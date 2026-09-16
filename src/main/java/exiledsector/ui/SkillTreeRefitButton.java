@@ -5,16 +5,13 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
-import exiledsector.skills.SkillNode;
-import exiledsector.skills.SkillTree;
+import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import lunalib.lunaRefit.BaseRefitButton;
 import lunalib.lunaRefit.LunaRefitManager;
 
 public class SkillTreeRefitButton extends BaseRefitButton {
 
-    private static final float SCREEN_FRACTION = 0.8f;
-    private static final float SYMBOL_SIZE = 128f;
-    private static final float NODE_SIZE = 64f;
+    private static final float SCREEN_FRACTION = 1f;
 
     public static void addButton() {
         LunaRefitManager.addRefitButton(new SkillTreeRefitButton());
@@ -48,15 +45,14 @@ public class SkillTreeRefitButton extends BaseRefitButton {
     @Override
     public void initPanel(CustomPanelAPI backgroundPanel, FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
         String symbolPath = ShipSymbolResolver.resolveSymbolPath(member, variant);
-        float centerX = getPanelWidth(member, variant) / 2f;
-        float centerY = getPanelHeight(member, variant) / 2f;
+        float panelWidth = getPanelWidth(member, variant);
+        float panelHeight = getPanelHeight(member, variant);
 
-        VignettedIcon.addTo(backgroundPanel, symbolPath, SYMBOL_SIZE, centerX - SYMBOL_SIZE / 2f, centerY - SYMBOL_SIZE / 2f);
+        TooltipMakerAPI element = backgroundPanel.createUIElement(panelWidth, panelHeight, false);
+        backgroundPanel.addUIElement(element);
+        element.getPosition().inTL(0f, 0f);
 
-        for (SkillNode node : SkillTree.getAllNodes().values()) {
-            float nodeX = centerX + node.getOffsetX() - NODE_SIZE / 2f;
-            float nodeY = centerY + node.getOffsetY() - NODE_SIZE / 2f;
-            VignettedIcon.addTo(backgroundPanel, node.getIconPath(), NODE_SIZE, nodeX, nodeY);
-        }
+        CustomPanelAPI canvas = Global.getSettings().createCustom(panelWidth, panelHeight, new SkillTreeCanvasPlugin(symbolPath));
+        element.addCustom(canvas, 0f).getPosition().inTL(0f, 0f);
     }
 }

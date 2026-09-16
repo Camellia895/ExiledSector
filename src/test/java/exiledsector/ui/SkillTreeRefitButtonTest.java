@@ -53,26 +53,26 @@ class SkillTreeRefitButtonTest {
     }
 
     @Test
-    void panelWidthIs80PercentOfScreenWidth() {
+    void panelWidthIsFullScreenWidth() {
         SettingsAPI settings = mock(SettingsAPI.class);
         when(settings.getScreenWidth()).thenReturn(1920f);
 
         try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
             globalMock.when(Global::getSettings).thenReturn(settings);
 
-            assertEquals(1536f, button.getPanelWidth(null, null));
+            assertEquals(1920f, button.getPanelWidth(null, null));
         }
     }
 
     @Test
-    void panelHeightIs80PercentOfScreenHeight() {
+    void panelHeightIsFullScreenHeight() {
         SettingsAPI settings = mock(SettingsAPI.class);
         when(settings.getScreenHeight()).thenReturn(1080f);
 
         try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
             globalMock.when(Global::getSettings).thenReturn(settings);
 
-            assertEquals(864f, button.getPanelHeight(null, null));
+            assertEquals(1080f, button.getPanelHeight(null, null));
         }
     }
 }
