@@ -14,6 +14,12 @@ public class SkillTreeRefitButton extends BaseRefitButton {
 
     private static final float SCREEN_FRACTION = 0.8f;
     private static final float SYMBOL_SIZE = 128f;
+    // The crest sprite has been observed rendering wider than SYMBOL_SIZE in
+    // some cases (root cause not yet pinned down); the masked area is padded
+    // well beyond the icon's own bounds so the vignette's solid black fill
+    // reliably swallows that overflow instead of leaving it exposed.
+    private static final float MASK_PADDING = 48f;
+    private static final float MASK_SIZE = SYMBOL_SIZE + MASK_PADDING * 2f;
 
     public static void addButton() {
         LunaRefitManager.addRefitButton(new SkillTreeRefitButton());
@@ -48,12 +54,20 @@ public class SkillTreeRefitButton extends BaseRefitButton {
     public void initPanel(CustomPanelAPI backgroundPanel, FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
         String symbolPath = ShipSymbolResolver.resolveSymbolPath(member, variant);
 
-        TooltipMakerAPI element = backgroundPanel.createUIElement(SYMBOL_SIZE, SYMBOL_SIZE, false);
+        TooltipMakerAPI element = backgroundPanel.createUIElement(MASK_SIZE, MASK_SIZE, false);
         backgroundPanel.addUIElement(element);
-        float x = (getPanelWidth(member, variant) - SYMBOL_SIZE) / 2f;
-        float y = (getPanelHeight(member, variant) - SYMBOL_SIZE) / 2f;
+        float x = (getPanelWidth(member, variant) - MASK_SIZE) / 2f;
+        float y = (getPanelHeight(member, variant) - MASK_SIZE) / 2f;
         element.getPosition().inTL(x, y);
 
-        new LunaSpriteElement(symbolPath, LunaSpriteElement.ScalingTypes.STRETCH_SPRITE, element, SYMBOL_SIZE, SYMBOL_SIZE);
+        LunaSpriteElement sprite = new LunaSpriteElement(symbolPath, LunaSpriteElement.ScalingTypes.STRETCH_SPRITE, element, SYMBOL_SIZE, SYMBOL_SIZE);
+        sprite.getPosition().inTL(MASK_PADDING, MASK_PADDING);
+
+        // Added after the sprite so it renders on top and actually covers
+        // the icon's edges, rather than being hidden behind it. Sized to
+        // the full padded MASK_SIZE (not just SYMBOL_SIZE) so its solid
+        // black fill extends past the icon's own bounds - see MASK_PADDING.
+        CustomPanelAPI vignette = Global.getSettings().createCustom(MASK_SIZE, MASK_SIZE, new CircularVignettePlugin(SYMBOL_SIZE));
+        element.addCustom(vignette, 0f).getPosition().inTL(0f, 0f);
     }
 }
