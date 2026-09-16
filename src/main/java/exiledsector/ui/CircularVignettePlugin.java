@@ -17,11 +17,10 @@ import java.awt.Color;
  * corners.
  *
  * This plugin's own panel is intentionally sized larger than the icon it's
- * masking (see SkillTreeRefitButton's MASK_PADDING) - the sprite it's
- * layered over has been observed rendering wider than its nominal box in
- * some cases, so the solid-black fill needs real margin beyond the icon's
- * own bounds to reliably cover that overflow rather than just the icon's
- * exact edges.
+ * masking (see VignettedIcon's padding) - the sprite it's layered over has
+ * been observed rendering wider than its nominal box in some cases, so the
+ * solid-black fill needs real margin beyond the icon's own bounds to
+ * reliably cover that overflow rather than just the icon's exact edges.
  */
 public class CircularVignettePlugin extends BaseCustomUIPanelPlugin {
 

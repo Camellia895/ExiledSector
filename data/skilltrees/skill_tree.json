@@ -1,0 +1,44 @@
+{
+	"nodes": [
+		{
+			"id": "capacitors_1",
+			"name": "Capacitors",
+			"icon": "graphics/hullmods/flux_coil_adjunct.png",
+			"opCost": 2,
+			"xpCost": 500,
+			"prerequisites": [],
+			"x": -180,
+			"y": -180
+		},
+		{
+			"id": "capacitors_2",
+			"name": "Capacitors",
+			"icon": "graphics/hullmods/flux_coil_adjunct.png",
+			"opCost": 2,
+			"xpCost": 500,
+			"prerequisites": [],
+			"x": 180,
+			"y": -180
+		},
+		{
+			"id": "capacitors_3",
+			"name": "Capacitors",
+			"icon": "graphics/hullmods/flux_coil_adjunct.png",
+			"opCost": 2,
+			"xpCost": 500,
+			"prerequisites": [],
+			"x": -180,
+			"y": 180
+		},
+		{
+			"id": "capacitors_4",
+			"name": "Capacitors",
+			"icon": "graphics/hullmods/flux_coil_adjunct.png",
+			"opCost": 2,
+			"xpCost": 500,
+			"prerequisites": [],
+			"x": 180,
+			"y": 180
+		}
+	]
+}

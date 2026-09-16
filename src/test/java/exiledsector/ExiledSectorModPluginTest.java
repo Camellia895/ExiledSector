@@ -1,6 +1,7 @@
 package exiledsector;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.combat.CombatXpListener;
 import exiledsector.effects.SkillTreeInstaller;
@@ -8,6 +9,7 @@ import exiledsector.ui.SkillTreeRefitButton;
 import lunalib.lunaRefit.BaseRefitButton;
 import lunalib.lunaRefit.LunaRefitManager;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,13 +36,17 @@ class ExiledSectorModPluginTest {
     private SectorAPI sector;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         Map<String, Object> persistentData = new HashMap<>();
         sector = mock(SectorAPI.class);
         when(sector.getPersistentData()).thenReturn(persistentData);
 
+        SettingsAPI settings = mock(SettingsAPI.class);
+        when(settings.loadJSON("data/skilltrees/skill_tree.json")).thenReturn(new JSONObject("{ \"nodes\": [] }"));
+
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSector).thenReturn(sector);
+        globalMock.when(Global::getSettings).thenReturn(settings);
         globalMock.when(() -> Global.getLogger(any())).thenReturn(mock(Logger.class));
     }
 

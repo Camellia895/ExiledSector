@@ -33,7 +33,7 @@ class ShipSkillDataTest {
     void unlockMarksNodeAndSpendsItsOpAndXpCost() {
         ShipSkillData data = new ShipSkillData();
         data.addXp(500f);
-        SkillNode node = new SkillNode("armor_1", "Reinforced Plating", 2, 300f, List.of());
+        SkillNode node = new SkillNode("armor_1", "Reinforced Plating", "graphics/icons/skills/combat.png", 2, 300f, List.of(), 0f, 0f);
 
         data.unlock(node);
 
