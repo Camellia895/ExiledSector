@@ -32,7 +32,11 @@ foreach ($jar in $coreJars) {
 }
 
 $libJars = @{
-    "LazyLib"  = @("LazyLib.jar", "LazyLib-Kotlin.jar")
+    # LazyLib's bundled Kotlin-Runtime.jar is what supplies the Kotlin stdlib
+    # (kotlin.jvm.internal.Intrinsics etc.) that LunaLib's Kotlin-compiled
+    # classes need at runtime - LunaLib.jar doesn't bundle its own copy.
+    # Needed here too so unit tests that touch LunaLib classes can run.
+    "LazyLib"  = @("LazyLib.jar", "LazyLib-Kotlin.jar", "internal\Kotlin-Runtime.jar")
     "MagicLib" = @("MagicLib.jar", "MagicLib-Kotlin.jar")
     "LunaLib"  = @("LunaLib.jar", "libs\fuzzywuzzy-1.3.0.jar")
 }

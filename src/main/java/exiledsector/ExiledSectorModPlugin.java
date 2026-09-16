@@ -13,8 +13,6 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
     @Override
     public void onApplicationLoad() throws Exception {
         Global.getLogger(ExiledSectorModPlugin.class).info(LOG_TAG + " loaded");
-        // LunaRefitManager's button list is a static registry, not game
-        // state, so this only needs to happen once per application run.
         SkillTreeRefitButton.addButton();
     }
 
