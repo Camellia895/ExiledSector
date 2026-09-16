@@ -1,0 +1,74 @@
+{
+	"skillTypes": [
+		{
+			"id": "capacitors",
+			"name": "Capacitors",
+			"icon": "graphics/hullmods/flux_coil_adjunct.png",
+			"opCost": 2,
+			"xpCost": 500
+		},
+		{
+			"id": "hull",
+			"name": "Reinforced Hull",
+			"icon": "graphics/hullmods/reinforced_bulkheads.png",
+			"opCost": 2,
+			"xpCost": 500,
+			"effect": "HULL",
+			"magnitude": 10
+		},
+		{
+			"id": "armor",
+			"name": "Heavy Armor",
+			"icon": "graphics/hullmods/heavy_armor.png",
+			"opCost": 2,
+			"xpCost": 500,
+			"effect": "ARMOR",
+			"magnitude": 10
+		},
+		{
+			"id": "flux_dissipation",
+			"name": "Flux Distributor",
+			"icon": "graphics/hullmods/flux_distributor.png",
+			"opCost": 2,
+			"xpCost": 500,
+			"effect": "FLUX_DISSIPATION",
+			"magnitude": 10
+		},
+		{
+			"id": "ballistic_damage",
+			"name": "Ballistic Mastery",
+			"icon": "graphics/icons/skills/ranged_specialization.png",
+			"opCost": 2,
+			"xpCost": 500,
+			"effect": "BALLISTIC_DAMAGE",
+			"magnitude": 5
+		},
+		{
+			"id": "missile_damage",
+			"name": "Missile Mastery",
+			"icon": "graphics/weapons/pilum_launcher_large_turret.png",
+			"opCost": 2,
+			"xpCost": 500,
+			"effect": "MISSILE_DAMAGE",
+			"magnitude": 5
+		},
+		{
+			"id": "energy_damage",
+			"name": "Energy Weapon Mastery",
+			"icon": "graphics/icons/skills/energy_weapon_mastery.png",
+			"opCost": 2,
+			"xpCost": 500,
+			"effect": "ENERGY_DAMAGE",
+			"magnitude": 5
+		},
+		{
+			"id": "weapon_damage",
+			"name": "Weapon Drills",
+			"icon": "graphics/icons/skills/weapon_drills.png",
+			"opCost": 2,
+			"xpCost": 500,
+			"effect": "ALL_WEAPON_DAMAGE",
+			"magnitude": 5
+		}
+	]
+}

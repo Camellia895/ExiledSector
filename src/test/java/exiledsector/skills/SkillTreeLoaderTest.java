@@ -4,26 +4,30 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SkillTreeLoaderTest {
 
+    private static final Map<String, SkillType> SKILL_TYPES = Map.of(
+            "capacitors", new SkillType("capacitors", "Capacitors", "graphics/hullmods/flux_coil_adjunct.png", 2, 500, null, 0f),
+            "bare", new SkillType("bare", "Bare", "graphics/icons/skills/combat.png", 0, 0, null, 0f)
+    );
+
     @Test
-    void parsesAllFieldsOfANode() throws Exception {
+    void parsesAllFieldsOfANodeAndResolvesItsType() throws Exception {
         JSONObject root = new JSONObject("{ \"nodes\": [ {"
                 + "\"id\": \"capacitors_1\","
-                + "\"name\": \"Capacitors\","
-                + "\"icon\": \"graphics/hullmods/flux_coil_adjunct.png\","
-                + "\"opCost\": 2,"
-                + "\"xpCost\": 500,"
+                + "\"type\": \"capacitors\","
                 + "\"prerequisites\": [\"vents_1\"],"
                 + "\"x\": -180,"
                 + "\"y\": 180"
                 + "} ] }");
 
-        List<SkillNode> nodes = SkillTreeLoader.parseNodes(root);
+        List<SkillNode> nodes = SkillTreeLoader.parseNodes(root, SKILL_TYPES);
 
         assertEquals(1, nodes.size());
         SkillNode node = nodes.get(0);
@@ -41,15 +45,12 @@ class SkillTreeLoaderTest {
     void missingOptionalFieldsFallBackToDefaults() throws Exception {
         JSONObject root = new JSONObject("{ \"nodes\": [ {"
                 + "\"id\": \"bare_node\","
-                + "\"name\": \"Bare Node\","
-                + "\"icon\": \"graphics/icons/skills/combat.png\""
+                + "\"type\": \"bare\""
                 + "} ] }");
 
-        SkillNode node = SkillTreeLoader.parseNodes(root).get(0);
+        SkillNode node = SkillTreeLoader.parseNodes(root, SKILL_TYPES).get(0);
 
         assertTrue(node.getPrerequisiteNodeIds().isEmpty());
-        assertEquals(0, node.getOpCost());
-        assertEquals(0f, node.getXpCost());
         assertEquals(0f, node.getOffsetX());
         assertEquals(0f, node.getOffsetY());
     }
@@ -57,12 +58,22 @@ class SkillTreeLoaderTest {
     @Test
     void parsesMultipleNodesInOrder() throws Exception {
         JSONObject root = new JSONObject("{ \"nodes\": ["
-                + "{\"id\": \"a\", \"name\": \"A\", \"icon\": \"a.png\"},"
-                + "{\"id\": \"b\", \"name\": \"B\", \"icon\": \"b.png\"}"
+                + "{\"id\": \"a\", \"type\": \"bare\"},"
+                + "{\"id\": \"b\", \"type\": \"capacitors\"}"
                 + "] }");
 
-        List<SkillNode> nodes = SkillTreeLoader.parseNodes(root);
+        List<SkillNode> nodes = SkillTreeLoader.parseNodes(root, SKILL_TYPES);
 
         assertEquals(List.of("a", "b"), List.of(nodes.get(0).getId(), nodes.get(1).getId()));
+    }
+
+    @Test
+    void unknownSkillTypeThrows() throws Exception {
+        JSONObject root = new JSONObject("{ \"nodes\": [ {"
+                + "\"id\": \"mystery\","
+                + "\"type\": \"does_not_exist\""
+                + "} ] }");
+
+        assertThrows(org.json.JSONException.class, () -> SkillTreeLoader.parseNodes(root, SKILL_TYPES));
     }
 }

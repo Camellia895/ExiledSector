@@ -9,39 +9,42 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
- * Reads skill node definitions from data/skilltrees/skill_tree.json.
- * Parsing (parseNodes/parseNode) is kept separate from the Global-touching
- * file read (loadNodes) so it can be unit tested against a hand-built
- * JSONObject without a running game session.
+ * Reads node placements (which SkillType, where, and behind which
+ * prerequisites) from data/skilltrees/ship_skill_tree.json, resolving each
+ * against the shared SkillType definitions from SkillTypeLoader. Parsing is
+ * kept separate from the Global-touching file read so it can be unit tested
+ * against hand-built JSONObjects without a running game session.
  */
 public final class SkillTreeLoader {
 
-    private static final String DATA_PATH = "data/skilltrees/skill_tree.json";
+    private static final String DATA_PATH = "data/skilltrees/ship_skill_tree.json";
 
     private SkillTreeLoader() {
     }
 
     public static List<SkillNode> loadNodes() {
         try {
-            return parseNodes(Global.getSettings().loadJSON(DATA_PATH));
+            Map<String, SkillType> skillTypes = SkillTypeLoader.loadSkillTypes();
+            return parseNodes(Global.getSettings().loadJSON(DATA_PATH), skillTypes);
         } catch (IOException | JSONException e) {
             Logger.getLogger(SkillTreeLoader.class).error("Failed to load " + DATA_PATH, e);
             return new ArrayList<>();
         }
     }
 
-    public static List<SkillNode> parseNodes(JSONObject root) throws JSONException {
+    public static List<SkillNode> parseNodes(JSONObject root, Map<String, SkillType> skillTypes) throws JSONException {
         List<SkillNode> nodes = new ArrayList<>();
         JSONArray nodeArray = root.getJSONArray("nodes");
         for (int i = 0; i < nodeArray.length(); i++) {
-            nodes.add(parseNode(nodeArray.getJSONObject(i)));
+            nodes.add(parseNode(nodeArray.getJSONObject(i), skillTypes));
         }
         return nodes;
     }
 
-    private static SkillNode parseNode(JSONObject json) throws JSONException {
+    private static SkillNode parseNode(JSONObject json, Map<String, SkillType> skillTypes) throws JSONException {
         List<String> prerequisites = new ArrayList<>();
         JSONArray prereqArray = json.optJSONArray("prerequisites");
         if (prereqArray != null) {
@@ -50,12 +53,15 @@ public final class SkillTreeLoader {
             }
         }
 
+        String typeId = json.getString("type");
+        SkillType type = skillTypes.get(typeId);
+        if (type == null) {
+            throw new JSONException("Unknown skill type \"" + typeId + "\" referenced by node \"" + json.optString("id") + "\"");
+        }
+
         return new SkillNode(
                 json.getString("id"),
-                json.getString("name"),
-                json.getString("icon"),
-                json.optInt("opCost", 0),
-                (float) json.optDouble("xpCost", 0),
+                type,
                 prerequisites,
                 (float) json.optDouble("x", 0),
                 (float) json.optDouble("y", 0));

@@ -4,17 +4,17 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Definition of a single skill tree node. Content is authored as data (see
- * SkillTreeLoader, data/skilltrees/skill_tree.json) and loaded into SkillTree;
- * this class is just the shape that data gets parsed into.
+ * A single placed instance of a SkillType within the tree: its id,
+ * prerequisites, and position. Display name/icon/cost are not duplicated
+ * here - they're delegated to the shared SkillType so authoring many copies
+ * of the same skill (e.g. four "Capacitors" nodes) doesn't repeat that data.
+ * Content is authored as data (see SkillTreeLoader,
+ * data/skilltrees/ship_skill_tree.json) and loaded into SkillTree.
  */
 public class SkillNode {
 
     private final String id;
-    private final String displayName;
-    private final String iconPath;
-    private final int opCost;
-    private final float xpCost;
+    private final SkillType type;
     private final List<String> prerequisiteNodeIds;
     // Position offset from the tree's center point, in the same panel-space
     // units as SkillTreeRefitButton's own layout - hand-placed per node
@@ -22,13 +22,9 @@ public class SkillNode {
     private final float offsetX;
     private final float offsetY;
 
-    public SkillNode(String id, String displayName, String iconPath, int opCost, float xpCost,
-                      List<String> prerequisiteNodeIds, float offsetX, float offsetY) {
+    public SkillNode(String id, SkillType type, List<String> prerequisiteNodeIds, float offsetX, float offsetY) {
         this.id = id;
-        this.displayName = displayName;
-        this.iconPath = iconPath;
-        this.opCost = opCost;
-        this.xpCost = xpCost;
+        this.type = type;
         this.prerequisiteNodeIds = prerequisiteNodeIds == null ? Collections.emptyList() : prerequisiteNodeIds;
         this.offsetX = offsetX;
         this.offsetY = offsetY;
@@ -38,20 +34,24 @@ public class SkillNode {
         return id;
     }
 
+    public SkillType getType() {
+        return type;
+    }
+
     public String getDisplayName() {
-        return displayName;
+        return type.getDisplayName();
     }
 
     public String getIconPath() {
-        return iconPath;
+        return type.getIconPath();
     }
 
     public int getOpCost() {
-        return opCost;
+        return type.getOpCost();
     }
 
     public float getXpCost() {
-        return xpCost;
+        return type.getXpCost();
     }
 
     public List<String> getPrerequisiteNodeIds() {

@@ -42,7 +42,8 @@ class ExiledSectorModPluginTest {
         when(sector.getPersistentData()).thenReturn(persistentData);
 
         SettingsAPI settings = mock(SettingsAPI.class);
-        when(settings.loadJSON("data/skilltrees/skill_tree.json")).thenReturn(new JSONObject("{ \"nodes\": [] }"));
+        when(settings.loadJSON("data/skilltrees/skill_types.json")).thenReturn(new JSONObject("{ \"skillTypes\": [] }"));
+        when(settings.loadJSON("data/skilltrees/ship_skill_tree.json")).thenReturn(new JSONObject("{ \"nodes\": [] }"));
 
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSector).thenReturn(sector);
