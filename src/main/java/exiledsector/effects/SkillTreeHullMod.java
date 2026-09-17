@@ -23,7 +23,7 @@ public class SkillTreeHullMod extends BaseHullMod {
         if (member == null) return;
 
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
-        for (String nodeId : data.getUnlockedNodeIds()) {
+        for (String nodeId : data.getAllocatedNodeIds()) {
             SkillNode node = SkillTree.get(nodeId);
             if (node == null) continue;
 

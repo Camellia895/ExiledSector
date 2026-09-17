@@ -52,7 +52,7 @@ public class SkillTreeRefitButton extends BaseRefitButton {
         backgroundPanel.addUIElement(element);
         element.getPosition().inTL(0f, 0f);
 
-        CustomPanelAPI canvas = Global.getSettings().createCustom(panelWidth, panelHeight, new SkillTreeCanvasPlugin(symbolPath));
+        CustomPanelAPI canvas = Global.getSettings().createCustom(panelWidth, panelHeight, new SkillTreeCanvasPlugin(symbolPath, member.getId()));
         element.addCustom(canvas, 0f).getPosition().inTL(0f, 0f);
     }
 }

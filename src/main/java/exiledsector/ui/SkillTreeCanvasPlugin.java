@@ -6,6 +6,8 @@ import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import org.apache.log4j.Logger;
@@ -57,6 +59,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private static final int MIN_ALPHA_TO_SAMPLE = 128;
 
     private final String symbolPath;
+    private final String shipId;
     private final Set<String> loadedSprites = new HashSet<>();
 
     private final Map<String, TooltipText> tooltipTitles = new HashMap<>();
@@ -73,9 +76,11 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private float mouseX = 0f;
     private float mouseY = 0f;
     private boolean mouseKnown = false;
+    private SkillNode pendingClickNode;
 
-    public SkillTreeCanvasPlugin(String symbolPath) {
+    public SkillTreeCanvasPlugin(String symbolPath, String shipId) {
         this.symbolPath = symbolPath;
+        this.shipId = shipId;
     }
 
     @Override
@@ -91,10 +96,19 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             if (event.isConsumed()) continue;
 
             if (event.isLMBDownEvent() && position.containsEvent(event)) {
-                dragging = true;
+                SkillNode clicked = findNodeAt(event.getX(), event.getY());
+                if (clicked != null) {
+                    pendingClickNode = clicked;
+                } else {
+                    dragging = true;
+                }
                 event.consume();
             } else if (event.isLMBUpEvent()) {
                 dragging = false;
+                if (pendingClickNode != null) {
+                    toggleAllocation(pendingClickNode);
+                    pendingClickNode = null;
+                }
             } else if (event.isMouseMoveEvent()) {
                 mouseX = event.getX();
                 mouseY = event.getY();
@@ -119,30 +133,56 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     public void render(float alphaMult) {
         if (position == null) return;
 
-        float centerX = position.getX() + position.getWidth() / 2f + panX;
-        float centerY = position.getY() + position.getHeight() / 2f + panY;
+        float centerX = centerX();
+        float centerY = centerY();
 
         drawIcon(symbolPath, centerX, centerY, SYMBOL_SIZE * zoom, alphaMult);
 
-        SkillNode hovered = null;
         for (SkillNode node : SkillTree.getAllNodes().values()) {
             float nodeX = centerX + node.getOffsetX() * zoom;
             float nodeY = centerY - node.getOffsetY() * zoom;
             drawIcon(node.getIconPath(), nodeX, nodeY, NODE_SIZE * zoom, alphaMult);
-
-            if (!dragging && mouseKnown && isMouseOverNode(nodeX, nodeY)) {
-                hovered = node;
-            }
         }
 
-        if (hovered != null) {
-            renderTooltip(hovered, alphaMult);
+        if (!dragging && mouseKnown) {
+            SkillNode hovered = findNodeAt(mouseX, mouseY);
+            if (hovered != null) {
+                renderTooltip(hovered, alphaMult);
+            }
         }
     }
 
-    private boolean isMouseOverNode(float nodeX, float nodeY) {
+    private float centerX() {
+        return position.getX() + position.getWidth() / 2f + panX;
+    }
+
+    private float centerY() {
+        return position.getY() + position.getHeight() / 2f + panY;
+    }
+
+    private SkillNode findNodeAt(float x, float y) {
+        if (position == null) return null;
+
+        float centerX = centerX();
+        float centerY = centerY();
         float halfSize = NODE_SIZE * zoom / 2f;
-        return Math.abs(mouseX - nodeX) <= halfSize && Math.abs(mouseY - nodeY) <= halfSize;
+        for (SkillNode node : SkillTree.getAllNodes().values()) {
+            float nodeX = centerX + node.getOffsetX() * zoom;
+            float nodeY = centerY - node.getOffsetY() * zoom;
+            if (Math.abs(x - nodeX) <= halfSize && Math.abs(y - nodeY) <= halfSize) {
+                return node;
+            }
+        }
+        return null;
+    }
+
+    private void toggleAllocation(SkillNode node) {
+        ShipSkillData data = ShipSkillDataManager.get(shipId);
+        boolean wasAllocated = data.isAllocated(node.getId());
+        data.toggle(node, SkillTree.getAllNodes().values());
+        if (data.isAllocated(node.getId()) != wasAllocated) {
+            tooltipTitles.remove(node.getId());
+        }
     }
 
     private void drawIcon(String spritePath, float cx, float cy, float size, float alphaMult) {
@@ -209,7 +249,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         if (font == null) return;
 
         TooltipText title = tooltipTitles.computeIfAbsent(node.getId(),
-                id -> buildTooltipText(font, node.getDisplayName(), TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR));
+                id -> buildTooltipText(font, titleText(node), TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR));
         TooltipText body = tooltipBodies.computeIfAbsent(node.getId(),
                 id -> buildTooltipText(font, node.getDescription(), TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR));
 
@@ -224,6 +264,11 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         float bodyY = titleY - title.height - TOOLTIP_TITLE_BODY_GAP;
         title.drawable.draw(boxX + TOOLTIP_PADDING, titleY);
         body.drawable.draw(boxX + TOOLTIP_PADDING, bodyY);
+    }
+
+    private String titleText(SkillNode node) {
+        boolean allocated = ShipSkillDataManager.get(shipId).isAllocated(node.getId());
+        return allocated ? node.getDisplayName() + " [A]" : node.getDisplayName();
     }
 
     private TooltipText buildTooltipText(LazyFont font, String rawText, float fontSize, Color color) {

@@ -49,14 +49,14 @@ class SkillTreeHullModTest {
     }
 
     @Test
-    void appliesTheEffectOfEachUnlockedNodeWithOneRegisteredOnTheTree() {
+    void appliesTheEffectOfEachAllocatedNodeWithOneRegisteredOnTheTree() {
         SkillType hullType = new SkillType("hull", "Reinforced Hull", "graphics/hullmods/reinforced_bulkheads.png", 2, 500, SkillEffect.HULL, 10f);
         SkillNode hullNode = new SkillNode("hull_1", hullType, List.of(), 0f, 0f);
         SkillTree.register(hullNode);
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").unlock(hullNode);
+        ShipSkillDataManager.get("ship-a").allocate(hullNode);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         when(stats.getFleetMember()).thenReturn(member);
@@ -76,7 +76,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").unlock(cosmeticNode);
+        ShipSkillDataManager.get("ship-a").allocate(cosmeticNode);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         when(stats.getFleetMember()).thenReturn(member);

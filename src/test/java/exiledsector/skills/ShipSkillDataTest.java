@@ -10,13 +10,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ShipSkillDataTest {
 
+    private static SkillNode node(String id, List<String> prerequisiteIds) {
+        SkillType type = new SkillType(id, id, "graphics/hullmods/heavy_armor.png", 2, 300f, null, 0f);
+        return new SkillNode(id, type, prerequisiteIds, 0f, 0f);
+    }
+
     @Test
     void startsWithNoProgress() {
         ShipSkillData data = new ShipSkillData();
 
         assertEquals(0f, data.getXp());
         assertEquals(0, data.getSpentOp());
-        assertTrue(data.getUnlockedNodeIds().isEmpty());
+        assertTrue(data.getAllocatedNodeIds().isEmpty());
     }
 
     @Test
@@ -30,23 +35,124 @@ class ShipSkillDataTest {
     }
 
     @Test
-    void unlockMarksNodeAndSpendsItsOpAndXpCost() {
+    void allocateMarksNodeAndSpendsItsOpAndXpCost() {
         ShipSkillData data = new ShipSkillData();
         data.addXp(500f);
-        SkillType type = new SkillType("armor", "Heavy Armor", "graphics/hullmods/heavy_armor.png", 2, 300f, null, 0f);
-        SkillNode node = new SkillNode("armor_1", type, List.of(), 0f, 0f);
+        SkillNode node = node("armor_1", List.of());
 
-        data.unlock(node);
+        data.allocate(node);
 
-        assertTrue(data.isUnlocked("armor_1"));
+        assertTrue(data.isAllocated("armor_1"));
         assertEquals(2, data.getSpentOp());
         assertEquals(200f, data.getXp());
     }
 
     @Test
-    void isUnlockedIsFalseForANodeThatWasNeverUnlocked() {
+    void deallocateRefundsTheNodesOpAndXpCost() {
+        ShipSkillData data = new ShipSkillData();
+        data.addXp(500f);
+        SkillNode node = node("armor_1", List.of());
+        data.allocate(node);
+
+        data.deallocate(node);
+
+        assertFalse(data.isAllocated("armor_1"));
+        assertEquals(0, data.getSpentOp());
+        assertEquals(500f, data.getXp());
+    }
+
+    @Test
+    void isAllocatedIsFalseForANodeThatWasNeverAllocated() {
         ShipSkillData data = new ShipSkillData();
 
-        assertFalse(data.isUnlocked("nonexistent"));
+        assertFalse(data.isAllocated("nonexistent"));
+    }
+
+    @Test
+    void canAllocateIsTrueWhenThereAreNoPrerequisites() {
+        ShipSkillData data = new ShipSkillData();
+
+        assertTrue(data.canAllocate(node("root", List.of())));
+    }
+
+    @Test
+    void canAllocateIsFalseWhenAPrerequisiteIsNotAllocated() {
+        ShipSkillData data = new ShipSkillData();
+
+        assertFalse(data.canAllocate(node("child", List.of("parent"))));
+    }
+
+    @Test
+    void canAllocateIsTrueOnceEveryPrerequisiteIsAllocated() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode parent = node("parent", List.of());
+        data.allocate(parent);
+
+        assertTrue(data.canAllocate(node("child", List.of("parent"))));
+    }
+
+    @Test
+    void canDeallocateIsTrueWhenNoAllocatedNodeDependsOnIt() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode parent = node("parent", List.of());
+        data.allocate(parent);
+
+        assertTrue(data.canDeallocate(parent, List.of(parent)));
+    }
+
+    @Test
+    void canDeallocateIsFalseWhenAnAllocatedChildDependsOnIt() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode parent = node("parent", List.of());
+        SkillNode child = node("child", List.of("parent"));
+        data.allocate(parent);
+        data.allocate(child);
+
+        assertFalse(data.canDeallocate(parent, List.of(parent, child)));
+    }
+
+    @Test
+    void toggleAllocatesAnUnallocatedNodeWhosePrerequisitesAreMet() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode root = node("root", List.of());
+
+        data.toggle(root, List.of(root));
+
+        assertTrue(data.isAllocated("root"));
+    }
+
+    @Test
+    void toggleDoesNothingForAnUnallocatedNodeWithAnUnmetPrerequisite() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode parent = node("parent", List.of());
+        SkillNode child = node("child", List.of("parent"));
+
+        data.toggle(child, List.of(parent, child));
+
+        assertFalse(data.isAllocated("child"));
+    }
+
+    @Test
+    void toggleDeallocatesAnAllocatedNodeWithNoAllocatedChildren() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode root = node("root", List.of());
+        data.allocate(root);
+
+        data.toggle(root, List.of(root));
+
+        assertFalse(data.isAllocated("root"));
+    }
+
+    @Test
+    void toggleDoesNothingForAnAllocatedNodeWithAnAllocatedChild() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode parent = node("parent", List.of());
+        SkillNode child = node("child", List.of("parent"));
+        data.allocate(parent);
+        data.allocate(child);
+
+        data.toggle(parent, List.of(parent, child));
+
+        assertTrue(data.isAllocated("parent"));
     }
 }
