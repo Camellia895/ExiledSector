@@ -67,6 +67,28 @@ class SkillEffectTest {
     }
 
     @Test
+    void nonBeamEnergyDamageModifiesOnlyTheEnergyDamageStat() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        MutableStat energy = mock(MutableStat.class);
+        when(stats.getEnergyWeaponDamageMult()).thenReturn(energy);
+
+        SkillEffect.NON_BEAM_ENERGY_DAMAGE.apply(stats, "mod_id", 5f);
+
+        verify(energy).modifyPercent("mod_id", 5f);
+    }
+
+    @Test
+    void beamDamageModifiesOnlyTheBeamDamageStat() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        MutableStat beam = mock(MutableStat.class);
+        when(stats.getBeamWeaponDamageMult()).thenReturn(beam);
+
+        SkillEffect.BEAM_DAMAGE.apply(stats, "mod_id", 5f);
+
+        verify(beam).modifyPercent("mod_id", 5f);
+    }
+
+    @Test
     void energyDamageModifiesBothEnergyAndBeamDamageStats() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         MutableStat energy = mock(MutableStat.class);

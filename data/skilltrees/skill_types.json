@@ -9,7 +9,7 @@
 		},
 		{
 			"id": "hull",
-			"name": "Reinforced Hull",
+			"name": "Hull",
 			"icon": "graphics/hullmods/reinforced_bulkheads.png",
 			"opCost": 2,
 			"xpCost": 500,
@@ -18,7 +18,7 @@
 		},
 		{
 			"id": "armor",
-			"name": "Heavy Armor",
+			"name": "Armor",
 			"icon": "graphics/hullmods/heavy_armor.png",
 			"opCost": 2,
 			"xpCost": 500,
@@ -27,7 +27,7 @@
 		},
 		{
 			"id": "flux_dissipation",
-			"name": "Flux Distributor",
+			"name": "Flux Dissipation",
 			"icon": "graphics/hullmods/flux_distributor.png",
 			"opCost": 2,
 			"xpCost": 500,
@@ -36,7 +36,7 @@
 		},
 		{
 			"id": "ballistic_damage",
-			"name": "Ballistic Mastery",
+			"name": "Ballistic Damage",
 			"icon": "graphics/icons/skills/ranged_specialization.png",
 			"opCost": 2,
 			"xpCost": 500,
@@ -45,16 +45,34 @@
 		},
 		{
 			"id": "missile_damage",
-			"name": "Missile Mastery",
-			"icon": "graphics/weapons/pilum_launcher_large_turret.png",
+			"name": "Missile Damage",
+			"icon": "graphics/hullmods/expanded_missile_racks.png",
 			"opCost": 2,
 			"xpCost": 500,
 			"effect": "MISSILE_DAMAGE",
 			"magnitude": 5
 		},
 		{
+			"id": "non_beam_energy_damage",
+			"name": "Non-Beam Energy Weapon Damage",
+			"icon": "graphics/hullmods/coherer.png",
+			"opCost": 2,
+			"xpCost": 500,
+			"effect": "NON_BEAM_ENERGY_DAMAGE",
+			"magnitude": 5
+		},
+		{
+			"id": "beam_damage",
+			"name": "Beam Energy Weapon Damage",
+			"icon": "graphics/hullmods/high_scatter_amp.png",
+			"opCost": 2,
+			"xpCost": 500,
+			"effect": "BEAM_DAMAGE",
+			"magnitude": 5
+		},
+		{
 			"id": "energy_damage",
-			"name": "Energy Weapon Mastery",
+			"name": "Energy Weapon Damage",
 			"icon": "graphics/icons/skills/energy_weapon_mastery.png",
 			"opCost": 2,
 			"xpCost": 500,
@@ -63,7 +81,7 @@
 		},
 		{
 			"id": "weapon_damage",
-			"name": "Weapon Drills",
+			"name": "All Weapon Damage",
 			"icon": "graphics/icons/skills/weapon_drills.png",
 			"opCost": 2,
 			"xpCost": 500,

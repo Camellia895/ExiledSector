@@ -71,9 +71,23 @@
 			"y": -540
 		},
 		{
+			"id": "non_beam_energy_damage_1",
+			"type": "non_beam_energy_damage",
+			"prerequisites": [],
+			"x": -720,
+			"y": 450
+		},
+		{
+			"id": "beam_damage_1",
+			"type": "beam_damage",
+			"prerequisites": [],
+			"x": -720,
+			"y": 630
+		},
+		{
 			"id": "energy_damage_1",
 			"type": "energy_damage",
-			"prerequisites": [],
+			"prerequisites": ["non_beam_energy_damage_1", "beam_damage_1"],
 			"x": -540,
 			"y": 540
 		}

@@ -41,12 +41,29 @@ public enum SkillEffect {
             stats.getMissileWeaponDamageMult().modifyPercent(modId, magnitude);
         }
     },
+    // Non-beam energy weapons only (e.g. Heavy Blaster, Ion Cannon) - named
+    // to match vanilla's own "non-beam energy weapons" terminology (see the
+    // Energy Bolt Coherer hullmod tooltip), since "projectile energy weapon"
+    // has no precedent anywhere in the game's data or text.
+    NON_BEAM_ENERGY_DAMAGE {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getEnergyWeaponDamageMult().modifyPercent(modId, magnitude);
+        }
+    },
+    // Beam weapons only (e.g. Tachyon Lance, Phase Lance) - the game tracks
+    // these as a separate stat from other energy weapons.
+    BEAM_DAMAGE {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getBeamWeaponDamageMult().modifyPercent(modId, magnitude);
+        }
+    },
+    // Hybrid skill covering both of the above, for a player who doesn't
+    // want to specialize into one or the other.
     ENERGY_DAMAGE {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            // The game tracks beams as a separate stat from other energy
-            // weapons, but a player picking "energy weapon damage" expects
-            // it to cover beams too.
             stats.getEnergyWeaponDamageMult().modifyPercent(modId, magnitude);
             stats.getBeamWeaponDamageMult().modifyPercent(modId, magnitude);
         }
