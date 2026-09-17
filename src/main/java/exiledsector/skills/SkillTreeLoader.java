@@ -11,13 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Reads node placements (which SkillType, where, and behind which
- * prerequisites) from data/skilltrees/ship_skill_tree.json, resolving each
- * against the shared SkillType definitions from SkillTypeLoader. Parsing is
- * kept separate from the Global-touching file read so it can be unit tested
- * against hand-built JSONObjects without a running game session.
- */
 public final class SkillTreeLoader {
 
     private static final String DATA_PATH = "data/skilltrees/ship_skill_tree.json";

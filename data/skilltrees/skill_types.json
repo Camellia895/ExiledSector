@@ -19,12 +19,12 @@
 			"magnitude": 1
 		},
 		{
-			"id": "flux_regulation",
-			"name": "Flux Regulation",
+			"id": "hybrid_flux",
+			"name": "Flux Capacity and Dissipation",
 			"icon": "graphics/icons/skills/flux_dynamics.png",
 			"opCost": 2,
 			"xpCost": 500,
-			"effect": "FLUX_REGULATION",
+			"effect": "HYBRID_FLUX",
 			"magnitude": 0.5
 		},
 		{
@@ -47,7 +47,7 @@
 		},
 		{
 			"id": "ballistic_damage",
-			"name": "Ballistic Damage",
+			"name": "Ballistic Weapon Damage",
 			"icon": "graphics/icons/skills/ranged_specialization.png",
 			"opCost": 2,
 			"xpCost": 500,
@@ -56,7 +56,7 @@
 		},
 		{
 			"id": "missile_damage",
-			"name": "Missile Damage",
+			"name": "Missile Weapon Damage",
 			"icon": "graphics/hullmods/expanded_missile_racks.png",
 			"opCost": 2,
 			"xpCost": 500,
@@ -74,7 +74,7 @@
 		},
 		{
 			"id": "beam_damage",
-			"name": "Beam Energy Weapon Damage",
+			"name": "Beam Weapon Damage",
 			"icon": "graphics/hullmods/high_scatter_amp.png",
 			"opCost": 2,
 			"xpCost": 500,

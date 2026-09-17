@@ -8,12 +8,6 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Resolves which symbol a ship's skill tree should show: the crest of the
- * one faction that "owns" its hull design, or a generic tech-tier icon if
- * the hull is shared/ambiguous (e.g. a civilian hull many factions use) or
- * unrecognized.
- */
 public class ShipSymbolResolver {
 
     private static final String LOW_TECH_CREST = "graphics/factions/crest_lowtech.png";
@@ -49,7 +43,6 @@ public class ShipSymbolResolver {
         if ("High Tech".equals(manufacturer)) {
             return HIGH_TECH_CREST;
         }
-        // "Midline" and anything unrecognized
         return MIDLINE_CREST;
     }
 }

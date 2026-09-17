@@ -10,13 +10,6 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * Reads skill type definitions (name/icon/cost, but no position or
- * prerequisites - see SkillTreeLoader for that) from
- * data/skilltrees/skill_types.json. Parsing is kept separate from the
- * Global-touching file read so it can be unit tested against a hand-built
- * JSONObject without a running game session.
- */
 public final class SkillTypeLoader {
 
     private static final String DATA_PATH = "data/skilltrees/skill_types.json";

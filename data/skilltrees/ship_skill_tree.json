@@ -1,8 +1,8 @@
 {
 	"nodes": [
 		{
-			"id": "flux_regulation_1",
-			"type": "flux_regulation",
+			"id": "hybrid_flux_1",
+			"type": "hybrid_flux",
 			"prerequisites": [],
 			"x": 0,
 			"y": -320
@@ -10,14 +10,14 @@
 		{
 			"id": "flux_capacity_1",
 			"type": "flux_capacity",
-			"prerequisites": ["flux_regulation_1"],
+			"prerequisites": ["hybrid_flux_1"],
 			"x": -140,
 			"y": -480
 		},
 		{
 			"id": "flux_dissipation_1",
 			"type": "flux_dissipation",
-			"prerequisites": ["flux_regulation_1"],
+			"prerequisites": ["hybrid_flux_1"],
 			"x": 140,
 			"y": -480
 		},

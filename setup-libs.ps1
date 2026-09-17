@@ -1,11 +1,3 @@
-<#
-One-time setup: copies the compile-time jars this project needs into ./libs/,
-and copies the LazyLib/MagicLib/LunaLib mod folders into the dev Starsector
-install's mods folder so the game can actually load this mod at runtime.
-
-Run once after cloning, or whenever the Starsector/LazyLib/MagicLib/LunaLib versions change.
-#>
-
 $ErrorActionPreference = "Stop"
 
 $starsectorCore = "E:\Dev\Starsector\starsector-core"
@@ -32,10 +24,6 @@ foreach ($jar in $coreJars) {
 }
 
 $libJars = @{
-    # LazyLib's bundled Kotlin-Runtime.jar is what supplies the Kotlin stdlib
-    # (kotlin.jvm.internal.Intrinsics etc.) that LunaLib's Kotlin-compiled
-    # classes need at runtime - LunaLib.jar doesn't bundle its own copy.
-    # Needed here too so unit tests that touch LunaLib classes can run.
     "LazyLib"  = @("LazyLib.jar", "LazyLib-Kotlin.jar", "internal\Kotlin-Runtime.jar")
     "MagicLib" = @("MagicLib.jar", "MagicLib-Kotlin.jar")
     "LunaLib"  = @("LunaLib.jar", "libs\fuzzywuzzy-1.3.0.jar")
@@ -44,8 +32,6 @@ $libJars = @{
 foreach ($modName in $libJars.Keys) {
     $srcJarsDir = Join-Path $sourceMods "$modName\jars"
     foreach ($jar in $libJars[$modName]) {
-        # LunaLib's fuzzywuzzy jar lives in a jars\libs subfolder; everything
-        # else copies flat into libs\, matching the systemPath entries in pom.xml.
         Copy-Item -Path (Join-Path $srcJarsDir $jar) -Destination (Join-Path $libs (Split-Path $jar -Leaf)) -Force
     }
 }

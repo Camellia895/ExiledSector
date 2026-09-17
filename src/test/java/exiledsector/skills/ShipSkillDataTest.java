@@ -40,7 +40,6 @@ class ShipSkillDataTest {
 
         assertTrue(data.isUnlocked("armor_1"));
         assertEquals(2, data.getSpentOp());
-        // 500 banked minus the node's 300 XP cost.
         assertEquals(200f, data.getXp());
     }
 

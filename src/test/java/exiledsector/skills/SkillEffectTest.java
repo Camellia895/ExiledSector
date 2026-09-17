@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.StatBonus;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -63,7 +64,7 @@ class SkillEffectTest {
         when(stats.getFluxCapacity()).thenReturn(fluxCapacity);
         when(stats.getFluxDissipation()).thenReturn(fluxDissipation);
 
-        SkillEffect.FLUX_REGULATION.apply(stats, "mod_id", 0.5f);
+        SkillEffect.HYBRID_FLUX.apply(stats, "mod_id", 0.5f);
 
         verify(fluxCapacity).modifyPercent("mod_id", 0.5f);
         verify(fluxDissipation).modifyPercent("mod_id", 0.5f);
@@ -145,5 +146,20 @@ class SkillEffectTest {
         verify(missile).modifyPercent("mod_id", 5f);
         verify(energy).modifyPercent("mod_id", 5f);
         verify(beam).modifyPercent("mod_id", 5f);
+    }
+
+    @Test
+    void describeFormatsAWholeNumberMagnitudeWithoutADecimal() {
+        assertEquals("Increases hull points by 10%.", SkillEffect.HULL.describe(10f));
+    }
+
+    @Test
+    void describeFormatsAFractionalMagnitudeWithADecimal() {
+        assertEquals("Increases flux capacity and dissipation by 0.5% each.", SkillEffect.HYBRID_FLUX.describe(0.5f));
+    }
+
+    @Test
+    void describeMentionsBothStatsForTheAllWeaponDamageHybrid() {
+        assertEquals("Increases damage of all weapon types by 5%.", SkillEffect.ALL_WEAPON_DAMAGE.describe(5f));
     }
 }

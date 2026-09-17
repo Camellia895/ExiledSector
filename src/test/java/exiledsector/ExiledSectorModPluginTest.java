@@ -25,11 +25,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-/**
- * Global is statically mocked throughout since the plugin calls
- * Global.getLogger()/Global.getSector() directly and there's no running
- * game session to back those in a test.
- */
 class ExiledSectorModPluginTest {
 
     private MockedStatic<Global> globalMock;
@@ -54,12 +49,8 @@ class ExiledSectorModPluginTest {
     @AfterEach
     void tearDown() {
         globalMock.close();
-        // onApplicationLoad() registers into LunaRefitManager's static
-        // registry - clean it up so it doesn't leak into other tests.
         BaseRefitButton registered = LunaRefitManager.getFirstButtonOfClass(SkillTreeRefitButton.class);
         if (registered != null) {
-            // removeButton() isn't @JvmStatic, so it's reached through the
-            // Kotlin object's singleton INSTANCE field from Java.
             LunaRefitManager.INSTANCE.removeButton(registered);
         }
     }

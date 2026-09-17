@@ -1,18 +1,5 @@
 package exiledsector.skills;
 
-/**
- * Definition of a kind of skill (its display name, icon, OP/XP cost, and the
- * stat bonus it grants), shared by every SkillNode placement that uses it.
- * Content is authored in data/skilltrees/skill_types.json (see
- * SkillTypeLoader) and looked up by id while parsing
- * data/skilltrees/ship_skill_tree.json, so a tree with many copies of the
- * same skill (e.g. four "Capacitors" nodes) only has to define that skill's
- * name/icon/cost/effect once.
- *
- * effect may be null for a skill that doesn't apply a stat bonus yet (it's
- * still just a visual placeholder in the tree) - SkillTreeHullMod skips
- * those when applying unlocked nodes.
- */
 public class SkillType {
 
     private final String id;

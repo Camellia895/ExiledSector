@@ -3,22 +3,11 @@ package exiledsector.skills;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * A single placed instance of a SkillType within the tree: its id,
- * prerequisites, and position. Display name/icon/cost are not duplicated
- * here - they're delegated to the shared SkillType so authoring many copies
- * of the same skill (e.g. four "Capacitors" nodes) doesn't repeat that data.
- * Content is authored as data (see SkillTreeLoader,
- * data/skilltrees/ship_skill_tree.json) and loaded into SkillTree.
- */
 public class SkillNode {
 
     private final String id;
     private final SkillType type;
     private final List<String> prerequisiteNodeIds;
-    // Position offset from the tree's center point, in the same panel-space
-    // units as SkillTreeRefitButton's own layout - hand-placed per node
-    // rather than auto-laid-out, since the JSON is meant to be hand-authored.
     private final float offsetX;
     private final float offsetY;
 
@@ -52,6 +41,10 @@ public class SkillNode {
 
     public float getXpCost() {
         return type.getXpCost();
+    }
+
+    public String getDescription() {
+        return type.getEffect() == null ? "" : type.getEffect().describe(type.getMagnitude());
     }
 
     public List<String> getPrerequisiteNodeIds() {

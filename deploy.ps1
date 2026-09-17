@@ -1,8 +1,3 @@
-<#
-Builds the mod and copies it into the dev Starsector install's mods folder
-for in-game testing. Run setup-libs.ps1 first if you haven't already.
-#>
-
 $ErrorActionPreference = "Stop"
 
 $projectRoot = $PSScriptRoot
@@ -12,7 +7,6 @@ $mvnCmd = Get-Command mvn -ErrorAction SilentlyContinue
 if ($mvnCmd) {
     $mvn = $mvnCmd.Source
 } else {
-    # Fall back to the Maven bundled with IntelliJ IDEA if `mvn` isn't on PATH.
     $mvn = Get-ChildItem "C:\Program Files\JetBrains\IntelliJ IDEA*\plugins\maven-plugin\lib\maven3\bin\mvn.cmd" |
         Select-Object -First 1 -ExpandProperty FullName
     if (-not $mvn) {

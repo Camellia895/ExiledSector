@@ -20,12 +20,8 @@ class SkillTreeRefitButtonTest {
 
     @AfterEach
     void tearDown() {
-        // addButton() registers into LunaRefitManager's static registry -
-        // clean it up so it doesn't leak into other tests.
         BaseRefitButton registered = LunaRefitManager.getFirstButtonOfClass(SkillTreeRefitButton.class);
         if (registered != null) {
-            // removeButton() isn't @JvmStatic, so it's reached through the
-            // Kotlin object's singleton INSTANCE field from Java.
             LunaRefitManager.INSTANCE.removeButton(registered);
         }
     }

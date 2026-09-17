@@ -15,10 +15,6 @@ public class SkillTreeHullMod extends BaseHullMod {
 
     public static final String ID = "exiledSector_core";
 
-    // Prefixes the modifier id passed to StatBonus/MutableStat.modifyPercent
-    // so it can't collide with an unrelated mod's own modifier id on the
-    // same stat. modifyPercent replaces any existing entry for the same id,
-    // so recomputing this on every ship creation is naturally idempotent.
     private static final String MOD_ID_PREFIX = "exiledSector_skill_";
 
     @Override
@@ -33,7 +29,7 @@ public class SkillTreeHullMod extends BaseHullMod {
 
             SkillType type = node.getType();
             SkillEffect effect = type.getEffect();
-            if (effect == null) continue; // still a visual-only placeholder skill
+            if (effect == null) continue;
 
             effect.apply(stats, MOD_ID_PREFIX + node.getId(), type.getMagnitude());
         }

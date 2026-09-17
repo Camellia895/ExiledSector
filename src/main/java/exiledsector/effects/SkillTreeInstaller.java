@@ -4,11 +4,6 @@ import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 
-/**
- * Periodically ensures every ship in the player's fleet has the hidden
- * SkillTreeHullMod installed, since it must be present for a ship's unlocked
- * nodes to take effect but isn't something the player installs manually.
- */
 public class SkillTreeInstaller implements EveryFrameScript {
 
     private static final float CHECK_INTERVAL_SECONDS = 1f;
