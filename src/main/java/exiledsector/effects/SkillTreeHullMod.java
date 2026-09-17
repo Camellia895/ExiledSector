@@ -9,10 +9,10 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
-import exiledsector.skills.SkillEffect;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
+import exiledsector.skills.SkillTypeEffect;
 
 public class SkillTreeHullMod extends BaseHullMod {
 
@@ -43,10 +43,9 @@ public class SkillTreeHullMod extends BaseHullMod {
                 continue;
             }
 
-            SkillEffect effect = type.getEffect();
-            if (effect == null) continue;
-
-            effect.apply(stats, MOD_ID_PREFIX + node.getId(), type.getMagnitude());
+            for (SkillTypeEffect effect : type.getEffects()) {
+                effect.effect().apply(stats, MOD_ID_PREFIX + node.getId(), effect.magnitude());
+            }
         }
     }
 }

@@ -400,7 +400,7 @@ final class SkillTreeNodeRenderer {
         SkillTreePanelStyle.TooltipText title = tooltipTitles.computeIfAbsent(node.getId(),
                 id -> buildTooltipText(font, node.getDisplayName(), TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR));
         SkillTreePanelStyle.TooltipText body = tooltipBodies.computeIfAbsent(node.getId(),
-                id -> buildTooltipText(font, node.getDescription(member.getHullSpec().getHullSize()), TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR));
+                id -> buildTooltipText(font, node.getDescription(), TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR));
 
         float boxWidth = Math.max(title.width, body.width) + TOOLTIP_PADDING * 2f + TOOLTIP_WIDTH_SAFETY_MARGIN;
         float boxHeight = title.height + TOOLTIP_TITLE_BODY_GAP + body.height + TOOLTIP_PADDING * 2f;

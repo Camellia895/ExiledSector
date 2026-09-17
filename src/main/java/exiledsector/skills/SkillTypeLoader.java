@@ -7,7 +7,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public final class SkillTypeLoader {
@@ -37,9 +39,8 @@ public final class SkillTypeLoader {
     }
 
     private static SkillType parseSkillType(JSONObject json) throws JSONException {
-        String effectName = json.optString("effect", null);
-        SkillEffect effect = effectName == null ? null : SkillEffect.valueOf(effectName);
         SkillTier tier = SkillTier.valueOf(json.optString("tier", "SMALL"));
+        List<SkillTypeEffect> effects = parseEffects(json.optJSONArray("effects"));
 
         return new SkillType(
                 json.getString("id"),
@@ -47,9 +48,24 @@ public final class SkillTypeLoader {
                 json.getString("icon"),
                 json.optInt("opCost", 0),
                 (float) json.optDouble("xpCost", 0),
-                effect,
-                (float) json.optDouble("magnitude", 0),
+                effects,
                 tier,
-                json.optString("vanillaHullMod", null));
+                json.optString("vanillaHullMod", null),
+                json.optString("description", null),
+                json.optString("todo", null));
+    }
+
+    private static List<SkillTypeEffect> parseEffects(JSONArray effectsArray) throws JSONException {
+        List<SkillTypeEffect> effects = new ArrayList<>();
+        if (effectsArray == null) {
+            return effects;
+        }
+        for (int i = 0; i < effectsArray.length(); i++) {
+            JSONObject entry = effectsArray.getJSONObject(i);
+            SkillEffect effect = SkillEffect.valueOf(entry.getString("effect"));
+            float magnitude = (float) entry.getDouble("magnitude");
+            effects.add(new SkillTypeEffect(effect, magnitude));
+        }
+        return effects;
     }
 }

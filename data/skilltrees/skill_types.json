@@ -1,22 +1,24 @@
-{
+﻿{
 	"skillTypes": [
 		{
 			"id": "flux_capacity",
 			"name": "Flux Capacity",
-			"icon": "graphics/hullmods/flux_coil_adjunct.png",
+			"icon": "graphics/icons/skills/containment_procedures.png",
 			"opCost": 2,
 			"xpCost": 500,
-			"effect": "FLUX_CAPACITY",
-			"magnitude": 1
+			"effects": [
+				{ "effect": "FLUX_CAPACITY", "magnitude": 1 }
+			]
 		},
 		{
 			"id": "flux_dissipation",
 			"name": "Flux Dissipation",
-			"icon": "graphics/hullmods/flux_distributor.png",
+			"icon": "graphics/icons/skills/systems_expertise.png",
 			"opCost": 2,
 			"xpCost": 500,
-			"effect": "FLUX_DISSIPATION",
-			"magnitude": 1
+			"effects": [
+				{ "effect": "FLUX_DISSIPATION", "magnitude": 1 }
+			]
 		},
 		{
 			"id": "hybrid_flux",
@@ -24,26 +26,29 @@
 			"icon": "graphics/icons/skills/flux_dynamics.png",
 			"opCost": 2,
 			"xpCost": 500,
-			"effect": "HYBRID_FLUX",
-			"magnitude": 0.5
+			"effects": [
+				{ "effect": "HYBRID_FLUX", "magnitude": 0.5 }
+			]
 		},
 		{
 			"id": "hull",
 			"name": "Hull",
-			"icon": "graphics/hullmods/reinforced_bulkheads.png",
+			"icon": "graphics/icons/skills/damage_control2.png",
 			"opCost": 2,
 			"xpCost": 500,
-			"effect": "HULL",
-			"magnitude": 1
+			"effects": [
+				{ "effect": "HULL", "magnitude": 1 }
+			]
 		},
 		{
 			"id": "armor",
 			"name": "Armor",
-			"icon": "graphics/hullmods/heavy_armor.png",
+			"icon": "graphics/icons/skills/polarized_armor.png",
 			"opCost": 2,
 			"xpCost": 500,
-			"effect": "ARMOR",
-			"magnitude": 1
+			"effects": [
+				{ "effect": "ARMOR", "magnitude": 1 }
+			]
 		},
 		{
 			"id": "ballistic_damage",
@@ -51,35 +56,39 @@
 			"icon": "graphics/icons/skills/ranged_specialization.png",
 			"opCost": 2,
 			"xpCost": 500,
-			"effect": "BALLISTIC_DAMAGE",
-			"magnitude": 1
+			"effects": [
+				{ "effect": "BALLISTIC_DAMAGE", "magnitude": 1 }
+			]
 		},
 		{
 			"id": "missile_damage",
 			"name": "Missile Weapon Damage",
-			"icon": "graphics/hullmods/expanded_missile_racks.png",
+			"icon": "graphics/icons/skills/missile_specialization2.png",
 			"opCost": 2,
 			"xpCost": 500,
-			"effect": "MISSILE_DAMAGE",
-			"magnitude": 1
+			"effects": [
+				{ "effect": "MISSILE_DAMAGE", "magnitude": 1 }
+			]
 		},
 		{
 			"id": "non_beam_energy_damage",
 			"name": "Non-Beam Energy Weapon Damage",
-			"icon": "graphics/hullmods/coherer.png",
+			"icon": "graphics/icons/skills/special_modifications.png",
 			"opCost": 2,
 			"xpCost": 500,
-			"effect": "NON_BEAM_ENERGY_DAMAGE",
-			"magnitude": 1
+			"effects": [
+				{ "effect": "NON_BEAM_ENERGY_DAMAGE", "magnitude": 1 }
+			]
 		},
 		{
 			"id": "beam_damage",
 			"name": "Beam Weapon Damage",
-			"icon": "graphics/hullmods/high_scatter_amp.png",
+			"icon": "graphics/icons/skills/hypercognition.png",
 			"opCost": 2,
 			"xpCost": 500,
-			"effect": "BEAM_DAMAGE",
-			"magnitude": 1
+			"effects": [
+				{ "effect": "BEAM_DAMAGE", "magnitude": 1 }
+			]
 		},
 		{
 			"id": "energy_damage",
@@ -87,8 +96,9 @@
 			"icon": "graphics/icons/skills/energy_weapon_mastery.png",
 			"opCost": 2,
 			"xpCost": 500,
-			"effect": "ENERGY_DAMAGE",
-			"magnitude": 1
+			"effects": [
+				{ "effect": "ENERGY_DAMAGE", "magnitude": 1 }
+			]
 		},
 		{
 			"id": "weapon_damage",
@@ -96,8 +106,9 @@
 			"icon": "graphics/icons/skills/weapon_drills.png",
 			"opCost": 2,
 			"xpCost": 500,
-			"effect": "ALL_WEAPON_DAMAGE",
-			"magnitude": 1
+			"effects": [
+				{ "effect": "ALL_WEAPON_DAMAGE", "magnitude": 1 }
+			]
 		},
 		{
 			"id": "packed_capacitors",
@@ -105,9 +116,10 @@
 			"icon": "graphics/icons/skills/power_grid_manipulation.png",
 			"opCost": 3,
 			"xpCost": 1200,
-			"effect": "FLUX_CAPACITY",
-			"magnitude": 10,
-			"tier": "NOTABLE"
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "FLUX_CAPACITY", "magnitude": 10 }
+			]
 		},
 		{
 			"id": "safety_overrides",
@@ -116,7 +128,562 @@
 			"opCost": 5,
 			"xpCost": 3000,
 			"tier": "KEYSTONE",
-			"vanillaHullMod": "safetyoverrides"
+			"effects": [
+				{ "effect": "TOP_SPEED", "magnitude": 15 },
+				{ "effect": "FLUX_DISSIPATION", "magnitude": 20 },
+				{ "effect": "PEAK_CR_DURATION", "magnitude": -20 },
+				{ "effect": "WEAPON_RANGE_FALLOFF", "magnitude": -15 }
+			]
+		},
+		{
+			"id": "adaptive_coils",
+			"name": "Adaptive Phase Coils",
+			"icon": "graphics/icons/notable_hullmods/phase_field.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"vanillaHullMod": "adaptive_coils",
+			"todo": "Phase hard-flux speed threshold - no clean stat mapping yet"
+		},
+		{
+			"id": "adaptiveshields",
+			"name": "Shield Conversion - Omni",
+			"icon": "graphics/icons/notable_hullmods/omni_shield_emitter_mod.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"vanillaHullMod": "adaptiveshields",
+			"todo": "Converts front shield to omni - needs a real mechanic"
+		},
+		{
+			"id": "additional_berthing",
+			"name": "Additional Berthing",
+			"icon": "graphics/icons/notable_hullmods/berthing.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "CREW_CAPACITY", "magnitude": 20 }
+			]
+		},
+		{
+			"id": "advancedoptics",
+			"name": "Advanced Optics",
+			"icon": "graphics/icons/notable_hullmods/advanced_optics.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "BEAM_WEAPON_RANGE", "magnitude": 15 }
+			]
+		},
+		{
+			"id": "advancedshieldemitter",
+			"name": "Accelerated Shields",
+			"icon": "graphics/icons/notable_hullmods/accelerated_shields.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "SHIELD_TURN_RATE", "magnitude": 15 },
+				{ "effect": "SHIELD_RAISE_RATE", "magnitude": 15 }
+			]
+		},
+		{
+			"id": "armoredweapons",
+			"name": "Armored Weapon Mounts",
+			"icon": "graphics/icons/notable_hullmods/armored_weapon_emplacements.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "WEAPON_DURABILITY", "magnitude": 20 },
+				{ "effect": "ARMOR", "magnitude": 10 }
+			]
+		},
+		{
+			"id": "augmentedengines",
+			"name": "Augmented Drive Field",
+			"icon": "graphics/icons/notable_hullmods/augmented_drive_field2.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "BURN_LEVEL", "magnitude": 15 }
+			]
+		},
+		{
+			"id": "autorepair",
+			"name": "Automated Repair Unit",
+			"icon": "graphics/icons/notable_hullmods/automated_repair_unit.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "REPAIR_TIME", "magnitude": -20 }
+			]
+		},
+		{
+			"id": "auxiliary_fuel_tanks",
+			"name": "Auxiliary Fuel Tanks",
+			"icon": "graphics/icons/notable_hullmods/fuel_tanks.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "FUEL_CAPACITY", "magnitude": 20 }
+			]
+		},
+		{
+			"id": "auxiliarythrusters",
+			"name": "Auxiliary Thrusters",
+			"icon": "graphics/icons/notable_hullmods/auxilliary_thrusters.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "MANEUVERABILITY", "magnitude": 15 }
+			]
+		},
+		{
+			"id": "ballistic_rangefinder",
+			"name": "Ballistic Rangefinder",
+			"icon": "graphics/icons/notable_hullmods/ballistic_rangefinder.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "BALLISTIC_WEAPON_RANGE", "magnitude": 15 }
+			]
+		},
+		{
+			"id": "blast_doors",
+			"name": "Blast Doors",
+			"icon": "graphics/icons/notable_hullmods/blast_doors.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "HULL", "magnitude": 10 }
+			]
+		},
+		{
+			"id": "converted_fighterbay",
+			"name": "Converted Fighter Bay",
+			"icon": "graphics/icons/notable_hullmods/converted_fighter_bay.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"vanillaHullMod": "converted_fighterbay",
+			"todo": "Converts fighter bay to cargo hold - structural, not a stat"
+		},
+		{
+			"id": "converted_hangar",
+			"name": "Converted Hangar",
+			"icon": "graphics/icons/notable_hullmods/converted_hangar.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"vanillaHullMod": "converted_hangar",
+			"todo": "Converts fighter bay to cargo/hangar - structural, not a stat"
+		},
+		{
+			"id": "dedicated_targeting_core",
+			"name": "Dedicated Targeting Core",
+			"icon": "graphics/icons/notable_hullmods/targeting_core.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "BALLISTIC_WEAPON_RANGE", "magnitude": 15 },
+				{ "effect": "ENERGY_WEAPON_RANGE", "magnitude": 15 }
+			]
+		},
+		{
+			"id": "defensive_targeting_array",
+			"name": "Defensive Targeting Array",
+			"icon": "graphics/icons/notable_hullmods/defensive_targeting_array.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"vanillaHullMod": "defensive_targeting_array",
+			"todo": "Fighter PD behavior change - no clean stat mapping yet"
+		},
+		{
+			"id": "eccm",
+			"name": "ECCM Package",
+			"icon": "graphics/icons/notable_hullmods/eccm_package.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "MISSILE_GUIDANCE", "magnitude": 20 }
+			]
+		},
+		{
+			"id": "ecm",
+			"name": "ECM Package",
+			"icon": "graphics/icons/notable_hullmods/ecm_package.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"vanillaHullMod": "ecm",
+			"todo": "ECM rating - not exposed as a simple modifiable stat"
+		},
+		{
+			"id": "efficiency_overhaul",
+			"name": "Efficiency Overhaul",
+			"icon": "graphics/icons/notable_hullmods/efficiency.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "CR_RECOVERY_RATE", "magnitude": 15 }
+			]
+		},
+		{
+			"id": "escort_package",
+			"name": "Escort Package",
+			"icon": "graphics/icons/notable_hullmods/escort_package.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"vanillaHullMod": "escort_package",
+			"todo": "Conditional proximity aura - no clean stat mapping yet"
+		},
+		{
+			"id": "expanded_cargo_holds",
+			"name": "Expanded Cargo Holds",
+			"icon": "graphics/icons/notable_hullmods/expanded_cargo.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "CARGO_CAPACITY", "magnitude": 20 }
+			]
+		},
+		{
+			"id": "expanded_deck_crew",
+			"name": "Expanded Deck Crew",
+			"icon": "graphics/icons/notable_hullmods/expanded_deck_crew.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"vanillaHullMod": "expanded_deck_crew",
+			"todo": "Fighter replacement rate - no clean stat mapping yet"
+		},
+		{
+			"id": "extendedshieldemitter",
+			"name": "Extended Shields",
+			"icon": "graphics/icons/notable_hullmods/extended_shields.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "SHIELD_ARC", "magnitude": 20 }
+			]
+		},
+		{
+			"id": "fluxbreakers",
+			"name": "Resistant Flux Conduits",
+			"icon": "graphics/icons/notable_hullmods/resistant_flux_conduits.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "FLUX_DISSIPATION", "magnitude": 10 }
+			]
+		},
+		{
+			"id": "fluxcoil",
+			"name": "Flux Coil Adjunct",
+			"icon": "graphics/icons/notable_hullmods/flux_coil_adjunct.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "FLUX_CAPACITY", "magnitude": 10 }
+			]
+		},
+		{
+			"id": "fluxdistributor",
+			"name": "Flux Distributor",
+			"icon": "graphics/icons/notable_hullmods/flux_distributor.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "FLUX_DISSIPATION", "magnitude": 10 }
+			]
+		},
+		{
+			"id": "frontemitter",
+			"name": "Shield Conversion - Front",
+			"icon": "graphics/icons/notable_hullmods/front_shield_emitter.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"vanillaHullMod": "frontemitter",
+			"todo": "Converts omni shield to front-facing - needs a real mechanic"
+		},
+		{
+			"id": "frontshield",
+			"name": "Makeshift Shield Generator",
+			"icon": "graphics/icons/notable_hullmods/front_shield_generator.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"vanillaHullMod": "frontshield",
+			"todo": "Adds shields to a shieldless ship - needs a real mechanic"
+		},
+		{
+			"id": "hardened_subsystems",
+			"name": "Hardened Subsystems",
+			"icon": "graphics/icons/notable_hullmods/hardened_subsystems.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "PEAK_CR_DURATION", "magnitude": 20 }
+			]
+		},
+		{
+			"id": "hardenedshieldemitter",
+			"name": "Hardened Shields",
+			"icon": "graphics/icons/notable_hullmods/hardened_shields.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "SHIELD_ABSORPTION", "magnitude": -10 }
+			]
+		},
+		{
+			"id": "heavyarmor",
+			"name": "Heavy Armor",
+			"icon": "graphics/icons/notable_hullmods/heavy_armor.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "ARMOR", "magnitude": 15 }
+			]
+		},
+		{
+			"id": "high_scatter_amp",
+			"name": "High Scatter Amplifier",
+			"icon": "graphics/icons/notable_hullmods/high_scatter_amp.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "BEAM_DAMAGE", "magnitude": 15 }
+			]
+		},
+		{
+			"id": "hiressensors",
+			"name": "High Resolution Sensors",
+			"icon": "graphics/icons/notable_hullmods/high_res_sensors.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "SENSOR_STRENGTH", "magnitude": 20 }
+			]
+		},
+		{
+			"id": "insulatedengine",
+			"name": "Insulated Engine Assembly",
+			"icon": "graphics/icons/notable_hullmods/insulated_engine_assembly.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "ENGINE_DURABILITY", "magnitude": 15 },
+				{ "effect": "HULL", "magnitude": 5 },
+				{ "effect": "SENSOR_PROFILE", "magnitude": -10 }
+			]
+		},
+		{
+			"id": "magazines",
+			"name": "Expanded Magazines",
+			"icon": "graphics/icons/notable_hullmods/expanded_magazines2.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "BALLISTIC_AMMO", "magnitude": 20 },
+				{ "effect": "ENERGY_AMMO", "magnitude": 20 }
+			]
+		},
+		{
+			"id": "militarized_subsystems",
+			"name": "Militarized Subsystems",
+			"icon": "graphics/icons/notable_hullmods/militarized_subsystems.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"vanillaHullMod": "militarized_subsystems",
+			"todo": "Removes civilian-grade penalties - structural, not additive"
+		},
+		{
+			"id": "missile_autoloader",
+			"name": "Missile Autoloader",
+			"icon": "graphics/icons/notable_hullmods/missile_autoloader.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"vanillaHullMod": "missile_autoloader",
+			"todo": "Reload behavior change - no clean stat mapping yet"
+		},
+		{
+			"id": "missleracks",
+			"name": "Expanded Missile Racks",
+			"icon": "graphics/icons/notable_hullmods/expanded_missile_racks.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "MISSILE_AMMO", "magnitude": 25 }
+			]
+		},
+		{
+			"id": "nav_relay",
+			"name": "Nav Relay",
+			"icon": "graphics/icons/notable_hullmods/nav_relay.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"vanillaHullMod": "nav_relay",
+			"todo": "Fleet-wide nav rating aura - not a self-only stat"
+		},
+		{
+			"id": "operations_center",
+			"name": "Operations Center",
+			"icon": "graphics/icons/notable_hullmods/operations_center.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"vanillaHullMod": "operations_center",
+			"todo": "Fleet command point regen - no clean stat mapping yet"
+		},
+		{
+			"id": "phase_anchor",
+			"name": "Phase Anchor",
+			"icon": "graphics/icons/notable_hullmods/phase_anchor.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"vanillaHullMod": "phase_anchor",
+			"todo": "Behavioral (emergency phase dive) - no clean stat mapping yet"
+		},
+		{
+			"id": "pointdefenseai",
+			"name": "Integrated Point Defense AI",
+			"icon": "graphics/icons/notable_hullmods/integrated_point_defense_ai.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"vanillaHullMod": "pointdefenseai",
+			"todo": "PD flare immunity/targeting behavior - no clean stat mapping yet"
+		},
+		{
+			"id": "recovery_shuttles",
+			"name": "Recovery Shuttles",
+			"icon": "graphics/icons/notable_hullmods/recovery_shuttles.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "CREW_LOSS", "magnitude": -15 }
+			]
+		},
+		{
+			"id": "reinforcedhull",
+			"name": "Reinforced Bulkheads",
+			"icon": "graphics/icons/notable_hullmods/reinforced_bulkheads.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "HULL", "magnitude": 15 }
+			]
+		},
+		{
+			"id": "shield_shunt",
+			"name": "Shield Shunt",
+			"icon": "graphics/icons/notable_hullmods/shield_shunt.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"vanillaHullMod": "shield_shunt",
+			"todo": "Removes shields entirely - needs a real mechanic"
+		},
+		{
+			"id": "solar_shielding",
+			"name": "Solar Shielding",
+			"icon": "graphics/icons/notable_hullmods/solar_shielding2.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "ENERGY_DAMAGE_TAKEN", "magnitude": -10 }
+			]
+		},
+		{
+			"id": "stabilizedshieldemitter",
+			"name": "Stabilized Shields",
+			"icon": "graphics/icons/notable_hullmods/stabilized_shields.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "SHIELD_UPKEEP", "magnitude": -15 }
+			]
+		},
+		{
+			"id": "surveying_equipment",
+			"name": "Surveying Equipment",
+			"icon": "graphics/icons/notable_hullmods/surveying_equipment.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"vanillaHullMod": "surveying_equipment",
+			"todo": "Campaign-layer survey cost reduction - no combat stat"
+		},
+		{
+			"id": "targetingunit",
+			"name": "Integrated Targeting Unit",
+			"icon": "graphics/icons/notable_hullmods/integrated_targeting_unit.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "BALLISTIC_WEAPON_RANGE", "magnitude": 15 },
+				{ "effect": "ENERGY_WEAPON_RANGE", "magnitude": 15 }
+			]
+		},
+		{
+			"id": "turretgyros",
+			"name": "Advanced Turret Gyros",
+			"icon": "graphics/icons/notable_hullmods/advanced_turret_gyros.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "WEAPON_TURN_RATE", "magnitude": 20 }
+			]
+		},
+		{
+			"id": "unstable_injector",
+			"name": "Unstable Injector",
+			"icon": "graphics/icons/notable_hullmods/unstable_injector.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{ "effect": "TOP_SPEED", "magnitude": 10 }
+			]
 		}
 	]
 }

@@ -37,4 +37,9 @@ if (Test-Path $dataDir) {
     Copy-Item -Path $dataDir -Destination $modTarget -Recurse -Force
 }
 
+$graphicsDir = Join-Path $projectRoot "graphics"
+if (Test-Path $graphicsDir) {
+    Copy-Item -Path $graphicsDir -Destination $modTarget -Recurse -Force
+}
+
 Write-Host "Deployed ExiledSector to $modTarget"

@@ -7,19 +7,19 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SkillTypeLoaderTest {
 
     @Test
-    void parsesAllFieldsIncludingEffectAndMagnitude() throws Exception {
+    void parsesAllFieldsIncludingEffectsList() throws Exception {
         JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
                 + "\"id\": \"hull\","
                 + "\"name\": \"Reinforced Hull\","
                 + "\"icon\": \"graphics/hullmods/reinforced_bulkheads.png\","
                 + "\"opCost\": 2,"
                 + "\"xpCost\": 500,"
-                + "\"effect\": \"HULL\","
-                + "\"magnitude\": 10"
+                + "\"effects\": [ { \"effect\": \"HULL\", \"magnitude\": 10 } ]"
                 + "} ] }");
 
         Map<String, SkillType> types = SkillTypeLoader.parseSkillTypes(root);
@@ -29,12 +29,29 @@ class SkillTypeLoaderTest {
         assertEquals("graphics/hullmods/reinforced_bulkheads.png", hull.getIconPath());
         assertEquals(2, hull.getOpCost());
         assertEquals(500f, hull.getXpCost());
-        assertEquals(SkillEffect.HULL, hull.getEffect());
-        assertEquals(10f, hull.getMagnitude());
+        assertEquals(1, hull.getEffects().size());
+        assertEquals(SkillEffect.HULL, hull.getEffects().get(0).effect());
+        assertEquals(10f, hull.getEffects().get(0).magnitude());
     }
 
     @Test
-    void missingEffectFieldMeansCosmeticPlaceholder() throws Exception {
+    void parsesMultipleEffectsInOrder() throws Exception {
+        JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
+                + "\"id\": \"heavyarmor\","
+                + "\"name\": \"Heavy Armor\","
+                + "\"icon\": \"graphics/icons/notable_hullmods/heavy_armor.png\","
+                + "\"effects\": [ { \"effect\": \"ARMOR\", \"magnitude\": 15 }, { \"effect\": \"HULL\", \"magnitude\": 5 } ]"
+                + "} ] }");
+
+        SkillType heavyArmor = SkillTypeLoader.parseSkillTypes(root).get("heavyarmor");
+
+        assertEquals(2, heavyArmor.getEffects().size());
+        assertEquals(SkillEffect.ARMOR, heavyArmor.getEffects().get(0).effect());
+        assertEquals(SkillEffect.HULL, heavyArmor.getEffects().get(1).effect());
+    }
+
+    @Test
+    void missingEffectsFieldMeansCosmeticPlaceholder() throws Exception {
         JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
                 + "\"id\": \"capacitors\","
                 + "\"name\": \"Capacitors\","
@@ -43,8 +60,7 @@ class SkillTypeLoaderTest {
 
         SkillType capacitors = SkillTypeLoader.parseSkillTypes(root).get("capacitors");
 
-        assertNull(capacitors.getEffect());
-        assertEquals(0f, capacitors.getMagnitude());
+        assertTrue(capacitors.getEffects().isEmpty());
         assertEquals(0, capacitors.getOpCost());
         assertEquals(0f, capacitors.getXpCost());
     }
@@ -64,19 +80,36 @@ class SkillTypeLoaderTest {
     }
 
     @Test
-    void parsesTierAndVanillaHullModFields() throws Exception {
+    void parsesTierVanillaHullModAndTodoFields() throws Exception {
         JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
-                + "\"id\": \"safety_overrides\","
-                + "\"name\": \"Safety Overrides\","
-                + "\"icon\": \"graphics/icons/skills/helmsmanship.png\","
-                + "\"tier\": \"KEYSTONE\","
-                + "\"vanillaHullMod\": \"safetyoverrides\""
+                + "\"id\": \"escort_package\","
+                + "\"name\": \"Escort Package\","
+                + "\"icon\": \"graphics/icons/notable_hullmods/escort_package.png\","
+                + "\"tier\": \"NOTABLE\","
+                + "\"vanillaHullMod\": \"escort_package\","
+                + "\"todo\": \"Needs a real mechanic\""
                 + "} ] }");
 
-        SkillType safetyOverrides = SkillTypeLoader.parseSkillTypes(root).get("safety_overrides");
+        SkillType escortPackage = SkillTypeLoader.parseSkillTypes(root).get("escort_package");
 
-        assertEquals(SkillTier.KEYSTONE, safetyOverrides.getTier());
-        assertEquals("safetyoverrides", safetyOverrides.getVanillaHullModId());
+        assertEquals(SkillTier.NOTABLE, escortPackage.getTier());
+        assertEquals("escort_package", escortPackage.getVanillaHullModId());
+        assertEquals("Needs a real mechanic", escortPackage.getTodo());
+        assertTrue(escortPackage.getEffects().isEmpty());
+    }
+
+    @Test
+    void parsesDescriptionOverride() throws Exception {
+        JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
+                + "\"id\": \"hull\","
+                + "\"name\": \"Hull\","
+                + "\"icon\": \"a.png\","
+                + "\"description\": \"Custom flavor text.\""
+                + "} ] }");
+
+        SkillType hull = SkillTypeLoader.parseSkillTypes(root).get("hull");
+
+        assertEquals("Custom flavor text.", hull.getDescriptionOverride());
     }
 
     @Test

@@ -1,11 +1,8 @@
 package exiledsector.skills;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import com.fs.starfarer.api.loading.HullModSpecAPI;
-
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SkillNode {
 
@@ -48,16 +45,15 @@ public class SkillNode {
     }
 
     public String getDescription() {
-        return type.getEffect() == null ? "" : type.getEffect().describe(type.getMagnitude());
-    }
-
-    public String getDescription(HullSize hullSize) {
-        String vanillaHullModId = type.getVanillaHullModId();
-        if (vanillaHullModId == null) {
-            return getDescription();
+        if (type.getDescriptionOverride() != null) {
+            return type.getDescriptionOverride();
         }
-        HullModSpecAPI spec = Global.getSettings().getHullModSpec(vanillaHullModId);
-        return spec == null ? "" : spec.getDescription(hullSize);
+        if (!type.getEffects().isEmpty()) {
+            return type.getEffects().stream()
+                    .map(e -> e.effect().describe(e.magnitude()))
+                    .collect(Collectors.joining(" "));
+        }
+        return "";
     }
 
     public List<String> getPrerequisiteNodeIds() {

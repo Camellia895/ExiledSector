@@ -1,0 +1,1289 @@
+<title>Skill Tree Layout Editor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0f16;
+    --panel: #121926;
+    --panel-2: #0e1420;
+    --line: #263140;
+    --line-soft: #1a2330;
+    --text: #dbe4ee;
+    --text-dim: #8494a8;
+    --text-faint: #566274;
+    --accent: #5fd0ff;
+    --accent-dim: #2c5c70;
+    --small: #7c8ba0;
+    --notable: #5fd0ff;
+    --keystone: #ffb454;
+    --danger: #ff6b6b;
+    --danger-dim: #4a2626;
+    --success: #4ade80;
+    --canvas-grid: #16202c;
+    --canvas-bg: #0a0e15;
+    --font-display: 'Space Grotesk', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, 'Courier New', monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="light"]) {
+      --bg: #eef1f5;
+      --panel: #ffffff;
+      --panel-2: #f5f7fa;
+      --line: #d3dae3;
+      --line-soft: #e3e8ee;
+      --text: #1b2430;
+      --text-dim: #5c6b7d;
+      --text-faint: #93a1b0;
+      --accent: #0d84ad;
+      --accent-dim: #cfe9f4;
+      --small: #6b7686;
+      --notable: #0d84ad;
+      --keystone: #b9720a;
+      --danger: #c8393a;
+      --danger-dim: #fbdede;
+      --success: #16824a;
+      --canvas-grid: #e2e7ed;
+      --canvas-bg: #f7f9fb;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #eef1f5;
+    --panel: #ffffff;
+    --panel-2: #f5f7fa;
+    --line: #d3dae3;
+    --line-soft: #e3e8ee;
+    --text: #1b2430;
+    --text-dim: #5c6b7d;
+    --text-faint: #93a1b0;
+    --accent: #0d84ad;
+    --accent-dim: #cfe9f4;
+    --small: #6b7686;
+    --notable: #0d84ad;
+    --keystone: #b9720a;
+    --danger: #c8393a;
+    --danger-dim: #fbdede;
+    --success: #16824a;
+    --canvas-grid: #e2e7ed;
+    --canvas-bg: #f7f9fb;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-display);
+    height: 100%;
+    overflow: hidden;
+  }
+  html { height: 100%; }
+
+  .app {
+    display: grid;
+    grid-template-columns: 240px 1fr 320px;
+    grid-template-rows: 52px 1fr 1px 220px;
+    grid-template-areas:
+      "topbar topbar topbar"
+      "toolbar canvas inspector"
+      "toolbar canvas inspector"
+      "toolbar export export";
+    height: 100vh;
+    padding-block: env(safe-area-inset-top, 0px) env(safe-area-inset-bottom, 0px);
+  }
+  @media (max-width: 860px) {
+    .app {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto 1fr auto;
+      grid-template-areas:
+        "topbar"
+        "toolbar"
+        "canvas"
+        "export";
+      height: auto;
+      min-height: 100vh;
+      overflow: auto;
+    }
+    #inspector { display: none; }
+    #inspector.open {
+      display: block;
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      grid-area: unset;
+    }
+  }
+
+  #topbar {
+    grid-area: topbar;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 0 16px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--line);
+  }
+  #topbar h1 {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    margin: 0;
+    white-space: nowrap;
+  }
+  #topbar .stats {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    display: flex;
+    gap: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+  #topbar .spacer { flex: 1; }
+  #searchBox {
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    width: 200px;
+  }
+  #searchBox:focus { outline: 1px solid var(--accent); border-color: var(--accent); }
+  .themeToggle {
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--text-dim);
+    font-size: 13px;
+    padding: 6px 9px;
+    cursor: pointer;
+  }
+
+  #toolbar {
+    grid-area: toolbar;
+    background: var(--panel);
+    border-right: 1px solid var(--line);
+    padding: 14px 12px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .toolSection { display: flex; flex-direction: column; gap: 8px; }
+  .toolSection .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-faint);
+    font-weight: 600;
+  }
+  .modeBtn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    color: var(--text-dim);
+    padding: 9px 10px;
+    font-family: var(--font-display);
+    font-size: 12.5px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color .1s, color .1s;
+  }
+  .modeBtn:hover { border-color: var(--accent-dim); color: var(--text); }
+  .modeBtn.active {
+    background: var(--accent-dim);
+    border-color: var(--accent);
+    color: var(--text);
+  }
+  .modeBtn .key {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-faint);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 1px 4px;
+  }
+  .hint { font-size: 11px; color: var(--text-faint); line-height: 1.5; }
+
+  .legendRow { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-dim); }
+  .legendDot { width: 11px; height: 11px; border-radius: 50%; flex: none; border: 1.5px solid rgba(0,0,0,.2); }
+
+  .smallBtn {
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--text-dim);
+    padding: 7px 9px;
+    font-family: var(--font-display);
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .smallBtn:hover { border-color: var(--accent-dim); color: var(--text); }
+  .smallBtn.danger:hover { border-color: var(--danger); color: var(--danger); }
+  .smallBtn.primary { background: var(--accent-dim); border-color: var(--accent); color: var(--text); }
+  .btnRow { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  #canvasWrap {
+    grid-area: canvas;
+    position: relative;
+    overflow: hidden;
+    background: var(--canvas-bg);
+  }
+  #canvasWrap.mode-add { cursor: copy; }
+  #canvasWrap.mode-link { cursor: crosshair; }
+  svg#stage { width: 100%; height: 100%; display: block; }
+  .node-circle { cursor: grab; transition: stroke-width .08s; }
+  .node-circle:active { cursor: grabbing; }
+  .node-label {
+    font-family: var(--font-display);
+    font-size: 11px;
+    fill: var(--text-dim);
+    pointer-events: none;
+    user-select: none;
+  }
+  .edge-line { stroke: var(--text-faint); stroke-width: 1.4; opacity: .55; }
+  .edge-line.bad { stroke: var(--danger); opacity: .9; stroke-dasharray: 4 3; }
+  .root-line { stroke: var(--text-faint); stroke-width: 1; opacity: .3; stroke-dasharray: 3 4; }
+  .center-mark { fill: none; stroke: var(--accent); stroke-width: 1.5; opacity: .8; }
+
+  .zoomControls {
+    position: absolute;
+    right: 14px;
+    bottom: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    z-index: 5;
+  }
+  .zoomControls button {
+    width: 30px; height: 30px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--text-dim);
+    font-size: 15px;
+    cursor: pointer;
+  }
+  .zoomControls button:hover { color: var(--text); border-color: var(--accent-dim); }
+
+  .warnBadge {
+    position: absolute;
+    left: 14px;
+    bottom: 14px;
+    background: var(--panel);
+    border: 1px solid var(--danger);
+    color: var(--danger);
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    max-width: 360px;
+    z-index: 5;
+  }
+
+  #inspector {
+    grid-area: inspector;
+    background: var(--panel);
+    border-left: 1px solid var(--line);
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  #inspector .closeMobile { display: none; }
+  @media (max-width: 860px) {
+    #inspector .closeMobile {
+      display: block; align-self: flex-end;
+      background: none; border: none; color: var(--text-dim);
+      font-size: 20px; cursor: pointer; padding: 0;
+    }
+  }
+  #inspector h2 {
+    font-size: 13px;
+    margin: 0;
+    letter-spacing: .02em;
+  }
+  .empty-inspector { color: var(--text-faint); font-size: 12.5px; line-height: 1.6; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-faint); }
+  .field input, .field select {
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 7px 9px;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    width: 100%;
+  }
+  .field input:focus, .field select:focus { outline: none; border-color: var(--accent); }
+  .fieldRow { display: flex; gap: 8px; }
+  .fieldRow .field { flex: 1; }
+  .tierPill {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; padding: 3px 9px; border-radius: 20px;
+    font-family: var(--font-mono); width: fit-content;
+    border: 1px solid var(--line);
+  }
+  .prereqList { display: flex; flex-direction: column; gap: 5px; }
+  .prereqItem {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--panel-2); border: 1px solid var(--line-soft);
+    border-radius: 5px; padding: 5px 8px; font-size: 12px; font-family: var(--font-mono);
+  }
+  .prereqItem span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .prereqItem button { background: none; border: none; color: var(--text-faint); cursor: pointer; font-size: 13px; line-height: 1; }
+  .prereqItem button:hover { color: var(--danger); }
+  hr.sep { border: none; border-top: 1px solid var(--line-soft); margin: 2px 0; }
+
+  #exportBar {
+    grid-area: export;
+    background: var(--panel);
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .exportTabs { display: flex; border-bottom: 1px solid var(--line); }
+  .exportTab {
+    padding: 8px 16px;
+    font-size: 12px;
+    color: var(--text-dim);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    font-family: var(--font-mono);
+  }
+  .exportTab.active { color: var(--text); border-bottom-color: var(--accent); }
+  .exportBody { flex: 1; display: flex; overflow: hidden; }
+  .exportBody textarea {
+    flex: 1;
+    resize: none;
+    background: var(--panel-2);
+    color: var(--text-dim);
+    border: none;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1.5;
+    padding: 10px 12px;
+    white-space: pre;
+  }
+  .exportSide {
+    width: 150px;
+    border-left: 1px solid var(--line);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--panel);
+    border: 1px solid var(--success);
+    color: var(--success);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s;
+  }
+  .toast.show { opacity: 1; }
+
+  .modalOverlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.5);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 200;
+  }
+  .modal {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 10px; padding: 20px; width: min(420px, 90vw);
+    display: flex; flex-direction: column; gap: 12px;
+    max-height: 80vh; overflow-y: auto;
+  }
+  .modal h3 { margin: 0; font-size: 14px; }
+  .modalBtns { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+</style>
+
+<div class="app">
+  <div id="topbar">
+    <h1>Skill Tree Layout Editor</h1>
+    <div class="stats" id="statsLine"></div>
+    <div class="spacer"></div>
+    <input id="searchBox" placeholder="Search node or type name...">
+    <button class="themeToggle" id="themeToggle" title="Toggle theme">◐</button>
+  </div>
+
+  <div id="toolbar">
+    <div class="toolSection">
+      <div class="label">Mode</div>
+      <button class="modeBtn active" data-mode="select">↖ Select / Move <span class="key">V</span></button>
+      <button class="modeBtn" data-mode="add">✚ Add Node <span class="key">A</span></button>
+      <button class="modeBtn" data-mode="link">⇄ Link / Unlink <span class="key">L</span></button>
+      <div class="hint">Select: drag a node to move it, drag empty canvas to pan, scroll to zoom.<br><br>Add: click empty canvas to place a node there.<br><br>Link: click two nodes - the outer one gets the inner one added as a prerequisite. Click the same pair again to unlink.</div>
+    </div>
+
+    <div class="toolSection">
+      <div class="label">Tiers</div>
+      <div class="legendRow"><span class="legendDot" style="background:var(--small)"></span>Small</div>
+      <div class="legendRow"><span class="legendDot" style="background:var(--notable)"></span>Notable</div>
+      <div class="legendRow"><span class="legendDot" style="background:var(--keystone)"></span>Keystone</div>
+      <label class="legendRow" style="cursor:pointer"><input type="checkbox" id="labelsToggle" checked> Show labels</label>
+    </div>
+
+    <div class="toolSection">
+      <div class="label">View</div>
+      <div class="btnRow">
+        <button class="smallBtn" id="fitBtn">Fit to screen</button>
+        <button class="smallBtn" id="centerBtn">Center on origin</button>
+      </div>
+    </div>
+
+    <div class="toolSection">
+      <div class="label">Data</div>
+      <div class="btnRow">
+        <button class="smallBtn" id="importBtn">Import JSON...</button>
+        <button class="smallBtn danger" id="resetBtn">Reset to shipped data</button>
+      </div>
+      <div class="hint">Autosaves to this browser as you edit. Nothing reaches the actual project files until you copy the export below back into them.</div>
+    </div>
+  </div>
+
+  <div id="canvasWrap" class="mode-select">
+    <svg id="stage"></svg>
+    <div class="zoomControls">
+      <button id="zoomIn">+</button>
+      <button id="zoomOut">−</button>
+    </div>
+    <div class="warnBadge" id="warnBadge" style="display:none"></div>
+  </div>
+
+  <div id="inspector">
+    <button class="closeMobile" id="closeInspector">×</button>
+    <div id="inspectorBody"><div class="empty-inspector">Select a node to see and edit its details, or switch to Add mode and click the canvas to place a new one.</div></div>
+  </div>
+
+  <div id="exportBar">
+    <div class="exportTabs">
+      <div class="exportTab active" data-tab="tree">ship_skill_tree.json</div>
+      <div class="exportTab" data-tab="types">skill_types.json</div>
+    </div>
+    <div class="exportBody">
+      <textarea id="exportText" readonly spellcheck="false"></textarea>
+      <div class="exportSide">
+        <button class="smallBtn primary" id="copyBtn">Copy</button>
+        <button class="smallBtn" id="refreshExportBtn">Regenerate</button>
+        <div class="hint" id="exportHint"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div id="modalRoot"></div>
+
+<script>
+(function(){
+"use strict";
+
+var SHIPPED_TYPES = [
+{"id":"flux_capacity","name":"Flux Capacity","icon":"graphics/icons/skills/containment_procedures.png","opCost":2,"xpCost":500,"effect":"FLUX_CAPACITY","magnitude":1},
+{"id":"flux_dissipation","name":"Flux Dissipation","icon":"graphics/icons/skills/systems_expertise.png","opCost":2,"xpCost":500,"effect":"FLUX_DISSIPATION","magnitude":1},
+{"id":"hybrid_flux","name":"Flux Capacity and Dissipation","icon":"graphics/icons/skills/flux_dynamics.png","opCost":2,"xpCost":500,"effect":"HYBRID_FLUX","magnitude":0.5},
+{"id":"hull","name":"Hull","icon":"graphics/icons/skills/damage_control2.png","opCost":2,"xpCost":500,"effect":"HULL","magnitude":1},
+{"id":"armor","name":"Armor","icon":"graphics/icons/skills/polarized_armor.png","opCost":2,"xpCost":500,"effect":"ARMOR","magnitude":1},
+{"id":"ballistic_damage","name":"Ballistic Weapon Damage","icon":"graphics/icons/skills/ranged_specialization.png","opCost":2,"xpCost":500,"effect":"BALLISTIC_DAMAGE","magnitude":1},
+{"id":"missile_damage","name":"Missile Weapon Damage","icon":"graphics/icons/skills/missile_specialization2.png","opCost":2,"xpCost":500,"effect":"MISSILE_DAMAGE","magnitude":1},
+{"id":"non_beam_energy_damage","name":"Non-Beam Energy Weapon Damage","icon":"graphics/icons/skills/special_modifications.png","opCost":2,"xpCost":500,"effect":"NON_BEAM_ENERGY_DAMAGE","magnitude":1},
+{"id":"beam_damage","name":"Beam Weapon Damage","icon":"graphics/icons/skills/hypercognition.png","opCost":2,"xpCost":500,"effect":"BEAM_DAMAGE","magnitude":1},
+{"id":"energy_damage","name":"Energy Weapon Damage","icon":"graphics/icons/skills/energy_weapon_mastery.png","opCost":2,"xpCost":500,"effect":"ENERGY_DAMAGE","magnitude":1},
+{"id":"weapon_damage","name":"All Weapon Damage","icon":"graphics/icons/skills/weapon_drills.png","opCost":2,"xpCost":500,"effect":"ALL_WEAPON_DAMAGE","magnitude":1},
+{"id":"packed_capacitors","name":"Packed Capacitors","icon":"graphics/icons/skills/power_grid_manipulation.png","opCost":3,"xpCost":1200,"effect":"FLUX_CAPACITY","magnitude":10,"tier":"NOTABLE"},
+{"id":"safety_overrides","name":"Safety Overrides","icon":"graphics/icons/skills/helmsmanship.png","opCost":5,"xpCost":3000,"tier":"KEYSTONE","vanillaHullMod":"safetyoverrides"},
+{"id":"advancedshieldemitter","name":"Accelerated Shields","icon":"graphics/icons/notable_hullmods/accelerated_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"advancedshieldemitter"},
+{"id":"adaptive_coils","name":"Adaptive Phase Coils","icon":"graphics/icons/notable_hullmods/phase_field.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"adaptive_coils"},
+{"id":"advancedoptics","name":"Advanced Optics","icon":"graphics/icons/notable_hullmods/advanced_optics.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"advancedoptics"},
+{"id":"turretgyros","name":"Advanced Turret Gyros","icon":"graphics/icons/notable_hullmods/advanced_turret_gyros.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"turretgyros"},
+{"id":"armoredweapons","name":"Armored Weapon Mounts","icon":"graphics/icons/notable_hullmods/armored_weapon_emplacements.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"armoredweapons"},
+{"id":"autorepair","name":"Automated Repair Unit","icon":"graphics/icons/notable_hullmods/automated_repair_unit.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"autorepair"},
+{"id":"auxiliarythrusters","name":"Auxiliary Thrusters","icon":"graphics/icons/notable_hullmods/auxilliary_thrusters.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"auxiliarythrusters"},
+{"id":"ballistic_rangefinder","name":"Ballistic Rangefinder","icon":"graphics/icons/notable_hullmods/ballistic_rangefinder.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"ballistic_rangefinder"},
+{"id":"blast_doors","name":"Blast Doors","icon":"graphics/icons/notable_hullmods/blast_doors.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"blast_doors"},
+{"id":"converted_hangar","name":"Converted Hangar","icon":"graphics/icons/notable_hullmods/converted_hangar.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"converted_hangar"},
+{"id":"converted_fighterbay","name":"Converted Fighter Bay","icon":"graphics/icons/notable_hullmods/converted_fighter_bay.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"converted_fighterbay"},
+{"id":"dedicated_targeting_core","name":"Dedicated Targeting Core","icon":"graphics/icons/notable_hullmods/targeting_core.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"dedicated_targeting_core"},
+{"id":"defensive_targeting_array","name":"Defensive Targeting Array","icon":"graphics/icons/notable_hullmods/defensive_targeting_array.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"defensive_targeting_array"},
+{"id":"eccm","name":"ECCM Package","icon":"graphics/icons/notable_hullmods/eccm_package.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"eccm"},
+{"id":"ecm","name":"ECM Package","icon":"graphics/icons/notable_hullmods/ecm_package.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"ecm"},
+{"id":"escort_package","name":"Escort Package","icon":"graphics/icons/notable_hullmods/escort_package.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"escort_package"},
+{"id":"expanded_deck_crew","name":"Expanded Deck Crew","icon":"graphics/icons/notable_hullmods/expanded_deck_crew.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"expanded_deck_crew"},
+{"id":"magazines","name":"Expanded Magazines","icon":"graphics/icons/notable_hullmods/expanded_magazines2.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"magazines"},
+{"id":"missleracks","name":"Expanded Missile Racks","icon":"graphics/icons/notable_hullmods/expanded_missile_racks.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"missleracks"},
+{"id":"extendedshieldemitter","name":"Extended Shields","icon":"graphics/icons/notable_hullmods/extended_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"extendedshieldemitter"},
+{"id":"fluxcoil","name":"Flux Coil Adjunct","icon":"graphics/icons/notable_hullmods/flux_coil_adjunct.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"fluxcoil"},
+{"id":"fluxdistributor","name":"Flux Distributor","icon":"graphics/icons/notable_hullmods/flux_distributor.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"fluxdistributor"},
+{"id":"shield_shunt","name":"Shield Shunt","icon":"graphics/icons/notable_hullmods/shield_shunt.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"shield_shunt"},
+{"id":"frontshield","name":"Makeshift Shield Generator","icon":"graphics/icons/notable_hullmods/front_shield_generator.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"frontshield"},
+{"id":"missile_autoloader","name":"Missile Autoloader","icon":"graphics/icons/notable_hullmods/missile_autoloader.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"missile_autoloader"},
+{"id":"hardenedshieldemitter","name":"Hardened Shields","icon":"graphics/icons/notable_hullmods/hardened_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"hardenedshieldemitter"},
+{"id":"hardened_subsystems","name":"Hardened Subsystems","icon":"graphics/icons/notable_hullmods/hardened_subsystems.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"hardened_subsystems"},
+{"id":"heavyarmor","name":"Heavy Armor","icon":"graphics/icons/notable_hullmods/heavy_armor.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"heavyarmor"},
+{"id":"high_scatter_amp","name":"High Scatter Amplifier","icon":"graphics/icons/notable_hullmods/high_scatter_amp.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"high_scatter_amp"},
+{"id":"pointdefenseai","name":"Integrated Point Defense AI","icon":"graphics/icons/notable_hullmods/integrated_point_defense_ai.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"pointdefenseai"},
+{"id":"targetingunit","name":"Integrated Targeting Unit","icon":"graphics/icons/notable_hullmods/integrated_targeting_unit.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"targetingunit"},
+{"id":"nav_relay","name":"Nav Relay","icon":"graphics/icons/notable_hullmods/nav_relay.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"nav_relay"},
+{"id":"frontemitter","name":"Shield Conversion - Front","icon":"graphics/icons/notable_hullmods/front_shield_emitter.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"frontemitter"},
+{"id":"adaptiveshields","name":"Shield Conversion - Omni","icon":"graphics/icons/notable_hullmods/omni_shield_emitter_mod.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"adaptiveshields"},
+{"id":"operations_center","name":"Operations Center","icon":"graphics/icons/notable_hullmods/operations_center.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"operations_center"},
+{"id":"phase_anchor","name":"Phase Anchor","icon":"graphics/icons/notable_hullmods/phase_anchor.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"phase_anchor"},
+{"id":"recovery_shuttles","name":"Recovery Shuttles","icon":"graphics/icons/notable_hullmods/recovery_shuttles.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"recovery_shuttles"},
+{"id":"reinforcedhull","name":"Reinforced Bulkheads","icon":"graphics/icons/notable_hullmods/reinforced_bulkheads.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"reinforcedhull"},
+{"id":"fluxbreakers","name":"Resistant Flux Conduits","icon":"graphics/icons/notable_hullmods/resistant_flux_conduits.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"fluxbreakers"},
+{"id":"stabilizedshieldemitter","name":"Stabilized Shields","icon":"graphics/icons/notable_hullmods/stabilized_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"stabilizedshieldemitter"},
+{"id":"unstable_injector","name":"Unstable Injector","icon":"graphics/icons/notable_hullmods/unstable_injector.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"unstable_injector"},
+{"id":"additional_berthing","name":"Additional Berthing","icon":"graphics/icons/notable_hullmods/berthing.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"additional_berthing"},
+{"id":"augmentedengines","name":"Augmented Drive Field","icon":"graphics/icons/notable_hullmods/augmented_drive_field2.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"augmentedengines"},
+{"id":"auxiliary_fuel_tanks","name":"Auxiliary Fuel Tanks","icon":"graphics/icons/notable_hullmods/fuel_tanks.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"auxiliary_fuel_tanks"},
+{"id":"efficiency_overhaul","name":"Efficiency Overhaul","icon":"graphics/icons/notable_hullmods/efficiency.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"efficiency_overhaul"},
+{"id":"expanded_cargo_holds","name":"Expanded Cargo Holds","icon":"graphics/icons/notable_hullmods/expanded_cargo.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"expanded_cargo_holds"},
+{"id":"hiressensors","name":"High Resolution Sensors","icon":"graphics/icons/notable_hullmods/high_res_sensors.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"hiressensors"},
+{"id":"insulatedengine","name":"Insulated Engine Assembly","icon":"graphics/icons/notable_hullmods/insulated_engine_assembly.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"insulatedengine"},
+{"id":"militarized_subsystems","name":"Militarized Subsystems","icon":"graphics/icons/notable_hullmods/militarized_subsystems.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"militarized_subsystems"},
+{"id":"solar_shielding","name":"Solar Shielding","icon":"graphics/icons/notable_hullmods/solar_shielding2.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"solar_shielding"},
+{"id":"surveying_equipment","name":"Surveying Equipment","icon":"graphics/icons/notable_hullmods/surveying_equipment.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"surveying_equipment"}
+];
+
+var SHIPPED_NODES = [
+{"id":"hybrid_flux_1","type":"hybrid_flux","prerequisites":[],"x":0,"y":-320},
+{"id":"flux_capacity_1","type":"flux_capacity","prerequisites":["hybrid_flux_1"],"x":-140,"y":-480},
+{"id":"flux_dissipation_1","type":"flux_dissipation","prerequisites":["hybrid_flux_1"],"x":140,"y":-480},
+{"id":"missile_damage_1","type":"missile_damage","prerequisites":[],"x":277,"y":-160},
+{"id":"ballistic_damage_1","type":"ballistic_damage","prerequisites":[],"x":277,"y":160},
+{"id":"hull_1","type":"hull","prerequisites":[],"x":0,"y":320},
+{"id":"beam_damage_1","type":"beam_damage","prerequisites":[],"x":-277,"y":160},
+{"id":"non_beam_energy_damage_1","type":"non_beam_energy_damage","prerequisites":[],"x":-277,"y":-160},
+{"id":"energy_damage_1","type":"energy_damage","prerequisites":["non_beam_energy_damage_1","beam_damage_1"],"x":-450,"y":0},
+{"id":"armor_1","type":"armor","prerequisites":["hull_1"],"x":0,"y":500},
+{"id":"weapon_damage_1","type":"weapon_damage","prerequisites":[],"x":450,"y":0},
+{"id":"packed_capacitors_1","type":"packed_capacitors","prerequisites":["flux_capacity_1"],"x":-190,"y":-650},
+{"id":"safety_overrides_1","type":"safety_overrides","prerequisites":["armor_1"],"x":0,"y":750},
+{"id":"heavyarmor_1","type":"heavyarmor","prerequisites":["armor_1"],"x":222,"y":685},
+{"id":"armoredweapons_1","type":"armoredweapons","prerequisites":["armor_1"],"x":-222,"y":685},
+{"id":"reinforcedhull_1","type":"reinforcedhull","prerequisites":["hull_1"],"x":410,"y":382},
+{"id":"blast_doors_1","type":"blast_doors","prerequisites":["hull_1"],"x":219,"y":515},
+{"id":"fluxcoil_1","type":"fluxcoil","prerequisites":["flux_capacity_1"],"x":-597,"y":-403},
+{"id":"fluxbreakers_1","type":"fluxbreakers","prerequisites":["flux_capacity_1"],"x":-316,"y":-647},
+{"id":"fluxdistributor_1","type":"fluxdistributor","prerequisites":["flux_dissipation_1"],"x":-50,"y":-718},
+{"id":"autorepair_1","type":"autorepair","prerequisites":["flux_dissipation_1"],"x":198,"y":-692},
+{"id":"hardened_subsystems_1","type":"hardened_subsystems","prerequisites":["flux_dissipation_1"],"x":423,"y":-582},
+{"id":"turretgyros_1","type":"turretgyros","prerequisites":["ballistic_damage_1"],"x":518,"y":45},
+{"id":"ballistic_rangefinder_1","type":"ballistic_rangefinder","prerequisites":["ballistic_damage_1"],"x":483,"y":192},
+{"id":"magazines_1","type":"magazines","prerequisites":["ballistic_damage_1"],"x":408,"y":323},
+{"id":"pointdefenseai_1","type":"pointdefenseai","prerequisites":["ballistic_damage_1"],"x":298,"y":426},
+{"id":"missleracks_1","type":"missleracks","prerequisites":["missile_damage_1"],"x":334,"y":-398},
+{"id":"missile_autoloader_1","type":"missile_autoloader","prerequisites":["missile_damage_1"],"x":450,"y":-260},
+{"id":"eccm_1","type":"eccm","prerequisites":["missile_damage_1"],"x":512,"y":-90},
+{"id":"high_scatter_amp_1","type":"high_scatter_amp","prerequisites":["beam_damage_1"],"x":-368,"y":368},
+{"id":"advancedoptics_1","type":"advancedoptics","prerequisites":["beam_damage_1"],"x":-502,"y":135},
+{"id":"dedicated_targeting_core_1","type":"dedicated_targeting_core","prerequisites":["non_beam_energy_damage_1"],"x":-450,"y":-260},
+{"id":"targetingunit_1","type":"targetingunit","prerequisites":["energy_damage_1"],"x":-650,"y":0},
+{"id":"ecm_1","type":"ecm","prerequisites":["weapon_damage_1"],"x":628,"y":-168},
+{"id":"defensive_targeting_array_1","type":"defensive_targeting_array","prerequisites":["weapon_damage_1"],"x":628,"y":168},
+{"id":"advancedshieldemitter_1","type":"advancedshieldemitter","prerequisites":[],"x":589,"y":275},
+{"id":"extendedshieldemitter_1","type":"extendedshieldemitter","prerequisites":[],"x":696,"y":488},
+{"id":"hardenedshieldemitter_1","type":"hardenedshieldemitter","prerequisites":[],"x":460,"y":460},
+{"id":"stabilizedshieldemitter_1","type":"stabilizedshieldemitter","prerequisites":[],"x":488,"y":696},
+{"id":"shield_shunt_1","type":"shield_shunt","prerequisites":[],"x":275,"y":589},
+{"id":"frontshield_1","type":"frontshield","prerequisites":[],"x":220,"y":821},
+{"id":"frontemitter_1","type":"frontemitter","prerequisites":[],"x":57,"y":648},
+{"id":"adaptiveshields_1","type":"adaptiveshields","prerequisites":[],"x":-74,"y":847},
+{"id":"auxiliarythrusters_1","type":"auxiliarythrusters","prerequisites":[],"x":0,"y":650},
+{"id":"unstable_injector_1","type":"unstable_injector","prerequisites":[],"x":-220,"y":821},
+{"id":"nav_relay_1","type":"nav_relay","prerequisites":[],"x":-325,"y":563},
+{"id":"adaptive_coils_1","type":"adaptive_coils","prerequisites":[],"x":-601,"y":601},
+{"id":"phase_anchor_1","type":"phase_anchor","prerequisites":[],"x":-563,"y":325},
+{"id":"additional_berthing_1","type":"additional_berthing","prerequisites":[],"x":-628,"y":-168},
+{"id":"augmentedengines_1","type":"augmentedengines","prerequisites":[],"x":-777,"y":-344},
+{"id":"auxiliary_fuel_tanks_1","type":"auxiliary_fuel_tanks","prerequisites":[],"x":-547,"y":-352},
+{"id":"efficiency_overhaul_1","type":"efficiency_overhaul","prerequisites":[],"x":-635,"y":-565},
+{"id":"expanded_cargo_holds_1","type":"expanded_cargo_holds","prerequisites":[],"x":-413,"y":-502},
+{"id":"hiressensors_1","type":"hiressensors","prerequisites":[],"x":-432,"y":-732},
+{"id":"insulatedengine_1","type":"insulatedengine","prerequisites":[],"x":-240,"y":-604},
+{"id":"militarized_subsystems_1","type":"militarized_subsystems","prerequisites":[],"x":-188,"y":-829},
+{"id":"solar_shielding_1","type":"solar_shielding","prerequisites":[],"x":-44,"y":-649},
+{"id":"surveying_equipment_1","type":"surveying_equipment","prerequisites":[],"x":74,"y":-847},
+{"id":"converted_hangar_1","type":"converted_hangar","prerequisites":[],"x":57,"y":-648},
+{"id":"converted_fighterbay_1","type":"converted_fighterbay","prerequisites":[],"x":314,"y":-790},
+{"id":"expanded_deck_crew_1","type":"expanded_deck_crew","prerequisites":[],"x":403,"y":-510},
+{"id":"recovery_shuttles_1","type":"recovery_shuttles","prerequisites":[],"x":696,"y":-488},
+{"id":"operations_center_1","type":"operations_center","prerequisites":[],"x":532,"y":-373},
+{"id":"escort_package_1","type":"escort_package","prerequisites":[],"x":847,"y":-74}
+];
+
+var SMALL_R = 11, NOTABLE_R = 17, KEYSTONE_R = 23;
+function tierOf(type){ return (type && type.tier) ? type.tier : 'SMALL'; }
+function radiusFor(tier){ return tier === 'KEYSTONE' ? KEYSTONE_R : tier === 'NOTABLE' ? NOTABLE_R : SMALL_R; }
+function colorVarFor(tier){ return tier === 'KEYSTONE' ? '--keystone' : tier === 'NOTABLE' ? '--notable' : '--small'; }
+
+var state = {
+  types: [],
+  nodes: [],
+  view: { panX: 0, panY: 0, zoom: 0.55 },
+  mode: 'select',
+  selectedNodeId: null,
+  linkFirst: null,
+  showLabels: true,
+  search: ''
+};
+
+function deepCopy(x){ return JSON.parse(JSON.stringify(x)); }
+function typeById(id){ for (var i=0;i<state.types.length;i++) if (state.types[i].id === id) return state.types[i]; return null; }
+function nodeById(id){ for (var i=0;i<state.nodes.length;i++) if (state.nodes[i].id === id) return state.nodes[i]; return null; }
+
+function loadShipped(){
+  state.types = deepCopy(SHIPPED_TYPES);
+  state.nodes = deepCopy(SHIPPED_NODES);
+}
+
+function saveLocal(){
+  try {
+    localStorage.setItem('skillTreeEditor.v1', JSON.stringify({ types: state.types, nodes: state.nodes }));
+  } catch(e){}
+}
+function loadLocal(){
+  try {
+    var raw = localStorage.getItem('skillTreeEditor.v1');
+    if (!raw) return false;
+    var parsed = JSON.parse(raw);
+    if (!parsed || !parsed.types || !parsed.nodes) return false;
+    state.types = parsed.types;
+    state.nodes = parsed.nodes;
+    return true;
+  } catch(e){ return false; }
+}
+
+if (!loadLocal()) loadShipped();
+
+// ---------- SVG canvas ----------
+var svg = document.getElementById('stage');
+var canvasWrap = document.getElementById('canvasWrap');
+var NS = 'http://www.w3.org/2000/svg';
+var layerRoot, layerEdges, layerNodes, layerLabels;
+
+function buildLayers(){
+  svg.innerHTML = '';
+  layerRoot = document.createElementNS(NS, 'g');
+  layerEdges = document.createElementNS(NS, 'g');
+  layerNodes = document.createElementNS(NS, 'g');
+  layerLabels = document.createElementNS(NS, 'g');
+  layerRoot.appendChild(layerEdges);
+  layerRoot.appendChild(layerNodes);
+  layerRoot.appendChild(layerLabels);
+  svg.appendChild(layerRoot);
+}
+buildLayers();
+
+function worldToScreenTransform(){
+  var rect = canvasWrap.getBoundingClientRect();
+  var cx = rect.width / 2 + state.view.panX;
+  var cy = rect.height / 2 + state.view.panY;
+  return 'translate(' + cx + ',' + cy + ') scale(' + state.view.zoom + ')';
+}
+function screenPointToWorld(clientX, clientY){
+  var rect = canvasWrap.getBoundingClientRect();
+  var rx = clientX - rect.left, ry = clientY - rect.top;
+  var cx = rect.width / 2 + state.view.panX;
+  var cy = rect.height / 2 + state.view.panY;
+  var wx = (rx - cx) / state.view.zoom;
+  var wyScreen = (ry - cy) / state.view.zoom;
+  return { x: wx, y: -wyScreen };
+}
+function worldToScreenXY(x, y){ return { sx: x, sy: -y }; }
+
+function validate(){
+  var issues = [];
+  var idCount = {};
+  state.nodes.forEach(function(n){ idCount[n.id] = (idCount[n.id]||0) + 1; });
+  Object.keys(idCount).forEach(function(id){ if (idCount[id] > 1) issues.push('Duplicate node id: ' + id); });
+  state.nodes.forEach(function(n){
+    if (!typeById(n.type)) issues.push('Node "' + n.id + '" uses unknown type "' + n.type + '"');
+    (n.prerequisites||[]).forEach(function(p){
+      if (!nodeById(p)) issues.push('Node "' + n.id + '" prerequisite "' + p + '" does not exist');
+    });
+  });
+  return issues;
+}
+
+function render(){
+  buildLayers();
+  layerRoot.setAttribute('transform', worldToScreenTransform());
+
+  var centerMark = document.createElementNS(NS, 'path');
+  var s = 14;
+  centerMark.setAttribute('d', 'M ' + (-s) + ' 0 L 0 ' + (-s) + ' L ' + s + ' 0 L 0 ' + s + ' Z');
+  centerMark.setAttribute('class', 'center-mark');
+  layerEdges.appendChild(centerMark);
+
+  var q = state.search.trim().toLowerCase();
+  var matchIds = null;
+  if (q) {
+    matchIds = {};
+    state.nodes.forEach(function(n){
+      var t = typeById(n.type);
+      var name = t ? t.name : n.type;
+      if (n.id.toLowerCase().indexOf(q) !== -1 || (name||'').toLowerCase().indexOf(q) !== -1) matchIds[n.id] = true;
+    });
+  }
+
+  var badIds = {};
+  state.nodes.forEach(function(n){
+    (n.prerequisites||[]).forEach(function(p){ if (!nodeById(p)) badIds[n.id] = true; });
+    if (!typeById(n.type)) badIds[n.id] = true;
+  });
+
+  state.nodes.forEach(function(n){
+    var pos = worldToScreenXY(n.x, n.y);
+    if (n.prerequisites.length === 0) {
+      var rl = document.createElementNS(NS, 'line');
+      rl.setAttribute('x1', 0); rl.setAttribute('y1', 0);
+      rl.setAttribute('x2', pos.sx); rl.setAttribute('y2', pos.sy);
+      rl.setAttribute('class', 'root-line');
+      layerEdges.appendChild(rl);
+    }
+    (n.prerequisites||[]).forEach(function(pid){
+      var p = nodeById(pid);
+      if (!p) return;
+      var ppos = worldToScreenXY(p.x, p.y);
+      var line = document.createElementNS(NS, 'line');
+      line.setAttribute('x1', ppos.sx); line.setAttribute('y1', ppos.sy);
+      line.setAttribute('x2', pos.sx); line.setAttribute('y2', pos.sy);
+      line.setAttribute('class', 'edge-line');
+      layerEdges.appendChild(line);
+    });
+  });
+
+  state.nodes.forEach(function(n){
+    var t = typeById(n.type);
+    var tier = t ? tierOf(t) : 'SMALL';
+    var r = radiusFor(tier);
+    var pos = worldToScreenXY(n.x, n.y);
+    var dim = matchIds && !matchIds[n.id];
+
+    var c = document.createElementNS(NS, 'circle');
+    c.setAttribute('cx', pos.sx); c.setAttribute('cy', pos.sy); c.setAttribute('r', r);
+    c.setAttribute('class', 'node-circle');
+    var color = badIds[n.id] ? getComputedStyle(document.documentElement).getPropertyValue('--danger') : getComputedStyle(document.documentElement).getPropertyValue(colorVarFor(tier));
+    c.setAttribute('fill', color.trim());
+    c.setAttribute('fill-opacity', dim ? 0.25 : (n.id === state.selectedNodeId ? 1 : 0.85));
+    c.setAttribute('stroke', n.id === state.selectedNodeId ? getComputedStyle(document.documentElement).getPropertyValue('--text').trim() : 'rgba(0,0,0,.25)');
+    c.setAttribute('stroke-width', n.id === state.selectedNodeId ? 2.5 : 1);
+    if (n.id === state.linkFirst) { c.setAttribute('stroke', getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()); c.setAttribute('stroke-width', 3); }
+    c.dataset.nodeId = n.id;
+    layerNodes.appendChild(c);
+
+    if (state.showLabels && !dim) {
+      var lbl = document.createElementNS(NS, 'text');
+      lbl.setAttribute('x', pos.sx);
+      lbl.setAttribute('y', pos.sy + r + 12);
+      lbl.setAttribute('text-anchor', 'middle');
+      lbl.setAttribute('class', 'node-label');
+      lbl.textContent = t ? t.name : n.type;
+      layerLabels.appendChild(lbl);
+    }
+  });
+
+  attachNodeHandlers();
+  updateStats();
+  updateWarnBadge();
+}
+
+function updateStats(){
+  document.getElementById('statsLine').textContent =
+    state.nodes.length + ' nodes · ' + state.types.length + ' types · zoom ' + state.view.zoom.toFixed(2) + 'x';
+}
+function updateWarnBadge(){
+  var el = document.getElementById('warnBadge');
+  var issues = validate();
+  if (issues.length === 0) { el.style.display = 'none'; return; }
+  el.style.display = 'block';
+  el.textContent = '⚠ ' + issues.length + ' issue' + (issues.length>1?'s':'') + ' - click to view';
+  el.onclick = function(){ alert(issues.join('\n')); };
+}
+
+// ---------- dragging / panning / node click ----------
+var drag = null;
+
+function attachNodeHandlers(){
+  var circles = layerNodes.querySelectorAll('circle');
+  circles.forEach(function(c){
+    c.addEventListener('pointerdown', function(ev){
+      ev.stopPropagation();
+      var id = c.dataset.nodeId;
+      if (state.mode === 'link') {
+        handleLinkClick(id);
+        return;
+      }
+      if (state.mode === 'add') return;
+      selectNode(id);
+      var n = nodeById(id);
+      drag = { id: id, startWorld: screenPointToWorld(ev.clientX, ev.clientY), origX: n.x, origY: n.y, moved: false };
+      ev.target.setPointerCapture(ev.pointerId);
+    });
+  });
+}
+
+canvasWrap.addEventListener('pointerdown', function(ev){
+  if (ev.target !== svg && ev.target.tagName !== 'svg') return;
+  if (state.mode === 'add') {
+    var w = screenPointToWorld(ev.clientX, ev.clientY);
+    openAddNodeModal(Math.round(w.x), Math.round(w.y));
+    return;
+  }
+  if (state.mode === 'link') { state.linkFirst = null; render(); return; }
+  drag = { pan: true, startClientX: ev.clientX, startClientY: ev.clientY, startPanX: state.view.panX, startPanY: state.view.panY };
+});
+
+window.addEventListener('pointermove', function(ev){
+  if (!drag) return;
+  if (drag.pan) {
+    state.view.panX = drag.startPanX + (ev.clientX - drag.startClientX);
+    state.view.panY = drag.startPanY + (ev.clientY - drag.startClientY);
+    render();
+    return;
+  }
+  var w = screenPointToWorld(ev.clientX, ev.clientY);
+  var dx = w.x - drag.startWorld.x, dy = w.y - drag.startWorld.y;
+  if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) drag.moved = true;
+  var n = nodeById(drag.id);
+  if (n) {
+    n.x = Math.round(drag.origX + dx);
+    n.y = Math.round(drag.origY + dy);
+    render();
+    if (state.selectedNodeId === n.id) refreshInspector();
+  }
+});
+
+window.addEventListener('pointerup', function(){
+  if (drag && !drag.pan && drag.moved) saveLocal();
+  drag = null;
+});
+
+canvasWrap.addEventListener('wheel', function(ev){
+  ev.preventDefault();
+  var factor = ev.deltaY < 0 ? 1.1 : 0.9;
+  var rect = canvasWrap.getBoundingClientRect();
+  var mx = ev.clientX - rect.left - rect.width/2 - state.view.panX;
+  var my = ev.clientY - rect.top - rect.height/2 - state.view.panY;
+  var newZoom = Math.min(3, Math.max(0.08, state.view.zoom * factor));
+  var scaleChange = newZoom / state.view.zoom;
+  state.view.panX -= mx * (scaleChange - 1);
+  state.view.panY -= my * (scaleChange - 1);
+  state.view.zoom = newZoom;
+  render();
+}, { passive: false });
+
+function handleLinkClick(id){
+  if (!state.linkFirst) { state.linkFirst = id; render(); return; }
+  if (state.linkFirst === id) { state.linkFirst = null; render(); return; }
+  var a = nodeById(state.linkFirst), b = nodeById(id);
+  state.linkFirst = null;
+  if (!a || !b) { render(); return; }
+  var distA = Math.hypot(a.x, a.y), distB = Math.hypot(b.x, b.y);
+  var outer = distA >= distB ? a : b;
+  var inner = distA >= distB ? b : a;
+  var idx = outer.prerequisites.indexOf(inner.id);
+  if (idx === -1) { outer.prerequisites.push(inner.id); showToast(outer.id + ' now requires ' + inner.id); }
+  else { outer.prerequisites.splice(idx, 1); showToast('Unlinked ' + outer.id + ' from ' + inner.id); }
+  saveLocal();
+  render();
+}
+
+function selectNode(id){
+  state.selectedNodeId = id;
+  document.getElementById('inspector').classList.add('open');
+  render();
+  refreshInspector();
+}
+
+// ---------- mode buttons ----------
+document.querySelectorAll('.modeBtn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.modeBtn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    state.mode = btn.dataset.mode;
+    state.linkFirst = null;
+    canvasWrap.className = 'mode-' + state.mode;
+    render();
+  });
+});
+document.addEventListener('keydown', function(ev){
+  if (ev.target.tagName === 'INPUT' || ev.target.tagName === 'TEXTAREA' || ev.target.tagName === 'SELECT') return;
+  var map = { 'v': 'select', 'a': 'add', 'l': 'link' };
+  var m = map[ev.key.toLowerCase()];
+  if (m) { document.querySelector('.modeBtn[data-mode="'+m+'"]').click(); }
+  if (ev.key === 'Delete' || ev.key === 'Backspace') { if (state.selectedNodeId) deleteSelectedNode(); }
+});
+
+// ---------- inspector ----------
+function refreshInspector(){
+  var body = document.getElementById('inspectorBody');
+  var n = nodeById(state.selectedNodeId);
+  if (!n) {
+    body.innerHTML = '<div class="empty-inspector">Select a node to see and edit its details, or switch to Add mode and click the canvas to place a new one.</div>';
+    return;
+  }
+  var t = typeById(n.type);
+  var tier = t ? tierOf(t) : 'SMALL';
+  var typeOptions = state.types.map(function(ty){
+    return '<option value="' + ty.id + '"' + (ty.id === n.type ? ' selected' : '') + '>' + ty.name + ' (' + ty.id + ')</option>';
+  }).join('');
+  var prereqHtml = (n.prerequisites||[]).map(function(pid){
+    var pn = nodeById(pid);
+    return '<div class="prereqItem"><span>' + pid + (pn ? '' : ' (missing!)') + '</span><button data-remove-prereq="' + pid + '">✕</button></div>';
+  }).join('') || '<div class="hint">None - connects straight to the ship center.</div>';
+  var otherNodeOptions = state.nodes.filter(function(o){ return o.id !== n.id; }).map(function(o){
+    return '<option value="' + o.id + '">' + o.id + '</option>';
+  }).join('');
+
+  body.innerHTML =
+    '<h2>' + (t ? t.name : n.type) + '</h2>' +
+    '<span class="tierPill" style="color:var(' + colorVarFor(tier) + ');border-color:var(' + colorVarFor(tier) + ')">' + tier + '</span>' +
+    '<div class="field"><label>Node id</label><input value="' + n.id + '" data-field="id"></div>' +
+    '<div class="field"><label>Type</label><select data-field="type">' + typeOptions + '</select></div>' +
+    '<div class="fieldRow">' +
+      '<div class="field"><label>X</label><input type="number" value="' + n.x + '" data-field="x"></div>' +
+      '<div class="field"><label>Y</label><input type="number" value="' + n.y + '" data-field="y"></div>' +
+    '</div>' +
+    '<hr class="sep">' +
+    '<div class="field"><label>Prerequisites</label><div class="prereqList">' + prereqHtml + '</div></div>' +
+    '<div class="fieldRow">' +
+      '<select id="addPrereqSelect" style="flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12px;padding:6px;"><option value="">Add prerequisite...</option>' + otherNodeOptions + '</select>' +
+    '</div>' +
+    '<hr class="sep">' +
+    '<div class="hint">Type "' + n.type + '" - opCost ' + (t?t.opCost:'?') + ', xpCost ' + (t?t.xpCost:'?') + (t && t.vanillaHullMod ? ', vanillaHullMod: ' + t.vanillaHullMod : '') + (t && t.effect ? ', effect: ' + t.effect + ' x' + t.magnitude : '') + '</div>' +
+    '<div class="btnRow">' +
+      '<button class="smallBtn" id="editTypeBtn">Edit type "' + n.type + '"</button>' +
+      '<button class="smallBtn" id="duplicateBtn">Duplicate node</button>' +
+    '</div>' +
+    '<button class="smallBtn danger" id="deleteNodeBtn">Delete this node</button>';
+
+  body.querySelectorAll('[data-field]').forEach(function(inp){
+    inp.addEventListener('change', function(){
+      var field = inp.dataset.field;
+      if (field === 'id') {
+        var newId = inp.value.trim();
+        if (!newId || nodeById(newId)) { showToast('Id must be unique and non-empty'); inp.value = n.id; return; }
+        var oldId = n.id;
+        n.id = newId;
+        state.nodes.forEach(function(o){
+          var idx = o.prerequisites.indexOf(oldId);
+          if (idx !== -1) o.prerequisites[idx] = newId;
+        });
+        state.selectedNodeId = newId;
+      } else if (field === 'type') {
+        n.type = inp.value;
+      } else if (field === 'x' || field === 'y') {
+        n[field] = parseInt(inp.value, 10) || 0;
+      }
+      saveLocal(); render(); refreshInspector();
+    });
+  });
+  var addSel = document.getElementById('addPrereqSelect');
+  addSel.addEventListener('change', function(){
+    if (addSel.value) {
+      if (n.prerequisites.indexOf(addSel.value) === -1) n.prerequisites.push(addSel.value);
+      saveLocal(); render(); refreshInspector();
+    }
+  });
+  body.querySelectorAll('[data-remove-prereq]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var pid = btn.dataset.removePrereq;
+      var idx = n.prerequisites.indexOf(pid);
+      if (idx !== -1) n.prerequisites.splice(idx, 1);
+      saveLocal(); render(); refreshInspector();
+    });
+  });
+  document.getElementById('deleteNodeBtn').addEventListener('click', deleteSelectedNode);
+  document.getElementById('duplicateBtn').addEventListener('click', function(){
+    var copy = deepCopy(n);
+    copy.id = uniqueNodeId(n.type);
+    copy.x = n.x + 40; copy.y = n.y - 40;
+    copy.prerequisites = deepCopy(n.prerequisites);
+    state.nodes.push(copy);
+    selectNode(copy.id);
+    saveLocal();
+  });
+  document.getElementById('editTypeBtn').addEventListener('click', function(){
+    openTypeModal(t);
+  });
+}
+
+function uniqueNodeId(typeId){
+  var i = 1, id;
+  do { id = typeId + '_' + i; i++; } while (nodeById(id));
+  return id;
+}
+
+function deleteSelectedNode(){
+  var n = nodeById(state.selectedNodeId);
+  if (!n) return;
+  if (!confirm('Delete node "' + n.id + '"? It will also be removed from other nodes\' prerequisites.')) return;
+  state.nodes = state.nodes.filter(function(o){ return o.id !== n.id; });
+  state.nodes.forEach(function(o){
+    var idx = o.prerequisites.indexOf(n.id);
+    if (idx !== -1) o.prerequisites.splice(idx, 1);
+  });
+  state.selectedNodeId = null;
+  saveLocal();
+  render();
+  refreshInspector();
+}
+
+document.getElementById('closeInspector').addEventListener('click', function(){
+  document.getElementById('inspector').classList.remove('open');
+});
+
+// ---------- add node modal ----------
+function openAddNodeModal(x, y){
+  var typeOptions = state.types.map(function(t){ return '<option value="'+t.id+'">'+t.name+' ('+t.id+')</option>'; }).join('');
+  var html =
+    '<div class="modalOverlay"><div class="modal">' +
+    '<h3>Add node at (' + x + ', ' + y + ')</h3>' +
+    '<div class="field"><label>Type</label><select id="mAddType">' + typeOptions + '</select></div>' +
+    '<div class="hint">Placed with no prerequisites - link it afterward in Link mode.</div>' +
+    '<div class="modalBtns">' +
+      '<button class="smallBtn" id="mAddNewType">Define new type instead</button>' +
+      '<button class="smallBtn" id="mCancel">Cancel</button>' +
+      '<button class="smallBtn primary" id="mConfirm">Add node</button>' +
+    '</div>' +
+    '</div></div>';
+  var root = document.getElementById('modalRoot');
+  root.innerHTML = html;
+  document.getElementById('mCancel').addEventListener('click', function(){ root.innerHTML=''; });
+  document.getElementById('mAddNewType').addEventListener('click', function(){
+    root.innerHTML = '';
+    openTypeModal(null, function(newType){
+      addNodeOfType(newType.id, x, y);
+    });
+  });
+  document.getElementById('mConfirm').addEventListener('click', function(){
+    var typeId = document.getElementById('mAddType').value;
+    root.innerHTML = '';
+    addNodeOfType(typeId, x, y);
+  });
+}
+function addNodeOfType(typeId, x, y){
+  var node = { id: uniqueNodeId(typeId), type: typeId, prerequisites: [], x: x, y: y };
+  state.nodes.push(node);
+  saveLocal();
+  selectNode(node.id);
+}
+
+// ---------- type editor modal ----------
+function openTypeModal(existingType, onSave){
+  var isNew = !existingType;
+  var t = existingType ? deepCopy(existingType) : { id: '', name: '', icon: '', opCost: 4, xpCost: 2000, tier: 'NOTABLE', effect: '', magnitude: 0, vanillaHullMod: '' };
+  var effectOptions = ['','HULL','ARMOR','FLUX_CAPACITY','FLUX_DISSIPATION','HYBRID_FLUX','BALLISTIC_DAMAGE','MISSILE_DAMAGE','NON_BEAM_ENERGY_DAMAGE','BEAM_DAMAGE','ENERGY_DAMAGE','ALL_WEAPON_DAMAGE']
+    .map(function(e){ return '<option value="'+e+'"'+(e===(t.effect||'')?' selected':'')+'>'+(e||'(none)')+'</option>'; }).join('');
+  var tierOptions = ['SMALL','NOTABLE','KEYSTONE'].map(function(tr){ return '<option value="'+tr+'"'+(tr===tierOf(t)?' selected':'')+'>'+tr+'</option>'; }).join('');
+
+  var html =
+    '<div class="modalOverlay"><div class="modal">' +
+    '<h3>' + (isNew ? 'New skill type' : 'Edit type "' + t.id + '"') + '</h3>' +
+    '<div class="field"><label>Id</label><input id="tId" value="' + (t.id||'') + '" ' + (isNew?'':'disabled') + '></div>' +
+    '<div class="field"><label>Display name</label><input id="tName" value="' + (t.name||'') + '"></div>' +
+    '<div class="field"><label>Icon path</label><input id="tIcon" value="' + (t.icon||'') + '"></div>' +
+    '<div class="fieldRow">' +
+      '<div class="field"><label>OP cost</label><input id="tOp" type="number" value="' + t.opCost + '"></div>' +
+      '<div class="field"><label>XP cost</label><input id="tXp" type="number" value="' + t.xpCost + '"></div>' +
+    '</div>' +
+    '<div class="field"><label>Tier</label><select id="tTier">' + tierOptions + '</select></div>' +
+    '<div class="hint">Either set an Effect + Magnitude (uses this mod\'s own stat code), or a vanilla hull mod id (delegates straight to that hull mod\'s real effect). Leave the one you are not using blank.</div>' +
+    '<div class="fieldRow">' +
+      '<div class="field"><label>Effect</label><select id="tEffect">' + effectOptions + '</select></div>' +
+      '<div class="field"><label>Magnitude</label><input id="tMag" type="number" step="0.1" value="' + (t.magnitude||0) + '"></div>' +
+    '</div>' +
+    '<div class="field"><label>vanillaHullMod id</label><input id="tVanilla" value="' + (t.vanillaHullMod||'') + '"></div>' +
+    '<div class="modalBtns">' +
+      '<button class="smallBtn" id="mCancel2">Cancel</button>' +
+      '<button class="smallBtn primary" id="mSave2">Save type</button>' +
+    '</div>' +
+    '</div></div>';
+  var root = document.getElementById('modalRoot');
+  root.innerHTML = html;
+  document.getElementById('mCancel2').addEventListener('click', function(){ root.innerHTML=''; });
+  document.getElementById('mSave2').addEventListener('click', function(){
+    var id = isNew ? document.getElementById('tId').value.trim() : t.id;
+    if (!id) { showToast('Id is required'); return; }
+    if (isNew && typeById(id)) { showToast('A type with that id already exists'); return; }
+    var updated = {
+      id: id,
+      name: document.getElementById('tName').value.trim() || id,
+      icon: document.getElementById('tIcon').value.trim(),
+      opCost: parseInt(document.getElementById('tOp').value,10) || 0,
+      xpCost: parseFloat(document.getElementById('tXp').value) || 0,
+      tier: document.getElementById('tTier').value,
+      effect: document.getElementById('tEffect').value,
+      magnitude: parseFloat(document.getElementById('tMag').value) || 0,
+      vanillaHullMod: document.getElementById('tVanilla').value.trim()
+    };
+    if (isNew) state.types.push(updated);
+    else {
+      var idx = state.types.findIndex(function(x){ return x.id === t.id; });
+      state.types[idx] = updated;
+    }
+    root.innerHTML = '';
+    saveLocal();
+    render();
+    if (state.selectedNodeId) refreshInspector();
+    if (onSave) onSave(updated);
+  });
+}
+
+// ---------- toast ----------
+var toastTimer = null;
+function showToast(msg){
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 1800);
+}
+
+// ---------- export ----------
+function serializeType(t){
+  var out = { id: t.id, name: t.name, icon: t.icon, opCost: t.opCost, xpCost: t.xpCost };
+  if (t.effect) { out.effect = t.effect; out.magnitude = t.magnitude; }
+  if (tierOf(t) !== 'SMALL') out.tier = tierOf(t);
+  if (t.vanillaHullMod) out.vanillaHullMod = t.vanillaHullMod;
+  return out;
+}
+function toTabbedJson(obj, rootKey){
+  var wrapper = {}; wrapper[rootKey] = obj;
+  var raw = JSON.stringify(wrapper, null, '\t');
+  return raw;
+}
+var currentExportTab = 'tree';
+function refreshExport(){
+  var text;
+  if (currentExportTab === 'tree') {
+    var nodesOut = state.nodes.map(function(n){ return { id: n.id, type: n.type, prerequisites: n.prerequisites, x: n.x, y: n.y }; });
+    text = toTabbedJson(nodesOut, 'nodes');
+    document.getElementById('exportHint').textContent = 'Paste over data/skilltrees/ship_skill_tree.json';
+  } else {
+    var typesOut = state.types.map(serializeType);
+    text = toTabbedJson(typesOut, 'skillTypes');
+    document.getElementById('exportHint').textContent = 'Paste over data/skilltrees/skill_types.json';
+  }
+  document.getElementById('exportText').value = text;
+}
+document.querySelectorAll('.exportTab').forEach(function(tab){
+  tab.addEventListener('click', function(){
+    document.querySelectorAll('.exportTab').forEach(function(t){ t.classList.remove('active'); });
+    tab.classList.add('active');
+    currentExportTab = tab.dataset.tab;
+    refreshExport();
+  });
+});
+document.getElementById('refreshExportBtn').addEventListener('click', refreshExport);
+document.getElementById('copyBtn').addEventListener('click', function(){
+  var ta = document.getElementById('exportText');
+  ta.focus(); ta.select();
+  var ok = false;
+  try { if (navigator.clipboard) { navigator.clipboard.writeText(ta.value); ok = true; } } catch(e){}
+  if (!ok) { try { document.execCommand('copy'); ok = true; } catch(e){} }
+  showToast(ok ? 'Copied to clipboard' : 'Select-all done - press Ctrl+C');
+});
+
+// ---------- import ----------
+document.getElementById('importBtn').addEventListener('click', function(){
+  var html =
+    '<div class="modalOverlay"><div class="modal" style="width:min(560px,92vw)">' +
+    '<h3>Import JSON</h3>' +
+    '<div class="hint">Paste the contents of your actual skill_types.json and/or ship_skill_tree.json. Leave either blank to keep what is currently loaded.</div>' +
+    '<div class="field"><label>skill_types.json contents</label><textarea id="impTypes" style="height:100px;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:11px;padding:8px;"></textarea></div>' +
+    '<div class="field"><label>ship_skill_tree.json contents</label><textarea id="impNodes" style="height:100px;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:11px;padding:8px;"></textarea></div>' +
+    '<div class="modalBtns"><button class="smallBtn" id="mCancel3">Cancel</button><button class="smallBtn primary" id="mLoad3">Load</button></div>' +
+    '</div></div>';
+  var root = document.getElementById('modalRoot');
+  root.innerHTML = html;
+  document.getElementById('mCancel3').addEventListener('click', function(){ root.innerHTML=''; });
+  document.getElementById('mLoad3').addEventListener('click', function(){
+    var typesRaw = document.getElementById('impTypes').value.trim();
+    var nodesRaw = document.getElementById('impNodes').value.trim();
+    try {
+      if (typesRaw) { var pt = JSON.parse(typesRaw); state.types = pt.skillTypes || pt; }
+      if (nodesRaw) { var pn = JSON.parse(nodesRaw); state.nodes = pn.nodes || pn; }
+      root.innerHTML = '';
+      state.selectedNodeId = null;
+      saveLocal();
+      render();
+      refreshInspector();
+      fitToScreen();
+      showToast('Imported');
+    } catch(e){
+      alert('Could not parse JSON: ' + e.message);
+    }
+  });
+});
+
+document.getElementById('resetBtn').addEventListener('click', function(){
+  if (!confirm('Discard all changes in this browser and reload the shipped tree data?')) return;
+  try { localStorage.removeItem('skillTreeEditor.v1'); } catch(e){}
+  loadShipped();
+  state.selectedNodeId = null;
+  render();
+  refreshInspector();
+  fitToScreen();
+});
+
+// ---------- view controls ----------
+document.getElementById('zoomIn').addEventListener('click', function(){ state.view.zoom = Math.min(3, state.view.zoom * 1.2); render(); });
+document.getElementById('zoomOut').addEventListener('click', function(){ state.view.zoom = Math.max(0.08, state.view.zoom / 1.2); render(); });
+document.getElementById('centerBtn').addEventListener('click', function(){ state.view.panX = 0; state.view.panY = 0; render(); });
+function fitToScreen(){
+  if (state.nodes.length === 0) return;
+  var maxR = 100;
+  state.nodes.forEach(function(n){ maxR = Math.max(maxR, Math.abs(n.x), Math.abs(n.y)); });
+  var rect = canvasWrap.getBoundingClientRect();
+  var avail = Math.min(rect.width, rect.height) / 2 - 60;
+  state.view.zoom = Math.max(0.08, Math.min(1.5, avail / maxR));
+  state.view.panX = 0; state.view.panY = 0;
+  render();
+}
+document.getElementById('fitBtn').addEventListener('click', fitToScreen);
+
+document.getElementById('labelsToggle').addEventListener('change', function(ev){ state.showLabels = ev.target.checked; render(); });
+document.getElementById('searchBox').addEventListener('input', function(ev){ state.search = ev.target.value; render(); });
+
+document.getElementById('themeToggle').addEventListener('click', function(){
+  var root = document.documentElement;
+  var cur = root.getAttribute('data-theme');
+  if (cur === 'dark') { root.setAttribute('data-theme', 'light'); }
+  else if (cur === 'light') { root.removeAttribute('data-theme'); }
+  else { root.setAttribute('data-theme', 'dark'); }
+  render();
+});
+
+window.addEventListener('resize', render);
+
+fitToScreen();
+render();
+refreshExport();
+})();
+</script>

@@ -44,21 +44,35 @@ public class ShipSkillData {
     }
 
     public boolean canAllocate(SkillNode node) {
+        if (node.getPrerequisiteNodeIds().isEmpty()) {
+            return true;
+        }
         for (String prerequisiteId : node.getPrerequisiteNodeIds()) {
-            if (!isAllocated(prerequisiteId)) {
+            if (isAllocated(prerequisiteId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean canDeallocate(SkillNode node, Collection<SkillNode> allNodes) {
+        for (SkillNode candidate : allNodes) {
+            if (!isAllocated(candidate.getId())) continue;
+            if (!candidate.getPrerequisiteNodeIds().contains(node.getId())) continue;
+            if (!hasAnotherAllocatedPrerequisite(candidate, node.getId())) {
                 return false;
             }
         }
         return true;
     }
 
-    public boolean canDeallocate(SkillNode node, Collection<SkillNode> allNodes) {
-        for (SkillNode candidate : allNodes) {
-            if (candidate.getPrerequisiteNodeIds().contains(node.getId()) && isAllocated(candidate.getId())) {
-                return false;
+    private boolean hasAnotherAllocatedPrerequisite(SkillNode node, String excludingId) {
+        for (String prerequisiteId : node.getPrerequisiteNodeIds()) {
+            if (!prerequisiteId.equals(excludingId) && isAllocated(prerequisiteId)) {
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     public void toggle(SkillNode node, Collection<SkillNode> allNodes) {

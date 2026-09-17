@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ShipSkillDataTest {
 
     private static SkillNode node(String id, List<String> prerequisiteIds) {
-        SkillType type = new SkillType(id, id, "graphics/hullmods/heavy_armor.png", 2, 300f, null, 0f, SkillTier.SMALL, null);
+        SkillType type = new SkillType(id, id, "graphics/hullmods/heavy_armor.png", 2, 300f, List.of(), SkillTier.SMALL, null, null, null);
         return new SkillNode(id, type, prerequisiteIds, 0f, 0f);
     }
 
@@ -92,6 +92,33 @@ class ShipSkillDataTest {
     }
 
     @Test
+    void canAllocateIsFalseWithMultiplePrerequisitesWhenNoneAreAllocated() {
+        ShipSkillData data = new ShipSkillData();
+
+        assertFalse(data.canAllocate(node("child", List.of("b", "c"))));
+    }
+
+    @Test
+    void canAllocateIsTrueWithMultiplePrerequisitesWhenOnlyOneIsAllocated() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode b = node("b", List.of());
+        data.allocate(b);
+
+        assertTrue(data.canAllocate(node("a", List.of("b", "c"))));
+    }
+
+    @Test
+    void canAllocateIsTrueWithMultiplePrerequisitesWhenAllAreAllocated() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode b = node("b", List.of());
+        SkillNode c = node("c", List.of());
+        data.allocate(b);
+        data.allocate(c);
+
+        assertTrue(data.canAllocate(node("a", List.of("b", "c"))));
+    }
+
+    @Test
     void canDeallocateIsTrueWhenNoAllocatedNodeDependsOnIt() {
         ShipSkillData data = new ShipSkillData();
         SkillNode parent = node("parent", List.of());
@@ -109,6 +136,31 @@ class ShipSkillDataTest {
         data.allocate(child);
 
         assertFalse(data.canDeallocate(parent, List.of(parent, child)));
+    }
+
+    @Test
+    void canDeallocateIsTrueWhenAnAllocatedChildHasAnotherAllocatedPrerequisite() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode b = node("b", List.of());
+        SkillNode c = node("c", List.of());
+        SkillNode a = node("a", List.of("b", "c"));
+        data.allocate(b);
+        data.allocate(c);
+        data.allocate(a);
+
+        assertTrue(data.canDeallocate(b, List.of(a, b, c)));
+    }
+
+    @Test
+    void canDeallocateIsFalseWhenItIsTheOnlyAllocatedPrerequisiteOfAnAllocatedChild() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode b = node("b", List.of());
+        SkillNode c = node("c", List.of());
+        SkillNode a = node("a", List.of("b", "c"));
+        data.allocate(b);
+        data.allocate(a);
+
+        assertFalse(data.canDeallocate(b, List.of(a, b, c)));
     }
 
     @Test
