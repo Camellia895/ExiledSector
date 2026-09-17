@@ -76,6 +76,20 @@
 			"prerequisites": [],
 			"x": 450,
 			"y": 0
+		},
+		{
+			"id": "packed_capacitors_1",
+			"type": "packed_capacitors",
+			"prerequisites": ["flux_capacity_1"],
+			"x": -190,
+			"y": -650
+		},
+		{
+			"id": "safety_overrides_1",
+			"type": "safety_overrides",
+			"prerequisites": ["armor_1"],
+			"x": 0,
+			"y": 750
 		}
 	]
 }

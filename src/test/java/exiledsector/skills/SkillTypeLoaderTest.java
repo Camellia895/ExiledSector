@@ -50,6 +50,36 @@ class SkillTypeLoaderTest {
     }
 
     @Test
+    void missingTierFieldDefaultsToSmall() throws Exception {
+        JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
+                + "\"id\": \"capacitors\","
+                + "\"name\": \"Capacitors\","
+                + "\"icon\": \"graphics/hullmods/flux_coil_adjunct.png\""
+                + "} ] }");
+
+        SkillType capacitors = SkillTypeLoader.parseSkillTypes(root).get("capacitors");
+
+        assertEquals(SkillTier.SMALL, capacitors.getTier());
+        assertNull(capacitors.getVanillaHullModId());
+    }
+
+    @Test
+    void parsesTierAndVanillaHullModFields() throws Exception {
+        JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
+                + "\"id\": \"safety_overrides\","
+                + "\"name\": \"Safety Overrides\","
+                + "\"icon\": \"graphics/icons/skills/helmsmanship.png\","
+                + "\"tier\": \"KEYSTONE\","
+                + "\"vanillaHullMod\": \"safetyoverrides\""
+                + "} ] }");
+
+        SkillType safetyOverrides = SkillTypeLoader.parseSkillTypes(root).get("safety_overrides");
+
+        assertEquals(SkillTier.KEYSTONE, safetyOverrides.getTier());
+        assertEquals("safetyoverrides", safetyOverrides.getVanillaHullModId());
+    }
+
+    @Test
     void parsesMultipleTypesKeyedById() throws Exception {
         JSONObject root = new JSONObject("{ \"skillTypes\": ["
                 + "{\"id\": \"a\", \"name\": \"A\", \"icon\": \"a.png\"},"

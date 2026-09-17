@@ -8,16 +8,14 @@ import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.ui.LazyFont;
 import org.lwjgl.opengl.GL11;
 
-import javax.imageio.ImageIO;
 import java.awt.Color;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -47,20 +45,28 @@ final class SkillTreeNodeRenderer {
     private static final float TOOLTIP_TITLE_BODY_GAP = 6f;
     private static final float TOOLTIP_CURSOR_OFFSET = 18f;
     private static final Color TOOLTIP_TITLE_COLOR = Color.WHITE;
-    private static final Color DEFAULT_TOOLTIP_BORDER_COLOR = Color.LIGHT_GRAY;
-    private static final int COLOR_QUANTIZE_STEP = 24;
-    private static final int MIN_ALPHA_TO_SAMPLE = 128;
 
     private static final Color ALLOCATED_TINT = Color.WHITE;
     private static final Color UNALLOCATED_TINT = new Color(90, 90, 90);
 
-    private static final float[] RING_RADIUS_FRACTIONS = {1f, 1.25f};
-    private static final float NODE_CONNECTOR_RADIUS_FRACTION = RING_RADIUS_FRACTIONS[RING_RADIUS_FRACTIONS.length - 1];
+    private static final float[] RING_OFFSETS_SMALL = {0f, 0.25f};
+    private static final float[] RING_OFFSETS_NOTABLE = {0f, 0.13f, 0.26f, 0.39f};
     private static final int RING_SEGMENTS = 32;
     private static final float RING_LINE_THICKNESS = 1.5f;
     private static final Color RING_DULL_COLOR = new Color(150, 150, 150);
     private static final float RING_DULL_ALPHA = 0.5f;
     private static final float RING_ALLOCATED_ALPHA = 0.9f;
+
+    private static final float KEYSTONE_RING_GAP = 0.3f;
+    private static final float KEYSTONE_RING_THICKNESS = 4f;
+    private static final int KEYSTONE_CIRCUIT_BRANCH_COUNT = 8;
+    private static final float KEYSTONE_CIRCUIT_JOG_FRACTION = 1.55f;
+    private static final float KEYSTONE_CIRCUIT_JOG_LENGTH_FRACTION = 0.3f;
+    private static final float KEYSTONE_CIRCUIT_LINE_THICKNESS = 1.5f;
+    private static final float KEYSTONE_CIRCUIT_VIA_RADIUS = 3f;
+
+    private static final float ICON_SIZE_MULTIPLIER_NOTABLE = 1.2f;
+    private static final float ICON_SIZE_MULTIPLIER_KEYSTONE = 1.4f;
 
     private static final float PULSE_DURATION = 0.5f;
     private static final float PULSE_START_RADIUS_FRACTION = 1f;
@@ -81,7 +87,6 @@ final class SkillTreeNodeRenderer {
     private final Map<String, SkillTreePanelStyle.TooltipText> tooltipTitles = new HashMap<>();
     private final Map<String, SkillTreePanelStyle.TooltipText> tooltipBodies = new HashMap<>();
     private final Map<String, Float> pulseElapsed = new HashMap<>();
-    private Color symbolDominantColor;
 
     SkillTreeNodeRenderer(String symbolPath, FleetMemberAPI member, SkillTreePanelStyle style) {
         this.symbolPath = symbolPath;
@@ -114,10 +119,12 @@ final class SkillTreeNodeRenderer {
             float nodeX = centerX + node.getOffsetX() * zoom;
             float nodeY = centerY - node.getOffsetY() * zoom;
             boolean allocated = data.isAllocated(node.getId());
-            float nodeSize = NODE_SIZE * zoom;
+            SkillTier tier = node.getType().getTier();
+            float footprintSize = NODE_SIZE * zoom * tier.getSizeMultiplier();
+            float iconSize = footprintSize * iconSizeMultiplier(tier);
 
-            drawIcon(node.getIconPath(), nodeX, nodeY, nodeSize, alphaMult, allocated ? ALLOCATED_TINT : UNALLOCATED_TINT);
-            drawRings(nodeX, nodeY, nodeSize, alphaMult, allocated, pulseElapsed.get(node.getId()));
+            drawIcon(node.getIconPath(), nodeX, nodeY, iconSize, alphaMult, allocated ? ALLOCATED_TINT : UNALLOCATED_TINT);
+            drawRings(nodeX, nodeY, footprintSize, alphaMult, allocated, pulseElapsed.get(node.getId()), tier);
         }
 
         drawNodeConnectors(centerX, centerY, zoom, data, alphaMult);
@@ -131,10 +138,10 @@ final class SkillTreeNodeRenderer {
     }
 
     SkillNode findNodeAt(float centerX, float centerY, float zoom, float x, float y) {
-        float halfSize = NODE_SIZE * zoom / 2f;
         for (SkillNode node : SkillTree.getAllNodes().values()) {
             float nodeX = centerX + node.getOffsetX() * zoom;
             float nodeY = centerY - node.getOffsetY() * zoom;
+            float halfSize = NODE_SIZE * zoom * node.getType().getTier().getSizeMultiplier() / 2f;
             if (Math.abs(x - nodeX) <= halfSize && Math.abs(y - nodeY) <= halfSize) {
                 return node;
             }
@@ -181,27 +188,78 @@ final class SkillTreeNodeRenderer {
         drawVignette(cx, cy, size, alphaMult);
     }
 
-    private void drawRings(float cx, float cy, float iconSize, float alphaMult, boolean allocated, Float pulseSeconds) {
-        float half = iconSize / 2f;
+    private void drawRings(float cx, float cy, float footprintSize, float alphaMult, boolean allocated, Float pulseSeconds, SkillTier tier) {
+        float half = footprintSize / 2f;
+        float iconEdgeFraction = iconSizeMultiplier(tier);
         Color ringColor = allocated ? GLOW_COLOR : RING_DULL_COLOR;
         float ringAlpha = allocated ? RING_ALLOCATED_ALPHA : RING_DULL_ALPHA;
 
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glLineWidth(RING_LINE_THICKNESS);
 
-        for (float fraction : RING_RADIUS_FRACTIONS) {
-            drawRingOutline(cx, cy, half * fraction, ringColor, ringAlpha * alphaMult);
+        if (tier == SkillTier.KEYSTONE) {
+            float ringFraction = iconEdgeFraction + KEYSTONE_RING_GAP;
+            GL11.glLineWidth(KEYSTONE_RING_THICKNESS);
+            drawRingOutline(cx, cy, half * ringFraction, ringColor, ringAlpha * alphaMult);
+            drawKeystoneCircuit(cx, cy, half, ringFraction, ringColor, ringAlpha * alphaMult);
+        } else {
+            GL11.glLineWidth(RING_LINE_THICKNESS);
+            float[] offsets = tier == SkillTier.NOTABLE ? RING_OFFSETS_NOTABLE : RING_OFFSETS_SMALL;
+            for (float offset : offsets) {
+                drawRingOutline(cx, cy, half * (iconEdgeFraction + offset), ringColor, ringAlpha * alphaMult);
+            }
         }
 
         if (pulseSeconds != null) {
+            GL11.glLineWidth(RING_LINE_THICKNESS);
             float progress = pulseSeconds / PULSE_DURATION;
             float radiusFraction = PULSE_START_RADIUS_FRACTION + (PULSE_END_RADIUS_FRACTION - PULSE_START_RADIUS_FRACTION) * progress;
             drawRingOutline(cx, cy, half * radiusFraction, GLOW_COLOR, (1f - progress) * alphaMult);
         }
 
         GL11.glDisable(GL11.GL_BLEND);
+    }
+
+    private void drawKeystoneCircuit(float cx, float cy, float half, float ringFraction, Color color, float alpha) {
+        GL11.glLineWidth(KEYSTONE_CIRCUIT_LINE_THICKNESS);
+        float jogLength = half * KEYSTONE_CIRCUIT_JOG_LENGTH_FRACTION;
+
+        for (int i = 0; i < KEYSTONE_CIRCUIT_BRANCH_COUNT; i++) {
+            float angle = (float) (2 * Math.PI * i / KEYSTONE_CIRCUIT_BRANCH_COUNT);
+            float dirX = (float) Math.cos(angle);
+            float dirY = (float) Math.sin(angle);
+            float perpX = -dirY * (i % 2 == 0 ? 1 : -1);
+            float perpY = dirX * (i % 2 == 0 ? 1 : -1);
+
+            float startX = cx + dirX * half * ringFraction;
+            float startY = cy + dirY * half * ringFraction;
+            float jogX = cx + dirX * half * KEYSTONE_CIRCUIT_JOG_FRACTION;
+            float jogY = cy + dirY * half * KEYSTONE_CIRCUIT_JOG_FRACTION;
+            float endX = jogX + perpX * jogLength;
+            float endY = jogY + perpY * jogLength;
+
+            drawLine(startX, startY, jogX, jogY, color, alpha, KEYSTONE_CIRCUIT_LINE_THICKNESS);
+            drawLine(jogX, jogY, endX, endY, color, alpha, KEYSTONE_CIRCUIT_LINE_THICKNESS);
+            drawRingOutline(jogX, jogY, KEYSTONE_CIRCUIT_VIA_RADIUS, color, alpha);
+            drawRingOutline(endX, endY, KEYSTONE_CIRCUIT_VIA_RADIUS, color, alpha);
+        }
+    }
+
+    private static float iconSizeMultiplier(SkillTier tier) {
+        switch (tier) {
+            case KEYSTONE: return ICON_SIZE_MULTIPLIER_KEYSTONE / tier.getSizeMultiplier();
+            case NOTABLE: return ICON_SIZE_MULTIPLIER_NOTABLE / tier.getSizeMultiplier();
+            default: return 1f;
+        }
+    }
+
+    private static float outerNodeRadius(float footprintSize, SkillTier tier) {
+        float half = footprintSize / 2f;
+        float iconEdgeFraction = iconSizeMultiplier(tier);
+        if (tier == SkillTier.KEYSTONE) return half * (iconEdgeFraction + KEYSTONE_RING_GAP);
+        float[] offsets = tier == SkillTier.NOTABLE ? RING_OFFSETS_NOTABLE : RING_OFFSETS_SMALL;
+        return half * (iconEdgeFraction + offsets[offsets.length - 1]);
     }
 
     private void drawRingOutline(float cx, float cy, float radius, Color color, float alpha) {
@@ -229,7 +287,6 @@ final class SkillTreeNodeRenderer {
 
     private void drawNodeConnectors(float centerX, float centerY, float zoom, ShipSkillData data, float alphaMult) {
         float centerRadius = (SYMBOL_SIZE * zoom / 2f) * CENTER_RING_RADIUS_FRACTION;
-        float nodeRadius = (NODE_SIZE * zoom / 2f) * NODE_CONNECTOR_RADIUS_FRACTION;
 
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
@@ -238,6 +295,7 @@ final class SkillTreeNodeRenderer {
         for (SkillNode node : SkillTree.getAllNodes().values()) {
             float nodeX = centerX + node.getOffsetX() * zoom;
             float nodeY = centerY - node.getOffsetY() * zoom;
+            float nodeRadius = outerNodeRadius(NODE_SIZE * zoom * node.getType().getTier().getSizeMultiplier(), node.getType().getTier());
 
             if (node.getPrerequisiteNodeIds().isEmpty()) {
                 drawNodeConnectorLine(centerX, centerY, centerRadius, nodeX, nodeY, nodeRadius, data.isAllocated(node.getId()), alphaMult);
@@ -248,8 +306,9 @@ final class SkillTreeNodeRenderer {
 
                     float parentX = centerX + parent.getOffsetX() * zoom;
                     float parentY = centerY - parent.getOffsetY() * zoom;
+                    float parentRadius = outerNodeRadius(NODE_SIZE * zoom * parent.getType().getTier().getSizeMultiplier(), parent.getType().getTier());
                     boolean bothAllocated = data.isAllocated(node.getId()) && data.isAllocated(parent.getId());
-                    drawNodeConnectorLine(parentX, parentY, nodeRadius, nodeX, nodeY, nodeRadius, bothAllocated, alphaMult);
+                    drawNodeConnectorLine(parentX, parentY, parentRadius, nodeX, nodeY, nodeRadius, bothAllocated, alphaMult);
                 }
             }
         }
@@ -341,14 +400,14 @@ final class SkillTreeNodeRenderer {
         SkillTreePanelStyle.TooltipText title = tooltipTitles.computeIfAbsent(node.getId(),
                 id -> buildTooltipText(font, node.getDisplayName(), TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR));
         SkillTreePanelStyle.TooltipText body = tooltipBodies.computeIfAbsent(node.getId(),
-                id -> buildTooltipText(font, node.getDescription(), TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR));
+                id -> buildTooltipText(font, node.getDescription(member.getHullSpec().getHullSize()), TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR));
 
         float boxWidth = Math.max(title.width, body.width) + TOOLTIP_PADDING * 2f + TOOLTIP_WIDTH_SAFETY_MARGIN;
         float boxHeight = title.height + TOOLTIP_TITLE_BODY_GAP + body.height + TOOLTIP_PADDING * 2f;
         float boxX = mouseX + TOOLTIP_CURSOR_OFFSET;
         float boxY = mouseY - boxHeight - TOOLTIP_CURSOR_OFFSET;
 
-        style.drawTooltipBackground(boxX, boxY, boxWidth, boxHeight, alphaMult, getSymbolDominantColor());
+        style.drawTooltipBackground(boxX, boxY, boxWidth, boxHeight, alphaMult, style.getAccentColor());
 
         float titleY = boxY + boxHeight - TOOLTIP_PADDING;
         float bodyY = titleY - title.height - TOOLTIP_TITLE_BODY_GAP;
@@ -370,61 +429,6 @@ final class SkillTreeNodeRenderer {
         drawable.setAlignment(LazyFont.TextAlignment.LEFT);
         drawable.setAnchor(LazyFont.TextAnchor.TOP_LEFT);
         return new SkillTreePanelStyle.TooltipText(drawable, width, height);
-    }
-
-    private Color getSymbolDominantColor() {
-        if (symbolDominantColor == null) {
-            symbolDominantColor = computeDominantColor(symbolPath);
-        }
-        return symbolDominantColor;
-    }
-
-    private Color computeDominantColor(String path) {
-        try (InputStream in = Global.getSettings().openStream(path)) {
-            BufferedImage image = ImageIO.read(in);
-            if (image == null) return DEFAULT_TOOLTIP_BORDER_COLOR;
-
-            Map<Integer, Integer> bucketCounts = new HashMap<>();
-            Map<Integer, int[]> bucketSums = new HashMap<>();
-            for (int y = 0; y < image.getHeight(); y++) {
-                for (int x = 0; x < image.getWidth(); x++) {
-                    int argb = image.getRGB(x, y);
-                    int alpha = (argb >>> 24) & 0xFF;
-                    if (alpha < MIN_ALPHA_TO_SAMPLE) continue;
-
-                    int r = (argb >> 16) & 0xFF;
-                    int g = (argb >> 8) & 0xFF;
-                    int b = argb & 0xFF;
-                    int bucket = (quantize(r) << 16) | (quantize(g) << 8) | quantize(b);
-
-                    bucketCounts.merge(bucket, 1, Integer::sum);
-                    int[] sum = bucketSums.computeIfAbsent(bucket, key -> new int[3]);
-                    sum[0] += r;
-                    sum[1] += g;
-                    sum[2] += b;
-                }
-            }
-
-            if (bucketCounts.isEmpty()) return DEFAULT_TOOLTIP_BORDER_COLOR;
-
-            Map.Entry<Integer, Integer> mostCommon = null;
-            for (Map.Entry<Integer, Integer> entry : bucketCounts.entrySet()) {
-                if (mostCommon == null || entry.getValue() > mostCommon.getValue()) {
-                    mostCommon = entry;
-                }
-            }
-
-            int[] sum = bucketSums.get(mostCommon.getKey());
-            int pixelCount = mostCommon.getValue();
-            return new Color(sum[0] / pixelCount, sum[1] / pixelCount, sum[2] / pixelCount);
-        } catch (IOException e) {
-            Logger.getLogger(SkillTreeNodeRenderer.class).error("Failed to read " + path + " for tooltip border colour", e);
-            return DEFAULT_TOOLTIP_BORDER_COLOR;
-        }
-    }
-
-    private static int quantize(int channel) {
-        return (channel / COLOR_QUANTIZE_STEP) * COLOR_QUANTIZE_STEP;
     }
 
     private static float boundaryRadius(float cos, float sin, float halfWidth, float halfHeight) {

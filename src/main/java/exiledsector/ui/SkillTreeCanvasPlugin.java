@@ -14,8 +14,10 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private static final float MAX_ZOOM = 2.5f;
     private static final float ZOOM_STEP = 1.1f;
 
+    private final SkillTreePanelStyle style;
     private final SkillTreeNodeRenderer nodeRenderer;
     private final SkillTreeStatPanel statPanel;
+    private final float shipCardHeight;
 
     private PositionAPI position;
     private boolean dragging = false;
@@ -27,10 +29,11 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private boolean mouseKnown = false;
     private SkillNode pendingClickNode;
 
-    public SkillTreeCanvasPlugin(String symbolPath, FleetMemberAPI member) {
-        SkillTreePanelStyle style = new SkillTreePanelStyle();
+    public SkillTreeCanvasPlugin(String symbolPath, FleetMemberAPI member, float shipCardHeight) {
+        this.style = new SkillTreePanelStyle(symbolPath);
         this.nodeRenderer = new SkillTreeNodeRenderer(symbolPath, member, style);
         this.statPanel = new SkillTreeStatPanel(member, style);
+        this.shipCardHeight = shipCardHeight;
     }
 
     @Override
@@ -95,10 +98,17 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
         nodeRenderer.render(centerX, centerY, zoom, alphaMult);
         statPanel.render(position, alphaMult);
+        drawShipCardFrame(alphaMult);
 
         if (!dragging && mouseKnown) {
             nodeRenderer.renderHoverTooltip(centerX, centerY, zoom, mouseX, mouseY, alphaMult);
         }
+    }
+
+    private void drawShipCardFrame(float alphaMult) {
+        float boxX = position.getX() + SkillTreeRefitButton.SHIP_CARD_MARGIN;
+        float boxY = position.getY() + position.getHeight() - SkillTreeRefitButton.SHIP_CARD_MARGIN - shipCardHeight;
+        style.drawTooltipBackground(boxX, boxY, SkillTreeRefitButton.SHIP_CARD_ICON_SIZE, shipCardHeight, alphaMult, style.getAccentColor());
     }
 
     private float centerX() {

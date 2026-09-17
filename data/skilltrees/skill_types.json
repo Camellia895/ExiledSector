@@ -98,6 +98,25 @@
 			"xpCost": 500,
 			"effect": "ALL_WEAPON_DAMAGE",
 			"magnitude": 1
+		},
+		{
+			"id": "packed_capacitors",
+			"name": "Packed Capacitors",
+			"icon": "graphics/icons/skills/power_grid_manipulation.png",
+			"opCost": 3,
+			"xpCost": 1200,
+			"effect": "FLUX_CAPACITY",
+			"magnitude": 10,
+			"tier": "NOTABLE"
+		},
+		{
+			"id": "safety_overrides",
+			"name": "Safety Overrides",
+			"icon": "graphics/icons/skills/helmsmanship.png",
+			"opCost": 5,
+			"xpCost": 3000,
+			"tier": "KEYSTONE",
+			"vanillaHullMod": "safetyoverrides"
 		}
 	]
 }

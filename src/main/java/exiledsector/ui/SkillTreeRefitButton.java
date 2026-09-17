@@ -15,8 +15,8 @@ import java.util.Collections;
 public class SkillTreeRefitButton extends BaseRefitButton {
 
     private static final float SCREEN_FRACTION = 1f;
-    private static final float SHIP_CARD_ICON_SIZE = 128f;
-    private static final float SHIP_CARD_MARGIN = 16f;
+    static final float SHIP_CARD_ICON_SIZE = 128f;
+    static final float SHIP_CARD_MARGIN = 16f;
 
     public static void addButton() {
         LunaRefitManager.addRefitButton(new SkillTreeRefitButton());
@@ -53,15 +53,17 @@ public class SkillTreeRefitButton extends BaseRefitButton {
         float panelWidth = getPanelWidth(member, variant);
         float panelHeight = getPanelHeight(member, variant);
 
+        TooltipMakerAPI shipCard = backgroundPanel.createUIElement(SHIP_CARD_ICON_SIZE, SHIP_CARD_ICON_SIZE, false);
+        shipCard.addShipList(1, 1, SHIP_CARD_ICON_SIZE, new Color(0, 0, 0, 0), Collections.singletonList(member), 0f);
+        float shipCardHeight = shipCard.getPrev().getPosition().getHeight();
+
         TooltipMakerAPI element = backgroundPanel.createUIElement(panelWidth, panelHeight, false);
         backgroundPanel.addUIElement(element);
         element.getPosition().inTL(0f, 0f);
 
-        CustomPanelAPI canvas = Global.getSettings().createCustom(panelWidth, panelHeight, new SkillTreeCanvasPlugin(symbolPath, member));
+        CustomPanelAPI canvas = Global.getSettings().createCustom(panelWidth, panelHeight, new SkillTreeCanvasPlugin(symbolPath, member, shipCardHeight));
         element.addCustom(canvas, 0f).getPosition().inTL(0f, 0f);
 
-        TooltipMakerAPI shipCard = backgroundPanel.createUIElement(SHIP_CARD_ICON_SIZE, SHIP_CARD_ICON_SIZE * 2f, false);
-        shipCard.addShipList(1, 1, SHIP_CARD_ICON_SIZE, new Color(0, 0, 0, 0), Collections.singletonList(member), 0f);
         backgroundPanel.addUIElement(shipCard);
         shipCard.getPosition().inTL(SHIP_CARD_MARGIN, SHIP_CARD_MARGIN);
     }

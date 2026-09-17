@@ -1,9 +1,12 @@
 package exiledsector.effects;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.BaseHullMod;
+import com.fs.starfarer.api.combat.HullModEffect;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillEffect;
@@ -28,6 +31,18 @@ public class SkillTreeHullMod extends BaseHullMod {
             if (node == null) continue;
 
             SkillType type = node.getType();
+
+            String vanillaHullModId = type.getVanillaHullModId();
+            if (vanillaHullModId != null) {
+                HullModSpecAPI spec = Global.getSettings().getHullModSpec(vanillaHullModId);
+                if (spec == null) continue;
+                HullModEffect vanillaEffect = spec.getEffect();
+                if (vanillaEffect != null) {
+                    vanillaEffect.applyEffectsBeforeShipCreation(hullSize, stats, vanillaHullModId);
+                }
+                continue;
+            }
+
             SkillEffect effect = type.getEffect();
             if (effect == null) continue;
 

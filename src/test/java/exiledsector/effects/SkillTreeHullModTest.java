@@ -1,14 +1,18 @@
 package exiledsector.effects;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.combat.HullModEffect;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillEffect;
 import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import org.junit.jupiter.api.AfterEach;
@@ -50,7 +54,7 @@ class SkillTreeHullModTest {
 
     @Test
     void appliesTheEffectOfEachAllocatedNodeWithOneRegisteredOnTheTree() {
-        SkillType hullType = new SkillType("hull", "Reinforced Hull", "graphics/hullmods/reinforced_bulkheads.png", 2, 500, SkillEffect.HULL, 10f);
+        SkillType hullType = new SkillType("hull", "Reinforced Hull", "graphics/hullmods/reinforced_bulkheads.png", 2, 500, SkillEffect.HULL, 10f, SkillTier.SMALL, null);
         SkillNode hullNode = new SkillNode("hull_1", hullType, List.of(), 0f, 0f);
         SkillTree.register(hullNode);
 
@@ -70,7 +74,7 @@ class SkillTreeHullModTest {
 
     @Test
     void skipsNodesWithNoEffectDefinedYet() {
-        SkillType cosmeticType = new SkillType("capacitors", "Capacitors", "graphics/hullmods/flux_coil_adjunct.png", 2, 500, null, 0f);
+        SkillType cosmeticType = new SkillType("capacitors", "Capacitors", "graphics/hullmods/flux_coil_adjunct.png", 2, 500, null, 0f, SkillTier.SMALL, null);
         SkillNode cosmeticNode = new SkillNode("capacitors_1", cosmeticType, List.of(), 0f, 0f);
         SkillTree.register(cosmeticNode);
 
@@ -84,6 +88,31 @@ class SkillTreeHullModTest {
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
 
         verify(stats, never()).getHullBonus();
+    }
+
+    @Test
+    void delegatesToTheRealVanillaHullModEffectWhenTypeSpecifiesOne() {
+        SkillType keystoneType = new SkillType("safety_overrides", "Safety Overrides", "graphics/icons/skills/helmsmanship.png", 4, 2000, null, 0f, SkillTier.KEYSTONE, "safetyoverrides");
+        SkillNode keystoneNode = new SkillNode("safety_overrides_1", keystoneType, List.of(), 0f, 0f);
+        SkillTree.register(keystoneNode);
+
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        ShipSkillDataManager.get("ship-a").allocate(keystoneNode);
+
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        when(stats.getFleetMember()).thenReturn(member);
+
+        SettingsAPI settings = mock(SettingsAPI.class);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+        HullModSpecAPI spec = mock(HullModSpecAPI.class);
+        when(settings.getHullModSpec("safetyoverrides")).thenReturn(spec);
+        HullModEffect vanillaEffect = mock(HullModEffect.class);
+        when(spec.getEffect()).thenReturn(vanillaEffect);
+
+        new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
+
+        verify(vanillaEffect).applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "safetyoverrides");
     }
 
     @Test

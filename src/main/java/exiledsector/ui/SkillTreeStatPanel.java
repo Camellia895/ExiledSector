@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 import static exiledsector.ui.SkillTreePanelStyle.FONT_LINE_HEIGHT_FACTOR;
-import static exiledsector.ui.SkillTreePanelStyle.GLOW_COLOR;
 import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_BODY_COLOR;
 import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE;
 import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE;
@@ -32,7 +31,6 @@ final class SkillTreeStatPanel {
     private static final Color STAT_PANEL_TEXT_COLOR = TOOLTIP_BODY_COLOR;
     private static final float STAT_PANEL_HEADER_FONT_SIZE = TOOLTIP_TITLE_FONT_SIZE;
     private static final float STAT_PANEL_HEADER_PADDING = 10f;
-    private static final Color STAT_PANEL_HEADER_COLOR = new Color(15, 40, 50);
     private static final Color STAT_PANEL_HEADER_TEXT_COLOR = Color.WHITE;
 
     private final FleetMemberAPI member;
@@ -54,7 +52,7 @@ final class SkillTreeStatPanel {
         if (font == null) return;
 
         for (StatGroupLayout layout : layoutStatGroups(position, font)) {
-            style.drawTooltipBackground(layout.x, layout.y, layout.width, layout.height, alphaMult, GLOW_COLOR);
+            style.drawTooltipBackground(layout.x, layout.y, layout.width, layout.height, alphaMult, style.getAccentColor());
             drawStatGroupHeaderBar(font, layout, alphaMult);
             if (!layout.collapsed) {
                 layout.bodyText.drawable.draw(layout.x + STAT_PANEL_PADDING, layout.headerY - STAT_PANEL_PADDING);
@@ -117,7 +115,7 @@ final class SkillTreeStatPanel {
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        Misc.setColor(STAT_PANEL_HEADER_COLOR, alphaMult);
+        Misc.setColor(style.getHeaderBackgroundColor(), alphaMult);
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glVertex2f(x, y);
         GL11.glVertex2f(x + width, y);

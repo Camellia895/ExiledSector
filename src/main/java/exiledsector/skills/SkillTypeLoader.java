@@ -39,6 +39,7 @@ public final class SkillTypeLoader {
     private static SkillType parseSkillType(JSONObject json) throws JSONException {
         String effectName = json.optString("effect", null);
         SkillEffect effect = effectName == null ? null : SkillEffect.valueOf(effectName);
+        SkillTier tier = SkillTier.valueOf(json.optString("tier", "SMALL"));
 
         return new SkillType(
                 json.getString("id"),
@@ -47,6 +48,8 @@ public final class SkillTypeLoader {
                 json.optInt("opCost", 0),
                 (float) json.optDouble("xpCost", 0),
                 effect,
-                (float) json.optDouble("magnitude", 0));
+                (float) json.optDouble("magnitude", 0),
+                tier,
+                json.optString("vanillaHullMod", null));
     }
 }

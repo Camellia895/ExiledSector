@@ -13,8 +13,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class SkillTreeLoaderTest {
 
     private static final Map<String, SkillType> SKILL_TYPES = Map.of(
-            "capacitors", new SkillType("capacitors", "Capacitors", "graphics/hullmods/flux_coil_adjunct.png", 2, 500, null, 0f),
-            "bare", new SkillType("bare", "Bare", "graphics/icons/skills/combat.png", 0, 0, null, 0f)
+            "capacitors", new SkillType("capacitors", "Capacitors", "graphics/hullmods/flux_coil_adjunct.png", 2, 500, null, 0f, SkillTier.SMALL, null),
+            "bare", new SkillType("bare", "Bare", "graphics/icons/skills/combat.png", 0, 0, null, 0f, SkillTier.SMALL, null)
     );
 
     @Test

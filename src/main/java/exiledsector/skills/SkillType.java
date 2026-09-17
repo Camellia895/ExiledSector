@@ -9,9 +9,11 @@ public class SkillType {
     private final float xpCost;
     private final SkillEffect effect;
     private final float magnitude;
+    private final SkillTier tier;
+    private final String vanillaHullModId;
 
     public SkillType(String id, String displayName, String iconPath, int opCost, float xpCost,
-                      SkillEffect effect, float magnitude) {
+                      SkillEffect effect, float magnitude, SkillTier tier, String vanillaHullModId) {
         this.id = id;
         this.displayName = displayName;
         this.iconPath = iconPath;
@@ -19,6 +21,8 @@ public class SkillType {
         this.xpCost = xpCost;
         this.effect = effect;
         this.magnitude = magnitude;
+        this.tier = tier;
+        this.vanillaHullModId = vanillaHullModId;
     }
 
     public String getId() {
@@ -47,5 +51,13 @@ public class SkillType {
 
     public float getMagnitude() {
         return magnitude;
+    }
+
+    public SkillTier getTier() {
+        return tier;
+    }
+
+    public String getVanillaHullModId() {
+        return vanillaHullModId;
     }
 }

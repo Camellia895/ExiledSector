@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ShipSkillDataTest {
 
     private static SkillNode node(String id, List<String> prerequisiteIds) {
-        SkillType type = new SkillType(id, id, "graphics/hullmods/heavy_armor.png", 2, 300f, null, 0f);
+        SkillType type = new SkillType(id, id, "graphics/hullmods/heavy_armor.png", 2, 300f, null, 0f, SkillTier.SMALL, null);
         return new SkillNode(id, type, prerequisiteIds, 0f, 0f);
     }
 
