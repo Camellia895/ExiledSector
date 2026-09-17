@@ -9,9 +9,14 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import lunalib.lunaRefit.BaseRefitButton;
 import lunalib.lunaRefit.LunaRefitManager;
 
+import java.awt.Color;
+import java.util.Collections;
+
 public class SkillTreeRefitButton extends BaseRefitButton {
 
     private static final float SCREEN_FRACTION = 1f;
+    private static final float SHIP_CARD_ICON_SIZE = 128f;
+    private static final float SHIP_CARD_MARGIN = 16f;
 
     public static void addButton() {
         LunaRefitManager.addRefitButton(new SkillTreeRefitButton());
@@ -54,5 +59,10 @@ public class SkillTreeRefitButton extends BaseRefitButton {
 
         CustomPanelAPI canvas = Global.getSettings().createCustom(panelWidth, panelHeight, new SkillTreeCanvasPlugin(symbolPath, member));
         element.addCustom(canvas, 0f).getPosition().inTL(0f, 0f);
+
+        TooltipMakerAPI shipCard = backgroundPanel.createUIElement(SHIP_CARD_ICON_SIZE, SHIP_CARD_ICON_SIZE * 2f, false);
+        shipCard.addShipList(1, 1, SHIP_CARD_ICON_SIZE, new Color(0, 0, 0, 0), Collections.singletonList(member), 0f);
+        backgroundPanel.addUIElement(shipCard);
+        shipCard.getPosition().inTL(SHIP_CARD_MARGIN, SHIP_CARD_MARGIN);
     }
 }
