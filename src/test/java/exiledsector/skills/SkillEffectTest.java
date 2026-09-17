@@ -34,6 +34,17 @@ class SkillEffectTest {
     }
 
     @Test
+    void fluxCapacityModifiesTheFluxCapacityStat() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        MutableStat fluxCapacity = mock(MutableStat.class);
+        when(stats.getFluxCapacity()).thenReturn(fluxCapacity);
+
+        SkillEffect.FLUX_CAPACITY.apply(stats, "mod_id", 1f);
+
+        verify(fluxCapacity).modifyPercent("mod_id", 1f);
+    }
+
+    @Test
     void fluxDissipationModifiesTheFluxDissipationStat() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         MutableStat fluxDissipation = mock(MutableStat.class);
@@ -42,6 +53,20 @@ class SkillEffectTest {
         SkillEffect.FLUX_DISSIPATION.apply(stats, "mod_id", 10f);
 
         verify(fluxDissipation).modifyPercent("mod_id", 10f);
+    }
+
+    @Test
+    void fluxRegulationModifiesBothFluxCapacityAndDissipationStats() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        MutableStat fluxCapacity = mock(MutableStat.class);
+        MutableStat fluxDissipation = mock(MutableStat.class);
+        when(stats.getFluxCapacity()).thenReturn(fluxCapacity);
+        when(stats.getFluxDissipation()).thenReturn(fluxDissipation);
+
+        SkillEffect.FLUX_REGULATION.apply(stats, "mod_id", 0.5f);
+
+        verify(fluxCapacity).modifyPercent("mod_id", 0.5f);
+        verify(fluxDissipation).modifyPercent("mod_id", 0.5f);
     }
 
     @Test

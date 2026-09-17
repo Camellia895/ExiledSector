@@ -1,29 +1,13 @@
 {
 	"skillTypes": [
 		{
-			"id": "capacitors",
-			"name": "Capacitors",
+			"id": "flux_capacity",
+			"name": "Flux Capacity",
 			"icon": "graphics/hullmods/flux_coil_adjunct.png",
 			"opCost": 2,
-			"xpCost": 500
-		},
-		{
-			"id": "hull",
-			"name": "Hull",
-			"icon": "graphics/hullmods/reinforced_bulkheads.png",
-			"opCost": 2,
 			"xpCost": 500,
-			"effect": "HULL",
-			"magnitude": 10
-		},
-		{
-			"id": "armor",
-			"name": "Armor",
-			"icon": "graphics/hullmods/heavy_armor.png",
-			"opCost": 2,
-			"xpCost": 500,
-			"effect": "ARMOR",
-			"magnitude": 10
+			"effect": "FLUX_CAPACITY",
+			"magnitude": 1
 		},
 		{
 			"id": "flux_dissipation",
@@ -32,7 +16,34 @@
 			"opCost": 2,
 			"xpCost": 500,
 			"effect": "FLUX_DISSIPATION",
-			"magnitude": 10
+			"magnitude": 1
+		},
+		{
+			"id": "flux_regulation",
+			"name": "Flux Regulation",
+			"icon": "graphics/icons/skills/flux_dynamics.png",
+			"opCost": 2,
+			"xpCost": 500,
+			"effect": "FLUX_REGULATION",
+			"magnitude": 0.5
+		},
+		{
+			"id": "hull",
+			"name": "Hull",
+			"icon": "graphics/hullmods/reinforced_bulkheads.png",
+			"opCost": 2,
+			"xpCost": 500,
+			"effect": "HULL",
+			"magnitude": 1
+		},
+		{
+			"id": "armor",
+			"name": "Armor",
+			"icon": "graphics/hullmods/heavy_armor.png",
+			"opCost": 2,
+			"xpCost": 500,
+			"effect": "ARMOR",
+			"magnitude": 1
 		},
 		{
 			"id": "ballistic_damage",
@@ -41,7 +52,7 @@
 			"opCost": 2,
 			"xpCost": 500,
 			"effect": "BALLISTIC_DAMAGE",
-			"magnitude": 5
+			"magnitude": 1
 		},
 		{
 			"id": "missile_damage",
@@ -50,7 +61,7 @@
 			"opCost": 2,
 			"xpCost": 500,
 			"effect": "MISSILE_DAMAGE",
-			"magnitude": 5
+			"magnitude": 1
 		},
 		{
 			"id": "non_beam_energy_damage",
@@ -59,7 +70,7 @@
 			"opCost": 2,
 			"xpCost": 500,
 			"effect": "NON_BEAM_ENERGY_DAMAGE",
-			"magnitude": 5
+			"magnitude": 1
 		},
 		{
 			"id": "beam_damage",
@@ -68,7 +79,7 @@
 			"opCost": 2,
 			"xpCost": 500,
 			"effect": "BEAM_DAMAGE",
-			"magnitude": 5
+			"magnitude": 1
 		},
 		{
 			"id": "energy_damage",
@@ -77,7 +88,7 @@
 			"opCost": 2,
 			"xpCost": 500,
 			"effect": "ENERGY_DAMAGE",
-			"magnitude": 5
+			"magnitude": 1
 		},
 		{
 			"id": "weapon_damage",
@@ -86,7 +97,7 @@
 			"opCost": 2,
 			"xpCost": 500,
 			"effect": "ALL_WEAPON_DAMAGE",
-			"magnitude": 5
+			"magnitude": 1
 		}
 	]
 }

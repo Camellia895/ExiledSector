@@ -23,9 +23,24 @@ public enum SkillEffect {
             stats.getArmorBonus().modifyPercent(modId, magnitude);
         }
     },
+    FLUX_CAPACITY {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getFluxCapacity().modifyPercent(modId, magnitude);
+        }
+    },
     FLUX_DISSIPATION {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getFluxDissipation().modifyPercent(modId, magnitude);
+        }
+    },
+    // Hybrid of the two above, for a node that sits before the tree
+    // branches into dedicated capacity/dissipation nodes.
+    FLUX_REGULATION {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getFluxCapacity().modifyPercent(modId, magnitude);
             stats.getFluxDissipation().modifyPercent(modId, magnitude);
         }
     },

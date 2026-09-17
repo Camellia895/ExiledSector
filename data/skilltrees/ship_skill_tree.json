@@ -1,95 +1,81 @@
 {
 	"nodes": [
 		{
-			"id": "capacitors_1",
-			"type": "capacitors",
+			"id": "flux_regulation_1",
+			"type": "flux_regulation",
 			"prerequisites": [],
-			"x": -180,
-			"y": -180
+			"x": 0,
+			"y": -320
 		},
 		{
-			"id": "capacitors_2",
-			"type": "capacitors",
-			"prerequisites": [],
-			"x": 180,
-			"y": -180
+			"id": "flux_capacity_1",
+			"type": "flux_capacity",
+			"prerequisites": ["flux_regulation_1"],
+			"x": -140,
+			"y": -480
 		},
 		{
-			"id": "capacitors_3",
-			"type": "capacitors",
-			"prerequisites": [],
-			"x": -180,
-			"y": 180
+			"id": "flux_dissipation_1",
+			"type": "flux_dissipation",
+			"prerequisites": ["flux_regulation_1"],
+			"x": 140,
+			"y": -480
 		},
 		{
-			"id": "capacitors_4",
-			"type": "capacitors",
+			"id": "missile_damage_1",
+			"type": "missile_damage",
 			"prerequisites": [],
-			"x": 180,
-			"y": 180
+			"x": 277,
+			"y": -160
+		},
+		{
+			"id": "ballistic_damage_1",
+			"type": "ballistic_damage",
+			"prerequisites": [],
+			"x": 277,
+			"y": 160
 		},
 		{
 			"id": "hull_1",
 			"type": "hull",
 			"prerequisites": [],
-			"x": -360,
+			"x": 0,
+			"y": 320
+		},
+		{
+			"id": "beam_damage_1",
+			"type": "beam_damage",
+			"prerequisites": [],
+			"x": -277,
+			"y": 160
+		},
+		{
+			"id": "non_beam_energy_damage_1",
+			"type": "non_beam_energy_damage",
+			"prerequisites": [],
+			"x": -277,
+			"y": -160
+		},
+		{
+			"id": "energy_damage_1",
+			"type": "energy_damage",
+			"prerequisites": ["non_beam_energy_damage_1", "beam_damage_1"],
+			"x": -450,
 			"y": 0
 		},
 		{
 			"id": "armor_1",
 			"type": "armor",
 			"prerequisites": [],
-			"x": 360,
-			"y": 0
-		},
-		{
-			"id": "flux_dissipation_1",
-			"type": "flux_dissipation",
-			"prerequisites": [],
 			"x": 0,
-			"y": -360
+			"y": 500
 		},
 		{
 			"id": "weapon_damage_1",
 			"type": "weapon_damage",
 			"prerequisites": [],
-			"x": 0,
-			"y": 360
-		},
-		{
-			"id": "ballistic_damage_1",
-			"type": "ballistic_damage",
-			"prerequisites": [],
-			"x": -540,
-			"y": -540
-		},
-		{
-			"id": "missile_damage_1",
-			"type": "missile_damage",
-			"prerequisites": [],
-			"x": 540,
-			"y": -540
-		},
-		{
-			"id": "non_beam_energy_damage_1",
-			"type": "non_beam_energy_damage",
-			"prerequisites": [],
-			"x": -720,
-			"y": 450
-		},
-		{
-			"id": "beam_damage_1",
-			"type": "beam_damage",
-			"prerequisites": [],
-			"x": -720,
-			"y": 630
-		},
-		{
-			"id": "energy_damage_1",
-			"type": "energy_damage",
-			"prerequisites": ["non_beam_energy_damage_1", "beam_damage_1"],
-			"x": -540,
-			"y": 540
+			"x": 450,
+			"y": 0
 		}
 	]
 }
