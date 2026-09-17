@@ -1,4 +1,4 @@
-<title>Skill Tree Layout Editor</title>
+﻿<title>Skill Tree Layout Editor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -426,15 +426,15 @@
     <div class="stats" id="statsLine"></div>
     <div class="spacer"></div>
     <input id="searchBox" placeholder="Search node or type name...">
-    <button class="themeToggle" id="themeToggle" title="Toggle theme">◐</button>
+    <button class="themeToggle" id="themeToggle" title="Toggle theme">â—</button>
   </div>
 
   <div id="toolbar">
     <div class="toolSection">
       <div class="label">Mode</div>
-      <button class="modeBtn active" data-mode="select">↖ Select / Move <span class="key">V</span></button>
-      <button class="modeBtn" data-mode="add">✚ Add Node <span class="key">A</span></button>
-      <button class="modeBtn" data-mode="link">⇄ Link / Unlink <span class="key">L</span></button>
+      <button class="modeBtn active" data-mode="select">â†– Select / Move <span class="key">V</span></button>
+      <button class="modeBtn" data-mode="add">âœš Add Node <span class="key">A</span></button>
+      <button class="modeBtn" data-mode="link">â‡„ Link / Unlink <span class="key">L</span></button>
       <div class="hint">Select: drag a node to move it, drag empty canvas to pan, scroll to zoom.<br><br>Add: click empty canvas to place a node there.<br><br>Link: click two nodes - the outer one gets the inner one added as a prerequisite. Click the same pair again to unlink.</div>
     </div>
 
@@ -468,13 +468,13 @@
     <svg id="stage"></svg>
     <div class="zoomControls">
       <button id="zoomIn">+</button>
-      <button id="zoomOut">−</button>
+      <button id="zoomOut">âˆ’</button>
     </div>
     <div class="warnBadge" id="warnBadge" style="display:none"></div>
   </div>
 
   <div id="inspector">
-    <button class="closeMobile" id="closeInspector">×</button>
+    <button class="closeMobile" id="closeInspector">Ã—</button>
     <div id="inspectorBody"><div class="empty-inspector">Select a node to see and edit its details, or switch to Add mode and click the canvas to place a new one.</div></div>
   </div>
 
@@ -502,70 +502,70 @@
 "use strict";
 
 var SHIPPED_TYPES = [
-{"id":"flux_capacity","name":"Flux Capacity","icon":"graphics/icons/skills/containment_procedures.png","opCost":2,"xpCost":500,"effect":"FLUX_CAPACITY","magnitude":1},
-{"id":"flux_dissipation","name":"Flux Dissipation","icon":"graphics/icons/skills/systems_expertise.png","opCost":2,"xpCost":500,"effect":"FLUX_DISSIPATION","magnitude":1},
-{"id":"hybrid_flux","name":"Flux Capacity and Dissipation","icon":"graphics/icons/skills/flux_dynamics.png","opCost":2,"xpCost":500,"effect":"HYBRID_FLUX","magnitude":0.5},
-{"id":"hull","name":"Hull","icon":"graphics/icons/skills/damage_control2.png","opCost":2,"xpCost":500,"effect":"HULL","magnitude":1},
-{"id":"armor","name":"Armor","icon":"graphics/icons/skills/polarized_armor.png","opCost":2,"xpCost":500,"effect":"ARMOR","magnitude":1},
-{"id":"ballistic_damage","name":"Ballistic Weapon Damage","icon":"graphics/icons/skills/ranged_specialization.png","opCost":2,"xpCost":500,"effect":"BALLISTIC_DAMAGE","magnitude":1},
-{"id":"missile_damage","name":"Missile Weapon Damage","icon":"graphics/icons/skills/missile_specialization2.png","opCost":2,"xpCost":500,"effect":"MISSILE_DAMAGE","magnitude":1},
-{"id":"non_beam_energy_damage","name":"Non-Beam Energy Weapon Damage","icon":"graphics/icons/skills/special_modifications.png","opCost":2,"xpCost":500,"effect":"NON_BEAM_ENERGY_DAMAGE","magnitude":1},
-{"id":"beam_damage","name":"Beam Weapon Damage","icon":"graphics/icons/skills/hypercognition.png","opCost":2,"xpCost":500,"effect":"BEAM_DAMAGE","magnitude":1},
-{"id":"energy_damage","name":"Energy Weapon Damage","icon":"graphics/icons/skills/energy_weapon_mastery.png","opCost":2,"xpCost":500,"effect":"ENERGY_DAMAGE","magnitude":1},
-{"id":"weapon_damage","name":"All Weapon Damage","icon":"graphics/icons/skills/weapon_drills.png","opCost":2,"xpCost":500,"effect":"ALL_WEAPON_DAMAGE","magnitude":1},
-{"id":"packed_capacitors","name":"Packed Capacitors","icon":"graphics/icons/skills/power_grid_manipulation.png","opCost":3,"xpCost":1200,"effect":"FLUX_CAPACITY","magnitude":10,"tier":"NOTABLE"},
-{"id":"safety_overrides","name":"Safety Overrides","icon":"graphics/icons/skills/helmsmanship.png","opCost":5,"xpCost":3000,"tier":"KEYSTONE","vanillaHullMod":"safetyoverrides"},
-{"id":"advancedshieldemitter","name":"Accelerated Shields","icon":"graphics/icons/notable_hullmods/accelerated_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"advancedshieldemitter"},
-{"id":"adaptive_coils","name":"Adaptive Phase Coils","icon":"graphics/icons/notable_hullmods/phase_field.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"adaptive_coils"},
-{"id":"advancedoptics","name":"Advanced Optics","icon":"graphics/icons/notable_hullmods/advanced_optics.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"advancedoptics"},
-{"id":"turretgyros","name":"Advanced Turret Gyros","icon":"graphics/icons/notable_hullmods/advanced_turret_gyros.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"turretgyros"},
-{"id":"armoredweapons","name":"Armored Weapon Mounts","icon":"graphics/icons/notable_hullmods/armored_weapon_emplacements.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"armoredweapons"},
-{"id":"autorepair","name":"Automated Repair Unit","icon":"graphics/icons/notable_hullmods/automated_repair_unit.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"autorepair"},
-{"id":"auxiliarythrusters","name":"Auxiliary Thrusters","icon":"graphics/icons/notable_hullmods/auxilliary_thrusters.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"auxiliarythrusters"},
-{"id":"ballistic_rangefinder","name":"Ballistic Rangefinder","icon":"graphics/icons/notable_hullmods/ballistic_rangefinder.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"ballistic_rangefinder"},
-{"id":"blast_doors","name":"Blast Doors","icon":"graphics/icons/notable_hullmods/blast_doors.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"blast_doors"},
-{"id":"converted_hangar","name":"Converted Hangar","icon":"graphics/icons/notable_hullmods/converted_hangar.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"converted_hangar"},
-{"id":"converted_fighterbay","name":"Converted Fighter Bay","icon":"graphics/icons/notable_hullmods/converted_fighter_bay.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"converted_fighterbay"},
-{"id":"dedicated_targeting_core","name":"Dedicated Targeting Core","icon":"graphics/icons/notable_hullmods/targeting_core.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"dedicated_targeting_core"},
-{"id":"defensive_targeting_array","name":"Defensive Targeting Array","icon":"graphics/icons/notable_hullmods/defensive_targeting_array.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"defensive_targeting_array"},
-{"id":"eccm","name":"ECCM Package","icon":"graphics/icons/notable_hullmods/eccm_package.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"eccm"},
-{"id":"ecm","name":"ECM Package","icon":"graphics/icons/notable_hullmods/ecm_package.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"ecm"},
-{"id":"escort_package","name":"Escort Package","icon":"graphics/icons/notable_hullmods/escort_package.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"escort_package"},
-{"id":"expanded_deck_crew","name":"Expanded Deck Crew","icon":"graphics/icons/notable_hullmods/expanded_deck_crew.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"expanded_deck_crew"},
-{"id":"magazines","name":"Expanded Magazines","icon":"graphics/icons/notable_hullmods/expanded_magazines2.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"magazines"},
-{"id":"missleracks","name":"Expanded Missile Racks","icon":"graphics/icons/notable_hullmods/expanded_missile_racks.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"missleracks"},
-{"id":"extendedshieldemitter","name":"Extended Shields","icon":"graphics/icons/notable_hullmods/extended_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"extendedshieldemitter"},
-{"id":"fluxcoil","name":"Flux Coil Adjunct","icon":"graphics/icons/notable_hullmods/flux_coil_adjunct.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"fluxcoil"},
-{"id":"fluxdistributor","name":"Flux Distributor","icon":"graphics/icons/notable_hullmods/flux_distributor.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"fluxdistributor"},
-{"id":"shield_shunt","name":"Shield Shunt","icon":"graphics/icons/notable_hullmods/shield_shunt.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"shield_shunt"},
-{"id":"frontshield","name":"Makeshift Shield Generator","icon":"graphics/icons/notable_hullmods/front_shield_generator.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"frontshield"},
-{"id":"missile_autoloader","name":"Missile Autoloader","icon":"graphics/icons/notable_hullmods/missile_autoloader.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"missile_autoloader"},
-{"id":"hardenedshieldemitter","name":"Hardened Shields","icon":"graphics/icons/notable_hullmods/hardened_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"hardenedshieldemitter"},
-{"id":"hardened_subsystems","name":"Hardened Subsystems","icon":"graphics/icons/notable_hullmods/hardened_subsystems.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"hardened_subsystems"},
-{"id":"heavyarmor","name":"Heavy Armor","icon":"graphics/icons/notable_hullmods/heavy_armor.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"heavyarmor"},
-{"id":"high_scatter_amp","name":"High Scatter Amplifier","icon":"graphics/icons/notable_hullmods/high_scatter_amp.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"high_scatter_amp"},
-{"id":"pointdefenseai","name":"Integrated Point Defense AI","icon":"graphics/icons/notable_hullmods/integrated_point_defense_ai.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"pointdefenseai"},
-{"id":"targetingunit","name":"Integrated Targeting Unit","icon":"graphics/icons/notable_hullmods/integrated_targeting_unit.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"targetingunit"},
-{"id":"nav_relay","name":"Nav Relay","icon":"graphics/icons/notable_hullmods/nav_relay.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"nav_relay"},
-{"id":"frontemitter","name":"Shield Conversion - Front","icon":"graphics/icons/notable_hullmods/front_shield_emitter.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"frontemitter"},
-{"id":"adaptiveshields","name":"Shield Conversion - Omni","icon":"graphics/icons/notable_hullmods/omni_shield_emitter_mod.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"adaptiveshields"},
-{"id":"operations_center","name":"Operations Center","icon":"graphics/icons/notable_hullmods/operations_center.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"operations_center"},
-{"id":"phase_anchor","name":"Phase Anchor","icon":"graphics/icons/notable_hullmods/phase_anchor.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"phase_anchor"},
-{"id":"recovery_shuttles","name":"Recovery Shuttles","icon":"graphics/icons/notable_hullmods/recovery_shuttles.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"recovery_shuttles"},
-{"id":"reinforcedhull","name":"Reinforced Bulkheads","icon":"graphics/icons/notable_hullmods/reinforced_bulkheads.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"reinforcedhull"},
-{"id":"fluxbreakers","name":"Resistant Flux Conduits","icon":"graphics/icons/notable_hullmods/resistant_flux_conduits.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"fluxbreakers"},
-{"id":"stabilizedshieldemitter","name":"Stabilized Shields","icon":"graphics/icons/notable_hullmods/stabilized_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"stabilizedshieldemitter"},
-{"id":"unstable_injector","name":"Unstable Injector","icon":"graphics/icons/notable_hullmods/unstable_injector.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"unstable_injector"},
-{"id":"additional_berthing","name":"Additional Berthing","icon":"graphics/icons/notable_hullmods/berthing.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"additional_berthing"},
-{"id":"augmentedengines","name":"Augmented Drive Field","icon":"graphics/icons/notable_hullmods/augmented_drive_field2.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"augmentedengines"},
-{"id":"auxiliary_fuel_tanks","name":"Auxiliary Fuel Tanks","icon":"graphics/icons/notable_hullmods/fuel_tanks.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"auxiliary_fuel_tanks"},
-{"id":"efficiency_overhaul","name":"Efficiency Overhaul","icon":"graphics/icons/notable_hullmods/efficiency.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"efficiency_overhaul"},
-{"id":"expanded_cargo_holds","name":"Expanded Cargo Holds","icon":"graphics/icons/notable_hullmods/expanded_cargo.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"expanded_cargo_holds"},
-{"id":"hiressensors","name":"High Resolution Sensors","icon":"graphics/icons/notable_hullmods/high_res_sensors.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"hiressensors"},
-{"id":"insulatedengine","name":"Insulated Engine Assembly","icon":"graphics/icons/notable_hullmods/insulated_engine_assembly.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"insulatedengine"},
-{"id":"militarized_subsystems","name":"Militarized Subsystems","icon":"graphics/icons/notable_hullmods/militarized_subsystems.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"militarized_subsystems"},
-{"id":"solar_shielding","name":"Solar Shielding","icon":"graphics/icons/notable_hullmods/solar_shielding2.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"solar_shielding"},
-{"id":"surveying_equipment","name":"Surveying Equipment","icon":"graphics/icons/notable_hullmods/surveying_equipment.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"surveying_equipment"}
+{"id":"flux_capacity","name":"Flux Capacity","icon":"graphics/icons/skills/containment_procedures.png","opCost":2,"xpCost":500,"effects":[{"effect":"FLUX_CAPACITY","magnitude":1}]},
+{"id":"flux_dissipation","name":"Flux Dissipation","icon":"graphics/icons/skills/systems_expertise.png","opCost":2,"xpCost":500,"effects":[{"effect":"FLUX_DISSIPATION","magnitude":1}]},
+{"id":"hybrid_flux","name":"Flux Capacity and Dissipation","icon":"graphics/icons/skills/flux_dynamics.png","opCost":2,"xpCost":500,"effects":[{"effect":"HYBRID_FLUX","magnitude":0.5}]},
+{"id":"hull","name":"Hull","icon":"graphics/icons/skills/damage_control2.png","opCost":2,"xpCost":500,"effects":[{"effect":"HULL","magnitude":1}]},
+{"id":"armor","name":"Armor","icon":"graphics/icons/skills/polarized_armor.png","opCost":2,"xpCost":500,"effects":[{"effect":"ARMOR","magnitude":1}]},
+{"id":"ballistic_damage","name":"Ballistic Weapon Damage","icon":"graphics/icons/skills/ranged_specialization.png","opCost":2,"xpCost":500,"effects":[{"effect":"BALLISTIC_DAMAGE","magnitude":1}]},
+{"id":"missile_damage","name":"Missile Weapon Damage","icon":"graphics/icons/skills/missile_specialization2.png","opCost":2,"xpCost":500,"effects":[{"effect":"MISSILE_DAMAGE","magnitude":1}]},
+{"id":"non_beam_energy_damage","name":"Non-Beam Energy Weapon Damage","icon":"graphics/icons/skills/special_modifications.png","opCost":2,"xpCost":500,"effects":[{"effect":"NON_BEAM_ENERGY_DAMAGE","magnitude":1}]},
+{"id":"beam_damage","name":"Beam Weapon Damage","icon":"graphics/icons/skills/hypercognition.png","opCost":2,"xpCost":500,"effects":[{"effect":"BEAM_DAMAGE","magnitude":1}]},
+{"id":"energy_damage","name":"Energy Weapon Damage","icon":"graphics/icons/skills/energy_weapon_mastery.png","opCost":2,"xpCost":500,"effects":[{"effect":"ENERGY_DAMAGE","magnitude":1}]},
+{"id":"weapon_damage","name":"All Weapon Damage","icon":"graphics/icons/skills/weapon_drills.png","opCost":2,"xpCost":500,"effects":[{"effect":"ALL_WEAPON_DAMAGE","magnitude":1}]},
+{"id":"packed_capacitors","name":"Packed Capacitors","icon":"graphics/icons/skills/power_grid_manipulation.png","opCost":3,"xpCost":1200,"tier":"NOTABLE","effects":[{"effect":"FLUX_CAPACITY","magnitude":10}]},
+{"id":"safety_overrides","name":"Safety Overrides","icon":"graphics/icons/skills/helmsmanship.png","opCost":5,"xpCost":3000,"tier":"KEYSTONE","effects":[{"effect":"TOP_SPEED","magnitude":15},{"effect":"FLUX_DISSIPATION","magnitude":20},{"effect":"PEAK_CR_DURATION","magnitude":-20},{"effect":"WEAPON_RANGE_FALLOFF","magnitude":-15}]},
+{"id":"adaptive_coils","name":"Adaptive Phase Coils","icon":"graphics/icons/notable_hullmods/phase_field.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"adaptive_coils","todo":"Phase hard-flux speed threshold - no clean stat mapping yet"},
+{"id":"adaptiveshields","name":"Shield Conversion - Omni","icon":"graphics/icons/notable_hullmods/omni_shield_emitter_mod.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"adaptiveshields","todo":"Converts front shield to omni - needs a real mechanic"},
+{"id":"additional_berthing","name":"Additional Berthing","icon":"graphics/icons/notable_hullmods/berthing.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"CREW_CAPACITY","magnitude":20}]},
+{"id":"advancedoptics","name":"Advanced Optics","icon":"graphics/icons/notable_hullmods/advanced_optics.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"BEAM_WEAPON_RANGE","magnitude":15}]},
+{"id":"advancedshieldemitter","name":"Accelerated Shields","icon":"graphics/icons/notable_hullmods/accelerated_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"SHIELD_TURN_RATE","magnitude":15},{"effect":"SHIELD_RAISE_RATE","magnitude":15}]},
+{"id":"armoredweapons","name":"Armored Weapon Mounts","icon":"graphics/icons/notable_hullmods/armored_weapon_emplacements.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"WEAPON_DURABILITY","magnitude":20},{"effect":"ARMOR","magnitude":10}]},
+{"id":"augmentedengines","name":"Augmented Drive Field","icon":"graphics/icons/notable_hullmods/augmented_drive_field2.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"BURN_LEVEL","magnitude":15}]},
+{"id":"autorepair","name":"Automated Repair Unit","icon":"graphics/icons/notable_hullmods/automated_repair_unit.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"REPAIR_TIME","magnitude":-20}]},
+{"id":"auxiliary_fuel_tanks","name":"Auxiliary Fuel Tanks","icon":"graphics/icons/notable_hullmods/fuel_tanks.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"FUEL_CAPACITY","magnitude":20}]},
+{"id":"auxiliarythrusters","name":"Auxiliary Thrusters","icon":"graphics/icons/notable_hullmods/auxilliary_thrusters.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"MANEUVERABILITY","magnitude":15}]},
+{"id":"ballistic_rangefinder","name":"Ballistic Rangefinder","icon":"graphics/icons/notable_hullmods/ballistic_rangefinder.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"BALLISTIC_WEAPON_RANGE","magnitude":15}]},
+{"id":"blast_doors","name":"Blast Doors","icon":"graphics/icons/notable_hullmods/blast_doors.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"HULL","magnitude":10}]},
+{"id":"converted_fighterbay","name":"Converted Fighter Bay","icon":"graphics/icons/notable_hullmods/converted_fighter_bay.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"converted_fighterbay","todo":"Converts fighter bay to cargo hold - structural, not a stat"},
+{"id":"converted_hangar","name":"Converted Hangar","icon":"graphics/icons/notable_hullmods/converted_hangar.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"converted_hangar","todo":"Converts fighter bay to cargo/hangar - structural, not a stat"},
+{"id":"dedicated_targeting_core","name":"Dedicated Targeting Core","icon":"graphics/icons/notable_hullmods/targeting_core.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"BALLISTIC_WEAPON_RANGE","magnitude":15},{"effect":"ENERGY_WEAPON_RANGE","magnitude":15}]},
+{"id":"defensive_targeting_array","name":"Defensive Targeting Array","icon":"graphics/icons/notable_hullmods/defensive_targeting_array.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"defensive_targeting_array","todo":"Fighter PD behavior change - no clean stat mapping yet"},
+{"id":"eccm","name":"ECCM Package","icon":"graphics/icons/notable_hullmods/eccm_package.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"MISSILE_GUIDANCE","magnitude":20}]},
+{"id":"ecm","name":"ECM Package","icon":"graphics/icons/notable_hullmods/ecm_package.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"ecm","todo":"ECM rating - not exposed as a simple modifiable stat"},
+{"id":"efficiency_overhaul","name":"Efficiency Overhaul","icon":"graphics/icons/notable_hullmods/efficiency.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"CR_RECOVERY_RATE","magnitude":15}]},
+{"id":"escort_package","name":"Escort Package","icon":"graphics/icons/notable_hullmods/escort_package.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"escort_package","todo":"Conditional proximity aura - no clean stat mapping yet"},
+{"id":"expanded_cargo_holds","name":"Expanded Cargo Holds","icon":"graphics/icons/notable_hullmods/expanded_cargo.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"CARGO_CAPACITY","magnitude":20}]},
+{"id":"expanded_deck_crew","name":"Expanded Deck Crew","icon":"graphics/icons/notable_hullmods/expanded_deck_crew.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"expanded_deck_crew","todo":"Fighter replacement rate - no clean stat mapping yet"},
+{"id":"extendedshieldemitter","name":"Extended Shields","icon":"graphics/icons/notable_hullmods/extended_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"SHIELD_ARC","magnitude":20}]},
+{"id":"fluxbreakers","name":"Resistant Flux Conduits","icon":"graphics/icons/notable_hullmods/resistant_flux_conduits.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"FLUX_DISSIPATION","magnitude":10}]},
+{"id":"fluxcoil","name":"Flux Coil Adjunct","icon":"graphics/icons/notable_hullmods/flux_coil_adjunct.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"FLUX_CAPACITY","magnitude":10}]},
+{"id":"fluxdistributor","name":"Flux Distributor","icon":"graphics/icons/notable_hullmods/flux_distributor.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"FLUX_DISSIPATION","magnitude":10}]},
+{"id":"frontemitter","name":"Shield Conversion - Front","icon":"graphics/icons/notable_hullmods/front_shield_emitter.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"frontemitter","todo":"Converts omni shield to front-facing - needs a real mechanic"},
+{"id":"frontshield","name":"Makeshift Shield Generator","icon":"graphics/icons/notable_hullmods/front_shield_generator.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"frontshield","todo":"Adds shields to a shieldless ship - needs a real mechanic"},
+{"id":"hardened_subsystems","name":"Hardened Subsystems","icon":"graphics/icons/notable_hullmods/hardened_subsystems.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"PEAK_CR_DURATION","magnitude":20}]},
+{"id":"hardenedshieldemitter","name":"Hardened Shields","icon":"graphics/icons/notable_hullmods/hardened_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"SHIELD_ABSORPTION","magnitude":-10}]},
+{"id":"heavyarmor","name":"Heavy Armor","icon":"graphics/icons/notable_hullmods/heavy_armor.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"ARMOR","magnitude":15}]},
+{"id":"high_scatter_amp","name":"High Scatter Amplifier","icon":"graphics/icons/notable_hullmods/high_scatter_amp.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"BEAM_DAMAGE","magnitude":15}]},
+{"id":"hiressensors","name":"High Resolution Sensors","icon":"graphics/icons/notable_hullmods/high_res_sensors.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"SENSOR_STRENGTH","magnitude":20}]},
+{"id":"insulatedengine","name":"Insulated Engine Assembly","icon":"graphics/icons/notable_hullmods/insulated_engine_assembly.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"ENGINE_DURABILITY","magnitude":15},{"effect":"HULL","magnitude":5},{"effect":"SENSOR_PROFILE","magnitude":-10}]},
+{"id":"magazines","name":"Expanded Magazines","icon":"graphics/icons/notable_hullmods/expanded_magazines2.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"BALLISTIC_AMMO","magnitude":20},{"effect":"ENERGY_AMMO","magnitude":20}]},
+{"id":"militarized_subsystems","name":"Militarized Subsystems","icon":"graphics/icons/notable_hullmods/militarized_subsystems.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"militarized_subsystems","todo":"Removes civilian-grade penalties - structural, not additive"},
+{"id":"missile_autoloader","name":"Missile Autoloader","icon":"graphics/icons/notable_hullmods/missile_autoloader.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"missile_autoloader","todo":"Reload behavior change - no clean stat mapping yet"},
+{"id":"missleracks","name":"Expanded Missile Racks","icon":"graphics/icons/notable_hullmods/expanded_missile_racks.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"MISSILE_AMMO","magnitude":25}]},
+{"id":"nav_relay","name":"Nav Relay","icon":"graphics/icons/notable_hullmods/nav_relay.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"nav_relay","todo":"Fleet-wide nav rating aura - not a self-only stat"},
+{"id":"operations_center","name":"Operations Center","icon":"graphics/icons/notable_hullmods/operations_center.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"operations_center","todo":"Fleet command point regen - no clean stat mapping yet"},
+{"id":"phase_anchor","name":"Phase Anchor","icon":"graphics/icons/notable_hullmods/phase_anchor.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"phase_anchor","todo":"Behavioral (emergency phase dive) - no clean stat mapping yet"},
+{"id":"pointdefenseai","name":"Integrated Point Defense AI","icon":"graphics/icons/notable_hullmods/integrated_point_defense_ai.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"pointdefenseai","todo":"PD flare immunity/targeting behavior - no clean stat mapping yet"},
+{"id":"recovery_shuttles","name":"Recovery Shuttles","icon":"graphics/icons/notable_hullmods/recovery_shuttles.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"CREW_LOSS","magnitude":-15}]},
+{"id":"reinforcedhull","name":"Reinforced Bulkheads","icon":"graphics/icons/notable_hullmods/reinforced_bulkheads.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"HULL","magnitude":15}]},
+{"id":"shield_shunt","name":"Shield Shunt","icon":"graphics/icons/notable_hullmods/shield_shunt.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"shield_shunt","todo":"Removes shields entirely - needs a real mechanic"},
+{"id":"solar_shielding","name":"Solar Shielding","icon":"graphics/icons/notable_hullmods/solar_shielding2.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"ENERGY_DAMAGE_TAKEN","magnitude":-10}]},
+{"id":"stabilizedshieldemitter","name":"Stabilized Shields","icon":"graphics/icons/notable_hullmods/stabilized_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"SHIELD_UPKEEP","magnitude":-15}]},
+{"id":"surveying_equipment","name":"Surveying Equipment","icon":"graphics/icons/notable_hullmods/surveying_equipment.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"surveying_equipment","todo":"Campaign-layer survey cost reduction - no combat stat"},
+{"id":"targetingunit","name":"Integrated Targeting Unit","icon":"graphics/icons/notable_hullmods/integrated_targeting_unit.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"BALLISTIC_WEAPON_RANGE","magnitude":15},{"effect":"ENERGY_WEAPON_RANGE","magnitude":15}]},
+{"id":"turretgyros","name":"Advanced Turret Gyros","icon":"graphics/icons/notable_hullmods/advanced_turret_gyros.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"WEAPON_TURN_RATE","magnitude":20}]},
+{"id":"unstable_injector","name":"Unstable Injector","icon":"graphics/icons/notable_hullmods/unstable_injector.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"TOP_SPEED","magnitude":10}]}
 ];
 
 var SHIPPED_NODES = [
@@ -814,14 +814,14 @@ function render(){
 
 function updateStats(){
   document.getElementById('statsLine').textContent =
-    state.nodes.length + ' nodes · ' + state.types.length + ' types · zoom ' + state.view.zoom.toFixed(2) + 'x';
+    state.nodes.length + ' nodes Â· ' + state.types.length + ' types Â· zoom ' + state.view.zoom.toFixed(2) + 'x';
 }
 function updateWarnBadge(){
   var el = document.getElementById('warnBadge');
   var issues = validate();
   if (issues.length === 0) { el.style.display = 'none'; return; }
   el.style.display = 'block';
-  el.textContent = '⚠ ' + issues.length + ' issue' + (issues.length>1?'s':'') + ' - click to view';
+  el.textContent = 'âš  ' + issues.length + ' issue' + (issues.length>1?'s':'') + ' - click to view';
   el.onclick = function(){ alert(issues.join('\n')); };
 }
 
@@ -954,7 +954,7 @@ function refreshInspector(){
   }).join('');
   var prereqHtml = (n.prerequisites||[]).map(function(pid){
     var pn = nodeById(pid);
-    return '<div class="prereqItem"><span>' + pid + (pn ? '' : ' (missing!)') + '</span><button data-remove-prereq="' + pid + '">✕</button></div>';
+    return '<div class="prereqItem"><span>' + pid + (pn ? '' : ' (missing!)') + '</span><button data-remove-prereq="' + pid + '">âœ•</button></div>';
   }).join('') || '<div class="hint">None - connects straight to the ship center.</div>';
   var otherNodeOptions = state.nodes.filter(function(o){ return o.id !== n.id; }).map(function(o){
     return '<option value="' + o.id + '">' + o.id + '</option>';
@@ -975,7 +975,7 @@ function refreshInspector(){
       '<select id="addPrereqSelect" style="flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12px;padding:6px;"><option value="">Add prerequisite...</option>' + otherNodeOptions + '</select>' +
     '</div>' +
     '<hr class="sep">' +
-    '<div class="hint">Type "' + n.type + '" - opCost ' + (t?t.opCost:'?') + ', xpCost ' + (t?t.xpCost:'?') + (t && t.vanillaHullMod ? ', vanillaHullMod: ' + t.vanillaHullMod : '') + (t && t.effect ? ', effect: ' + t.effect + ' x' + t.magnitude : '') + '</div>' +
+    '<div class="hint">Type "' + n.type + '" - opCost ' + (t?t.opCost:'?') + ', xpCost ' + (t?t.xpCost:'?') + (t && t.vanillaHullMod ? ', vanillaHullMod: ' + t.vanillaHullMod : '') + (t && t.effects && t.effects.length ? ', effects: ' + t.effects.map(function(e){ return e.effect + ' x' + e.magnitude; }).join(', ') : '') + (t && t.todo ? ' [TODO: ' + t.todo + ']' : '') + '</div>' +
     '<div class="btnRow">' +
       '<button class="smallBtn" id="editTypeBtn">Edit type "' + n.type + '"</button>' +
       '<button class="smallBtn" id="duplicateBtn">Duplicate node</button>' +
@@ -1095,64 +1095,121 @@ function addNodeOfType(typeId, x, y){
 }
 
 // ---------- type editor modal ----------
+var EFFECT_NAMES = ['HULL','ARMOR','FLUX_CAPACITY','FLUX_DISSIPATION','HYBRID_FLUX','BALLISTIC_DAMAGE','MISSILE_DAMAGE',
+  'NON_BEAM_ENERGY_DAMAGE','BEAM_DAMAGE','ENERGY_DAMAGE','ALL_WEAPON_DAMAGE','MANEUVERABILITY','FUEL_CAPACITY',
+  'CARGO_CAPACITY','CREW_CAPACITY','BURN_LEVEL','SENSOR_PROFILE','SENSOR_STRENGTH','BALLISTIC_WEAPON_RANGE',
+  'ENERGY_WEAPON_RANGE','BEAM_WEAPON_RANGE','BALLISTIC_AMMO','ENERGY_AMMO','MISSILE_AMMO','WEAPON_TURN_RATE',
+  'SHIELD_ARC','SHIELD_UPKEEP','SHIELD_ABSORPTION','SHIELD_TURN_RATE','SHIELD_RAISE_RATE','WEAPON_DURABILITY',
+  'ENGINE_DURABILITY','TOP_SPEED','PEAK_CR_DURATION','WEAPON_RANGE_FALLOFF','REPAIR_TIME','MISSILE_GUIDANCE',
+  'CR_RECOVERY_RATE','CREW_LOSS','ENERGY_DAMAGE_TAKEN'];
+
 function openTypeModal(existingType, onSave){
   var isNew = !existingType;
-  var t = existingType ? deepCopy(existingType) : { id: '', name: '', icon: '', opCost: 4, xpCost: 2000, tier: 'NOTABLE', effect: '', magnitude: 0, vanillaHullMod: '' };
-  var effectOptions = ['','HULL','ARMOR','FLUX_CAPACITY','FLUX_DISSIPATION','HYBRID_FLUX','BALLISTIC_DAMAGE','MISSILE_DAMAGE','NON_BEAM_ENERGY_DAMAGE','BEAM_DAMAGE','ENERGY_DAMAGE','ALL_WEAPON_DAMAGE']
-    .map(function(e){ return '<option value="'+e+'"'+(e===(t.effect||'')?' selected':'')+'>'+(e||'(none)')+'</option>'; }).join('');
-  var tierOptions = ['SMALL','NOTABLE','KEYSTONE'].map(function(tr){ return '<option value="'+tr+'"'+(tr===tierOf(t)?' selected':'')+'>'+tr+'</option>'; }).join('');
-
-  var html =
-    '<div class="modalOverlay"><div class="modal">' +
-    '<h3>' + (isNew ? 'New skill type' : 'Edit type "' + t.id + '"') + '</h3>' +
-    '<div class="field"><label>Id</label><input id="tId" value="' + (t.id||'') + '" ' + (isNew?'':'disabled') + '></div>' +
-    '<div class="field"><label>Display name</label><input id="tName" value="' + (t.name||'') + '"></div>' +
-    '<div class="field"><label>Icon path</label><input id="tIcon" value="' + (t.icon||'') + '"></div>' +
-    '<div class="fieldRow">' +
-      '<div class="field"><label>OP cost</label><input id="tOp" type="number" value="' + t.opCost + '"></div>' +
-      '<div class="field"><label>XP cost</label><input id="tXp" type="number" value="' + t.xpCost + '"></div>' +
-    '</div>' +
-    '<div class="field"><label>Tier</label><select id="tTier">' + tierOptions + '</select></div>' +
-    '<div class="hint">Either set an Effect + Magnitude (uses this mod\'s own stat code), or a vanilla hull mod id (delegates straight to that hull mod\'s real effect). Leave the one you are not using blank.</div>' +
-    '<div class="fieldRow">' +
-      '<div class="field"><label>Effect</label><select id="tEffect">' + effectOptions + '</select></div>' +
-      '<div class="field"><label>Magnitude</label><input id="tMag" type="number" step="0.1" value="' + (t.magnitude||0) + '"></div>' +
-    '</div>' +
-    '<div class="field"><label>vanillaHullMod id</label><input id="tVanilla" value="' + (t.vanillaHullMod||'') + '"></div>' +
-    '<div class="modalBtns">' +
-      '<button class="smallBtn" id="mCancel2">Cancel</button>' +
-      '<button class="smallBtn primary" id="mSave2">Save type</button>' +
-    '</div>' +
-    '</div></div>';
+  var t = existingType ? deepCopy(existingType) : { id: '', name: '', icon: '', opCost: 4, xpCost: 2000, tier: 'NOTABLE', vanillaHullMod: '', description: '', todo: '' };
+  var effectsDraft = deepCopy(t.effects || []);
   var root = document.getElementById('modalRoot');
-  root.innerHTML = html;
-  document.getElementById('mCancel2').addEventListener('click', function(){ root.innerHTML=''; });
-  document.getElementById('mSave2').addEventListener('click', function(){
-    var id = isNew ? document.getElementById('tId').value.trim() : t.id;
-    if (!id) { showToast('Id is required'); return; }
-    if (isNew && typeById(id)) { showToast('A type with that id already exists'); return; }
-    var updated = {
-      id: id,
-      name: document.getElementById('tName').value.trim() || id,
-      icon: document.getElementById('tIcon').value.trim(),
-      opCost: parseInt(document.getElementById('tOp').value,10) || 0,
-      xpCost: parseFloat(document.getElementById('tXp').value) || 0,
-      tier: document.getElementById('tTier').value,
-      effect: document.getElementById('tEffect').value,
-      magnitude: parseFloat(document.getElementById('tMag').value) || 0,
-      vanillaHullMod: document.getElementById('tVanilla').value.trim()
-    };
-    if (isNew) state.types.push(updated);
-    else {
-      var idx = state.types.findIndex(function(x){ return x.id === t.id; });
-      state.types[idx] = updated;
-    }
-    root.innerHTML = '';
-    saveLocal();
-    render();
-    if (state.selectedNodeId) refreshInspector();
-    if (onSave) onSave(updated);
-  });
+
+  function syncDraftFromInputs(){
+    if (!document.getElementById('tId')) return;
+    if (isNew) t.id = document.getElementById('tId').value.trim();
+    t.name = document.getElementById('tName').value;
+    t.icon = document.getElementById('tIcon').value;
+    t.opCost = document.getElementById('tOp').value;
+    t.xpCost = document.getElementById('tXp').value;
+    t.tier = document.getElementById('tTier').value;
+    t.vanillaHullMod = document.getElementById('tVanilla').value;
+    t.description = document.getElementById('tDescription').value;
+    t.todo = document.getElementById('tTodo').value;
+    effectsDraft.forEach(function(e, i){
+      var effSel = document.getElementById('tEffect' + i);
+      var magInp = document.getElementById('tMag' + i);
+      if (effSel) e.effect = effSel.value;
+      if (magInp) e.magnitude = parseFloat(magInp.value) || 0;
+    });
+  }
+
+  function renderModal(){
+    var tierOptions = ['SMALL','NOTABLE','KEYSTONE'].map(function(tr){ return '<option value="'+tr+'"'+(tr===tierOf(t)?' selected':'')+'>'+tr+'</option>'; }).join('');
+    var effectRows = effectsDraft.map(function(e, i){
+      var options = EFFECT_NAMES.map(function(name){ return '<option value="'+name+'"'+(name===e.effect?' selected':'')+'>'+name+'</option>'; }).join('');
+      return '<div class="fieldRow" style="align-items:flex-end">' +
+        '<div class="field" style="flex:2"><label>Effect ' + (i+1) + '</label><select id="tEffect' + i + '">' + options + '</select></div>' +
+        '<div class="field" style="flex:1"><label>Magnitude</label><input id="tMag' + i + '" type="number" step="0.1" value="' + e.magnitude + '"></div>' +
+        '<button class="smallBtn danger" type="button" data-remove-effect-row="' + i + '">✕</button>' +
+      '</div>';
+    }).join('') || '<div class="hint">No effects yet - click "+ Add effect" below, or set a vanillaHullMod id instead.</div>';
+
+    var html =
+      '<div class="modalOverlay"><div class="modal">' +
+      '<h3>' + (isNew ? 'New skill type' : 'Edit type "' + t.id + '"') + '</h3>' +
+      '<div class="field"><label>Id</label><input id="tId" value="' + (t.id||'') + '" ' + (isNew?'':'disabled') + '></div>' +
+      '<div class="field"><label>Display name</label><input id="tName" value="' + (t.name||'') + '"></div>' +
+      '<div class="field"><label>Icon path</label><input id="tIcon" value="' + (t.icon||'') + '"></div>' +
+      '<div class="fieldRow">' +
+        '<div class="field"><label>OP cost</label><input id="tOp" type="number" value="' + t.opCost + '"></div>' +
+        '<div class="field"><label>XP cost</label><input id="tXp" type="number" value="' + t.xpCost + '"></div>' +
+      '</div>' +
+      '<div class="field"><label>Tier</label><select id="tTier">' + tierOptions + '</select></div>' +
+      '<hr class="sep">' +
+      '<div class="hint">One or more Effect + Magnitude rows, each independently tunable - this mod\'s own stat code, not vanilla\'s. Or set a vanillaHullMod id below to delegate to that hull mod\'s real effect for now instead (pair it with a Todo note).</div>' +
+      '<div class="field"><label>Effects</label>' + effectRows + '</div>' +
+      '<div class="btnRow"><button class="smallBtn" type="button" id="addEffectRowBtn">+ Add effect</button></div>' +
+      '<hr class="sep">' +
+      '<div class="field"><label>vanillaHullMod id</label><input id="tVanilla" value="' + (t.vanillaHullMod||'') + '"></div>' +
+      '<div class="field"><label>Description override (optional)</label><input id="tDescription" value="' + (t.description||'') + '"></div>' +
+      '<div class="hint">Leave the description blank to auto-generate one line per effect from its magnitude. Only set it for custom flavor text.</div>' +
+      '<div class="field"><label>Todo (optional)</label><input id="tTodo" value="' + (t.todo||'') + '"></div>' +
+      '<div class="modalBtns">' +
+        '<button class="smallBtn" id="mCancel2">Cancel</button>' +
+        '<button class="smallBtn primary" id="mSave2">Save type</button>' +
+      '</div>' +
+      '</div></div>';
+    root.innerHTML = html;
+
+    document.getElementById('mCancel2').addEventListener('click', function(){ root.innerHTML=''; });
+    document.getElementById('addEffectRowBtn').addEventListener('click', function(){
+      syncDraftFromInputs();
+      effectsDraft.push({ effect: EFFECT_NAMES[0], magnitude: 10 });
+      renderModal();
+    });
+    root.querySelectorAll('[data-remove-effect-row]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        syncDraftFromInputs();
+        effectsDraft.splice(parseInt(btn.dataset.removeEffectRow, 10), 1);
+        renderModal();
+      });
+    });
+    document.getElementById('mSave2').addEventListener('click', function(){
+      syncDraftFromInputs();
+      var id = isNew ? t.id.trim() : t.id;
+      if (!id) { showToast('Id is required'); return; }
+      if (isNew && typeById(id)) { showToast('A type with that id already exists'); return; }
+      var updated = {
+        id: id,
+        name: (t.name||'').trim() || id,
+        icon: (t.icon||'').trim(),
+        opCost: parseInt(t.opCost, 10) || 0,
+        xpCost: parseFloat(t.xpCost) || 0,
+        tier: t.tier,
+        effects: effectsDraft,
+        vanillaHullMod: (t.vanillaHullMod||'').trim(),
+        description: (t.description||'').trim(),
+        todo: (t.todo||'').trim()
+      };
+      if (isNew) state.types.push(updated);
+      else {
+        var idx = state.types.findIndex(function(x){ return x.id === t.id; });
+        state.types[idx] = updated;
+      }
+      root.innerHTML = '';
+      saveLocal();
+      render();
+      if (state.selectedNodeId) refreshInspector();
+      if (onSave) onSave(updated);
+    });
+  }
+
+  renderModal();
 }
 
 // ---------- toast ----------
@@ -1168,9 +1225,11 @@ function showToast(msg){
 // ---------- export ----------
 function serializeType(t){
   var out = { id: t.id, name: t.name, icon: t.icon, opCost: t.opCost, xpCost: t.xpCost };
-  if (t.effect) { out.effect = t.effect; out.magnitude = t.magnitude; }
   if (tierOf(t) !== 'SMALL') out.tier = tierOf(t);
+  if (t.effects && t.effects.length) out.effects = t.effects.map(function(e){ return { effect: e.effect, magnitude: e.magnitude }; });
   if (t.vanillaHullMod) out.vanillaHullMod = t.vanillaHullMod;
+  if (t.description) out.description = t.description;
+  if (t.todo) out.todo = t.todo;
   return out;
 }
 function toTabbedJson(obj, rootKey){

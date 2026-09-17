@@ -10,14 +10,18 @@
 		{
 			"id": "flux_capacity_1",
 			"type": "flux_capacity",
-			"prerequisites": ["hybrid_flux_1"],
+			"prerequisites": [
+				"hybrid_flux_1"
+			],
 			"x": -140,
 			"y": -480
 		},
 		{
 			"id": "flux_dissipation_1",
 			"type": "flux_dissipation",
-			"prerequisites": ["hybrid_flux_1"],
+			"prerequisites": [
+				"hybrid_flux_1"
+			],
 			"x": 140,
 			"y": -480
 		},
@@ -32,8 +36,8 @@
 			"id": "ballistic_damage_1",
 			"type": "ballistic_damage",
 			"prerequisites": [],
-			"x": 277,
-			"y": 160
+			"x": 300,
+			"y": 174
 		},
 		{
 			"id": "hull_1",
@@ -45,28 +49,34 @@
 		{
 			"id": "beam_damage_1",
 			"type": "beam_damage",
-			"prerequisites": [],
-			"x": -277,
-			"y": 160
+			"prerequisites": [
+				"beam_damage_2"
+			],
+			"x": -294,
+			"y": 78
 		},
 		{
 			"id": "non_beam_energy_damage_1",
 			"type": "non_beam_energy_damage",
-			"prerequisites": [],
-			"x": -277,
-			"y": -160
+			"prerequisites": [
+				"energy_damage_1"
+			],
+			"x": -222,
+			"y": -22
 		},
 		{
 			"id": "energy_damage_1",
 			"type": "energy_damage",
-			"prerequisites": ["non_beam_energy_damage_1", "beam_damage_1"],
-			"x": -450,
-			"y": 0
+			"prerequisites": [],
+			"x": -138,
+			"y": 9
 		},
 		{
 			"id": "armor_1",
 			"type": "armor",
-			"prerequisites": ["hull_1"],
+			"prerequisites": [
+				"hull_1"
+			],
 			"x": 0,
 			"y": 500
 		},
@@ -80,168 +90,208 @@
 		{
 			"id": "packed_capacitors_1",
 			"type": "packed_capacitors",
-			"prerequisites": ["flux_capacity_1"],
+			"prerequisites": [
+				"flux_capacity_1"
+			],
 			"x": -190,
 			"y": -650
 		},
 		{
 			"id": "safety_overrides_1",
 			"type": "safety_overrides",
-			"prerequisites": ["armor_1"],
+			"prerequisites": [
+				"armor_1"
+			],
 			"x": 0,
 			"y": 750
 		},
 		{
 			"id": "heavyarmor_1",
 			"type": "heavyarmor",
-			"prerequisites": ["armor_1"],
+			"prerequisites": [
+				"armor_1"
+			],
 			"x": 222,
 			"y": 685
 		},
 		{
 			"id": "armoredweapons_1",
 			"type": "armoredweapons",
-			"prerequisites": ["armor_1"],
+			"prerequisites": [
+				"armor_1"
+			],
 			"x": -222,
 			"y": 685
 		},
 		{
 			"id": "reinforcedhull_1",
 			"type": "reinforcedhull",
-			"prerequisites": ["hull_1"],
+			"prerequisites": [
+				"hull_1"
+			],
 			"x": 410,
 			"y": 382
 		},
 		{
 			"id": "blast_doors_1",
 			"type": "blast_doors",
-			"prerequisites": ["hull_1"],
+			"prerequisites": [
+				"hull_1"
+			],
 			"x": 219,
 			"y": 515
 		},
 		{
 			"id": "fluxcoil_1",
 			"type": "fluxcoil",
-			"prerequisites": ["flux_capacity_1"],
-			"x": -597,
-			"y": -403
+			"prerequisites": [
+				"flux_capacity_1"
+			],
+			"x": -332,
+			"y": -345
 		},
 		{
 			"id": "fluxbreakers_1",
 			"type": "fluxbreakers",
-			"prerequisites": ["flux_capacity_1"],
+			"prerequisites": [
+				"flux_capacity_1"
+			],
 			"x": -316,
 			"y": -647
 		},
 		{
 			"id": "fluxdistributor_1",
 			"type": "fluxdistributor",
-			"prerequisites": ["flux_dissipation_1"],
+			"prerequisites": [
+				"flux_dissipation_1"
+			],
 			"x": -50,
 			"y": -718
 		},
 		{
 			"id": "autorepair_1",
 			"type": "autorepair",
-			"prerequisites": ["flux_dissipation_1"],
+			"prerequisites": [
+				"flux_dissipation_1"
+			],
 			"x": 198,
 			"y": -692
 		},
 		{
 			"id": "hardened_subsystems_1",
 			"type": "hardened_subsystems",
-			"prerequisites": ["flux_dissipation_1"],
+			"prerequisites": [
+				"flux_dissipation_1"
+			],
 			"x": 423,
 			"y": -582
 		},
 		{
 			"id": "turretgyros_1",
 			"type": "turretgyros",
-			"prerequisites": ["ballistic_damage_1"],
-			"x": 518,
-			"y": 45
+			"prerequisites": [
+				"ballistic_damage_1"
+			],
+			"x": 591,
+			"y": 40
 		},
 		{
 			"id": "ballistic_rangefinder_1",
 			"type": "ballistic_rangefinder",
-			"prerequisites": ["ballistic_damage_1"],
+			"prerequisites": [
+				"ballistic_damage_1"
+			],
 			"x": 483,
 			"y": 192
 		},
 		{
 			"id": "magazines_1",
 			"type": "magazines",
-			"prerequisites": ["ballistic_damage_1"],
+			"prerequisites": [
+				"ballistic_damage_1"
+			],
 			"x": 408,
 			"y": 323
 		},
 		{
 			"id": "pointdefenseai_1",
 			"type": "pointdefenseai",
-			"prerequisites": ["ballistic_damage_1"],
+			"prerequisites": [
+				"ballistic_damage_1"
+			],
 			"x": 298,
 			"y": 426
 		},
 		{
 			"id": "missleracks_1",
 			"type": "missleracks",
-			"prerequisites": ["missile_damage_1"],
+			"prerequisites": [
+				"missile_damage_1"
+			],
 			"x": 334,
 			"y": -398
 		},
 		{
 			"id": "missile_autoloader_1",
 			"type": "missile_autoloader",
-			"prerequisites": ["missile_damage_1"],
+			"prerequisites": [
+				"missile_damage_1"
+			],
 			"x": 450,
 			"y": -260
 		},
 		{
 			"id": "eccm_1",
 			"type": "eccm",
-			"prerequisites": ["missile_damage_1"],
+			"prerequisites": [
+				"missile_damage_1"
+			],
 			"x": 512,
 			"y": -90
 		},
 		{
 			"id": "high_scatter_amp_1",
 			"type": "high_scatter_amp",
-			"prerequisites": ["beam_damage_1"],
-			"x": -368,
-			"y": 368
+			"prerequisites": [],
+			"x": -863,
+			"y": 510
 		},
 		{
 			"id": "advancedoptics_1",
 			"type": "advancedoptics",
-			"prerequisites": ["beam_damage_1"],
-			"x": -502,
-			"y": 135
+			"prerequisites": [],
+			"x": -776,
+			"y": 469
 		},
 		{
 			"id": "dedicated_targeting_core_1",
 			"type": "dedicated_targeting_core",
-			"prerequisites": ["non_beam_energy_damage_1"],
+			"prerequisites": [],
 			"x": -450,
 			"y": -260
 		},
 		{
 			"id": "targetingunit_1",
 			"type": "targetingunit",
-			"prerequisites": ["energy_damage_1"],
-			"x": -650,
-			"y": 0
+			"prerequisites": [],
+			"x": -974,
+			"y": 385
 		},
 		{
 			"id": "ecm_1",
 			"type": "ecm",
-			"prerequisites": ["weapon_damage_1"],
+			"prerequisites": [
+				"weapon_damage_1"
+			],
 			"x": 628,
 			"y": -168
 		},
 		{
 			"id": "defensive_targeting_array_1",
 			"type": "defensive_targeting_array",
-			"prerequisites": ["weapon_damage_1"],
+			"prerequisites": [
+				"weapon_damage_1"
+			],
 			"x": 628,
 			"y": 168
 		},
@@ -319,22 +369,22 @@
 			"id": "nav_relay_1",
 			"type": "nav_relay",
 			"prerequisites": [],
-			"x": -325,
-			"y": 563
+			"x": -319,
+			"y": 575
 		},
 		{
 			"id": "adaptive_coils_1",
 			"type": "adaptive_coils",
 			"prerequisites": [],
-			"x": -601,
-			"y": 601
+			"x": -971,
+			"y": 461
 		},
 		{
 			"id": "phase_anchor_1",
 			"type": "phase_anchor",
 			"prerequisites": [],
-			"x": -563,
-			"y": 325
+			"x": -867,
+			"y": 432
 		},
 		{
 			"id": "additional_berthing_1",
@@ -447,6 +497,56 @@
 			"prerequisites": [],
 			"x": 847,
 			"y": -74
+		},
+		{
+			"id": "beam_damage_2",
+			"type": "beam_damage",
+			"prerequisites": [
+				"energy_damage_1"
+			],
+			"x": -217,
+			"y": 49
+		},
+		{
+			"id": "beam_damage_3",
+			"type": "beam_damage",
+			"prerequisites": [],
+			"x": -327,
+			"y": 394
+		},
+		{
+			"id": "beam_damage_5",
+			"type": "beam_damage",
+			"prerequisites": [
+				"beam_damage_1"
+			],
+			"x": -379,
+			"y": 69
+		},
+		{
+			"id": "flux_capacity_2",
+			"type": "flux_capacity",
+			"prerequisites": [],
+			"x": -853,
+			"y": 160
+		},
+		{
+			"id": "non_beam_energy_damage_2",
+			"type": "non_beam_energy_damage",
+			"prerequisites": [
+				"non_beam_energy_damage_1"
+			],
+			"x": -301,
+			"y": -34
+		},
+		{
+			"id": "non_beam_energy_damage_3",
+			"type": "non_beam_energy_damage",
+			"prerequisites": [
+				"non_beam_energy_damage_2"
+			],
+			"x": -385,
+			"y": -12
 		}
 	]
 }
