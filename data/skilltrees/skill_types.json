@@ -181,7 +181,7 @@
 			"icon": "graphics/icons/notable_hullmods/converted_hangar.png",
 			"opCost": 4,
 			"xpCost": 2000,
-			"tier": "NOTABLE",
+			"tier": "KEYSTONE",
 			"vanillaHullMod": "converted_hangar"
 		},
 		{
@@ -190,7 +190,7 @@
 			"icon": "graphics/icons/notable_hullmods/converted_fighter_bay.png",
 			"opCost": 4,
 			"xpCost": 2000,
-			"tier": "NOTABLE",
+			"tier": "KEYSTONE",
 			"vanillaHullMod": "converted_fighterbay"
 		},
 		{
@@ -307,7 +307,7 @@
 			"icon": "graphics/icons/notable_hullmods/front_shield_generator.png",
 			"opCost": 4,
 			"xpCost": 2000,
-			"tier": "NOTABLE",
+			"tier": "KEYSTONE",
 			"vanillaHullMod": "frontshield"
 		},
 		{
@@ -460,7 +460,7 @@
 			"icon": "graphics/icons/notable_hullmods/unstable_injector.png",
 			"opCost": 4,
 			"xpCost": 2000,
-			"tier": "NOTABLE",
+			"tier": "KEYSTONE",
 			"vanillaHullMod": "unstable_injector"
 		},
 		{
@@ -496,7 +496,7 @@
 			"icon": "graphics/icons/notable_hullmods/efficiency.png",
 			"opCost": 4,
 			"xpCost": 2000,
-			"tier": "NOTABLE",
+			"tier": "KEYSTONE",
 			"vanillaHullMod": "efficiency_overhaul"
 		},
 		{

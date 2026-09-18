@@ -281,8 +281,8 @@
 			"id": "frontshield_1",
 			"type": "frontshield",
 			"prerequisites": [],
-			"x": 349,
-			"y": -1006
+			"x": 340,
+			"y": -997
 		},
 		{
 			"id": "frontemitter_1",
@@ -309,8 +309,8 @@
 			"id": "unstable_injector_1",
 			"type": "unstable_injector",
 			"prerequisites": [],
-			"x": 1316,
-			"y": 290
+			"x": 1303,
+			"y": 282
 		},
 		{
 			"id": "nav_relay_1",
@@ -351,22 +351,22 @@
 			"id": "auxiliary_fuel_tanks_1",
 			"type": "auxiliary_fuel_tanks",
 			"prerequisites": [],
-			"x": -244,
-			"y": 160
+			"x": -242,
+			"y": 132
 		},
 		{
 			"id": "efficiency_overhaul_1",
 			"type": "efficiency_overhaul",
 			"prerequisites": [],
-			"x": 34,
-			"y": 250
+			"x": 26,
+			"y": 246
 		},
 		{
 			"id": "expanded_cargo_holds_1",
 			"type": "expanded_cargo_holds",
 			"prerequisites": [],
-			"x": -393,
-			"y": 21
+			"x": 122,
+			"y": 46
 		},
 		{
 			"id": "hiressensors_1",
@@ -408,7 +408,7 @@
 			"type": "converted_hangar",
 			"prerequisites": [],
 			"x": 180,
-			"y": 145
+			"y": 184
 		},
 		{
 			"id": "converted_fighterbay_1",
@@ -442,8 +442,8 @@
 			"id": "escort_package_1",
 			"type": "escort_package",
 			"prerequisites": [],
-			"x": 1448,
-			"y": 121
+			"x": 1453,
+			"y": 144
 		},
 		{
 			"id": "beam_damage_2",
