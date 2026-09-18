@@ -55,21 +55,10 @@ final class SkillTreeNodeRenderer {
     private static final Color ALLOCATED_TINT = Color.WHITE;
     private static final Color UNALLOCATED_TINT = new Color(90, 90, 90);
 
-    private static final float[] RING_OFFSETS_SMALL = {0f, 0.25f};
-    private static final float[] RING_OFFSETS_NOTABLE = {0f, 0.13f, 0.26f, 0.39f};
     private static final int RING_SEGMENTS = 32;
     private static final float RING_LINE_THICKNESS = 1.5f;
     private static final Color RING_DULL_COLOR = new Color(150, 150, 150);
     private static final float RING_DULL_ALPHA = 0.5f;
-    private static final float RING_ALLOCATED_ALPHA = 0.9f;
-
-    private static final float KEYSTONE_RING_GAP = 0.3f;
-    private static final float KEYSTONE_RING_THICKNESS = 4f;
-    private static final int KEYSTONE_CIRCUIT_BRANCH_COUNT = 8;
-    private static final float KEYSTONE_CIRCUIT_JOG_FRACTION = 1.55f;
-    private static final float KEYSTONE_CIRCUIT_JOG_LENGTH_FRACTION = 0.3f;
-    private static final float KEYSTONE_CIRCUIT_LINE_THICKNESS = 1.5f;
-    private static final float KEYSTONE_CIRCUIT_VIA_RADIUS = 3f;
 
     private static final float ICON_SIZE_MULTIPLIER_NOTABLE = 1.2f;
     private static final float ICON_SIZE_MULTIPLIER_KEYSTONE = 1.4f;
@@ -250,26 +239,12 @@ final class SkillTreeNodeRenderer {
 
     private void drawRings(float cx, float cy, float footprintSize, float alphaMult, boolean allocated, Float pulseSeconds, SkillTier tier) {
         float half = footprintSize / 2f;
-        float iconEdgeFraction = iconSizeMultiplier(tier);
-        Color ringColor = allocated ? GLOW_COLOR : RING_DULL_COLOR;
-        float ringAlpha = allocated ? RING_ALLOCATED_ALPHA : RING_DULL_ALPHA;
 
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        if (tier == SkillTier.KEYSTONE) {
-            float ringFraction = iconEdgeFraction + KEYSTONE_RING_GAP;
-            GL11.glLineWidth(KEYSTONE_RING_THICKNESS);
-            drawRingOutline(cx, cy, half * ringFraction, ringColor, ringAlpha * alphaMult);
-            drawKeystoneCircuit(cx, cy, half, ringFraction, ringColor, ringAlpha * alphaMult);
-        } else {
-            GL11.glLineWidth(RING_LINE_THICKNESS);
-            float[] offsets = tier == SkillTier.NOTABLE ? RING_OFFSETS_NOTABLE : RING_OFFSETS_SMALL;
-            for (float offset : offsets) {
-                drawRingOutline(cx, cy, half * (iconEdgeFraction + offset), ringColor, ringAlpha * alphaMult);
-            }
-        }
+        drawNodeDonut(cx, cy, donutRadius(footprintSize, tier), allocated, alphaMult);
 
         if (pulseSeconds != null) {
             GL11.glLineWidth(RING_LINE_THICKNESS);
@@ -281,29 +256,23 @@ final class SkillTreeNodeRenderer {
         GL11.glDisable(GL11.GL_BLEND);
     }
 
-    private void drawKeystoneCircuit(float cx, float cy, float half, float ringFraction, Color color, float alpha) {
-        GL11.glLineWidth(KEYSTONE_CIRCUIT_LINE_THICKNESS);
-        float jogLength = half * KEYSTONE_CIRCUIT_JOG_LENGTH_FRACTION;
-
-        for (int i = 0; i < KEYSTONE_CIRCUIT_BRANCH_COUNT; i++) {
-            float angle = (float) (2 * Math.PI * i / KEYSTONE_CIRCUIT_BRANCH_COUNT);
-            float dirX = (float) Math.cos(angle);
-            float dirY = (float) Math.sin(angle);
-            float perpX = -dirY * (i % 2 == 0 ? 1 : -1);
-            float perpY = dirX * (i % 2 == 0 ? 1 : -1);
-
-            float startX = cx + dirX * half * ringFraction;
-            float startY = cy + dirY * half * ringFraction;
-            float jogX = cx + dirX * half * KEYSTONE_CIRCUIT_JOG_FRACTION;
-            float jogY = cy + dirY * half * KEYSTONE_CIRCUIT_JOG_FRACTION;
-            float endX = jogX + perpX * jogLength;
-            float endY = jogY + perpY * jogLength;
-
-            drawLine(startX, startY, jogX, jogY, color, alpha, KEYSTONE_CIRCUIT_LINE_THICKNESS);
-            drawLine(jogX, jogY, endX, endY, color, alpha, KEYSTONE_CIRCUIT_LINE_THICKNESS);
-            drawRingOutline(jogX, jogY, KEYSTONE_CIRCUIT_VIA_RADIUS, color, alpha);
-            drawRingOutline(endX, endY, KEYSTONE_CIRCUIT_VIA_RADIUS, color, alpha);
+    private void drawNodeDonut(float cx, float cy, float radius, boolean allocated, float alphaMult) {
+        if (allocated) {
+            GL11.glLineWidth(NODE_CONNECTOR_GLOW_HALO_THICKNESS);
+            drawRingOutline(cx, cy, radius, GLOW_COLOR, alphaMult * NODE_CONNECTOR_GLOW_HALO_ALPHA);
+            GL11.glLineWidth(NODE_CONNECTOR_GLOW_LINE_THICKNESS);
+            drawRingOutline(cx, cy, radius, GLOW_COLOR, alphaMult);
+            return;
         }
+
+        float gapRadius = NODE_CONNECTOR_PARALLEL_GAP / 2f;
+        GL11.glLineWidth(NODE_CONNECTOR_LINE_THICKNESS);
+        drawRingOutline(cx, cy, radius - gapRadius, RING_DULL_COLOR, alphaMult * RING_DULL_ALPHA);
+        drawRingOutline(cx, cy, radius + gapRadius, RING_DULL_COLOR, alphaMult * RING_DULL_ALPHA);
+    }
+
+    private static float donutRadius(float footprintSize, SkillTier tier) {
+        return (footprintSize / 2f) * iconSizeMultiplier(tier);
     }
 
     private static float iconSizeMultiplier(SkillTier tier) {
@@ -312,14 +281,6 @@ final class SkillTreeNodeRenderer {
             case NOTABLE: return ICON_SIZE_MULTIPLIER_NOTABLE / tier.getSizeMultiplier();
             default: return 1f;
         }
-    }
-
-    private static float outerNodeRadius(float footprintSize, SkillTier tier) {
-        float half = footprintSize / 2f;
-        float iconEdgeFraction = iconSizeMultiplier(tier);
-        if (tier == SkillTier.KEYSTONE) return half * (iconEdgeFraction + KEYSTONE_RING_GAP);
-        float[] offsets = tier == SkillTier.NOTABLE ? RING_OFFSETS_NOTABLE : RING_OFFSETS_SMALL;
-        return half * (iconEdgeFraction + offsets[offsets.length - 1]);
     }
 
     private void drawRingOutline(float cx, float cy, float radius, Color color, float alpha) {
@@ -357,7 +318,7 @@ final class SkillTreeNodeRenderer {
 
             float nodeX = centerX + node.getOffsetX() * zoom;
             float nodeY = centerY - node.getOffsetY() * zoom;
-            float nodeRadius = outerNodeRadius(NODE_SIZE * zoom * node.getType().getTier().getSizeMultiplier(), node.getType().getTier());
+            float nodeRadius = donutRadius(NODE_SIZE * zoom * node.getType().getTier().getSizeMultiplier(), node.getType().getTier());
 
             for (String connectedId : node.getConnectedNodeIds()) {
                 SkillNode other = SkillTree.get(connectedId);
@@ -366,7 +327,7 @@ final class SkillTreeNodeRenderer {
 
                 float otherX = centerX + other.getOffsetX() * zoom;
                 float otherY = centerY - other.getOffsetY() * zoom;
-                float otherRadius = outerNodeRadius(NODE_SIZE * zoom * other.getType().getTier().getSizeMultiplier(), other.getType().getTier());
+                float otherRadius = donutRadius(NODE_SIZE * zoom * other.getType().getTier().getSizeMultiplier(), other.getType().getTier());
                 boolean bothSatisfied = data.isSatisfied(node.getId(), satisfiedRootId) && data.isSatisfied(other.getId(), satisfiedRootId);
                 drawNodeConnectorLine(otherX, otherY, otherRadius, nodeX, nodeY, nodeRadius, bothSatisfied, alphaMult);
             }
