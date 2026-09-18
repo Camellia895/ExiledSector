@@ -1,6 +1,7 @@
 package exiledsector.skills;
 
 import com.fs.starfarer.api.Global;
+import exiledsector.skills.skilleffect.SkillEffect;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -64,7 +65,7 @@ public final class SkillTypeLoader {
         }
         for (int i = 0; i < effectsArray.length(); i++) {
             JSONObject entry = effectsArray.getJSONObject(i);
-            SkillEffect effect = SkillEffect.valueOf(entry.getString("effect"));
+            SkillEffect effect = SkillEffect.byName(entry.getString("effect"));
             float magnitude = (float) entry.getDouble("magnitude");
             effects.add(new SkillTypeEffect(effect, magnitude));
         }
@@ -78,7 +79,7 @@ public final class SkillTypeLoader {
         }
         for (int i = 0; i < effectsArray.length(); i++) {
             JSONObject entry = effectsArray.getJSONObject(i);
-            SkillEffect effect = SkillEffect.valueOf(entry.getString("effect"));
+            SkillEffect effect = SkillEffect.byName(entry.getString("effect"));
             float frigate = (float) entry.getDouble("frigate");
             float destroyer = (float) entry.getDouble("destroyer");
             float cruiser = (float) entry.getDouble("cruiser");

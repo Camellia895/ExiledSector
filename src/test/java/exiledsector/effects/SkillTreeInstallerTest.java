@@ -12,7 +12,7 @@ import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
-import exiledsector.skills.SkillEffect;
+import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -137,7 +137,7 @@ class SkillTreeInstallerTest {
     @Test
     void reappliesEffectsOnEveryQualifyingTickRegardlessOfWhetherTheModWasJustAdded() {
         SkillType hullType = new SkillType("hull", "Hull", "graphics/hullmods/reinforced_bulkheads.png", 2, 500,
-                List.of(new SkillTypeEffect(SkillEffect.HULL, 10f)), SkillTier.SMALL, null, null, null);
+                List.of(new SkillTypeEffect(DefenseSkillEffect.HULL, 10f)), SkillTier.SMALL, null, null, null);
         SkillNode hullNode = new SkillNode("hull_1", hullType, List.of(), 0f, 0f);
         SkillTree.register(hullNode);
 

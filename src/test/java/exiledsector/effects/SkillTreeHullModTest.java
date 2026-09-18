@@ -17,7 +17,10 @@ import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
-import exiledsector.skills.SkillEffect;
+import exiledsector.skills.skilleffect.DefenseSkillEffect;
+import exiledsector.skills.skilleffect.FluxSkillEffect;
+import exiledsector.skills.skilleffect.MiscSkillEffect;
+import exiledsector.skills.skilleffect.PhaseSkillEffect;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -65,7 +68,7 @@ class SkillTreeHullModTest {
     @Test
     void appliesTheEffectOfEachAllocatedNodeWithOneRegisteredOnTheTree() {
         SkillType hullType = new SkillType("hull", "Reinforced Hull", "graphics/hullmods/reinforced_bulkheads.png", 2, 500,
-                List.of(new SkillTypeEffect(SkillEffect.HULL, 10f)), SkillTier.SMALL, null, null, null);
+                List.of(new SkillTypeEffect(DefenseSkillEffect.HULL, 10f)), SkillTier.SMALL, null, null, null);
         SkillNode hullNode = new SkillNode("hull_1", hullType, List.of(), 0f, 0f);
         SkillTree.register(hullNode);
 
@@ -86,7 +89,7 @@ class SkillTreeHullModTest {
     @Test
     void appliesEachEffectOnANodeWithMultipleEffectsIndependently() {
         SkillType multiType = new SkillType("heavyarmor", "Heavy Armor", "graphics/icons/notable_hullmods/heavy_armor.png", 4, 2000,
-                List.of(new SkillTypeEffect(SkillEffect.ARMOR, 15f), new SkillTypeEffect(SkillEffect.HULL, 5f)),
+                List.of(new SkillTypeEffect(DefenseSkillEffect.ARMOR, 15f), new SkillTypeEffect(DefenseSkillEffect.HULL, 5f)),
                 SkillTier.NOTABLE, null, null, null);
         SkillNode multiNode = new SkillNode("heavyarmor_1", multiType, List.of(), 0f, 0f);
         SkillTree.register(multiNode);
@@ -174,7 +177,7 @@ class SkillTreeHullModTest {
     @Test
     void advanceInCombatAppliesConditionalEffectWhileVenting() {
         SkillType ventType = new SkillType("fluxbreakers", "Resistant Flux Conduits", "graphics/icons/notable_hullmods/resistant_flux_conduits.png", 4, 2000,
-                List.of(new SkillTypeEffect(SkillEffect.FLUX_DISSIPATION_WHILE_VENTING, 25f)), SkillTier.NOTABLE, null, null, null);
+                List.of(new SkillTypeEffect(FluxSkillEffect.FLUX_DISSIPATION_WHILE_VENTING, 25f)), SkillTier.NOTABLE, null, null, null);
         SkillNode ventNode = new SkillNode("fluxbreakers_1", ventType, List.of(), 0f, 0f);
         SkillTree.register(ventNode);
 
@@ -199,7 +202,7 @@ class SkillTreeHullModTest {
     @Test
     void advanceInCombatRemovesConditionalEffectWhenNotVenting() {
         SkillType ventType = new SkillType("fluxbreakers", "Resistant Flux Conduits", "graphics/icons/notable_hullmods/resistant_flux_conduits.png", 4, 2000,
-                List.of(new SkillTypeEffect(SkillEffect.FLUX_DISSIPATION_WHILE_VENTING, 25f)), SkillTier.NOTABLE, null, null, null);
+                List.of(new SkillTypeEffect(FluxSkillEffect.FLUX_DISSIPATION_WHILE_VENTING, 25f)), SkillTier.NOTABLE, null, null, null);
         SkillNode ventNode = new SkillNode("fluxbreakers_1", ventType, List.of(), 0f, 0f);
         SkillTree.register(ventNode);
 
@@ -224,7 +227,7 @@ class SkillTreeHullModTest {
     @Test
     void advanceInCombatDoesNotTouchNonConditionalEffects() {
         SkillType hullType = new SkillType("hull", "Reinforced Hull", "graphics/hullmods/reinforced_bulkheads.png", 2, 500,
-                List.of(new SkillTypeEffect(SkillEffect.HULL, 10f)), SkillTier.SMALL, null, null, null);
+                List.of(new SkillTypeEffect(DefenseSkillEffect.HULL, 10f)), SkillTier.SMALL, null, null, null);
         SkillNode hullNode = new SkillNode("hull_1", hullType, List.of(), 0f, 0f);
         SkillTree.register(hullNode);
 
@@ -256,7 +259,7 @@ class SkillTreeHullModTest {
     @Test
     void advanceInCombatDoublesStatsWhilePhased() {
         SkillType phaseType = new SkillType("phase_anchor", "Phase Anchor", "graphics/icons/notable_hullmods/phase_anchor.png", 4, 2000,
-                List.of(new SkillTypeEffect(SkillEffect.COMBAT_BOOST_WHILE_PHASED, 100f)), SkillTier.NOTABLE, null, null, null);
+                List.of(new SkillTypeEffect(PhaseSkillEffect.COMBAT_BOOST_WHILE_PHASED, 100f)), SkillTier.NOTABLE, null, null, null);
         SkillNode phaseNode = new SkillNode("phase_anchor_1", phaseType, List.of(), 0f, 0f);
         SkillTree.register(phaseNode);
 
@@ -286,7 +289,7 @@ class SkillTreeHullModTest {
     @Test
     void advanceInCombatUndoesTheBoostWhenNotPhased() {
         SkillType phaseType = new SkillType("phase_anchor", "Phase Anchor", "graphics/icons/notable_hullmods/phase_anchor.png", 4, 2000,
-                List.of(new SkillTypeEffect(SkillEffect.COMBAT_BOOST_WHILE_PHASED, 100f)), SkillTier.NOTABLE, null, null, null);
+                List.of(new SkillTypeEffect(PhaseSkillEffect.COMBAT_BOOST_WHILE_PHASED, 100f)), SkillTier.NOTABLE, null, null, null);
         SkillNode phaseNode = new SkillNode("phase_anchor_1", phaseType, List.of(), 0f, 0f);
         SkillTree.register(phaseNode);
 
@@ -315,7 +318,7 @@ class SkillTreeHullModTest {
     @Test
     void advanceInCombatGrantsCommandPointRecoveryWhenFlagship() {
         SkillType opsType = new SkillType("operations_center", "Operations Center", "graphics/icons/notable_hullmods/operations_center.png", 4, 2000,
-                List.of(new SkillTypeEffect(SkillEffect.COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP, 2.5f)), SkillTier.NOTABLE, null, null, null);
+                List.of(new SkillTypeEffect(MiscSkillEffect.COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP, 2.5f)), SkillTier.NOTABLE, null, null, null);
         SkillNode opsNode = new SkillNode("operations_center_1", opsType, List.of(), 0f, 0f);
         SkillTree.register(opsNode);
 
@@ -342,7 +345,7 @@ class SkillTreeHullModTest {
     @Test
     void advanceInCombatWithholdsCommandPointRecoveryWhenNotFlagship() {
         SkillType opsType = new SkillType("operations_center", "Operations Center", "graphics/icons/notable_hullmods/operations_center.png", 4, 2000,
-                List.of(new SkillTypeEffect(SkillEffect.COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP, 2.5f)), SkillTier.NOTABLE, null, null, null);
+                List.of(new SkillTypeEffect(MiscSkillEffect.COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP, 2.5f)), SkillTier.NOTABLE, null, null, null);
         SkillNode opsNode = new SkillNode("operations_center_1", opsType, List.of(), 0f, 0f);
         SkillTree.register(opsNode);
 

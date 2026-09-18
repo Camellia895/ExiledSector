@@ -1,5 +1,6 @@
 package exiledsector.skills;
 
+import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class SkillTreeTest {
 
     private static final SkillType TYPE = new SkillType("hull", "Hull", "a.png", 2, 500,
-            List.of(new SkillTypeEffect(SkillEffect.HULL, 1f)), SkillTier.SMALL, null, null, null);
+            List.of(new SkillTypeEffect(DefenseSkillEffect.HULL, 1f)), SkillTier.SMALL, null, null, null);
 
     @BeforeEach
     void setUp() {

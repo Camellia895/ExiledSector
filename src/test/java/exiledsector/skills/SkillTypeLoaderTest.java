@@ -1,5 +1,6 @@
 package exiledsector.skills;
 
+import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +31,7 @@ class SkillTypeLoaderTest {
         assertEquals(2, hull.getOpCost());
         assertEquals(500f, hull.getXpCost());
         assertEquals(1, hull.getEffects().size());
-        assertEquals(SkillEffect.HULL, hull.getEffects().get(0).effect());
+        assertEquals(DefenseSkillEffect.HULL, hull.getEffects().get(0).effect());
         assertEquals(10f, hull.getEffects().get(0).magnitude());
     }
 
@@ -46,8 +47,8 @@ class SkillTypeLoaderTest {
         SkillType heavyArmor = SkillTypeLoader.parseSkillTypes(root).get("heavyarmor");
 
         assertEquals(2, heavyArmor.getEffects().size());
-        assertEquals(SkillEffect.ARMOR, heavyArmor.getEffects().get(0).effect());
-        assertEquals(SkillEffect.HULL, heavyArmor.getEffects().get(1).effect());
+        assertEquals(DefenseSkillEffect.ARMOR, heavyArmor.getEffects().get(0).effect());
+        assertEquals(DefenseSkillEffect.HULL, heavyArmor.getEffects().get(1).effect());
     }
 
     @Test
