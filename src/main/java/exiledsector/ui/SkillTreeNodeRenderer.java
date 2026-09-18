@@ -6,11 +6,14 @@ import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.HullSizeSkillEffect;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTechLevel;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
+import exiledsector.skills.SkillType;
+import exiledsector.skills.SkillTypeEffect;
 import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.ui.LazyFont;
 import org.lwjgl.opengl.GL11;
@@ -39,12 +42,13 @@ final class SkillTreeNodeRenderer {
     private static final float VIGNETTE_OUTER_FRACTION = 1f;
     private static final float VIGNETTE_MARGIN_FRACTION = 0.375f;
 
-    private static final float TOOLTIP_MAX_TEXT_WIDTH = 240f;
-    private static final float TOOLTIP_MAX_TEXT_HEIGHT = 200f;
+    private static final float TOOLTIP_MAX_TEXT_WIDTH = 480f;
+    private static final float TOOLTIP_MAX_TEXT_HEIGHT = 800f;
     private static final float TOOLTIP_WIDTH_SAFETY_MARGIN = 8f;
     private static final float TOOLTIP_PADDING = 10f;
     private static final float TOOLTIP_TITLE_BODY_GAP = 6f;
     private static final float TOOLTIP_CURSOR_OFFSET = 18f;
+    private static final float TOOLTIP_TITLE_BOLD_OFFSET = 1f;
     private static final Color TOOLTIP_TITLE_COLOR = Color.WHITE;
 
     private static final Color ALLOCATED_TINT = Color.WHITE;
@@ -188,6 +192,9 @@ final class SkillTreeNodeRenderer {
     void toggleAllocation(SkillNode node) {
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
         boolean wasAllocated = data.isAllocated(node.getId());
+        if (wasAllocated && blockDeallocationReason(node) != null) {
+            return;
+        }
         data.toggle(node, SkillTree.getAllNodes().values(), satisfiedRootId());
         boolean isAllocatedNow = data.isAllocated(node.getId());
         if (isAllocatedNow != wasAllocated) {
@@ -198,6 +205,20 @@ final class SkillTreeNodeRenderer {
                 pulseElapsed.put(node.getId(), 0f);
             }
         }
+    }
+
+    private String blockDeallocationReason(SkillNode node) {
+        SkillType type = node.getType();
+        for (SkillTypeEffect effect : type.getEffects()) {
+            String reason = effect.effect().blockDeallocationReason(member, effect.magnitude());
+            if (reason != null) return reason;
+        }
+        for (HullSizeSkillEffect effect : type.getHullSizeEffects()) {
+            float magnitude = effect.valueFor(member.getHullSpec().getHullSize());
+            String reason = effect.effect().blockDeallocationReason(member, magnitude);
+            if (reason != null) return reason;
+        }
+        return null;
     }
 
     private boolean ensureTextureLoaded(String spritePath) {
@@ -338,7 +359,6 @@ final class SkillTreeNodeRenderer {
             for (String connectedId : node.getConnectedNodeIds()) {
                 SkillNode other = SkillTree.get(connectedId);
                 if (other == null) continue;
-                // connectedTo is symmetric, so each edge appears in both nodes' lists - only draw it once.
                 if (other.getType().getTier() != SkillTier.ROOT && node.getId().compareTo(other.getId()) >= 0) continue;
 
                 float otherX = centerX + other.getOffsetX() * zoom;
@@ -448,6 +468,7 @@ final class SkillTreeNodeRenderer {
         float titleY = boxY + boxHeight - TOOLTIP_PADDING;
         float bodyY = titleY - title.height - TOOLTIP_TITLE_BODY_GAP;
         title.drawable.draw(boxX + TOOLTIP_PADDING, titleY);
+        title.drawable.draw(boxX + TOOLTIP_PADDING + TOOLTIP_TITLE_BOLD_OFFSET, titleY);
         body.drawable.draw(boxX + TOOLTIP_PADDING, bodyY);
     }
 

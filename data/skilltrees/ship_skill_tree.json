@@ -118,8 +118,8 @@
 			"id": "blast_doors_1",
 			"type": "blast_doors",
 			"connectedTo": [],
-			"x": 35,
-			"y": 140
+			"x": 100,
+			"y": 223
 		},
 		{
 			"id": "fluxcoil_1",
@@ -237,8 +237,8 @@
 			"id": "ecm_1",
 			"type": "ecm",
 			"connectedTo": [],
-			"x": -144,
-			"y": -36
+			"x": 67,
+			"y": 79
 		},
 		{
 			"id": "defensive_targeting_array_1",
@@ -321,8 +321,8 @@
 			"id": "nav_relay_1",
 			"type": "nav_relay",
 			"connectedTo": [],
-			"x": -114,
-			"y": 185
+			"x": -24,
+			"y": 255
 		},
 		{
 			"id": "adaptive_coils_1",
@@ -342,71 +342,71 @@
 			"id": "additional_berthing_1",
 			"type": "additional_berthing",
 			"connectedTo": [],
-			"x": 226,
-			"y": -7
+			"x": -14,
+			"y": -168
 		},
 		{
 			"id": "augmentedengines_1",
 			"type": "augmentedengines",
 			"connectedTo": [],
-			"x": -261,
-			"y": 13
+			"x": 287,
+			"y": 61
 		},
 		{
 			"id": "auxiliary_fuel_tanks_1",
 			"type": "auxiliary_fuel_tanks",
 			"connectedTo": [],
-			"x": -242,
-			"y": 132
+			"x": -61,
+			"y": 75
 		},
 		{
 			"id": "efficiency_overhaul_1",
 			"type": "efficiency_overhaul",
 			"connectedTo": [],
-			"x": -59,
-			"y": 300
+			"x": 0,
+			"y": 0
 		},
 		{
 			"id": "expanded_cargo_holds_1",
 			"type": "expanded_cargo_holds",
 			"connectedTo": [],
-			"x": 122,
-			"y": 46
+			"x": 102,
+			"y": -116
 		},
 		{
 			"id": "hiressensors_1",
 			"type": "hiressensors",
 			"connectedTo": [],
-			"x": -226,
-			"y": -135
+			"x": 129,
+			"y": -12
 		},
 		{
 			"id": "insulatedengine_1",
 			"type": "insulatedengine",
 			"connectedTo": [],
-			"x": -89,
-			"y": -164
+			"x": -206,
+			"y": -26
 		},
 		{
 			"id": "militarized_subsystems_1",
 			"type": "militarized_subsystems",
 			"connectedTo": [],
-			"x": 60,
-			"y": -169
+			"x": -202,
+			"y": 102
 		},
 		{
 			"id": "solar_shielding_1",
 			"type": "solar_shielding",
 			"connectedTo": [],
-			"x": 156,
-			"y": -111
+			"x": -138,
+			"y": -122
 		},
 		{
 			"id": "surveying_equipment_1",
 			"type": "surveying_equipment",
 			"connectedTo": [],
-			"x": 264,
-			"y": -88
+			"x": 221,
+			"y": 166
 		},
 		{
 			"id": "converted_hangar_1",
@@ -419,8 +419,8 @@
 			"id": "converted_fighterbay_1",
 			"type": "converted_fighterbay",
 			"connectedTo": [],
-			"x": 232,
-			"y": 171
+			"x": 293,
+			"y": -50
 		},
 		{
 			"id": "expanded_deck_crew_1",
@@ -440,8 +440,8 @@
 			"id": "operations_center_1",
 			"type": "operations_center",
 			"connectedTo": [],
-			"x": -102,
-			"y": 73
+			"x": -146,
+			"y": 199
 		},
 		{
 			"id": "escort_package_1",
@@ -547,8 +547,8 @@
 				"increased_fuel_1",
 				"increased_crew_1"
 			],
-			"x": -9,
-			"y": -428
+			"x": -3,
+			"y": -467
 		},
 		{
 			"id": "increased_crew_1",
@@ -557,8 +557,8 @@
 				"root_high_tech_1",
 				"increased_cargo_1"
 			],
-			"x": 157,
-			"y": -417
+			"x": 178,
+			"y": -425
 		},
 		{
 			"id": "fighter_weapon_damage_1",
@@ -660,8 +660,8 @@
 			"connectedTo": [
 				"increased_fuel_7"
 			],
-			"x": -474,
-			"y": -180
+			"x": -459,
+			"y": -179
 		},
 		{
 			"id": "increased_fuel_7",

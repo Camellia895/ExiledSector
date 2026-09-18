@@ -18,7 +18,7 @@ import java.util.Map;
 final class SkillTreePanelStyle {
 
     static final String TOOLTIP_FONT_PATH = "graphics/fonts/insignia15LTaa.fnt";
-    static final float TOOLTIP_TITLE_FONT_SIZE = 20f;
+    static final float TOOLTIP_TITLE_FONT_SIZE = 24f;
     static final float TOOLTIP_BODY_FONT_SIZE = 20f;
     static final Color TOOLTIP_BODY_COLOR = new Color(230, 230, 230);
     static final float FONT_LINE_HEIGHT_FACTOR = 1f;

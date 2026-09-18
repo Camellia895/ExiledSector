@@ -590,9 +590,6 @@ public enum SkillEffect {
         }
     },
     FIGHTER_REPLACEMENT_RATE_MULT {
-        // Bundles the two dynamic stats vanilla's Converted Hangar uses together (decay and recovery rate
-        // both scaled the same way) so this reads as one lever, same "% change" magnitude convention as
-        // other _MULT effects: magnitude 50 means the rate becomes 1.5x slower, matching vanilla exactly.
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             float mult = 1f / (1f + magnitude / 100f);
@@ -625,6 +622,21 @@ public enum SkillEffect {
         @Override
         public String describe(float magnitude) {
             return flatChange(magnitude, "number of fighter bays");
+        }
+
+        @Override
+        public String blockDeallocationReason(FleetMemberAPI member, float magnitude) {
+            int fittedWings = member.getVariant().getFittedWings().size();
+            float baysWithoutThis = member.getStats().getNumFighterBays().getModifiedValue() - magnitude;
+            if (fittedWings > baysWithoutThis) {
+                return "Remove a fighter wing first - not enough empty fighter bays without this skill.";
+            }
+            return null;
+        }
+
+        @Override
+        public String deallocationWarning(float magnitude) {
+            return "Cannot be unallocated without at least 1 empty fighter bay.";
         }
     },
     SUPPLIES_PER_MONTH_MULT {
@@ -672,8 +684,6 @@ public enum SkillEffect {
         }
     },
     REMOVE_CIVILIAN_HULL_PENALTY {
-        // Magnitude is unused - this removes a specific vanilla-applied penalty (id "civgrade") rather than
-        // adding a tunable bonus. It's a no-op on ships that never had that penalty in the first place.
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getSensorStrength().unmodify("civgrade");
@@ -708,8 +718,6 @@ public enum SkillEffect {
         }
     },
     FLUX_DISSIPATION_WHILE_VENTING {
-        // Conditional effect - only active while the ship is venting flux. Applied per-combat-frame via
-        // advanceInCombat instead of once at ship creation; apply() is intentionally a no-op here.
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
         }
@@ -734,9 +742,6 @@ public enum SkillEffect {
         }
     },
     COMBAT_BOOST_WHILE_PHASED {
-        // Conditional effect - vanilla Phase Anchor doubles flux dissipation, all 3 weapon RoF stats, and
-        // all 3 ammo regen stats together while phased (and not decloaking). magnitude follows the same
-        // "% change" convention as other _MULT effects here: 100 means double, matching vanilla exactly.
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
         }
@@ -780,9 +785,6 @@ public enum SkillEffect {
         }
     },
     COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP {
-        // Conditional effect - vanilla Operations Center only grants this while the ship is the flagship
-        // (the player's own ship, or captained by the fleet commander). magnitude is a flat bonus, same
-        // as vanilla's own modifyFlat call (2.5 in vanilla).
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
         }
@@ -818,10 +820,6 @@ public enum SkillEffect {
         }
     },
     SURVEY_COST_REDUCTION_HEAVY_MACHINERY {
-        // Not conditional despite being a campaign-layer effect - the fleet-wide survey cost calculator
-        // (SurveyPluginImpl) reads this same per-ship dynamic stat via Misc.getFleetwideTotalMod, which
-        // sums it across every non-mothballed ship in the fleet. Setting it once at ship creation is
-        // enough; no per-frame hook needed.
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getDynamic().getMod("survey_cost_reduction_heavy_machinery").modifyFlat(modId, magnitude);
@@ -864,6 +862,14 @@ public enum SkillEffect {
     }
 
     public void advanceInCombat(ShipAPI ship, String modId, float magnitude) {
+    }
+
+    public String blockDeallocationReason(FleetMemberAPI member, float magnitude) {
+        return null;
+    }
+
+    public String deallocationWarning(float magnitude) {
+        return null;
     }
 
     static String pct(float magnitude) {

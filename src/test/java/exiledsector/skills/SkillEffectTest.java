@@ -2,10 +2,15 @@ package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -493,5 +498,71 @@ class SkillEffectTest {
     @Test
     void describeUsesDecreasesForANegativeBidirectionalMagnitude() {
         assertEquals("Decreases peak combat readiness duration by 20%.", SkillEffect.PEAK_CR_DURATION.describe(-20f));
+    }
+
+    @Test
+    void fighterBaysFlatModifiesTheNumFighterBaysStat() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        MutableStat numFighterBays = mock(MutableStat.class);
+        when(stats.getNumFighterBays()).thenReturn(numFighterBays);
+
+        SkillEffect.FIGHTER_BAYS_FLAT.apply(stats, "mod_id", 1f);
+
+        verify(numFighterBays).modifyFlat("mod_id", 1f);
+    }
+
+    @Test
+    void fighterBaysFlatDescribesTheBayCountOnly() {
+        assertEquals("Increases number of fighter bays by 1.", SkillEffect.FIGHTER_BAYS_FLAT.describe(1f));
+    }
+
+    @Test
+    void fighterBaysFlatHasADeallocationWarning() {
+        assertEquals("Cannot be unallocated without at least 1 empty fighter bay.",
+                SkillEffect.FIGHTER_BAYS_FLAT.deallocationWarning(1f));
+    }
+
+    @Test
+    void mostEffectsHaveNoDeallocationWarning() {
+        assertNull(SkillEffect.HULL.deallocationWarning(10f));
+    }
+
+    @Test
+    void fighterBaysFlatBlocksDeallocationWhenNoEmptyBayWouldRemain() {
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(member.getVariant()).thenReturn(variant);
+        when(variant.getFittedWings()).thenReturn(List.of("wing_1"));
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        when(member.getStats()).thenReturn(stats);
+        MutableStat numFighterBays = mock(MutableStat.class);
+        when(stats.getNumFighterBays()).thenReturn(numFighterBays);
+        when(numFighterBays.getModifiedValue()).thenReturn(1f);
+
+        String reason = SkillEffect.FIGHTER_BAYS_FLAT.blockDeallocationReason(member, 1f);
+
+        assertEquals("Remove a fighter wing first - not enough empty fighter bays without this skill.", reason);
+    }
+
+    @Test
+    void fighterBaysFlatAllowsDeallocationWhenAnEmptyBayWouldRemain() {
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(member.getVariant()).thenReturn(variant);
+        when(variant.getFittedWings()).thenReturn(List.of("wing_1"));
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        when(member.getStats()).thenReturn(stats);
+        MutableStat numFighterBays = mock(MutableStat.class);
+        when(stats.getNumFighterBays()).thenReturn(numFighterBays);
+        when(numFighterBays.getModifiedValue()).thenReturn(2f);
+
+        String reason = SkillEffect.FIGHTER_BAYS_FLAT.blockDeallocationReason(member, 1f);
+
+        assertNull(reason);
+    }
+
+    @Test
+    void mostEffectsNeverBlockDeallocation() {
+        assertNull(SkillEffect.HULL.blockDeallocationReason(mock(FleetMemberAPI.class), 10f));
     }
 }
