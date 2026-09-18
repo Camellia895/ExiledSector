@@ -436,15 +436,15 @@
     <div class="stats" id="statsLine"></div>
     <div class="spacer"></div>
     <input id="searchBox" placeholder="Search node or type name...">
-    <button class="themeToggle" id="themeToggle" title="Toggle theme">â—</button>
+    <button class="themeToggle" id="themeToggle" title="Toggle theme">ÃƒÂ¢Ã¢â‚¬â€Ã‚Â</button>
   </div>
 
   <div id="toolbar">
     <div class="toolSection">
       <div class="label">Mode</div>
-      <button class="modeBtn active" data-mode="select">â†– Select / Move <span class="key">V</span></button>
-      <button class="modeBtn" data-mode="add">âœš Add Node <span class="key">A</span></button>
-      <button class="modeBtn" data-mode="link">â‡„ Link / Unlink <span class="key">L</span></button>
+      <button class="modeBtn active" data-mode="select">ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â€œ Select / Move <span class="key">V</span></button>
+      <button class="modeBtn" data-mode="add">ÃƒÂ¢Ã…â€œÃ…Â¡ Add Node <span class="key">A</span></button>
+      <button class="modeBtn" data-mode="link">ÃƒÂ¢Ã¢â‚¬Â¡Ã¢â‚¬Å¾ Link / Unlink <span class="key">L</span></button>
       <div class="hint">Select: drag a node to move it, drag empty canvas to pan, scroll to zoom. Shift-click a node to add/remove it from a multi-selection, or shift-drag empty canvas to marquee-select. Drag any selected node to move the whole group together.<br><br>Add: click empty canvas to place a node there.<br><br>Link: click two nodes to connect them - each is added to the other's connections, so allocating either one lets you allocate the other. Click the same pair again to unlink.</div>
     </div>
 
@@ -479,13 +479,13 @@
     <svg id="stage"></svg>
     <div class="zoomControls">
       <button id="zoomIn">+</button>
-      <button id="zoomOut">âˆ’</button>
+      <button id="zoomOut">ÃƒÂ¢Ã‹â€ Ã¢â‚¬â„¢</button>
     </div>
     <div class="warnBadge" id="warnBadge" style="display:none"></div>
   </div>
 
   <div id="inspector">
-    <button class="closeMobile" id="closeInspector">Ã—</button>
+    <button class="closeMobile" id="closeInspector">ÃƒÆ’Ã¢â‚¬â€</button>
     <div id="inspectorBody"><div class="empty-inspector">Select a node to see and edit its details, or switch to Add mode and click the canvas to place a new one.</div></div>
   </div>
 
@@ -878,14 +878,14 @@ function render(){
 
 function updateStats(){
   document.getElementById('statsLine').textContent =
-    state.nodes.length + ' nodes Â· ' + state.types.length + ' types Â· zoom ' + state.view.zoom.toFixed(2) + 'x';
+    state.nodes.length + ' nodes Ãƒâ€šÃ‚Â· ' + state.types.length + ' types Ãƒâ€šÃ‚Â· zoom ' + state.view.zoom.toFixed(2) + 'x';
 }
 function updateWarnBadge(){
   var el = document.getElementById('warnBadge');
   var issues = validate();
   if (issues.length === 0) { el.style.display = 'none'; return; }
   el.style.display = 'block';
-  el.textContent = 'âš  ' + issues.length + ' issue' + (issues.length>1?'s':'') + ' - click to view';
+  el.textContent = 'ÃƒÂ¢Ã…Â¡Ã‚Â  ' + issues.length + ' issue' + (issues.length>1?'s':'') + ' - click to view';
   el.onclick = function(){ alert(issues.join('\n')); };
 }
 
@@ -1100,7 +1100,7 @@ function refreshInspector(){
   }).join('');
   var prereqHtml = (n.connectedTo||[]).map(function(pid){
     var pn = nodeById(pid);
-    return '<div class="prereqItem"><span>' + pid + (pn ? '' : ' (missing!)') + '</span><button data-remove-prereq="' + pid + '">âœ•</button></div>';
+    return '<div class="prereqItem"><span>' + pid + (pn ? '' : ' (missing!)') + '</span><button data-remove-prereq="' + pid + '">ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¢</button></div>';
   }).join('') || '<div class="hint">None - renders with no connector line until you add one (e.g. a root node).</div>';
   var otherNodeOptions = state.nodes.filter(function(o){ return o.id !== n.id; }).map(function(o){
     return '<option value="' + o.id + '">' + o.id + '</option>';
@@ -1113,7 +1113,7 @@ function refreshInspector(){
       return '<div class="fieldRow" style="align-items:flex-end">' +
         '<div class="field" style="flex:2"><label>Effect ' + (i+1) + '</label><select data-stat-effect="' + i + '">' + options + '</select></div>' +
         '<div class="field" style="flex:1"><label>Magnitude</label><input type="number" step="0.1" value="' + e.magnitude + '" data-stat-magnitude="' + i + '"></div>' +
-        '<button class="smallBtn danger" data-remove-stat-row="' + i + '">âœ•</button>' +
+        '<button class="smallBtn danger" data-remove-stat-row="' + i + '">ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¢</button>' +
       '</div>';
     }).join('') || '<div class="hint">No effects yet.' + (t.vanillaHullMod ? ' Still on vanillaHullMod passthrough ("' + t.vanillaHullMod + '") - adding effects here does not switch that off, use "Edit type" for that.' : '') + '</div>';
     if (!t.hullSizeEffects) t.hullSizeEffects = [];
@@ -1387,7 +1387,7 @@ function renderHullSizeEffectRows(idPrefix, hullSizeEffectsDraft){
       '<div class="field" style="flex:1 1 70px"><label>Destroyer</label><input id="' + idPrefix + 'HsDestroyer' + i + '" type="number" step="0.1" value="' + e.destroyer + '"></div>' +
       '<div class="field" style="flex:1 1 70px"><label>Cruiser</label><input id="' + idPrefix + 'HsCruiser' + i + '" type="number" step="0.1" value="' + e.cruiser + '"></div>' +
       '<div class="field" style="flex:1 1 70px"><label>Capital</label><input id="' + idPrefix + 'HsCapital' + i + '" type="number" step="0.1" value="' + e.capitalShip + '"></div>' +
-      '<button class="smallBtn danger" type="button" data-' + idPrefix + '-remove-hs-row="' + i + '">âœ•</button>' +
+      '<button class="smallBtn danger" type="button" data-' + idPrefix + '-remove-hs-row="' + i + '">ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¢</button>' +
     '</div>';
   }).join('');
   return rows || '<div class="hint">No hull-size-dependent effects.</div>';
@@ -1440,7 +1440,7 @@ function openTypeModal(existingType, onSave){
       return '<div class="fieldRow" style="align-items:flex-end">' +
         '<div class="field" style="flex:2"><label>Effect ' + (i+1) + '</label><select id="tEffect' + i + '">' + options + '</select></div>' +
         '<div class="field" style="flex:1"><label>Magnitude</label><input id="tMag' + i + '" type="number" step="0.1" value="' + e.magnitude + '"></div>' +
-        '<button class="smallBtn danger" type="button" data-remove-effect-row="' + i + '">âœ•</button>' +
+        '<button class="smallBtn danger" type="button" data-remove-effect-row="' + i + '">ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¢</button>' +
       '</div>';
     }).join('') || '<div class="hint">No effects yet - click "+ Add effect" below, or set a vanillaHullMod id instead.</div>';
 
@@ -1619,12 +1619,6 @@ function saveToProject(reason){
 }
 document.getElementById('saveToProjectBtn').addEventListener('click', function(){ saveToProject(); });
 
-// ---------- respond to save requests from Claude, so it never edits stale files ----------
-setInterval(function(){
-  fetch('/save-requested').then(function(res){ return res.json(); }).then(function(data){
-    if (data && data.requested) saveToProject('Auto-saved (Claude requested a sync before editing)');
-  }).catch(function(){});
-}, 1500);
 document.getElementById('copyBtn').addEventListener('click', function(){
   var ta = document.getElementById('exportText');
   ta.focus(); ta.select();

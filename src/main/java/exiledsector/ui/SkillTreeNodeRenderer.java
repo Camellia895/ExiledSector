@@ -78,7 +78,6 @@ final class SkillTreeNodeRenderer {
     private final String symbolPath;
     private final FleetMemberAPI member;
     private final SkillTreePanelStyle style;
-    private final ShipTechLevel techLevel;
     private final SkillNode activeRoot;
     private final Set<String> loadedSprites = new HashSet<>();
     private final Map<String, SkillTreePanelStyle.TooltipText> tooltipTitles = new HashMap<>();
@@ -89,8 +88,7 @@ final class SkillTreeNodeRenderer {
         this.symbolPath = symbolPath;
         this.member = member;
         this.style = style;
-        this.techLevel = ShipTechLevel.of(member);
-        this.activeRoot = findRootNode(rootTypeId(techLevel));
+        this.activeRoot = findRootNode(rootTypeId(ShipTechLevel.of(member)));
     }
 
     private String satisfiedRootId() {
@@ -244,7 +242,7 @@ final class SkillTreeNodeRenderer {
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        drawNodeDonut(cx, cy, donutRadius(footprintSize, tier), allocated, alphaMult);
+        drawNodeDonut(cx, cy, donutRadius(footprintSize, tier), tier.getSizeMultiplier(), allocated, alphaMult);
 
         if (pulseSeconds != null) {
             GL11.glLineWidth(RING_LINE_THICKNESS);
@@ -256,23 +254,31 @@ final class SkillTreeNodeRenderer {
         GL11.glDisable(GL11.GL_BLEND);
     }
 
-    private void drawNodeDonut(float cx, float cy, float radius, boolean allocated, float alphaMult) {
+    private void drawNodeDonut(float cx, float cy, float radius, float scale, boolean allocated, float alphaMult) {
         if (allocated) {
-            GL11.glLineWidth(NODE_CONNECTOR_GLOW_HALO_THICKNESS);
+            GL11.glLineWidth(NODE_CONNECTOR_GLOW_HALO_THICKNESS * scale);
             drawRingOutline(cx, cy, radius, GLOW_COLOR, alphaMult * NODE_CONNECTOR_GLOW_HALO_ALPHA);
-            GL11.glLineWidth(NODE_CONNECTOR_GLOW_LINE_THICKNESS);
+            GL11.glLineWidth(NODE_CONNECTOR_GLOW_LINE_THICKNESS * scale);
             drawRingOutline(cx, cy, radius, GLOW_COLOR, alphaMult);
             return;
         }
 
-        float gapRadius = NODE_CONNECTOR_PARALLEL_GAP / 2f;
-        GL11.glLineWidth(NODE_CONNECTOR_LINE_THICKNESS);
+        float gapRadius = donutGapRadius(scale);
+        GL11.glLineWidth(NODE_CONNECTOR_LINE_THICKNESS * scale);
         drawRingOutline(cx, cy, radius - gapRadius, RING_DULL_COLOR, alphaMult * RING_DULL_ALPHA);
         drawRingOutline(cx, cy, radius + gapRadius, RING_DULL_COLOR, alphaMult * RING_DULL_ALPHA);
     }
 
+    private static float donutGapRadius(float scale) {
+        return (NODE_CONNECTOR_PARALLEL_GAP * scale) / 2f;
+    }
+
     private static float donutRadius(float footprintSize, SkillTier tier) {
         return (footprintSize / 2f) * iconSizeMultiplier(tier);
+    }
+
+    private static float donutOuterRadius(float footprintSize, SkillTier tier) {
+        return donutRadius(footprintSize, tier) + donutGapRadius(tier.getSizeMultiplier());
     }
 
     private static float iconSizeMultiplier(SkillTier tier) {
@@ -318,7 +324,7 @@ final class SkillTreeNodeRenderer {
 
             float nodeX = centerX + node.getOffsetX() * zoom;
             float nodeY = centerY - node.getOffsetY() * zoom;
-            float nodeRadius = donutRadius(NODE_SIZE * zoom * node.getType().getTier().getSizeMultiplier(), node.getType().getTier());
+            float nodeRadius = donutOuterRadius(NODE_SIZE * zoom * node.getType().getTier().getSizeMultiplier(), node.getType().getTier());
 
             for (String connectedId : node.getConnectedNodeIds()) {
                 SkillNode other = SkillTree.get(connectedId);
@@ -327,7 +333,7 @@ final class SkillTreeNodeRenderer {
 
                 float otherX = centerX + other.getOffsetX() * zoom;
                 float otherY = centerY - other.getOffsetY() * zoom;
-                float otherRadius = donutRadius(NODE_SIZE * zoom * other.getType().getTier().getSizeMultiplier(), other.getType().getTier());
+                float otherRadius = donutOuterRadius(NODE_SIZE * zoom * other.getType().getTier().getSizeMultiplier(), other.getType().getTier());
                 boolean bothSatisfied = data.isSatisfied(node.getId(), satisfiedRootId) && data.isSatisfied(other.getId(), satisfiedRootId);
                 drawNodeConnectorLine(otherX, otherY, otherRadius, nodeX, nodeY, nodeRadius, bothSatisfied, alphaMult);
             }
