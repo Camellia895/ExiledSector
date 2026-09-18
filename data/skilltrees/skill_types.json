@@ -213,7 +213,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "blast_doors",
+			"effects": [
+				{ "effect": "HULL", "magnitude": 20 },
+				{ "effect": "CREW_LOSS", "magnitude": -60 }
+			],
 			"tags": [
 				"logistics"
 			]
@@ -285,7 +288,9 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "ecm",
+			"hullSizeEffects": [
+				{ "effect": "ELECTRONIC_WARFARE", "frigate": 1, "destroyer": 2, "cruiser": 3, "capitalShip": 4 }
+			],
 			"tags": [
 				"logistics"
 			]
@@ -494,7 +499,9 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "nav_relay",
+			"hullSizeEffects": [
+				{ "effect": "NAV_RATING", "frigate": 2, "destroyer": 3, "cruiser": 4, "capitalShip": 5 }
+			],
 			"tags": [
 				"logistics"
 			]
@@ -589,7 +596,6 @@
 				{ "effect": "EMP_DAMAGE_TAKEN", "magnitude": -50 },
 				{ "effect": "FLUX_DISSIPATION_WHILE_VENTING", "magnitude": 25 }
 			],
-			"todo": "Real vanilla effect is -50% EMP damage taken (that part is now correctly always-on, matches vanilla) plus +25% flux dissipation but only while venting. FLUX_DISSIPATION_WHILE_VENTING is currently applied always instead of gated - couldn't find the real vanilla implementation class to confirm the exact hook (its class is obfuscated with a renamed identity, unlike most other hullmod effects which ship with real names in starfarer.api.jar). Once the custom condition system exists (advanceInCombat + ship.getFluxTracker().isVenting()), only this one effect's apply() method needs to change - no node data updates needed.",
 			"tags": [
 				"flux",
 				"phase"
@@ -623,7 +629,9 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "additional_berthing",
+			"hullSizeEffects": [
+				{ "effect": "CREW_CAPACITY_FLAT", "frigate": 30, "destroyer": 60, "cruiser": 100, "capitalShip": 200 }
+			],
 			"tags": [
 				"logistics"
 			]
@@ -652,7 +660,9 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "auxiliary_fuel_tanks",
+			"hullSizeEffects": [
+				{ "effect": "FUEL_CAPACITY_FLAT", "frigate": 30, "destroyer": 60, "cruiser": 100, "capitalShip": 200 }
+			],
 			"tags": [
 				"logistics"
 			]
@@ -697,7 +707,9 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "expanded_cargo_holds",
+			"hullSizeEffects": [
+				{ "effect": "CARGO_CAPACITY_FLAT", "frigate": 30, "destroyer": 60, "cruiser": 100, "capitalShip": 200 }
+			],
 			"tags": [
 				"logistics"
 			]
@@ -709,7 +721,9 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "hiressensors",
+			"hullSizeEffects": [
+				{ "effect": "SENSOR_RANGE", "frigate": 50, "destroyer": 75, "cruiser": 100, "capitalShip": 150 }
+			],
 			"tags": [
 				"logistics"
 			]
@@ -721,7 +735,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "insulatedengine",
+			"effects": [
+				{ "effect": "ENGINE_DURABILITY", "magnitude": 100 },
+				{ "effect": "HULL", "magnitude": 10 }
+			],
 			"tags": [
 				"logistics"
 			]

@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.BaseHullMod;
 import com.fs.starfarer.api.combat.HullModEffect;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
@@ -49,6 +50,33 @@ public class SkillTreeHullMod extends BaseHullMod {
             }
             for (HullSizeSkillEffect effect : type.getHullSizeEffects()) {
                 effect.effect().apply(stats, MOD_ID_PREFIX + node.getId(), effect.valueFor(hullSize));
+            }
+        }
+    }
+
+    @Override
+    public void advanceInCombat(ShipAPI ship, float amount) {
+        FleetMemberAPI member = ship.getMutableStats().getFleetMember();
+        if (member == null) return;
+
+        ShipSkillData data = ShipSkillDataManager.get(member.getId());
+        HullSize hullSize = ship.getHullSize();
+        for (String nodeId : data.getAllocatedNodeIds()) {
+            SkillNode node = SkillTree.get(nodeId);
+            if (node == null) continue;
+
+            SkillType type = node.getType();
+            if (type.getVanillaHullModId() != null) continue;
+
+            for (SkillTypeEffect effect : type.getEffects()) {
+                if (effect.effect().isConditional()) {
+                    effect.effect().advanceInCombat(ship, MOD_ID_PREFIX + node.getId(), effect.magnitude());
+                }
+            }
+            for (HullSizeSkillEffect effect : type.getHullSizeEffects()) {
+                if (effect.effect().isConditional()) {
+                    effect.effect().advanceInCombat(ship, MOD_ID_PREFIX + node.getId(), effect.valueFor(hullSize));
+                }
             }
         }
     }

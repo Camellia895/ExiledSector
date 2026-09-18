@@ -1,6 +1,7 @@
 package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
 
 public enum SkillEffect {
 
@@ -641,18 +642,29 @@ public enum SkillEffect {
         }
     },
     FLUX_DISSIPATION_WHILE_VENTING {
-        // Real vanilla effect only applies this while venting - we don't have a condition system yet,
-        // so for now this is a permanent bonus, same math as FLUX_DISSIPATION. Kept as its own named
-        // effect so it can be switched to a real "only while venting" check later without touching
-        // any node data - just this apply() method.
+        // Conditional effect - only active while the ship is venting flux. Applied per-combat-frame via
+        // advanceInCombat instead of once at ship creation; apply() is intentionally a no-op here.
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getFluxDissipation().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public boolean isConditional() {
+            return true;
+        }
+
+        @Override
+        public void advanceInCombat(ShipAPI ship, String modId, float magnitude) {
+            if (ship.getFluxTracker().isVenting()) {
+                ship.getMutableStats().getFluxDissipation().modifyPercent(modId, magnitude);
+            } else {
+                ship.getMutableStats().getFluxDissipation().unmodify(modId);
+            }
         }
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "flux dissipation rate");
+            return pctChange(magnitude, "flux dissipation rate while venting");
         }
     },
     ENERGY_DAMAGE_TAKEN {
@@ -670,6 +682,13 @@ public enum SkillEffect {
     public abstract void apply(MutableShipStatsAPI stats, String modId, float magnitude);
 
     public abstract String describe(float magnitude);
+
+    public boolean isConditional() {
+        return false;
+    }
+
+    public void advanceInCombat(ShipAPI ship, String modId, float magnitude) {
+    }
 
     static String pct(float magnitude) {
         if (magnitude == Math.rint(magnitude)) {

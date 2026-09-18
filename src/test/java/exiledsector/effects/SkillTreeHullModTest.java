@@ -3,8 +3,11 @@ package exiledsector.effects;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.combat.FluxTrackerAPI;
 import com.fs.starfarer.api.combat.HullModEffect;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.MutableStat;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
@@ -26,6 +29,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.mockito.ArgumentMatchers.anyFloat;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -152,5 +157,95 @@ class SkillTreeHullModTest {
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
 
         verify(stats, never()).getHullBonus();
+    }
+
+    private ShipAPI mockShip(FleetMemberAPI member, MutableShipStatsAPI stats) {
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.getMutableStats()).thenReturn(stats);
+        when(ship.getHullSize()).thenReturn(HullSize.FRIGATE);
+        when(stats.getFleetMember()).thenReturn(member);
+        return ship;
+    }
+
+    @Test
+    void advanceInCombatAppliesConditionalEffectWhileVenting() {
+        SkillType ventType = new SkillType("fluxbreakers", "Resistant Flux Conduits", "graphics/icons/notable_hullmods/resistant_flux_conduits.png", 4, 2000,
+                List.of(new SkillTypeEffect(SkillEffect.FLUX_DISSIPATION_WHILE_VENTING, 25f)), SkillTier.NOTABLE, null, null, null);
+        SkillNode ventNode = new SkillNode("fluxbreakers_1", ventType, List.of(), 0f, 0f);
+        SkillTree.register(ventNode);
+
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        ShipSkillDataManager.get("ship-a").allocate(ventNode);
+
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        ShipAPI ship = mockShip(member, stats);
+        FluxTrackerAPI fluxTracker = mock(FluxTrackerAPI.class);
+        when(ship.getFluxTracker()).thenReturn(fluxTracker);
+        when(fluxTracker.isVenting()).thenReturn(true);
+        MutableStat dissipation = mock(MutableStat.class);
+        when(stats.getFluxDissipation()).thenReturn(dissipation);
+
+        new SkillTreeHullMod().advanceInCombat(ship, 0.1f);
+
+        verify(dissipation).modifyPercent("exiledSector_skill_fluxbreakers_1", 25f);
+        verify(dissipation, never()).unmodify(anyString());
+    }
+
+    @Test
+    void advanceInCombatRemovesConditionalEffectWhenNotVenting() {
+        SkillType ventType = new SkillType("fluxbreakers", "Resistant Flux Conduits", "graphics/icons/notable_hullmods/resistant_flux_conduits.png", 4, 2000,
+                List.of(new SkillTypeEffect(SkillEffect.FLUX_DISSIPATION_WHILE_VENTING, 25f)), SkillTier.NOTABLE, null, null, null);
+        SkillNode ventNode = new SkillNode("fluxbreakers_1", ventType, List.of(), 0f, 0f);
+        SkillTree.register(ventNode);
+
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        ShipSkillDataManager.get("ship-a").allocate(ventNode);
+
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        ShipAPI ship = mockShip(member, stats);
+        FluxTrackerAPI fluxTracker = mock(FluxTrackerAPI.class);
+        when(ship.getFluxTracker()).thenReturn(fluxTracker);
+        when(fluxTracker.isVenting()).thenReturn(false);
+        MutableStat dissipation = mock(MutableStat.class);
+        when(stats.getFluxDissipation()).thenReturn(dissipation);
+
+        new SkillTreeHullMod().advanceInCombat(ship, 0.1f);
+
+        verify(dissipation).unmodify("exiledSector_skill_fluxbreakers_1");
+        verify(dissipation, never()).modifyPercent(anyString(), anyFloat());
+    }
+
+    @Test
+    void advanceInCombatDoesNotTouchNonConditionalEffects() {
+        SkillType hullType = new SkillType("hull", "Reinforced Hull", "graphics/hullmods/reinforced_bulkheads.png", 2, 500,
+                List.of(new SkillTypeEffect(SkillEffect.HULL, 10f)), SkillTier.SMALL, null, null, null);
+        SkillNode hullNode = new SkillNode("hull_1", hullType, List.of(), 0f, 0f);
+        SkillTree.register(hullNode);
+
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        ShipSkillDataManager.get("ship-a").allocate(hullNode);
+
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        ShipAPI ship = mockShip(member, stats);
+
+        new SkillTreeHullMod().advanceInCombat(ship, 0.1f);
+
+        verify(ship, never()).getFluxTracker();
+        verify(stats, never()).getHullBonus();
+    }
+
+    @Test
+    void advanceInCombatDoesNothingWhenTheShipHasNoFleetMember() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        when(stats.getFleetMember()).thenReturn(null);
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.getMutableStats()).thenReturn(stats);
+
+        new SkillTreeHullMod().advanceInCombat(ship, 0.1f);
+
+        verify(ship, never()).getFluxTracker();
     }
 }
