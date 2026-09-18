@@ -41,6 +41,7 @@ public final class SkillTypeLoader {
     private static SkillType parseSkillType(JSONObject json) throws JSONException {
         SkillTier tier = SkillTier.valueOf(json.optString("tier", "SMALL"));
         List<SkillTypeEffect> effects = parseEffects(json.optJSONArray("effects"));
+        List<HullSizeSkillEffect> hullSizeEffects = parseHullSizeEffects(json.optJSONArray("hullSizeEffects"));
 
         return new SkillType(
                 json.getString("id"),
@@ -49,6 +50,7 @@ public final class SkillTypeLoader {
                 json.optInt("opCost", 0),
                 (float) json.optDouble("xpCost", 0),
                 effects,
+                hullSizeEffects,
                 tier,
                 json.optString("vanillaHullMod", null),
                 json.optString("description", null),
@@ -65,6 +67,23 @@ public final class SkillTypeLoader {
             SkillEffect effect = SkillEffect.valueOf(entry.getString("effect"));
             float magnitude = (float) entry.getDouble("magnitude");
             effects.add(new SkillTypeEffect(effect, magnitude));
+        }
+        return effects;
+    }
+
+    private static List<HullSizeSkillEffect> parseHullSizeEffects(JSONArray effectsArray) throws JSONException {
+        List<HullSizeSkillEffect> effects = new ArrayList<>();
+        if (effectsArray == null) {
+            return effects;
+        }
+        for (int i = 0; i < effectsArray.length(); i++) {
+            JSONObject entry = effectsArray.getJSONObject(i);
+            SkillEffect effect = SkillEffect.valueOf(entry.getString("effect"));
+            float frigate = (float) entry.getDouble("frigate");
+            float destroyer = (float) entry.getDouble("destroyer");
+            float cruiser = (float) entry.getDouble("cruiser");
+            float capitalShip = (float) entry.getDouble("capitalShip");
+            effects.add(new HullSizeSkillEffect(effect, frigate, destroyer, cruiser, capitalShip));
         }
         return effects;
     }

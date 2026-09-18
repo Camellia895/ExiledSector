@@ -5,35 +5,50 @@
 			"name": "Flux Capacity",
 			"icon": "graphics/icons/skills/containment_procedures.png",
 			"opCost": 2,
-			"xpCost": 500
+			"xpCost": 500,
+			"tags": [
+				"flux"
+			]
 		},
 		{
 			"id": "flux_dissipation",
 			"name": "Flux Dissipation",
 			"icon": "graphics/icons/skills/systems_expertise.png",
 			"opCost": 2,
-			"xpCost": 500
+			"xpCost": 500,
+			"tags": [
+				"flux"
+			]
 		},
 		{
 			"id": "hybrid_flux",
 			"name": "Flux Capacity and Dissipation",
 			"icon": "graphics/icons/skills/flux_dynamics.png",
 			"opCost": 2,
-			"xpCost": 500
+			"xpCost": 500,
+			"tags": [
+				"flux"
+			]
 		},
 		{
 			"id": "hull",
 			"name": "Hull",
 			"icon": "graphics/icons/skills/damage_control2.png",
 			"opCost": 2,
-			"xpCost": 500
+			"xpCost": 500,
+			"tags": [
+				"hull"
+			]
 		},
 		{
 			"id": "armor",
 			"name": "Armor",
 			"icon": "graphics/icons/skills/polarized_armor.png",
 			"opCost": 2,
-			"xpCost": 500
+			"xpCost": 500,
+			"tags": [
+				"armour"
+			]
 		},
 		{
 			"id": "ballistic_damage",
@@ -47,7 +62,10 @@
 			"name": "Missile Weapon Damage",
 			"icon": "graphics/icons/skills/missile_specialization2.png",
 			"opCost": 2,
-			"xpCost": 500
+			"xpCost": 500,
+			"tags": [
+				"missile"
+			]
 		},
 		{
 			"id": "non_beam_energy_damage",
@@ -83,7 +101,10 @@
 			"icon": "graphics/icons/skills/power_grid_manipulation.png",
 			"opCost": 3,
 			"xpCost": 1200,
-			"tier": "NOTABLE"
+			"tier": "NOTABLE",
+			"tags": [
+				"flux"
+			]
 		},
 		{
 			"id": "safety_overrides",
@@ -101,7 +122,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "advancedshieldemitter"
+			"vanillaHullMod": "advancedshieldemitter",
+			"tags": [
+				"shield"
+			]
 		},
 		{
 			"id": "adaptive_coils",
@@ -110,7 +134,11 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "adaptive_coils"
+			"vanillaHullMod": "adaptive_coils",
+			"tags": [
+				"flux",
+				"phase"
+			]
 		},
 		{
 			"id": "advancedoptics",
@@ -119,7 +147,11 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "advancedoptics"
+			"vanillaHullMod": "advancedoptics",
+			"tags": [
+				"energy",
+				"beam"
+			]
 		},
 		{
 			"id": "turretgyros",
@@ -137,7 +169,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "armoredweapons"
+			"vanillaHullMod": "armoredweapons",
+			"tags": [
+				"armour"
+			]
 		},
 		{
 			"id": "autorepair",
@@ -173,7 +208,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "blast_doors"
+			"vanillaHullMod": "blast_doors",
+			"tags": [
+				"logistics"
+			]
 		},
 		{
 			"id": "converted_hangar",
@@ -182,7 +220,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "KEYSTONE",
-			"vanillaHullMod": "converted_hangar"
+			"vanillaHullMod": "converted_hangar",
+			"tags": [
+				"logistics"
+			]
 		},
 		{
 			"id": "converted_fighterbay",
@@ -191,7 +232,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "KEYSTONE",
-			"vanillaHullMod": "converted_fighterbay"
+			"vanillaHullMod": "converted_fighterbay",
+			"tags": [
+				"fighter"
+			]
 		},
 		{
 			"id": "dedicated_targeting_core",
@@ -200,7 +244,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "dedicated_targeting_core"
+			"vanillaHullMod": "dedicated_targeting_core",
+			"tags": [
+				"range"
+			]
 		},
 		{
 			"id": "defensive_targeting_array",
@@ -209,7 +256,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "defensive_targeting_array"
+			"vanillaHullMod": "defensive_targeting_array",
+			"tags": [
+				"range"
+			]
 		},
 		{
 			"id": "eccm",
@@ -218,7 +268,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "eccm"
+			"vanillaHullMod": "eccm",
+			"tags": [
+				"missile"
+			]
 		},
 		{
 			"id": "ecm",
@@ -227,7 +280,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "ecm"
+			"vanillaHullMod": "ecm",
+			"tags": [
+				"logistics"
+			]
 		},
 		{
 			"id": "escort_package",
@@ -245,7 +301,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "expanded_deck_crew"
+			"vanillaHullMod": "expanded_deck_crew",
+			"tags": [
+				"fighter"
+			]
 		},
 		{
 			"id": "magazines",
@@ -263,7 +322,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "missleracks"
+			"vanillaHullMod": "missleracks",
+			"tags": [
+				"missile"
+			]
 		},
 		{
 			"id": "extendedshieldemitter",
@@ -272,7 +334,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "extendedshieldemitter"
+			"vanillaHullMod": "extendedshieldemitter",
+			"tags": [
+				"shield"
+			]
 		},
 		{
 			"id": "fluxcoil",
@@ -281,7 +346,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "fluxcoil"
+			"vanillaHullMod": "fluxcoil",
+			"tags": [
+				"flux"
+			]
 		},
 		{
 			"id": "fluxdistributor",
@@ -290,7 +358,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "fluxdistributor"
+			"vanillaHullMod": "fluxdistributor",
+			"tags": [
+				"flux"
+			]
 		},
 		{
 			"id": "shield_shunt",
@@ -299,7 +370,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "shield_shunt"
+			"vanillaHullMod": "shield_shunt",
+			"tags": [
+				"armour"
+			]
 		},
 		{
 			"id": "frontshield",
@@ -308,7 +382,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "KEYSTONE",
-			"vanillaHullMod": "frontshield"
+			"vanillaHullMod": "frontshield",
+			"tags": [
+				"shield"
+			]
 		},
 		{
 			"id": "missile_autoloader",
@@ -317,7 +394,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "missile_autoloader"
+			"vanillaHullMod": "missile_autoloader",
+			"tags": [
+				"missile"
+			]
 		},
 		{
 			"id": "hardenedshieldemitter",
@@ -326,7 +406,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "hardenedshieldemitter"
+			"vanillaHullMod": "hardenedshieldemitter",
+			"tags": [
+				"shield"
+			]
 		},
 		{
 			"id": "hardened_subsystems",
@@ -344,7 +427,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "heavyarmor"
+			"vanillaHullMod": "heavyarmor",
+			"tags": [
+				"armour"
+			]
 		},
 		{
 			"id": "high_scatter_amp",
@@ -353,7 +439,11 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "high_scatter_amp"
+			"vanillaHullMod": "high_scatter_amp",
+			"tags": [
+				"energy",
+				"beam"
+			]
 		},
 		{
 			"id": "pointdefenseai",
@@ -371,7 +461,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "targetingunit"
+			"vanillaHullMod": "targetingunit",
+			"tags": [
+				"range"
+			]
 		},
 		{
 			"id": "nav_relay",
@@ -380,7 +473,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "nav_relay"
+			"vanillaHullMod": "nav_relay",
+			"tags": [
+				"logistics"
+			]
 		},
 		{
 			"id": "frontemitter",
@@ -389,7 +485,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "frontemitter"
+			"vanillaHullMod": "frontemitter",
+			"tags": [
+				"shield"
+			]
 		},
 		{
 			"id": "adaptiveshields",
@@ -398,7 +497,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "adaptiveshields"
+			"vanillaHullMod": "adaptiveshields",
+			"tags": [
+				"shield"
+			]
 		},
 		{
 			"id": "operations_center",
@@ -407,7 +509,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "operations_center"
+			"vanillaHullMod": "operations_center",
+			"tags": [
+				"logistics"
+			]
 		},
 		{
 			"id": "phase_anchor",
@@ -416,7 +521,11 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "phase_anchor"
+			"vanillaHullMod": "phase_anchor",
+			"tags": [
+				"flux",
+				"phase"
+			]
 		},
 		{
 			"id": "recovery_shuttles",
@@ -425,7 +534,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "recovery_shuttles"
+			"vanillaHullMod": "recovery_shuttles",
+			"tags": [
+				"fighter"
+			]
 		},
 		{
 			"id": "reinforcedhull",
@@ -434,7 +546,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "reinforcedhull"
+			"vanillaHullMod": "reinforcedhull",
+			"tags": [
+				"hull"
+			]
 		},
 		{
 			"id": "fluxbreakers",
@@ -443,7 +558,11 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "fluxbreakers"
+			"vanillaHullMod": "fluxbreakers",
+			"tags": [
+				"flux",
+				"phase"
+			]
 		},
 		{
 			"id": "stabilizedshieldemitter",
@@ -452,7 +571,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "stabilizedshieldemitter"
+			"vanillaHullMod": "stabilizedshieldemitter",
+			"tags": [
+				"shield"
+			]
 		},
 		{
 			"id": "unstable_injector",
@@ -470,7 +592,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "additional_berthing"
+			"vanillaHullMod": "additional_berthing",
+			"tags": [
+				"logistics"
+			]
 		},
 		{
 			"id": "augmentedengines",
@@ -479,7 +604,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "augmentedengines"
+			"vanillaHullMod": "augmentedengines",
+			"tags": [
+				"logistics"
+			]
 		},
 		{
 			"id": "auxiliary_fuel_tanks",
@@ -488,7 +616,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "auxiliary_fuel_tanks"
+			"vanillaHullMod": "auxiliary_fuel_tanks",
+			"tags": [
+				"logistics"
+			]
 		},
 		{
 			"id": "efficiency_overhaul",
@@ -497,7 +628,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "KEYSTONE",
-			"vanillaHullMod": "efficiency_overhaul"
+			"vanillaHullMod": "efficiency_overhaul",
+			"tags": [
+				"logistics"
+			]
 		},
 		{
 			"id": "expanded_cargo_holds",
@@ -506,7 +640,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "expanded_cargo_holds"
+			"vanillaHullMod": "expanded_cargo_holds",
+			"tags": [
+				"logistics"
+			]
 		},
 		{
 			"id": "hiressensors",
@@ -515,7 +652,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "hiressensors"
+			"vanillaHullMod": "hiressensors",
+			"tags": [
+				"logistics"
+			]
 		},
 		{
 			"id": "insulatedengine",
@@ -524,7 +664,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "insulatedengine"
+			"vanillaHullMod": "insulatedengine",
+			"tags": [
+				"logistics"
+			]
 		},
 		{
 			"id": "militarized_subsystems",
@@ -533,7 +676,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "militarized_subsystems"
+			"vanillaHullMod": "militarized_subsystems",
+			"tags": [
+				"logistics"
+			]
 		},
 		{
 			"id": "solar_shielding",
@@ -542,7 +688,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "solar_shielding"
+			"vanillaHullMod": "solar_shielding",
+			"tags": [
+				"logistics"
+			]
 		},
 		{
 			"id": "surveying_equipment",
@@ -551,7 +700,10 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "surveying_equipment"
+			"vanillaHullMod": "surveying_equipment",
+			"tags": [
+				"logistics"
+			]
 		},
 		{
 			"id": "root_low_tech",
@@ -584,7 +736,13 @@
 			"opCost": 2,
 			"xpCost": 500,
 			"effects": [
-				{ "effect": "FUEL_CAPACITY", "magnitude": 15 }
+				{
+					"effect": "FUEL_CAPACITY",
+					"magnitude": 15
+				}
+			],
+			"tags": [
+				"logistics"
 			]
 		},
 		{
@@ -594,7 +752,13 @@
 			"opCost": 2,
 			"xpCost": 500,
 			"effects": [
-				{ "effect": "CARGO_CAPACITY", "magnitude": 15 }
+				{
+					"effect": "CARGO_CAPACITY",
+					"magnitude": 15
+				}
+			],
+			"tags": [
+				"logistics"
 			]
 		},
 		{
@@ -604,7 +768,13 @@
 			"opCost": 2,
 			"xpCost": 500,
 			"effects": [
-				{ "effect": "CREW_CAPACITY", "magnitude": 10 }
+				{
+					"effect": "CREW_CAPACITY",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"logistics"
 			]
 		},
 		{
@@ -614,7 +784,10 @@
 			"opCost": 2,
 			"xpCost": 500,
 			"description": "Increases the weapon damage of fighters launched from this ship.",
-			"todo": "Fighters are separate ships spawned from the carrier's bays, so this can't be applied through the carrier's own MutableShipStatsAPI like other effects - it needs a combat-time hook that finds each fighter's source ship and applies the bonus to the fighter's own stats. Not yet built."
+			"todo": "Fighters are separate ships spawned from the carrier's bays, so this can't be applied through the carrier's own MutableShipStatsAPI like other effects - it needs a combat-time hook that finds each fighter's source ship and applies the bonus to the fighter's own stats. Not yet built.",
+			"tags": [
+				"fighter"
+			]
 		},
 		{
 			"id": "fighter_speed",
@@ -623,7 +796,10 @@
 			"opCost": 2,
 			"xpCost": 500,
 			"description": "Increases the top speed of fighters launched from this ship.",
-			"todo": "Same limitation as fighter_weapon_damage - needs a combat-time hook targeting launched fighters, not yet built."
+			"todo": "Same limitation as fighter_weapon_damage - needs a combat-time hook targeting launched fighters, not yet built.",
+			"tags": [
+				"fighter"
+			]
 		}
 	]
 }

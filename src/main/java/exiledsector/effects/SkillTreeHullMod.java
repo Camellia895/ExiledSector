@@ -8,6 +8,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.HullSizeSkillEffect;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
@@ -45,6 +46,9 @@ public class SkillTreeHullMod extends BaseHullMod {
 
             for (SkillTypeEffect effect : type.getEffects()) {
                 effect.effect().apply(stats, MOD_ID_PREFIX + node.getId(), effect.magnitude());
+            }
+            for (HullSizeSkillEffect effect : type.getHullSizeEffects()) {
+                effect.effect().apply(stats, MOD_ID_PREFIX + node.getId(), effect.valueFor(hullSize));
             }
         }
     }

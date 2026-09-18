@@ -37,6 +37,17 @@ public enum SkillEffect {
             return "Increases flux capacity by " + pct(magnitude) + "%.";
         }
     },
+    FLUX_CAPACITY_FLAT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getFluxCapacity().modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return flatChange(magnitude, "flux capacity");
+        }
+    },
     FLUX_DISSIPATION {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -46,6 +57,17 @@ public enum SkillEffect {
         @Override
         public String describe(float magnitude) {
             return "Increases flux dissipation by " + pct(magnitude) + "%.";
+        }
+    },
+    FLUX_DISSIPATION_FLAT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getFluxDissipation().modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return flatChange(magnitude, "flux dissipation");
         }
     },
     HYBRID_FLUX {
@@ -465,5 +487,10 @@ public enum SkillEffect {
     static String pctChange(float magnitude, String stat) {
         String verb = magnitude >= 0 ? "Increases " : "Decreases ";
         return verb + stat + " by " + pct(Math.abs(magnitude)) + "%.";
+    }
+
+    static String flatChange(float magnitude, String stat) {
+        String verb = magnitude >= 0 ? "Increases " : "Decreases ";
+        return verb + stat + " by " + pct(Math.abs(magnitude)) + ".";
     }
 }

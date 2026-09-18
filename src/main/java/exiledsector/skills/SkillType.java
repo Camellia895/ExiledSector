@@ -11,6 +11,7 @@ public class SkillType {
     private final int opCost;
     private final float xpCost;
     private final List<SkillTypeEffect> effects;
+    private final List<HullSizeSkillEffect> hullSizeEffects;
     private final SkillTier tier;
     private final String vanillaHullModId;
     private final String descriptionOverride;
@@ -19,12 +20,20 @@ public class SkillType {
     public SkillType(String id, String displayName, String iconPath, int opCost, float xpCost,
                       List<SkillTypeEffect> effects, SkillTier tier, String vanillaHullModId,
                       String descriptionOverride, String todo) {
+        this(id, displayName, iconPath, opCost, xpCost, effects, Collections.emptyList(), tier,
+                vanillaHullModId, descriptionOverride, todo);
+    }
+
+    public SkillType(String id, String displayName, String iconPath, int opCost, float xpCost,
+                      List<SkillTypeEffect> effects, List<HullSizeSkillEffect> hullSizeEffects, SkillTier tier,
+                      String vanillaHullModId, String descriptionOverride, String todo) {
         this.id = id;
         this.displayName = displayName;
         this.iconPath = iconPath;
         this.opCost = opCost;
         this.xpCost = xpCost;
         this.effects = effects == null ? Collections.emptyList() : effects;
+        this.hullSizeEffects = hullSizeEffects == null ? Collections.emptyList() : hullSizeEffects;
         this.tier = tier;
         this.vanillaHullModId = vanillaHullModId;
         this.descriptionOverride = descriptionOverride;
@@ -53,6 +62,10 @@ public class SkillType {
 
     public List<SkillTypeEffect> getEffects() {
         return effects;
+    }
+
+    public List<HullSizeSkillEffect> getHullSizeEffects() {
+        return hullSizeEffects;
     }
 
     public SkillTier getTier() {

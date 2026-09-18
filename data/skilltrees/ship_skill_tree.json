@@ -39,8 +39,8 @@
 			"id": "hull_1",
 			"type": "hull",
 			"prerequisites": [],
-			"x": -173,
-			"y": 775
+			"x": -81,
+			"y": 794
 		},
 		{
 			"id": "beam_damage_1",
@@ -71,8 +71,8 @@
 			"id": "armor_1",
 			"type": "armor",
 			"prerequisites": [],
-			"x": -294,
-			"y": 761
+			"x": -348,
+			"y": 777
 		},
 		{
 			"id": "packed_capacitors_1",
@@ -85,8 +85,8 @@
 			"id": "safety_overrides_1",
 			"type": "safety_overrides",
 			"prerequisites": [],
-			"x": 1605,
-			"y": 300
+			"x": 1676,
+			"y": 454
 		},
 		{
 			"id": "heavyarmor_1",
@@ -106,8 +106,8 @@
 			"id": "reinforcedhull_1",
 			"type": "reinforcedhull",
 			"prerequisites": [],
-			"x": 1102,
-			"y": 798
+			"x": -104,
+			"y": 878
 		},
 		{
 			"id": "blast_doors_1",
@@ -127,8 +127,8 @@
 			"id": "fluxbreakers_1",
 			"type": "fluxbreakers",
 			"prerequisites": [],
-			"x": -820,
-			"y": -1075
+			"x": -952,
+			"y": -905
 		},
 		{
 			"id": "fluxdistributor_1",
@@ -148,8 +148,8 @@
 			"id": "hardened_subsystems_1",
 			"type": "hardened_subsystems",
 			"prerequisites": [],
-			"x": 292,
-			"y": -168
+			"x": 1200,
+			"y": 74
 		},
 		{
 			"id": "turretgyros_1",
@@ -162,22 +162,22 @@
 			"id": "ballistic_rangefinder_1",
 			"type": "ballistic_rangefinder",
 			"prerequisites": [],
-			"x": 1155,
-			"y": 873
+			"x": 1131,
+			"y": 808
 		},
 		{
 			"id": "magazines_1",
 			"type": "magazines",
 			"prerequisites": [],
-			"x": 1521,
-			"y": 57
+			"x": 1465,
+			"y": 67
 		},
 		{
 			"id": "pointdefenseai_1",
 			"type": "pointdefenseai",
 			"prerequisites": [],
-			"x": 1441,
-			"y": 299
+			"x": 1329,
+			"y": 51
 		},
 		{
 			"id": "missleracks_1",
@@ -218,36 +218,36 @@
 			"id": "dedicated_targeting_core_1",
 			"type": "dedicated_targeting_core",
 			"prerequisites": [],
-			"x": 1380,
-			"y": 60
+			"x": 1787,
+			"y": 153
 		},
 		{
 			"id": "targetingunit_1",
 			"type": "targetingunit",
 			"prerequisites": [],
-			"x": 1595,
-			"y": 209
+			"x": 1771,
+			"y": 227
 		},
 		{
 			"id": "ecm_1",
 			"type": "ecm",
 			"prerequisites": [],
-			"x": -128,
-			"y": -17
+			"x": -182,
+			"y": -44
 		},
 		{
 			"id": "defensive_targeting_array_1",
 			"type": "defensive_targeting_array",
 			"prerequisites": [],
-			"x": 1446,
-			"y": 224
+			"x": 1883,
+			"y": 202
 		},
 		{
 			"id": "advancedshieldemitter_1",
 			"type": "advancedshieldemitter",
 			"prerequisites": [],
 			"x": 563,
-			"y": -1075
+			"y": -1076
 		},
 		{
 			"id": "extendedshieldemitter_1",
@@ -274,8 +274,8 @@
 			"id": "shield_shunt_1",
 			"type": "shield_shunt",
 			"prerequisites": [],
-			"x": -441,
-			"y": 931
+			"x": -442,
+			"y": 879
 		},
 		{
 			"id": "frontshield_1",
@@ -302,15 +302,15 @@
 			"id": "auxiliarythrusters_1",
 			"type": "auxiliarythrusters",
 			"prerequisites": [],
-			"x": 1581,
-			"y": 124
+			"x": 1443,
+			"y": 222
 		},
 		{
 			"id": "unstable_injector_1",
 			"type": "unstable_injector",
 			"prerequisites": [],
-			"x": 1303,
-			"y": 282
+			"x": 1461,
+			"y": 478
 		},
 		{
 			"id": "nav_relay_1",
@@ -323,29 +323,29 @@
 			"id": "adaptive_coils_1",
 			"type": "adaptive_coils",
 			"prerequisites": [],
-			"x": -845,
-			"y": -903
+			"x": -873,
+			"y": -940
 		},
 		{
 			"id": "phase_anchor_1",
 			"type": "phase_anchor",
 			"prerequisites": [],
-			"x": -922,
-			"y": -954
+			"x": -958,
+			"y": -977
 		},
 		{
 			"id": "additional_berthing_1",
 			"type": "additional_berthing",
 			"prerequisites": [],
-			"x": 278,
-			"y": 33
+			"x": 226,
+			"y": -7
 		},
 		{
 			"id": "augmentedengines_1",
 			"type": "augmentedengines",
 			"prerequisites": [],
-			"x": -247,
-			"y": 17
+			"x": -331,
+			"y": -124
 		},
 		{
 			"id": "auxiliary_fuel_tanks_1",
@@ -372,36 +372,36 @@
 			"id": "hiressensors_1",
 			"type": "hiressensors",
 			"prerequisites": [],
-			"x": -255,
-			"y": -112
+			"x": -239,
+			"y": -204
 		},
 		{
 			"id": "insulatedengine_1",
 			"type": "insulatedengine",
 			"prerequisites": [],
-			"x": -78,
-			"y": -125
+			"x": -83,
+			"y": -229
 		},
 		{
 			"id": "militarized_subsystems_1",
 			"type": "militarized_subsystems",
 			"prerequisites": [],
-			"x": 61,
-			"y": -174
+			"x": 56,
+			"y": -231
 		},
 		{
 			"id": "solar_shielding_1",
 			"type": "solar_shielding",
 			"prerequisites": [],
-			"x": 84,
-			"y": -69
+			"x": 193,
+			"y": -195
 		},
 		{
 			"id": "surveying_equipment_1",
 			"type": "surveying_equipment",
 			"prerequisites": [],
-			"x": 181,
-			"y": -104
+			"x": 276,
+			"y": -149
 		},
 		{
 			"id": "converted_hangar_1",
@@ -467,8 +467,8 @@
 			"id": "flux_capacity_2",
 			"type": "flux_capacity",
 			"prerequisites": [],
-			"x": -584,
-			"y": -918
+			"x": -633,
+			"y": -898
 		},
 		{
 			"id": "non_beam_energy_damage_2",
@@ -491,58 +491,132 @@
 		{
 			"id": "root_low_tech_1",
 			"type": "root_low_tech",
-			"prerequisites": [],
+			"prerequisites": [
+				"increased_cargo_2",
+				"increased_crew_2",
+				"increased_fuel_3"
+			],
 			"x": 993,
 			"y": 506
 		},
 		{
 			"id": "root_midline_1",
 			"type": "root_midline",
-			"prerequisites": [],
-			"x": -992,
-			"y": 575
+			"prerequisites": [
+				"increased_cargo_3",
+				"increased_crew_3",
+				"increased_fuel_2"
+			],
+			"x": -837,
+			"y": 536
 		},
 		{
 			"id": "root_high_tech_1",
 			"type": "root_high_tech",
-			"prerequisites": [],
+			"prerequisites": [
+				"increased_crew_1",
+				"increased_cargo_1",
+				"increased_fuel_1"
+			],
 			"x": -4,
 			"y": -577
 		},
 		{
 			"id": "increased_fuel_1",
 			"type": "increased_fuel",
-			"prerequisites": [],
-			"x": -400,
-			"y": 1200
+			"prerequisites": [
+				"increased_cargo_1",
+				"increased_crew_4"
+			],
+			"x": -167,
+			"y": -420
 		},
 		{
 			"id": "increased_cargo_1",
 			"type": "increased_cargo",
 			"prerequisites": [],
-			"x": -200,
-			"y": 1200
+			"x": -22,
+			"y": -431
 		},
 		{
 			"id": "increased_crew_1",
 			"type": "increased_crew",
-			"prerequisites": [],
-			"x": 0,
-			"y": 1200
+			"prerequisites": [
+				"increased_crew_4"
+			],
+			"x": 157,
+			"y": -417
 		},
 		{
 			"id": "fighter_weapon_damage_1",
 			"type": "fighter_weapon_damage",
 			"prerequisites": [],
-			"x": 200,
-			"y": 1200
+			"x": 881,
+			"y": -595
 		},
 		{
 			"id": "fighter_speed_1",
 			"type": "fighter_speed",
 			"prerequisites": [],
-			"x": 400,
-			"y": 1200
+			"x": 997,
+			"y": -581
+		},
+		{
+			"id": "increased_fuel_2",
+			"type": "increased_fuel",
+			"prerequisites": [
+				"increased_cargo_3"
+			],
+			"x": -653,
+			"y": 607
+		},
+		{
+			"id": "increased_fuel_3",
+			"type": "increased_fuel",
+			"prerequisites": [
+				"increased_cargo_2"
+			],
+			"x": 937,
+			"y": 356
+		},
+		{
+			"id": "increased_cargo_2",
+			"type": "increased_cargo",
+			"prerequisites": [],
+			"x": 868,
+			"y": 444
+		},
+		{
+			"id": "increased_crew_2",
+			"type": "increased_crew",
+			"prerequisites": [
+				"increased_cargo_2"
+			],
+			"x": 841,
+			"y": 556
+		},
+		{
+			"id": "increased_crew_3",
+			"type": "increased_crew",
+			"prerequisites": [
+				"increased_cargo_3"
+			],
+			"x": -773,
+			"y": 338
+		},
+		{
+			"id": "increased_cargo_3",
+			"type": "increased_cargo",
+			"prerequisites": [],
+			"x": -668,
+			"y": 454
+		},
+		{
+			"id": "increased_crew_4",
+			"type": "increased_crew",
+			"prerequisites": [],
+			"x": -33,
+			"y": -342
 		}
 	]
 }
