@@ -436,15 +436,15 @@
     <div class="stats" id="statsLine"></div>
     <div class="spacer"></div>
     <input id="searchBox" placeholder="Search node or type name...">
-    <button class="themeToggle" id="themeToggle" title="Toggle theme">◐</button>
+    <button class="themeToggle" id="themeToggle" title="Toggle theme">â—</button>
   </div>
 
   <div id="toolbar">
     <div class="toolSection">
       <div class="label">Mode</div>
-      <button class="modeBtn active" data-mode="select">↖ Select / Move <span class="key">V</span></button>
-      <button class="modeBtn" data-mode="add">✚ Add Node <span class="key">A</span></button>
-      <button class="modeBtn" data-mode="link">⇄ Link / Unlink <span class="key">L</span></button>
+      <button class="modeBtn active" data-mode="select">â†– Select / Move <span class="key">V</span></button>
+      <button class="modeBtn" data-mode="add">âœš Add Node <span class="key">A</span></button>
+      <button class="modeBtn" data-mode="link">â‡„ Link / Unlink <span class="key">L</span></button>
       <div class="hint">Select: drag a node to move it, drag empty canvas to pan, scroll to zoom. Shift-click a node to add/remove it from a multi-selection, or shift-drag empty canvas to marquee-select. Drag any selected node to move the whole group together.<br><br>Add: click empty canvas to place a node there.<br><br>Link: click two nodes to connect them - each is added to the other's connections, so allocating either one lets you allocate the other. Click the same pair again to unlink.</div>
     </div>
 
@@ -479,13 +479,13 @@
     <svg id="stage"></svg>
     <div class="zoomControls">
       <button id="zoomIn">+</button>
-      <button id="zoomOut">−</button>
+      <button id="zoomOut">âˆ’</button>
     </div>
     <div class="warnBadge" id="warnBadge" style="display:none"></div>
   </div>
 
   <div id="inspector">
-    <button class="closeMobile" id="closeInspector">×</button>
+    <button class="closeMobile" id="closeInspector">Ã—</button>
     <div id="inspectorBody"><div class="empty-inspector">Select a node to see and edit its details, or switch to Add mode and click the canvas to place a new one.</div></div>
   </div>
 
@@ -514,78 +514,78 @@
 "use strict";
 
 var SHIPPED_TYPES = [
-{"id":"flux_capacity","name":"Flux Capacity","icon":"graphics/icons/skills/containment_procedures.png","opCost":2,"xpCost":500,"tags":["flux"]},
-{"id":"flux_dissipation","name":"Flux Dissipation","icon":"graphics/icons/skills/systems_expertise.png","opCost":2,"xpCost":500,"tags":["flux"]},
-{"id":"hybrid_flux","name":"Flux Capacity and Dissipation","icon":"graphics/icons/skills/flux_dynamics.png","opCost":2,"xpCost":500,"tags":["flux"]},
-{"id":"hull","name":"Hull","icon":"graphics/icons/skills/damage_control2.png","opCost":2,"xpCost":500,"tags":["hull"]},
-{"id":"armor","name":"Armor","icon":"graphics/icons/skills/polarized_armor.png","opCost":2,"xpCost":500,"tags":["armour"]},
-{"id":"ballistic_damage","name":"Ballistic Weapon Damage","icon":"graphics/icons/skills/ranged_specialization.png","opCost":2,"xpCost":500},
-{"id":"missile_damage","name":"Missile Weapon Damage","icon":"graphics/icons/skills/missile_specialization2.png","opCost":2,"xpCost":500,"tags":["missile"]},
-{"id":"non_beam_energy_damage","name":"Non-Beam Energy Weapon Damage","icon":"graphics/icons/skills/special_modifications.png","opCost":2,"xpCost":500},
-{"id":"beam_damage","name":"Beam Weapon Damage","icon":"graphics/icons/skills/hypercognition.png","opCost":2,"xpCost":500},
-{"id":"energy_damage","name":"Energy Weapon Damage","icon":"graphics/icons/skills/energy_weapon_mastery.png","opCost":2,"xpCost":500},
-{"id":"weapon_damage","name":"All Weapon Damage","icon":"graphics/icons/skills/weapon_drills.png","opCost":2,"xpCost":500},
-{"id":"packed_capacitors","name":"Packed Capacitors","icon":"graphics/icons/skills/power_grid_manipulation.png","opCost":3,"xpCost":1200,"tier":"NOTABLE","tags":["flux"]},
-{"id":"safety_overrides","name":"Safety Overrides","icon":"graphics/icons/skills/helmsmanship.png","opCost":5,"xpCost":3000,"tier":"KEYSTONE","vanillaHullMod":"safetyoverrides"},
-{"id":"advancedshieldemitter","name":"Accelerated Shields","icon":"graphics/icons/notable_hullmods/accelerated_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"advancedshieldemitter","tags":["shield"]},
-{"id":"adaptive_coils","name":"Adaptive Phase Coils","icon":"graphics/icons/notable_hullmods/phase_field.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"PHASE_CLOAK_FLUX_THRESHOLD","magnitude":50}],"tags":["flux","phase"]},
-{"id":"advancedoptics","name":"Advanced Optics","icon":"graphics/icons/notable_hullmods/advanced_optics.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"advancedoptics","tags":["energy","beam"]},
-{"id":"turretgyros","name":"Advanced Turret Gyros","icon":"graphics/icons/notable_hullmods/advanced_turret_gyros.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"turretgyros"},
-{"id":"armoredweapons","name":"Armored Weapon Mounts","icon":"graphics/icons/notable_hullmods/armored_weapon_emplacements.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"armoredweapons","tags":["armour"]},
-{"id":"autorepair","name":"Automated Repair Unit","icon":"graphics/icons/notable_hullmods/automated_repair_unit.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"autorepair"},
-{"id":"auxiliarythrusters","name":"Auxiliary Thrusters","icon":"graphics/icons/notable_hullmods/auxilliary_thrusters.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"auxiliarythrusters"},
-{"id":"ballistic_rangefinder","name":"Ballistic Rangefinder","icon":"graphics/icons/notable_hullmods/ballistic_rangefinder.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"ballistic_rangefinder"},
-{"id":"blast_doors","name":"Blast Doors","icon":"graphics/icons/notable_hullmods/blast_doors.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"HULL","magnitude":20},{"effect":"CREW_LOSS","magnitude":-60}],"tags":["logistics"]},
-{"id":"converted_hangar","name":"Converted Hangar","icon":"graphics/icons/notable_hullmods/converted_hangar.png","opCost":4,"xpCost":2000,"tier":"KEYSTONE","effects":[{"effect":"FIGHTER_BAYS_FLAT","magnitude":1},{"effect":"FIGHTER_REFIT_TIME_MULT","magnitude":50},{"effect":"FIGHTER_REPLACEMENT_RATE_MULT","magnitude":50},{"effect":"FIGHTER_RELAUNCH_TIME_FLAT","magnitude":40},{"effect":"MIN_CREW_FLAT","magnitude":20}],"todo":"Real vanilla effect also increases deployment points and supply cost to recover by 1 per 5 OP spent on fighters (min 1), with a proportional increase in CR lost per deployment - deliberately not implemented yet, so right now this node is a buff with no real downside beyond the 4 modifiers above. This node may need other balance considerations once that\u0027s added.","tags":["fighter"]},
-{"id":"converted_fighterbay","name":"Converted Fighter Bay","icon":"graphics/icons/notable_hullmods/converted_fighter_bay.png","opCost":4,"xpCost":2000,"tier":"KEYSTONE","vanillaHullMod":"converted_fighterbay","tags":["logistics"]},
-{"id":"dedicated_targeting_core","name":"Dedicated Targeting Core","icon":"graphics/icons/notable_hullmods/targeting_core.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"dedicated_targeting_core","tags":["range"]},
-{"id":"defensive_targeting_array","name":"Defensive Targeting Array","icon":"graphics/icons/notable_hullmods/defensive_targeting_array.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"defensive_targeting_array","tags":["range"]},
-{"id":"eccm","name":"ECCM Package","icon":"graphics/icons/notable_hullmods/eccm_package.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"eccm","tags":["missile"]},
-{"id":"ecm","name":"ECM Package","icon":"graphics/icons/notable_hullmods/ecm_package.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","hullSizeEffects":[{"effect":"ELECTRONIC_WARFARE","frigate":1,"destroyer":2,"cruiser":3,"capitalShip":4}],"tags":["logistics"]},
-{"id":"escort_package","name":"Escort Package","icon":"graphics/icons/notable_hullmods/escort_package.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"escort_package"},
-{"id":"expanded_deck_crew","name":"Expanded Deck Crew","icon":"graphics/icons/notable_hullmods/expanded_deck_crew.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"expanded_deck_crew","tags":["fighter"]},
-{"id":"magazines","name":"Expanded Magazines","icon":"graphics/icons/notable_hullmods/expanded_magazines2.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"magazines"},
-{"id":"missleracks","name":"Expanded Missile Racks","icon":"graphics/icons/notable_hullmods/expanded_missile_racks.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"missleracks","tags":["missile"]},
-{"id":"extendedshieldemitter","name":"Extended Shields","icon":"graphics/icons/notable_hullmods/extended_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"extendedshieldemitter","tags":["shield"]},
-{"id":"fluxcoil","name":"Flux Coil Adjunct","icon":"graphics/icons/notable_hullmods/flux_coil_adjunct.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","hullSizeEffects":[{"effect":"FLUX_CAPACITY_FLAT","frigate":600,"destroyer":1200,"cruiser":1800,"capitalShip":3000}],"tags":["flux"]},
-{"id":"fluxdistributor","name":"Flux Distributor","icon":"graphics/icons/notable_hullmods/flux_distributor.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","hullSizeEffects":[{"effect":"FLUX_DISSIPATION_FLAT","frigate":30,"destroyer":60,"cruiser":90,"capitalShip":150}],"tags":["flux"]},
-{"id":"shield_shunt","name":"Shield Shunt","icon":"graphics/icons/notable_hullmods/shield_shunt.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"shield_shunt","tags":["armour"]},
-{"id":"frontshield","name":"Makeshift Shield Generator","icon":"graphics/icons/notable_hullmods/front_shield_generator.png","opCost":4,"xpCost":2000,"tier":"KEYSTONE","vanillaHullMod":"frontshield","tags":["shield"]},
-{"id":"missile_autoloader","name":"Missile Autoloader","icon":"graphics/icons/notable_hullmods/missile_autoloader.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"missile_autoloader","tags":["missile"]},
-{"id":"hardenedshieldemitter","name":"Hardened Shields","icon":"graphics/icons/notable_hullmods/hardened_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"hardenedshieldemitter","tags":["shield"]},
-{"id":"hardened_subsystems","name":"Hardened Subsystems","icon":"graphics/icons/notable_hullmods/hardened_subsystems.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"hardened_subsystems"},
-{"id":"heavyarmor","name":"Heavy Armor","icon":"graphics/icons/notable_hullmods/heavy_armor.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"heavyarmor","tags":["armour"]},
-{"id":"high_scatter_amp","name":"High Scatter Amplifier","icon":"graphics/icons/notable_hullmods/high_scatter_amp.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"high_scatter_amp","tags":["energy","beam"]},
-{"id":"pointdefenseai","name":"Integrated Point Defense AI","icon":"graphics/icons/notable_hullmods/integrated_point_defense_ai.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"pointdefenseai"},
-{"id":"targetingunit","name":"Integrated Targeting Unit","icon":"graphics/icons/notable_hullmods/integrated_targeting_unit.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"targetingunit","tags":["range"]},
-{"id":"nav_relay","name":"Nav Relay","icon":"graphics/icons/notable_hullmods/nav_relay.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","hullSizeEffects":[{"effect":"NAV_RATING","frigate":2,"destroyer":3,"cruiser":4,"capitalShip":5}],"tags":["logistics"]},
-{"id":"frontemitter","name":"Shield Conversion - Front","icon":"graphics/icons/notable_hullmods/front_shield_emitter.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"frontemitter","tags":["shield"]},
-{"id":"adaptiveshields","name":"Shield Conversion - Omni","icon":"graphics/icons/notable_hullmods/omni_shield_emitter_mod.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"adaptiveshields","tags":["shield"]},
-{"id":"operations_center","name":"Operations Center","icon":"graphics/icons/notable_hullmods/operations_center.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP","magnitude":2.5}],"tags":["logistics"]},
-{"id":"phase_anchor","name":"Phase Anchor","icon":"graphics/icons/notable_hullmods/phase_anchor.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"PHASE_CLOAK_ACTIVATION_COST_MULT","magnitude":-100},{"effect":"COMBAT_BOOST_WHILE_PHASED","magnitude":100}],"tags":["flux","phase"]},
-{"id":"recovery_shuttles","name":"Recovery Shuttles","icon":"graphics/icons/notable_hullmods/recovery_shuttles.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"recovery_shuttles","tags":["fighter"]},
-{"id":"reinforcedhull","name":"Reinforced Bulkheads","icon":"graphics/icons/notable_hullmods/reinforced_bulkheads.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"reinforcedhull","tags":["hull"]},
-{"id":"fluxbreakers","name":"Resistant Flux Conduits","icon":"graphics/icons/notable_hullmods/resistant_flux_conduits.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"EMP_DAMAGE_TAKEN","magnitude":-50},{"effect":"FLUX_DISSIPATION_WHILE_VENTING","magnitude":25}],"tags":["flux","phase"]},
-{"id":"stabilizedshieldemitter","name":"Stabilized Shields","icon":"graphics/icons/notable_hullmods/stabilized_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"stabilizedshieldemitter","tags":["shield"]},
-{"id":"unstable_injector","name":"Unstable Injector","icon":"graphics/icons/notable_hullmods/unstable_injector.png","opCost":4,"xpCost":2000,"tier":"KEYSTONE","vanillaHullMod":"unstable_injector"},
-{"id":"additional_berthing","name":"Additional Berthing","icon":"graphics/icons/notable_hullmods/berthing.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","hullSizeEffects":[{"effect":"CREW_CAPACITY_FLAT","frigate":30,"destroyer":60,"cruiser":100,"capitalShip":200}],"tags":["logistics"]},
-{"id":"augmentedengines","name":"Augmented Drive Field","icon":"graphics/icons/notable_hullmods/augmented_drive_field2.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"BURN_LEVEL_FLAT","magnitude":2}],"tags":["logistics"]},
-{"id":"auxiliary_fuel_tanks","name":"Auxiliary Fuel Tanks","icon":"graphics/icons/notable_hullmods/fuel_tanks.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","hullSizeEffects":[{"effect":"FUEL_CAPACITY_FLAT","frigate":30,"destroyer":60,"cruiser":100,"capitalShip":200}],"tags":["logistics"]},
-{"id":"efficiency_overhaul","name":"Efficiency Overhaul","icon":"graphics/icons/notable_hullmods/efficiency.png","opCost":4,"xpCost":2000,"tier":"KEYSTONE","effects":[{"effect":"MIN_CREW_MULT","magnitude":-20},{"effect":"SUPPLIES_PER_MONTH_MULT","magnitude":-20},{"effect":"FUEL_USE_MULT","magnitude":-20},{"effect":"CR_RECOVERY_RATE","magnitude":50},{"effect":"REPAIR_RATE_PER_DAY","magnitude":50}],"tags":["logistics"]},
-{"id":"expanded_cargo_holds","name":"Expanded Cargo Holds","icon":"graphics/icons/notable_hullmods/expanded_cargo.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","hullSizeEffects":[{"effect":"CARGO_CAPACITY_FLAT","frigate":30,"destroyer":60,"cruiser":100,"capitalShip":200}],"tags":["logistics"]},
-{"id":"hiressensors","name":"High Resolution Sensors","icon":"graphics/icons/notable_hullmods/high_res_sensors.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","hullSizeEffects":[{"effect":"SENSOR_RANGE","frigate":50,"destroyer":75,"cruiser":100,"capitalShip":150}],"tags":["logistics"]},
-{"id":"insulatedengine","name":"Insulated Engine Assembly","icon":"graphics/icons/notable_hullmods/insulated_engine_assembly.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"ENGINE_DURABILITY","magnitude":100},{"effect":"HULL","magnitude":10}],"tags":["logistics"]},
-{"id":"militarized_subsystems","name":"Militarized Subsystems","icon":"graphics/icons/notable_hullmods/militarized_subsystems.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"BURN_LEVEL_FLAT","magnitude":1},{"effect":"MIN_CREW_PERCENT","magnitude":100},{"effect":"REMOVE_CIVILIAN_HULL_PENALTY","magnitude":0}],"tags":["logistics"]},
-{"id":"solar_shielding","name":"Solar Shielding","icon":"graphics/icons/notable_hullmods/solar_shielding2.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"solar_shielding","todo":"Real effect is -75% CR loss from solar corona/deep hyperspace storms, plus -10% energy damage taken in combat. The energy damage part is trivial and safe (existing ENERGY_DAMAGE_TAKEN effect, magnitude -10) whenever we want it. The corona/storm part is NOT safe to implement yet - found the real dynamic stat key (\u0027corona_resistance\u0027, confirmed shared by both StarCoronaTerrainPlugin and HyperspaceTerrainPlugin, matching the tooltip\u0027s \u0027same effect against storms\u0027 claim) but decompiling StarCoronaTerrainPlugin showed corona_resistance actually GATES whether a CR-loss event fires (if (corona_resistance \u003e 0) applyCREvent(...) else \u003ccomputes what looks like an interval/frequency ratio instead\u003e) rather than scaling a loss percentage directly - the sign/semantics don\u0027t resolve cleanly and getting it backward could make ships MORE vulnerable, not less. Deliberately left the whole hullmod on vanillaHullMod passthrough (both effects still work correctly via vanilla\u0027s own code) rather than partially convert, since our apply loop is all-or-nothing per node and converting now would silently drop corona/storm protection. Needs more investigation (or someone who already knows this mechanic) before touching.","tags":["logistics"]},
-{"id":"surveying_equipment","name":"Surveying Equipment","icon":"graphics/icons/notable_hullmods/surveying_equipment.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","hullSizeEffects":[{"effect":"SURVEY_COST_REDUCTION_HEAVY_MACHINERY","frigate":5,"destroyer":10,"cruiser":20,"capitalShip":40},{"effect":"SURVEY_COST_REDUCTION_SUPPLIES","frigate":5,"destroyer":10,"cruiser":20,"capitalShip":40}],"tags":["logistics"]},
+{"id":"flux_capacity","name":"Flux Capacity","icon":"graphics/icons/circular/skills/containment_procedures.png","opCost":2,"xpCost":500,"tags":["flux"]},
+{"id":"flux_dissipation","name":"Flux Dissipation","icon":"graphics/icons/circular/skills/systems_expertise.png","opCost":2,"xpCost":500,"tags":["flux"]},
+{"id":"hybrid_flux","name":"Flux Capacity and Dissipation","icon":"graphics/icons/circular/skills/flux_dynamics.png","opCost":2,"xpCost":500,"tags":["flux"]},
+{"id":"hull","name":"Hull","icon":"graphics/icons/circular/skills/damage_control2.png","opCost":2,"xpCost":500,"tags":["hull"]},
+{"id":"armor","name":"Armor","icon":"graphics/icons/circular/skills/polarized_armor.png","opCost":2,"xpCost":500,"tags":["armour"]},
+{"id":"ballistic_damage","name":"Ballistic Weapon Damage","icon":"graphics/icons/circular/skills/ranged_specialization.png","opCost":2,"xpCost":500},
+{"id":"missile_damage","name":"Missile Weapon Damage","icon":"graphics/icons/circular/skills/missile_specialization2.png","opCost":2,"xpCost":500,"tags":["missile"]},
+{"id":"non_beam_energy_damage","name":"Non-Beam Energy Weapon Damage","icon":"graphics/icons/circular/skills/special_modifications.png","opCost":2,"xpCost":500},
+{"id":"beam_damage","name":"Beam Weapon Damage","icon":"graphics/icons/circular/skills/hypercognition.png","opCost":2,"xpCost":500},
+{"id":"energy_damage","name":"Energy Weapon Damage","icon":"graphics/icons/circular/skills/energy_weapon_mastery.png","opCost":2,"xpCost":500},
+{"id":"weapon_damage","name":"All Weapon Damage","icon":"graphics/icons/circular/skills/weapon_drills.png","opCost":2,"xpCost":500},
+{"id":"packed_capacitors","name":"Packed Capacitors","icon":"graphics/icons/circular/skills/power_grid_manipulation.png","opCost":3,"xpCost":1200,"tier":"NOTABLE","tags":["flux"]},
+{"id":"safety_overrides","name":"Safety Overrides","icon":"graphics/icons/circular/skills/helmsmanship.png","opCost":5,"xpCost":3000,"tier":"KEYSTONE","vanillaHullMod":"safetyoverrides"},
+{"id":"advancedshieldemitter","name":"Accelerated Shields","icon":"graphics/icons/circular/notable_hullmods/accelerated_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"advancedshieldemitter","tags":["shield"]},
+{"id":"adaptive_coils","name":"Adaptive Phase Coils","icon":"graphics/icons/circular/notable_hullmods/phase_field.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"PHASE_CLOAK_FLUX_THRESHOLD","magnitude":50}],"tags":["flux","phase"]},
+{"id":"advancedoptics","name":"Advanced Optics","icon":"graphics/icons/circular/notable_hullmods/advanced_optics.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"advancedoptics","tags":["energy","beam"]},
+{"id":"turretgyros","name":"Advanced Turret Gyros","icon":"graphics/icons/circular/notable_hullmods/advanced_turret_gyros.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"turretgyros"},
+{"id":"armoredweapons","name":"Armored Weapon Mounts","icon":"graphics/icons/circular/notable_hullmods/armored_weapon_emplacements.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"armoredweapons","tags":["armour"]},
+{"id":"autorepair","name":"Automated Repair Unit","icon":"graphics/icons/circular/notable_hullmods/automated_repair_unit.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"autorepair"},
+{"id":"auxiliarythrusters","name":"Auxiliary Thrusters","icon":"graphics/icons/circular/notable_hullmods/auxilliary_thrusters.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"auxiliarythrusters"},
+{"id":"ballistic_rangefinder","name":"Ballistic Rangefinder","icon":"graphics/icons/circular/notable_hullmods/ballistic_rangefinder.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"ballistic_rangefinder"},
+{"id":"blast_doors","name":"Blast Doors","icon":"graphics/icons/circular/notable_hullmods/blast_doors.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"HULL","magnitude":20},{"effect":"CREW_LOSS","magnitude":-60}],"tags":["logistics"]},
+{"id":"converted_hangar","name":"Converted Hangar","icon":"graphics/icons/circular/notable_hullmods/converted_hangar.png","opCost":4,"xpCost":2000,"tier":"KEYSTONE","effects":[{"effect":"FIGHTER_BAYS_FLAT","magnitude":1},{"effect":"FIGHTER_REFIT_TIME_MULT","magnitude":50},{"effect":"FIGHTER_REPLACEMENT_RATE_MULT","magnitude":50},{"effect":"FIGHTER_RELAUNCH_TIME_FLAT","magnitude":40},{"effect":"MIN_CREW_FLAT","magnitude":20}],"todo":"Real vanilla effect also increases deployment points and supply cost to recover by 1 per 5 OP spent on fighters (min 1), with a proportional increase in CR lost per deployment - deliberately not implemented yet, so right now this node is a buff with no real downside beyond the 4 modifiers above. This node may need other balance considerations once that\u0027s added.","tags":["fighter"]},
+{"id":"converted_fighterbay","name":"Converted Fighter Bay","icon":"graphics/icons/circular/notable_hullmods/converted_fighter_bay.png","opCost":4,"xpCost":2000,"tier":"KEYSTONE","vanillaHullMod":"converted_fighterbay","tags":["logistics"]},
+{"id":"dedicated_targeting_core","name":"Dedicated Targeting Core","icon":"graphics/icons/circular/notable_hullmods/targeting_core.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"dedicated_targeting_core","tags":["range"]},
+{"id":"defensive_targeting_array","name":"Defensive Targeting Array","icon":"graphics/icons/circular/notable_hullmods/defensive_targeting_array.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"defensive_targeting_array","tags":["range"]},
+{"id":"eccm","name":"ECCM Package","icon":"graphics/icons/circular/notable_hullmods/eccm_package.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"eccm","tags":["missile"]},
+{"id":"ecm","name":"ECM Package","icon":"graphics/icons/circular/notable_hullmods/ecm_package.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","hullSizeEffects":[{"effect":"ELECTRONIC_WARFARE","frigate":1,"destroyer":2,"cruiser":3,"capitalShip":4}],"tags":["logistics"]},
+{"id":"escort_package","name":"Escort Package","icon":"graphics/icons/circular/notable_hullmods/escort_package.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"escort_package"},
+{"id":"expanded_deck_crew","name":"Expanded Deck Crew","icon":"graphics/icons/circular/notable_hullmods/expanded_deck_crew.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"expanded_deck_crew","tags":["fighter"]},
+{"id":"magazines","name":"Expanded Magazines","icon":"graphics/icons/circular/notable_hullmods/expanded_magazines2.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"magazines"},
+{"id":"missleracks","name":"Expanded Missile Racks","icon":"graphics/icons/circular/notable_hullmods/expanded_missile_racks.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"missleracks","tags":["missile"]},
+{"id":"extendedshieldemitter","name":"Extended Shields","icon":"graphics/icons/circular/notable_hullmods/extended_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"extendedshieldemitter","tags":["shield"]},
+{"id":"fluxcoil","name":"Flux Coil Adjunct","icon":"graphics/icons/circular/notable_hullmods/flux_coil_adjunct.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","hullSizeEffects":[{"effect":"FLUX_CAPACITY_FLAT","frigate":600,"destroyer":1200,"cruiser":1800,"capitalShip":3000}],"tags":["flux"]},
+{"id":"fluxdistributor","name":"Flux Distributor","icon":"graphics/icons/circular/notable_hullmods/flux_distributor.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","hullSizeEffects":[{"effect":"FLUX_DISSIPATION_FLAT","frigate":30,"destroyer":60,"cruiser":90,"capitalShip":150}],"tags":["flux"]},
+{"id":"shield_shunt","name":"Shield Shunt","icon":"graphics/icons/circular/notable_hullmods/shield_shunt.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"shield_shunt","tags":["armour"]},
+{"id":"frontshield","name":"Makeshift Shield Generator","icon":"graphics/icons/circular/notable_hullmods/front_shield_generator.png","opCost":4,"xpCost":2000,"tier":"KEYSTONE","vanillaHullMod":"frontshield","tags":["shield"]},
+{"id":"missile_autoloader","name":"Missile Autoloader","icon":"graphics/icons/circular/notable_hullmods/missile_autoloader.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"missile_autoloader","tags":["missile"]},
+{"id":"hardenedshieldemitter","name":"Hardened Shields","icon":"graphics/icons/circular/notable_hullmods/hardened_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"hardenedshieldemitter","tags":["shield"]},
+{"id":"hardened_subsystems","name":"Hardened Subsystems","icon":"graphics/icons/circular/notable_hullmods/hardened_subsystems.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"hardened_subsystems"},
+{"id":"heavyarmor","name":"Heavy Armor","icon":"graphics/icons/circular/notable_hullmods/heavy_armor.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"heavyarmor","tags":["armour"]},
+{"id":"high_scatter_amp","name":"High Scatter Amplifier","icon":"graphics/icons/circular/notable_hullmods/high_scatter_amp.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"high_scatter_amp","tags":["energy","beam"]},
+{"id":"pointdefenseai","name":"Integrated Point Defense AI","icon":"graphics/icons/circular/notable_hullmods/integrated_point_defense_ai.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"pointdefenseai"},
+{"id":"targetingunit","name":"Integrated Targeting Unit","icon":"graphics/icons/circular/notable_hullmods/integrated_targeting_unit.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"targetingunit","tags":["range"]},
+{"id":"nav_relay","name":"Nav Relay","icon":"graphics/icons/circular/notable_hullmods/nav_relay.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","hullSizeEffects":[{"effect":"NAV_RATING","frigate":2,"destroyer":3,"cruiser":4,"capitalShip":5}],"tags":["logistics"]},
+{"id":"frontemitter","name":"Shield Conversion - Front","icon":"graphics/icons/circular/notable_hullmods/front_shield_emitter.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"frontemitter","tags":["shield"]},
+{"id":"adaptiveshields","name":"Shield Conversion - Omni","icon":"graphics/icons/circular/notable_hullmods/omni_shield_emitter_mod.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"adaptiveshields","tags":["shield"]},
+{"id":"operations_center","name":"Operations Center","icon":"graphics/icons/circular/notable_hullmods/operations_center.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP","magnitude":2.5}],"tags":["logistics"]},
+{"id":"phase_anchor","name":"Phase Anchor","icon":"graphics/icons/circular/notable_hullmods/phase_anchor.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"PHASE_CLOAK_ACTIVATION_COST_MULT","magnitude":-100},{"effect":"COMBAT_BOOST_WHILE_PHASED","magnitude":100}],"tags":["flux","phase"]},
+{"id":"recovery_shuttles","name":"Recovery Shuttles","icon":"graphics/icons/circular/notable_hullmods/recovery_shuttles.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"recovery_shuttles","tags":["fighter"]},
+{"id":"reinforcedhull","name":"Reinforced Bulkheads","icon":"graphics/icons/circular/notable_hullmods/reinforced_bulkheads.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"reinforcedhull","tags":["hull"]},
+{"id":"fluxbreakers","name":"Resistant Flux Conduits","icon":"graphics/icons/circular/notable_hullmods/resistant_flux_conduits.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"EMP_DAMAGE_TAKEN","magnitude":-50},{"effect":"FLUX_DISSIPATION_WHILE_VENTING","magnitude":25}],"tags":["flux","phase"]},
+{"id":"stabilizedshieldemitter","name":"Stabilized Shields","icon":"graphics/icons/circular/notable_hullmods/stabilized_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"stabilizedshieldemitter","tags":["shield"]},
+{"id":"unstable_injector","name":"Unstable Injector","icon":"graphics/icons/circular/notable_hullmods/unstable_injector.png","opCost":4,"xpCost":2000,"tier":"KEYSTONE","vanillaHullMod":"unstable_injector"},
+{"id":"additional_berthing","name":"Additional Berthing","icon":"graphics/icons/circular/notable_hullmods/berthing.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","hullSizeEffects":[{"effect":"CREW_CAPACITY_FLAT","frigate":30,"destroyer":60,"cruiser":100,"capitalShip":200}],"tags":["logistics"]},
+{"id":"augmentedengines","name":"Augmented Drive Field","icon":"graphics/icons/circular/notable_hullmods/augmented_drive_field2.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"BURN_LEVEL_FLAT","magnitude":2}],"tags":["logistics"]},
+{"id":"auxiliary_fuel_tanks","name":"Auxiliary Fuel Tanks","icon":"graphics/icons/circular/notable_hullmods/fuel_tanks.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","hullSizeEffects":[{"effect":"FUEL_CAPACITY_FLAT","frigate":30,"destroyer":60,"cruiser":100,"capitalShip":200}],"tags":["logistics"]},
+{"id":"efficiency_overhaul","name":"Efficiency Overhaul","icon":"graphics/icons/circular/notable_hullmods/efficiency.png","opCost":4,"xpCost":2000,"tier":"KEYSTONE","effects":[{"effect":"MIN_CREW_MULT","magnitude":-20},{"effect":"SUPPLIES_PER_MONTH_MULT","magnitude":-20},{"effect":"FUEL_USE_MULT","magnitude":-20},{"effect":"CR_RECOVERY_RATE","magnitude":50},{"effect":"REPAIR_RATE_PER_DAY","magnitude":50}],"tags":["logistics"]},
+{"id":"expanded_cargo_holds","name":"Expanded Cargo Holds","icon":"graphics/icons/circular/notable_hullmods/expanded_cargo.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","hullSizeEffects":[{"effect":"CARGO_CAPACITY_FLAT","frigate":30,"destroyer":60,"cruiser":100,"capitalShip":200}],"tags":["logistics"]},
+{"id":"hiressensors","name":"High Resolution Sensors","icon":"graphics/icons/circular/notable_hullmods/high_res_sensors.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","hullSizeEffects":[{"effect":"SENSOR_RANGE","frigate":50,"destroyer":75,"cruiser":100,"capitalShip":150}],"tags":["logistics"]},
+{"id":"insulatedengine","name":"Insulated Engine Assembly","icon":"graphics/icons/circular/notable_hullmods/insulated_engine_assembly.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"ENGINE_DURABILITY","magnitude":100},{"effect":"HULL","magnitude":10}],"tags":["logistics"]},
+{"id":"militarized_subsystems","name":"Militarized Subsystems","icon":"graphics/icons/circular/notable_hullmods/militarized_subsystems.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"BURN_LEVEL_FLAT","magnitude":1},{"effect":"MIN_CREW_PERCENT","magnitude":100},{"effect":"REMOVE_CIVILIAN_HULL_PENALTY","magnitude":0}],"tags":["logistics"]},
+{"id":"solar_shielding","name":"Solar Shielding","icon":"graphics/icons/circular/notable_hullmods/solar_shielding2.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"solar_shielding","todo":"Real effect is -75% CR loss from solar corona/deep hyperspace storms, plus -10% energy damage taken in combat. The energy damage part is trivial and safe (existing ENERGY_DAMAGE_TAKEN effect, magnitude -10) whenever we want it. The corona/storm part is NOT safe to implement yet - found the real dynamic stat key (\u0027corona_resistance\u0027, confirmed shared by both StarCoronaTerrainPlugin and HyperspaceTerrainPlugin, matching the tooltip\u0027s \u0027same effect against storms\u0027 claim) but decompiling StarCoronaTerrainPlugin showed corona_resistance actually GATES whether a CR-loss event fires (if (corona_resistance \u003e 0) applyCREvent(...) else \u003ccomputes what looks like an interval/frequency ratio instead\u003e) rather than scaling a loss percentage directly - the sign/semantics don\u0027t resolve cleanly and getting it backward could make ships MORE vulnerable, not less. Deliberately left the whole hullmod on vanillaHullMod passthrough (both effects still work correctly via vanilla\u0027s own code) rather than partially convert, since our apply loop is all-or-nothing per node and converting now would silently drop corona/storm protection. Needs more investigation (or someone who already knows this mechanic) before touching.","tags":["logistics"]},
+{"id":"surveying_equipment","name":"Surveying Equipment","icon":"graphics/icons/circular/notable_hullmods/surveying_equipment.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","hullSizeEffects":[{"effect":"SURVEY_COST_REDUCTION_HEAVY_MACHINERY","frigate":5,"destroyer":10,"cruiser":20,"capitalShip":40},{"effect":"SURVEY_COST_REDUCTION_SUPPLIES","frigate":5,"destroyer":10,"cruiser":20,"capitalShip":40}],"tags":["logistics"]},
 {"id":"root_low_tech","name":"Low Tech Root","icon":"","opCost":0,"xpCost":0,"tier":"ROOT"},
 {"id":"root_midline","name":"Midline Root","icon":"","opCost":0,"xpCost":0,"tier":"ROOT"},
 {"id":"root_high_tech","name":"High Tech Root","icon":"","opCost":0,"xpCost":0,"tier":"ROOT"},
-{"id":"increased_fuel","name":"Increased Fuel Capacity","icon":"graphics/icons/skills/navigation.png","opCost":2,"xpCost":500,"effects":[{"effect":"FUEL_CAPACITY","magnitude":15}],"tags":["logistics"]},
-{"id":"increased_cargo","name":"Increased Cargo Capacity","icon":"graphics/icons/skills/bulk_transport.png","opCost":2,"xpCost":500,"effects":[{"effect":"CARGO_CAPACITY","magnitude":15}],"tags":["logistics"]},
-{"id":"increased_crew","name":"Increased Crew Capacity","icon":"graphics/icons/skills/crew_training.png","opCost":2,"xpCost":500,"effects":[{"effect":"CREW_CAPACITY","magnitude":10}],"tags":["logistics"]},
-{"id":"fighter_weapon_damage","name":"Fighter Weapon Damage","icon":"graphics/icons/skills/fighter_uplink2.png","opCost":2,"xpCost":500,"description":"Increases the weapon damage of fighters launched from this ship.","todo":"Fighters are separate ships spawned from the carrier\u0027s bays, so this can\u0027t be applied through the carrier\u0027s own MutableShipStatsAPI like other effects - it needs a combat-time hook that finds each fighter\u0027s source ship and applies the bonus to the fighter\u0027s own stats. Not yet built.","tags":["fighter"]},
-{"id":"fighter_speed","name":"Fighter Speed","icon":"graphics/icons/skills/wing_commander.png","opCost":2,"xpCost":500,"description":"Increases the top speed of fighters launched from this ship.","todo":"Same limitation as fighter_weapon_damage - needs a combat-time hook targeting launched fighters, not yet built.","tags":["fighter"]}
+{"id":"increased_fuel","name":"Increased Fuel Capacity","icon":"graphics/icons/circular/skills/navigation.png","opCost":2,"xpCost":500,"effects":[{"effect":"FUEL_CAPACITY","magnitude":15}],"tags":["logistics"]},
+{"id":"increased_cargo","name":"Increased Cargo Capacity","icon":"graphics/icons/circular/skills/bulk_transport.png","opCost":2,"xpCost":500,"effects":[{"effect":"CARGO_CAPACITY","magnitude":15}],"tags":["logistics"]},
+{"id":"increased_crew","name":"Increased Crew Capacity","icon":"graphics/icons/circular/skills/crew_training.png","opCost":2,"xpCost":500,"effects":[{"effect":"CREW_CAPACITY","magnitude":10}],"tags":["logistics"]},
+{"id":"fighter_weapon_damage","name":"Fighter Weapon Damage","icon":"graphics/icons/circular/skills/fighter_uplink2.png","opCost":2,"xpCost":500,"description":"Increases the weapon damage of fighters launched from this ship.","todo":"Fighters are separate ships spawned from the carrier\u0027s bays, so this can\u0027t be applied through the carrier\u0027s own MutableShipStatsAPI like other effects - it needs a combat-time hook that finds each fighter\u0027s source ship and applies the bonus to the fighter\u0027s own stats. Not yet built.","tags":["fighter"]},
+{"id":"fighter_speed","name":"Fighter Speed","icon":"graphics/icons/circular/skills/wing_commander.png","opCost":2,"xpCost":500,"description":"Increases the top speed of fighters launched from this ship.","todo":"Same limitation as fighter_weapon_damage - needs a combat-time hook targeting launched fighters, not yet built.","tags":["fighter"]}
 ];
 
 var SHIPPED_NODES = [
@@ -878,14 +878,14 @@ function render(){
 
 function updateStats(){
   document.getElementById('statsLine').textContent =
-    state.nodes.length + ' nodes · ' + state.types.length + ' types · zoom ' + state.view.zoom.toFixed(2) + 'x';
+    state.nodes.length + ' nodes Â· ' + state.types.length + ' types Â· zoom ' + state.view.zoom.toFixed(2) + 'x';
 }
 function updateWarnBadge(){
   var el = document.getElementById('warnBadge');
   var issues = validate();
   if (issues.length === 0) { el.style.display = 'none'; return; }
   el.style.display = 'block';
-  el.textContent = '⚠ ' + issues.length + ' issue' + (issues.length>1?'s':'') + ' - click to view';
+  el.textContent = 'âš  ' + issues.length + ' issue' + (issues.length>1?'s':'') + ' - click to view';
   el.onclick = function(){ alert(issues.join('\n')); };
 }
 
@@ -1100,7 +1100,7 @@ function refreshInspector(){
   }).join('');
   var prereqHtml = (n.connectedTo||[]).map(function(pid){
     var pn = nodeById(pid);
-    return '<div class="prereqItem"><span>' + pid + (pn ? '' : ' (missing!)') + '</span><button data-remove-prereq="' + pid + '">✕</button></div>';
+    return '<div class="prereqItem"><span>' + pid + (pn ? '' : ' (missing!)') + '</span><button data-remove-prereq="' + pid + '">âœ•</button></div>';
   }).join('') || '<div class="hint">None - renders with no connector line until you add one (e.g. a root node).</div>';
   var otherNodeOptions = state.nodes.filter(function(o){ return o.id !== n.id; }).map(function(o){
     return '<option value="' + o.id + '">' + o.id + '</option>';
@@ -1113,7 +1113,7 @@ function refreshInspector(){
       return '<div class="fieldRow" style="align-items:flex-end">' +
         '<div class="field" style="flex:2"><label>Effect ' + (i+1) + '</label><select data-stat-effect="' + i + '">' + options + '</select></div>' +
         '<div class="field" style="flex:1"><label>Magnitude</label><input type="number" step="0.1" value="' + e.magnitude + '" data-stat-magnitude="' + i + '"></div>' +
-        '<button class="smallBtn danger" data-remove-stat-row="' + i + '">✕</button>' +
+        '<button class="smallBtn danger" data-remove-stat-row="' + i + '">âœ•</button>' +
       '</div>';
     }).join('') || '<div class="hint">No effects yet.' + (t.vanillaHullMod ? ' Still on vanillaHullMod passthrough ("' + t.vanillaHullMod + '") - adding effects here does not switch that off, use "Edit type" for that.' : '') + '</div>';
     if (!t.hullSizeEffects) t.hullSizeEffects = [];
@@ -1387,7 +1387,7 @@ function renderHullSizeEffectRows(idPrefix, hullSizeEffectsDraft){
       '<div class="field" style="flex:1 1 70px"><label>Destroyer</label><input id="' + idPrefix + 'HsDestroyer' + i + '" type="number" step="0.1" value="' + e.destroyer + '"></div>' +
       '<div class="field" style="flex:1 1 70px"><label>Cruiser</label><input id="' + idPrefix + 'HsCruiser' + i + '" type="number" step="0.1" value="' + e.cruiser + '"></div>' +
       '<div class="field" style="flex:1 1 70px"><label>Capital</label><input id="' + idPrefix + 'HsCapital' + i + '" type="number" step="0.1" value="' + e.capitalShip + '"></div>' +
-      '<button class="smallBtn danger" type="button" data-' + idPrefix + '-remove-hs-row="' + i + '">✕</button>' +
+      '<button class="smallBtn danger" type="button" data-' + idPrefix + '-remove-hs-row="' + i + '">âœ•</button>' +
     '</div>';
   }).join('');
   return rows || '<div class="hint">No hull-size-dependent effects.</div>';
@@ -1440,7 +1440,7 @@ function openTypeModal(existingType, onSave){
       return '<div class="fieldRow" style="align-items:flex-end">' +
         '<div class="field" style="flex:2"><label>Effect ' + (i+1) + '</label><select id="tEffect' + i + '">' + options + '</select></div>' +
         '<div class="field" style="flex:1"><label>Magnitude</label><input id="tMag' + i + '" type="number" step="0.1" value="' + e.magnitude + '"></div>' +
-        '<button class="smallBtn danger" type="button" data-remove-effect-row="' + i + '">✕</button>' +
+        '<button class="smallBtn danger" type="button" data-remove-effect-row="' + i + '">âœ•</button>' +
       '</div>';
     }).join('') || '<div class="hint">No effects yet - click "+ Add effect" below, or set a vanillaHullMod id instead.</div>';
 

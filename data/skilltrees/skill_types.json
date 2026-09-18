@@ -3,7 +3,7 @@
 		{
 			"id": "flux_capacity",
 			"name": "Flux Capacity",
-			"icon": "graphics/icons/skills/containment_procedures.png",
+			"icon": "graphics/icons/circular/skills/containment_procedures.png",
 			"opCost": 2,
 			"xpCost": 500,
 			"tags": [
@@ -13,7 +13,7 @@
 		{
 			"id": "flux_dissipation",
 			"name": "Flux Dissipation",
-			"icon": "graphics/icons/skills/systems_expertise.png",
+			"icon": "graphics/icons/circular/skills/systems_expertise.png",
 			"opCost": 2,
 			"xpCost": 500,
 			"tags": [
@@ -23,7 +23,7 @@
 		{
 			"id": "hybrid_flux",
 			"name": "Flux Capacity and Dissipation",
-			"icon": "graphics/icons/skills/flux_dynamics.png",
+			"icon": "graphics/icons/circular/skills/flux_dynamics.png",
 			"opCost": 2,
 			"xpCost": 500,
 			"tags": [
@@ -33,7 +33,7 @@
 		{
 			"id": "hull",
 			"name": "Hull",
-			"icon": "graphics/icons/skills/damage_control2.png",
+			"icon": "graphics/icons/circular/skills/damage_control2.png",
 			"opCost": 2,
 			"xpCost": 500,
 			"tags": [
@@ -43,7 +43,7 @@
 		{
 			"id": "armor",
 			"name": "Armor",
-			"icon": "graphics/icons/skills/polarized_armor.png",
+			"icon": "graphics/icons/circular/skills/polarized_armor.png",
 			"opCost": 2,
 			"xpCost": 500,
 			"tags": [
@@ -53,14 +53,14 @@
 		{
 			"id": "ballistic_damage",
 			"name": "Ballistic Weapon Damage",
-			"icon": "graphics/icons/skills/ranged_specialization.png",
+			"icon": "graphics/icons/circular/skills/ranged_specialization.png",
 			"opCost": 2,
 			"xpCost": 500
 		},
 		{
 			"id": "missile_damage",
 			"name": "Missile Weapon Damage",
-			"icon": "graphics/icons/skills/missile_specialization2.png",
+			"icon": "graphics/icons/circular/skills/missile_specialization2.png",
 			"opCost": 2,
 			"xpCost": 500,
 			"tags": [
@@ -70,35 +70,35 @@
 		{
 			"id": "non_beam_energy_damage",
 			"name": "Non-Beam Energy Weapon Damage",
-			"icon": "graphics/icons/skills/special_modifications.png",
+			"icon": "graphics/icons/circular/skills/special_modifications.png",
 			"opCost": 2,
 			"xpCost": 500
 		},
 		{
 			"id": "beam_damage",
 			"name": "Beam Weapon Damage",
-			"icon": "graphics/icons/skills/hypercognition.png",
+			"icon": "graphics/icons/circular/skills/hypercognition.png",
 			"opCost": 2,
 			"xpCost": 500
 		},
 		{
 			"id": "energy_damage",
 			"name": "Energy Weapon Damage",
-			"icon": "graphics/icons/skills/energy_weapon_mastery.png",
+			"icon": "graphics/icons/circular/skills/energy_weapon_mastery.png",
 			"opCost": 2,
 			"xpCost": 500
 		},
 		{
 			"id": "weapon_damage",
 			"name": "All Weapon Damage",
-			"icon": "graphics/icons/skills/weapon_drills.png",
+			"icon": "graphics/icons/circular/skills/weapon_drills.png",
 			"opCost": 2,
 			"xpCost": 500
 		},
 		{
 			"id": "packed_capacitors",
 			"name": "Packed Capacitors",
-			"icon": "graphics/icons/skills/power_grid_manipulation.png",
+			"icon": "graphics/icons/circular/skills/power_grid_manipulation.png",
 			"opCost": 3,
 			"xpCost": 1200,
 			"tier": "NOTABLE",
@@ -109,7 +109,7 @@
 		{
 			"id": "safety_overrides",
 			"name": "Safety Overrides",
-			"icon": "graphics/icons/skills/helmsmanship.png",
+			"icon": "graphics/icons/circular/skills/helmsmanship.png",
 			"opCost": 5,
 			"xpCost": 3000,
 			"tier": "KEYSTONE",
@@ -118,7 +118,7 @@
 		{
 			"id": "advancedshieldemitter",
 			"name": "Accelerated Shields",
-			"icon": "graphics/icons/notable_hullmods/accelerated_shields.png",
+			"icon": "graphics/icons/circular/notable_hullmods/accelerated_shields.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -130,7 +130,7 @@
 		{
 			"id": "adaptive_coils",
 			"name": "Adaptive Phase Coils",
-			"icon": "graphics/icons/notable_hullmods/phase_field.png",
+			"icon": "graphics/icons/circular/notable_hullmods/phase_field.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -148,7 +148,7 @@
 		{
 			"id": "advancedoptics",
 			"name": "Advanced Optics",
-			"icon": "graphics/icons/notable_hullmods/advanced_optics.png",
+			"icon": "graphics/icons/circular/notable_hullmods/advanced_optics.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -161,7 +161,7 @@
 		{
 			"id": "turretgyros",
 			"name": "Advanced Turret Gyros",
-			"icon": "graphics/icons/notable_hullmods/advanced_turret_gyros.png",
+			"icon": "graphics/icons/circular/notable_hullmods/advanced_turret_gyros.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -170,7 +170,7 @@
 		{
 			"id": "armoredweapons",
 			"name": "Armored Weapon Mounts",
-			"icon": "graphics/icons/notable_hullmods/armored_weapon_emplacements.png",
+			"icon": "graphics/icons/circular/notable_hullmods/armored_weapon_emplacements.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -182,7 +182,7 @@
 		{
 			"id": "autorepair",
 			"name": "Automated Repair Unit",
-			"icon": "graphics/icons/notable_hullmods/automated_repair_unit.png",
+			"icon": "graphics/icons/circular/notable_hullmods/automated_repair_unit.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -191,7 +191,7 @@
 		{
 			"id": "auxiliarythrusters",
 			"name": "Auxiliary Thrusters",
-			"icon": "graphics/icons/notable_hullmods/auxilliary_thrusters.png",
+			"icon": "graphics/icons/circular/notable_hullmods/auxilliary_thrusters.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -200,7 +200,7 @@
 		{
 			"id": "ballistic_rangefinder",
 			"name": "Ballistic Rangefinder",
-			"icon": "graphics/icons/notable_hullmods/ballistic_rangefinder.png",
+			"icon": "graphics/icons/circular/notable_hullmods/ballistic_rangefinder.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -209,7 +209,7 @@
 		{
 			"id": "blast_doors",
 			"name": "Blast Doors",
-			"icon": "graphics/icons/notable_hullmods/blast_doors.png",
+			"icon": "graphics/icons/circular/notable_hullmods/blast_doors.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -230,7 +230,7 @@
 		{
 			"id": "converted_hangar",
 			"name": "Converted Hangar",
-			"icon": "graphics/icons/notable_hullmods/converted_hangar.png",
+			"icon": "graphics/icons/circular/notable_hullmods/converted_hangar.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "KEYSTONE",
@@ -264,7 +264,7 @@
 		{
 			"id": "converted_fighterbay",
 			"name": "Converted Fighter Bay",
-			"icon": "graphics/icons/notable_hullmods/converted_fighter_bay.png",
+			"icon": "graphics/icons/circular/notable_hullmods/converted_fighter_bay.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "KEYSTONE",
@@ -276,7 +276,7 @@
 		{
 			"id": "dedicated_targeting_core",
 			"name": "Dedicated Targeting Core",
-			"icon": "graphics/icons/notable_hullmods/targeting_core.png",
+			"icon": "graphics/icons/circular/notable_hullmods/targeting_core.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -288,7 +288,7 @@
 		{
 			"id": "defensive_targeting_array",
 			"name": "Defensive Targeting Array",
-			"icon": "graphics/icons/notable_hullmods/defensive_targeting_array.png",
+			"icon": "graphics/icons/circular/notable_hullmods/defensive_targeting_array.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -300,7 +300,7 @@
 		{
 			"id": "eccm",
 			"name": "ECCM Package",
-			"icon": "graphics/icons/notable_hullmods/eccm_package.png",
+			"icon": "graphics/icons/circular/notable_hullmods/eccm_package.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -312,7 +312,7 @@
 		{
 			"id": "ecm",
 			"name": "ECM Package",
-			"icon": "graphics/icons/notable_hullmods/ecm_package.png",
+			"icon": "graphics/icons/circular/notable_hullmods/ecm_package.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -332,7 +332,7 @@
 		{
 			"id": "escort_package",
 			"name": "Escort Package",
-			"icon": "graphics/icons/notable_hullmods/escort_package.png",
+			"icon": "graphics/icons/circular/notable_hullmods/escort_package.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -341,7 +341,7 @@
 		{
 			"id": "expanded_deck_crew",
 			"name": "Expanded Deck Crew",
-			"icon": "graphics/icons/notable_hullmods/expanded_deck_crew.png",
+			"icon": "graphics/icons/circular/notable_hullmods/expanded_deck_crew.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -353,7 +353,7 @@
 		{
 			"id": "magazines",
 			"name": "Expanded Magazines",
-			"icon": "graphics/icons/notable_hullmods/expanded_magazines2.png",
+			"icon": "graphics/icons/circular/notable_hullmods/expanded_magazines2.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -362,7 +362,7 @@
 		{
 			"id": "missleracks",
 			"name": "Expanded Missile Racks",
-			"icon": "graphics/icons/notable_hullmods/expanded_missile_racks.png",
+			"icon": "graphics/icons/circular/notable_hullmods/expanded_missile_racks.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -374,7 +374,7 @@
 		{
 			"id": "extendedshieldemitter",
 			"name": "Extended Shields",
-			"icon": "graphics/icons/notable_hullmods/extended_shields.png",
+			"icon": "graphics/icons/circular/notable_hullmods/extended_shields.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -386,7 +386,7 @@
 		{
 			"id": "fluxcoil",
 			"name": "Flux Coil Adjunct",
-			"icon": "graphics/icons/notable_hullmods/flux_coil_adjunct.png",
+			"icon": "graphics/icons/circular/notable_hullmods/flux_coil_adjunct.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -406,7 +406,7 @@
 		{
 			"id": "fluxdistributor",
 			"name": "Flux Distributor",
-			"icon": "graphics/icons/notable_hullmods/flux_distributor.png",
+			"icon": "graphics/icons/circular/notable_hullmods/flux_distributor.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -426,7 +426,7 @@
 		{
 			"id": "shield_shunt",
 			"name": "Shield Shunt",
-			"icon": "graphics/icons/notable_hullmods/shield_shunt.png",
+			"icon": "graphics/icons/circular/notable_hullmods/shield_shunt.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -438,7 +438,7 @@
 		{
 			"id": "frontshield",
 			"name": "Makeshift Shield Generator",
-			"icon": "graphics/icons/notable_hullmods/front_shield_generator.png",
+			"icon": "graphics/icons/circular/notable_hullmods/front_shield_generator.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "KEYSTONE",
@@ -450,7 +450,7 @@
 		{
 			"id": "missile_autoloader",
 			"name": "Missile Autoloader",
-			"icon": "graphics/icons/notable_hullmods/missile_autoloader.png",
+			"icon": "graphics/icons/circular/notable_hullmods/missile_autoloader.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -462,7 +462,7 @@
 		{
 			"id": "hardenedshieldemitter",
 			"name": "Hardened Shields",
-			"icon": "graphics/icons/notable_hullmods/hardened_shields.png",
+			"icon": "graphics/icons/circular/notable_hullmods/hardened_shields.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -474,7 +474,7 @@
 		{
 			"id": "hardened_subsystems",
 			"name": "Hardened Subsystems",
-			"icon": "graphics/icons/notable_hullmods/hardened_subsystems.png",
+			"icon": "graphics/icons/circular/notable_hullmods/hardened_subsystems.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -483,7 +483,7 @@
 		{
 			"id": "heavyarmor",
 			"name": "Heavy Armor",
-			"icon": "graphics/icons/notable_hullmods/heavy_armor.png",
+			"icon": "graphics/icons/circular/notable_hullmods/heavy_armor.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -495,7 +495,7 @@
 		{
 			"id": "high_scatter_amp",
 			"name": "High Scatter Amplifier",
-			"icon": "graphics/icons/notable_hullmods/high_scatter_amp.png",
+			"icon": "graphics/icons/circular/notable_hullmods/high_scatter_amp.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -508,7 +508,7 @@
 		{
 			"id": "pointdefenseai",
 			"name": "Integrated Point Defense AI",
-			"icon": "graphics/icons/notable_hullmods/integrated_point_defense_ai.png",
+			"icon": "graphics/icons/circular/notable_hullmods/integrated_point_defense_ai.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -517,7 +517,7 @@
 		{
 			"id": "targetingunit",
 			"name": "Integrated Targeting Unit",
-			"icon": "graphics/icons/notable_hullmods/integrated_targeting_unit.png",
+			"icon": "graphics/icons/circular/notable_hullmods/integrated_targeting_unit.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -529,7 +529,7 @@
 		{
 			"id": "nav_relay",
 			"name": "Nav Relay",
-			"icon": "graphics/icons/notable_hullmods/nav_relay.png",
+			"icon": "graphics/icons/circular/notable_hullmods/nav_relay.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -549,7 +549,7 @@
 		{
 			"id": "frontemitter",
 			"name": "Shield Conversion - Front",
-			"icon": "graphics/icons/notable_hullmods/front_shield_emitter.png",
+			"icon": "graphics/icons/circular/notable_hullmods/front_shield_emitter.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -561,7 +561,7 @@
 		{
 			"id": "adaptiveshields",
 			"name": "Shield Conversion - Omni",
-			"icon": "graphics/icons/notable_hullmods/omni_shield_emitter_mod.png",
+			"icon": "graphics/icons/circular/notable_hullmods/omni_shield_emitter_mod.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -573,7 +573,7 @@
 		{
 			"id": "operations_center",
 			"name": "Operations Center",
-			"icon": "graphics/icons/notable_hullmods/operations_center.png",
+			"icon": "graphics/icons/circular/notable_hullmods/operations_center.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -590,7 +590,7 @@
 		{
 			"id": "phase_anchor",
 			"name": "Phase Anchor",
-			"icon": "graphics/icons/notable_hullmods/phase_anchor.png",
+			"icon": "graphics/icons/circular/notable_hullmods/phase_anchor.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -612,7 +612,7 @@
 		{
 			"id": "recovery_shuttles",
 			"name": "Recovery Shuttles",
-			"icon": "graphics/icons/notable_hullmods/recovery_shuttles.png",
+			"icon": "graphics/icons/circular/notable_hullmods/recovery_shuttles.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -624,7 +624,7 @@
 		{
 			"id": "reinforcedhull",
 			"name": "Reinforced Bulkheads",
-			"icon": "graphics/icons/notable_hullmods/reinforced_bulkheads.png",
+			"icon": "graphics/icons/circular/notable_hullmods/reinforced_bulkheads.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -636,7 +636,7 @@
 		{
 			"id": "fluxbreakers",
 			"name": "Resistant Flux Conduits",
-			"icon": "graphics/icons/notable_hullmods/resistant_flux_conduits.png",
+			"icon": "graphics/icons/circular/notable_hullmods/resistant_flux_conduits.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -658,7 +658,7 @@
 		{
 			"id": "stabilizedshieldemitter",
 			"name": "Stabilized Shields",
-			"icon": "graphics/icons/notable_hullmods/stabilized_shields.png",
+			"icon": "graphics/icons/circular/notable_hullmods/stabilized_shields.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -670,7 +670,7 @@
 		{
 			"id": "unstable_injector",
 			"name": "Unstable Injector",
-			"icon": "graphics/icons/notable_hullmods/unstable_injector.png",
+			"icon": "graphics/icons/circular/notable_hullmods/unstable_injector.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "KEYSTONE",
@@ -679,7 +679,7 @@
 		{
 			"id": "additional_berthing",
 			"name": "Additional Berthing",
-			"icon": "graphics/icons/notable_hullmods/berthing.png",
+			"icon": "graphics/icons/circular/notable_hullmods/berthing.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -699,7 +699,7 @@
 		{
 			"id": "augmentedengines",
 			"name": "Augmented Drive Field",
-			"icon": "graphics/icons/notable_hullmods/augmented_drive_field2.png",
+			"icon": "graphics/icons/circular/notable_hullmods/augmented_drive_field2.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -716,7 +716,7 @@
 		{
 			"id": "auxiliary_fuel_tanks",
 			"name": "Auxiliary Fuel Tanks",
-			"icon": "graphics/icons/notable_hullmods/fuel_tanks.png",
+			"icon": "graphics/icons/circular/notable_hullmods/fuel_tanks.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -736,7 +736,7 @@
 		{
 			"id": "efficiency_overhaul",
 			"name": "Efficiency Overhaul",
-			"icon": "graphics/icons/notable_hullmods/efficiency.png",
+			"icon": "graphics/icons/circular/notable_hullmods/efficiency.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "KEYSTONE",
@@ -769,7 +769,7 @@
 		{
 			"id": "expanded_cargo_holds",
 			"name": "Expanded Cargo Holds",
-			"icon": "graphics/icons/notable_hullmods/expanded_cargo.png",
+			"icon": "graphics/icons/circular/notable_hullmods/expanded_cargo.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -789,7 +789,7 @@
 		{
 			"id": "hiressensors",
 			"name": "High Resolution Sensors",
-			"icon": "graphics/icons/notable_hullmods/high_res_sensors.png",
+			"icon": "graphics/icons/circular/notable_hullmods/high_res_sensors.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -809,7 +809,7 @@
 		{
 			"id": "insulatedengine",
 			"name": "Insulated Engine Assembly",
-			"icon": "graphics/icons/notable_hullmods/insulated_engine_assembly.png",
+			"icon": "graphics/icons/circular/notable_hullmods/insulated_engine_assembly.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -830,7 +830,7 @@
 		{
 			"id": "militarized_subsystems",
 			"name": "Militarized Subsystems",
-			"icon": "graphics/icons/notable_hullmods/militarized_subsystems.png",
+			"icon": "graphics/icons/circular/notable_hullmods/militarized_subsystems.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -855,7 +855,7 @@
 		{
 			"id": "solar_shielding",
 			"name": "Solar Shielding",
-			"icon": "graphics/icons/notable_hullmods/solar_shielding2.png",
+			"icon": "graphics/icons/circular/notable_hullmods/solar_shielding2.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -868,7 +868,7 @@
 		{
 			"id": "surveying_equipment",
 			"name": "Surveying Equipment",
-			"icon": "graphics/icons/notable_hullmods/surveying_equipment.png",
+			"icon": "graphics/icons/circular/notable_hullmods/surveying_equipment.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
@@ -919,7 +919,7 @@
 		{
 			"id": "increased_fuel",
 			"name": "Increased Fuel Capacity",
-			"icon": "graphics/icons/skills/navigation.png",
+			"icon": "graphics/icons/circular/skills/navigation.png",
 			"opCost": 2,
 			"xpCost": 500,
 			"effects": [
@@ -935,7 +935,7 @@
 		{
 			"id": "increased_cargo",
 			"name": "Increased Cargo Capacity",
-			"icon": "graphics/icons/skills/bulk_transport.png",
+			"icon": "graphics/icons/circular/skills/bulk_transport.png",
 			"opCost": 2,
 			"xpCost": 500,
 			"effects": [
@@ -951,7 +951,7 @@
 		{
 			"id": "increased_crew",
 			"name": "Increased Crew Capacity",
-			"icon": "graphics/icons/skills/crew_training.png",
+			"icon": "graphics/icons/circular/skills/crew_training.png",
 			"opCost": 2,
 			"xpCost": 500,
 			"effects": [
@@ -967,7 +967,7 @@
 		{
 			"id": "fighter_weapon_damage",
 			"name": "Fighter Weapon Damage",
-			"icon": "graphics/icons/skills/fighter_uplink2.png",
+			"icon": "graphics/icons/circular/skills/fighter_uplink2.png",
 			"opCost": 2,
 			"xpCost": 500,
 			"description": "Increases the weapon damage of fighters launched from this ship.",
@@ -979,7 +979,7 @@
 		{
 			"id": "fighter_speed",
 			"name": "Fighter Speed",
-			"icon": "graphics/icons/skills/wing_commander.png",
+			"icon": "graphics/icons/circular/skills/wing_commander.png",
 			"opCost": 2,
 			"xpCost": 500,
 			"description": "Increases the top speed of fighters launched from this ship.",

@@ -40,7 +40,8 @@ final class SkillTreeNodeRenderer {
     private static final int VIGNETTE_SEGMENTS = 48;
     private static final float VIGNETTE_INNER_FRACTION = 0.88f;
     private static final float VIGNETTE_OUTER_FRACTION = 1f;
-    private static final float VIGNETTE_MARGIN_FRACTION = 0.375f;
+    private static final float VIGNETTE_MARGIN_FRACTION = 0.02f;
+    private static final String CIRCULAR_ICON_PATH_PREFIX = "graphics/icons/circular/";
 
     private static final float TOOLTIP_MAX_TEXT_WIDTH = 480f;
     private static final float TOOLTIP_MAX_TEXT_HEIGHT = 800f;
@@ -242,7 +243,9 @@ final class SkillTreeNodeRenderer {
         sprite.setColor(tint);
         sprite.renderAtCenter(cx, cy);
 
-        drawVignette(cx, cy, size, alphaMult);
+        if (!spritePath.startsWith(CIRCULAR_ICON_PATH_PREFIX)) {
+            drawVignette(cx, cy, size, alphaMult);
+        }
     }
 
     private void drawRings(float cx, float cy, float footprintSize, float alphaMult, boolean allocated, Float pulseSeconds, SkillTier tier) {
