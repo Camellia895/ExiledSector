@@ -576,6 +576,54 @@
 			"opCost": 0,
 			"xpCost": 0,
 			"tier": "ROOT"
+		},
+		{
+			"id": "increased_fuel",
+			"name": "Increased Fuel Capacity",
+			"icon": "graphics/icons/skills/navigation.png",
+			"opCost": 2,
+			"xpCost": 500,
+			"effects": [
+				{ "effect": "FUEL_CAPACITY", "magnitude": 15 }
+			]
+		},
+		{
+			"id": "increased_cargo",
+			"name": "Increased Cargo Capacity",
+			"icon": "graphics/icons/skills/bulk_transport.png",
+			"opCost": 2,
+			"xpCost": 500,
+			"effects": [
+				{ "effect": "CARGO_CAPACITY", "magnitude": 15 }
+			]
+		},
+		{
+			"id": "increased_crew",
+			"name": "Increased Crew Capacity",
+			"icon": "graphics/icons/skills/crew_training.png",
+			"opCost": 2,
+			"xpCost": 500,
+			"effects": [
+				{ "effect": "CREW_CAPACITY", "magnitude": 10 }
+			]
+		},
+		{
+			"id": "fighter_weapon_damage",
+			"name": "Fighter Weapon Damage",
+			"icon": "graphics/icons/skills/fighter_uplink2.png",
+			"opCost": 2,
+			"xpCost": 500,
+			"description": "Increases the weapon damage of fighters launched from this ship.",
+			"todo": "Fighters are separate ships spawned from the carrier's bays, so this can't be applied through the carrier's own MutableShipStatsAPI like other effects - it needs a combat-time hook that finds each fighter's source ship and applies the bonus to the fighter's own stats. Not yet built."
+		},
+		{
+			"id": "fighter_speed",
+			"name": "Fighter Speed",
+			"icon": "graphics/icons/skills/wing_commander.png",
+			"opCost": 2,
+			"xpCost": 500,
+			"description": "Increases the top speed of fighters launched from this ship.",
+			"todo": "Same limitation as fighter_weapon_damage - needs a combat-time hook targeting launched fighters, not yet built."
 		}
 	]
 }

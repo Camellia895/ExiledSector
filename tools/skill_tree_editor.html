@@ -462,9 +462,9 @@
       <div class="label">Data</div>
       <div class="btnRow">
         <button class="smallBtn" id="importBtn">Import JSON...</button>
-        <button class="smallBtn danger" id="resetBtn">Reset to shipped data</button>
+        <button class="smallBtn danger" id="resetBtn">Reload from disk</button>
       </div>
-      <div class="hint">Autosaves to this browser as you edit. Nothing reaches the actual project files until you copy the export below back into them.</div>
+      <div class="hint">Autosaves to this browser as you edit. Use Save to project (below) to write changes to the real files, or Reload from disk to discard changes and pull the current files back in.</div>
     </div>
   </div>
 
@@ -529,8 +529,8 @@ var SHIPPED_TYPES = [
 {"id":"auxiliarythrusters","name":"Auxiliary Thrusters","icon":"graphics/icons/notable_hullmods/auxilliary_thrusters.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"auxiliarythrusters"},
 {"id":"ballistic_rangefinder","name":"Ballistic Rangefinder","icon":"graphics/icons/notable_hullmods/ballistic_rangefinder.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"ballistic_rangefinder"},
 {"id":"blast_doors","name":"Blast Doors","icon":"graphics/icons/notable_hullmods/blast_doors.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"blast_doors"},
-{"id":"converted_hangar","name":"Converted Hangar","icon":"graphics/icons/notable_hullmods/converted_hangar.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"converted_hangar"},
-{"id":"converted_fighterbay","name":"Converted Fighter Bay","icon":"graphics/icons/notable_hullmods/converted_fighter_bay.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"converted_fighterbay"},
+{"id":"converted_hangar","name":"Converted Hangar","icon":"graphics/icons/notable_hullmods/converted_hangar.png","opCost":4,"xpCost":2000,"tier":"KEYSTONE","vanillaHullMod":"converted_hangar"},
+{"id":"converted_fighterbay","name":"Converted Fighter Bay","icon":"graphics/icons/notable_hullmods/converted_fighter_bay.png","opCost":4,"xpCost":2000,"tier":"KEYSTONE","vanillaHullMod":"converted_fighterbay"},
 {"id":"dedicated_targeting_core","name":"Dedicated Targeting Core","icon":"graphics/icons/notable_hullmods/targeting_core.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"dedicated_targeting_core"},
 {"id":"defensive_targeting_array","name":"Defensive Targeting Array","icon":"graphics/icons/notable_hullmods/defensive_targeting_array.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"defensive_targeting_array"},
 {"id":"eccm","name":"ECCM Package","icon":"graphics/icons/notable_hullmods/eccm_package.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"eccm"},
@@ -543,7 +543,7 @@ var SHIPPED_TYPES = [
 {"id":"fluxcoil","name":"Flux Coil Adjunct","icon":"graphics/icons/notable_hullmods/flux_coil_adjunct.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"fluxcoil"},
 {"id":"fluxdistributor","name":"Flux Distributor","icon":"graphics/icons/notable_hullmods/flux_distributor.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"fluxdistributor"},
 {"id":"shield_shunt","name":"Shield Shunt","icon":"graphics/icons/notable_hullmods/shield_shunt.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"shield_shunt"},
-{"id":"frontshield","name":"Makeshift Shield Generator","icon":"graphics/icons/notable_hullmods/front_shield_generator.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"frontshield"},
+{"id":"frontshield","name":"Makeshift Shield Generator","icon":"graphics/icons/notable_hullmods/front_shield_generator.png","opCost":4,"xpCost":2000,"tier":"KEYSTONE","vanillaHullMod":"frontshield"},
 {"id":"missile_autoloader","name":"Missile Autoloader","icon":"graphics/icons/notable_hullmods/missile_autoloader.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"missile_autoloader"},
 {"id":"hardenedshieldemitter","name":"Hardened Shields","icon":"graphics/icons/notable_hullmods/hardened_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"hardenedshieldemitter"},
 {"id":"hardened_subsystems","name":"Hardened Subsystems","icon":"graphics/icons/notable_hullmods/hardened_subsystems.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"hardened_subsystems"},
@@ -560,11 +560,11 @@ var SHIPPED_TYPES = [
 {"id":"reinforcedhull","name":"Reinforced Bulkheads","icon":"graphics/icons/notable_hullmods/reinforced_bulkheads.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"reinforcedhull"},
 {"id":"fluxbreakers","name":"Resistant Flux Conduits","icon":"graphics/icons/notable_hullmods/resistant_flux_conduits.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"fluxbreakers"},
 {"id":"stabilizedshieldemitter","name":"Stabilized Shields","icon":"graphics/icons/notable_hullmods/stabilized_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"stabilizedshieldemitter"},
-{"id":"unstable_injector","name":"Unstable Injector","icon":"graphics/icons/notable_hullmods/unstable_injector.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"unstable_injector"},
+{"id":"unstable_injector","name":"Unstable Injector","icon":"graphics/icons/notable_hullmods/unstable_injector.png","opCost":4,"xpCost":2000,"tier":"KEYSTONE","vanillaHullMod":"unstable_injector"},
 {"id":"additional_berthing","name":"Additional Berthing","icon":"graphics/icons/notable_hullmods/berthing.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"additional_berthing"},
 {"id":"augmentedengines","name":"Augmented Drive Field","icon":"graphics/icons/notable_hullmods/augmented_drive_field2.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"augmentedengines"},
 {"id":"auxiliary_fuel_tanks","name":"Auxiliary Fuel Tanks","icon":"graphics/icons/notable_hullmods/fuel_tanks.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"auxiliary_fuel_tanks"},
-{"id":"efficiency_overhaul","name":"Efficiency Overhaul","icon":"graphics/icons/notable_hullmods/efficiency.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"efficiency_overhaul"},
+{"id":"efficiency_overhaul","name":"Efficiency Overhaul","icon":"graphics/icons/notable_hullmods/efficiency.png","opCost":4,"xpCost":2000,"tier":"KEYSTONE","vanillaHullMod":"efficiency_overhaul"},
 {"id":"expanded_cargo_holds","name":"Expanded Cargo Holds","icon":"graphics/icons/notable_hullmods/expanded_cargo.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"expanded_cargo_holds"},
 {"id":"hiressensors","name":"High Resolution Sensors","icon":"graphics/icons/notable_hullmods/high_res_sensors.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"hiressensors"},
 {"id":"insulatedengine","name":"Insulated Engine Assembly","icon":"graphics/icons/notable_hullmods/insulated_engine_assembly.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"insulatedengine"},
@@ -573,83 +573,91 @@ var SHIPPED_TYPES = [
 {"id":"surveying_equipment","name":"Surveying Equipment","icon":"graphics/icons/notable_hullmods/surveying_equipment.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"surveying_equipment"},
 {"id":"root_low_tech","name":"Low Tech Root","icon":"","opCost":0,"xpCost":0,"tier":"ROOT"},
 {"id":"root_midline","name":"Midline Root","icon":"","opCost":0,"xpCost":0,"tier":"ROOT"},
-{"id":"root_high_tech","name":"High Tech Root","icon":"","opCost":0,"xpCost":0,"tier":"ROOT"}
+{"id":"root_high_tech","name":"High Tech Root","icon":"","opCost":0,"xpCost":0,"tier":"ROOT"},
+{"id":"increased_fuel","name":"Increased Fuel Capacity","icon":"graphics/icons/skills/navigation.png","opCost":2,"xpCost":500,"effects":[{"effect":"FUEL_CAPACITY","magnitude":15}]},
+{"id":"increased_cargo","name":"Increased Cargo Capacity","icon":"graphics/icons/skills/bulk_transport.png","opCost":2,"xpCost":500,"effects":[{"effect":"CARGO_CAPACITY","magnitude":15}]},
+{"id":"increased_crew","name":"Increased Crew Capacity","icon":"graphics/icons/skills/crew_training.png","opCost":2,"xpCost":500,"effects":[{"effect":"CREW_CAPACITY","magnitude":10}]},
+{"id":"fighter_weapon_damage","name":"Fighter Weapon Damage","icon":"graphics/icons/skills/fighter_uplink2.png","opCost":2,"xpCost":500,"description":"Increases the weapon damage of fighters launched from this ship.","todo":"Fighters are separate ships spawned from the carrier\u0027s bays, so this can\u0027t be applied through the carrier\u0027s own MutableShipStatsAPI like other effects - it needs a combat-time hook that finds each fighter\u0027s source ship and applies the bonus to the fighter\u0027s own stats. Not yet built."},
+{"id":"fighter_speed","name":"Fighter Speed","icon":"graphics/icons/skills/wing_commander.png","opCost":2,"xpCost":500,"description":"Increases the top speed of fighters launched from this ship.","todo":"Same limitation as fighter_weapon_damage - needs a combat-time hook targeting launched fighters, not yet built."}
 ];
 
 var SHIPPED_NODES = [
-{"id":"hybrid_flux_1","type":"hybrid_flux","prerequisites":[],"x":0,"y":-320},
-{"id":"flux_capacity_1","type":"flux_capacity","prerequisites":["hybrid_flux_1"],"x":-140,"y":-480},
-{"id":"flux_dissipation_1","type":"flux_dissipation","prerequisites":["hybrid_flux_1"],"x":140,"y":-480},
-{"id":"missile_damage_1","type":"missile_damage","prerequisites":[],"x":277,"y":-160},
-{"id":"ballistic_damage_1","type":"ballistic_damage","prerequisites":[],"x":300,"y":174},
-{"id":"hull_1","type":"hull","prerequisites":[],"x":0,"y":320},
-{"id":"beam_damage_1","type":"beam_damage","prerequisites":["beam_damage_2"],"x":-294,"y":78},
-{"id":"non_beam_energy_damage_1","type":"non_beam_energy_damage","prerequisites":["energy_damage_1"],"x":-222,"y":-22},
-{"id":"energy_damage_1","type":"energy_damage","prerequisites":[],"x":-138,"y":9},
-{"id":"armor_1","type":"armor","prerequisites":["hull_1"],"x":0,"y":500},
-{"id":"weapon_damage_1","type":"weapon_damage","prerequisites":[],"x":450,"y":0},
-{"id":"packed_capacitors_1","type":"packed_capacitors","prerequisites":["flux_capacity_1"],"x":-190,"y":-650},
-{"id":"safety_overrides_1","type":"safety_overrides","prerequisites":["armor_1"],"x":0,"y":750},
-{"id":"heavyarmor_1","type":"heavyarmor","prerequisites":["armor_1"],"x":222,"y":685},
-{"id":"armoredweapons_1","type":"armoredweapons","prerequisites":["armor_1"],"x":-222,"y":685},
-{"id":"reinforcedhull_1","type":"reinforcedhull","prerequisites":["hull_1"],"x":410,"y":382},
-{"id":"blast_doors_1","type":"blast_doors","prerequisites":["hull_1"],"x":219,"y":515},
-{"id":"fluxcoil_1","type":"fluxcoil","prerequisites":["flux_capacity_1"],"x":-332,"y":-345},
-{"id":"fluxbreakers_1","type":"fluxbreakers","prerequisites":["flux_capacity_1"],"x":-316,"y":-647},
-{"id":"fluxdistributor_1","type":"fluxdistributor","prerequisites":["flux_dissipation_1"],"x":-50,"y":-718},
-{"id":"autorepair_1","type":"autorepair","prerequisites":["flux_dissipation_1"],"x":198,"y":-692},
-{"id":"hardened_subsystems_1","type":"hardened_subsystems","prerequisites":["flux_dissipation_1"],"x":423,"y":-582},
-{"id":"turretgyros_1","type":"turretgyros","prerequisites":["ballistic_damage_1"],"x":591,"y":40},
-{"id":"ballistic_rangefinder_1","type":"ballistic_rangefinder","prerequisites":["ballistic_damage_1"],"x":483,"y":192},
-{"id":"magazines_1","type":"magazines","prerequisites":["ballistic_damage_1"],"x":408,"y":323},
-{"id":"pointdefenseai_1","type":"pointdefenseai","prerequisites":["ballistic_damage_1"],"x":298,"y":426},
-{"id":"missleracks_1","type":"missleracks","prerequisites":["missile_damage_1"],"x":334,"y":-398},
-{"id":"missile_autoloader_1","type":"missile_autoloader","prerequisites":["missile_damage_1"],"x":450,"y":-260},
-{"id":"eccm_1","type":"eccm","prerequisites":["missile_damage_1"],"x":512,"y":-90},
-{"id":"high_scatter_amp_1","type":"high_scatter_amp","prerequisites":[],"x":-863,"y":510},
-{"id":"advancedoptics_1","type":"advancedoptics","prerequisites":[],"x":-776,"y":469},
-{"id":"dedicated_targeting_core_1","type":"dedicated_targeting_core","prerequisites":[],"x":-450,"y":-260},
-{"id":"targetingunit_1","type":"targetingunit","prerequisites":[],"x":-974,"y":385},
-{"id":"ecm_1","type":"ecm","prerequisites":["weapon_damage_1"],"x":628,"y":-168},
-{"id":"defensive_targeting_array_1","type":"defensive_targeting_array","prerequisites":["weapon_damage_1"],"x":628,"y":168},
-{"id":"advancedshieldemitter_1","type":"advancedshieldemitter","prerequisites":[],"x":589,"y":275},
-{"id":"extendedshieldemitter_1","type":"extendedshieldemitter","prerequisites":[],"x":696,"y":488},
-{"id":"hardenedshieldemitter_1","type":"hardenedshieldemitter","prerequisites":[],"x":460,"y":460},
-{"id":"stabilizedshieldemitter_1","type":"stabilizedshieldemitter","prerequisites":[],"x":488,"y":696},
-{"id":"shield_shunt_1","type":"shield_shunt","prerequisites":[],"x":275,"y":589},
-{"id":"frontshield_1","type":"frontshield","prerequisites":[],"x":220,"y":821},
-{"id":"frontemitter_1","type":"frontemitter","prerequisites":[],"x":57,"y":648},
-{"id":"adaptiveshields_1","type":"adaptiveshields","prerequisites":[],"x":-74,"y":847},
-{"id":"auxiliarythrusters_1","type":"auxiliarythrusters","prerequisites":[],"x":0,"y":650},
-{"id":"unstable_injector_1","type":"unstable_injector","prerequisites":[],"x":-220,"y":821},
-{"id":"nav_relay_1","type":"nav_relay","prerequisites":[],"x":-319,"y":575},
-{"id":"adaptive_coils_1","type":"adaptive_coils","prerequisites":[],"x":-971,"y":461},
-{"id":"phase_anchor_1","type":"phase_anchor","prerequisites":[],"x":-867,"y":432},
-{"id":"additional_berthing_1","type":"additional_berthing","prerequisites":[],"x":-628,"y":-168},
-{"id":"augmentedengines_1","type":"augmentedengines","prerequisites":[],"x":-777,"y":-344},
-{"id":"auxiliary_fuel_tanks_1","type":"auxiliary_fuel_tanks","prerequisites":[],"x":-547,"y":-352},
-{"id":"efficiency_overhaul_1","type":"efficiency_overhaul","prerequisites":[],"x":-635,"y":-565},
-{"id":"expanded_cargo_holds_1","type":"expanded_cargo_holds","prerequisites":[],"x":-413,"y":-502},
-{"id":"hiressensors_1","type":"hiressensors","prerequisites":[],"x":-432,"y":-732},
-{"id":"insulatedengine_1","type":"insulatedengine","prerequisites":[],"x":-240,"y":-604},
-{"id":"militarized_subsystems_1","type":"militarized_subsystems","prerequisites":[],"x":-188,"y":-829},
-{"id":"solar_shielding_1","type":"solar_shielding","prerequisites":[],"x":-44,"y":-649},
-{"id":"surveying_equipment_1","type":"surveying_equipment","prerequisites":[],"x":74,"y":-847},
-{"id":"converted_hangar_1","type":"converted_hangar","prerequisites":[],"x":57,"y":-648},
-{"id":"converted_fighterbay_1","type":"converted_fighterbay","prerequisites":[],"x":314,"y":-790},
-{"id":"expanded_deck_crew_1","type":"expanded_deck_crew","prerequisites":[],"x":403,"y":-510},
-{"id":"recovery_shuttles_1","type":"recovery_shuttles","prerequisites":[],"x":696,"y":-488},
-{"id":"operations_center_1","type":"operations_center","prerequisites":[],"x":532,"y":-373},
-{"id":"escort_package_1","type":"escort_package","prerequisites":[],"x":847,"y":-74},
-{"id":"beam_damage_2","type":"beam_damage","prerequisites":["energy_damage_1"],"x":-217,"y":49},
-{"id":"beam_damage_3","type":"beam_damage","prerequisites":[],"x":-327,"y":394},
-{"id":"beam_damage_5","type":"beam_damage","prerequisites":["beam_damage_1"],"x":-379,"y":69},
-{"id":"flux_capacity_2","type":"flux_capacity","prerequisites":[],"x":-853,"y":160},
-{"id":"non_beam_energy_damage_2","type":"non_beam_energy_damage","prerequisites":["non_beam_energy_damage_1"],"x":-301,"y":-34},
-{"id":"non_beam_energy_damage_3","type":"non_beam_energy_damage","prerequisites":["non_beam_energy_damage_2"],"x":-385,"y":-12},
-{"id":"root_low_tech_1","type":"root_low_tech","prerequisites":[],"x":0,"y":0},
-{"id":"root_midline_1","type":"root_midline","prerequisites":[],"x":-120,"y":0},
-{"id":"root_high_tech_1","type":"root_high_tech","prerequisites":[],"x":120,"y":0}
+{"id":"hybrid_flux_1","type":"hybrid_flux","prerequisites":[],"x":-500,"y":-941},
+{"id":"flux_capacity_1","type":"flux_capacity","prerequisites":[],"x":-535,"y":-1017},
+{"id":"flux_dissipation_1","type":"flux_dissipation","prerequisites":[],"x":-614,"y":-1008},
+{"id":"missile_damage_1","type":"missile_damage","prerequisites":[],"x":1293,"y":-274},
+{"id":"ballistic_damage_1","type":"ballistic_damage","prerequisites":[],"x":1181,"y":715},
+{"id":"hull_1","type":"hull","prerequisites":[],"x":-173,"y":775},
+{"id":"beam_damage_1","type":"beam_damage","prerequisites":["beam_damage_2"],"x":-952,"y":7},
+{"id":"non_beam_energy_damage_1","type":"non_beam_energy_damage","prerequisites":["energy_damage_1"],"x":-880,"y":-93},
+{"id":"energy_damage_1","type":"energy_damage","prerequisites":[],"x":-796,"y":-62},
+{"id":"armor_1","type":"armor","prerequisites":[],"x":-294,"y":761},
+{"id":"packed_capacitors_1","type":"packed_capacitors","prerequisites":[],"x":-580,"y":-1101},
+{"id":"safety_overrides_1","type":"safety_overrides","prerequisites":[],"x":1605,"y":300},
+{"id":"heavyarmor_1","type":"heavyarmor","prerequisites":[],"x":-324,"y":869},
+{"id":"armoredweapons_1","type":"armoredweapons","prerequisites":[],"x":-430,"y":804},
+{"id":"reinforcedhull_1","type":"reinforcedhull","prerequisites":[],"x":1102,"y":798},
+{"id":"blast_doors_1","type":"blast_doors","prerequisites":[],"x":35,"y":140},
+{"id":"fluxcoil_1","type":"fluxcoil","prerequisites":[],"x":-751,"y":-957},
+{"id":"fluxbreakers_1","type":"fluxbreakers","prerequisites":[],"x":-820,"y":-1075},
+{"id":"fluxdistributor_1","type":"fluxdistributor","prerequisites":[],"x":-698,"y":-1045},
+{"id":"autorepair_1","type":"autorepair","prerequisites":[],"x":1314,"y":207},
+{"id":"hardened_subsystems_1","type":"hardened_subsystems","prerequisites":[],"x":292,"y":-168},
+{"id":"turretgyros_1","type":"turretgyros","prerequisites":[],"x":1316,"y":134},
+{"id":"ballistic_rangefinder_1","type":"ballistic_rangefinder","prerequisites":[],"x":1155,"y":873},
+{"id":"magazines_1","type":"magazines","prerequisites":[],"x":1521,"y":57},
+{"id":"pointdefenseai_1","type":"pointdefenseai","prerequisites":[],"x":1441,"y":299},
+{"id":"missleracks_1","type":"missleracks","prerequisites":[],"x":1292,"y":-402},
+{"id":"missile_autoloader_1","type":"missile_autoloader","prerequisites":[],"x":1231,"y":-336},
+{"id":"eccm_1","type":"eccm","prerequisites":[],"x":1329,"y":-344},
+{"id":"high_scatter_amp_1","type":"high_scatter_amp","prerequisites":[],"x":-1337,"y":90},
+{"id":"advancedoptics_1","type":"advancedoptics","prerequisites":[],"x":-1306,"y":197},
+{"id":"dedicated_targeting_core_1","type":"dedicated_targeting_core","prerequisites":[],"x":1380,"y":60},
+{"id":"targetingunit_1","type":"targetingunit","prerequisites":[],"x":1595,"y":209},
+{"id":"ecm_1","type":"ecm","prerequisites":[],"x":-128,"y":-17},
+{"id":"defensive_targeting_array_1","type":"defensive_targeting_array","prerequisites":[],"x":1446,"y":224},
+{"id":"advancedshieldemitter_1","type":"advancedshieldemitter","prerequisites":[],"x":563,"y":-1075},
+{"id":"extendedshieldemitter_1","type":"extendedshieldemitter","prerequisites":[],"x":319,"y":-1108},
+{"id":"hardenedshieldemitter_1","type":"hardenedshieldemitter","prerequisites":[],"x":420,"y":-1068},
+{"id":"stabilizedshieldemitter_1","type":"stabilizedshieldemitter","prerequisites":[],"x":483,"y":-988},
+{"id":"shield_shunt_1","type":"shield_shunt","prerequisites":[],"x":-441,"y":931},
+{"id":"frontshield_1","type":"frontshield","prerequisites":[],"x":340,"y":-997},
+{"id":"frontemitter_1","type":"frontemitter","prerequisites":[],"x":222,"y":-1023},
+{"id":"adaptiveshields_1","type":"adaptiveshields","prerequisites":[],"x":378,"y":-924},
+{"id":"auxiliarythrusters_1","type":"auxiliarythrusters","prerequisites":[],"x":1581,"y":124},
+{"id":"unstable_injector_1","type":"unstable_injector","prerequisites":[],"x":1303,"y":282},
+{"id":"nav_relay_1","type":"nav_relay","prerequisites":[],"x":-114,"y":185},
+{"id":"adaptive_coils_1","type":"adaptive_coils","prerequisites":[],"x":-845,"y":-903},
+{"id":"phase_anchor_1","type":"phase_anchor","prerequisites":[],"x":-922,"y":-954},
+{"id":"additional_berthing_1","type":"additional_berthing","prerequisites":[],"x":278,"y":33},
+{"id":"augmentedengines_1","type":"augmentedengines","prerequisites":[],"x":-247,"y":17},
+{"id":"auxiliary_fuel_tanks_1","type":"auxiliary_fuel_tanks","prerequisites":[],"x":-242,"y":132},
+{"id":"efficiency_overhaul_1","type":"efficiency_overhaul","prerequisites":[],"x":26,"y":246},
+{"id":"expanded_cargo_holds_1","type":"expanded_cargo_holds","prerequisites":[],"x":122,"y":46},
+{"id":"hiressensors_1","type":"hiressensors","prerequisites":[],"x":-255,"y":-112},
+{"id":"insulatedengine_1","type":"insulatedengine","prerequisites":[],"x":-78,"y":-125},
+{"id":"militarized_subsystems_1","type":"militarized_subsystems","prerequisites":[],"x":61,"y":-174},
+{"id":"solar_shielding_1","type":"solar_shielding","prerequisites":[],"x":84,"y":-69},
+{"id":"surveying_equipment_1","type":"surveying_equipment","prerequisites":[],"x":181,"y":-104},
+{"id":"converted_hangar_1","type":"converted_hangar","prerequisites":[],"x":180,"y":184},
+{"id":"converted_fighterbay_1","type":"converted_fighterbay","prerequisites":[],"x":1111,"y":-656},
+{"id":"expanded_deck_crew_1","type":"expanded_deck_crew","prerequisites":[],"x":1027,"y":-734},
+{"id":"recovery_shuttles_1","type":"recovery_shuttles","prerequisites":[],"x":965,"y":-664},
+{"id":"operations_center_1","type":"operations_center","prerequisites":[],"x":-102,"y":73},
+{"id":"escort_package_1","type":"escort_package","prerequisites":[],"x":1453,"y":144},
+{"id":"beam_damage_2","type":"beam_damage","prerequisites":["energy_damage_1"],"x":-875,"y":-22},
+{"id":"beam_damage_5","type":"beam_damage","prerequisites":["beam_damage_1"],"x":-1037,"y":-2},
+{"id":"flux_capacity_2","type":"flux_capacity","prerequisites":[],"x":-584,"y":-918},
+{"id":"non_beam_energy_damage_2","type":"non_beam_energy_damage","prerequisites":["non_beam_energy_damage_1"],"x":-959,"y":-105},
+{"id":"non_beam_energy_damage_3","type":"non_beam_energy_damage","prerequisites":["non_beam_energy_damage_2"],"x":-1043,"y":-83},
+{"id":"root_low_tech_1","type":"root_low_tech","prerequisites":[],"x":993,"y":506},
+{"id":"root_midline_1","type":"root_midline","prerequisites":[],"x":-992,"y":575},
+{"id":"root_high_tech_1","type":"root_high_tech","prerequisites":[],"x":-4,"y":-577},
+{"id":"increased_fuel_1","type":"increased_fuel","prerequisites":[],"x":-400,"y":1200},
+{"id":"increased_cargo_1","type":"increased_cargo","prerequisites":[],"x":-200,"y":1200},
+{"id":"increased_crew_1","type":"increased_crew","prerequisites":[],"x":0,"y":1200},
+{"id":"fighter_weapon_damage_1","type":"fighter_weapon_damage","prerequisites":[],"x":200,"y":1200},
+{"id":"fighter_speed_1","type":"fighter_speed","prerequisites":[],"x":400,"y":1200}
 ];
 
 var SMALL_R = 11, NOTABLE_R = 17, KEYSTONE_R = 23, ROOT_R = 20;
@@ -1504,13 +1512,23 @@ document.getElementById('importBtn').addEventListener('click', function(){
 });
 
 document.getElementById('resetBtn').addEventListener('click', function(){
-  if (!confirm('Discard all changes in this browser and reload the shipped tree data?')) return;
-  try { localStorage.removeItem('skillTreeEditor.v1'); } catch(e){}
-  loadShipped();
-  state.selectedIds = [];
-  render();
-  refreshInspector();
-  fitToScreen();
+  if (!confirm('Discard all changes in this browser and reload skill_types.json / ship_skill_tree.json from disk?')) return;
+  Promise.all([
+    fetch('/data/types').then(function(r){ if (!r.ok) throw new Error('types ' + r.status); return r.json(); }),
+    fetch('/data/tree').then(function(r){ if (!r.ok) throw new Error('tree ' + r.status); return r.json(); })
+  ]).then(function(results){
+    var typesJson = results[0], treeJson = results[1];
+    state.types = typesJson.skillTypes || typesJson;
+    state.nodes = treeJson.nodes || treeJson;
+    try { localStorage.removeItem('skillTreeEditor.v1'); } catch(e){}
+    state.selectedIds = [];
+    render();
+    refreshInspector();
+    fitToScreen();
+    showToast('Reloaded from disk');
+  }).catch(function(){
+    showToast('Could not reach local server - run tools\\skill_tree_server.ps1 to reload from disk');
+  });
 });
 
 // ---------- view controls ----------

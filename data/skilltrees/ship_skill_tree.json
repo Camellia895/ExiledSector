@@ -508,6 +508,41 @@
 			"prerequisites": [],
 			"x": -4,
 			"y": -577
+		},
+		{
+			"id": "increased_fuel_1",
+			"type": "increased_fuel",
+			"prerequisites": [],
+			"x": -400,
+			"y": 1200
+		},
+		{
+			"id": "increased_cargo_1",
+			"type": "increased_cargo",
+			"prerequisites": [],
+			"x": -200,
+			"y": 1200
+		},
+		{
+			"id": "increased_crew_1",
+			"type": "increased_crew",
+			"prerequisites": [],
+			"x": 0,
+			"y": 1200
+		},
+		{
+			"id": "fighter_weapon_damage_1",
+			"type": "fighter_weapon_damage",
+			"prerequisites": [],
+			"x": 200,
+			"y": 1200
+		},
+		{
+			"id": "fighter_speed_1",
+			"type": "fighter_speed",
+			"prerequisites": [],
+			"x": 400,
+			"y": 1200
 		}
 	]
 }

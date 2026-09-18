@@ -34,6 +34,16 @@ try {
                 $response.ContentType = "text/html; charset=utf-8"
                 $response.OutputStream.Write($bytes, 0, $bytes.Length)
             }
+            elseif ($request.HttpMethod -eq "GET" -and $request.Url.LocalPath -eq "/data/types") {
+                $bytes = [System.IO.File]::ReadAllBytes($typesPath)
+                $response.ContentType = "application/json; charset=utf-8"
+                $response.OutputStream.Write($bytes, 0, $bytes.Length)
+            }
+            elseif ($request.HttpMethod -eq "GET" -and $request.Url.LocalPath -eq "/data/tree") {
+                $bytes = [System.IO.File]::ReadAllBytes($treePath)
+                $response.ContentType = "application/json; charset=utf-8"
+                $response.OutputStream.Write($bytes, 0, $bytes.Length)
+            }
             elseif ($request.HttpMethod -eq "POST" -and $request.Url.LocalPath -eq "/save") {
                 $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
                 $bodyText = $reader.ReadToEnd()
