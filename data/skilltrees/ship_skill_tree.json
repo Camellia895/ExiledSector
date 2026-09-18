@@ -503,8 +503,8 @@
 				"increased_crew_2",
 				"increased_fuel_3"
 			],
-			"x": 993,
-			"y": 506
+			"x": 806,
+			"y": 468
 		},
 		{
 			"id": "root_midline_1",
@@ -591,8 +591,8 @@
 				"root_low_tech_1",
 				"increased_cargo_2"
 			],
-			"x": 937,
-			"y": 356
+			"x": 750,
+			"y": 318
 		},
 		{
 			"id": "increased_cargo_2",
@@ -602,8 +602,8 @@
 				"increased_fuel_3",
 				"increased_crew_2"
 			],
-			"x": 868,
-			"y": 444
+			"x": 681,
+			"y": 406
 		},
 		{
 			"id": "increased_crew_2",
@@ -612,8 +612,8 @@
 				"root_low_tech_1",
 				"increased_cargo_2"
 			],
-			"x": 841,
-			"y": 556
+			"x": 654,
+			"y": 518
 		},
 		{
 			"id": "increased_crew_3",
