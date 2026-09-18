@@ -335,15 +335,17 @@ final class SkillTreeNodeRenderer {
             float nodeY = centerY - node.getOffsetY() * zoom;
             float nodeRadius = outerNodeRadius(NODE_SIZE * zoom * node.getType().getTier().getSizeMultiplier(), node.getType().getTier());
 
-            for (String prerequisiteId : node.getPrerequisiteNodeIds()) {
-                SkillNode parent = SkillTree.get(prerequisiteId);
-                if (parent == null) continue;
+            for (String connectedId : node.getConnectedNodeIds()) {
+                SkillNode other = SkillTree.get(connectedId);
+                if (other == null) continue;
+                // connectedTo is symmetric, so each edge appears in both nodes' lists - only draw it once.
+                if (other.getType().getTier() != SkillTier.ROOT && node.getId().compareTo(other.getId()) >= 0) continue;
 
-                float parentX = centerX + parent.getOffsetX() * zoom;
-                float parentY = centerY - parent.getOffsetY() * zoom;
-                float parentRadius = outerNodeRadius(NODE_SIZE * zoom * parent.getType().getTier().getSizeMultiplier(), parent.getType().getTier());
-                boolean bothSatisfied = data.isSatisfied(node.getId(), satisfiedRootId) && data.isSatisfied(parent.getId(), satisfiedRootId);
-                drawNodeConnectorLine(parentX, parentY, parentRadius, nodeX, nodeY, nodeRadius, bothSatisfied, alphaMult);
+                float otherX = centerX + other.getOffsetX() * zoom;
+                float otherY = centerY - other.getOffsetY() * zoom;
+                float otherRadius = outerNodeRadius(NODE_SIZE * zoom * other.getType().getTier().getSizeMultiplier(), other.getType().getTier());
+                boolean bothSatisfied = data.isSatisfied(node.getId(), satisfiedRootId) && data.isSatisfied(other.getId(), satisfiedRootId);
+                drawNodeConnectorLine(otherX, otherY, otherRadius, nodeX, nodeY, nodeRadius, bothSatisfied, alphaMult);
             }
         }
 

@@ -48,11 +48,11 @@ public class ShipSkillData {
     }
 
     public boolean canAllocate(SkillNode node, String satisfiedRootId) {
-        if (node.getPrerequisiteNodeIds().isEmpty()) {
+        if (node.getConnectedNodeIds().isEmpty()) {
             return true;
         }
-        for (String prerequisiteId : node.getPrerequisiteNodeIds()) {
-            if (isSatisfied(prerequisiteId, satisfiedRootId)) {
+        for (String connectedId : node.getConnectedNodeIds()) {
+            if (isSatisfied(connectedId, satisfiedRootId)) {
                 return true;
             }
         }
@@ -62,17 +62,17 @@ public class ShipSkillData {
     public boolean canDeallocate(SkillNode node, Collection<SkillNode> allNodes, String satisfiedRootId) {
         for (SkillNode candidate : allNodes) {
             if (!isAllocated(candidate.getId())) continue;
-            if (!candidate.getPrerequisiteNodeIds().contains(node.getId())) continue;
-            if (!hasAnotherSatisfiedPrerequisite(candidate, node.getId(), satisfiedRootId)) {
+            if (!candidate.getConnectedNodeIds().contains(node.getId())) continue;
+            if (!hasAnotherSatisfiedConnection(candidate, node.getId(), satisfiedRootId)) {
                 return false;
             }
         }
         return true;
     }
 
-    private boolean hasAnotherSatisfiedPrerequisite(SkillNode node, String excludingId, String satisfiedRootId) {
-        for (String prerequisiteId : node.getPrerequisiteNodeIds()) {
-            if (!prerequisiteId.equals(excludingId) && isSatisfied(prerequisiteId, satisfiedRootId)) {
+    private boolean hasAnotherSatisfiedConnection(SkillNode node, String excludingId, String satisfiedRootId) {
+        for (String connectedId : node.getConnectedNodeIds()) {
+            if (!connectedId.equals(excludingId) && isSatisfied(connectedId, satisfiedRootId)) {
                 return true;
             }
         }

@@ -38,11 +38,11 @@ public final class SkillTreeLoader {
     }
 
     private static SkillNode parseNode(JSONObject json, Map<String, SkillType> skillTypes) throws JSONException {
-        List<String> prerequisites = new ArrayList<>();
-        JSONArray prereqArray = json.optJSONArray("prerequisites");
-        if (prereqArray != null) {
-            for (int i = 0; i < prereqArray.length(); i++) {
-                prerequisites.add(prereqArray.getString(i));
+        List<String> connectedTo = new ArrayList<>();
+        JSONArray connectedArray = json.optJSONArray("connectedTo");
+        if (connectedArray != null) {
+            for (int i = 0; i < connectedArray.length(); i++) {
+                connectedTo.add(connectedArray.getString(i));
             }
         }
 
@@ -55,7 +55,7 @@ public final class SkillTreeLoader {
         return new SkillNode(
                 json.getString("id"),
                 type,
-                prerequisites,
+                connectedTo,
                 (float) json.optDouble("x", 0),
                 (float) json.optDouble("y", 0));
     }

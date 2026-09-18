@@ -10,14 +10,14 @@ public class SkillNode {
 
     private final String id;
     private final SkillType type;
-    private final List<String> prerequisiteNodeIds;
+    private final List<String> connectedNodeIds;
     private final float offsetX;
     private final float offsetY;
 
-    public SkillNode(String id, SkillType type, List<String> prerequisiteNodeIds, float offsetX, float offsetY) {
+    public SkillNode(String id, SkillType type, List<String> connectedNodeIds, float offsetX, float offsetY) {
         this.id = id;
         this.type = type;
-        this.prerequisiteNodeIds = prerequisiteNodeIds == null ? Collections.emptyList() : prerequisiteNodeIds;
+        this.connectedNodeIds = connectedNodeIds == null ? Collections.emptyList() : connectedNodeIds;
         this.offsetX = offsetX;
         this.offsetY = offsetY;
     }
@@ -66,8 +66,8 @@ public class SkillNode {
         return String.join(" ", lines);
     }
 
-    public List<String> getPrerequisiteNodeIds() {
-        return prerequisiteNodeIds;
+    public List<String> getConnectedNodeIds() {
+        return connectedNodeIds;
     }
 
     public float getOffsetX() {

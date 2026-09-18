@@ -445,7 +445,7 @@
       <button class="modeBtn active" data-mode="select">↖ Select / Move <span class="key">V</span></button>
       <button class="modeBtn" data-mode="add">✚ Add Node <span class="key">A</span></button>
       <button class="modeBtn" data-mode="link">⇄ Link / Unlink <span class="key">L</span></button>
-      <div class="hint">Select: drag a node to move it, drag empty canvas to pan, scroll to zoom. Shift-click a node to add/remove it from a multi-selection, or shift-drag empty canvas to marquee-select. Drag any selected node to move the whole group together.<br><br>Add: click empty canvas to place a node there.<br><br>Link: click two nodes - the outer one gets the inner one added as a prerequisite. Click the same pair again to unlink.</div>
+      <div class="hint">Select: drag a node to move it, drag empty canvas to pan, scroll to zoom. Shift-click a node to add/remove it from a multi-selection, or shift-drag empty canvas to marquee-select. Drag any selected node to move the whole group together.<br><br>Add: click empty canvas to place a node there.<br><br>Link: click two nodes to connect them - each is added to the other's connections, so allocating either one lets you allocate the other. Click the same pair again to unlink.</div>
     </div>
 
     <div class="toolSection">
@@ -528,7 +528,7 @@ var SHIPPED_TYPES = [
 {"id":"packed_capacitors","name":"Packed Capacitors","icon":"graphics/icons/skills/power_grid_manipulation.png","opCost":3,"xpCost":1200,"tier":"NOTABLE","tags":["flux"]},
 {"id":"safety_overrides","name":"Safety Overrides","icon":"graphics/icons/skills/helmsmanship.png","opCost":5,"xpCost":3000,"tier":"KEYSTONE","vanillaHullMod":"safetyoverrides"},
 {"id":"advancedshieldemitter","name":"Accelerated Shields","icon":"graphics/icons/notable_hullmods/accelerated_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"advancedshieldemitter","tags":["shield"]},
-{"id":"adaptive_coils","name":"Adaptive Phase Coils","icon":"graphics/icons/notable_hullmods/phase_field.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"adaptive_coils","todo":"Real effect raises the hard-flux threshold where phase speed bottoms out (50% -\u003e 75%). That curve is baked into the base game\u0027s ship movement code and isn\u0027t exposed via MutableShipStatsAPI at all - no stat hook to replicate it with. Staying on vanillaHullMod passthrough permanently unless we decide to reinterpret this as a different phase-themed effect instead (e.g. cheaper phase cloak activation) - still undecided.","tags":["flux","phase"]},
+{"id":"adaptive_coils","name":"Adaptive Phase Coils","icon":"graphics/icons/notable_hullmods/phase_field.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"adaptive_coils","tags":["flux","phase"]},
 {"id":"advancedoptics","name":"Advanced Optics","icon":"graphics/icons/notable_hullmods/advanced_optics.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"advancedoptics","tags":["energy","beam"]},
 {"id":"turretgyros","name":"Advanced Turret Gyros","icon":"graphics/icons/notable_hullmods/advanced_turret_gyros.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"turretgyros"},
 {"id":"armoredweapons","name":"Armored Weapon Mounts","icon":"graphics/icons/notable_hullmods/armored_weapon_emplacements.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"armoredweapons","tags":["armour"]},
@@ -547,8 +547,8 @@ var SHIPPED_TYPES = [
 {"id":"magazines","name":"Expanded Magazines","icon":"graphics/icons/notable_hullmods/expanded_magazines2.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"magazines"},
 {"id":"missleracks","name":"Expanded Missile Racks","icon":"graphics/icons/notable_hullmods/expanded_missile_racks.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"missleracks","tags":["missile"]},
 {"id":"extendedshieldemitter","name":"Extended Shields","icon":"graphics/icons/notable_hullmods/extended_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"extendedshieldemitter","tags":["shield"]},
-{"id":"fluxcoil","name":"Flux Coil Adjunct","icon":"graphics/icons/notable_hullmods/flux_coil_adjunct.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","hullSizeEffects":[{"effect":"FLUX_CAPACITY_FLAT","frigate":600,"destroyer":1200,"cruiser":1800,"capitalShip":3000}],"tags":["flux"]},
-{"id":"fluxdistributor","name":"Flux Distributor","icon":"graphics/icons/notable_hullmods/flux_distributor.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","hullSizeEffects":[{"effect":"FLUX_DISSIPATION_FLAT","frigate":30,"destroyer":60,"cruiser":90,"capitalShip":150}],"tags":["flux"]},
+{"id":"fluxcoil","name":"Flux Coil Adjunct","icon":"graphics/icons/notable_hullmods/flux_coil_adjunct.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"fluxcoil","tags":["flux"]},
+{"id":"fluxdistributor","name":"Flux Distributor","icon":"graphics/icons/notable_hullmods/flux_distributor.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"fluxdistributor","tags":["flux"]},
 {"id":"shield_shunt","name":"Shield Shunt","icon":"graphics/icons/notable_hullmods/shield_shunt.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"shield_shunt","tags":["armour"]},
 {"id":"frontshield","name":"Makeshift Shield Generator","icon":"graphics/icons/notable_hullmods/front_shield_generator.png","opCost":4,"xpCost":2000,"tier":"KEYSTONE","vanillaHullMod":"frontshield","tags":["shield"]},
 {"id":"missile_autoloader","name":"Missile Autoloader","icon":"graphics/icons/notable_hullmods/missile_autoloader.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"missile_autoloader","tags":["missile"]},
@@ -562,10 +562,10 @@ var SHIPPED_TYPES = [
 {"id":"frontemitter","name":"Shield Conversion - Front","icon":"graphics/icons/notable_hullmods/front_shield_emitter.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"frontemitter","tags":["shield"]},
 {"id":"adaptiveshields","name":"Shield Conversion - Omni","icon":"graphics/icons/notable_hullmods/omni_shield_emitter_mod.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"adaptiveshields","tags":["shield"]},
 {"id":"operations_center","name":"Operations Center","icon":"graphics/icons/notable_hullmods/operations_center.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"operations_center","tags":["logistics"]},
-{"id":"phase_anchor","name":"Phase Anchor","icon":"graphics/icons/notable_hullmods/phase_anchor.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"phase_anchor","todo":"Real effect is cheaper phase cloak activation cost, plus +soft flux dissipation and +weapon recharge rate but only while phased. The cloak cost part maps to MutableShipStatsAPI.getPhaseCloakActivationCostBonus() directly. The \u0027only while phased\u0027 part needs a custom condition system - hook HullModEffect.advanceInCombat(ShipAPI, float), check ship.isPhased() each frame, and apply/remove a StatBonus/MutableStat modifier accordingly. Not built yet.","tags":["flux","phase"]},
+{"id":"phase_anchor","name":"Phase Anchor","icon":"graphics/icons/notable_hullmods/phase_anchor.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"phase_anchor","tags":["flux","phase"]},
 {"id":"recovery_shuttles","name":"Recovery Shuttles","icon":"graphics/icons/notable_hullmods/recovery_shuttles.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"recovery_shuttles","tags":["fighter"]},
 {"id":"reinforcedhull","name":"Reinforced Bulkheads","icon":"graphics/icons/notable_hullmods/reinforced_bulkheads.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"reinforcedhull","tags":["hull"]},
-{"id":"fluxbreakers","name":"Resistant Flux Conduits","icon":"graphics/icons/notable_hullmods/resistant_flux_conduits.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"fluxbreakers","todo":"Real effect is -EMP damage taken (always-on, maps directly to MutableShipStatsAPI.getEmpDamageTakenMult()) plus +flux dissipation but only while venting. The \u0027only while venting\u0027 part needs a custom condition system - hook HullModEffect.advanceInCombat(ShipAPI, float), check ship.getFluxTracker().isVenting() each frame, and apply/remove a StatBonus/MutableStat modifier accordingly (or use MutableShipStatsAPI.getVentRateMult() if that\u0027s closer to the intent). Not built yet.","tags":["flux","phase"]},
+{"id":"fluxbreakers","name":"Resistant Flux Conduits","icon":"graphics/icons/notable_hullmods/resistant_flux_conduits.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"fluxbreakers","tags":["flux","phase"]},
 {"id":"stabilizedshieldemitter","name":"Stabilized Shields","icon":"graphics/icons/notable_hullmods/stabilized_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"stabilizedshieldemitter","tags":["shield"]},
 {"id":"unstable_injector","name":"Unstable Injector","icon":"graphics/icons/notable_hullmods/unstable_injector.png","opCost":4,"xpCost":2000,"tier":"KEYSTONE","vanillaHullMod":"unstable_injector"},
 {"id":"additional_berthing","name":"Additional Berthing","icon":"graphics/icons/notable_hullmods/berthing.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"additional_berthing","tags":["logistics"]},
@@ -589,88 +589,89 @@ var SHIPPED_TYPES = [
 ];
 
 var SHIPPED_NODES = [
-{"id":"hybrid_flux_1","type":"hybrid_flux","prerequisites":[],"x":-500,"y":-941},
-{"id":"flux_capacity_1","type":"flux_capacity","prerequisites":[],"x":-535,"y":-1017},
-{"id":"flux_dissipation_1","type":"flux_dissipation","prerequisites":[],"x":-614,"y":-1008},
-{"id":"missile_damage_1","type":"missile_damage","prerequisites":[],"x":1293,"y":-274},
-{"id":"ballistic_damage_1","type":"ballistic_damage","prerequisites":[],"x":1181,"y":715},
-{"id":"hull_1","type":"hull","prerequisites":[],"x":-81,"y":794},
-{"id":"beam_damage_1","type":"beam_damage","prerequisites":["beam_damage_2"],"x":-952,"y":7},
-{"id":"non_beam_energy_damage_1","type":"non_beam_energy_damage","prerequisites":["energy_damage_1"],"x":-880,"y":-93},
-{"id":"energy_damage_1","type":"energy_damage","prerequisites":[],"x":-796,"y":-62},
-{"id":"armor_1","type":"armor","prerequisites":[],"x":-348,"y":777},
-{"id":"packed_capacitors_1","type":"packed_capacitors","prerequisites":[],"x":-580,"y":-1101},
-{"id":"safety_overrides_1","type":"safety_overrides","prerequisites":[],"x":1676,"y":454},
-{"id":"heavyarmor_1","type":"heavyarmor","prerequisites":[],"x":-324,"y":869},
-{"id":"armoredweapons_1","type":"armoredweapons","prerequisites":[],"x":-430,"y":804},
-{"id":"reinforcedhull_1","type":"reinforcedhull","prerequisites":[],"x":-104,"y":878},
-{"id":"blast_doors_1","type":"blast_doors","prerequisites":[],"x":35,"y":140},
-{"id":"fluxcoil_1","type":"fluxcoil","prerequisites":[],"x":-751,"y":-957},
-{"id":"fluxbreakers_1","type":"fluxbreakers","prerequisites":[],"x":-952,"y":-905},
-{"id":"fluxdistributor_1","type":"fluxdistributor","prerequisites":[],"x":-698,"y":-1045},
-{"id":"autorepair_1","type":"autorepair","prerequisites":[],"x":1314,"y":207},
-{"id":"hardened_subsystems_1","type":"hardened_subsystems","prerequisites":[],"x":1200,"y":74},
-{"id":"turretgyros_1","type":"turretgyros","prerequisites":[],"x":1316,"y":134},
-{"id":"ballistic_rangefinder_1","type":"ballistic_rangefinder","prerequisites":[],"x":1131,"y":808},
-{"id":"magazines_1","type":"magazines","prerequisites":[],"x":1465,"y":67},
-{"id":"pointdefenseai_1","type":"pointdefenseai","prerequisites":[],"x":1329,"y":51},
-{"id":"missleracks_1","type":"missleracks","prerequisites":[],"x":1292,"y":-402},
-{"id":"missile_autoloader_1","type":"missile_autoloader","prerequisites":[],"x":1231,"y":-336},
-{"id":"eccm_1","type":"eccm","prerequisites":[],"x":1329,"y":-344},
-{"id":"high_scatter_amp_1","type":"high_scatter_amp","prerequisites":[],"x":-1337,"y":90},
-{"id":"advancedoptics_1","type":"advancedoptics","prerequisites":[],"x":-1306,"y":197},
-{"id":"dedicated_targeting_core_1","type":"dedicated_targeting_core","prerequisites":[],"x":1787,"y":153},
-{"id":"targetingunit_1","type":"targetingunit","prerequisites":[],"x":1771,"y":227},
-{"id":"ecm_1","type":"ecm","prerequisites":[],"x":-182,"y":-44},
-{"id":"defensive_targeting_array_1","type":"defensive_targeting_array","prerequisites":[],"x":1883,"y":202},
-{"id":"advancedshieldemitter_1","type":"advancedshieldemitter","prerequisites":[],"x":563,"y":-1076},
-{"id":"extendedshieldemitter_1","type":"extendedshieldemitter","prerequisites":[],"x":319,"y":-1108},
-{"id":"hardenedshieldemitter_1","type":"hardenedshieldemitter","prerequisites":[],"x":420,"y":-1068},
-{"id":"stabilizedshieldemitter_1","type":"stabilizedshieldemitter","prerequisites":[],"x":483,"y":-988},
-{"id":"shield_shunt_1","type":"shield_shunt","prerequisites":[],"x":-442,"y":879},
-{"id":"frontshield_1","type":"frontshield","prerequisites":[],"x":340,"y":-997},
-{"id":"frontemitter_1","type":"frontemitter","prerequisites":[],"x":222,"y":-1023},
-{"id":"adaptiveshields_1","type":"adaptiveshields","prerequisites":[],"x":378,"y":-924},
-{"id":"auxiliarythrusters_1","type":"auxiliarythrusters","prerequisites":[],"x":1443,"y":222},
-{"id":"unstable_injector_1","type":"unstable_injector","prerequisites":[],"x":1461,"y":478},
-{"id":"nav_relay_1","type":"nav_relay","prerequisites":[],"x":-114,"y":185},
-{"id":"adaptive_coils_1","type":"adaptive_coils","prerequisites":[],"x":-873,"y":-940},
-{"id":"phase_anchor_1","type":"phase_anchor","prerequisites":[],"x":-958,"y":-977},
-{"id":"additional_berthing_1","type":"additional_berthing","prerequisites":[],"x":226,"y":-7},
-{"id":"augmentedengines_1","type":"augmentedengines","prerequisites":[],"x":-331,"y":-124},
-{"id":"auxiliary_fuel_tanks_1","type":"auxiliary_fuel_tanks","prerequisites":[],"x":-242,"y":132},
-{"id":"efficiency_overhaul_1","type":"efficiency_overhaul","prerequisites":[],"x":26,"y":246},
-{"id":"expanded_cargo_holds_1","type":"expanded_cargo_holds","prerequisites":[],"x":122,"y":46},
-{"id":"hiressensors_1","type":"hiressensors","prerequisites":[],"x":-239,"y":-204},
-{"id":"insulatedengine_1","type":"insulatedengine","prerequisites":[],"x":-83,"y":-229},
-{"id":"militarized_subsystems_1","type":"militarized_subsystems","prerequisites":[],"x":56,"y":-231},
-{"id":"solar_shielding_1","type":"solar_shielding","prerequisites":[],"x":193,"y":-195},
-{"id":"surveying_equipment_1","type":"surveying_equipment","prerequisites":[],"x":276,"y":-149},
-{"id":"converted_hangar_1","type":"converted_hangar","prerequisites":[],"x":180,"y":184},
-{"id":"converted_fighterbay_1","type":"converted_fighterbay","prerequisites":[],"x":1111,"y":-656},
-{"id":"expanded_deck_crew_1","type":"expanded_deck_crew","prerequisites":[],"x":1027,"y":-734},
-{"id":"recovery_shuttles_1","type":"recovery_shuttles","prerequisites":[],"x":965,"y":-664},
-{"id":"operations_center_1","type":"operations_center","prerequisites":[],"x":-102,"y":73},
-{"id":"escort_package_1","type":"escort_package","prerequisites":[],"x":1453,"y":144},
-{"id":"beam_damage_2","type":"beam_damage","prerequisites":["energy_damage_1"],"x":-875,"y":-22},
-{"id":"beam_damage_5","type":"beam_damage","prerequisites":["beam_damage_1"],"x":-1037,"y":-2},
-{"id":"flux_capacity_2","type":"flux_capacity","prerequisites":[],"x":-633,"y":-898},
-{"id":"non_beam_energy_damage_2","type":"non_beam_energy_damage","prerequisites":["non_beam_energy_damage_1"],"x":-959,"y":-105},
-{"id":"non_beam_energy_damage_3","type":"non_beam_energy_damage","prerequisites":["non_beam_energy_damage_2"],"x":-1043,"y":-83},
-{"id":"root_low_tech_1","type":"root_low_tech","prerequisites":["increased_cargo_2","increased_crew_2","increased_fuel_3"],"x":993,"y":506},
-{"id":"root_midline_1","type":"root_midline","prerequisites":["increased_cargo_3","increased_crew_3","increased_fuel_2"],"x":-837,"y":536},
-{"id":"root_high_tech_1","type":"root_high_tech","prerequisites":["increased_cargo_1","increased_fuel_1","increased_crew_1"],"x":-4,"y":-577},
-{"id":"increased_fuel_1","type":"increased_fuel","prerequisites":["increased_cargo_1"],"x":-167,"y":-420},
-{"id":"increased_cargo_1","type":"increased_cargo","prerequisites":[],"x":-8,"y":-444},
-{"id":"increased_crew_1","type":"increased_crew","prerequisites":["increased_cargo_1"],"x":157,"y":-418},
-{"id":"fighter_weapon_damage_1","type":"fighter_weapon_damage","prerequisites":[],"x":881,"y":-595},
-{"id":"fighter_speed_1","type":"fighter_speed","prerequisites":[],"x":997,"y":-581},
-{"id":"increased_fuel_2","type":"increased_fuel","prerequisites":["increased_cargo_3"],"x":-653,"y":607},
-{"id":"increased_fuel_3","type":"increased_fuel","prerequisites":["increased_cargo_2"],"x":937,"y":356},
-{"id":"increased_cargo_2","type":"increased_cargo","prerequisites":[],"x":868,"y":444},
-{"id":"increased_crew_2","type":"increased_crew","prerequisites":["increased_cargo_2"],"x":841,"y":556},
-{"id":"increased_crew_3","type":"increased_crew","prerequisites":["increased_cargo_3"],"x":-773,"y":338},
-{"id":"increased_cargo_3","type":"increased_cargo","prerequisites":[],"x":-668,"y":454}
+{"id":"hybrid_flux_1","type":"hybrid_flux","connectedTo":[],"x":-500,"y":-941},
+{"id":"flux_capacity_1","type":"flux_capacity","connectedTo":[],"x":-535,"y":-1017},
+{"id":"flux_dissipation_1","type":"flux_dissipation","connectedTo":[],"x":-614,"y":-1008},
+{"id":"missile_damage_1","type":"missile_damage","connectedTo":[],"x":1293,"y":-274},
+{"id":"ballistic_damage_1","type":"ballistic_damage","connectedTo":[],"x":1181,"y":715},
+{"id":"hull_1","type":"hull","connectedTo":[],"x":-81,"y":794},
+{"id":"beam_damage_1","type":"beam_damage","connectedTo":["beam_damage_2","beam_damage_5"],"x":-952,"y":7},
+{"id":"non_beam_energy_damage_1","type":"non_beam_energy_damage","connectedTo":["energy_damage_1","non_beam_energy_damage_2"],"x":-880,"y":-93},
+{"id":"energy_damage_1","type":"energy_damage","connectedTo":["non_beam_energy_damage_1","beam_damage_2"],"x":-796,"y":-62},
+{"id":"armor_1","type":"armor","connectedTo":[],"x":-348,"y":777},
+{"id":"packed_capacitors_1","type":"packed_capacitors","connectedTo":[],"x":-580,"y":-1101},
+{"id":"safety_overrides_1","type":"safety_overrides","connectedTo":[],"x":1676,"y":454},
+{"id":"heavyarmor_1","type":"heavyarmor","connectedTo":[],"x":-324,"y":869},
+{"id":"armoredweapons_1","type":"armoredweapons","connectedTo":[],"x":-430,"y":804},
+{"id":"reinforcedhull_1","type":"reinforcedhull","connectedTo":[],"x":-104,"y":878},
+{"id":"blast_doors_1","type":"blast_doors","connectedTo":[],"x":35,"y":140},
+{"id":"fluxcoil_1","type":"fluxcoil","connectedTo":[],"x":-751,"y":-957},
+{"id":"fluxbreakers_1","type":"fluxbreakers","connectedTo":[],"x":-952,"y":-905},
+{"id":"fluxdistributor_1","type":"fluxdistributor","connectedTo":[],"x":-698,"y":-1045},
+{"id":"autorepair_1","type":"autorepair","connectedTo":[],"x":1314,"y":207},
+{"id":"hardened_subsystems_1","type":"hardened_subsystems","connectedTo":[],"x":1200,"y":74},
+{"id":"turretgyros_1","type":"turretgyros","connectedTo":[],"x":1316,"y":134},
+{"id":"ballistic_rangefinder_1","type":"ballistic_rangefinder","connectedTo":[],"x":1131,"y":808},
+{"id":"magazines_1","type":"magazines","connectedTo":[],"x":1465,"y":67},
+{"id":"pointdefenseai_1","type":"pointdefenseai","connectedTo":[],"x":1329,"y":51},
+{"id":"missleracks_1","type":"missleracks","connectedTo":[],"x":1292,"y":-402},
+{"id":"missile_autoloader_1","type":"missile_autoloader","connectedTo":[],"x":1231,"y":-336},
+{"id":"eccm_1","type":"eccm","connectedTo":[],"x":1329,"y":-344},
+{"id":"high_scatter_amp_1","type":"high_scatter_amp","connectedTo":[],"x":-1337,"y":90},
+{"id":"advancedoptics_1","type":"advancedoptics","connectedTo":[],"x":-1306,"y":197},
+{"id":"dedicated_targeting_core_1","type":"dedicated_targeting_core","connectedTo":[],"x":1787,"y":153},
+{"id":"targetingunit_1","type":"targetingunit","connectedTo":[],"x":1771,"y":227},
+{"id":"ecm_1","type":"ecm","connectedTo":[],"x":-182,"y":-44},
+{"id":"defensive_targeting_array_1","type":"defensive_targeting_array","connectedTo":[],"x":1883,"y":202},
+{"id":"advancedshieldemitter_1","type":"advancedshieldemitter","connectedTo":[],"x":563,"y":-1076},
+{"id":"extendedshieldemitter_1","type":"extendedshieldemitter","connectedTo":[],"x":319,"y":-1108},
+{"id":"hardenedshieldemitter_1","type":"hardenedshieldemitter","connectedTo":[],"x":420,"y":-1068},
+{"id":"stabilizedshieldemitter_1","type":"stabilizedshieldemitter","connectedTo":[],"x":483,"y":-988},
+{"id":"shield_shunt_1","type":"shield_shunt","connectedTo":[],"x":-442,"y":879},
+{"id":"frontshield_1","type":"frontshield","connectedTo":[],"x":340,"y":-997},
+{"id":"frontemitter_1","type":"frontemitter","connectedTo":[],"x":222,"y":-1023},
+{"id":"adaptiveshields_1","type":"adaptiveshields","connectedTo":[],"x":378,"y":-924},
+{"id":"auxiliarythrusters_1","type":"auxiliarythrusters","connectedTo":[],"x":1443,"y":222},
+{"id":"unstable_injector_1","type":"unstable_injector","connectedTo":[],"x":1461,"y":478},
+{"id":"nav_relay_1","type":"nav_relay","connectedTo":[],"x":-114,"y":185},
+{"id":"adaptive_coils_1","type":"adaptive_coils","connectedTo":[],"x":-873,"y":-940},
+{"id":"phase_anchor_1","type":"phase_anchor","connectedTo":[],"x":-958,"y":-977},
+{"id":"additional_berthing_1","type":"additional_berthing","connectedTo":[],"x":226,"y":-7},
+{"id":"augmentedengines_1","type":"augmentedengines","connectedTo":[],"x":-331,"y":-124},
+{"id":"auxiliary_fuel_tanks_1","type":"auxiliary_fuel_tanks","connectedTo":[],"x":-242,"y":132},
+{"id":"efficiency_overhaul_1","type":"efficiency_overhaul","connectedTo":[],"x":26,"y":246},
+{"id":"expanded_cargo_holds_1","type":"expanded_cargo_holds","connectedTo":[],"x":122,"y":46},
+{"id":"hiressensors_1","type":"hiressensors","connectedTo":[],"x":-239,"y":-204},
+{"id":"insulatedengine_1","type":"insulatedengine","connectedTo":[],"x":-83,"y":-229},
+{"id":"militarized_subsystems_1","type":"militarized_subsystems","connectedTo":[],"x":56,"y":-231},
+{"id":"solar_shielding_1","type":"solar_shielding","connectedTo":[],"x":193,"y":-195},
+{"id":"surveying_equipment_1","type":"surveying_equipment","connectedTo":[],"x":276,"y":-149},
+{"id":"converted_hangar_1","type":"converted_hangar","connectedTo":[],"x":180,"y":184},
+{"id":"converted_fighterbay_1","type":"converted_fighterbay","connectedTo":[],"x":1111,"y":-656},
+{"id":"expanded_deck_crew_1","type":"expanded_deck_crew","connectedTo":[],"x":1027,"y":-734},
+{"id":"recovery_shuttles_1","type":"recovery_shuttles","connectedTo":[],"x":965,"y":-664},
+{"id":"operations_center_1","type":"operations_center","connectedTo":[],"x":-102,"y":73},
+{"id":"escort_package_1","type":"escort_package","connectedTo":[],"x":1453,"y":144},
+{"id":"beam_damage_2","type":"beam_damage","connectedTo":["beam_damage_1","energy_damage_1"],"x":-875,"y":-22},
+{"id":"beam_damage_5","type":"beam_damage","connectedTo":["beam_damage_1"],"x":-1037,"y":-2},
+{"id":"flux_capacity_2","type":"flux_capacity","connectedTo":[],"x":-633,"y":-898},
+{"id":"non_beam_energy_damage_2","type":"non_beam_energy_damage","connectedTo":["non_beam_energy_damage_1","non_beam_energy_damage_3"],"x":-959,"y":-105},
+{"id":"non_beam_energy_damage_3","type":"non_beam_energy_damage","connectedTo":["non_beam_energy_damage_2"],"x":-1043,"y":-83},
+{"id":"root_low_tech_1","type":"root_low_tech","connectedTo":["increased_cargo_2","increased_crew_2","increased_fuel_3"],"x":993,"y":506},
+{"id":"root_midline_1","type":"root_midline","connectedTo":["increased_cargo_3","increased_crew_3","increased_fuel_2"],"x":-837,"y":536},
+{"id":"root_high_tech_1","type":"root_high_tech","connectedTo":["increased_crew_1","increased_cargo_1","increased_fuel_1"],"x":-4,"y":-577},
+{"id":"increased_fuel_1","type":"increased_fuel","connectedTo":["root_high_tech_1","increased_cargo_1","increased_crew_4"],"x":-167,"y":-420},
+{"id":"increased_cargo_1","type":"increased_cargo","connectedTo":["root_high_tech_1","increased_fuel_1"],"x":-22,"y":-431},
+{"id":"increased_crew_1","type":"increased_crew","connectedTo":["root_high_tech_1","increased_crew_4"],"x":157,"y":-417},
+{"id":"fighter_weapon_damage_1","type":"fighter_weapon_damage","connectedTo":[],"x":881,"y":-595},
+{"id":"fighter_speed_1","type":"fighter_speed","connectedTo":[],"x":997,"y":-581},
+{"id":"increased_fuel_2","type":"increased_fuel","connectedTo":["root_midline_1","increased_cargo_3"],"x":-653,"y":607},
+{"id":"increased_fuel_3","type":"increased_fuel","connectedTo":["root_low_tech_1","increased_cargo_2"],"x":937,"y":356},
+{"id":"increased_cargo_2","type":"increased_cargo","connectedTo":["root_low_tech_1","increased_fuel_3","increased_crew_2"],"x":868,"y":444},
+{"id":"increased_crew_2","type":"increased_crew","connectedTo":["root_low_tech_1","increased_cargo_2"],"x":841,"y":556},
+{"id":"increased_crew_3","type":"increased_crew","connectedTo":["root_midline_1","increased_cargo_3"],"x":-773,"y":338},
+{"id":"increased_cargo_3","type":"increased_cargo","connectedTo":["root_midline_1","increased_fuel_2","increased_crew_3"],"x":-668,"y":454},
+{"id":"increased_crew_4","type":"increased_crew","connectedTo":["increased_fuel_1","increased_crew_1"],"x":-33,"y":-342}
 ];
 
 var SMALL_R = 11, NOTABLE_R = 17, KEYSTONE_R = 23, ROOT_R = 20;
@@ -770,8 +771,8 @@ function validate(){
   Object.keys(idCount).forEach(function(id){ if (idCount[id] > 1) issues.push('Duplicate node id: ' + id); });
   state.nodes.forEach(function(n){
     if (!typeById(n.type)) issues.push('Node "' + n.id + '" uses unknown type "' + n.type + '"');
-    (n.prerequisites||[]).forEach(function(p){
-      if (!nodeById(p)) issues.push('Node "' + n.id + '" prerequisite "' + p + '" does not exist');
+    (n.connectedTo||[]).forEach(function(p){
+      if (!nodeById(p)) issues.push('Node "' + n.id + '" connection "' + p + '" does not exist');
     });
   });
   return issues;
@@ -800,15 +801,17 @@ function render(){
 
   var badIds = {};
   state.nodes.forEach(function(n){
-    (n.prerequisites||[]).forEach(function(p){ if (!nodeById(p)) badIds[n.id] = true; });
+    (n.connectedTo||[]).forEach(function(p){ if (!nodeById(p)) badIds[n.id] = true; });
     if (!typeById(n.type)) badIds[n.id] = true;
   });
 
   state.nodes.forEach(function(n){
     var pos = worldToScreenXY(n.x, n.y);
-    (n.prerequisites||[]).forEach(function(pid){
+    (n.connectedTo||[]).forEach(function(pid){
       var p = nodeById(pid);
       if (!p) return;
+      // connectedTo is symmetric, so each edge appears in both nodes' lists - only draw it once.
+      if (n.id >= pid) return;
       var ppos = worldToScreenXY(p.x, p.y);
       var line = document.createElementNS(NS, 'line');
       line.setAttribute('x1', ppos.sx); line.setAttribute('y1', ppos.sy);
@@ -1020,12 +1023,17 @@ function handleLinkClick(id){
   var a = nodeById(state.linkFirst), b = nodeById(id);
   state.linkFirst = null;
   if (!a || !b) { render(); return; }
-  var distA = Math.hypot(a.x, a.y), distB = Math.hypot(b.x, b.y);
-  var outer = distA >= distB ? a : b;
-  var inner = distA >= distB ? b : a;
-  var idx = outer.prerequisites.indexOf(inner.id);
-  if (idx === -1) { outer.prerequisites.push(inner.id); showToast(outer.id + ' now requires ' + inner.id); }
-  else { outer.prerequisites.splice(idx, 1); showToast('Unlinked ' + outer.id + ' from ' + inner.id); }
+  var idx = a.connectedTo.indexOf(b.id);
+  if (idx === -1) {
+    a.connectedTo.push(b.id);
+    b.connectedTo.push(a.id);
+    showToast(a.id + ' <-> ' + b.id + ' connected');
+  } else {
+    a.connectedTo.splice(idx, 1);
+    var backIdx = b.connectedTo.indexOf(a.id);
+    if (backIdx !== -1) b.connectedTo.splice(backIdx, 1);
+    showToast('Unlinked ' + a.id + ' from ' + b.id);
+  }
   saveLocal();
   render();
 }
@@ -1084,7 +1092,7 @@ function refreshInspector(){
   var typeOptions = state.types.map(function(ty){
     return '<option value="' + ty.id + '"' + (ty.id === n.type ? ' selected' : '') + '>' + ty.name + ' (' + ty.id + ')</option>';
   }).join('');
-  var prereqHtml = (n.prerequisites||[]).map(function(pid){
+  var prereqHtml = (n.connectedTo||[]).map(function(pid){
     var pn = nodeById(pid);
     return '<div class="prereqItem"><span>' + pid + (pn ? '' : ' (missing!)') + '</span><button data-remove-prereq="' + pid + '">✕</button></div>';
   }).join('') || '<div class="hint">None - renders with no connector line until you add one (e.g. a root node).</div>';
@@ -1124,9 +1132,9 @@ function refreshInspector(){
     '</div>' +
     '<hr class="sep">' +
     statsHtml +
-    '<div class="field"><label>Prerequisites</label><div class="prereqList">' + prereqHtml + '</div></div>' +
+    '<div class="field"><label>Connected to</label><div class="prereqList">' + prereqHtml + '</div></div>' +
     '<div class="fieldRow">' +
-      '<select id="addPrereqSelect" style="flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12px;padding:6px;"><option value="">Add prerequisite...</option>' + otherNodeOptions + '</select>' +
+      '<select id="addPrereqSelect" style="flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12px;padding:6px;"><option value="">Connect to...</option>' + otherNodeOptions + '</select>' +
     '</div>' +
     '<hr class="sep">' +
     '<div class="hint">Type "' + n.type + '" - opCost ' + (t?t.opCost:'?') + ', xpCost ' + (t?t.xpCost:'?') + (t && t.vanillaHullMod ? ', vanillaHullMod: ' + t.vanillaHullMod : '') + (t && t.todo ? ' [TODO: ' + t.todo + ']' : '') + '</div>' +
@@ -1145,8 +1153,8 @@ function refreshInspector(){
         var oldId = n.id;
         n.id = newId;
         state.nodes.forEach(function(o){
-          var idx = o.prerequisites.indexOf(oldId);
-          if (idx !== -1) o.prerequisites[idx] = newId;
+          var idx = o.connectedTo.indexOf(oldId);
+          if (idx !== -1) o.connectedTo[idx] = newId;
         });
         state.selectedIds = [newId];
       } else if (field === 'type') {
@@ -1160,15 +1168,22 @@ function refreshInspector(){
   var addSel = document.getElementById('addPrereqSelect');
   addSel.addEventListener('change', function(){
     if (addSel.value) {
-      if (n.prerequisites.indexOf(addSel.value) === -1) n.prerequisites.push(addSel.value);
+      var other = nodeById(addSel.value);
+      if (n.connectedTo.indexOf(addSel.value) === -1) n.connectedTo.push(addSel.value);
+      if (other && other.connectedTo.indexOf(n.id) === -1) other.connectedTo.push(n.id);
       saveLocal(); render(); refreshInspector();
     }
   });
   body.querySelectorAll('[data-remove-prereq]').forEach(function(btn){
     btn.addEventListener('click', function(){
       var pid = btn.dataset.removePrereq;
-      var idx = n.prerequisites.indexOf(pid);
-      if (idx !== -1) n.prerequisites.splice(idx, 1);
+      var idx = n.connectedTo.indexOf(pid);
+      if (idx !== -1) n.connectedTo.splice(idx, 1);
+      var other = nodeById(pid);
+      if (other) {
+        var backIdx = other.connectedTo.indexOf(n.id);
+        if (backIdx !== -1) other.connectedTo.splice(backIdx, 1);
+      }
       saveLocal(); render(); refreshInspector();
     });
   });
@@ -1235,7 +1250,11 @@ function refreshInspector(){
     var copy = deepCopy(n);
     copy.id = uniqueNodeId(n.type);
     copy.x = n.x + 40; copy.y = n.y - 40;
-    copy.prerequisites = deepCopy(n.prerequisites);
+    copy.connectedTo = deepCopy(n.connectedTo);
+    copy.connectedTo.forEach(function(pid){
+      var other = nodeById(pid);
+      if (other && other.connectedTo.indexOf(copy.id) === -1) other.connectedTo.push(copy.id);
+    });
     state.nodes.push(copy);
     selectNode(copy.id);
     saveLocal();
@@ -1255,12 +1274,12 @@ function deleteSelectedNodes(){
   var ids = state.selectedIds;
   if (ids.length === 0) return;
   var message = ids.length === 1
-    ? 'Delete node "' + ids[0] + '"? It will also be removed from other nodes\' prerequisites.'
-    : 'Delete ' + ids.length + ' selected nodes? They will also be removed from other nodes\' prerequisites.';
+    ? 'Delete node "' + ids[0] + '"? It will also be removed from other nodes\' connections.'
+    : 'Delete ' + ids.length + ' selected nodes? They will also be removed from other nodes\' connections.';
   if (!confirm(message)) return;
   state.nodes = state.nodes.filter(function(o){ return ids.indexOf(o.id) === -1; });
   state.nodes.forEach(function(o){
-    o.prerequisites = o.prerequisites.filter(function(pid){ return ids.indexOf(pid) === -1; });
+    o.connectedTo = o.connectedTo.filter(function(pid){ return ids.indexOf(pid) === -1; });
   });
   state.selectedIds = [];
   document.getElementById('inspector').classList.remove('open');
@@ -1301,7 +1320,7 @@ function openAddNodeModal(x, y){
     '<div class="modalOverlay"><div class="modal">' +
     '<h3>Add node at (' + x + ', ' + y + ')</h3>' +
     '<div class="field"><label>Type</label><select id="mAddType">' + typeOptions + '</select></div>' +
-    '<div class="hint">Placed with no prerequisites - link it afterward in Link mode.</div>' +
+    '<div class="hint">Placed with no connections - link it afterward in Link mode.</div>' +
     '<div class="modalBtns">' +
       '<button class="smallBtn" id="mAddNewType">Define new type instead</button>' +
       '<button class="smallBtn" id="mCancel">Cancel</button>' +
@@ -1324,7 +1343,7 @@ function openAddNodeModal(x, y){
   });
 }
 function addNodeOfType(typeId, x, y){
-  var node = { id: uniqueNodeId(typeId), type: typeId, prerequisites: [], x: x, y: y };
+  var node = { id: uniqueNodeId(typeId), type: typeId, connectedTo: [], x: x, y: y };
   state.nodes.push(node);
   saveLocal();
   selectNode(node.id);
@@ -1546,7 +1565,7 @@ var currentExportTab = 'tree';
 function refreshExport(){
   var text;
   if (currentExportTab === 'tree') {
-    var nodesOut = state.nodes.map(function(n){ return { id: n.id, type: n.type, prerequisites: n.prerequisites, x: n.x, y: n.y }; });
+    var nodesOut = state.nodes.map(function(n){ return { id: n.id, type: n.type, connectedTo: n.connectedTo, x: n.x, y: n.y }; });
     text = toTabbedJson(nodesOut, 'nodes');
     document.getElementById('exportHint').textContent = 'Paste over data/skilltrees/ship_skill_tree.json';
   } else {
@@ -1566,7 +1585,7 @@ document.querySelectorAll('.exportTab').forEach(function(tab){
 });
 document.getElementById('refreshExportBtn').addEventListener('click', refreshExport);
 document.getElementById('saveToProjectBtn').addEventListener('click', function(){
-  var nodesOut = state.nodes.map(function(n){ return { id: n.id, type: n.type, prerequisites: n.prerequisites, x: n.x, y: n.y }; });
+  var nodesOut = state.nodes.map(function(n){ return { id: n.id, type: n.type, connectedTo: n.connectedTo, x: n.x, y: n.y }; });
   var treeText = toTabbedJson(nodesOut, 'nodes');
   var typesOut = state.types.map(serializeType);
   var typesText = toTabbedJson(typesOut, 'skillTypes');

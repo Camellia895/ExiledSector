@@ -22,7 +22,7 @@ class SkillTreeLoaderTest {
         JSONObject root = new JSONObject("{ \"nodes\": [ {"
                 + "\"id\": \"capacitors_1\","
                 + "\"type\": \"capacitors\","
-                + "\"prerequisites\": [\"vents_1\"],"
+                + "\"connectedTo\": [\"vents_1\"],"
                 + "\"x\": -180,"
                 + "\"y\": 180"
                 + "} ] }");
@@ -36,7 +36,7 @@ class SkillTreeLoaderTest {
         assertEquals("graphics/hullmods/flux_coil_adjunct.png", node.getIconPath());
         assertEquals(2, node.getOpCost());
         assertEquals(500f, node.getXpCost());
-        assertEquals(List.of("vents_1"), node.getPrerequisiteNodeIds());
+        assertEquals(List.of("vents_1"), node.getConnectedNodeIds());
         assertEquals(-180f, node.getOffsetX());
         assertEquals(180f, node.getOffsetY());
     }
@@ -50,7 +50,7 @@ class SkillTreeLoaderTest {
 
         SkillNode node = SkillTreeLoader.parseNodes(root, SKILL_TYPES).get(0);
 
-        assertTrue(node.getPrerequisiteNodeIds().isEmpty());
+        assertTrue(node.getConnectedNodeIds().isEmpty());
         assertEquals(0f, node.getOffsetX());
         assertEquals(0f, node.getOffsetY());
     }
