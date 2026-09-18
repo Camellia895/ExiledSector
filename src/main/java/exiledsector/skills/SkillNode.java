@@ -51,6 +51,10 @@ public class SkillNode {
     }
 
     public String getDescription(HullSize hullSize) {
+        return describeType(type, hullSize);
+    }
+
+    public static String describeType(SkillType type, HullSize hullSize) {
         if (type.getDescriptionOverride() != null) {
             return type.getDescriptionOverride();
         }
@@ -71,6 +75,14 @@ public class SkillNode {
         }
         lines.addAll(warnings);
         return String.join("\n\n", lines);
+    }
+
+    public SkillType resolveEffectiveType(ShipSkillData data) {
+        if (!type.isOptional()) return type;
+        String selectedId = data.getOptionalSelection(id);
+        if (selectedId == null) return type;
+        SkillType chosen = SkillTree.getType(selectedId);
+        return chosen != null ? chosen : type;
     }
 
     public List<String> getConnectedNodeIds() {

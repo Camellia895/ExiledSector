@@ -43,6 +43,7 @@ public final class SkillTypeLoader {
         SkillTier tier = SkillTier.valueOf(json.optString("tier", "SMALL"));
         List<SkillTypeEffect> effects = parseEffects(json.optJSONArray("effects"));
         List<HullSizeSkillEffect> hullSizeEffects = parseHullSizeEffects(json.optJSONArray("hullSizeEffects"));
+        List<String> optionalOptionIds = parseOptionalOptions(json.optJSONArray("optionalOptions"));
 
         return new SkillType(
                 json.getString("id"),
@@ -55,7 +56,19 @@ public final class SkillTypeLoader {
                 tier,
                 json.optString("vanillaHullMod", null),
                 json.optString("description", null),
-                json.optString("todo", null));
+                json.optString("todo", null),
+                optionalOptionIds);
+    }
+
+    private static List<String> parseOptionalOptions(JSONArray optionsArray) throws JSONException {
+        List<String> optionIds = new ArrayList<>();
+        if (optionsArray == null) {
+            return optionIds;
+        }
+        for (int i = 0; i < optionsArray.length(); i++) {
+            optionIds.add(optionsArray.getString(i));
+        }
+        return optionIds;
     }
 
     private static List<SkillTypeEffect> parseEffects(JSONArray effectsArray) throws JSONException {

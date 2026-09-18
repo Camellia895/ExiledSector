@@ -499,9 +499,9 @@
 			"id": "root_low_tech_1",
 			"type": "root_low_tech",
 			"connectedTo": [
-				"increased_cargo_2",
-				"increased_crew_2",
-				"increased_fuel_3"
+				"small_logistics_optional_15",
+				"small_logistics_optional_16",
+				"small_logistics_optional_17"
 			],
 			"x": 806,
 			"y": 468
@@ -509,11 +509,7 @@
 		{
 			"id": "root_midline_1",
 			"type": "root_midline",
-			"connectedTo": [
-				"increased_cargo_3",
-				"increased_crew_3",
-				"increased_fuel_2"
-			],
+			"connectedTo": [],
 			"x": -837,
 			"y": 536
 		},
@@ -521,44 +517,12 @@
 			"id": "root_high_tech_1",
 			"type": "root_high_tech",
 			"connectedTo": [
-				"increased_crew_1",
-				"increased_cargo_1",
-				"increased_fuel_1"
+				"small_logistics_optional_1",
+				"small_logistics_optional_2",
+				"small_logistics_optional_3"
 			],
 			"x": -4,
 			"y": -577
-		},
-		{
-			"id": "increased_fuel_1",
-			"type": "increased_fuel",
-			"connectedTo": [
-				"root_high_tech_1",
-				"increased_cargo_1",
-				"increased_fuel_4"
-			],
-			"x": -167,
-			"y": -420
-		},
-		{
-			"id": "increased_cargo_1",
-			"type": "increased_cargo",
-			"connectedTo": [
-				"root_high_tech_1",
-				"increased_fuel_1",
-				"increased_crew_1"
-			],
-			"x": -3,
-			"y": -467
-		},
-		{
-			"id": "increased_crew_1",
-			"type": "increased_crew",
-			"connectedTo": [
-				"root_high_tech_1",
-				"increased_cargo_1"
-			],
-			"x": 178,
-			"y": -425
 		},
 		{
 			"id": "fighter_weapon_damage_1",
@@ -575,132 +539,161 @@
 			"y": -581
 		},
 		{
-			"id": "increased_fuel_2",
-			"type": "increased_fuel",
+			"id": "small_logistics_optional_1",
+			"type": "small_logistics_optional",
 			"connectedTo": [
-				"root_midline_1",
-				"increased_cargo_3"
+				"root_high_tech_1",
+				"small_logistics_optional_2",
+				"small_logistics_optional_3"
 			],
-			"x": -653,
-			"y": 607
+			"x": -1,
+			"y": -448
 		},
 		{
-			"id": "increased_fuel_3",
-			"type": "increased_fuel",
+			"id": "small_logistics_optional_2",
+			"type": "small_logistics_optional",
 			"connectedTo": [
-				"root_low_tech_1",
-				"increased_cargo_2"
+				"root_high_tech_1",
+				"small_logistics_optional_4",
+				"small_logistics_optional_1"
 			],
-			"x": 750,
-			"y": 318
+			"x": -114,
+			"y": -454
 		},
 		{
-			"id": "increased_cargo_2",
-			"type": "increased_cargo",
+			"id": "small_logistics_optional_3",
+			"type": "small_logistics_optional",
 			"connectedTo": [
-				"root_low_tech_1",
-				"increased_fuel_3",
-				"increased_crew_2"
+				"root_high_tech_1",
+				"small_logistics_optional_1",
+				"small_logistics_optional_6"
 			],
-			"x": 681,
-			"y": 406
+			"x": 128,
+			"y": -455
 		},
 		{
-			"id": "increased_crew_2",
-			"type": "increased_crew",
+			"id": "small_logistics_optional_4",
+			"type": "small_logistics_optional",
 			"connectedTo": [
-				"root_low_tech_1",
-				"increased_cargo_2"
+				"small_logistics_optional_2"
 			],
-			"x": 654,
-			"y": 518
+			"x": -196,
+			"y": -368
 		},
 		{
-			"id": "increased_crew_3",
-			"type": "increased_crew",
+			"id": "small_logistics_optional_6",
+			"type": "small_logistics_optional",
 			"connectedTo": [
-				"root_midline_1",
-				"increased_cargo_3",
-				"increased_crew_4"
+				"small_logistics_optional_8",
+				"small_logistics_optional_3"
 			],
-			"x": -773,
-			"y": 338
+			"x": 197,
+			"y": -399
 		},
 		{
-			"id": "increased_cargo_3",
-			"type": "increased_cargo",
-			"connectedTo": [
-				"root_midline_1",
-				"increased_fuel_2",
-				"increased_crew_3"
-			],
-			"x": -668,
-			"y": 454
-		},
-		{
-			"id": "increased_fuel_4",
-			"type": "increased_fuel",
-			"connectedTo": [
-				"increased_fuel_7",
-				"increased_fuel_1"
-			],
-			"x": -269,
-			"y": -349
-		},
-		{
-			"id": "increased_fuel_5",
-			"type": "increased_fuel",
+			"id": "small_logistics_optional_7",
+			"type": "small_logistics_optional",
 			"connectedTo": [],
-			"x": -498,
-			"y": 632
+			"x": 3,
+			"y": -370
 		},
 		{
-			"id": "increased_fuel_6",
-			"type": "increased_fuel",
+			"id": "small_logistics_optional_8",
+			"type": "small_logistics_optional",
 			"connectedTo": [
-				"increased_fuel_7"
+				"small_logistics_optional_6",
+				"small_logistics_optional_12"
 			],
-			"x": -459,
-			"y": -179
+			"x": 275,
+			"y": -325
 		},
 		{
-			"id": "increased_fuel_7",
-			"type": "increased_fuel",
+			"id": "small_logistics_optional_9",
+			"type": "small_logistics_optional",
 			"connectedTo": [
-				"increased_fuel_6",
-				"increased_fuel_4"
+				"small_logistics_optional_10",
+				"small_logistics_optional_13"
 			],
-			"x": -365,
-			"y": -273
+			"x": 552,
+			"y": 38
 		},
 		{
-			"id": "increased_crew_4",
-			"type": "increased_crew",
+			"id": "small_logistics_optional_10",
+			"type": "small_logistics_optional",
 			"connectedTo": [
-				"increased_crew_3",
-				"increased_crew_5"
+				"small_logistics_optional_11",
+				"small_logistics_optional_9"
 			],
-			"x": -732,
-			"y": 222
+			"x": 495,
+			"y": -60
 		},
 		{
-			"id": "increased_crew_5",
-			"type": "increased_crew",
+			"id": "small_logistics_optional_11",
+			"type": "small_logistics_optional",
 			"connectedTo": [
-				"increased_crew_4",
-				"increased_crew_6"
+				"small_logistics_optional_12",
+				"small_logistics_optional_10"
 			],
-			"x": -686,
-			"y": 120
+			"x": 426,
+			"y": -140
 		},
 		{
-			"id": "increased_crew_6",
-			"type": "increased_crew",
+			"id": "small_logistics_optional_12",
+			"type": "small_logistics_optional",
 			"connectedTo": [
-				"increased_crew_5"
+				"small_logistics_optional_8",
+				"small_logistics_optional_11"
 			],
-			"x": -627,
-			"y": 7
+			"x": 354,
+			"y": -228
+		},
+		{
+			"id": "small_logistics_optional_13",
+			"type": "small_logistics_optional",
+			"connectedTo": [
+				"small_logistics_optional_9",
+				"small_logistics_optional_14"
+			],
+			"x": 625,
+			"y": 143
+		},
+		{
+			"id": "small_logistics_optional_14",
+			"type": "small_logistics_optional",
+			"connectedTo": [
+				"small_logistics_optional_13",
+				"small_logistics_optional_15"
+			],
+			"x": 686,
+			"y": 232
+		},
+		{
+			"id": "small_logistics_optional_15",
+			"type": "small_logistics_optional",
+			"connectedTo": [
+				"small_logistics_optional_14",
+				"root_low_tech_1"
+			],
+			"x": 756,
+			"y": 363
+		},
+		{
+			"id": "small_logistics_optional_16",
+			"type": "small_logistics_optional",
+			"connectedTo": [
+				"root_low_tech_1"
+			],
+			"x": 660,
+			"y": 488
+		},
+		{
+			"id": "small_logistics_optional_17",
+			"type": "small_logistics_optional",
+			"connectedTo": [
+				"root_low_tech_1"
+			],
+			"x": 707,
+			"y": 438
 		}
 	]
 }

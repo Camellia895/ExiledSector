@@ -57,12 +57,14 @@ class SkillTreeHullModTest {
         globalMock.when(Global::getSector).thenReturn(sector);
 
         SkillTree.getAllNodes().clear();
+        SkillTree.getAllTypes().clear();
     }
 
     @AfterEach
     void tearDown() {
         globalMock.close();
         SkillTree.getAllNodes().clear();
+        SkillTree.getAllTypes().clear();
     }
 
     @Test
@@ -84,6 +86,30 @@ class SkillTreeHullModTest {
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
 
         verify(hullStatBonus).modifyPercent("exiledSector_skill_hull_1", 10f);
+    }
+
+    @Test
+    void appliesTheSelectedOptionsEffectForAnOptionalNodeNotThePlaceholders() {
+        SkillType placeholder = new SkillType("slot", "Optional Skill", "a.png", 0, 0,
+                List.of(), List.of(), SkillTier.SMALL, null, null, null, List.of("hull"));
+        SkillType hullOption = new SkillType("hull", "Reinforced Hull", "graphics/hullmods/reinforced_bulkheads.png", 2, 500,
+                List.of(new SkillTypeEffect(DefenseSkillEffect.HULL, 10f)), SkillTier.SMALL, null, null, null);
+        SkillTree.registerType(hullOption);
+        SkillNode slotNode = new SkillNode("slot_1", placeholder, List.of(), 0f, 0f);
+        SkillTree.register(slotNode);
+
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        ShipSkillDataManager.get("ship-a").selectOption(slotNode, hullOption);
+
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        when(stats.getFleetMember()).thenReturn(member);
+        com.fs.starfarer.api.combat.StatBonus hullStatBonus = mock(com.fs.starfarer.api.combat.StatBonus.class);
+        when(stats.getHullBonus()).thenReturn(hullStatBonus);
+
+        new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
+
+        verify(hullStatBonus).modifyPercent("exiledSector_skill_slot_1", 10f);
     }
 
     @Test

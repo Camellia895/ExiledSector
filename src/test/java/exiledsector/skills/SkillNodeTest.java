@@ -2,13 +2,26 @@ package exiledsector.skills;
 
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.FighterSkillEffect;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 class SkillNodeTest {
+
+    @BeforeEach
+    void setUp() {
+        SkillTree.getAllTypes().clear();
+    }
+
+    @AfterEach
+    void tearDown() {
+        SkillTree.getAllTypes().clear();
+    }
 
     @Test
     void descriptionDelegatesToTheTypesEffect() {
@@ -66,5 +79,37 @@ class SkillNodeTest {
         SkillNode node = new SkillNode("escort_package_1", type, List.of(), 0f, 0f);
 
         assertEquals("", node.getDescription());
+    }
+
+    @Test
+    void resolveEffectiveTypeReturnsItsOwnTypeWhenNotOptional() {
+        SkillType type = new SkillType("hull", "Hull", "graphics/hullmods/reinforced_bulkheads.png", 2, 500,
+                List.of(new SkillTypeEffect(DefenseSkillEffect.HULL, 10f)), SkillTier.SMALL, null, null, null);
+        SkillNode node = new SkillNode("hull_1", type, List.of(), 0f, 0f);
+
+        assertSame(type, node.resolveEffectiveType(new ShipSkillData()));
+    }
+
+    @Test
+    void resolveEffectiveTypeReturnsThePlaceholderWhenOptionalAndUnselected() {
+        SkillType placeholder = new SkillType("slot", "Optional Skill", "a.png", 0, 0,
+                List.of(), List.of(), SkillTier.SMALL, null, null, null, List.of("hull", "armor"));
+        SkillNode node = new SkillNode("slot_1", placeholder, List.of(), 0f, 0f);
+
+        assertSame(placeholder, node.resolveEffectiveType(new ShipSkillData()));
+    }
+
+    @Test
+    void resolveEffectiveTypeReturnsTheSelectedOptionsTypeOnceChosen() {
+        SkillType placeholder = new SkillType("slot", "Optional Skill", "a.png", 0, 0,
+                List.of(), List.of(), SkillTier.SMALL, null, null, null, List.of("hull"));
+        SkillType hullOption = new SkillType("hull", "Hull", "graphics/hullmods/reinforced_bulkheads.png", 2, 500,
+                List.of(new SkillTypeEffect(DefenseSkillEffect.HULL, 10f)), SkillTier.SMALL, null, null, null);
+        SkillTree.registerType(hullOption);
+        SkillNode node = new SkillNode("slot_1", placeholder, List.of(), 0f, 0f);
+        ShipSkillData data = new ShipSkillData();
+        data.selectOption(node, hullOption);
+
+        assertSame(hullOption, node.resolveEffectiveType(data));
     }
 }

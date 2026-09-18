@@ -1,14 +1,27 @@
 package exiledsector.skills;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ShipSkillDataTest {
+
+    @BeforeEach
+    void setUp() {
+        SkillTree.getAllTypes().clear();
+    }
+
+    @AfterEach
+    void tearDown() {
+        SkillTree.getAllTypes().clear();
+    }
 
     private static SkillNode node(String id, List<String> prerequisiteIds) {
         SkillType type = new SkillType(id, id, "graphics/hullmods/heavy_armor.png", 2, 300f, List.of(), SkillTier.SMALL, null, null, null);
@@ -255,5 +268,59 @@ class ShipSkillDataTest {
         data.allocate(a);
 
         assertTrue(data.canDeallocate(b, List.of(a, b), "root_low_tech_1"));
+    }
+
+    @Test
+    void getOptionalSelectionIsNullWhenNothingHasBeenSelected() {
+        ShipSkillData data = new ShipSkillData();
+
+        assertNull(data.getOptionalSelection("slot_1"));
+    }
+
+    @Test
+    void selectOptionAllocatesTheSlotNodeAndSpendsTheChosenOptionsCost() {
+        ShipSkillData data = new ShipSkillData();
+        data.addXp(1000f);
+        SkillNode slot = node("slot_1", List.of());
+        SkillType chosenOption = new SkillType("hull", "Hull", "a.png", 3, 400f, List.of(), SkillTier.SMALL, null, null, null);
+
+        data.selectOption(slot, chosenOption);
+
+        assertTrue(data.isAllocated("slot_1"));
+        assertEquals("hull", data.getOptionalSelection("slot_1"));
+        assertEquals(3, data.getSpentOp());
+        assertEquals(600f, data.getXp());
+    }
+
+    @Test
+    void deallocateRefundsTheSelectedOptionsCostNotThePlaceholdersCost() {
+        ShipSkillData data = new ShipSkillData();
+        data.addXp(1000f);
+        SkillNode slot = node("slot_1", List.of());
+        SkillType chosenOption = new SkillType("hull", "Hull", "a.png", 3, 400f, List.of(), SkillTier.SMALL, null, null, null);
+        SkillTree.registerType(chosenOption);
+        data.selectOption(slot, chosenOption);
+
+        data.deallocate(slot);
+
+        assertFalse(data.isAllocated("slot_1"));
+        assertNull(data.getOptionalSelection("slot_1"));
+        assertEquals(0, data.getSpentOp());
+        assertEquals(1000f, data.getXp());
+    }
+
+    @Test
+    void togglingASelectedOptionalNodeOffClearsTheSelection() {
+        ShipSkillData data = new ShipSkillData();
+        data.addXp(1000f);
+        SkillNode slot = node("slot_1", List.of());
+        SkillType chosenOption = new SkillType("hull", "Hull", "a.png", 3, 400f, List.of(), SkillTier.SMALL, null, null, null);
+        SkillTree.registerType(chosenOption);
+        data.selectOption(slot, chosenOption);
+
+        data.toggle(slot, List.of(slot), null);
+
+        assertFalse(data.isAllocated("slot_1"));
+        assertNull(data.getOptionalSelection("slot_1"));
     }
 }

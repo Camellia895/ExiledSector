@@ -5,6 +5,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillType;
 
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private float mouseY = 0f;
     private boolean mouseKnown = false;
     private SkillNode pendingClickNode;
+    private SkillType pendingDropdownOption;
 
     public SkillTreeCanvasPlugin(String symbolPath, FleetMemberAPI member, float shipCardHeight) {
         this.style = new SkillTreePanelStyle(symbolPath);
@@ -55,17 +57,29 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
             if (event.isLMBDownEvent() && position.containsEvent(event)) {
                 if (!statPanel.handleClick(position, event.getX(), event.getY())) {
-                    SkillNode clicked = nodeRenderer.findNodeAt(centerX(), centerY(), zoom, event.getX(), event.getY());
-                    if (clicked != null) {
-                        pendingClickNode = clicked;
+                    if (nodeRenderer.isDropdownOpen()) {
+                        SkillType option = nodeRenderer.findDropdownOptionAt(centerX(), centerY(), zoom, event.getX(), event.getY());
+                        if (option != null) {
+                            pendingDropdownOption = option;
+                        } else {
+                            nodeRenderer.closeDropdown();
+                        }
                     } else {
-                        dragging = true;
+                        SkillNode clicked = nodeRenderer.findNodeAt(centerX(), centerY(), zoom, event.getX(), event.getY());
+                        if (clicked != null) {
+                            pendingClickNode = clicked;
+                        } else {
+                            dragging = true;
+                        }
                     }
                 }
                 event.consume();
             } else if (event.isLMBUpEvent()) {
                 dragging = false;
-                if (pendingClickNode != null) {
+                if (pendingDropdownOption != null) {
+                    nodeRenderer.commitDropdownSelection(pendingDropdownOption);
+                    pendingDropdownOption = null;
+                } else if (pendingClickNode != null) {
                     nodeRenderer.toggleAllocation(pendingClickNode);
                     pendingClickNode = null;
                 }
@@ -96,7 +110,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         float centerX = centerX();
         float centerY = centerY();
 
-        nodeRenderer.render(centerX, centerY, zoom, alphaMult);
+        nodeRenderer.render(centerX, centerY, zoom, alphaMult, mouseX, mouseY, mouseKnown);
         statPanel.render(position, alphaMult);
         drawShipCardFrame(alphaMult);
 

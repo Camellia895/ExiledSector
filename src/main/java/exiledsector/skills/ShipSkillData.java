@@ -1,18 +1,34 @@
 package exiledsector.skills;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 
 public class ShipSkillData {
 
     private final Set<String> allocatedNodeIds = new LinkedHashSet<>();
+    private Map<String, String> optionalSelections = new LinkedHashMap<>();
     private int spentOp = 0;
     private float xp = 0f;
 
     public boolean isAllocated(String nodeId) {
         return allocatedNodeIds.contains(nodeId);
+    }
+
+    public String getOptionalSelection(String nodeId) {
+        if (optionalSelections == null) return null;
+        return optionalSelections.get(nodeId);
+    }
+
+    public void selectOption(SkillNode node, SkillType chosenOption) {
+        allocatedNodeIds.add(node.getId());
+        if (optionalSelections == null) optionalSelections = new LinkedHashMap<>();
+        optionalSelections.put(node.getId(), chosenOption.getId());
+        spentOp += chosenOption.getOpCost();
+        xp -= chosenOption.getXpCost();
     }
 
     public boolean isSatisfied(String nodeId, String satisfiedRootId) {
@@ -43,6 +59,15 @@ public class ShipSkillData {
 
     public void deallocate(SkillNode node) {
         allocatedNodeIds.remove(node.getId());
+        String selectedOptionId = optionalSelections == null ? null : optionalSelections.remove(node.getId());
+        if (selectedOptionId != null) {
+            SkillType chosenOption = SkillTree.getType(selectedOptionId);
+            if (chosenOption != null) {
+                spentOp -= chosenOption.getOpCost();
+                xp += chosenOption.getXpCost();
+                return;
+            }
+        }
         spentOp -= node.getOpCost();
         xp += node.getXpCost();
     }

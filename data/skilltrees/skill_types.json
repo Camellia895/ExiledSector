@@ -987,6 +987,21 @@
 			"tags": [
 				"fighter"
 			]
+		},
+		{
+			"id": "small_logistics_optional",
+			"name": "Fuel, Crew or Cargo",
+			"icon": "",
+			"opCost": 4,
+			"xpCost": 2000,
+			"optionalOptions": [
+				"increased_fuel",
+				"increased_cargo",
+				"increased_crew"
+			],
+			"tags": [
+				"logistics"
+			]
 		}
 	]
 }

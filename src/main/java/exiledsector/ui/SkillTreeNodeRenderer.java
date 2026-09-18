@@ -20,9 +20,11 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -75,6 +77,13 @@ final class SkillTreeNodeRenderer {
     private static final float NODE_CONNECTOR_GLOW_HALO_THICKNESS = 7f;
     private static final float NODE_CONNECTOR_GLOW_HALO_ALPHA = 0.35f;
 
+    private static final String OPTIONAL_NODE_HINT = "Click to choose an option.";
+    private static final float DROPDOWN_FONT_SIZE = TOOLTIP_BODY_FONT_SIZE;
+    private static final float DROPDOWN_ROW_PADDING = 8f;
+    private static final float DROPDOWN_ROW_GAP = 2f;
+    private static final float DROPDOWN_TOP_OFFSET = 24f;
+    private static final float DROPDOWN_HOVER_ALPHA = 0.35f;
+
     private final String symbolPath;
     private final FleetMemberAPI member;
     private final SkillTreePanelStyle style;
@@ -82,7 +91,11 @@ final class SkillTreeNodeRenderer {
     private final Set<String> loadedSprites = new HashSet<>();
     private final Map<String, SkillTreePanelStyle.TooltipText> tooltipTitles = new HashMap<>();
     private final Map<String, SkillTreePanelStyle.TooltipText> tooltipBodies = new HashMap<>();
+    private final Map<String, SkillTreePanelStyle.TooltipText> typeTooltipTitles = new HashMap<>();
+    private final Map<String, SkillTreePanelStyle.TooltipText> typeTooltipBodies = new HashMap<>();
+    private final Map<String, LazyFont.DrawableString> dropdownRowText = new HashMap<>();
     private final Map<String, Float> pulseElapsed = new HashMap<>();
+    private SkillNode openDropdownNode;
 
     SkillTreeNodeRenderer(String symbolPath, FleetMemberAPI member, SkillTreePanelStyle style) {
         this.symbolPath = symbolPath;
@@ -110,7 +123,7 @@ final class SkillTreeNodeRenderer {
         }
     }
 
-    void render(float centerX, float centerY, float zoom, float alphaMult) {
+    void render(float centerX, float centerY, float zoom, float alphaMult, float mouseX, float mouseY, boolean mouseKnown) {
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
 
         float shipX = centerX;
@@ -129,14 +142,16 @@ final class SkillTreeNodeRenderer {
             float nodeY = centerY - node.getOffsetY() * zoom;
             boolean allocated = data.isAllocated(node.getId());
             SkillTier tier = node.getType().getTier();
+            SkillType effectiveType = node.resolveEffectiveType(data);
             float footprintSize = NODE_SIZE * zoom * tier.getSizeMultiplier();
             float iconSize = footprintSize * iconSizeMultiplier(tier);
 
-            drawIcon(node.getIconPath(), nodeX, nodeY, iconSize, alphaMult, allocated ? ALLOCATED_TINT : UNALLOCATED_TINT);
+            drawIcon(effectiveType.getIconPath(), nodeX, nodeY, iconSize, alphaMult, allocated ? ALLOCATED_TINT : UNALLOCATED_TINT);
             drawRings(nodeX, nodeY, footprintSize, alphaMult, allocated, pulseElapsed.get(node.getId()), tier);
         }
 
         drawNodeConnectors(centerX, centerY, zoom, data, alphaMult);
+        renderDropdown(centerX, centerY, zoom, mouseX, mouseY, mouseKnown, alphaMult);
     }
 
     private static String rootTypeId(ShipTechLevel techLevel) {
@@ -157,6 +172,18 @@ final class SkillTreeNodeRenderer {
     }
 
     void renderHoverTooltip(float centerX, float centerY, float zoom, float mouseX, float mouseY, float alphaMult) {
+        if (openDropdownNode != null) {
+            LazyFont font = style.getFont();
+            if (font == null) return;
+            for (DropdownRow row : computeDropdownRows(centerX, centerY, zoom, font)) {
+                if (row.contains(mouseX, mouseY)) {
+                    renderTooltipForType(row.option, mouseX, mouseY, alphaMult);
+                    return;
+                }
+            }
+            return;
+        }
+
         SkillNode hovered = findNodeAt(centerX, centerY, zoom, mouseX, mouseY);
         if (hovered != null) {
             renderTooltip(hovered, mouseX, mouseY, alphaMult);
@@ -180,23 +207,67 @@ final class SkillTreeNodeRenderer {
     void toggleAllocation(SkillNode node) {
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
         boolean wasAllocated = data.isAllocated(node.getId());
+
+        if (!wasAllocated && node.getType().isOptional()) {
+            if (data.canAllocate(node, satisfiedRootId())) {
+                openDropdownNode = node;
+            }
+            return;
+        }
+
         if (wasAllocated && blockDeallocationReason(node) != null) {
             return;
         }
         data.toggle(node, SkillTree.getAllNodes().values(), satisfiedRootId());
         boolean isAllocatedNow = data.isAllocated(node.getId());
         if (isAllocatedNow != wasAllocated) {
-            member.setStatUpdateNeeded(true);
-            member.updateStats();
-            new SkillTreeHullMod().applyEffectsBeforeShipCreation(member.getHullSpec().getHullSize(), member.getStats(), SkillTreeHullMod.ID);
-            if (isAllocatedNow) {
-                pulseElapsed.put(node.getId(), 0f);
+            refreshAfterAllocationChange(node, isAllocatedNow);
+        }
+    }
+
+    boolean isDropdownOpen() {
+        return openDropdownNode != null;
+    }
+
+    void closeDropdown() {
+        openDropdownNode = null;
+    }
+
+    SkillType findDropdownOptionAt(float centerX, float centerY, float zoom, float x, float y) {
+        LazyFont font = style.getFont();
+        if (font == null) return null;
+        for (DropdownRow row : computeDropdownRows(centerX, centerY, zoom, font)) {
+            if (row.contains(x, y)) {
+                return row.option;
             }
+        }
+        return null;
+    }
+
+    void commitDropdownSelection(SkillType chosenOption) {
+        SkillNode node = openDropdownNode;
+        openDropdownNode = null;
+        if (node == null) return;
+
+        ShipSkillData data = ShipSkillDataManager.get(member.getId());
+        data.selectOption(node, chosenOption);
+        refreshAfterAllocationChange(node, true);
+    }
+
+    private void refreshAfterAllocationChange(SkillNode node, boolean isAllocatedNow) {
+        tooltipTitles.remove(node.getId());
+        tooltipBodies.remove(node.getId());
+        member.setStatUpdateNeeded(true);
+        member.updateStats();
+        new SkillTreeHullMod().applyEffectsBeforeShipCreation(member.getHullSpec().getHullSize(), member.getStats(), SkillTreeHullMod.ID);
+        if (isAllocatedNow) {
+            pulseElapsed.put(node.getId(), 0f);
         }
     }
 
     private String blockDeallocationReason(SkillNode node) {
-        SkillType type = node.getType();
+        ShipSkillData data = ShipSkillDataManager.get(member.getId());
+        SkillType type = node.resolveEffectiveType(data);
         for (SkillTypeEffect effect : type.getEffects()) {
             String reason = effect.effect().blockDeallocationReason(member, effect.magnitude());
             if (reason != null) return reason;
@@ -207,6 +278,107 @@ final class SkillTreeNodeRenderer {
             if (reason != null) return reason;
         }
         return null;
+    }
+
+    private List<DropdownRow> computeDropdownRows(float centerX, float centerY, float zoom, LazyFont font) {
+        List<DropdownRow> rows = new ArrayList<>();
+        if (openDropdownNode == null) return rows;
+
+        List<SkillType> options = new ArrayList<>();
+        for (String optionId : openDropdownNode.getType().getOptionalOptionIds()) {
+            SkillType option = SkillTree.getType(optionId);
+            if (option != null) options.add(option);
+        }
+        if (options.isEmpty()) return rows;
+
+        float nodeX = centerX + openDropdownNode.getOffsetX() * zoom;
+        float nodeY = centerY - openDropdownNode.getOffsetY() * zoom;
+
+        float width = 0f;
+        for (SkillType option : options) {
+            width = Math.max(width, font.calcWidth(option.getDisplayName(), DROPDOWN_FONT_SIZE));
+        }
+        width += DROPDOWN_ROW_PADDING * 2f;
+
+        float rowHeight = DROPDOWN_FONT_SIZE * FONT_LINE_HEIGHT_FACTOR + DROPDOWN_ROW_PADDING * 2f;
+        float x = nodeX - width / 2f;
+        float topY = nodeY - DROPDOWN_TOP_OFFSET;
+
+        for (int i = 0; i < options.size(); i++) {
+            float rowTop = topY - i * (rowHeight + DROPDOWN_ROW_GAP);
+            rows.add(new DropdownRow(options.get(i), x, rowTop - rowHeight, width, rowHeight));
+        }
+        return rows;
+    }
+
+    private void renderDropdown(float centerX, float centerY, float zoom, float mouseX, float mouseY, boolean mouseKnown, float alphaMult) {
+        if (openDropdownNode == null) return;
+        LazyFont font = style.getFont();
+        if (font == null) return;
+
+        List<DropdownRow> rows = computeDropdownRows(centerX, centerY, zoom, font);
+        if (rows.isEmpty()) return;
+
+        float minX = Float.MAX_VALUE, minY = Float.MAX_VALUE, maxX = -Float.MAX_VALUE, maxY = -Float.MAX_VALUE;
+        for (DropdownRow row : rows) {
+            minX = Math.min(minX, row.x);
+            minY = Math.min(minY, row.y);
+            maxX = Math.max(maxX, row.x + row.width);
+            maxY = Math.max(maxY, row.y + row.height);
+        }
+        style.drawTooltipBackground(minX, minY, maxX - minX, maxY - minY, alphaMult, style.getAccentColor());
+
+        for (DropdownRow row : rows) {
+            if (mouseKnown && row.contains(mouseX, mouseY)) {
+                drawDropdownRowHighlight(row, alphaMult);
+            }
+            LazyFont.DrawableString text = getDropdownRowText(font, row.option);
+            float textY = row.y + row.height / 2f + (DROPDOWN_FONT_SIZE * FONT_LINE_HEIGHT_FACTOR) / 2f;
+            text.draw(row.x + DROPDOWN_ROW_PADDING, textY);
+        }
+    }
+
+    private void drawDropdownRowHighlight(DropdownRow row, float alphaMult) {
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        Misc.setColor(GLOW_COLOR, DROPDOWN_HOVER_ALPHA * alphaMult);
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glVertex2f(row.x, row.y);
+        GL11.glVertex2f(row.x + row.width, row.y);
+        GL11.glVertex2f(row.x + row.width, row.y + row.height);
+        GL11.glVertex2f(row.x, row.y + row.height);
+        GL11.glEnd();
+        GL11.glDisable(GL11.GL_BLEND);
+    }
+
+    private LazyFont.DrawableString getDropdownRowText(LazyFont font, SkillType option) {
+        return dropdownRowText.computeIfAbsent(option.getId(), id -> {
+            LazyFont.DrawableString text = font.createText(option.getDisplayName(), TOOLTIP_BODY_COLOR, DROPDOWN_FONT_SIZE);
+            text.setAnchor(LazyFont.TextAnchor.TOP_LEFT);
+            text.setAlignment(LazyFont.TextAlignment.LEFT);
+            return text;
+        });
+    }
+
+    private static final class DropdownRow {
+        final SkillType option;
+        final float x;
+        final float y;
+        final float width;
+        final float height;
+
+        DropdownRow(SkillType option, float x, float y, float width, float height) {
+            this.option = option;
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+        }
+
+        boolean contains(float px, float py) {
+            return px >= x && px <= x + width && py >= y && py <= y + height;
+        }
     }
 
     private boolean ensureTextureLoaded(String spritePath) {
@@ -423,11 +595,34 @@ final class SkillTreeNodeRenderer {
         LazyFont font = style.getFont();
         if (font == null) return;
 
-        SkillTreePanelStyle.TooltipText title = tooltipTitles.computeIfAbsent(node.getId(),
-                id -> buildTooltipText(font, node.getDisplayName(), TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR));
-        SkillTreePanelStyle.TooltipText body = tooltipBodies.computeIfAbsent(node.getId(),
-                id -> buildTooltipText(font, node.getDescription(member.getHullSpec().getHullSize()), TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR));
+        ShipSkillData data = ShipSkillDataManager.get(member.getId());
+        SkillType effectiveType = node.resolveEffectiveType(data);
+        boolean showOptionalHint = effectiveType == node.getType() && effectiveType.isOptional()
+                && effectiveType.getDescriptionOverride() == null;
 
+        SkillTreePanelStyle.TooltipText title = tooltipTitles.computeIfAbsent(node.getId(),
+                id -> buildTooltipText(font, effectiveType.getDisplayName(), TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR));
+        SkillTreePanelStyle.TooltipText body = tooltipBodies.computeIfAbsent(node.getId(),
+                id -> buildTooltipText(font,
+                        showOptionalHint ? OPTIONAL_NODE_HINT : SkillNode.describeType(effectiveType, member.getHullSpec().getHullSize()),
+                        TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR));
+
+        drawTooltipBox(title, body, mouseX, mouseY, alphaMult);
+    }
+
+    private void renderTooltipForType(SkillType type, float mouseX, float mouseY, float alphaMult) {
+        LazyFont font = style.getFont();
+        if (font == null) return;
+
+        SkillTreePanelStyle.TooltipText title = typeTooltipTitles.computeIfAbsent(type.getId(),
+                id -> buildTooltipText(font, type.getDisplayName(), TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR));
+        SkillTreePanelStyle.TooltipText body = typeTooltipBodies.computeIfAbsent(type.getId(),
+                id -> buildTooltipText(font, SkillNode.describeType(type, member.getHullSpec().getHullSize()), TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR));
+
+        drawTooltipBox(title, body, mouseX, mouseY, alphaMult);
+    }
+
+    private void drawTooltipBox(SkillTreePanelStyle.TooltipText title, SkillTreePanelStyle.TooltipText body, float mouseX, float mouseY, float alphaMult) {
         float boxWidth = Math.max(title.width, body.width) + TOOLTIP_PADDING * 2f + TOOLTIP_WIDTH_SAFETY_MARGIN;
         float boxHeight = title.height + TOOLTIP_TITLE_BODY_GAP + body.height + TOOLTIP_PADDING * 2f;
         float boxX = mouseX + TOOLTIP_CURSOR_OFFSET;

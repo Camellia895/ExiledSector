@@ -229,6 +229,15 @@
   .smallBtn:hover { border-color: var(--accent-dim); color: var(--text); }
   .smallBtn.danger:hover { border-color: var(--danger); color: var(--danger); }
   .smallBtn.primary { background: var(--accent-dim); border-color: var(--accent); color: var(--text); }
+  .smallBtn .key {
+    margin-left: 6px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-faint);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 1px 4px;
+  }
   .btnRow { display: flex; gap: 6px; flex-wrap: wrap; }
 
   #canvasWrap {
@@ -238,7 +247,6 @@
     background: var(--canvas-bg);
   }
   #canvasWrap.mode-add { cursor: copy; }
-  #canvasWrap.mode-link { cursor: crosshair; }
   svg#stage { width: 100%; height: 100%; display: block; }
   .node-circle { cursor: grab; transition: stroke-width .08s; }
   .node-circle:active { cursor: grabbing; }
@@ -442,10 +450,9 @@
   <div id="toolbar">
     <div class="toolSection">
       <div class="label">Mode</div>
-      <button class="modeBtn active" data-mode="select">Select / Move <span class="key">V</span></button>
-      <button class="modeBtn" data-mode="add">Add Node <span class="key">A</span></button>
-      <button class="modeBtn" data-mode="link">Link / Unlink <span class="key">L</span></button>
-      <div class="hint">Select: drag a node to move it, drag empty canvas to pan, scroll to zoom. Shift-click a node to add/remove it from a multi-selection, or shift-drag empty canvas to marquee-select. Drag any selected node to move the whole group together.<br><br>Add: click empty canvas to place a node there.<br><br>Link: click two nodes to connect them - each is added to the other's connections, so allocating either one lets you allocate the other. Click the same pair again to unlink.</div>
+      <button class="modeBtn active" data-mode="select">Select / Move <span class="key">A</span></button>
+      <button class="modeBtn" data-mode="add">Add Node <span class="key">S</span></button>
+      <div class="hint">Select: drag a node to move it, drag empty canvas to pan, scroll to zoom. Shift-click a node to add/remove it from a multi-selection, or shift-drag empty canvas to marquee-select. Drag any selected node to move the whole group together. With a single node selected, Ctrl-click another node to link/unlink it to the selection - each is added to the other's connections, so allocating either one lets you allocate the other. Ctrl-click the same pair again to unlink.<br><br>Add: click empty canvas to place a node there.</div>
     </div>
 
     <div class="toolSection">
@@ -585,7 +592,8 @@ var SHIPPED_TYPES = [
 {"id":"increased_cargo","name":"Increased Cargo Capacity","icon":"graphics/icons/circular/small_passives/bulk_transport.png","opCost":2,"xpCost":500,"effects":[{"effect":"CARGO_CAPACITY","magnitude":15}],"tags":["logistics"]},
 {"id":"increased_crew","name":"Increased Crew Capacity","icon":"graphics/icons/circular/small_passives/crew_training.png","opCost":2,"xpCost":500,"effects":[{"effect":"CREW_CAPACITY","magnitude":10}],"tags":["logistics"]},
 {"id":"fighter_weapon_damage","name":"Fighter Weapon Damage","icon":"graphics/icons/circular/small_passives/fighter_uplink2.png","opCost":2,"xpCost":500,"description":"Increases the weapon damage of fighters launched from this ship.","todo":"Fighters are separate ships spawned from the carrier\u0027s bays, so this can\u0027t be applied through the carrier\u0027s own MutableShipStatsAPI like other effects - it needs a combat-time hook that finds each fighter\u0027s source ship and applies the bonus to the fighter\u0027s own stats. Not yet built.","tags":["fighter"]},
-{"id":"fighter_speed","name":"Fighter Speed","icon":"graphics/icons/circular/small_passives/wing_commander.png","opCost":2,"xpCost":500,"description":"Increases the top speed of fighters launched from this ship.","todo":"Same limitation as fighter_weapon_damage - needs a combat-time hook targeting launched fighters, not yet built.","tags":["fighter"]}
+{"id":"fighter_speed","name":"Fighter Speed","icon":"graphics/icons/circular/small_passives/wing_commander.png","opCost":2,"xpCost":500,"description":"Increases the top speed of fighters launched from this ship.","todo":"Same limitation as fighter_weapon_damage - needs a combat-time hook targeting launched fighters, not yet built.","tags":["fighter"]},
+{"id":"small_logistics_optional","name":"Fuel, Crew or Cargo","icon":"graphics/icons/circular/small_passives/compact_storage.png","opCost":4,"xpCost":2000,"optionalOptions":["increased_fuel","increased_cargo","increased_crew"],"tags":["logistics"]}
 ];
 
 var SHIPPED_NODES = [
@@ -657,18 +665,18 @@ var SHIPPED_NODES = [
 {"id":"flux_capacity_2","type":"flux_capacity","connectedTo":[],"x":-633,"y":-898},
 {"id":"non_beam_energy_damage_2","type":"non_beam_energy_damage","connectedTo":["non_beam_energy_damage_1","non_beam_energy_damage_3"],"x":-959,"y":-105},
 {"id":"non_beam_energy_damage_3","type":"non_beam_energy_damage","connectedTo":["non_beam_energy_damage_2"],"x":-1043,"y":-83},
-{"id":"root_low_tech_1","type":"root_low_tech","connectedTo":["increased_cargo_2","increased_crew_2","increased_fuel_3"],"x":993,"y":506},
+{"id":"root_low_tech_1","type":"root_low_tech","connectedTo":["increased_cargo_2","increased_crew_2","increased_fuel_3"],"x":806,"y":468},
 {"id":"root_midline_1","type":"root_midline","connectedTo":["increased_cargo_3","increased_crew_3","increased_fuel_2"],"x":-837,"y":536},
-{"id":"root_high_tech_1","type":"root_high_tech","connectedTo":["increased_crew_1","increased_cargo_1","increased_fuel_1"],"x":-4,"y":-577},
+{"id":"root_high_tech_1","type":"root_high_tech","connectedTo":["increased_crew_1","increased_cargo_1","increased_fuel_1","small_logistics_optional_1"],"x":-4,"y":-577},
 {"id":"increased_fuel_1","type":"increased_fuel","connectedTo":["root_high_tech_1","increased_cargo_1","increased_fuel_4"],"x":-167,"y":-420},
 {"id":"increased_cargo_1","type":"increased_cargo","connectedTo":["root_high_tech_1","increased_fuel_1","increased_crew_1"],"x":-3,"y":-467},
 {"id":"increased_crew_1","type":"increased_crew","connectedTo":["root_high_tech_1","increased_cargo_1"],"x":178,"y":-425},
 {"id":"fighter_weapon_damage_1","type":"fighter_weapon_damage","connectedTo":[],"x":881,"y":-595},
 {"id":"fighter_speed_1","type":"fighter_speed","connectedTo":[],"x":997,"y":-581},
 {"id":"increased_fuel_2","type":"increased_fuel","connectedTo":["root_midline_1","increased_cargo_3"],"x":-653,"y":607},
-{"id":"increased_fuel_3","type":"increased_fuel","connectedTo":["root_low_tech_1","increased_cargo_2"],"x":937,"y":356},
-{"id":"increased_cargo_2","type":"increased_cargo","connectedTo":["root_low_tech_1","increased_fuel_3","increased_crew_2"],"x":868,"y":444},
-{"id":"increased_crew_2","type":"increased_crew","connectedTo":["root_low_tech_1","increased_cargo_2"],"x":841,"y":556},
+{"id":"increased_fuel_3","type":"increased_fuel","connectedTo":["root_low_tech_1","increased_cargo_2"],"x":750,"y":318},
+{"id":"increased_cargo_2","type":"increased_cargo","connectedTo":["root_low_tech_1","increased_fuel_3","increased_crew_2"],"x":681,"y":406},
+{"id":"increased_crew_2","type":"increased_crew","connectedTo":["root_low_tech_1","increased_cargo_2"],"x":654,"y":518},
 {"id":"increased_crew_3","type":"increased_crew","connectedTo":["root_midline_1","increased_cargo_3","increased_crew_4"],"x":-773,"y":338},
 {"id":"increased_cargo_3","type":"increased_cargo","connectedTo":["root_midline_1","increased_fuel_2","increased_crew_3"],"x":-668,"y":454},
 {"id":"increased_fuel_4","type":"increased_fuel","connectedTo":["increased_fuel_7","increased_fuel_1"],"x":-269,"y":-349},
@@ -677,7 +685,8 @@ var SHIPPED_NODES = [
 {"id":"increased_fuel_7","type":"increased_fuel","connectedTo":["increased_fuel_6","increased_fuel_4"],"x":-365,"y":-273},
 {"id":"increased_crew_4","type":"increased_crew","connectedTo":["increased_crew_3","increased_crew_5"],"x":-732,"y":222},
 {"id":"increased_crew_5","type":"increased_crew","connectedTo":["increased_crew_4","increased_crew_6"],"x":-686,"y":120},
-{"id":"increased_crew_6","type":"increased_crew","connectedTo":["increased_crew_5"],"x":-627,"y":7}
+{"id":"increased_crew_6","type":"increased_crew","connectedTo":["increased_crew_5"],"x":-627,"y":7},
+{"id":"small_logistics_optional_1","type":"small_logistics_optional","connectedTo":["root_high_tech_1"],"x":79,"y":-337}
 ];
 
 var SMALL_R = 11, NOTABLE_R = 17, KEYSTONE_R = 23, ROOT_R = 20;
@@ -701,7 +710,6 @@ var state = {
   view: { panX: 0, panY: 0, zoom: 0.55 },
   mode: 'select',
   selectedIds: [],
-  linkFirst: null,
   showLabels: true,
   search: ''
 };
@@ -843,7 +851,6 @@ function render(){
     c.setAttribute('fill-opacity', dim ? 0.25 : (isSelected ? 1 : 0.85));
     c.setAttribute('stroke', isSelected ? getComputedStyle(document.documentElement).getPropertyValue('--text').trim() : 'rgba(0,0,0,.25)');
     c.setAttribute('stroke-width', isSelected ? 2.5 : 1);
-    if (n.id === state.linkFirst) { c.setAttribute('stroke', getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()); c.setAttribute('stroke-width', 3); }
     c.dataset.nodeId = n.id;
     layerNodes.appendChild(c);
 
@@ -898,11 +905,12 @@ function attachNodeHandlers(){
     c.addEventListener('pointerdown', function(ev){
       ev.stopPropagation();
       var id = c.dataset.nodeId;
-      if (state.mode === 'link') {
-        handleLinkClick(id);
+      if (state.mode === 'add') return;
+
+      if ((ev.ctrlKey || ev.metaKey) && state.selectedIds.length === 1 && state.selectedIds[0] !== id) {
+        toggleLink(state.selectedIds[0], id);
         return;
       }
-      if (state.mode === 'add') return;
 
       if (ev.shiftKey) {
         toggleNodeSelection(id);
@@ -936,7 +944,6 @@ canvasWrap.addEventListener('pointerdown', function(ev){
     openAddNodeModal(Math.round(w.x), Math.round(w.y));
     return;
   }
-  if (state.mode === 'link') { state.linkFirst = null; render(); return; }
   if (ev.shiftKey) {
     drag = { marquee: true, startClientX: ev.clientX, startClientY: ev.clientY };
     return;
@@ -1023,12 +1030,9 @@ canvasWrap.addEventListener('wheel', function(ev){
   render();
 }, { passive: false });
 
-function handleLinkClick(id){
-  if (!state.linkFirst) { state.linkFirst = id; render(); return; }
-  if (state.linkFirst === id) { state.linkFirst = null; render(); return; }
-  var a = nodeById(state.linkFirst), b = nodeById(id);
-  state.linkFirst = null;
-  if (!a || !b) { render(); return; }
+function toggleLink(aId, bId){
+  var a = nodeById(aId), b = nodeById(bId);
+  if (!a || !b) return;
   var idx = a.connectedTo.indexOf(b.id);
   if (idx === -1) {
     a.connectedTo.push(b.id);
@@ -1057,17 +1061,23 @@ document.querySelectorAll('.modeBtn').forEach(function(btn){
     document.querySelectorAll('.modeBtn').forEach(function(b){ b.classList.remove('active'); });
     btn.classList.add('active');
     state.mode = btn.dataset.mode;
-    state.linkFirst = null;
     canvasWrap.className = 'mode-' + state.mode;
     render();
   });
 });
 document.addEventListener('keydown', function(ev){
   if (ev.target.tagName === 'INPUT' || ev.target.tagName === 'TEXTAREA' || ev.target.tagName === 'SELECT') return;
-  var map = { 'v': 'select', 'a': 'add', 'l': 'link' };
-  var m = map[ev.key.toLowerCase()];
-  if (m) { document.querySelector('.modeBtn[data-mode="'+m+'"]').click(); }
+  if (!ev.ctrlKey && !ev.metaKey) {
+    var map = { 'a': 'select', 's': 'add' };
+    var m = map[ev.key.toLowerCase()];
+    if (m) { document.querySelector('.modeBtn[data-mode="'+m+'"]').click(); }
+    if (ev.key === 'q' || ev.key === 'Q') { if (state.selectedIds.length > 0) deleteSelectedNodes(); }
+  }
   if (ev.key === 'Delete' || ev.key === 'Backspace') { if (state.selectedIds.length > 0) deleteSelectedNodes(); }
+  if ((ev.key === 'd' || ev.key === 'D') && (ev.ctrlKey || ev.metaKey)) {
+    ev.preventDefault();
+    if (state.selectedIds.length === 1) { duplicateNode(nodeById(state.selectedIds[0])); }
+  }
   if (ev.key === 'Escape' && state.selectedIds.length > 0) {
     state.selectedIds = [];
     document.getElementById('inspector').classList.remove('open');
@@ -1146,9 +1156,9 @@ function refreshInspector(){
     '<div class="hint">Type "' + n.type + '" - opCost ' + (t?t.opCost:'?') + ', xpCost ' + (t?t.xpCost:'?') + (t && t.vanillaHullMod ? ', vanillaHullMod: ' + t.vanillaHullMod : '') + (t && t.todo ? ' [TODO: ' + t.todo + ']' : '') + '</div>' +
     '<div class="btnRow">' +
       '<button class="smallBtn" id="editTypeBtn">Edit type "' + n.type + '"</button>' +
-      '<button class="smallBtn" id="duplicateBtn">Duplicate node</button>' +
+      '<button class="smallBtn" id="duplicateBtn">Duplicate node <span class="key">Ctrl+D</span></button>' +
     '</div>' +
-    '<button class="smallBtn danger" id="deleteNodeBtn">Delete this node</button>';
+    '<button class="smallBtn danger" id="deleteNodeBtn">Delete this node <span class="key">Q</span></button>';
 
   body.querySelectorAll('[data-field]').forEach(function(inp){
     inp.addEventListener('change', function(){
@@ -1252,22 +1262,24 @@ function refreshInspector(){
     }
   }
   document.getElementById('deleteNodeBtn').addEventListener('click', deleteSelectedNodes);
-  document.getElementById('duplicateBtn').addEventListener('click', function(){
-    var copy = deepCopy(n);
-    copy.id = uniqueNodeId(n.type);
-    copy.x = n.x + 40; copy.y = n.y - 40;
-    copy.connectedTo = deepCopy(n.connectedTo);
-    copy.connectedTo.forEach(function(pid){
-      var other = nodeById(pid);
-      if (other && other.connectedTo.indexOf(copy.id) === -1) other.connectedTo.push(copy.id);
-    });
-    state.nodes.push(copy);
-    selectNode(copy.id);
-    saveLocal();
-  });
+  document.getElementById('duplicateBtn').addEventListener('click', function(){ duplicateNode(n); });
   document.getElementById('editTypeBtn').addEventListener('click', function(){
     openTypeModal(t);
   });
+}
+
+function duplicateNode(n){
+  var copy = deepCopy(n);
+  copy.id = uniqueNodeId(n.type);
+  copy.x = n.x + 40; copy.y = n.y - 40;
+  copy.connectedTo = deepCopy(n.connectedTo);
+  copy.connectedTo.forEach(function(pid){
+    var other = nodeById(pid);
+    if (other && other.connectedTo.indexOf(copy.id) === -1) other.connectedTo.push(copy.id);
+  });
+  state.nodes.push(copy);
+  selectNode(copy.id);
+  saveLocal();
 }
 
 function uniqueNodeId(typeId){
@@ -1279,10 +1291,6 @@ function uniqueNodeId(typeId){
 function deleteSelectedNodes(){
   var ids = state.selectedIds;
   if (ids.length === 0) return;
-  var message = ids.length === 1
-    ? 'Delete node "' + ids[0] + '"? It will also be removed from other nodes\' connections.'
-    : 'Delete ' + ids.length + ' selected nodes? They will also be removed from other nodes\' connections.';
-  if (!confirm(message)) return;
   state.nodes = state.nodes.filter(function(o){ return ids.indexOf(o.id) === -1; });
   state.nodes.forEach(function(o){
     o.connectedTo = o.connectedTo.filter(function(pid){ return ids.indexOf(pid) === -1; });
@@ -1305,7 +1313,7 @@ function refreshMultiInspector(body){
     '<div class="hint">Drag any of them to move the whole group together. Shift-click a node to add/remove it from this selection.</div>' +
     '<div class="prereqList">' + idsList + '</div>' +
     '<div class="btnRow"><button class="smallBtn" id="clearSelectionBtn">Clear selection</button></div>' +
-    '<button class="smallBtn danger" id="deleteNodesBtn">Delete ' + state.selectedIds.length + ' nodes</button>';
+    '<button class="smallBtn danger" id="deleteNodesBtn">Delete ' + state.selectedIds.length + ' nodes <span class="key">Q</span></button>';
   document.getElementById('clearSelectionBtn').addEventListener('click', function(){
     state.selectedIds = [];
     document.getElementById('inspector').classList.remove('open');
@@ -1378,6 +1386,18 @@ function renderTagChips(idPrefix, activeTags){
   }).join('') + '</div>';
 }
 
+function renderOptionalOptionsSelect(currentTier, selectedIds, selfId){
+  var candidates = state.types.filter(function(ty){ return tierOf(ty) === currentTier && ty.id !== selfId; });
+  if (!candidates.length) {
+    return '<select id="tOptionalOptions" multiple size="6" disabled><option disabled>No other ' + currentTier + ' types exist yet</option></select>';
+  }
+  var opts = candidates.map(function(ty){
+    var sel = selectedIds.indexOf(ty.id) !== -1 ? ' selected' : '';
+    return '<option value="' + ty.id + '"' + sel + '>' + (ty.name || ty.id) + '</option>';
+  }).join('');
+  return '<select id="tOptionalOptions" multiple size="6">' + opts + '</select>';
+}
+
 function renderHullSizeEffectRows(idPrefix, hullSizeEffectsDraft){
   var rows = hullSizeEffectsDraft.map(function(e, i){
     var options = EFFECT_NAMES.map(function(name){ return '<option value="'+name+'"'+(name===e.effect?' selected':'')+'>'+name+'</option>'; }).join('');
@@ -1407,7 +1427,7 @@ function syncHullSizeEffectsFromInputs(idPrefix, hullSizeEffectsDraft){
 
 function openTypeModal(existingType, onSave){
   var isNew = !existingType;
-  var t = existingType ? deepCopy(existingType) : { id: '', name: '', icon: '', opCost: 4, xpCost: 2000, tier: 'NOTABLE', vanillaHullMod: '', description: '', todo: '', tags: [] };
+  var t = existingType ? deepCopy(existingType) : { id: '', name: '', icon: '', opCost: 4, xpCost: 2000, tier: 'NOTABLE', vanillaHullMod: '', description: '', todo: '', tags: [], optionalOptions: [] };
   var effectsDraft = deepCopy(t.effects || []);
   var hullSizeEffectsDraft = deepCopy(t.hullSizeEffects || []);
   var tagsDraft = deepCopy(t.tags || []);
@@ -1422,6 +1442,10 @@ function openTypeModal(existingType, onSave){
     t.xpCost = document.getElementById('tXp').value;
     t.tier = document.getElementById('tTier').value;
     t.vanillaHullMod = document.getElementById('tVanilla').value;
+    var optSelect = document.getElementById('tOptionalOptions');
+    if (optSelect) {
+      t.optionalOptions = Array.from(optSelect.selectedOptions).map(function(o){ return o.value; }).filter(function(v){ return v; });
+    }
     t.description = document.getElementById('tDescription').value;
     t.todo = document.getElementById('tTodo').value;
     effectsDraft.forEach(function(e, i){
@@ -1466,6 +1490,9 @@ function openTypeModal(existingType, onSave){
       '<div class="btnRow"><button class="smallBtn" type="button" id="addHsEffectRowBtn">+ Add hull-size effect</button></div>' +
       '<hr class="sep">' +
       '<div class="field"><label>vanillaHullMod id</label><input id="tVanilla" value="' + (t.vanillaHullMod||'') + '"></div>' +
+      '<hr class="sep">' +
+      '<div class="hint">Optional slot options - pick other types of the same tier this node can resolve to (ctrl/cmd-click to select several). Non-empty means this node renders as a dropdown picker instead of a fixed effect: clicking it while unallocated opens the dropdown, picking an option allocates and applies that option\\u0027s cost/effects, and deallocating it reverts it to this unselected placeholder.</div>' +
+      '<div class="field"><label>Optional slot options</label>' + renderOptionalOptionsSelect(tierOf(t), t.optionalOptions||[], t.id) + '</div>' +
       '<div class="field"><label>Description override (optional)</label><input id="tDescription" value="' + (t.description||'') + '"></div>' +
       '<div class="hint">Leave the description blank to auto-generate one line per effect from its magnitude. Only set it for custom flavor text.</div>' +
       '<div class="field"><label>Todo (optional)</label><input id="tTodo" value="' + (t.todo||'') + '"></div>' +
@@ -1477,6 +1504,10 @@ function openTypeModal(existingType, onSave){
     root.innerHTML = html;
 
     document.getElementById('mCancel2').addEventListener('click', function(){ root.innerHTML=''; });
+    document.getElementById('tTier').addEventListener('change', function(){
+      syncDraftFromInputs();
+      renderModal();
+    });
     document.getElementById('addEffectRowBtn').addEventListener('click', function(){
       syncDraftFromInputs();
       effectsDraft.push({ effect: EFFECT_NAMES[0], magnitude: 10 });
@@ -1525,6 +1556,7 @@ function openTypeModal(existingType, onSave){
         effects: effectsDraft,
         hullSizeEffects: hullSizeEffectsDraft,
         vanillaHullMod: (t.vanillaHullMod||'').trim(),
+        optionalOptions: t.optionalOptions || [],
         description: (t.description||'').trim(),
         todo: (t.todo||'').trim(),
         tags: tagsDraft
@@ -1562,6 +1594,7 @@ function serializeType(t){
   if (t.effects && t.effects.length) out.effects = t.effects.map(function(e){ return { effect: e.effect, magnitude: e.magnitude }; });
   if (t.hullSizeEffects && t.hullSizeEffects.length) out.hullSizeEffects = t.hullSizeEffects.map(function(e){ return { effect: e.effect, frigate: e.frigate, destroyer: e.destroyer, cruiser: e.cruiser, capitalShip: e.capitalShip }; });
   if (t.vanillaHullMod) out.vanillaHullMod = t.vanillaHullMod;
+  if (t.optionalOptions && t.optionalOptions.length) out.optionalOptions = t.optionalOptions;
   if (t.description) out.description = t.description;
   if (t.todo) out.todo = t.todo;
   if (t.tags && t.tags.length) out.tags = t.tags;

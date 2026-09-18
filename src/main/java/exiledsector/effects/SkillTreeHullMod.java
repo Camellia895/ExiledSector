@@ -32,7 +32,7 @@ public class SkillTreeHullMod extends BaseHullMod {
             SkillNode node = SkillTree.get(nodeId);
             if (node == null) continue;
 
-            SkillType type = node.getType();
+            SkillType type = node.resolveEffectiveType(data);
 
             String vanillaHullModId = type.getVanillaHullModId();
             if (vanillaHullModId != null) {
@@ -65,7 +65,7 @@ public class SkillTreeHullMod extends BaseHullMod {
             SkillNode node = SkillTree.get(nodeId);
             if (node == null) continue;
 
-            SkillType type = node.getType();
+            SkillType type = node.resolveEffectiveType(data);
             if (type.getVanillaHullModId() != null) continue;
 
             for (SkillTypeEffect effect : type.getEffects()) {

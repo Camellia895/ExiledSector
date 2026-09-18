@@ -16,17 +16,25 @@ public class SkillType {
     private final String vanillaHullModId;
     private final String descriptionOverride;
     private final String todo;
+    private final List<String> optionalOptionIds;
 
     public SkillType(String id, String displayName, String iconPath, int opCost, float xpCost,
                       List<SkillTypeEffect> effects, SkillTier tier, String vanillaHullModId,
                       String descriptionOverride, String todo) {
         this(id, displayName, iconPath, opCost, xpCost, effects, Collections.emptyList(), tier,
-                vanillaHullModId, descriptionOverride, todo);
+                vanillaHullModId, descriptionOverride, todo, Collections.emptyList());
     }
 
     public SkillType(String id, String displayName, String iconPath, int opCost, float xpCost,
                       List<SkillTypeEffect> effects, List<HullSizeSkillEffect> hullSizeEffects, SkillTier tier,
                       String vanillaHullModId, String descriptionOverride, String todo) {
+        this(id, displayName, iconPath, opCost, xpCost, effects, hullSizeEffects, tier,
+                vanillaHullModId, descriptionOverride, todo, Collections.emptyList());
+    }
+
+    public SkillType(String id, String displayName, String iconPath, int opCost, float xpCost,
+                      List<SkillTypeEffect> effects, List<HullSizeSkillEffect> hullSizeEffects, SkillTier tier,
+                      String vanillaHullModId, String descriptionOverride, String todo, List<String> optionalOptionIds) {
         this.id = id;
         this.displayName = displayName;
         this.iconPath = iconPath;
@@ -38,6 +46,7 @@ public class SkillType {
         this.vanillaHullModId = vanillaHullModId;
         this.descriptionOverride = descriptionOverride;
         this.todo = todo;
+        this.optionalOptionIds = optionalOptionIds == null ? Collections.emptyList() : optionalOptionIds;
     }
 
     public String getId() {
@@ -82,5 +91,13 @@ public class SkillType {
 
     public String getTodo() {
         return todo;
+    }
+
+    public List<String> getOptionalOptionIds() {
+        return optionalOptionIds;
+    }
+
+    public boolean isOptional() {
+        return !optionalOptionIds.isEmpty();
     }
 }
