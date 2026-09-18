@@ -214,8 +214,14 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "HULL", "magnitude": 20 },
-				{ "effect": "CREW_LOSS", "magnitude": -60 }
+				{
+					"effect": "HULL",
+					"magnitude": 20
+				},
+				{
+					"effect": "CREW_LOSS",
+					"magnitude": -60
+				}
 			],
 			"tags": [
 				"logistics"
@@ -228,9 +234,31 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "KEYSTONE",
-			"vanillaHullMod": "converted_hangar",
+			"effects": [
+				{
+					"effect": "FIGHTER_BAYS_FLAT",
+					"magnitude": 1
+				},
+				{
+					"effect": "FIGHTER_REFIT_TIME_MULT",
+					"magnitude": 50
+				},
+				{
+					"effect": "FIGHTER_REPLACEMENT_RATE_MULT",
+					"magnitude": 50
+				},
+				{
+					"effect": "FIGHTER_RELAUNCH_TIME_FLAT",
+					"magnitude": 40
+				},
+				{
+					"effect": "MIN_CREW_FLAT",
+					"magnitude": 20
+				}
+			],
+			"todo": "Real vanilla effect also increases deployment points and supply cost to recover by 1 per 5 OP spent on fighters (min 1), with a proportional increase in CR lost per deployment - deliberately not implemented yet, so right now this node is a buff with no real downside beyond the 4 modifiers above. This node may need other balance considerations once that's added.",
 			"tags": [
-				"logistics"
+				"fighter"
 			]
 		},
 		{
@@ -242,7 +270,7 @@
 			"tier": "KEYSTONE",
 			"vanillaHullMod": "converted_fighterbay",
 			"tags": [
-				"fighter"
+				"logistics"
 			]
 		},
 		{
@@ -289,7 +317,13 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
-				{ "effect": "ELECTRONIC_WARFARE", "frigate": 1, "destroyer": 2, "cruiser": 3, "capitalShip": 4 }
+				{
+					"effect": "ELECTRONIC_WARFARE",
+					"frigate": 1,
+					"destroyer": 2,
+					"cruiser": 3,
+					"capitalShip": 4
+				}
 			],
 			"tags": [
 				"logistics"
@@ -500,7 +534,13 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
-				{ "effect": "NAV_RATING", "frigate": 2, "destroyer": 3, "cruiser": 4, "capitalShip": 5 }
+				{
+					"effect": "NAV_RATING",
+					"frigate": 2,
+					"destroyer": 3,
+					"cruiser": 4,
+					"capitalShip": 5
+				}
 			],
 			"tags": [
 				"logistics"
@@ -537,7 +577,12 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "operations_center",
+			"effects": [
+				{
+					"effect": "COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP",
+					"magnitude": 2.5
+				}
+			],
 			"tags": [
 				"logistics"
 			]
@@ -553,9 +598,12 @@
 				{
 					"effect": "PHASE_CLOAK_ACTIVATION_COST_MULT",
 					"magnitude": -100
+				},
+				{
+					"effect": "COMBAT_BOOST_WHILE_PHASED",
+					"magnitude": 100
 				}
 			],
-			"todo": "Cloak activation cost part is done (free activation, matches vanilla). Still missing: +soft flux dissipation and +weapon recharge rate, but only while phased. Confirmed via decompiling vanilla's PhaseAnchor class this lives in a separate listener registered via ship.addListener(new PhaseAnchorScript(ship)) in applyEffectsAfterShipCreation, not in advanceInCombat on the hullmod itself - the condition system needs to hook that pattern (or an equivalent per-frame ship.isPhased() check) to add this. Not built yet.",
 			"tags": [
 				"flux",
 				"phase"
@@ -593,8 +641,14 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "EMP_DAMAGE_TAKEN", "magnitude": -50 },
-				{ "effect": "FLUX_DISSIPATION_WHILE_VENTING", "magnitude": 25 }
+				{
+					"effect": "EMP_DAMAGE_TAKEN",
+					"magnitude": -50
+				},
+				{
+					"effect": "FLUX_DISSIPATION_WHILE_VENTING",
+					"magnitude": 25
+				}
 			],
 			"tags": [
 				"flux",
@@ -630,7 +684,13 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
-				{ "effect": "CREW_CAPACITY_FLAT", "frigate": 30, "destroyer": 60, "cruiser": 100, "capitalShip": 200 }
+				{
+					"effect": "CREW_CAPACITY_FLAT",
+					"frigate": 30,
+					"destroyer": 60,
+					"cruiser": 100,
+					"capitalShip": 200
+				}
 			],
 			"tags": [
 				"logistics"
@@ -661,7 +721,13 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
-				{ "effect": "FUEL_CAPACITY_FLAT", "frigate": 30, "destroyer": 60, "cruiser": 100, "capitalShip": 200 }
+				{
+					"effect": "FUEL_CAPACITY_FLAT",
+					"frigate": 30,
+					"destroyer": 60,
+					"cruiser": 100,
+					"capitalShip": 200
+				}
 			],
 			"tags": [
 				"logistics"
@@ -708,7 +774,13 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
-				{ "effect": "CARGO_CAPACITY_FLAT", "frigate": 30, "destroyer": 60, "cruiser": 100, "capitalShip": 200 }
+				{
+					"effect": "CARGO_CAPACITY_FLAT",
+					"frigate": 30,
+					"destroyer": 60,
+					"cruiser": 100,
+					"capitalShip": 200
+				}
 			],
 			"tags": [
 				"logistics"
@@ -722,7 +794,13 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
-				{ "effect": "SENSOR_RANGE", "frigate": 50, "destroyer": 75, "cruiser": 100, "capitalShip": 150 }
+				{
+					"effect": "SENSOR_RANGE",
+					"frigate": 50,
+					"destroyer": 75,
+					"cruiser": 100,
+					"capitalShip": 150
+				}
 			],
 			"tags": [
 				"logistics"
@@ -736,8 +814,14 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "ENGINE_DURABILITY", "magnitude": 100 },
-				{ "effect": "HULL", "magnitude": 10 }
+				{
+					"effect": "ENGINE_DURABILITY",
+					"magnitude": 100
+				},
+				{
+					"effect": "HULL",
+					"magnitude": 10
+				}
 			],
 			"tags": [
 				"logistics"
@@ -776,6 +860,7 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"vanillaHullMod": "solar_shielding",
+			"todo": "Real effect is -75% CR loss from solar corona/deep hyperspace storms, plus -10% energy damage taken in combat. The energy damage part is trivial and safe (existing ENERGY_DAMAGE_TAKEN effect, magnitude -10) whenever we want it. The corona/storm part is NOT safe to implement yet - found the real dynamic stat key ('corona_resistance', confirmed shared by both StarCoronaTerrainPlugin and HyperspaceTerrainPlugin, matching the tooltip's 'same effect against storms' claim) but decompiling StarCoronaTerrainPlugin showed corona_resistance actually GATES whether a CR-loss event fires (if (corona_resistance > 0) applyCREvent(...) else <computes what looks like an interval/frequency ratio instead>) rather than scaling a loss percentage directly - the sign/semantics don't resolve cleanly and getting it backward could make ships MORE vulnerable, not less. Deliberately left the whole hullmod on vanillaHullMod passthrough (both effects still work correctly via vanilla's own code) rather than partially convert, since our apply loop is all-or-nothing per node and converting now would silently drop corona/storm protection. Needs more investigation (or someone who already knows this mechanic) before touching.",
 			"tags": [
 				"logistics"
 			]
@@ -787,7 +872,22 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "surveying_equipment",
+			"hullSizeEffects": [
+				{
+					"effect": "SURVEY_COST_REDUCTION_HEAVY_MACHINERY",
+					"frigate": 5,
+					"destroyer": 10,
+					"cruiser": 20,
+					"capitalShip": 40
+				},
+				{
+					"effect": "SURVEY_COST_REDUCTION_SUPPLIES",
+					"frigate": 5,
+					"destroyer": 10,
+					"cruiser": 20,
+					"capitalShip": 40
+				}
+			],
 			"tags": [
 				"logistics"
 			]

@@ -1,7 +1,13 @@
 package exiledsector.skills;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipSystemAPI;
+import com.fs.starfarer.api.combat.StatBonus;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 
 public enum SkillEffect {
 
@@ -561,6 +567,66 @@ public enum SkillEffect {
             return pctChange(magnitude, "minimum crew required");
         }
     },
+    MIN_CREW_FLAT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getMinCrewMod().modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return flatChange(magnitude, "minimum crew required");
+        }
+    },
+    FIGHTER_REFIT_TIME_MULT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getFighterRefitTimeMult().modifyMult(modId, 1f + magnitude / 100f);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "fighter refit time");
+        }
+    },
+    FIGHTER_REPLACEMENT_RATE_MULT {
+        // Bundles the two dynamic stats vanilla's Converted Hangar uses together (decay and recovery rate
+        // both scaled the same way) so this reads as one lever, same "% change" magnitude convention as
+        // other _MULT effects: magnitude 50 means the rate becomes 1.5x slower, matching vanilla exactly.
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            float mult = 1f / (1f + magnitude / 100f);
+            stats.getDynamic().getStat("replacement_rate_decrease_mult").modifyMult(modId, mult);
+            stats.getDynamic().getStat("replacement_rate_increase_mult").modifyMult(modId, mult);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "fighter replacement rate (both decay and recovery)");
+        }
+    },
+    FIGHTER_RELAUNCH_TIME_FLAT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod("fighter_rearm_time_extra_fraction_of_base_refit_time_mod").modifyFlat(modId, magnitude / 100f);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return flatChange(magnitude, "fighter relaunch time, as a % of base refit time");
+        }
+    },
+    FIGHTER_BAYS_FLAT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getNumFighterBays().modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return flatChange(magnitude, "number of fighter bays");
+        }
+    },
     SUPPLIES_PER_MONTH_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -665,6 +731,116 @@ public enum SkillEffect {
         @Override
         public String describe(float magnitude) {
             return pctChange(magnitude, "flux dissipation rate while venting");
+        }
+    },
+    COMBAT_BOOST_WHILE_PHASED {
+        // Conditional effect - vanilla Phase Anchor doubles flux dissipation, all 3 weapon RoF stats, and
+        // all 3 ammo regen stats together while phased (and not decloaking). magnitude follows the same
+        // "% change" convention as other _MULT effects here: 100 means double, matching vanilla exactly.
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public boolean isConditional() {
+            return true;
+        }
+
+        @Override
+        public void advanceInCombat(ShipAPI ship, String modId, float magnitude) {
+            boolean active = ship.isPhased();
+            ShipSystemAPI phaseCloak = ship.getPhaseCloak();
+            if (active && phaseCloak != null && phaseCloak.isChargedown()) {
+                active = false;
+            }
+
+            MutableShipStatsAPI stats = ship.getMutableStats();
+            float mult = 1f + magnitude / 100f;
+            MutableStat[] boosted = {
+                    stats.getFluxDissipation(),
+                    stats.getBallisticRoFMult(),
+                    stats.getEnergyRoFMult(),
+                    stats.getMissileRoFMult(),
+                    stats.getBallisticAmmoRegenMult(),
+                    stats.getEnergyAmmoRegenMult(),
+                    stats.getMissileAmmoRegenMult()
+            };
+            for (MutableStat stat : boosted) {
+                if (active) {
+                    stat.modifyMult(modId, mult);
+                } else {
+                    stat.unmodifyMult(modId);
+                }
+            }
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "flux dissipation, weapon rate of fire, and ammo regen while phased");
+        }
+    },
+    COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP {
+        // Conditional effect - vanilla Operations Center only grants this while the ship is the flagship
+        // (the player's own ship, or captained by the fleet commander). magnitude is a flat bonus, same
+        // as vanilla's own modifyFlat call (2.5 in vanilla).
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public boolean isConditional() {
+            return true;
+        }
+
+        @Override
+        public void advanceInCombat(ShipAPI ship, String modId, float magnitude) {
+            boolean isFlagship = ship == Global.getCombatEngine().getPlayerShip();
+            if (!isFlagship) {
+                FleetMemberAPI member = ship.getMutableStats().getFleetMember();
+                if (member != null) {
+                    PersonAPI commander = member.getFleetCommanderForStats();
+                    if (commander == null) commander = member.getFleetCommander();
+                    isFlagship = commander != null && commander == ship.getCaptain();
+                }
+            }
+
+            StatBonus commandPointRate = ship.getMutableStats().getDynamic().getMod("command_point_rate_flat");
+            if (isFlagship) {
+                commandPointRate.modifyFlat(modId, magnitude);
+            } else {
+                commandPointRate.unmodify(modId);
+            }
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return flatChange(magnitude, "command point recovery rate while this ship is the flagship");
+        }
+    },
+    SURVEY_COST_REDUCTION_HEAVY_MACHINERY {
+        // Not conditional despite being a campaign-layer effect - the fleet-wide survey cost calculator
+        // (SurveyPluginImpl) reads this same per-ship dynamic stat via Misc.getFleetwideTotalMod, which
+        // sums it across every non-mothballed ship in the fleet. Setting it once at ship creation is
+        // enough; no per-frame hook needed.
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod("survey_cost_reduction_heavy_machinery").modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return flatChange(magnitude, "heavy machinery required to perform surveys (fleet-wide)");
+        }
+    },
+    SURVEY_COST_REDUCTION_SUPPLIES {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod("survey_cost_reduction_supplies").modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return flatChange(magnitude, "supplies required to perform surveys (fleet-wide)");
         }
     },
     ENERGY_DAMAGE_TAKEN {

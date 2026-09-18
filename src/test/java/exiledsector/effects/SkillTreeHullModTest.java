@@ -3,14 +3,18 @@ package exiledsector.effects;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.characters.PersonAPI;
+import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.FluxTrackerAPI;
 import com.fs.starfarer.api.combat.HullModEffect;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
+import com.fs.starfarer.api.util.DynamicStatsAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillEffect;
@@ -247,5 +251,123 @@ class SkillTreeHullModTest {
         new SkillTreeHullMod().advanceInCombat(ship, 0.1f);
 
         verify(ship, never()).getFluxTracker();
+    }
+
+    @Test
+    void advanceInCombatDoublesStatsWhilePhased() {
+        SkillType phaseType = new SkillType("phase_anchor", "Phase Anchor", "graphics/icons/notable_hullmods/phase_anchor.png", 4, 2000,
+                List.of(new SkillTypeEffect(SkillEffect.COMBAT_BOOST_WHILE_PHASED, 100f)), SkillTier.NOTABLE, null, null, null);
+        SkillNode phaseNode = new SkillNode("phase_anchor_1", phaseType, List.of(), 0f, 0f);
+        SkillTree.register(phaseNode);
+
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        ShipSkillDataManager.get("ship-a").allocate(phaseNode);
+
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        ShipAPI ship = mockShip(member, stats);
+        when(ship.isPhased()).thenReturn(true);
+        when(ship.getPhaseCloak()).thenReturn(null);
+        MutableStat dissipation = mock(MutableStat.class);
+        when(stats.getFluxDissipation()).thenReturn(dissipation);
+        when(stats.getBallisticRoFMult()).thenReturn(mock(MutableStat.class));
+        when(stats.getEnergyRoFMult()).thenReturn(mock(MutableStat.class));
+        when(stats.getMissileRoFMult()).thenReturn(mock(MutableStat.class));
+        when(stats.getBallisticAmmoRegenMult()).thenReturn(mock(MutableStat.class));
+        when(stats.getEnergyAmmoRegenMult()).thenReturn(mock(MutableStat.class));
+        when(stats.getMissileAmmoRegenMult()).thenReturn(mock(MutableStat.class));
+
+        new SkillTreeHullMod().advanceInCombat(ship, 0.1f);
+
+        verify(dissipation).modifyMult("exiledSector_skill_phase_anchor_1", 2f);
+        verify(dissipation, never()).unmodifyMult(anyString());
+    }
+
+    @Test
+    void advanceInCombatUndoesTheBoostWhenNotPhased() {
+        SkillType phaseType = new SkillType("phase_anchor", "Phase Anchor", "graphics/icons/notable_hullmods/phase_anchor.png", 4, 2000,
+                List.of(new SkillTypeEffect(SkillEffect.COMBAT_BOOST_WHILE_PHASED, 100f)), SkillTier.NOTABLE, null, null, null);
+        SkillNode phaseNode = new SkillNode("phase_anchor_1", phaseType, List.of(), 0f, 0f);
+        SkillTree.register(phaseNode);
+
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        ShipSkillDataManager.get("ship-a").allocate(phaseNode);
+
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        ShipAPI ship = mockShip(member, stats);
+        when(ship.isPhased()).thenReturn(false);
+        MutableStat dissipation = mock(MutableStat.class);
+        when(stats.getFluxDissipation()).thenReturn(dissipation);
+        when(stats.getBallisticRoFMult()).thenReturn(mock(MutableStat.class));
+        when(stats.getEnergyRoFMult()).thenReturn(mock(MutableStat.class));
+        when(stats.getMissileRoFMult()).thenReturn(mock(MutableStat.class));
+        when(stats.getBallisticAmmoRegenMult()).thenReturn(mock(MutableStat.class));
+        when(stats.getEnergyAmmoRegenMult()).thenReturn(mock(MutableStat.class));
+        when(stats.getMissileAmmoRegenMult()).thenReturn(mock(MutableStat.class));
+
+        new SkillTreeHullMod().advanceInCombat(ship, 0.1f);
+
+        verify(dissipation).unmodifyMult("exiledSector_skill_phase_anchor_1");
+        verify(dissipation, never()).modifyMult(anyString(), anyFloat());
+    }
+
+    @Test
+    void advanceInCombatGrantsCommandPointRecoveryWhenFlagship() {
+        SkillType opsType = new SkillType("operations_center", "Operations Center", "graphics/icons/notable_hullmods/operations_center.png", 4, 2000,
+                List.of(new SkillTypeEffect(SkillEffect.COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP, 2.5f)), SkillTier.NOTABLE, null, null, null);
+        SkillNode opsNode = new SkillNode("operations_center_1", opsType, List.of(), 0f, 0f);
+        SkillTree.register(opsNode);
+
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        ShipSkillDataManager.get("ship-a").allocate(opsNode);
+
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        ShipAPI ship = mockShip(member, stats);
+        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+        globalMock.when(Global::getCombatEngine).thenReturn(engine);
+        when(engine.getPlayerShip()).thenReturn(ship);
+        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
+        when(stats.getDynamic()).thenReturn(dynamic);
+        StatBonus commandPointRate = mock(StatBonus.class);
+        when(dynamic.getMod("command_point_rate_flat")).thenReturn(commandPointRate);
+
+        new SkillTreeHullMod().advanceInCombat(ship, 0.1f);
+
+        verify(commandPointRate).modifyFlat("exiledSector_skill_operations_center_1", 2.5f);
+        verify(commandPointRate, never()).unmodify(anyString());
+    }
+
+    @Test
+    void advanceInCombatWithholdsCommandPointRecoveryWhenNotFlagship() {
+        SkillType opsType = new SkillType("operations_center", "Operations Center", "graphics/icons/notable_hullmods/operations_center.png", 4, 2000,
+                List.of(new SkillTypeEffect(SkillEffect.COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP, 2.5f)), SkillTier.NOTABLE, null, null, null);
+        SkillNode opsNode = new SkillNode("operations_center_1", opsType, List.of(), 0f, 0f);
+        SkillTree.register(opsNode);
+
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        ShipSkillDataManager.get("ship-a").allocate(opsNode);
+
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        ShipAPI ship = mockShip(member, stats);
+        ShipAPI otherShip = mock(ShipAPI.class);
+        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+        globalMock.when(Global::getCombatEngine).thenReturn(engine);
+        when(engine.getPlayerShip()).thenReturn(otherShip);
+        PersonAPI captain = mock(PersonAPI.class);
+        when(ship.getCaptain()).thenReturn(captain);
+        when(member.getFleetCommander()).thenReturn(null);
+        when(member.getFleetCommanderForStats()).thenReturn(null);
+        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
+        when(stats.getDynamic()).thenReturn(dynamic);
+        StatBonus commandPointRate = mock(StatBonus.class);
+        when(dynamic.getMod("command_point_rate_flat")).thenReturn(commandPointRate);
+
+        new SkillTreeHullMod().advanceInCombat(ship, 0.1f);
+
+        verify(commandPointRate).unmodify("exiledSector_skill_operations_center_1");
+        verify(commandPointRate, never()).modifyFlat(anyString(), anyFloat());
     }
 }

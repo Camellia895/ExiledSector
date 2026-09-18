@@ -412,15 +412,15 @@
 			"id": "converted_hangar_1",
 			"type": "converted_hangar",
 			"connectedTo": [],
-			"x": 180,
-			"y": 184
+			"x": 1117,
+			"y": -528
 		},
 		{
 			"id": "converted_fighterbay_1",
 			"type": "converted_fighterbay",
 			"connectedTo": [],
-			"x": 1111,
-			"y": -656
+			"x": 232,
+			"y": 171
 		},
 		{
 			"id": "expanded_deck_crew_1",
