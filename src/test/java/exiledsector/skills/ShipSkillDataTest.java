@@ -72,14 +72,14 @@ class ShipSkillDataTest {
     void canAllocateIsTrueWhenThereAreNoPrerequisites() {
         ShipSkillData data = new ShipSkillData();
 
-        assertTrue(data.canAllocate(node("root", List.of())));
+        assertTrue(data.canAllocate(node("root", List.of()), null));
     }
 
     @Test
     void canAllocateIsFalseWhenAPrerequisiteIsNotAllocated() {
         ShipSkillData data = new ShipSkillData();
 
-        assertFalse(data.canAllocate(node("child", List.of("parent"))));
+        assertFalse(data.canAllocate(node("child", List.of("parent")), null));
     }
 
     @Test
@@ -88,14 +88,14 @@ class ShipSkillDataTest {
         SkillNode parent = node("parent", List.of());
         data.allocate(parent);
 
-        assertTrue(data.canAllocate(node("child", List.of("parent"))));
+        assertTrue(data.canAllocate(node("child", List.of("parent")), null));
     }
 
     @Test
     void canAllocateIsFalseWithMultiplePrerequisitesWhenNoneAreAllocated() {
         ShipSkillData data = new ShipSkillData();
 
-        assertFalse(data.canAllocate(node("child", List.of("b", "c"))));
+        assertFalse(data.canAllocate(node("child", List.of("b", "c")), null));
     }
 
     @Test
@@ -104,7 +104,7 @@ class ShipSkillDataTest {
         SkillNode b = node("b", List.of());
         data.allocate(b);
 
-        assertTrue(data.canAllocate(node("a", List.of("b", "c"))));
+        assertTrue(data.canAllocate(node("a", List.of("b", "c")), null));
     }
 
     @Test
@@ -115,7 +115,7 @@ class ShipSkillDataTest {
         data.allocate(b);
         data.allocate(c);
 
-        assertTrue(data.canAllocate(node("a", List.of("b", "c"))));
+        assertTrue(data.canAllocate(node("a", List.of("b", "c")), null));
     }
 
     @Test
@@ -124,7 +124,7 @@ class ShipSkillDataTest {
         SkillNode parent = node("parent", List.of());
         data.allocate(parent);
 
-        assertTrue(data.canDeallocate(parent, List.of(parent)));
+        assertTrue(data.canDeallocate(parent, List.of(parent), null));
     }
 
     @Test
@@ -135,7 +135,7 @@ class ShipSkillDataTest {
         data.allocate(parent);
         data.allocate(child);
 
-        assertFalse(data.canDeallocate(parent, List.of(parent, child)));
+        assertFalse(data.canDeallocate(parent, List.of(parent, child), null));
     }
 
     @Test
@@ -148,7 +148,7 @@ class ShipSkillDataTest {
         data.allocate(c);
         data.allocate(a);
 
-        assertTrue(data.canDeallocate(b, List.of(a, b, c)));
+        assertTrue(data.canDeallocate(b, List.of(a, b, c), null));
     }
 
     @Test
@@ -160,7 +160,7 @@ class ShipSkillDataTest {
         data.allocate(b);
         data.allocate(a);
 
-        assertFalse(data.canDeallocate(b, List.of(a, b, c)));
+        assertFalse(data.canDeallocate(b, List.of(a, b, c), null));
     }
 
     @Test
@@ -168,7 +168,7 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode root = node("root", List.of());
 
-        data.toggle(root, List.of(root));
+        data.toggle(root, List.of(root), null);
 
         assertTrue(data.isAllocated("root"));
     }
@@ -179,7 +179,7 @@ class ShipSkillDataTest {
         SkillNode parent = node("parent", List.of());
         SkillNode child = node("child", List.of("parent"));
 
-        data.toggle(child, List.of(parent, child));
+        data.toggle(child, List.of(parent, child), null);
 
         assertFalse(data.isAllocated("child"));
     }
@@ -190,7 +190,7 @@ class ShipSkillDataTest {
         SkillNode root = node("root", List.of());
         data.allocate(root);
 
-        data.toggle(root, List.of(root));
+        data.toggle(root, List.of(root), null);
 
         assertFalse(data.isAllocated("root"));
     }
@@ -203,8 +203,57 @@ class ShipSkillDataTest {
         data.allocate(parent);
         data.allocate(child);
 
-        data.toggle(parent, List.of(parent, child));
+        data.toggle(parent, List.of(parent, child), null);
 
         assertTrue(data.isAllocated("parent"));
+    }
+
+    @Test
+    void isSatisfiedIsTrueForAnAllocatedNode() {
+        ShipSkillData data = new ShipSkillData();
+        data.allocate(node("hull_1", List.of()));
+
+        assertTrue(data.isSatisfied("hull_1", null));
+    }
+
+    @Test
+    void isSatisfiedIsTrueForTheSatisfiedRootEvenIfNeverAllocated() {
+        ShipSkillData data = new ShipSkillData();
+
+        assertTrue(data.isSatisfied("root_low_tech_1", "root_low_tech_1"));
+    }
+
+    @Test
+    void isSatisfiedIsFalseForAnUnsatisfiedRoot() {
+        ShipSkillData data = new ShipSkillData();
+
+        assertFalse(data.isSatisfied("root_high_tech_1", "root_low_tech_1"));
+    }
+
+    @Test
+    void canAllocateIsTrueWhenPrerequisiteIsTheSatisfiedRootEvenIfNotAllocated() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode child = node("hull_1", List.of("root_low_tech_1"));
+
+        assertTrue(data.canAllocate(child, "root_low_tech_1"));
+    }
+
+    @Test
+    void canAllocateIsFalseWhenPrerequisiteIsAnUnsatisfiedRoot() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode child = node("hull_1", List.of("root_midline_1"));
+
+        assertFalse(data.canAllocate(child, "root_low_tech_1"));
+    }
+
+    @Test
+    void canDeallocateTreatsTheSatisfiedRootAsAnotherAllocatedPrerequisite() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode b = node("b", List.of());
+        SkillNode a = node("a", List.of("b", "root_low_tech_1"));
+        data.allocate(b);
+        data.allocate(a);
+
+        assertTrue(data.canDeallocate(b, List.of(a, b), "root_low_tech_1"));
     }
 }

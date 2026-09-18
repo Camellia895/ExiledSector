@@ -7,6 +7,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTechLevel;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -83,6 +84,8 @@ final class SkillTreeNodeRenderer {
     private final String symbolPath;
     private final FleetMemberAPI member;
     private final SkillTreePanelStyle style;
+    private final ShipTechLevel techLevel;
+    private final SkillNode activeRoot;
     private final Set<String> loadedSprites = new HashSet<>();
     private final Map<String, SkillTreePanelStyle.TooltipText> tooltipTitles = new HashMap<>();
     private final Map<String, SkillTreePanelStyle.TooltipText> tooltipBodies = new HashMap<>();
@@ -92,6 +95,12 @@ final class SkillTreeNodeRenderer {
         this.symbolPath = symbolPath;
         this.member = member;
         this.style = style;
+        this.techLevel = ShipTechLevel.of(member);
+        this.activeRoot = findRootNode(rootTypeId(techLevel));
+    }
+
+    private String satisfiedRootId() {
+        return activeRoot == null ? null : activeRoot.getId();
     }
 
     void advance(float amount) {
@@ -112,10 +121,18 @@ final class SkillTreeNodeRenderer {
     void render(float centerX, float centerY, float zoom, float alphaMult) {
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
 
-        drawIcon(symbolPath, centerX, centerY, SYMBOL_SIZE * zoom, alphaMult, ALLOCATED_TINT);
-        drawCenterRing(centerX, centerY, SYMBOL_SIZE * zoom, alphaMult);
+        float shipX = centerX;
+        float shipY = centerY;
+        if (activeRoot != null) {
+            shipX = centerX + activeRoot.getOffsetX() * zoom;
+            shipY = centerY - activeRoot.getOffsetY() * zoom;
+        }
+        drawIcon(symbolPath, shipX, shipY, SYMBOL_SIZE * zoom, alphaMult, ALLOCATED_TINT);
+        drawCenterRing(shipX, shipY, SYMBOL_SIZE * zoom, alphaMult);
 
         for (SkillNode node : SkillTree.getAllNodes().values()) {
+            if (node.getType().getTier() == SkillTier.ROOT) continue;
+
             float nodeX = centerX + node.getOffsetX() * zoom;
             float nodeY = centerY - node.getOffsetY() * zoom;
             boolean allocated = data.isAllocated(node.getId());
@@ -130,6 +147,23 @@ final class SkillTreeNodeRenderer {
         drawNodeConnectors(centerX, centerY, zoom, data, alphaMult);
     }
 
+    private static String rootTypeId(ShipTechLevel techLevel) {
+        switch (techLevel) {
+            case LOW_TECH: return "root_low_tech";
+            case HIGH_TECH: return "root_high_tech";
+            default: return "root_midline";
+        }
+    }
+
+    private static SkillNode findRootNode(String rootTypeId) {
+        for (SkillNode node : SkillTree.getAllNodes().values()) {
+            if (node.getType().getTier() == SkillTier.ROOT && node.getType().getId().equals(rootTypeId)) {
+                return node;
+            }
+        }
+        return null;
+    }
+
     void renderHoverTooltip(float centerX, float centerY, float zoom, float mouseX, float mouseY, float alphaMult) {
         SkillNode hovered = findNodeAt(centerX, centerY, zoom, mouseX, mouseY);
         if (hovered != null) {
@@ -139,6 +173,8 @@ final class SkillTreeNodeRenderer {
 
     SkillNode findNodeAt(float centerX, float centerY, float zoom, float x, float y) {
         for (SkillNode node : SkillTree.getAllNodes().values()) {
+            if (node.getType().getTier() == SkillTier.ROOT) continue;
+
             float nodeX = centerX + node.getOffsetX() * zoom;
             float nodeY = centerY - node.getOffsetY() * zoom;
             float halfSize = NODE_SIZE * zoom * node.getType().getTier().getSizeMultiplier() / 2f;
@@ -152,7 +188,7 @@ final class SkillTreeNodeRenderer {
     void toggleAllocation(SkillNode node) {
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
         boolean wasAllocated = data.isAllocated(node.getId());
-        data.toggle(node, SkillTree.getAllNodes().values());
+        data.toggle(node, SkillTree.getAllNodes().values(), satisfiedRootId());
         boolean isAllocatedNow = data.isAllocated(node.getId());
         if (isAllocatedNow != wasAllocated) {
             member.setStatUpdateNeeded(true);
@@ -286,30 +322,28 @@ final class SkillTreeNodeRenderer {
     }
 
     private void drawNodeConnectors(float centerX, float centerY, float zoom, ShipSkillData data, float alphaMult) {
-        float centerRadius = (SYMBOL_SIZE * zoom / 2f) * CENTER_RING_RADIUS_FRACTION;
+        String satisfiedRootId = satisfiedRootId();
 
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         for (SkillNode node : SkillTree.getAllNodes().values()) {
+            if (node.getType().getTier() == SkillTier.ROOT) continue;
+
             float nodeX = centerX + node.getOffsetX() * zoom;
             float nodeY = centerY - node.getOffsetY() * zoom;
             float nodeRadius = outerNodeRadius(NODE_SIZE * zoom * node.getType().getTier().getSizeMultiplier(), node.getType().getTier());
 
-            if (node.getPrerequisiteNodeIds().isEmpty()) {
-                drawNodeConnectorLine(centerX, centerY, centerRadius, nodeX, nodeY, nodeRadius, data.isAllocated(node.getId()), alphaMult);
-            } else {
-                for (String prerequisiteId : node.getPrerequisiteNodeIds()) {
-                    SkillNode parent = SkillTree.get(prerequisiteId);
-                    if (parent == null) continue;
+            for (String prerequisiteId : node.getPrerequisiteNodeIds()) {
+                SkillNode parent = SkillTree.get(prerequisiteId);
+                if (parent == null) continue;
 
-                    float parentX = centerX + parent.getOffsetX() * zoom;
-                    float parentY = centerY - parent.getOffsetY() * zoom;
-                    float parentRadius = outerNodeRadius(NODE_SIZE * zoom * parent.getType().getTier().getSizeMultiplier(), parent.getType().getTier());
-                    boolean bothAllocated = data.isAllocated(node.getId()) && data.isAllocated(parent.getId());
-                    drawNodeConnectorLine(parentX, parentY, parentRadius, nodeX, nodeY, nodeRadius, bothAllocated, alphaMult);
-                }
+                float parentX = centerX + parent.getOffsetX() * zoom;
+                float parentY = centerY - parent.getOffsetY() * zoom;
+                float parentRadius = outerNodeRadius(NODE_SIZE * zoom * parent.getType().getTier().getSizeMultiplier(), parent.getType().getTier());
+                boolean bothSatisfied = data.isSatisfied(node.getId(), satisfiedRootId) && data.isSatisfied(parent.getId(), satisfiedRootId);
+                drawNodeConnectorLine(parentX, parentY, parentRadius, nodeX, nodeY, nodeRadius, bothSatisfied, alphaMult);
             }
         }
 

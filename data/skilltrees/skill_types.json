@@ -1,4 +1,4 @@
-﻿{
+{
 	"skillTypes": [
 		{
 			"id": "flux_capacity",
@@ -552,6 +552,30 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"vanillaHullMod": "surveying_equipment"
+		},
+		{
+			"id": "root_low_tech",
+			"name": "Low Tech Root",
+			"icon": "",
+			"opCost": 0,
+			"xpCost": 0,
+			"tier": "ROOT"
+		},
+		{
+			"id": "root_midline",
+			"name": "Midline Root",
+			"icon": "",
+			"opCost": 0,
+			"xpCost": 0,
+			"tier": "ROOT"
+		},
+		{
+			"id": "root_high_tech",
+			"name": "High Tech Root",
+			"icon": "",
+			"opCost": 0,
+			"xpCost": 0,
+			"tier": "ROOT"
 		}
 	]
 }

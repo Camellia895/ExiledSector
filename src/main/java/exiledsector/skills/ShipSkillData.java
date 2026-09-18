@@ -15,6 +15,10 @@ public class ShipSkillData {
         return allocatedNodeIds.contains(nodeId);
     }
 
+    public boolean isSatisfied(String nodeId, String satisfiedRootId) {
+        return isAllocated(nodeId) || nodeId.equals(satisfiedRootId);
+    }
+
     public Set<String> getAllocatedNodeIds() {
         return allocatedNodeIds;
     }
@@ -43,44 +47,44 @@ public class ShipSkillData {
         xp += node.getXpCost();
     }
 
-    public boolean canAllocate(SkillNode node) {
+    public boolean canAllocate(SkillNode node, String satisfiedRootId) {
         if (node.getPrerequisiteNodeIds().isEmpty()) {
             return true;
         }
         for (String prerequisiteId : node.getPrerequisiteNodeIds()) {
-            if (isAllocated(prerequisiteId)) {
+            if (isSatisfied(prerequisiteId, satisfiedRootId)) {
                 return true;
             }
         }
         return false;
     }
 
-    public boolean canDeallocate(SkillNode node, Collection<SkillNode> allNodes) {
+    public boolean canDeallocate(SkillNode node, Collection<SkillNode> allNodes, String satisfiedRootId) {
         for (SkillNode candidate : allNodes) {
             if (!isAllocated(candidate.getId())) continue;
             if (!candidate.getPrerequisiteNodeIds().contains(node.getId())) continue;
-            if (!hasAnotherAllocatedPrerequisite(candidate, node.getId())) {
+            if (!hasAnotherSatisfiedPrerequisite(candidate, node.getId(), satisfiedRootId)) {
                 return false;
             }
         }
         return true;
     }
 
-    private boolean hasAnotherAllocatedPrerequisite(SkillNode node, String excludingId) {
+    private boolean hasAnotherSatisfiedPrerequisite(SkillNode node, String excludingId, String satisfiedRootId) {
         for (String prerequisiteId : node.getPrerequisiteNodeIds()) {
-            if (!prerequisiteId.equals(excludingId) && isAllocated(prerequisiteId)) {
+            if (!prerequisiteId.equals(excludingId) && isSatisfied(prerequisiteId, satisfiedRootId)) {
                 return true;
             }
         }
         return false;
     }
 
-    public void toggle(SkillNode node, Collection<SkillNode> allNodes) {
+    public void toggle(SkillNode node, Collection<SkillNode> allNodes, String satisfiedRootId) {
         if (isAllocated(node.getId())) {
-            if (canDeallocate(node, allNodes)) {
+            if (canDeallocate(node, allNodes, satisfiedRootId)) {
                 deallocate(node);
             }
-        } else if (canAllocate(node)) {
+        } else if (canAllocate(node, satisfiedRootId)) {
             allocate(node);
         }
     }

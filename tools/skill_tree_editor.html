@@ -1,4 +1,4 @@
-﻿<title>Skill Tree Layout Editor</title>
+<title>Skill Tree Layout Editor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -17,6 +17,7 @@
     --small: #7c8ba0;
     --notable: #5fd0ff;
     --keystone: #ffb454;
+    --root: #b98aff;
     --danger: #ff6b6b;
     --danger-dim: #4a2626;
     --success: #4ade80;
@@ -40,6 +41,7 @@
       --small: #6b7686;
       --notable: #0d84ad;
       --keystone: #b9720a;
+      --root: #7c4dff;
       --danger: #c8393a;
       --danger-dim: #fbdede;
       --success: #16824a;
@@ -61,6 +63,7 @@
     --small: #6b7686;
     --notable: #0d84ad;
     --keystone: #b9720a;
+    --root: #7c4dff;
     --danger: #c8393a;
     --danger-dim: #fbdede;
     --success: #16824a;
@@ -248,8 +251,8 @@
   }
   .edge-line { stroke: var(--text-faint); stroke-width: 1.4; opacity: .55; }
   .edge-line.bad { stroke: var(--danger); opacity: .9; stroke-dasharray: 4 3; }
-  .root-line { stroke: var(--text-faint); stroke-width: 1; opacity: .3; stroke-dasharray: 3 4; }
   .center-mark { fill: none; stroke: var(--accent); stroke-width: 1.5; opacity: .8; }
+  .marquee-rect { fill: var(--accent); fill-opacity: .12; stroke: var(--accent); stroke-width: 1; stroke-dasharray: 4 3; pointer-events: none; }
 
   .zoomControls {
     position: absolute;
@@ -426,16 +429,16 @@
     <div class="stats" id="statsLine"></div>
     <div class="spacer"></div>
     <input id="searchBox" placeholder="Search node or type name...">
-    <button class="themeToggle" id="themeToggle" title="Toggle theme">â—</button>
+    <button class="themeToggle" id="themeToggle" title="Toggle theme">◐</button>
   </div>
 
   <div id="toolbar">
     <div class="toolSection">
       <div class="label">Mode</div>
-      <button class="modeBtn active" data-mode="select">â†– Select / Move <span class="key">V</span></button>
-      <button class="modeBtn" data-mode="add">âœš Add Node <span class="key">A</span></button>
-      <button class="modeBtn" data-mode="link">â‡„ Link / Unlink <span class="key">L</span></button>
-      <div class="hint">Select: drag a node to move it, drag empty canvas to pan, scroll to zoom.<br><br>Add: click empty canvas to place a node there.<br><br>Link: click two nodes - the outer one gets the inner one added as a prerequisite. Click the same pair again to unlink.</div>
+      <button class="modeBtn active" data-mode="select">↖ Select / Move <span class="key">V</span></button>
+      <button class="modeBtn" data-mode="add">✚ Add Node <span class="key">A</span></button>
+      <button class="modeBtn" data-mode="link">⇄ Link / Unlink <span class="key">L</span></button>
+      <div class="hint">Select: drag a node to move it, drag empty canvas to pan, scroll to zoom. Shift-click a node to add/remove it from a multi-selection, or shift-drag empty canvas to marquee-select. Drag any selected node to move the whole group together.<br><br>Add: click empty canvas to place a node there.<br><br>Link: click two nodes - the outer one gets the inner one added as a prerequisite. Click the same pair again to unlink.</div>
     </div>
 
     <div class="toolSection">
@@ -443,6 +446,7 @@
       <div class="legendRow"><span class="legendDot" style="background:var(--small)"></span>Small</div>
       <div class="legendRow"><span class="legendDot" style="background:var(--notable)"></span>Notable</div>
       <div class="legendRow"><span class="legendDot" style="background:var(--keystone)"></span>Keystone</div>
+      <div class="legendRow"><span class="legendDot" style="background:var(--root)"></span>Root (ship start)</div>
       <label class="legendRow" style="cursor:pointer"><input type="checkbox" id="labelsToggle" checked> Show labels</label>
     </div>
 
@@ -468,13 +472,13 @@
     <svg id="stage"></svg>
     <div class="zoomControls">
       <button id="zoomIn">+</button>
-      <button id="zoomOut">âˆ’</button>
+      <button id="zoomOut">−</button>
     </div>
     <div class="warnBadge" id="warnBadge" style="display:none"></div>
   </div>
 
   <div id="inspector">
-    <button class="closeMobile" id="closeInspector">Ã—</button>
+    <button class="closeMobile" id="closeInspector">×</button>
     <div id="inspectorBody"><div class="empty-inspector">Select a node to see and edit its details, or switch to Add mode and click the canvas to place a new one.</div></div>
   </div>
 
@@ -486,6 +490,7 @@
     <div class="exportBody">
       <textarea id="exportText" readonly spellcheck="false"></textarea>
       <div class="exportSide">
+        <button class="smallBtn primary" id="saveToProjectBtn">Save to project</button>
         <button class="smallBtn primary" id="copyBtn">Copy</button>
         <button class="smallBtn" id="refreshExportBtn">Regenerate</button>
         <div class="hint" id="exportHint"></div>
@@ -502,70 +507,73 @@
 "use strict";
 
 var SHIPPED_TYPES = [
-{"id":"flux_capacity","name":"Flux Capacity","icon":"graphics/icons/skills/containment_procedures.png","opCost":2,"xpCost":500,"effects":[{"effect":"FLUX_CAPACITY","magnitude":1}]},
-{"id":"flux_dissipation","name":"Flux Dissipation","icon":"graphics/icons/skills/systems_expertise.png","opCost":2,"xpCost":500,"effects":[{"effect":"FLUX_DISSIPATION","magnitude":1}]},
-{"id":"hybrid_flux","name":"Flux Capacity and Dissipation","icon":"graphics/icons/skills/flux_dynamics.png","opCost":2,"xpCost":500,"effects":[{"effect":"HYBRID_FLUX","magnitude":0.5}]},
-{"id":"hull","name":"Hull","icon":"graphics/icons/skills/damage_control2.png","opCost":2,"xpCost":500,"effects":[{"effect":"HULL","magnitude":1}]},
-{"id":"armor","name":"Armor","icon":"graphics/icons/skills/polarized_armor.png","opCost":2,"xpCost":500,"effects":[{"effect":"ARMOR","magnitude":1}]},
-{"id":"ballistic_damage","name":"Ballistic Weapon Damage","icon":"graphics/icons/skills/ranged_specialization.png","opCost":2,"xpCost":500,"effects":[{"effect":"BALLISTIC_DAMAGE","magnitude":1}]},
-{"id":"missile_damage","name":"Missile Weapon Damage","icon":"graphics/icons/skills/missile_specialization2.png","opCost":2,"xpCost":500,"effects":[{"effect":"MISSILE_DAMAGE","magnitude":1}]},
-{"id":"non_beam_energy_damage","name":"Non-Beam Energy Weapon Damage","icon":"graphics/icons/skills/special_modifications.png","opCost":2,"xpCost":500,"effects":[{"effect":"NON_BEAM_ENERGY_DAMAGE","magnitude":1}]},
-{"id":"beam_damage","name":"Beam Weapon Damage","icon":"graphics/icons/skills/hypercognition.png","opCost":2,"xpCost":500,"effects":[{"effect":"BEAM_DAMAGE","magnitude":1}]},
-{"id":"energy_damage","name":"Energy Weapon Damage","icon":"graphics/icons/skills/energy_weapon_mastery.png","opCost":2,"xpCost":500,"effects":[{"effect":"ENERGY_DAMAGE","magnitude":1}]},
-{"id":"weapon_damage","name":"All Weapon Damage","icon":"graphics/icons/skills/weapon_drills.png","opCost":2,"xpCost":500,"effects":[{"effect":"ALL_WEAPON_DAMAGE","magnitude":1}]},
-{"id":"packed_capacitors","name":"Packed Capacitors","icon":"graphics/icons/skills/power_grid_manipulation.png","opCost":3,"xpCost":1200,"tier":"NOTABLE","effects":[{"effect":"FLUX_CAPACITY","magnitude":10}]},
-{"id":"safety_overrides","name":"Safety Overrides","icon":"graphics/icons/skills/helmsmanship.png","opCost":5,"xpCost":3000,"tier":"KEYSTONE","effects":[{"effect":"TOP_SPEED","magnitude":15},{"effect":"FLUX_DISSIPATION","magnitude":20},{"effect":"PEAK_CR_DURATION","magnitude":-20},{"effect":"WEAPON_RANGE_FALLOFF","magnitude":-15}]},
-{"id":"adaptive_coils","name":"Adaptive Phase Coils","icon":"graphics/icons/notable_hullmods/phase_field.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"adaptive_coils","todo":"Phase hard-flux speed threshold - no clean stat mapping yet"},
-{"id":"adaptiveshields","name":"Shield Conversion - Omni","icon":"graphics/icons/notable_hullmods/omni_shield_emitter_mod.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"adaptiveshields","todo":"Converts front shield to omni - needs a real mechanic"},
-{"id":"additional_berthing","name":"Additional Berthing","icon":"graphics/icons/notable_hullmods/berthing.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"CREW_CAPACITY","magnitude":20}]},
-{"id":"advancedoptics","name":"Advanced Optics","icon":"graphics/icons/notable_hullmods/advanced_optics.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"BEAM_WEAPON_RANGE","magnitude":15}]},
-{"id":"advancedshieldemitter","name":"Accelerated Shields","icon":"graphics/icons/notable_hullmods/accelerated_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"SHIELD_TURN_RATE","magnitude":15},{"effect":"SHIELD_RAISE_RATE","magnitude":15}]},
-{"id":"armoredweapons","name":"Armored Weapon Mounts","icon":"graphics/icons/notable_hullmods/armored_weapon_emplacements.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"WEAPON_DURABILITY","magnitude":20},{"effect":"ARMOR","magnitude":10}]},
-{"id":"augmentedengines","name":"Augmented Drive Field","icon":"graphics/icons/notable_hullmods/augmented_drive_field2.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"BURN_LEVEL","magnitude":15}]},
-{"id":"autorepair","name":"Automated Repair Unit","icon":"graphics/icons/notable_hullmods/automated_repair_unit.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"REPAIR_TIME","magnitude":-20}]},
-{"id":"auxiliary_fuel_tanks","name":"Auxiliary Fuel Tanks","icon":"graphics/icons/notable_hullmods/fuel_tanks.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"FUEL_CAPACITY","magnitude":20}]},
-{"id":"auxiliarythrusters","name":"Auxiliary Thrusters","icon":"graphics/icons/notable_hullmods/auxilliary_thrusters.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"MANEUVERABILITY","magnitude":15}]},
-{"id":"ballistic_rangefinder","name":"Ballistic Rangefinder","icon":"graphics/icons/notable_hullmods/ballistic_rangefinder.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"BALLISTIC_WEAPON_RANGE","magnitude":15}]},
-{"id":"blast_doors","name":"Blast Doors","icon":"graphics/icons/notable_hullmods/blast_doors.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"HULL","magnitude":10}]},
-{"id":"converted_fighterbay","name":"Converted Fighter Bay","icon":"graphics/icons/notable_hullmods/converted_fighter_bay.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"converted_fighterbay","todo":"Converts fighter bay to cargo hold - structural, not a stat"},
-{"id":"converted_hangar","name":"Converted Hangar","icon":"graphics/icons/notable_hullmods/converted_hangar.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"converted_hangar","todo":"Converts fighter bay to cargo/hangar - structural, not a stat"},
-{"id":"dedicated_targeting_core","name":"Dedicated Targeting Core","icon":"graphics/icons/notable_hullmods/targeting_core.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"BALLISTIC_WEAPON_RANGE","magnitude":15},{"effect":"ENERGY_WEAPON_RANGE","magnitude":15}]},
-{"id":"defensive_targeting_array","name":"Defensive Targeting Array","icon":"graphics/icons/notable_hullmods/defensive_targeting_array.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"defensive_targeting_array","todo":"Fighter PD behavior change - no clean stat mapping yet"},
-{"id":"eccm","name":"ECCM Package","icon":"graphics/icons/notable_hullmods/eccm_package.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"MISSILE_GUIDANCE","magnitude":20}]},
-{"id":"ecm","name":"ECM Package","icon":"graphics/icons/notable_hullmods/ecm_package.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"ecm","todo":"ECM rating - not exposed as a simple modifiable stat"},
-{"id":"efficiency_overhaul","name":"Efficiency Overhaul","icon":"graphics/icons/notable_hullmods/efficiency.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"CR_RECOVERY_RATE","magnitude":15}]},
-{"id":"escort_package","name":"Escort Package","icon":"graphics/icons/notable_hullmods/escort_package.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"escort_package","todo":"Conditional proximity aura - no clean stat mapping yet"},
-{"id":"expanded_cargo_holds","name":"Expanded Cargo Holds","icon":"graphics/icons/notable_hullmods/expanded_cargo.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"CARGO_CAPACITY","magnitude":20}]},
-{"id":"expanded_deck_crew","name":"Expanded Deck Crew","icon":"graphics/icons/notable_hullmods/expanded_deck_crew.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"expanded_deck_crew","todo":"Fighter replacement rate - no clean stat mapping yet"},
-{"id":"extendedshieldemitter","name":"Extended Shields","icon":"graphics/icons/notable_hullmods/extended_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"SHIELD_ARC","magnitude":20}]},
-{"id":"fluxbreakers","name":"Resistant Flux Conduits","icon":"graphics/icons/notable_hullmods/resistant_flux_conduits.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"FLUX_DISSIPATION","magnitude":10}]},
-{"id":"fluxcoil","name":"Flux Coil Adjunct","icon":"graphics/icons/notable_hullmods/flux_coil_adjunct.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"FLUX_CAPACITY","magnitude":10}]},
-{"id":"fluxdistributor","name":"Flux Distributor","icon":"graphics/icons/notable_hullmods/flux_distributor.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"FLUX_DISSIPATION","magnitude":10}]},
-{"id":"frontemitter","name":"Shield Conversion - Front","icon":"graphics/icons/notable_hullmods/front_shield_emitter.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"frontemitter","todo":"Converts omni shield to front-facing - needs a real mechanic"},
-{"id":"frontshield","name":"Makeshift Shield Generator","icon":"graphics/icons/notable_hullmods/front_shield_generator.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"frontshield","todo":"Adds shields to a shieldless ship - needs a real mechanic"},
-{"id":"hardened_subsystems","name":"Hardened Subsystems","icon":"graphics/icons/notable_hullmods/hardened_subsystems.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"PEAK_CR_DURATION","magnitude":20}]},
-{"id":"hardenedshieldemitter","name":"Hardened Shields","icon":"graphics/icons/notable_hullmods/hardened_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"SHIELD_ABSORPTION","magnitude":-10}]},
-{"id":"heavyarmor","name":"Heavy Armor","icon":"graphics/icons/notable_hullmods/heavy_armor.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"ARMOR","magnitude":15}]},
-{"id":"high_scatter_amp","name":"High Scatter Amplifier","icon":"graphics/icons/notable_hullmods/high_scatter_amp.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"BEAM_DAMAGE","magnitude":15}]},
-{"id":"hiressensors","name":"High Resolution Sensors","icon":"graphics/icons/notable_hullmods/high_res_sensors.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"SENSOR_STRENGTH","magnitude":20}]},
-{"id":"insulatedengine","name":"Insulated Engine Assembly","icon":"graphics/icons/notable_hullmods/insulated_engine_assembly.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"ENGINE_DURABILITY","magnitude":15},{"effect":"HULL","magnitude":5},{"effect":"SENSOR_PROFILE","magnitude":-10}]},
-{"id":"magazines","name":"Expanded Magazines","icon":"graphics/icons/notable_hullmods/expanded_magazines2.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"BALLISTIC_AMMO","magnitude":20},{"effect":"ENERGY_AMMO","magnitude":20}]},
-{"id":"militarized_subsystems","name":"Militarized Subsystems","icon":"graphics/icons/notable_hullmods/militarized_subsystems.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"militarized_subsystems","todo":"Removes civilian-grade penalties - structural, not additive"},
-{"id":"missile_autoloader","name":"Missile Autoloader","icon":"graphics/icons/notable_hullmods/missile_autoloader.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"missile_autoloader","todo":"Reload behavior change - no clean stat mapping yet"},
-{"id":"missleracks","name":"Expanded Missile Racks","icon":"graphics/icons/notable_hullmods/expanded_missile_racks.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"MISSILE_AMMO","magnitude":25}]},
-{"id":"nav_relay","name":"Nav Relay","icon":"graphics/icons/notable_hullmods/nav_relay.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"nav_relay","todo":"Fleet-wide nav rating aura - not a self-only stat"},
-{"id":"operations_center","name":"Operations Center","icon":"graphics/icons/notable_hullmods/operations_center.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"operations_center","todo":"Fleet command point regen - no clean stat mapping yet"},
-{"id":"phase_anchor","name":"Phase Anchor","icon":"graphics/icons/notable_hullmods/phase_anchor.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"phase_anchor","todo":"Behavioral (emergency phase dive) - no clean stat mapping yet"},
-{"id":"pointdefenseai","name":"Integrated Point Defense AI","icon":"graphics/icons/notable_hullmods/integrated_point_defense_ai.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"pointdefenseai","todo":"PD flare immunity/targeting behavior - no clean stat mapping yet"},
-{"id":"recovery_shuttles","name":"Recovery Shuttles","icon":"graphics/icons/notable_hullmods/recovery_shuttles.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"CREW_LOSS","magnitude":-15}]},
-{"id":"reinforcedhull","name":"Reinforced Bulkheads","icon":"graphics/icons/notable_hullmods/reinforced_bulkheads.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"HULL","magnitude":15}]},
-{"id":"shield_shunt","name":"Shield Shunt","icon":"graphics/icons/notable_hullmods/shield_shunt.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"shield_shunt","todo":"Removes shields entirely - needs a real mechanic"},
-{"id":"solar_shielding","name":"Solar Shielding","icon":"graphics/icons/notable_hullmods/solar_shielding2.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"ENERGY_DAMAGE_TAKEN","magnitude":-10}]},
-{"id":"stabilizedshieldemitter","name":"Stabilized Shields","icon":"graphics/icons/notable_hullmods/stabilized_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"SHIELD_UPKEEP","magnitude":-15}]},
-{"id":"surveying_equipment","name":"Surveying Equipment","icon":"graphics/icons/notable_hullmods/surveying_equipment.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"surveying_equipment","todo":"Campaign-layer survey cost reduction - no combat stat"},
-{"id":"targetingunit","name":"Integrated Targeting Unit","icon":"graphics/icons/notable_hullmods/integrated_targeting_unit.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"BALLISTIC_WEAPON_RANGE","magnitude":15},{"effect":"ENERGY_WEAPON_RANGE","magnitude":15}]},
-{"id":"turretgyros","name":"Advanced Turret Gyros","icon":"graphics/icons/notable_hullmods/advanced_turret_gyros.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"WEAPON_TURN_RATE","magnitude":20}]},
-{"id":"unstable_injector","name":"Unstable Injector","icon":"graphics/icons/notable_hullmods/unstable_injector.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"TOP_SPEED","magnitude":10}]}
+{"id":"flux_capacity","name":"Flux Capacity","icon":"graphics/icons/skills/containment_procedures.png","opCost":2,"xpCost":500},
+{"id":"flux_dissipation","name":"Flux Dissipation","icon":"graphics/icons/skills/systems_expertise.png","opCost":2,"xpCost":500},
+{"id":"hybrid_flux","name":"Flux Capacity and Dissipation","icon":"graphics/icons/skills/flux_dynamics.png","opCost":2,"xpCost":500},
+{"id":"hull","name":"Hull","icon":"graphics/icons/skills/damage_control2.png","opCost":2,"xpCost":500},
+{"id":"armor","name":"Armor","icon":"graphics/icons/skills/polarized_armor.png","opCost":2,"xpCost":500},
+{"id":"ballistic_damage","name":"Ballistic Weapon Damage","icon":"graphics/icons/skills/ranged_specialization.png","opCost":2,"xpCost":500},
+{"id":"missile_damage","name":"Missile Weapon Damage","icon":"graphics/icons/skills/missile_specialization2.png","opCost":2,"xpCost":500},
+{"id":"non_beam_energy_damage","name":"Non-Beam Energy Weapon Damage","icon":"graphics/icons/skills/special_modifications.png","opCost":2,"xpCost":500},
+{"id":"beam_damage","name":"Beam Weapon Damage","icon":"graphics/icons/skills/hypercognition.png","opCost":2,"xpCost":500},
+{"id":"energy_damage","name":"Energy Weapon Damage","icon":"graphics/icons/skills/energy_weapon_mastery.png","opCost":2,"xpCost":500},
+{"id":"weapon_damage","name":"All Weapon Damage","icon":"graphics/icons/skills/weapon_drills.png","opCost":2,"xpCost":500},
+{"id":"packed_capacitors","name":"Packed Capacitors","icon":"graphics/icons/skills/power_grid_manipulation.png","opCost":3,"xpCost":1200,"tier":"NOTABLE"},
+{"id":"safety_overrides","name":"Safety Overrides","icon":"graphics/icons/skills/helmsmanship.png","opCost":5,"xpCost":3000,"tier":"KEYSTONE","vanillaHullMod":"safetyoverrides"},
+{"id":"advancedshieldemitter","name":"Accelerated Shields","icon":"graphics/icons/notable_hullmods/accelerated_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"advancedshieldemitter"},
+{"id":"adaptive_coils","name":"Adaptive Phase Coils","icon":"graphics/icons/notable_hullmods/phase_field.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"adaptive_coils"},
+{"id":"advancedoptics","name":"Advanced Optics","icon":"graphics/icons/notable_hullmods/advanced_optics.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"advancedoptics"},
+{"id":"turretgyros","name":"Advanced Turret Gyros","icon":"graphics/icons/notable_hullmods/advanced_turret_gyros.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"turretgyros"},
+{"id":"armoredweapons","name":"Armored Weapon Mounts","icon":"graphics/icons/notable_hullmods/armored_weapon_emplacements.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"armoredweapons"},
+{"id":"autorepair","name":"Automated Repair Unit","icon":"graphics/icons/notable_hullmods/automated_repair_unit.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"autorepair"},
+{"id":"auxiliarythrusters","name":"Auxiliary Thrusters","icon":"graphics/icons/notable_hullmods/auxilliary_thrusters.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"auxiliarythrusters"},
+{"id":"ballistic_rangefinder","name":"Ballistic Rangefinder","icon":"graphics/icons/notable_hullmods/ballistic_rangefinder.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"ballistic_rangefinder"},
+{"id":"blast_doors","name":"Blast Doors","icon":"graphics/icons/notable_hullmods/blast_doors.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"blast_doors"},
+{"id":"converted_hangar","name":"Converted Hangar","icon":"graphics/icons/notable_hullmods/converted_hangar.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"converted_hangar"},
+{"id":"converted_fighterbay","name":"Converted Fighter Bay","icon":"graphics/icons/notable_hullmods/converted_fighter_bay.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"converted_fighterbay"},
+{"id":"dedicated_targeting_core","name":"Dedicated Targeting Core","icon":"graphics/icons/notable_hullmods/targeting_core.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"dedicated_targeting_core"},
+{"id":"defensive_targeting_array","name":"Defensive Targeting Array","icon":"graphics/icons/notable_hullmods/defensive_targeting_array.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"defensive_targeting_array"},
+{"id":"eccm","name":"ECCM Package","icon":"graphics/icons/notable_hullmods/eccm_package.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"eccm"},
+{"id":"ecm","name":"ECM Package","icon":"graphics/icons/notable_hullmods/ecm_package.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"ecm"},
+{"id":"escort_package","name":"Escort Package","icon":"graphics/icons/notable_hullmods/escort_package.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"escort_package"},
+{"id":"expanded_deck_crew","name":"Expanded Deck Crew","icon":"graphics/icons/notable_hullmods/expanded_deck_crew.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"expanded_deck_crew"},
+{"id":"magazines","name":"Expanded Magazines","icon":"graphics/icons/notable_hullmods/expanded_magazines2.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"magazines"},
+{"id":"missleracks","name":"Expanded Missile Racks","icon":"graphics/icons/notable_hullmods/expanded_missile_racks.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"missleracks"},
+{"id":"extendedshieldemitter","name":"Extended Shields","icon":"graphics/icons/notable_hullmods/extended_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"extendedshieldemitter"},
+{"id":"fluxcoil","name":"Flux Coil Adjunct","icon":"graphics/icons/notable_hullmods/flux_coil_adjunct.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"fluxcoil"},
+{"id":"fluxdistributor","name":"Flux Distributor","icon":"graphics/icons/notable_hullmods/flux_distributor.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"fluxdistributor"},
+{"id":"shield_shunt","name":"Shield Shunt","icon":"graphics/icons/notable_hullmods/shield_shunt.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"shield_shunt"},
+{"id":"frontshield","name":"Makeshift Shield Generator","icon":"graphics/icons/notable_hullmods/front_shield_generator.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"frontshield"},
+{"id":"missile_autoloader","name":"Missile Autoloader","icon":"graphics/icons/notable_hullmods/missile_autoloader.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"missile_autoloader"},
+{"id":"hardenedshieldemitter","name":"Hardened Shields","icon":"graphics/icons/notable_hullmods/hardened_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"hardenedshieldemitter"},
+{"id":"hardened_subsystems","name":"Hardened Subsystems","icon":"graphics/icons/notable_hullmods/hardened_subsystems.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"hardened_subsystems"},
+{"id":"heavyarmor","name":"Heavy Armor","icon":"graphics/icons/notable_hullmods/heavy_armor.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"heavyarmor"},
+{"id":"high_scatter_amp","name":"High Scatter Amplifier","icon":"graphics/icons/notable_hullmods/high_scatter_amp.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"high_scatter_amp"},
+{"id":"pointdefenseai","name":"Integrated Point Defense AI","icon":"graphics/icons/notable_hullmods/integrated_point_defense_ai.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"pointdefenseai"},
+{"id":"targetingunit","name":"Integrated Targeting Unit","icon":"graphics/icons/notable_hullmods/integrated_targeting_unit.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"targetingunit"},
+{"id":"nav_relay","name":"Nav Relay","icon":"graphics/icons/notable_hullmods/nav_relay.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"nav_relay"},
+{"id":"frontemitter","name":"Shield Conversion - Front","icon":"graphics/icons/notable_hullmods/front_shield_emitter.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"frontemitter"},
+{"id":"adaptiveshields","name":"Shield Conversion - Omni","icon":"graphics/icons/notable_hullmods/omni_shield_emitter_mod.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"adaptiveshields"},
+{"id":"operations_center","name":"Operations Center","icon":"graphics/icons/notable_hullmods/operations_center.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"operations_center"},
+{"id":"phase_anchor","name":"Phase Anchor","icon":"graphics/icons/notable_hullmods/phase_anchor.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"phase_anchor"},
+{"id":"recovery_shuttles","name":"Recovery Shuttles","icon":"graphics/icons/notable_hullmods/recovery_shuttles.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"recovery_shuttles"},
+{"id":"reinforcedhull","name":"Reinforced Bulkheads","icon":"graphics/icons/notable_hullmods/reinforced_bulkheads.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"reinforcedhull"},
+{"id":"fluxbreakers","name":"Resistant Flux Conduits","icon":"graphics/icons/notable_hullmods/resistant_flux_conduits.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"fluxbreakers"},
+{"id":"stabilizedshieldemitter","name":"Stabilized Shields","icon":"graphics/icons/notable_hullmods/stabilized_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"stabilizedshieldemitter"},
+{"id":"unstable_injector","name":"Unstable Injector","icon":"graphics/icons/notable_hullmods/unstable_injector.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"unstable_injector"},
+{"id":"additional_berthing","name":"Additional Berthing","icon":"graphics/icons/notable_hullmods/berthing.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"additional_berthing"},
+{"id":"augmentedengines","name":"Augmented Drive Field","icon":"graphics/icons/notable_hullmods/augmented_drive_field2.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"augmentedengines"},
+{"id":"auxiliary_fuel_tanks","name":"Auxiliary Fuel Tanks","icon":"graphics/icons/notable_hullmods/fuel_tanks.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"auxiliary_fuel_tanks"},
+{"id":"efficiency_overhaul","name":"Efficiency Overhaul","icon":"graphics/icons/notable_hullmods/efficiency.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"efficiency_overhaul"},
+{"id":"expanded_cargo_holds","name":"Expanded Cargo Holds","icon":"graphics/icons/notable_hullmods/expanded_cargo.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"expanded_cargo_holds"},
+{"id":"hiressensors","name":"High Resolution Sensors","icon":"graphics/icons/notable_hullmods/high_res_sensors.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"hiressensors"},
+{"id":"insulatedengine","name":"Insulated Engine Assembly","icon":"graphics/icons/notable_hullmods/insulated_engine_assembly.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"insulatedengine"},
+{"id":"militarized_subsystems","name":"Militarized Subsystems","icon":"graphics/icons/notable_hullmods/militarized_subsystems.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"militarized_subsystems"},
+{"id":"solar_shielding","name":"Solar Shielding","icon":"graphics/icons/notable_hullmods/solar_shielding2.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"solar_shielding"},
+{"id":"surveying_equipment","name":"Surveying Equipment","icon":"graphics/icons/notable_hullmods/surveying_equipment.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"surveying_equipment"},
+{"id":"root_low_tech","name":"Low Tech Root","icon":"","opCost":0,"xpCost":0,"tier":"ROOT"},
+{"id":"root_midline","name":"Midline Root","icon":"","opCost":0,"xpCost":0,"tier":"ROOT"},
+{"id":"root_high_tech","name":"High Tech Root","icon":"","opCost":0,"xpCost":0,"tier":"ROOT"}
 ];
 
 var SHIPPED_NODES = [
@@ -573,11 +581,11 @@ var SHIPPED_NODES = [
 {"id":"flux_capacity_1","type":"flux_capacity","prerequisites":["hybrid_flux_1"],"x":-140,"y":-480},
 {"id":"flux_dissipation_1","type":"flux_dissipation","prerequisites":["hybrid_flux_1"],"x":140,"y":-480},
 {"id":"missile_damage_1","type":"missile_damage","prerequisites":[],"x":277,"y":-160},
-{"id":"ballistic_damage_1","type":"ballistic_damage","prerequisites":[],"x":277,"y":160},
+{"id":"ballistic_damage_1","type":"ballistic_damage","prerequisites":[],"x":300,"y":174},
 {"id":"hull_1","type":"hull","prerequisites":[],"x":0,"y":320},
-{"id":"beam_damage_1","type":"beam_damage","prerequisites":[],"x":-277,"y":160},
-{"id":"non_beam_energy_damage_1","type":"non_beam_energy_damage","prerequisites":[],"x":-277,"y":-160},
-{"id":"energy_damage_1","type":"energy_damage","prerequisites":["non_beam_energy_damage_1","beam_damage_1"],"x":-450,"y":0},
+{"id":"beam_damage_1","type":"beam_damage","prerequisites":["beam_damage_2"],"x":-294,"y":78},
+{"id":"non_beam_energy_damage_1","type":"non_beam_energy_damage","prerequisites":["energy_damage_1"],"x":-222,"y":-22},
+{"id":"energy_damage_1","type":"energy_damage","prerequisites":[],"x":-138,"y":9},
 {"id":"armor_1","type":"armor","prerequisites":["hull_1"],"x":0,"y":500},
 {"id":"weapon_damage_1","type":"weapon_damage","prerequisites":[],"x":450,"y":0},
 {"id":"packed_capacitors_1","type":"packed_capacitors","prerequisites":["flux_capacity_1"],"x":-190,"y":-650},
@@ -586,22 +594,22 @@ var SHIPPED_NODES = [
 {"id":"armoredweapons_1","type":"armoredweapons","prerequisites":["armor_1"],"x":-222,"y":685},
 {"id":"reinforcedhull_1","type":"reinforcedhull","prerequisites":["hull_1"],"x":410,"y":382},
 {"id":"blast_doors_1","type":"blast_doors","prerequisites":["hull_1"],"x":219,"y":515},
-{"id":"fluxcoil_1","type":"fluxcoil","prerequisites":["flux_capacity_1"],"x":-597,"y":-403},
+{"id":"fluxcoil_1","type":"fluxcoil","prerequisites":["flux_capacity_1"],"x":-332,"y":-345},
 {"id":"fluxbreakers_1","type":"fluxbreakers","prerequisites":["flux_capacity_1"],"x":-316,"y":-647},
 {"id":"fluxdistributor_1","type":"fluxdistributor","prerequisites":["flux_dissipation_1"],"x":-50,"y":-718},
 {"id":"autorepair_1","type":"autorepair","prerequisites":["flux_dissipation_1"],"x":198,"y":-692},
 {"id":"hardened_subsystems_1","type":"hardened_subsystems","prerequisites":["flux_dissipation_1"],"x":423,"y":-582},
-{"id":"turretgyros_1","type":"turretgyros","prerequisites":["ballistic_damage_1"],"x":518,"y":45},
+{"id":"turretgyros_1","type":"turretgyros","prerequisites":["ballistic_damage_1"],"x":591,"y":40},
 {"id":"ballistic_rangefinder_1","type":"ballistic_rangefinder","prerequisites":["ballistic_damage_1"],"x":483,"y":192},
 {"id":"magazines_1","type":"magazines","prerequisites":["ballistic_damage_1"],"x":408,"y":323},
 {"id":"pointdefenseai_1","type":"pointdefenseai","prerequisites":["ballistic_damage_1"],"x":298,"y":426},
 {"id":"missleracks_1","type":"missleracks","prerequisites":["missile_damage_1"],"x":334,"y":-398},
 {"id":"missile_autoloader_1","type":"missile_autoloader","prerequisites":["missile_damage_1"],"x":450,"y":-260},
 {"id":"eccm_1","type":"eccm","prerequisites":["missile_damage_1"],"x":512,"y":-90},
-{"id":"high_scatter_amp_1","type":"high_scatter_amp","prerequisites":["beam_damage_1"],"x":-368,"y":368},
-{"id":"advancedoptics_1","type":"advancedoptics","prerequisites":["beam_damage_1"],"x":-502,"y":135},
-{"id":"dedicated_targeting_core_1","type":"dedicated_targeting_core","prerequisites":["non_beam_energy_damage_1"],"x":-450,"y":-260},
-{"id":"targetingunit_1","type":"targetingunit","prerequisites":["energy_damage_1"],"x":-650,"y":0},
+{"id":"high_scatter_amp_1","type":"high_scatter_amp","prerequisites":[],"x":-863,"y":510},
+{"id":"advancedoptics_1","type":"advancedoptics","prerequisites":[],"x":-776,"y":469},
+{"id":"dedicated_targeting_core_1","type":"dedicated_targeting_core","prerequisites":[],"x":-450,"y":-260},
+{"id":"targetingunit_1","type":"targetingunit","prerequisites":[],"x":-974,"y":385},
 {"id":"ecm_1","type":"ecm","prerequisites":["weapon_damage_1"],"x":628,"y":-168},
 {"id":"defensive_targeting_array_1","type":"defensive_targeting_array","prerequisites":["weapon_damage_1"],"x":628,"y":168},
 {"id":"advancedshieldemitter_1","type":"advancedshieldemitter","prerequisites":[],"x":589,"y":275},
@@ -614,9 +622,9 @@ var SHIPPED_NODES = [
 {"id":"adaptiveshields_1","type":"adaptiveshields","prerequisites":[],"x":-74,"y":847},
 {"id":"auxiliarythrusters_1","type":"auxiliarythrusters","prerequisites":[],"x":0,"y":650},
 {"id":"unstable_injector_1","type":"unstable_injector","prerequisites":[],"x":-220,"y":821},
-{"id":"nav_relay_1","type":"nav_relay","prerequisites":[],"x":-325,"y":563},
-{"id":"adaptive_coils_1","type":"adaptive_coils","prerequisites":[],"x":-601,"y":601},
-{"id":"phase_anchor_1","type":"phase_anchor","prerequisites":[],"x":-563,"y":325},
+{"id":"nav_relay_1","type":"nav_relay","prerequisites":[],"x":-319,"y":575},
+{"id":"adaptive_coils_1","type":"adaptive_coils","prerequisites":[],"x":-971,"y":461},
+{"id":"phase_anchor_1","type":"phase_anchor","prerequisites":[],"x":-867,"y":432},
 {"id":"additional_berthing_1","type":"additional_berthing","prerequisites":[],"x":-628,"y":-168},
 {"id":"augmentedengines_1","type":"augmentedengines","prerequisites":[],"x":-777,"y":-344},
 {"id":"auxiliary_fuel_tanks_1","type":"auxiliary_fuel_tanks","prerequisites":[],"x":-547,"y":-352},
@@ -632,20 +640,39 @@ var SHIPPED_NODES = [
 {"id":"expanded_deck_crew_1","type":"expanded_deck_crew","prerequisites":[],"x":403,"y":-510},
 {"id":"recovery_shuttles_1","type":"recovery_shuttles","prerequisites":[],"x":696,"y":-488},
 {"id":"operations_center_1","type":"operations_center","prerequisites":[],"x":532,"y":-373},
-{"id":"escort_package_1","type":"escort_package","prerequisites":[],"x":847,"y":-74}
+{"id":"escort_package_1","type":"escort_package","prerequisites":[],"x":847,"y":-74},
+{"id":"beam_damage_2","type":"beam_damage","prerequisites":["energy_damage_1"],"x":-217,"y":49},
+{"id":"beam_damage_3","type":"beam_damage","prerequisites":[],"x":-327,"y":394},
+{"id":"beam_damage_5","type":"beam_damage","prerequisites":["beam_damage_1"],"x":-379,"y":69},
+{"id":"flux_capacity_2","type":"flux_capacity","prerequisites":[],"x":-853,"y":160},
+{"id":"non_beam_energy_damage_2","type":"non_beam_energy_damage","prerequisites":["non_beam_energy_damage_1"],"x":-301,"y":-34},
+{"id":"non_beam_energy_damage_3","type":"non_beam_energy_damage","prerequisites":["non_beam_energy_damage_2"],"x":-385,"y":-12},
+{"id":"root_low_tech_1","type":"root_low_tech","prerequisites":[],"x":0,"y":0},
+{"id":"root_midline_1","type":"root_midline","prerequisites":[],"x":-120,"y":0},
+{"id":"root_high_tech_1","type":"root_high_tech","prerequisites":[],"x":120,"y":0}
 ];
 
-var SMALL_R = 11, NOTABLE_R = 17, KEYSTONE_R = 23;
+var SMALL_R = 11, NOTABLE_R = 17, KEYSTONE_R = 23, ROOT_R = 20;
 function tierOf(type){ return (type && type.tier) ? type.tier : 'SMALL'; }
-function radiusFor(tier){ return tier === 'KEYSTONE' ? KEYSTONE_R : tier === 'NOTABLE' ? NOTABLE_R : SMALL_R; }
-function colorVarFor(tier){ return tier === 'KEYSTONE' ? '--keystone' : tier === 'NOTABLE' ? '--notable' : '--small'; }
+function radiusFor(tier){
+  if (tier === 'KEYSTONE') return KEYSTONE_R;
+  if (tier === 'NOTABLE') return NOTABLE_R;
+  if (tier === 'ROOT') return ROOT_R;
+  return SMALL_R;
+}
+function colorVarFor(tier){
+  if (tier === 'KEYSTONE') return '--keystone';
+  if (tier === 'NOTABLE') return '--notable';
+  if (tier === 'ROOT') return '--root';
+  return '--small';
+}
 
 var state = {
   types: [],
   nodes: [],
   view: { panX: 0, panY: 0, zoom: 0.55 },
   mode: 'select',
-  selectedNodeId: null,
+  selectedIds: [],
   linkFirst: null,
   showLabels: true,
   search: ''
@@ -711,9 +738,9 @@ function screenPointToWorld(clientX, clientY){
   var cy = rect.height / 2 + state.view.panY;
   var wx = (rx - cx) / state.view.zoom;
   var wyScreen = (ry - cy) / state.view.zoom;
-  return { x: wx, y: -wyScreen };
+  return { x: wx, y: wyScreen };
 }
-function worldToScreenXY(x, y){ return { sx: x, sy: -y }; }
+function worldToScreenXY(x, y){ return { sx: x, sy: y }; }
 
 function validate(){
   var issues = [];
@@ -758,13 +785,6 @@ function render(){
 
   state.nodes.forEach(function(n){
     var pos = worldToScreenXY(n.x, n.y);
-    if (n.prerequisites.length === 0) {
-      var rl = document.createElementNS(NS, 'line');
-      rl.setAttribute('x1', 0); rl.setAttribute('y1', 0);
-      rl.setAttribute('x2', pos.sx); rl.setAttribute('y2', pos.sy);
-      rl.setAttribute('class', 'root-line');
-      layerEdges.appendChild(rl);
-    }
     (n.prerequisites||[]).forEach(function(pid){
       var p = nodeById(pid);
       if (!p) return;
@@ -784,14 +804,15 @@ function render(){
     var pos = worldToScreenXY(n.x, n.y);
     var dim = matchIds && !matchIds[n.id];
 
+    var isSelected = state.selectedIds.indexOf(n.id) !== -1;
     var c = document.createElementNS(NS, 'circle');
     c.setAttribute('cx', pos.sx); c.setAttribute('cy', pos.sy); c.setAttribute('r', r);
     c.setAttribute('class', 'node-circle');
     var color = badIds[n.id] ? getComputedStyle(document.documentElement).getPropertyValue('--danger') : getComputedStyle(document.documentElement).getPropertyValue(colorVarFor(tier));
     c.setAttribute('fill', color.trim());
-    c.setAttribute('fill-opacity', dim ? 0.25 : (n.id === state.selectedNodeId ? 1 : 0.85));
-    c.setAttribute('stroke', n.id === state.selectedNodeId ? getComputedStyle(document.documentElement).getPropertyValue('--text').trim() : 'rgba(0,0,0,.25)');
-    c.setAttribute('stroke-width', n.id === state.selectedNodeId ? 2.5 : 1);
+    c.setAttribute('fill-opacity', dim ? 0.25 : (isSelected ? 1 : 0.85));
+    c.setAttribute('stroke', isSelected ? getComputedStyle(document.documentElement).getPropertyValue('--text').trim() : 'rgba(0,0,0,.25)');
+    c.setAttribute('stroke-width', isSelected ? 2.5 : 1);
     if (n.id === state.linkFirst) { c.setAttribute('stroke', getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()); c.setAttribute('stroke-width', 3); }
     c.dataset.nodeId = n.id;
     layerNodes.appendChild(c);
@@ -807,6 +828,19 @@ function render(){
     }
   });
 
+  if (drag && drag.marquee && drag.curClientX !== undefined) {
+    var wrapRect = canvasWrap.getBoundingClientRect();
+    var mx1 = drag.startClientX - wrapRect.left, my1 = drag.startClientY - wrapRect.top;
+    var mx2 = drag.curClientX - wrapRect.left, my2 = drag.curClientY - wrapRect.top;
+    var marqueeRect = document.createElementNS(NS, 'rect');
+    marqueeRect.setAttribute('x', Math.min(mx1, mx2));
+    marqueeRect.setAttribute('y', Math.min(my1, my2));
+    marqueeRect.setAttribute('width', Math.abs(mx2 - mx1));
+    marqueeRect.setAttribute('height', Math.abs(my2 - my1));
+    marqueeRect.setAttribute('class', 'marquee-rect');
+    svg.appendChild(marqueeRect);
+  }
+
   attachNodeHandlers();
   updateStats();
   updateWarnBadge();
@@ -814,14 +848,14 @@ function render(){
 
 function updateStats(){
   document.getElementById('statsLine').textContent =
-    state.nodes.length + ' nodes Â· ' + state.types.length + ' types Â· zoom ' + state.view.zoom.toFixed(2) + 'x';
+    state.nodes.length + ' nodes · ' + state.types.length + ' types · zoom ' + state.view.zoom.toFixed(2) + 'x';
 }
 function updateWarnBadge(){
   var el = document.getElementById('warnBadge');
   var issues = validate();
   if (issues.length === 0) { el.style.display = 'none'; return; }
   el.style.display = 'block';
-  el.textContent = 'âš  ' + issues.length + ' issue' + (issues.length>1?'s':'') + ' - click to view';
+  el.textContent = '⚠ ' + issues.length + ' issue' + (issues.length>1?'s':'') + ' - click to view';
   el.onclick = function(){ alert(issues.join('\n')); };
 }
 
@@ -839,12 +873,30 @@ function attachNodeHandlers(){
         return;
       }
       if (state.mode === 'add') return;
-      selectNode(id);
-      var n = nodeById(id);
-      drag = { id: id, startWorld: screenPointToWorld(ev.clientX, ev.clientY), origX: n.x, origY: n.y, moved: false };
+
+      if (ev.shiftKey) {
+        toggleNodeSelection(id);
+        return;
+      }
+
+      if (state.selectedIds.indexOf(id) === -1) {
+        selectNode(id);
+      }
+      startGroupDrag(ev);
       ev.target.setPointerCapture(ev.pointerId);
     });
   });
+}
+
+function startGroupDrag(ev){
+  drag = {
+    startWorld: screenPointToWorld(ev.clientX, ev.clientY),
+    origPositions: state.selectedIds.map(function(id){
+      var n = nodeById(id);
+      return { id: id, x: n.x, y: n.y };
+    }),
+    moved: false
+  };
 }
 
 canvasWrap.addEventListener('pointerdown', function(ev){
@@ -855,11 +907,27 @@ canvasWrap.addEventListener('pointerdown', function(ev){
     return;
   }
   if (state.mode === 'link') { state.linkFirst = null; render(); return; }
+  if (ev.shiftKey) {
+    drag = { marquee: true, startClientX: ev.clientX, startClientY: ev.clientY };
+    return;
+  }
+  if (state.selectedIds.length > 0) {
+    state.selectedIds = [];
+    document.getElementById('inspector').classList.remove('open');
+    refreshInspector();
+    render();
+  }
   drag = { pan: true, startClientX: ev.clientX, startClientY: ev.clientY, startPanX: state.view.panX, startPanY: state.view.panY };
 });
 
 window.addEventListener('pointermove', function(ev){
   if (!drag) return;
+  if (drag.marquee) {
+    drag.curClientX = ev.clientX;
+    drag.curClientY = ev.clientY;
+    render();
+    return;
+  }
   if (drag.pan) {
     state.view.panX = drag.startPanX + (ev.clientX - drag.startClientX);
     state.view.panY = drag.startPanY + (ev.clientY - drag.startClientY);
@@ -869,19 +937,47 @@ window.addEventListener('pointermove', function(ev){
   var w = screenPointToWorld(ev.clientX, ev.clientY);
   var dx = w.x - drag.startWorld.x, dy = w.y - drag.startWorld.y;
   if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) drag.moved = true;
-  var n = nodeById(drag.id);
-  if (n) {
-    n.x = Math.round(drag.origX + dx);
-    n.y = Math.round(drag.origY + dy);
-    render();
-    if (state.selectedNodeId === n.id) refreshInspector();
-  }
+  drag.origPositions.forEach(function(op){
+    var n = nodeById(op.id);
+    if (n) {
+      n.x = Math.round(op.x + dx);
+      n.y = Math.round(op.y + dy);
+    }
+  });
+  render();
+  if (state.selectedIds.length === 1) refreshInspector();
 });
 
-window.addEventListener('pointerup', function(){
-  if (drag && !drag.pan && drag.moved) saveLocal();
+window.addEventListener('pointerup', function(ev){
+  if (drag && drag.marquee) {
+    finishMarqueeSelect(ev);
+  } else if (drag && !drag.pan && drag.moved) {
+    saveLocal();
+  }
   drag = null;
+  render();
 });
+
+function finishMarqueeSelect(ev){
+  var w1 = screenPointToWorld(drag.startClientX, drag.startClientY);
+  var w2 = screenPointToWorld(ev.clientX, ev.clientY);
+  var minX = Math.min(w1.x, w2.x), maxX = Math.max(w1.x, w2.x);
+  var minY = Math.min(w1.y, w2.y), maxY = Math.max(w1.y, w2.y);
+  state.selectedIds = state.nodes.filter(function(n){
+    return n.x >= minX && n.x <= maxX && n.y >= minY && n.y <= maxY;
+  }).map(function(n){ return n.id; });
+  document.getElementById('inspector').classList.toggle('open', state.selectedIds.length > 0);
+  refreshInspector();
+}
+
+function toggleNodeSelection(id){
+  var idx = state.selectedIds.indexOf(id);
+  if (idx === -1) state.selectedIds.push(id);
+  else state.selectedIds.splice(idx, 1);
+  document.getElementById('inspector').classList.toggle('open', state.selectedIds.length > 0);
+  render();
+  refreshInspector();
+}
 
 canvasWrap.addEventListener('wheel', function(ev){
   ev.preventDefault();
@@ -914,7 +1010,7 @@ function handleLinkClick(id){
 }
 
 function selectNode(id){
-  state.selectedNodeId = id;
+  state.selectedIds = [id];
   document.getElementById('inspector').classList.add('open');
   render();
   refreshInspector();
@@ -936,14 +1032,29 @@ document.addEventListener('keydown', function(ev){
   var map = { 'v': 'select', 'a': 'add', 'l': 'link' };
   var m = map[ev.key.toLowerCase()];
   if (m) { document.querySelector('.modeBtn[data-mode="'+m+'"]').click(); }
-  if (ev.key === 'Delete' || ev.key === 'Backspace') { if (state.selectedNodeId) deleteSelectedNode(); }
+  if (ev.key === 'Delete' || ev.key === 'Backspace') { if (state.selectedIds.length > 0) deleteSelectedNodes(); }
+  if (ev.key === 'Escape' && state.selectedIds.length > 0) {
+    state.selectedIds = [];
+    document.getElementById('inspector').classList.remove('open');
+    render();
+    refreshInspector();
+  }
 });
 
 // ---------- inspector ----------
 function refreshInspector(){
   var body = document.getElementById('inspectorBody');
-  var n = nodeById(state.selectedNodeId);
+  if (state.selectedIds.length === 0) {
+    body.innerHTML = '<div class="empty-inspector">Select a node to see and edit its details, or switch to Add mode and click the canvas to place a new one.<br><br>Shift-click a node to add it to a multi-selection, or shift-drag empty canvas to marquee-select. Drag any selected node to move the whole group.</div>';
+    return;
+  }
+  if (state.selectedIds.length > 1) {
+    refreshMultiInspector(body);
+    return;
+  }
+  var n = nodeById(state.selectedIds[0]);
   if (!n) {
+    state.selectedIds = [];
     body.innerHTML = '<div class="empty-inspector">Select a node to see and edit its details, or switch to Add mode and click the canvas to place a new one.</div>';
     return;
   }
@@ -954,11 +1065,28 @@ function refreshInspector(){
   }).join('');
   var prereqHtml = (n.prerequisites||[]).map(function(pid){
     var pn = nodeById(pid);
-    return '<div class="prereqItem"><span>' + pid + (pn ? '' : ' (missing!)') + '</span><button data-remove-prereq="' + pid + '">âœ•</button></div>';
-  }).join('') || '<div class="hint">None - connects straight to the ship center.</div>';
+    return '<div class="prereqItem"><span>' + pid + (pn ? '' : ' (missing!)') + '</span><button data-remove-prereq="' + pid + '">✕</button></div>';
+  }).join('') || '<div class="hint">None - renders with no connector line until you add one (e.g. a root node).</div>';
   var otherNodeOptions = state.nodes.filter(function(o){ return o.id !== n.id; }).map(function(o){
     return '<option value="' + o.id + '">' + o.id + '</option>';
   }).join('');
+
+  var statsHtml = '';
+  if (t) {
+    var statRows = (t.effects || []).map(function(e, i){
+      var options = EFFECT_NAMES.map(function(name){ return '<option value="'+name+'"'+(name===e.effect?' selected':'')+'>'+name+'</option>'; }).join('');
+      return '<div class="fieldRow" style="align-items:flex-end">' +
+        '<div class="field" style="flex:2"><label>Effect ' + (i+1) + '</label><select data-stat-effect="' + i + '">' + options + '</select></div>' +
+        '<div class="field" style="flex:1"><label>Magnitude</label><input type="number" step="0.1" value="' + e.magnitude + '" data-stat-magnitude="' + i + '"></div>' +
+        '<button class="smallBtn danger" data-remove-stat-row="' + i + '">✕</button>' +
+      '</div>';
+    }).join('') || '<div class="hint">No effects yet.' + (t.vanillaHullMod ? ' Still on vanillaHullMod passthrough ("' + t.vanillaHullMod + '") - adding effects here does not switch that off, use "Edit type" for that.' : '') + '</div>';
+    statsHtml =
+      '<div class="field"><label>Stats granted by type "' + t.id + '"</label>' + statRows + '</div>' +
+      '<div class="btnRow"><button class="smallBtn" id="addStatRowBtn">+ Add effect</button></div>' +
+      '<div class="hint">Shared by every node using this type - editing here affects them all, not just "' + n.id + '".</div>' +
+      '<hr class="sep">';
+  }
 
   body.innerHTML =
     '<h2>' + (t ? t.name : n.type) + '</h2>' +
@@ -970,12 +1098,13 @@ function refreshInspector(){
       '<div class="field"><label>Y</label><input type="number" value="' + n.y + '" data-field="y"></div>' +
     '</div>' +
     '<hr class="sep">' +
+    statsHtml +
     '<div class="field"><label>Prerequisites</label><div class="prereqList">' + prereqHtml + '</div></div>' +
     '<div class="fieldRow">' +
       '<select id="addPrereqSelect" style="flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12px;padding:6px;"><option value="">Add prerequisite...</option>' + otherNodeOptions + '</select>' +
     '</div>' +
     '<hr class="sep">' +
-    '<div class="hint">Type "' + n.type + '" - opCost ' + (t?t.opCost:'?') + ', xpCost ' + (t?t.xpCost:'?') + (t && t.vanillaHullMod ? ', vanillaHullMod: ' + t.vanillaHullMod : '') + (t && t.effects && t.effects.length ? ', effects: ' + t.effects.map(function(e){ return e.effect + ' x' + e.magnitude; }).join(', ') : '') + (t && t.todo ? ' [TODO: ' + t.todo + ']' : '') + '</div>' +
+    '<div class="hint">Type "' + n.type + '" - opCost ' + (t?t.opCost:'?') + ', xpCost ' + (t?t.xpCost:'?') + (t && t.vanillaHullMod ? ', vanillaHullMod: ' + t.vanillaHullMod : '') + (t && t.todo ? ' [TODO: ' + t.todo + ']' : '') + '</div>' +
     '<div class="btnRow">' +
       '<button class="smallBtn" id="editTypeBtn">Edit type "' + n.type + '"</button>' +
       '<button class="smallBtn" id="duplicateBtn">Duplicate node</button>' +
@@ -994,7 +1123,7 @@ function refreshInspector(){
           var idx = o.prerequisites.indexOf(oldId);
           if (idx !== -1) o.prerequisites[idx] = newId;
         });
-        state.selectedNodeId = newId;
+        state.selectedIds = [newId];
       } else if (field === 'type') {
         n.type = inp.value;
       } else if (field === 'x' || field === 'y') {
@@ -1018,7 +1147,35 @@ function refreshInspector(){
       saveLocal(); render(); refreshInspector();
     });
   });
-  document.getElementById('deleteNodeBtn').addEventListener('click', deleteSelectedNode);
+  if (t) {
+    body.querySelectorAll('[data-stat-effect]').forEach(function(sel){
+      sel.addEventListener('change', function(){
+        t.effects[parseInt(sel.dataset.statEffect, 10)].effect = sel.value;
+        saveLocal(); refreshInspector();
+      });
+    });
+    body.querySelectorAll('[data-stat-magnitude]').forEach(function(inp){
+      inp.addEventListener('change', function(){
+        t.effects[parseInt(inp.dataset.statMagnitude, 10)].magnitude = parseFloat(inp.value) || 0;
+        saveLocal(); refreshInspector();
+      });
+    });
+    body.querySelectorAll('[data-remove-stat-row]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        t.effects.splice(parseInt(btn.dataset.removeStatRow, 10), 1);
+        saveLocal(); refreshInspector();
+      });
+    });
+    var addStatBtn = document.getElementById('addStatRowBtn');
+    if (addStatBtn) {
+      addStatBtn.addEventListener('click', function(){
+        if (!t.effects) t.effects = [];
+        t.effects.push({ effect: EFFECT_NAMES[0], magnitude: 10 });
+        saveLocal(); refreshInspector();
+      });
+    }
+  }
+  document.getElementById('deleteNodeBtn').addEventListener('click', deleteSelectedNodes);
   document.getElementById('duplicateBtn').addEventListener('click', function(){
     var copy = deepCopy(n);
     copy.id = uniqueNodeId(n.type);
@@ -1039,19 +1196,43 @@ function uniqueNodeId(typeId){
   return id;
 }
 
-function deleteSelectedNode(){
-  var n = nodeById(state.selectedNodeId);
-  if (!n) return;
-  if (!confirm('Delete node "' + n.id + '"? It will also be removed from other nodes\' prerequisites.')) return;
-  state.nodes = state.nodes.filter(function(o){ return o.id !== n.id; });
+function deleteSelectedNodes(){
+  var ids = state.selectedIds;
+  if (ids.length === 0) return;
+  var message = ids.length === 1
+    ? 'Delete node "' + ids[0] + '"? It will also be removed from other nodes\' prerequisites.'
+    : 'Delete ' + ids.length + ' selected nodes? They will also be removed from other nodes\' prerequisites.';
+  if (!confirm(message)) return;
+  state.nodes = state.nodes.filter(function(o){ return ids.indexOf(o.id) === -1; });
   state.nodes.forEach(function(o){
-    var idx = o.prerequisites.indexOf(n.id);
-    if (idx !== -1) o.prerequisites.splice(idx, 1);
+    o.prerequisites = o.prerequisites.filter(function(pid){ return ids.indexOf(pid) === -1; });
   });
-  state.selectedNodeId = null;
+  state.selectedIds = [];
+  document.getElementById('inspector').classList.remove('open');
   saveLocal();
   render();
   refreshInspector();
+}
+
+function refreshMultiInspector(body){
+  var idsList = state.selectedIds.map(function(id){
+    var n = nodeById(id);
+    var t = n ? typeById(n.type) : null;
+    return '<div class="prereqItem"><span>' + id + (t ? ' (' + t.name + ')' : '') + '</span></div>';
+  }).join('');
+  body.innerHTML =
+    '<h2>' + state.selectedIds.length + ' nodes selected</h2>' +
+    '<div class="hint">Drag any of them to move the whole group together. Shift-click a node to add/remove it from this selection.</div>' +
+    '<div class="prereqList">' + idsList + '</div>' +
+    '<div class="btnRow"><button class="smallBtn" id="clearSelectionBtn">Clear selection</button></div>' +
+    '<button class="smallBtn danger" id="deleteNodesBtn">Delete ' + state.selectedIds.length + ' nodes</button>';
+  document.getElementById('clearSelectionBtn').addEventListener('click', function(){
+    state.selectedIds = [];
+    document.getElementById('inspector').classList.remove('open');
+    render();
+    refreshInspector();
+  });
+  document.getElementById('deleteNodesBtn').addEventListener('click', deleteSelectedNodes);
 }
 
 document.getElementById('closeInspector').addEventListener('click', function(){
@@ -1129,7 +1310,7 @@ function openTypeModal(existingType, onSave){
   }
 
   function renderModal(){
-    var tierOptions = ['SMALL','NOTABLE','KEYSTONE'].map(function(tr){ return '<option value="'+tr+'"'+(tr===tierOf(t)?' selected':'')+'>'+tr+'</option>'; }).join('');
+    var tierOptions = ['SMALL','NOTABLE','KEYSTONE','ROOT'].map(function(tr){ return '<option value="'+tr+'"'+(tr===tierOf(t)?' selected':'')+'>'+tr+'</option>'; }).join('');
     var effectRows = effectsDraft.map(function(e, i){
       var options = EFFECT_NAMES.map(function(name){ return '<option value="'+name+'"'+(name===e.effect?' selected':'')+'>'+name+'</option>'; }).join('');
       return '<div class="fieldRow" style="align-items:flex-end">' +
@@ -1204,7 +1385,7 @@ function openTypeModal(existingType, onSave){
       root.innerHTML = '';
       saveLocal();
       render();
-      if (state.selectedNodeId) refreshInspector();
+      if (state.selectedIds.length > 0) refreshInspector();
       if (onSave) onSave(updated);
     });
   }
@@ -1260,6 +1441,27 @@ document.querySelectorAll('.exportTab').forEach(function(tab){
   });
 });
 document.getElementById('refreshExportBtn').addEventListener('click', refreshExport);
+document.getElementById('saveToProjectBtn').addEventListener('click', function(){
+  var nodesOut = state.nodes.map(function(n){ return { id: n.id, type: n.type, prerequisites: n.prerequisites, x: n.x, y: n.y }; });
+  var treeText = toTabbedJson(nodesOut, 'nodes');
+  var typesOut = state.types.map(serializeType);
+  var typesText = toTabbedJson(typesOut, 'skillTypes');
+  fetch('/save', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ types: typesText, tree: treeText })
+  }).then(function(res){
+    return res.json().then(function(data){ return { status: res.status, data: data }; });
+  }).then(function(result){
+    if (result.status === 200 && result.data.ok) {
+      showToast('Saved to project files');
+    } else {
+      showToast('Save failed: ' + (result.data && result.data.message ? result.data.message : 'unknown error'));
+    }
+  }).catch(function(){
+    showToast('Could not reach local server - run tools\\skill_tree_server.ps1, or use Copy instead');
+  });
+});
 document.getElementById('copyBtn').addEventListener('click', function(){
   var ta = document.getElementById('exportText');
   ta.focus(); ta.select();
@@ -1289,7 +1491,7 @@ document.getElementById('importBtn').addEventListener('click', function(){
       if (typesRaw) { var pt = JSON.parse(typesRaw); state.types = pt.skillTypes || pt; }
       if (nodesRaw) { var pn = JSON.parse(nodesRaw); state.nodes = pn.nodes || pn; }
       root.innerHTML = '';
-      state.selectedNodeId = null;
+      state.selectedIds = [];
       saveLocal();
       render();
       refreshInspector();
@@ -1305,7 +1507,7 @@ document.getElementById('resetBtn').addEventListener('click', function(){
   if (!confirm('Discard all changes in this browser and reload the shipped tree data?')) return;
   try { localStorage.removeItem('skillTreeEditor.v1'); } catch(e){}
   loadShipped();
-  state.selectedNodeId = null;
+  state.selectedIds = [];
   render();
   refreshInspector();
   fitToScreen();
