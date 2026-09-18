@@ -237,8 +237,8 @@
 			"id": "ecm_1",
 			"type": "ecm",
 			"connectedTo": [],
-			"x": -182,
-			"y": -44
+			"x": -144,
+			"y": -36
 		},
 		{
 			"id": "defensive_targeting_array_1",
@@ -349,8 +349,8 @@
 			"id": "augmentedengines_1",
 			"type": "augmentedengines",
 			"connectedTo": [],
-			"x": -331,
-			"y": -124
+			"x": -261,
+			"y": 13
 		},
 		{
 			"id": "auxiliary_fuel_tanks_1",
@@ -363,8 +363,8 @@
 			"id": "efficiency_overhaul_1",
 			"type": "efficiency_overhaul",
 			"connectedTo": [],
-			"x": 26,
-			"y": 246
+			"x": -59,
+			"y": 300
 		},
 		{
 			"id": "expanded_cargo_holds_1",
@@ -377,36 +377,36 @@
 			"id": "hiressensors_1",
 			"type": "hiressensors",
 			"connectedTo": [],
-			"x": -239,
-			"y": -204
+			"x": -226,
+			"y": -135
 		},
 		{
 			"id": "insulatedengine_1",
 			"type": "insulatedengine",
 			"connectedTo": [],
-			"x": -83,
-			"y": -229
+			"x": -89,
+			"y": -164
 		},
 		{
 			"id": "militarized_subsystems_1",
 			"type": "militarized_subsystems",
 			"connectedTo": [],
-			"x": 56,
-			"y": -231
+			"x": 60,
+			"y": -169
 		},
 		{
 			"id": "solar_shielding_1",
 			"type": "solar_shielding",
 			"connectedTo": [],
-			"x": 193,
-			"y": -195
+			"x": 156,
+			"y": -111
 		},
 		{
 			"id": "surveying_equipment_1",
 			"type": "surveying_equipment",
 			"connectedTo": [],
-			"x": 276,
-			"y": -149
+			"x": 264,
+			"y": -88
 		},
 		{
 			"id": "converted_hangar_1",
@@ -534,7 +534,7 @@
 			"connectedTo": [
 				"root_high_tech_1",
 				"increased_cargo_1",
-				"increased_crew_4"
+				"increased_fuel_4"
 			],
 			"x": -167,
 			"y": -420
@@ -544,17 +544,18 @@
 			"type": "increased_cargo",
 			"connectedTo": [
 				"root_high_tech_1",
-				"increased_fuel_1"
+				"increased_fuel_1",
+				"increased_crew_1"
 			],
-			"x": -22,
-			"y": -431
+			"x": -9,
+			"y": -428
 		},
 		{
 			"id": "increased_crew_1",
 			"type": "increased_crew",
 			"connectedTo": [
 				"root_high_tech_1",
-				"increased_crew_4"
+				"increased_cargo_1"
 			],
 			"x": 157,
 			"y": -417
@@ -619,7 +620,8 @@
 			"type": "increased_crew",
 			"connectedTo": [
 				"root_midline_1",
-				"increased_cargo_3"
+				"increased_cargo_3",
+				"increased_crew_4"
 			],
 			"x": -773,
 			"y": 338
@@ -636,14 +638,69 @@
 			"y": 454
 		},
 		{
+			"id": "increased_fuel_4",
+			"type": "increased_fuel",
+			"connectedTo": [
+				"increased_fuel_7",
+				"increased_fuel_1"
+			],
+			"x": -269,
+			"y": -349
+		},
+		{
+			"id": "increased_fuel_5",
+			"type": "increased_fuel",
+			"connectedTo": [],
+			"x": -498,
+			"y": 632
+		},
+		{
+			"id": "increased_fuel_6",
+			"type": "increased_fuel",
+			"connectedTo": [
+				"increased_fuel_7"
+			],
+			"x": -474,
+			"y": -180
+		},
+		{
+			"id": "increased_fuel_7",
+			"type": "increased_fuel",
+			"connectedTo": [
+				"increased_fuel_6",
+				"increased_fuel_4"
+			],
+			"x": -365,
+			"y": -273
+		},
+		{
 			"id": "increased_crew_4",
 			"type": "increased_crew",
 			"connectedTo": [
-				"increased_fuel_1",
-				"increased_crew_1"
+				"increased_crew_3",
+				"increased_crew_5"
 			],
-			"x": -33,
-			"y": -342
+			"x": -732,
+			"y": 222
+		},
+		{
+			"id": "increased_crew_5",
+			"type": "increased_crew",
+			"connectedTo": [
+				"increased_crew_4",
+				"increased_crew_6"
+			],
+			"x": -686,
+			"y": 120
+		},
+		{
+			"id": "increased_crew_6",
+			"type": "increased_crew",
+			"connectedTo": [
+				"increased_crew_5"
+			],
+			"x": -627,
+			"y": 7
 		}
 	]
 }

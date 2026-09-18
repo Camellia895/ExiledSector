@@ -14,6 +14,8 @@ function Write-JsonResponse($response, $statusCode, $payload) {
     $response.OutputStream.Write($bytes, 0, $bytes.Length)
 }
 
+$saveRequested = $false
+
 $listener = New-Object System.Net.HttpListener
 $listener.Prefixes.Add("http://localhost:$port/")
 $listener.Start()
@@ -63,8 +65,16 @@ try {
                     $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
                     [System.IO.File]::WriteAllText($typesPath, $body.types, $utf8NoBom)
                     [System.IO.File]::WriteAllText($treePath, $body.tree, $utf8NoBom)
+                    $saveRequested = $false
                     Write-JsonResponse $response 200 @{ ok = $true; message = "Saved." }
                 }
+            }
+            elseif ($request.HttpMethod -eq "POST" -and $request.Url.LocalPath -eq "/request-save") {
+                $saveRequested = $true
+                Write-JsonResponse $response 200 @{ ok = $true; message = "Save requested." }
+            }
+            elseif ($request.HttpMethod -eq "GET" -and $request.Url.LocalPath -eq "/save-requested") {
+                Write-JsonResponse $response 200 @{ requested = $saveRequested }
             }
             else {
                 $response.StatusCode = 404

@@ -134,7 +134,12 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "adaptive_coils",
+			"effects": [
+				{
+					"effect": "PHASE_CLOAK_FLUX_THRESHOLD",
+					"magnitude": 50
+				}
+			],
 			"tags": [
 				"flux",
 				"phase"
@@ -346,7 +351,15 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "fluxcoil",
+			"hullSizeEffects": [
+				{
+					"effect": "FLUX_CAPACITY_FLAT",
+					"frigate": 600,
+					"destroyer": 1200,
+					"cruiser": 1800,
+					"capitalShip": 3000
+				}
+			],
 			"tags": [
 				"flux"
 			]
@@ -358,7 +371,15 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "fluxdistributor",
+			"hullSizeEffects": [
+				{
+					"effect": "FLUX_DISSIPATION_FLAT",
+					"frigate": 30,
+					"destroyer": 60,
+					"cruiser": 90,
+					"capitalShip": 150
+				}
+			],
 			"tags": [
 				"flux"
 			]
@@ -521,7 +542,13 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "phase_anchor",
+			"effects": [
+				{
+					"effect": "PHASE_CLOAK_ACTIVATION_COST_MULT",
+					"magnitude": -100
+				}
+			],
+			"todo": "Cloak activation cost part is done (free activation, matches vanilla). Still missing: +soft flux dissipation and +weapon recharge rate, but only while phased. Confirmed via decompiling vanilla's PhaseAnchor class this lives in a separate listener registered via ship.addListener(new PhaseAnchorScript(ship)) in applyEffectsAfterShipCreation, not in advanceInCombat on the hullmod itself - the condition system needs to hook that pattern (or an equivalent per-frame ship.isPhased() check) to add this. Not built yet.",
 			"tags": [
 				"flux",
 				"phase"
@@ -558,7 +585,11 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "fluxbreakers",
+			"effects": [
+				{ "effect": "EMP_DAMAGE_TAKEN", "magnitude": -50 },
+				{ "effect": "FLUX_DISSIPATION_WHILE_VENTING", "magnitude": 25 }
+			],
+			"todo": "Real vanilla effect is -50% EMP damage taken (that part is now correctly always-on, matches vanilla) plus +25% flux dissipation but only while venting. FLUX_DISSIPATION_WHILE_VENTING is currently applied always instead of gated - couldn't find the real vanilla implementation class to confirm the exact hook (its class is obfuscated with a renamed identity, unlike most other hullmod effects which ship with real names in starfarer.api.jar). Once the custom condition system exists (advanceInCombat + ship.getFluxTracker().isVenting()), only this one effect's apply() method needs to change - no node data updates needed.",
 			"tags": [
 				"flux",
 				"phase"
@@ -604,7 +635,12 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "augmentedengines",
+			"effects": [
+				{
+					"effect": "BURN_LEVEL_FLAT",
+					"magnitude": 2
+				}
+			],
 			"tags": [
 				"logistics"
 			]
@@ -628,7 +664,28 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "KEYSTONE",
-			"vanillaHullMod": "efficiency_overhaul",
+			"effects": [
+				{
+					"effect": "MIN_CREW_MULT",
+					"magnitude": -20
+				},
+				{
+					"effect": "SUPPLIES_PER_MONTH_MULT",
+					"magnitude": -20
+				},
+				{
+					"effect": "FUEL_USE_MULT",
+					"magnitude": -20
+				},
+				{
+					"effect": "CR_RECOVERY_RATE",
+					"magnitude": 50
+				},
+				{
+					"effect": "REPAIR_RATE_PER_DAY",
+					"magnitude": 50
+				}
+			],
 			"tags": [
 				"logistics"
 			]
@@ -676,7 +733,20 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "militarized_subsystems",
+			"effects": [
+				{
+					"effect": "BURN_LEVEL_FLAT",
+					"magnitude": 1
+				},
+				{
+					"effect": "MIN_CREW_PERCENT",
+					"magnitude": 100
+				},
+				{
+					"effect": "REMOVE_CIVILIAN_HULL_PENALTY",
+					"magnitude": 0
+				}
+			],
 			"tags": [
 				"logistics"
 			]

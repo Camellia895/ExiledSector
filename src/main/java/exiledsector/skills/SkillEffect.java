@@ -174,6 +174,17 @@ public enum SkillEffect {
             return pctChange(magnitude, "fuel capacity");
         }
     },
+    FUEL_CAPACITY_FLAT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getFuelMod().modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return flatChange(magnitude, "fuel capacity");
+        }
+    },
     CARGO_CAPACITY {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -183,6 +194,17 @@ public enum SkillEffect {
         @Override
         public String describe(float magnitude) {
             return pctChange(magnitude, "cargo capacity");
+        }
+    },
+    CARGO_CAPACITY_FLAT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getCargoMod().modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return flatChange(magnitude, "cargo capacity");
         }
     },
     CREW_CAPACITY {
@@ -196,6 +218,17 @@ public enum SkillEffect {
             return pctChange(magnitude, "crew capacity");
         }
     },
+    CREW_CAPACITY_FLAT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getMaxCrewMod().modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return flatChange(magnitude, "crew capacity");
+        }
+    },
     BURN_LEVEL {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -205,6 +238,17 @@ public enum SkillEffect {
         @Override
         public String describe(float magnitude) {
             return pctChange(magnitude, "max burn level");
+        }
+    },
+    BURN_LEVEL_FLAT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getMaxBurnLevel().modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return flatChange(magnitude, "max burn level");
         }
     },
     SENSOR_PROFILE {
@@ -227,6 +271,39 @@ public enum SkillEffect {
         @Override
         public String describe(float magnitude) {
             return pctChange(magnitude, "sensor strength");
+        }
+    },
+    SENSOR_RANGE {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod("hrs_sensor_range_mod").modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return flatChange(magnitude, "in-combat sensor/vision range");
+        }
+    },
+    ELECTRONIC_WARFARE {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod("electronic_warfare_flat").modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return flatChange(magnitude, "ECM rating");
+        }
+    },
+    NAV_RATING {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod("coord_maneuvers_flat").modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return flatChange(magnitude, "fleet nav rating");
         }
     },
     BALLISTIC_WEAPON_RANGE {
@@ -450,6 +527,97 @@ public enum SkillEffect {
             return pctChange(magnitude, "combat readiness recovery rate");
         }
     },
+    REPAIR_RATE_PER_DAY {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getRepairRatePercentPerDay().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "repair rate per day");
+        }
+    },
+    MIN_CREW_MULT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getMinCrewMod().modifyMult(modId, 1f + magnitude / 100f);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "minimum crew required");
+        }
+    },
+    MIN_CREW_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getMinCrewMod().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "minimum crew required");
+        }
+    },
+    SUPPLIES_PER_MONTH_MULT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getSuppliesPerMonth().modifyMult(modId, 1f + magnitude / 100f);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "supply use for maintenance");
+        }
+    },
+    FUEL_USE_MULT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getFuelUseMod().modifyMult(modId, 1f + magnitude / 100f);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "fuel use rate");
+        }
+    },
+    PHASE_CLOAK_ACTIVATION_COST_MULT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getPhaseCloakActivationCostBonus().modifyMult(modId, 1f + magnitude / 100f);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "phase cloak activation cost");
+        }
+    },
+    PHASE_CLOAK_FLUX_THRESHOLD {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod("phase_cloak_flux_level_for_min_speed_mod").modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "hard flux threshold before phase speed penalty kicks in");
+        }
+    },
+    REMOVE_CIVILIAN_HULL_PENALTY {
+        // Magnitude is unused - this removes a specific vanilla-applied penalty (id "civgrade") rather than
+        // adding a tunable bonus. It's a no-op on ships that never had that penalty in the first place.
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getSensorStrength().unmodify("civgrade");
+            stats.getSensorProfile().unmodify("civgrade");
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return "Removes the sensor strength and sensor profile penalties of a civilian-grade hull.";
+        }
+    },
     CREW_LOSS {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -459,6 +627,32 @@ public enum SkillEffect {
         @Override
         public String describe(float magnitude) {
             return pctChange(magnitude, "crew casualties");
+        }
+    },
+    EMP_DAMAGE_TAKEN {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getEmpDamageTakenMult().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "EMP damage taken");
+        }
+    },
+    FLUX_DISSIPATION_WHILE_VENTING {
+        // Real vanilla effect only applies this while venting - we don't have a condition system yet,
+        // so for now this is a permanent bonus, same math as FLUX_DISSIPATION. Kept as its own named
+        // effect so it can be switched to a real "only while venting" check later without touching
+        // any node data - just this apply() method.
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getFluxDissipation().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "flux dissipation rate");
         }
     },
     ENERGY_DAMAGE_TAKEN {
