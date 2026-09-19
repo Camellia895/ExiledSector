@@ -66,6 +66,10 @@ final class SkillTreeNodeRenderer {
     private static final float PULSE_START_RADIUS_FRACTION = 1f;
     private static final float PULSE_END_RADIUS_FRACTION = 2.2f;
 
+    private static final float BREATHING_PERIOD_SECONDS = 2.2f;
+    private static final float BREATHING_MIN_ALPHA = 0.35f;
+    private static final float BREATHING_MAX_ALPHA = 1f;
+
     private static final float NODE_CONNECTOR_PARALLEL_GAP = 4f;
     private static final float NODE_CONNECTOR_LINE_THICKNESS = 1.5f;
     private static final float NODE_CONNECTOR_GLOW_LINE_THICKNESS = 2.5f;
@@ -96,6 +100,7 @@ final class SkillTreeNodeRenderer {
     private final Map<String, LazyFont.DrawableString> dropdownRowText = new HashMap<>();
     private final Map<String, Float> pulseElapsed = new HashMap<>();
     private SkillNode openDropdownNode;
+    private float breathingPhase = 0f;
 
     SkillTreeNodeRenderer(FleetMemberAPI member, SkillTreePanelStyle style, BaseRefitButton refitButton) {
         this.member = member;
@@ -109,6 +114,8 @@ final class SkillTreeNodeRenderer {
     }
 
     void advance(float amount) {
+        breathingPhase = (breathingPhase + amount) % BREATHING_PERIOD_SECONDS;
+
         if (pulseElapsed.isEmpty()) return;
 
         Iterator<Map.Entry<String, Float>> it = pulseElapsed.entrySet().iterator();
@@ -125,6 +132,7 @@ final class SkillTreeNodeRenderer {
 
     void render(float centerX, float centerY, float zoom, float alphaMult, float mouseX, float mouseY, boolean mouseKnown) {
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
+        String satisfiedRootId = satisfiedRootId();
 
         for (SkillNode node : SkillTree.getAllNodes().values()) {
             SkillTier tier = node.getType().getTier();
@@ -133,6 +141,7 @@ final class SkillTreeNodeRenderer {
             float nodeX = centerX + node.getOffsetX() * zoom;
             float nodeY = centerY - node.getOffsetY() * zoom;
             boolean allocated = data.isAllocated(node.getId());
+            boolean breathing = !allocated && data.canAllocate(node, satisfiedRootId);
             SkillType effectiveType = node.resolveEffectiveType(data);
             float footprintSize = NODE_SIZE * zoom * tier.getSizeMultiplier();
             float iconSize = footprintSize * iconSizeMultiplier(tier) * ICON_INSET_RATIO;
@@ -143,7 +152,7 @@ final class SkillTreeNodeRenderer {
             } else {
                 drawIcon(effectiveType.getIconPath(), nodeX, nodeY, iconSize, alphaMult, tint);
             }
-            drawRings(nodeX, nodeY, footprintSize, alphaMult, allocated, pulseElapsed.get(node.getId()), tier, zoom);
+            drawRings(nodeX, nodeY, footprintSize, alphaMult, allocated, breathing, pulseElapsed.get(node.getId()), tier, zoom);
         }
 
         drawNodeConnectors(centerX, centerY, zoom, data, alphaMult);
@@ -457,14 +466,23 @@ final class SkillTreeNodeRenderer {
         GL11.glColorMask(true, true, true, true);
     }
 
-    private void drawRings(float cx, float cy, float footprintSize, float alphaMult, boolean allocated, Float pulseSeconds, SkillTier tier, float zoom) {
+    private void drawRings(float cx, float cy, float footprintSize, float alphaMult, boolean allocated, boolean breathing, Float pulseSeconds, SkillTier tier, float zoom) {
         float half = footprintSize / 2f;
+        float scale = tier.getSizeMultiplier();
 
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        drawNodeDonut(cx, cy, donutRadius(footprintSize, tier), tier.getSizeMultiplier(), zoom, allocated, alphaMult);
+        float ringRadius = donutRadius(footprintSize, tier);
+        drawNodeDonut(cx, cy, ringRadius, scale, zoom, allocated, alphaMult);
+
+        if (breathing) {
+            float breathingT = (float) (0.5 + 0.5 * Math.sin(2 * Math.PI * breathingPhase / BREATHING_PERIOD_SECONDS));
+            float breathingAlpha = (BREATHING_MIN_ALPHA + (BREATHING_MAX_ALPHA - BREATHING_MIN_ALPHA) * breathingT) * alphaMult;
+            GL11.glLineWidth(NODE_CONNECTOR_GLOW_LINE_THICKNESS * scale * zoom);
+            drawRingOutline(cx, cy, ringRadius, GLOW_COLOR, breathingAlpha);
+        }
 
         if (pulseSeconds != null) {
             GL11.glLineWidth(RING_LINE_THICKNESS * zoom);
