@@ -247,6 +247,7 @@
     background: var(--canvas-bg);
   }
   #canvasWrap.mode-add { cursor: copy; }
+  #canvasWrap.mode-addAnchor { cursor: crosshair; }
   svg#stage { width: 100%; height: 100%; display: block; }
   .node-circle { cursor: grab; transition: stroke-width .08s; }
   .node-circle:active { cursor: grabbing; }
@@ -262,6 +263,15 @@
   .curve-anchor { fill: var(--text-faint); opacity: .45; cursor: grab; }
   .curve-anchor:hover { fill: var(--accent); opacity: 1; }
   .curve-anchor.dragging { fill: var(--accent); opacity: 1; cursor: grabbing; }
+  .orbit-ring { fill: none; stroke: var(--text-faint); stroke-width: 1.5; stroke-dasharray: 5 5; opacity: .5; }
+  .orbit-ring.selected { stroke: var(--accent); opacity: .9; }
+  .orbit-center { fill: var(--panel-2); stroke: var(--text-faint); stroke-width: 1.5; cursor: move; }
+  .orbit-center:hover { stroke: var(--accent); }
+  .orbit-center.selected { stroke: var(--accent); fill: var(--accent-dim); }
+  .orbit-center.moving { stroke: var(--accent); fill: var(--accent-dim); }
+  .orbit-resize { fill: var(--text-faint); opacity: .55; cursor: ew-resize; }
+  .orbit-resize:hover { fill: var(--accent); opacity: 1; }
+  .orbit-resize.dragging { fill: var(--accent); opacity: 1; }
   .center-mark { fill: none; stroke: var(--accent); stroke-width: 1.5; opacity: .8; }
   .marquee-rect { fill: var(--accent); fill-opacity: .12; stroke: var(--accent); stroke-width: 1; stroke-dasharray: 4 3; pointer-events: none; }
 
@@ -455,7 +465,8 @@
       <div class="label">Mode</div>
       <button class="modeBtn active" data-mode="select">Select / Move <span class="key">A</span></button>
       <button class="modeBtn" data-mode="add">Add Node <span class="key">S</span></button>
-      <div class="hint">Select: drag a node to move it, drag empty canvas to pan, scroll to zoom. Shift-click a node to add/remove it from a multi-selection, or shift-drag empty canvas to marquee-select. Drag any selected node to move the whole group together. With a single node selected, Ctrl-click another node to link/unlink it to the selection - each is added to the other's connections, so allocating either one lets you allocate the other. Ctrl-click the same pair again to unlink.<br><br>Add: click empty canvas to place a node there.</div>
+      <button class="modeBtn" data-mode="addAnchor">Add Anchor <span class="key">D</span></button>
+      <div class="hint">Select: drag a node to move it, drag empty canvas to pan, scroll to zoom. Shift-click a node to add/remove it from a multi-selection, or shift-drag empty canvas to marquee-select. Drag any selected node to move the whole group together. With a single node selected, Ctrl-click another node to link/unlink it to the selection - each is added to the other's connections, so allocating either one lets you allocate the other. Ctrl-click the same pair again to unlink.<br><br>Add: click empty canvas to place a node there.<br><br>Add Anchor: click empty canvas to place an orbit anchor - a ring you can resize by dragging its edge handle. Drag any node close to a ring in Select mode to snap it onto the ring; drag it along the ring to move it around the orbit, or pull it far enough away to detach. Click an anchor's center dot to select it, then press Delete/Q to remove it.</div>
     </div>
 
     <div class="toolSection">
@@ -524,8 +535,8 @@
 "use strict";
 
 var SHIPPED_TYPES = [
-{"id":"flux_capacity","name":"Flux Capacity","icon":"graphics/icons/circular/small_passives/containment_procedures.png","opCost":2,"xpCost":500,"tags":["flux"]},
-{"id":"flux_dissipation","name":"Flux Dissipation","icon":"graphics/icons/circular/small_passives/systems_expertise.png","opCost":2,"xpCost":500,"tags":["flux"]},
+{"id":"flux_capacity","name":"Flux Capacity","icon":"graphics/icons/circular/small_passives/containment_procedures.png","opCost":2,"xpCost":500,"effects":[{"effect":"FLUX_CAPACITY_PERCENT","magnitude":1}],"tags":["flux"]},
+{"id":"flux_dissipation","name":"Flux Dissipation","icon":"graphics/icons/circular/small_passives/systems_expertise.png","opCost":2,"xpCost":500,"effects":[{"effect":"FLUX_DISSIPATION_PERCENT","magnitude":1}],"tags":["flux"]},
 {"id":"hybrid_flux","name":"Flux Capacity and Dissipation","icon":"graphics/icons/circular/small_passives/flux_dynamics.png","opCost":2,"xpCost":500,"tags":["flux"]},
 {"id":"hull","name":"Hull","icon":"graphics/icons/circular/small_passives/damage_control2.png","opCost":2,"xpCost":500,"tags":["hull"]},
 {"id":"armor","name":"Armor","icon":"graphics/icons/circular/small_passives/polarized_armor.png","opCost":2,"xpCost":500,"tags":["armour"]},
@@ -535,7 +546,7 @@ var SHIPPED_TYPES = [
 {"id":"beam_damage","name":"Beam Weapon Damage","icon":"graphics/icons/circular/small_passives/hypercognition.png","opCost":2,"xpCost":500},
 {"id":"energy_damage","name":"Energy Weapon Damage","icon":"graphics/icons/circular/small_passives/energy_weapon_mastery.png","opCost":2,"xpCost":500},
 {"id":"weapon_damage","name":"All Weapon Damage","icon":"graphics/icons/circular/small_passives/weapon_drills.png","opCost":2,"xpCost":500},
-{"id":"packed_capacitors","name":"Packed Capacitors","icon":"graphics/icons/circular/notable_passives/power_grid_manipulation.png","opCost":3,"xpCost":1200,"tier":"NOTABLE","tags":["flux"]},
+{"id":"packed_capacitors","name":"Packed Capacitors","icon":"graphics/icons/circular/notable_passives/power_grid_manipulation.png","opCost":3,"xpCost":1200,"tier":"NOTABLE","effects":[{"effect":"FLUX_CAPACITY_PERCENT","magnitude":5}],"hullSizeEffects":[{"effect":"FLUX_CAPACITY_FLAT","frigate":200,"destroyer":400,"cruiser":600,"capitalShip":1000}],"tags":["flux"]},
 {"id":"safety_overrides","name":"Safety Overrides","icon":"graphics/icons/circular/keystones/helmsmanship.png","opCost":5,"xpCost":3000,"tier":"KEYSTONE","effects":[{"effect":"ZERO_FLUX_ALWAYS_ON","magnitude":0},{"effect":"FLUX_DISSIPATION_PERCENT","magnitude":100},{"effect":"PEAK_CR_DURATION_PERCENT","magnitude":-67},{"effect":"VENT_RATE_PERCENT","magnitude":-100},{"effect":"WEAPON_RANGE_THRESHOLD","magnitude":450},{"effect":"WEAPON_RANGE_FALLOFF_PERCENT","magnitude":-75}],"hullSizeEffects":[{"effect":"TOP_SPEED_FLAT","frigate":50,"destroyer":30,"cruiser":20,"capitalShip":10},{"effect":"ACCELERATION_FLAT","frigate":100,"destroyer":60,"cruiser":40,"capitalShip":20},{"effect":"DECELERATION_FLAT","frigate":100,"destroyer":60,"cruiser":40,"capitalShip":20}]},
 {"id":"advancedshieldemitter","name":"Accelerated Shields","icon":"graphics/icons/circular/notable_passives/accelerated_shields.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"SHIELD_TURN_RATE_PERCENT","magnitude":100},{"effect":"SHIELD_RAISE_RATE_PERCENT","magnitude":100}],"tags":["shield"]},
 {"id":"adaptive_coils","name":"Adaptive Phase Coils","icon":"graphics/icons/circular/notable_passives/phase_field.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"PHASE_CLOAK_FLUX_THRESHOLD_PERCENT","magnitude":50}],"tags":["flux","phase"]},
@@ -587,7 +598,7 @@ var SHIPPED_TYPES = [
 {"id":"insulatedengine","name":"Insulated Engine Assembly","icon":"graphics/icons/circular/notable_passives/insulated_engine_assembly.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"ENGINE_DURABILITY_PERCENT","magnitude":100},{"effect":"HULL_PERCENT","magnitude":10}],"tags":["logistics"]},
 {"id":"militarized_subsystems","name":"Militarized Subsystems","icon":"graphics/icons/circular/notable_passives/militarized_subsystems.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"BURN_LEVEL_FLAT","magnitude":1},{"effect":"MIN_CREW_PERCENT","magnitude":100},{"effect":"REMOVE_CIVILIAN_HULL_PENALTY","magnitude":0}],"tags":["logistics"]},
 {"id":"solar_shielding","name":"Solar Shielding","icon":"graphics/icons/circular/notable_passives/solar_shielding2.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","vanillaHullMod":"solar_shielding","todo":"Real effect is -75% CR loss from solar corona/deep hyperspace storms, plus -10% energy damage taken in combat. The energy damage part is trivial and safe (existing ENERGY_DAMAGE_TAKEN_PERCENT effect, magnitude -10) whenever we want it. The corona/storm part is NOT safe to implement yet - found the real dynamic stat key (\u0027corona_resistance\u0027, confirmed shared by both StarCoronaTerrainPlugin and HyperspaceTerrainPlugin, matching the tooltip\u0027s \u0027same effect against storms\u0027 claim) but decompiling StarCoronaTerrainPlugin showed corona_resistance actually GATES whether a CR-loss event fires (if (corona_resistance \u003e 0) applyCREvent(...) else \u003ccomputes what looks like an interval/frequency ratio instead\u003e) rather than scaling a loss percentage directly - the sign/semantics don\u0027t resolve cleanly and getting it backward could make ships MORE vulnerable, not less. Deliberately left the whole hullmod on vanillaHullMod passthrough (both effects still work correctly via vanilla\u0027s own code) rather than partially convert, since our apply loop is all-or-nothing per node and converting now would silently drop corona/storm protection. Needs more investigation (or someone who already knows this mechanic) before touching.","tags":["logistics"]},
-{"id":"surveying_equipment","name":"Surveying Equipment","icon":"graphics/icons/circular/notable_passives/surveying_equipment.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","hullSizeEffects":[{"effect":"SURVEY_COST_REDUCTION_HEAVY_MACHINERY","frigate":5,"destroyer":10,"cruiser":20,"capitalShip":40},{"effect":"SURVEY_COST_REDUCTION_SUPPLIES","frigate":5,"destroyer":10,"cruiser":20,"capitalShip":40}],"tags":["logistics"]},
+{"id":"surveying_equipment","name":"Surveying Equipment","icon":"graphics/icons/circular/notable_passives/surveying_equipment.png","opCost":4,"xpCost":2000,"tier":"NOTABLE","hullSizeEffects":[{"effect":"SURVEY_COST_REDUCTION_HEAVY_MACHINERY","frigate":3,"destroyer":5,"cruiser":10,"capitalShip":20},{"effect":"SURVEY_COST_REDUCTION_SUPPLIES","frigate":3,"destroyer":5,"cruiser":10,"capitalShip":20}],"tags":["logistics"]},
 {"id":"root_low_tech","name":"Low Tech Root","icon":"","opCost":0,"xpCost":0,"tier":"ROOT"},
 {"id":"root_midline","name":"Midline Root","icon":"","opCost":0,"xpCost":0,"tier":"ROOT"},
 {"id":"root_high_tech","name":"High Tech Root","icon":"","opCost":0,"xpCost":0,"tier":"ROOT"},
@@ -597,29 +608,33 @@ var SHIPPED_TYPES = [
 {"id":"fighter_weapon_damage","name":"Fighter Weapon Damage","icon":"graphics/icons/circular/small_passives/fighter_uplink2.png","opCost":2,"xpCost":500,"effects":[{"effect":"FIGHTER_WEAPON_DAMAGE_PERCENT","magnitude":15}],"todo":"Placeholder magnitude (15%) pending real balance numbers.","tags":["fighter"]},
 {"id":"fighter_speed","name":"Fighter Speed","icon":"graphics/icons/circular/small_passives/wing_commander.png","opCost":2,"xpCost":500,"effects":[{"effect":"FIGHTER_TOP_SPEED_PERCENT","magnitude":15}],"todo":"Placeholder magnitude (15%) pending real balance numbers.","tags":["fighter"]},
 {"id":"small_logistics_optional","name":"Fuel, Crew or Cargo","icon":"graphics/icons/circular/small_passives/compact_storage.png","opCost":4,"xpCost":2000,"optionalOptions":["increased_fuel","increased_cargo","increased_crew"],"tags":["logistics"]},
-{"id":"small_flux_optional","name":"Caps or Vents","icon":"","opCost":4,"xpCost":2000,"optionalOptions":["flux_capacity","flux_dissipation"],"tags":["flux"]}
+{"id":"small_flux_optional","name":"Caps or Vents","icon":"","opCost":4,"xpCost":2000,"optionalOptions":["flux_capacity","flux_dissipation"],"tags":["flux"]},
+{"id":"efficient_vents","name":"Efficient Vents","icon":"","opCost":4,"xpCost":2000,"tier":"NOTABLE","effects":[{"effect":"FLUX_DISSIPATION_PERCENT","magnitude":5}],"hullSizeEffects":[{"effect":"FLUX_DISSIPATION_FLAT","frigate":10,"destroyer":20,"cruiser":30,"capitalShip":50}],"tags":["flux"]},
+{"id":"survey_mach_cost","name":"Survey Heavy Machinery Cost Reduction","icon":"","opCost":4,"xpCost":2000,"hullSizeEffects":[{"effect":"SURVEY_COST_REDUCTION_HEAVY_MACHINERY","frigate":2,"destroyer":4,"cruiser":7,"capitalShip":15}],"tags":["logistics"]},
+{"id":"survey_supplies_cost_reduction","name":"Survey supplies cost reduction","icon":"","opCost":4,"xpCost":2000,"hullSizeEffects":[{"effect":"SURVEY_COST_REDUCTION_SUPPLIES","frigate":2,"destroyer":4,"cruiser":7,"capitalShip":15}],"tags":["logistics"]},
+{"id":"survey_generic_cost_reduction","name":"Survey cost reduction","icon":"","opCost":4,"xpCost":2000,"hullSizeEffects":[{"effect":"SURVEY_COST_REDUCTION_HEAVY_MACHINERY","frigate":1,"destroyer":3,"cruiser":5,"capitalShip":10},{"effect":"SURVEY_COST_REDUCTION_SUPPLIES","frigate":1,"destroyer":3,"cruiser":5,"capitalShip":10}],"tags":["logistics"]},
+{"id":"increased_sensor_range","name":"Increased Sensor Range","icon":"","opCost":4,"xpCost":2000,"hullSizeEffects":[{"effect":"SENSOR_RANGE","frigate":50,"destroyer":75,"cruiser":100,"capitalShip":150}],"tags":["logistics"]}
 ];
 
 var SHIPPED_NODES = [
-{"id":"hybrid_flux_1","type":"hybrid_flux","connectedTo":[],"x":-500,"y":-941},
-{"id":"flux_capacity_1","type":"flux_capacity","connectedTo":[],"x":-535,"y":-1017},
-{"id":"flux_dissipation_1","type":"flux_dissipation","connectedTo":[],"x":-614,"y":-1008},
+{"id":"flux_capacity_1","type":"flux_capacity","connectedTo":["flux_capacity_3"],"x":-859,"y":-1086},
+{"id":"flux_dissipation_1","type":"flux_dissipation","connectedTo":["flux_dissipation_2"],"x":-344,"y":-1087},
 {"id":"missile_damage_1","type":"missile_damage","connectedTo":[],"x":1293,"y":-274},
 {"id":"ballistic_damage_1","type":"ballistic_damage","connectedTo":[],"x":1181,"y":715},
 {"id":"hull_1","type":"hull","connectedTo":[],"x":-291,"y":1023},
-{"id":"beam_damage_1","type":"beam_damage","connectedTo":["beam_damage_2","beam_damage_5"],"x":-1267,"y":-115},
-{"id":"non_beam_energy_damage_1","type":"non_beam_energy_damage","connectedTo":["energy_damage_1","non_beam_energy_damage_2"],"x":-1195,"y":-215},
-{"id":"energy_damage_1","type":"energy_damage","connectedTo":["non_beam_energy_damage_1","beam_damage_2"],"x":-1111,"y":-186},
+{"id":"beam_damage_1","type":"beam_damage","connectedTo":["beam_damage_2","beam_damage_5"],"x":-1457,"y":-675},
+{"id":"non_beam_energy_damage_1","type":"non_beam_energy_damage","connectedTo":["energy_damage_1","non_beam_energy_damage_2"],"x":-1385,"y":-775},
+{"id":"energy_damage_1","type":"energy_damage","connectedTo":["non_beam_energy_damage_1","beam_damage_2"],"x":-1301,"y":-746},
 {"id":"armor_1","type":"armor","connectedTo":[],"x":-378,"y":1038},
-{"id":"packed_capacitors_1","type":"packed_capacitors","connectedTo":[],"x":-580,"y":-1101},
+{"id":"packed_capacitors_1","type":"packed_capacitors","connectedTo":["flux_capacity_3"],"x":-799,"y":-1194},
 {"id":"safety_overrides_1","type":"safety_overrides","connectedTo":[],"x":1676,"y":454},
 {"id":"heavyarmor_1","type":"heavyarmor","connectedTo":[],"x":-415,"y":964},
 {"id":"armoredweapons_1","type":"armoredweapons","connectedTo":[],"x":-613,"y":976},
 {"id":"reinforcedhull_1","type":"reinforcedhull","connectedTo":[],"x":-176,"y":1023},
-{"id":"blast_doors_1","type":"blast_doors","connectedTo":[],"x":100,"y":223},
-{"id":"fluxcoil_1","type":"fluxcoil","connectedTo":[],"x":-751,"y":-957},
-{"id":"fluxbreakers_1","type":"fluxbreakers","connectedTo":[],"x":-952,"y":-905},
-{"id":"fluxdistributor_1","type":"fluxdistributor","connectedTo":[],"x":-698,"y":-1045},
+{"id":"blast_doors_1","type":"blast_doors","connectedTo":[],"x":562,"y":430},
+{"id":"fluxcoil_1","type":"fluxcoil","connectedTo":[],"x":-1540,"y":-1363},
+{"id":"fluxbreakers_1","type":"fluxbreakers","connectedTo":[],"x":-1156,"y":-1300},
+{"id":"fluxdistributor_1","type":"fluxdistributor","connectedTo":[],"x":-1517,"y":-1489},
 {"id":"autorepair_1","type":"autorepair","connectedTo":[],"x":1314,"y":207},
 {"id":"hardened_subsystems_1","type":"hardened_subsystems","connectedTo":[],"x":1200,"y":74},
 {"id":"turretgyros_1","type":"turretgyros","connectedTo":[],"x":1316,"y":134},
@@ -633,45 +648,45 @@ var SHIPPED_NODES = [
 {"id":"advancedoptics_1","type":"advancedoptics","connectedTo":[],"x":-1306,"y":197},
 {"id":"dedicated_targeting_core_1","type":"dedicated_targeting_core","connectedTo":[],"x":1787,"y":153},
 {"id":"targetingunit_1","type":"targetingunit","connectedTo":[],"x":1771,"y":227},
-{"id":"ecm_1","type":"ecm","connectedTo":[],"x":67,"y":79},
+{"id":"ecm_1","type":"ecm","connectedTo":[],"x":-349,"y":-436},
 {"id":"defensive_targeting_array_1","type":"defensive_targeting_array","connectedTo":[],"x":1883,"y":202},
 {"id":"advancedshieldemitter_1","type":"advancedshieldemitter","connectedTo":[],"x":921,"y":-1212},
 {"id":"extendedshieldemitter_1","type":"extendedshieldemitter","connectedTo":[],"x":677,"y":-1244},
 {"id":"hardenedshieldemitter_1","type":"hardenedshieldemitter","connectedTo":[],"x":778,"y":-1204},
 {"id":"stabilizedshieldemitter_1","type":"stabilizedshieldemitter","connectedTo":[],"x":841,"y":-1124},
 {"id":"shield_shunt_1","type":"shield_shunt","connectedTo":[],"x":-582,"y":911},
-{"id":"frontshield_1","type":"frontshield","connectedTo":[],"x":698,"y":-1133},
-{"id":"frontemitter_1","type":"frontemitter","connectedTo":[],"x":580,"y":-1159},
+{"id":"frontshield_1","type":"frontshield","connectedTo":[],"x":789,"y":-1346},
+{"id":"frontemitter_1","type":"frontemitter","connectedTo":[],"x":873,"y":-1296},
 {"id":"adaptiveshields_1","type":"adaptiveshields","connectedTo":[],"x":736,"y":-1060},
 {"id":"auxiliarythrusters_1","type":"auxiliarythrusters","connectedTo":[],"x":1443,"y":222},
 {"id":"unstable_injector_1","type":"unstable_injector","connectedTo":[],"x":1461,"y":478},
-{"id":"nav_relay_1","type":"nav_relay","connectedTo":[],"x":-24,"y":255},
-{"id":"adaptive_coils_1","type":"adaptive_coils","connectedTo":[],"x":-873,"y":-940},
-{"id":"phase_anchor_1","type":"phase_anchor","connectedTo":[],"x":-958,"y":-977},
-{"id":"additional_berthing_1","type":"additional_berthing","connectedTo":[],"x":-14,"y":-168},
-{"id":"augmentedengines_1","type":"augmentedengines","connectedTo":[],"x":287,"y":61},
-{"id":"auxiliary_fuel_tanks_1","type":"auxiliary_fuel_tanks","connectedTo":[],"x":-44,"y":72},
-{"id":"efficiency_overhaul_1","type":"efficiency_overhaul","connectedTo":[],"x":0,"y":0},
-{"id":"expanded_cargo_holds_1","type":"expanded_cargo_holds","connectedTo":[],"x":102,"y":-116},
-{"id":"hiressensors_1","type":"hiressensors","connectedTo":[],"x":129,"y":-12},
-{"id":"insulatedengine_1","type":"insulatedengine","connectedTo":[],"x":-206,"y":-26},
-{"id":"militarized_subsystems_1","type":"militarized_subsystems","connectedTo":[],"x":-220,"y":80},
-{"id":"solar_shielding_1","type":"solar_shielding","connectedTo":[],"x":-138,"y":-122},
-{"id":"surveying_equipment_1","type":"surveying_equipment","connectedTo":[],"x":221,"y":166},
+{"id":"nav_relay_1","type":"nav_relay","connectedTo":[],"x":-268,"y":-320},
+{"id":"adaptive_coils_1","type":"adaptive_coils","connectedTo":[],"x":-943,"y":-1569},
+{"id":"phase_anchor_1","type":"phase_anchor","connectedTo":[],"x":-844,"y":-1569},
+{"id":"additional_berthing_1","type":"additional_berthing","connectedTo":[],"x":-673,"y":263},
+{"id":"augmentedengines_1","type":"augmentedengines","connectedTo":[],"x":-418,"y":-520},
+{"id":"auxiliary_fuel_tanks_1","type":"auxiliary_fuel_tanks","connectedTo":[],"x":687,"y":256},
+{"id":"efficiency_overhaul_1","type":"efficiency_overhaul","connectedTo":["small_logistics_optional_4","small_logistics_optional_5"],"x":-173,"y":-96},
+{"id":"expanded_cargo_holds_1","type":"expanded_cargo_holds","connectedTo":[],"x":-610,"y":438},
+{"id":"hiressensors_1","type":"hiressensors","connectedTo":["increased_sensor_range_1"],"x":-116,"y":-616},
+{"id":"insulatedengine_1","type":"insulatedengine","connectedTo":[],"x":-652,"y":180},
+{"id":"militarized_subsystems_1","type":"militarized_subsystems","connectedTo":[],"x":596,"y":192},
+{"id":"solar_shielding_1","type":"solar_shielding","connectedTo":[],"x":-552,"y":242},
+{"id":"surveying_equipment_1","type":"surveying_equipment","connectedTo":["survey_generic_cost_reduction_2"],"x":270,"y":-411},
 {"id":"converted_hangar_1","type":"converted_hangar","connectedTo":[],"x":1117,"y":-528},
-{"id":"converted_fighterbay_1","type":"converted_fighterbay","connectedTo":[],"x":293,"y":-50},
+{"id":"converted_fighterbay_1","type":"converted_fighterbay","connectedTo":["small_logistics_optional_5","small_logistics_optional_9"],"x":171,"y":-105},
 {"id":"expanded_deck_crew_1","type":"expanded_deck_crew","connectedTo":[],"x":1027,"y":-734},
 {"id":"recovery_shuttles_1","type":"recovery_shuttles","connectedTo":[],"x":965,"y":-664},
-{"id":"operations_center_1","type":"operations_center","connectedTo":[],"x":-146,"y":199},
+{"id":"operations_center_1","type":"operations_center","connectedTo":["small_logistics_optional_5","small_logistics_optional_4","small_logistics_optional_9"],"x":2,"y":-1},
 {"id":"escort_package_1","type":"escort_package","connectedTo":[],"x":1453,"y":144},
-{"id":"beam_damage_2","type":"beam_damage","connectedTo":["beam_damage_1","energy_damage_1"],"x":-1190,"y":-144},
-{"id":"beam_damage_5","type":"beam_damage","connectedTo":["beam_damage_1"],"x":-1352,"y":-124},
-{"id":"flux_capacity_2","type":"flux_capacity","connectedTo":[],"x":-633,"y":-898},
-{"id":"non_beam_energy_damage_2","type":"non_beam_energy_damage","connectedTo":["non_beam_energy_damage_1","non_beam_energy_damage_3"],"x":-1274,"y":-227},
-{"id":"non_beam_energy_damage_3","type":"non_beam_energy_damage","connectedTo":["non_beam_energy_damage_2"],"x":-1358,"y":-205},
-{"id":"root_low_tech_1","type":"root_low_tech","connectedTo":["small_logistics_optional_11","small_logistics_optional_31"],"x":719,"y":415},
-{"id":"root_midline_1","type":"root_midline","connectedTo":["small_logistics_optional_21","small_logistics_optional_27"],"x":-719,"y":415},
-{"id":"root_high_tech_1","type":"root_high_tech","connectedTo":["small_logistics_optional_3","small_logistics_optional_17","small_flux_optional_1"],"x":0,"y":-830},
+{"id":"beam_damage_2","type":"beam_damage","connectedTo":["beam_damage_1","energy_damage_1"],"x":-1380,"y":-704},
+{"id":"beam_damage_5","type":"beam_damage","connectedTo":["beam_damage_1"],"x":-1542,"y":-684},
+{"id":"flux_capacity_2","type":"flux_capacity","connectedTo":[],"x":-604,"y":-1277},
+{"id":"non_beam_energy_damage_2","type":"non_beam_energy_damage","connectedTo":["non_beam_energy_damage_1","non_beam_energy_damage_3"],"x":-1464,"y":-787},
+{"id":"non_beam_energy_damage_3","type":"non_beam_energy_damage","connectedTo":["non_beam_energy_damage_2"],"x":-1548,"y":-765},
+{"id":"root_low_tech_1","type":"root_low_tech","connectedTo":["small_logistics_optional_11","small_logistics_optional_31","small_logistics_optional_14"],"x":719,"y":415},
+{"id":"root_midline_1","type":"root_midline","connectedTo":["small_logistics_optional_21","small_logistics_optional_27","small_logistics_optional_1"],"x":-719,"y":415},
+{"id":"root_high_tech_1","type":"root_high_tech","connectedTo":["small_logistics_optional_3","small_logistics_optional_17","small_flux_optional_1","small_flux_optional_2","small_logistics_optional_10"],"x":0,"y":-830},
 {"id":"fighter_weapon_damage_1","type":"fighter_weapon_damage","connectedTo":[],"x":881,"y":-595},
 {"id":"fighter_speed_1","type":"fighter_speed","connectedTo":[],"x":997,"y":-581},
 {"id":"small_logistics_optional_3","type":"small_logistics_optional","connectedTo":["root_high_tech_1","small_logistics_optional_6"],"x":284,"y":-780},
@@ -689,7 +704,33 @@ var SHIPPED_NODES = [
 {"id":"small_logistics_optional_29","type":"small_logistics_optional","connectedTo":["small_logistics_optional_28","small_logistics_optional_30"],"x":0,"y":830},
 {"id":"small_logistics_optional_30","type":"small_logistics_optional","connectedTo":["small_logistics_optional_29","small_logistics_optional_31"],"x":284,"y":780},
 {"id":"small_logistics_optional_31","type":"small_logistics_optional","connectedTo":["small_logistics_optional_30","root_low_tech_1"],"x":534,"y":636},
-{"id":"small_flux_optional_1","type":"small_flux_optional","connectedTo":["root_high_tech_1"],"x":-2,"y":-986}
+{"id":"small_flux_optional_1","type":"small_flux_optional","connectedTo":["root_high_tech_1","small_flux_optional_4"],"x":99,"y":-999},
+{"id":"small_flux_optional_3","type":"small_flux_optional","connectedTo":["small_flux_optional_4","small_flux_optional_6"],"x":336,"y":-1390},
+{"id":"small_flux_optional_4","type":"small_flux_optional","connectedTo":["small_flux_optional_3","small_flux_optional_1"],"x":217,"y":-1192},
+{"id":"flux_capacity_3","type":"flux_capacity","connectedTo":["packed_capacitors_1","flux_capacity_1"],"x":-877,"y":-975},
+{"id":"efficient_vents_1","type":"efficient_vents","connectedTo":["flux_dissipation_2"],"x":-548,"y":-861},
+{"id":"flux_dissipation_2","type":"flux_dissipation","connectedTo":["efficient_vents_1","flux_dissipation_1"],"x":-501,"y":-1009},
+{"id":"small_flux_optional_5","type":"small_flux_optional","connectedTo":[],"x":-806,"y":-865},
+{"id":"small_flux_optional_6","type":"small_flux_optional","connectedTo":["small_flux_optional_3","small_flux_optional_7"],"x":445,"y":-1580},
+{"id":"small_flux_optional_7","type":"small_flux_optional","connectedTo":["small_flux_optional_6","small_flux_optional_8"],"x":529,"y":-1742},
+{"id":"small_flux_optional_8","type":"small_flux_optional","connectedTo":["small_flux_optional_7"],"x":603,"y":-1884},
+{"id":"small_flux_optional_2","type":"small_flux_optional","connectedTo":["root_high_tech_1"],"x":-122,"y":-990},
+{"id":"small_logistics_optional_1","type":"small_logistics_optional","connectedTo":["root_midline_1","small_logistics_optional_2"],"x":-529,"y":309},
+{"id":"small_logistics_optional_2","type":"small_logistics_optional","connectedTo":["small_logistics_optional_1","small_logistics_optional_4"],"x":-325,"y":196},
+{"id":"small_logistics_optional_4","type":"small_logistics_optional","connectedTo":["small_logistics_optional_2","efficiency_overhaul_1","small_logistics_optional_5","small_logistics_optional_9","operations_center_1"],"x":-146,"y":90},
+{"id":"small_logistics_optional_5","type":"small_logistics_optional","connectedTo":["small_logistics_optional_4","small_logistics_optional_7","small_logistics_optional_9","efficiency_overhaul_1","converted_fighterbay_1","operations_center_1"],"x":0,"y":-159},
+{"id":"small_logistics_optional_7","type":"small_logistics_optional","connectedTo":["small_logistics_optional_5","small_logistics_optional_10","survey_generic_cost_reduction_1"],"x":1,"y":-401},
+{"id":"small_logistics_optional_9","type":"small_logistics_optional","connectedTo":["small_logistics_optional_5","small_logistics_optional_4","small_logistics_optional_13","converted_fighterbay_1","operations_center_1"],"x":153,"y":87},
+{"id":"small_logistics_optional_10","type":"small_logistics_optional","connectedTo":["small_logistics_optional_7","root_high_tech_1","increased_sensor_range_3"],"x":0,"y":-610},
+{"id":"small_logistics_optional_13","type":"small_logistics_optional","connectedTo":["small_logistics_optional_9","small_logistics_optional_14"],"x":339,"y":184},
+{"id":"small_logistics_optional_14","type":"small_logistics_optional","connectedTo":["small_logistics_optional_13","root_low_tech_1"],"x":512,"y":293},
+{"id":"survey_mach_cost_1","type":"survey_mach_cost","connectedTo":["survey_generic_cost_reduction_1","survey_generic_cost_reduction_2"],"x":270,"y":-325},
+{"id":"survey_supplies_cost_reduction_1","type":"survey_supplies_cost_reduction","connectedTo":["survey_generic_cost_reduction_1","survey_generic_cost_reduction_2"],"x":264,"y":-502},
+{"id":"survey_generic_cost_reduction_1","type":"survey_generic_cost_reduction","connectedTo":["small_logistics_optional_7","survey_supplies_cost_reduction_1","survey_mach_cost_1"],"x":149,"y":-403},
+{"id":"survey_generic_cost_reduction_2","type":"survey_generic_cost_reduction","connectedTo":["surveying_equipment_1","survey_supplies_cost_reduction_1","survey_mach_cost_1"],"x":394,"y":-413},
+{"id":"increased_sensor_range_1","type":"increased_sensor_range","connectedTo":["hiressensors_1","increased_sensor_range_2"],"x":-118,"y":-714},
+{"id":"increased_sensor_range_2","type":"increased_sensor_range","connectedTo":["increased_sensor_range_1","increased_sensor_range_3"],"x":-230,"y":-610},
+{"id":"increased_sensor_range_3","type":"increased_sensor_range","connectedTo":["increased_sensor_range_2","small_logistics_optional_10"],"x":-115,"y":-508}
 ];
 
 var SHIPPED_CURVES = [
@@ -710,7 +751,14 @@ var SHIPPED_CURVES = [
 {"a":"small_logistics_optional_28","b":"small_logistics_optional_29","controlX":-144,"controlY":817},
 {"a":"small_logistics_optional_29","b":"small_logistics_optional_30","controlX":144,"controlY":817},
 {"a":"small_logistics_optional_30","b":"small_logistics_optional_31","controlX":415,"controlY":719},
-{"a":"small_logistics_optional_31","b":"root_low_tech_1","controlX":636,"controlY":534}
+{"a":"small_logistics_optional_31","b":"root_low_tech_1","controlX":636,"controlY":534},
+{"a":"increased_sensor_range_2","b":"increased_sensor_range_3","controlX":-196,"controlY":-537},
+{"a":"increased_sensor_range_1","b":"increased_sensor_range_2","controlX":-192,"controlY":-690},
+{"a":"increased_sensor_range_3","b":"small_logistics_optional_10","controlX":-38,"controlY":-544}
+];
+
+var SHIPPED_ANCHORS = [
+
 ];
 
 var SMALL_R = 11, NOTABLE_R = 17, KEYSTONE_R = 23, ROOT_R = 20;
@@ -732,9 +780,11 @@ var state = {
   types: [],
   nodes: [],
   curves: [],
+  anchors: [],
   view: { panX: 0, panY: 0, zoom: 0.55 },
   mode: 'select',
   selectedIds: [],
+  selectedAnchorId: null,
   showLabels: true,
   search: ''
 };
@@ -785,15 +835,89 @@ function snapCurveToStraightIfClose(a, b){
   if (Math.sqrt(dx*dx + dy*dy) < 8) removeCurve(a, b);
 }
 
+// ---------- orbit anchors ----------
+// An anchor is a draggable, resizable ring. A node dragged close to a ring snaps onto its
+// circumference (orbitAnchorId/orbitAngle record the relationship) and can then be dragged
+// along it; pulling it far enough away detaches it and it moves freely again.
+var ORBIT_SNAP_RADIUS = 18;
+var ORBIT_DETACH_RADIUS = 45;
+var ORBIT_CARDINAL_SNAP_DEGREES = 6;
+var ORBIT_CARDINAL_ANGLES = [0, 90, 180, 270];
+
+function anchorById(id){ for (var i=0;i<state.anchors.length;i++) if (state.anchors[i].id === id) return state.anchors[i]; return null; }
+function uniqueAnchorId(){
+  var i = 1, id;
+  do { id = 'anchor_' + i; i++; } while (anchorById(id));
+  return id;
+}
+function positionOnAnchor(anchor, angleDeg){
+  var rad = angleDeg * Math.PI / 180;
+  return { x: anchor.x + Math.cos(rad) * anchor.radius, y: anchor.y + Math.sin(rad) * anchor.radius };
+}
+function snapAngleToCardinal(angleDeg){
+  var norm = ((angleDeg % 360) + 360) % 360;
+  for (var i=0;i<ORBIT_CARDINAL_ANGLES.length;i++){
+    var cardinal = ORBIT_CARDINAL_ANGLES[i];
+    var diff = Math.abs(norm - cardinal);
+    diff = Math.min(diff, 360 - diff);
+    if (diff <= ORBIT_CARDINAL_SNAP_DEGREES) return cardinal;
+  }
+  return angleDeg;
+}
+function snapNodeToAnchor(n, anchor, worldX, worldY){
+  var angleDeg = Math.atan2(worldY - anchor.y, worldX - anchor.x) * 180 / Math.PI;
+  angleDeg = snapAngleToCardinal(angleDeg);
+  var pos = positionOnAnchor(anchor, angleDeg);
+  n.x = Math.round(pos.x);
+  n.y = Math.round(pos.y);
+  n.orbitAnchorId = anchor.id;
+  n.orbitAngle = angleDeg;
+  syncRingArcCurves(anchor);
+}
+function detachNodeFromAnchor(n){
+  delete n.orbitAnchorId;
+  delete n.orbitAngle;
+}
+function resyncNodesOnAnchor(anchor){
+  state.nodes.forEach(function(n){
+    if (n.orbitAnchorId !== anchor.id) return;
+    var pos = positionOnAnchor(anchor, n.orbitAngle || 0);
+    n.x = Math.round(pos.x);
+    n.y = Math.round(pos.y);
+  });
+  syncRingArcCurves(anchor);
+}
+function ringArcThroughPoint(anchor, angleA, angleB){
+  var diff = ((angleB - angleA + 180) % 360 + 360) % 360 - 180;
+  return positionOnAnchor(anchor, angleA + diff / 2);
+}
+function syncRingArcCurves(anchor){
+  var onRing = state.nodes.filter(function(n){ return n.orbitAnchorId === anchor.id; });
+  onRing.forEach(function(n){
+    (n.connectedTo||[]).forEach(function(pid){
+      if (n.id >= pid) return;
+      var other = nodeById(pid);
+      if (!other || other.orbitAnchorId !== anchor.id) return;
+      var pt = ringArcThroughPoint(anchor, n.orbitAngle, other.orbitAngle);
+      setCurveControl(n.id, pid, Math.round(pt.x), Math.round(pt.y));
+    });
+  });
+}
+function deleteAnchor(id){
+  state.anchors = state.anchors.filter(function(a){ return a.id !== id; });
+  state.nodes.forEach(function(n){ if (n.orbitAnchorId === id) detachNodeFromAnchor(n); });
+}
+
 function loadShipped(){
   state.types = deepCopy(SHIPPED_TYPES);
   state.nodes = deepCopy(SHIPPED_NODES);
   state.curves = deepCopy(SHIPPED_CURVES);
+  state.anchors = deepCopy(SHIPPED_ANCHORS);
 }
 
 function saveLocal(){
   try {
-    localStorage.setItem('skillTreeEditor.v1', JSON.stringify({ types: state.types, nodes: state.nodes, curves: state.curves }));
+    localStorage.setItem('skillTreeEditor.v1', JSON.stringify({ types: state.types, nodes: state.nodes, curves: state.curves, anchors: state.anchors }));
   } catch(e){}
 }
 function loadLocal(){
@@ -805,6 +929,7 @@ function loadLocal(){
     state.types = parsed.types;
     state.nodes = parsed.nodes;
     state.curves = parsed.curves || [];
+    state.anchors = parsed.anchors || [];
     return true;
   } catch(e){ return false; }
 }
@@ -815,17 +940,21 @@ if (!loadLocal()) loadShipped();
 var svg = document.getElementById('stage');
 var canvasWrap = document.getElementById('canvasWrap');
 var NS = 'http://www.w3.org/2000/svg';
-var layerRoot, layerEdges, layerNodes, layerLabels;
+var layerRoot, layerAnchors, layerEdges, layerNodes, layerLabels, layerAnchorHandles;
 
 function buildLayers(){
   svg.innerHTML = '';
   layerRoot = document.createElementNS(NS, 'g');
+  layerAnchors = document.createElementNS(NS, 'g');
   layerEdges = document.createElementNS(NS, 'g');
   layerNodes = document.createElementNS(NS, 'g');
   layerLabels = document.createElementNS(NS, 'g');
+  layerAnchorHandles = document.createElementNS(NS, 'g');
+  layerRoot.appendChild(layerAnchors);
   layerRoot.appendChild(layerEdges);
   layerRoot.appendChild(layerNodes);
   layerRoot.appendChild(layerLabels);
+  layerRoot.appendChild(layerAnchorHandles);
   svg.appendChild(layerRoot);
 }
 buildLayers();
@@ -870,6 +999,32 @@ function render(){
   centerMark.setAttribute('d', 'M ' + (-s) + ' 0 L 0 ' + (-s) + ' L ' + s + ' 0 L 0 ' + s + ' Z');
   centerMark.setAttribute('class', 'center-mark');
   layerEdges.appendChild(centerMark);
+
+  state.anchors.forEach(function(a){
+    var selected = state.selectedAnchorId === a.id;
+    var ring = document.createElementNS(NS, 'circle');
+    ring.setAttribute('cx', a.x); ring.setAttribute('cy', a.y); ring.setAttribute('r', a.radius);
+    ring.setAttribute('class', 'orbit-ring' + (selected ? ' selected' : ''));
+    layerAnchors.appendChild(ring);
+
+    if (state.mode === 'select' || state.mode === 'addAnchor') {
+      var isMoving = drag && drag.anchorMove === a.id;
+      var center = document.createElementNS(NS, 'circle');
+      center.setAttribute('cx', a.x); center.setAttribute('cy', a.y); center.setAttribute('r', isMoving ? 8 : 6);
+      center.setAttribute('class', 'orbit-center' + (selected ? ' selected' : '') + (isMoving ? ' moving' : ''));
+      center.dataset.anchorId = a.id;
+      layerAnchorHandles.appendChild(center);
+
+      var isResizing = drag && drag.anchorResize === a.id;
+      var handlePos = { x: a.x + a.radius / 2, y: a.y };
+      var resizeHandle = document.createElementNS(NS, 'circle');
+      resizeHandle.setAttribute('cx', handlePos.x); resizeHandle.setAttribute('cy', handlePos.y);
+      resizeHandle.setAttribute('r', isResizing ? 7 : 5);
+      resizeHandle.setAttribute('class', 'orbit-resize' + (isResizing ? ' dragging' : ''));
+      resizeHandle.dataset.anchorResizeId = a.id;
+      layerAnchorHandles.appendChild(resizeHandle);
+    }
+  });
 
   var q = state.search.trim().toLowerCase();
   var matchIds = null;
@@ -960,6 +1115,7 @@ function render(){
 
   attachNodeHandlers();
   attachCurveAnchorHandlers();
+  attachOrbitAnchorHandlers();
   updateStats();
   updateWarnBadge();
 }
@@ -1018,6 +1174,25 @@ function attachCurveAnchorHandlers(){
   });
 }
 
+function attachOrbitAnchorHandlers(){
+  layerAnchorHandles.querySelectorAll('.orbit-center').forEach(function(c){
+    c.addEventListener('pointerdown', function(ev){
+      ev.stopPropagation();
+      state.selectedAnchorId = c.dataset.anchorId;
+      drag = { anchorMove: c.dataset.anchorId };
+      ev.target.setPointerCapture(ev.pointerId);
+      render();
+    });
+  });
+  layerAnchorHandles.querySelectorAll('.orbit-resize').forEach(function(c){
+    c.addEventListener('pointerdown', function(ev){
+      ev.stopPropagation();
+      drag = { anchorResize: c.dataset.anchorResizeId };
+      ev.target.setPointerCapture(ev.pointerId);
+    });
+  });
+}
+
 function startGroupDrag(ev){
   drag = {
     startWorld: screenPointToWorld(ev.clientX, ev.clientY),
@@ -1036,12 +1211,22 @@ canvasWrap.addEventListener('pointerdown', function(ev){
     openAddNodeModal(Math.round(w.x), Math.round(w.y));
     return;
   }
+  if (state.mode === 'addAnchor') {
+    var wa = screenPointToWorld(ev.clientX, ev.clientY);
+    var newAnchor = { id: uniqueAnchorId(), x: Math.round(wa.x), y: Math.round(wa.y), radius: 150 };
+    state.anchors.push(newAnchor);
+    state.selectedAnchorId = newAnchor.id;
+    saveLocal();
+    render();
+    return;
+  }
   if (ev.shiftKey) {
     drag = { marquee: true, startClientX: ev.clientX, startClientY: ev.clientY };
     return;
   }
-  if (state.selectedIds.length > 0) {
+  if (state.selectedIds.length > 0 || state.selectedAnchorId) {
     state.selectedIds = [];
+    state.selectedAnchorId = null;
     document.getElementById('inspector').classList.remove('open');
     refreshInspector();
     render();
@@ -1069,16 +1254,58 @@ window.addEventListener('pointermove', function(ev){
     render();
     return;
   }
+  if (drag.anchorMove) {
+    var anchor = anchorById(drag.anchorMove);
+    if (anchor) {
+      var wm = screenPointToWorld(ev.clientX, ev.clientY);
+      anchor.x = Math.round(wm.x);
+      anchor.y = Math.round(wm.y);
+      resyncNodesOnAnchor(anchor);
+    }
+    render();
+    return;
+  }
+  if (drag.anchorResize) {
+    var rAnchor = anchorById(drag.anchorResize);
+    if (rAnchor) {
+      var wr = screenPointToWorld(ev.clientX, ev.clientY);
+      var rdx = wr.x - rAnchor.x, rdy = wr.y - rAnchor.y;
+      rAnchor.radius = Math.max(10, Math.round(Math.sqrt(rdx*rdx + rdy*rdy)));
+      resyncNodesOnAnchor(rAnchor);
+    }
+    render();
+    return;
+  }
   var w = screenPointToWorld(ev.clientX, ev.clientY);
   var dx = w.x - drag.startWorld.x, dy = w.y - drag.startWorld.y;
   if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) drag.moved = true;
-  drag.origPositions.forEach(function(op){
-    var n = nodeById(op.id);
-    if (n) {
-      n.x = Math.round(op.x + dx);
-      n.y = Math.round(op.y + dy);
+  var singleNode = drag.origPositions.length === 1 ? nodeById(drag.origPositions[0].id) : null;
+  if (singleNode) {
+    var op0 = drag.origPositions[0];
+    var tentativeX = op0.x + dx, tentativeY = op0.y + dy;
+    var bestAnchor = null, bestDelta = Infinity;
+    state.anchors.forEach(function(a){
+      var adx = tentativeX - a.x, ady = tentativeY - a.y;
+      var delta = Math.abs(Math.sqrt(adx*adx + ady*ady) - a.radius);
+      var threshold = singleNode.orbitAnchorId === a.id ? ORBIT_DETACH_RADIUS : ORBIT_SNAP_RADIUS;
+      if (delta <= threshold && delta < bestDelta) { bestDelta = delta; bestAnchor = a; }
+    });
+    if (bestAnchor) {
+      snapNodeToAnchor(singleNode, bestAnchor, tentativeX, tentativeY);
+    } else {
+      if (singleNode.orbitAnchorId) detachNodeFromAnchor(singleNode);
+      singleNode.x = Math.round(tentativeX);
+      singleNode.y = Math.round(tentativeY);
     }
-  });
+  } else {
+    drag.origPositions.forEach(function(op){
+      var n = nodeById(op.id);
+      if (n) {
+        n.x = Math.round(op.x + dx);
+        n.y = Math.round(op.y + dy);
+      }
+    });
+  }
   render();
   if (state.selectedIds.length === 1) refreshInspector();
 });
@@ -1088,6 +1315,8 @@ window.addEventListener('pointerup', function(ev){
     finishMarqueeSelect(ev);
   } else if (drag && drag.curve) {
     snapCurveToStraightIfClose(drag.curve.a, drag.curve.b);
+    saveLocal();
+  } else if (drag && (drag.anchorMove || drag.anchorResize)) {
     saveLocal();
   } else if (drag && !drag.pan && drag.moved) {
     saveLocal();
@@ -1138,6 +1367,10 @@ function toggleLink(aId, bId){
   if (idx === -1) {
     a.connectedTo.push(b.id);
     b.connectedTo.push(a.id);
+    if (a.orbitAnchorId && a.orbitAnchorId === b.orbitAnchorId) {
+      var sharedAnchor = anchorById(a.orbitAnchorId);
+      if (sharedAnchor) syncRingArcCurves(sharedAnchor);
+    }
     showToast(a.id + ' <-> ' + b.id + ' connected');
   } else {
     a.connectedTo.splice(idx, 1);
@@ -1170,23 +1403,35 @@ document.querySelectorAll('.modeBtn').forEach(function(btn){
 document.addEventListener('keydown', function(ev){
   if (ev.target.tagName === 'INPUT' || ev.target.tagName === 'TEXTAREA' || ev.target.tagName === 'SELECT') return;
   if (!ev.ctrlKey && !ev.metaKey) {
-    var map = { 'a': 'select', 's': 'add' };
+    var map = { 'a': 'select', 's': 'add', 'd': 'addAnchor' };
     var m = map[ev.key.toLowerCase()];
     if (m) { document.querySelector('.modeBtn[data-mode="'+m+'"]').click(); }
-    if (ev.key === 'q' || ev.key === 'Q') { if (state.selectedIds.length > 0) deleteSelectedNodes(); }
+    if (ev.key === 'q' || ev.key === 'Q') { deleteSelectionOrAnchor(); }
   }
-  if (ev.key === 'Delete' || ev.key === 'Backspace') { if (state.selectedIds.length > 0) deleteSelectedNodes(); }
+  if (ev.key === 'Delete' || ev.key === 'Backspace') { deleteSelectionOrAnchor(); }
   if ((ev.key === 'd' || ev.key === 'D') && (ev.ctrlKey || ev.metaKey)) {
     ev.preventDefault();
     if (state.selectedIds.length === 1) { duplicateNode(nodeById(state.selectedIds[0])); }
   }
-  if (ev.key === 'Escape' && state.selectedIds.length > 0) {
+  if (ev.key === 'Escape' && (state.selectedIds.length > 0 || state.selectedAnchorId)) {
     state.selectedIds = [];
+    state.selectedAnchorId = null;
     document.getElementById('inspector').classList.remove('open');
     render();
     refreshInspector();
   }
 });
+
+function deleteSelectionOrAnchor(){
+  if (state.selectedIds.length > 0) {
+    deleteSelectedNodes();
+  } else if (state.selectedAnchorId) {
+    deleteAnchor(state.selectedAnchorId);
+    state.selectedAnchorId = null;
+    saveLocal();
+    render();
+  }
+}
 
 // ---------- inspector ----------
 function refreshInspector(){
@@ -1375,6 +1620,7 @@ function duplicateNode(n){
   copy.id = uniqueNodeId(n.type);
   copy.x = n.x + 40; copy.y = n.y - 40;
   copy.connectedTo = [n.id];
+  detachNodeFromAnchor(copy);
   n.connectedTo.push(copy.id);
   state.nodes.push(copy);
   selectNode(copy.id);
@@ -1702,10 +1948,17 @@ function toTabbedJson(obj, rootKey){
   return raw;
 }
 function buildTreeExportObject(){
-  var nodesOut = state.nodes.map(function(n){ return { id: n.id, type: n.type, connectedTo: n.connectedTo, x: n.x, y: n.y }; });
+  var nodesOut = state.nodes.map(function(n){
+    var out = { id: n.id, type: n.type, connectedTo: n.connectedTo, x: n.x, y: n.y };
+    if (n.orbitAnchorId) { out.orbitAnchorId = n.orbitAnchorId; out.orbitAngle = n.orbitAngle; }
+    return out;
+  });
   var out = { nodes: nodesOut };
   if (state.curves.length) {
     out.connectorCurves = state.curves.map(function(c){ return { a: c.a, b: c.b, controlX: c.controlX, controlY: c.controlY }; });
+  }
+  if (state.anchors.length) {
+    out.orbitAnchors = state.anchors.map(function(a){ return { id: a.id, x: a.x, y: a.y, radius: a.radius }; });
   }
   return out;
 }
@@ -1781,7 +2034,7 @@ document.getElementById('importBtn').addEventListener('click', function(){
     var nodesRaw = document.getElementById('impNodes').value.trim();
     try {
       if (typesRaw) { var pt = JSON.parse(typesRaw); state.types = pt.skillTypes || pt; }
-      if (nodesRaw) { var pn = JSON.parse(nodesRaw); state.nodes = pn.nodes || pn; state.curves = pn.connectorCurves || []; }
+      if (nodesRaw) { var pn = JSON.parse(nodesRaw); state.nodes = pn.nodes || pn; state.curves = pn.connectorCurves || []; state.anchors = pn.orbitAnchors || []; }
       root.innerHTML = '';
       state.selectedIds = [];
       saveLocal();
@@ -1805,8 +2058,10 @@ document.getElementById('resetBtn').addEventListener('click', function(){
     state.types = typesJson.skillTypes || typesJson;
     state.nodes = treeJson.nodes || treeJson;
     state.curves = treeJson.connectorCurves || [];
+    state.anchors = treeJson.orbitAnchors || [];
     try { localStorage.removeItem('skillTreeEditor.v1'); } catch(e){}
     state.selectedIds = [];
+    state.selectedAnchorId = null;
     render();
     refreshInspector();
     fitToScreen();

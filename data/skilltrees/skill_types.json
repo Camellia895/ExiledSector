@@ -1045,7 +1045,7 @@
 			"effects": [
 				{
 					"effect": "BURN_LEVEL_FLAT",
-					"magnitude": 2
+					"magnitude": 1
 				}
 			],
 			"tags": [
@@ -1450,6 +1450,25 @@
 					"destroyer": 3,
 					"cruiser": 5,
 					"capitalShip": 10
+				}
+			],
+			"tags": [
+				"logistics"
+			]
+		},
+		{
+			"id": "increased_sensor_range",
+			"name": "Increased Sensor Range",
+			"icon": "",
+			"opCost": 4,
+			"xpCost": 2000,
+			"hullSizeEffects": [
+				{
+					"effect": "SENSOR_RANGE",
+					"frigate": 50,
+					"destroyer": 75,
+					"cruiser": 100,
+					"capitalShip": 150
 				}
 			],
 			"tags": [
