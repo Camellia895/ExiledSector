@@ -1002,6 +1002,20 @@
 			"tags": [
 				"logistics"
 			]
+		},
+		{
+			"id": "small_flux_optional",
+			"name": "Caps or Vents",
+			"icon": "",
+			"opCost": 4,
+			"xpCost": 2000,
+			"optionalOptions": [
+				"flux_capacity",
+				"flux_dissipation"
+			],
+			"tags": [
+				"flux"
+			]
 		}
 	]
 }

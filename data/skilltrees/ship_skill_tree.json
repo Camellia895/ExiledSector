@@ -39,8 +39,8 @@
 			"id": "hull_1",
 			"type": "hull",
 			"connectedTo": [],
-			"x": -81,
-			"y": 794
+			"x": -291,
+			"y": 1023
 		},
 		{
 			"id": "beam_damage_1",
@@ -49,8 +49,8 @@
 				"beam_damage_2",
 				"beam_damage_5"
 			],
-			"x": -952,
-			"y": 7
+			"x": -1267,
+			"y": -115
 		},
 		{
 			"id": "non_beam_energy_damage_1",
@@ -59,8 +59,8 @@
 				"energy_damage_1",
 				"non_beam_energy_damage_2"
 			],
-			"x": -880,
-			"y": -93
+			"x": -1195,
+			"y": -215
 		},
 		{
 			"id": "energy_damage_1",
@@ -69,15 +69,15 @@
 				"non_beam_energy_damage_1",
 				"beam_damage_2"
 			],
-			"x": -796,
-			"y": -62
+			"x": -1111,
+			"y": -186
 		},
 		{
 			"id": "armor_1",
 			"type": "armor",
 			"connectedTo": [],
-			"x": -348,
-			"y": 777
+			"x": -378,
+			"y": 1038
 		},
 		{
 			"id": "packed_capacitors_1",
@@ -97,22 +97,22 @@
 			"id": "heavyarmor_1",
 			"type": "heavyarmor",
 			"connectedTo": [],
-			"x": -324,
-			"y": 869
+			"x": -415,
+			"y": 964
 		},
 		{
 			"id": "armoredweapons_1",
 			"type": "armoredweapons",
 			"connectedTo": [],
-			"x": -430,
-			"y": 804
+			"x": -613,
+			"y": 976
 		},
 		{
 			"id": "reinforcedhull_1",
 			"type": "reinforcedhull",
 			"connectedTo": [],
-			"x": -104,
-			"y": 878
+			"x": -176,
+			"y": 1023
 		},
 		{
 			"id": "blast_doors_1",
@@ -251,57 +251,57 @@
 			"id": "advancedshieldemitter_1",
 			"type": "advancedshieldemitter",
 			"connectedTo": [],
-			"x": 563,
-			"y": -1076
+			"x": 921,
+			"y": -1212
 		},
 		{
 			"id": "extendedshieldemitter_1",
 			"type": "extendedshieldemitter",
 			"connectedTo": [],
-			"x": 319,
-			"y": -1108
+			"x": 677,
+			"y": -1244
 		},
 		{
 			"id": "hardenedshieldemitter_1",
 			"type": "hardenedshieldemitter",
 			"connectedTo": [],
-			"x": 420,
-			"y": -1068
+			"x": 778,
+			"y": -1204
 		},
 		{
 			"id": "stabilizedshieldemitter_1",
 			"type": "stabilizedshieldemitter",
 			"connectedTo": [],
-			"x": 483,
-			"y": -988
+			"x": 841,
+			"y": -1124
 		},
 		{
 			"id": "shield_shunt_1",
 			"type": "shield_shunt",
 			"connectedTo": [],
-			"x": -442,
-			"y": 879
+			"x": -582,
+			"y": 911
 		},
 		{
 			"id": "frontshield_1",
 			"type": "frontshield",
 			"connectedTo": [],
-			"x": 340,
-			"y": -997
+			"x": 698,
+			"y": -1133
 		},
 		{
 			"id": "frontemitter_1",
 			"type": "frontemitter",
 			"connectedTo": [],
-			"x": 222,
-			"y": -1023
+			"x": 580,
+			"y": -1159
 		},
 		{
 			"id": "adaptiveshields_1",
 			"type": "adaptiveshields",
 			"connectedTo": [],
-			"x": 378,
-			"y": -924
+			"x": 736,
+			"y": -1060
 		},
 		{
 			"id": "auxiliarythrusters_1",
@@ -356,8 +356,8 @@
 			"id": "auxiliary_fuel_tanks_1",
 			"type": "auxiliary_fuel_tanks",
 			"connectedTo": [],
-			"x": -61,
-			"y": 75
+			"x": -44,
+			"y": 72
 		},
 		{
 			"id": "efficiency_overhaul_1",
@@ -391,8 +391,8 @@
 			"id": "militarized_subsystems_1",
 			"type": "militarized_subsystems",
 			"connectedTo": [],
-			"x": -202,
-			"y": 102
+			"x": -220,
+			"y": 80
 		},
 		{
 			"id": "solar_shielding_1",
@@ -457,8 +457,8 @@
 				"beam_damage_1",
 				"energy_damage_1"
 			],
-			"x": -875,
-			"y": -22
+			"x": -1190,
+			"y": -144
 		},
 		{
 			"id": "beam_damage_5",
@@ -466,8 +466,8 @@
 			"connectedTo": [
 				"beam_damage_1"
 			],
-			"x": -1037,
-			"y": -2
+			"x": -1352,
+			"y": -124
 		},
 		{
 			"id": "flux_capacity_2",
@@ -483,8 +483,8 @@
 				"non_beam_energy_damage_1",
 				"non_beam_energy_damage_3"
 			],
-			"x": -959,
-			"y": -105
+			"x": -1274,
+			"y": -227
 		},
 		{
 			"id": "non_beam_energy_damage_3",
@@ -492,8 +492,8 @@
 			"connectedTo": [
 				"non_beam_energy_damage_2"
 			],
-			"x": -1043,
-			"y": -83
+			"x": -1358,
+			"y": -205
 		},
 		{
 			"id": "root_low_tech_1",
@@ -520,7 +520,8 @@
 			"type": "root_high_tech",
 			"connectedTo": [
 				"small_logistics_optional_3",
-				"small_logistics_optional_17"
+				"small_logistics_optional_17",
+				"small_flux_optional_1"
 			],
 			"x": 0,
 			"y": -830
@@ -546,8 +547,8 @@
 				"root_high_tech_1",
 				"small_logistics_optional_6"
 			],
-			"x": 120,
-			"y": -622
+			"x": 284,
+			"y": -780
 		},
 		{
 			"id": "small_logistics_optional_6",
@@ -556,8 +557,8 @@
 				"small_logistics_optional_8",
 				"small_logistics_optional_3"
 			],
-			"x": 240,
-			"y": -415
+			"x": 534,
+			"y": -636
 		},
 		{
 			"id": "small_logistics_optional_8",
@@ -566,8 +567,8 @@
 				"small_logistics_optional_6",
 				"small_logistics_optional_12"
 			],
-			"x": 360,
-			"y": -207
+			"x": 719,
+			"y": -415
 		},
 		{
 			"id": "small_logistics_optional_12",
@@ -576,8 +577,8 @@
 				"small_logistics_optional_8",
 				"small_logistics_optional_11"
 			],
-			"x": 479,
-			"y": 0
+			"x": 817,
+			"y": -144
 		},
 		{
 			"id": "small_logistics_optional_11",
@@ -586,8 +587,8 @@
 				"small_logistics_optional_12",
 				"root_low_tech_1"
 			],
-			"x": 599,
-			"y": 208
+			"x": 817,
+			"y": 144
 		},
 		{
 			"id": "small_logistics_optional_17",
@@ -596,8 +597,8 @@
 				"root_high_tech_1",
 				"small_logistics_optional_18"
 			],
-			"x": -120,
-			"y": -622
+			"x": -284,
+			"y": -780
 		},
 		{
 			"id": "small_logistics_optional_18",
@@ -606,8 +607,8 @@
 				"small_logistics_optional_17",
 				"small_logistics_optional_19"
 			],
-			"x": -240,
-			"y": -415
+			"x": -534,
+			"y": -636
 		},
 		{
 			"id": "small_logistics_optional_19",
@@ -616,8 +617,8 @@
 				"small_logistics_optional_18",
 				"small_logistics_optional_20"
 			],
-			"x": -360,
-			"y": -207
+			"x": -719,
+			"y": -415
 		},
 		{
 			"id": "small_logistics_optional_20",
@@ -626,8 +627,8 @@
 				"small_logistics_optional_19",
 				"small_logistics_optional_21"
 			],
-			"x": -479,
-			"y": 0
+			"x": -817,
+			"y": -144
 		},
 		{
 			"id": "small_logistics_optional_21",
@@ -636,8 +637,8 @@
 				"small_logistics_optional_20",
 				"root_midline_1"
 			],
-			"x": -599,
-			"y": 208
+			"x": -817,
+			"y": 144
 		},
 		{
 			"id": "small_logistics_optional_27",
@@ -646,8 +647,8 @@
 				"root_midline_1",
 				"small_logistics_optional_28"
 			],
-			"x": -479,
-			"y": 415
+			"x": -534,
+			"y": 636
 		},
 		{
 			"id": "small_logistics_optional_28",
@@ -656,8 +657,8 @@
 				"small_logistics_optional_27",
 				"small_logistics_optional_29"
 			],
-			"x": -240,
-			"y": 415
+			"x": -284,
+			"y": 780
 		},
 		{
 			"id": "small_logistics_optional_29",
@@ -667,7 +668,7 @@
 				"small_logistics_optional_30"
 			],
 			"x": 0,
-			"y": 415
+			"y": 830
 		},
 		{
 			"id": "small_logistics_optional_30",
@@ -676,8 +677,8 @@
 				"small_logistics_optional_29",
 				"small_logistics_optional_31"
 			],
-			"x": 240,
-			"y": 415
+			"x": 284,
+			"y": 780
 		},
 		{
 			"id": "small_logistics_optional_31",
@@ -686,8 +687,127 @@
 				"small_logistics_optional_30",
 				"root_low_tech_1"
 			],
-			"x": 479,
-			"y": 415
+			"x": 534,
+			"y": 636
+		},
+		{
+			"id": "small_flux_optional_1",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"root_high_tech_1"
+			],
+			"x": -2,
+			"y": -986
+		}
+	],
+	"connectorCurves": [
+		{
+			"a": "root_high_tech_1",
+			"b": "small_logistics_optional_3",
+			"controlX": 144,
+			"controlY": -817
+		},
+		{
+			"a": "small_logistics_optional_3",
+			"b": "small_logistics_optional_6",
+			"controlX": 415,
+			"controlY": -719
+		},
+		{
+			"a": "small_logistics_optional_6",
+			"b": "small_logistics_optional_8",
+			"controlX": 636,
+			"controlY": -534
+		},
+		{
+			"a": "small_logistics_optional_8",
+			"b": "small_logistics_optional_12",
+			"controlX": 780,
+			"controlY": -284
+		},
+		{
+			"a": "small_logistics_optional_12",
+			"b": "small_logistics_optional_11",
+			"controlX": 830,
+			"controlY": 0
+		},
+		{
+			"a": "small_logistics_optional_11",
+			"b": "root_low_tech_1",
+			"controlX": 780,
+			"controlY": 284
+		},
+		{
+			"a": "root_high_tech_1",
+			"b": "small_logistics_optional_17",
+			"controlX": -144,
+			"controlY": -817
+		},
+		{
+			"a": "small_logistics_optional_17",
+			"b": "small_logistics_optional_18",
+			"controlX": -415,
+			"controlY": -719
+		},
+		{
+			"a": "small_logistics_optional_18",
+			"b": "small_logistics_optional_19",
+			"controlX": -636,
+			"controlY": -534
+		},
+		{
+			"a": "small_logistics_optional_19",
+			"b": "small_logistics_optional_20",
+			"controlX": -780,
+			"controlY": -284
+		},
+		{
+			"a": "small_logistics_optional_20",
+			"b": "small_logistics_optional_21",
+			"controlX": -830,
+			"controlY": 0
+		},
+		{
+			"a": "small_logistics_optional_21",
+			"b": "root_midline_1",
+			"controlX": -780,
+			"controlY": 284
+		},
+		{
+			"a": "root_midline_1",
+			"b": "small_logistics_optional_27",
+			"controlX": -636,
+			"controlY": 534
+		},
+		{
+			"a": "small_logistics_optional_27",
+			"b": "small_logistics_optional_28",
+			"controlX": -415,
+			"controlY": 719
+		},
+		{
+			"a": "small_logistics_optional_28",
+			"b": "small_logistics_optional_29",
+			"controlX": -144,
+			"controlY": 817
+		},
+		{
+			"a": "small_logistics_optional_29",
+			"b": "small_logistics_optional_30",
+			"controlX": 144,
+			"controlY": 817
+		},
+		{
+			"a": "small_logistics_optional_30",
+			"b": "small_logistics_optional_31",
+			"controlX": 415,
+			"controlY": 719
+		},
+		{
+			"a": "small_logistics_optional_31",
+			"b": "root_low_tech_1",
+			"controlX": 636,
+			"controlY": 534
 		}
 	]
 }

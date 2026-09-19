@@ -80,6 +80,9 @@ final class SkillTreeNodeRenderer {
     private static final int CURVE_ARC_SAMPLES = 40;
     private static final int CURVE_RENDER_SEGMENTS = 20;
 
+    private static final float PIE_START_ANGLE_DEGREES = -90f;
+    private static final float PIE_WEDGE_SEGMENT_DEGREES = 6f;
+
     private static final String OPTIONAL_NODE_HINT = "Click to choose an option.";
     private static final float DROPDOWN_FONT_SIZE = TOOLTIP_BODY_FONT_SIZE;
     private static final float DROPDOWN_ROW_PADDING = 8f;
@@ -149,7 +152,12 @@ final class SkillTreeNodeRenderer {
             float footprintSize = NODE_SIZE * zoom * tier.getSizeMultiplier();
             float iconSize = footprintSize * iconSizeMultiplier(tier);
 
-            drawIcon(effectiveType.getIconPath(), nodeX, nodeY, iconSize, alphaMult, allocated ? ALLOCATED_TINT : UNALLOCATED_TINT);
+            Color tint = allocated ? ALLOCATED_TINT : UNALLOCATED_TINT;
+            if (effectiveType.isOptional()) {
+                drawSplitIcon(optionTypesOf(effectiveType), nodeX, nodeY, iconSize, alphaMult, tint);
+            } else {
+                drawIcon(effectiveType.getIconPath(), nodeX, nodeY, iconSize, alphaMult, tint);
+            }
             drawRings(nodeX, nodeY, footprintSize, alphaMult, allocated, pulseElapsed.get(node.getId()), tier);
         }
 
@@ -408,6 +416,57 @@ final class SkillTreeNodeRenderer {
         if (!spritePath.startsWith(CIRCULAR_ICON_PATH_PREFIX)) {
             drawVignette(cx, cy, size, alphaMult);
         }
+    }
+
+    private List<SkillType> optionTypesOf(SkillType optionalType) {
+        List<SkillType> options = new ArrayList<>();
+        for (String optionId : optionalType.getOptionalOptionIds()) {
+            SkillType option = SkillTree.getType(optionId);
+            if (option != null) options.add(option);
+        }
+        return options;
+    }
+
+    private void drawSplitIcon(List<SkillType> options, float cx, float cy, float size, float alphaMult, Color tint) {
+        if (options.isEmpty()) return;
+        if (options.size() == 1) {
+            drawIcon(options.get(0).getIconPath(), cx, cy, size, alphaMult, tint);
+            return;
+        }
+
+        float radius = size / 2f;
+        float sweep = 360f / options.size();
+
+        GL11.glEnable(GL11.GL_STENCIL_TEST);
+        for (int i = 0; i < options.size(); i++) {
+            float startAngle = PIE_START_ANGLE_DEGREES + sweep * i;
+            float endAngle = startAngle + sweep;
+
+            maskPieWedge(cx, cy, radius, startAngle, endAngle, 1);
+            GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF);
+            GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
+            drawIcon(options.get(i).getIconPath(), cx, cy, size, alphaMult, tint);
+            maskPieWedge(cx, cy, radius, startAngle, endAngle, 0);
+        }
+        GL11.glDisable(GL11.GL_STENCIL_TEST);
+    }
+
+    private void maskPieWedge(float cx, float cy, float radius, float startDeg, float endDeg, int stencilValue) {
+        GL11.glColorMask(false, false, false, false);
+        GL11.glStencilFunc(GL11.GL_ALWAYS, stencilValue, 0xFF);
+        GL11.glStencilOp(GL11.GL_REPLACE, GL11.GL_REPLACE, GL11.GL_REPLACE);
+
+        int segments = Math.max(1, (int) Math.ceil((endDeg - startDeg) / PIE_WEDGE_SEGMENT_DEGREES));
+        GL11.glBegin(GL11.GL_TRIANGLE_FAN);
+        GL11.glVertex2f(cx, cy);
+        for (int i = 0; i <= segments; i++) {
+            float deg = startDeg + (endDeg - startDeg) * i / segments;
+            float rad = (float) Math.toRadians(deg);
+            GL11.glVertex2f(cx + (float) Math.cos(rad) * radius, cy + (float) Math.sin(rad) * radius);
+        }
+        GL11.glEnd();
+
+        GL11.glColorMask(true, true, true, true);
     }
 
     private void drawRings(float cx, float cy, float footprintSize, float alphaMult, boolean allocated, Float pulseSeconds, SkillTier tier) {
