@@ -82,20 +82,6 @@ class SkillEffectTest {
     }
 
     @Test
-    void fluxRegulationModifiesBothFluxCapacityAndDissipationStats() {
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        MutableStat fluxCapacity = mock(MutableStat.class);
-        MutableStat fluxDissipation = mock(MutableStat.class);
-        when(stats.getFluxCapacity()).thenReturn(fluxCapacity);
-        when(stats.getFluxDissipation()).thenReturn(fluxDissipation);
-
-        FluxSkillEffect.HYBRID_FLUX_PERCENT.apply(stats, "mod_id", 0.5f);
-
-        verify(fluxCapacity).modifyPercent("mod_id", 0.5f);
-        verify(fluxDissipation).modifyPercent("mod_id", 0.5f);
-    }
-
-    @Test
     void ballisticDamageModifiesOnlyTheBallisticDamageStat() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         MutableStat ballistic = mock(MutableStat.class);
@@ -180,7 +166,7 @@ class SkillEffectTest {
 
     @Test
     void describeFormatsAFractionalMagnitudeWithADecimal() {
-        assertEquals("Increases flux capacity and dissipation by 0.5% each.", FluxSkillEffect.HYBRID_FLUX_PERCENT.describe(0.5f));
+        assertEquals("Increases flux capacity by 0.5%.", FluxSkillEffect.FLUX_CAPACITY_PERCENT.describe(0.5f));
     }
 
     @Test

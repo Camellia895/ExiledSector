@@ -53,18 +53,6 @@ public enum FluxSkillEffect implements SkillEffect {
             return flatChange(magnitude, "flux dissipation");
         }
     },
-    HYBRID_FLUX_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getFluxCapacity().modifyPercent(modId, magnitude);
-            stats.getFluxDissipation().modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return "Increases flux capacity and dissipation by " + pct(magnitude) + "% each.";
-        }
-    },
     VENT_RATE_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
