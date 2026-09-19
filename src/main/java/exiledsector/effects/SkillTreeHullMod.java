@@ -55,6 +55,30 @@ public class SkillTreeHullMod extends BaseHullMod {
     }
 
     @Override
+    public void applyEffectsAfterShipCreation(ShipAPI ship, String id) {
+        FleetMemberAPI member = ship.getMutableStats().getFleetMember();
+        if (member == null) return;
+
+        ShipSkillData data = ShipSkillDataManager.get(member.getId());
+        for (String nodeId : data.getAllocatedNodeIds()) {
+            SkillNode node = SkillTree.get(nodeId);
+            if (node == null) continue;
+
+            SkillType type = node.resolveEffectiveType(data);
+
+            String vanillaHullModId = type.getVanillaHullModId();
+            if (vanillaHullModId == null) continue;
+
+            HullModSpecAPI spec = Global.getSettings().getHullModSpec(vanillaHullModId);
+            if (spec == null) continue;
+            HullModEffect vanillaEffect = spec.getEffect();
+            if (vanillaEffect != null) {
+                vanillaEffect.applyEffectsAfterShipCreation(ship, vanillaHullModId);
+            }
+        }
+    }
+
+    @Override
     public void advanceInCombat(ShipAPI ship, float amount) {
         FleetMemberAPI member = ship.getMutableStats().getFleetMember();
         if (member == null) return;

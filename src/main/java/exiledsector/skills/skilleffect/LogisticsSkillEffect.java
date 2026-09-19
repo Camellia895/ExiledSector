@@ -139,6 +139,17 @@ public enum LogisticsSkillEffect implements SkillEffect {
             return pctChange(magnitude, "repair rate per day");
         }
     },
+    CR_LOSS_PER_SECOND_MULT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getCRLossPerSecondPercent().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "rate of combat readiness loss from extended deployment");
+        }
+    },
     MIN_CREW_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {

@@ -65,6 +65,17 @@ public enum FluxSkillEffect implements SkillEffect {
             return "Increases flux capacity and dissipation by " + pct(magnitude) + "% each.";
         }
     },
+    VENT_RATE_MULT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getVentRateMult().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "venting speed");
+        }
+    },
     FLUX_DISSIPATION_WHILE_VENTING {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {

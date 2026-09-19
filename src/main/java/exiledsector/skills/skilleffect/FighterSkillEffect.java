@@ -8,6 +8,17 @@ import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
 
 public enum FighterSkillEffect implements SkillEffect {
 
+    FIGHTER_CREW_LOSS {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getStat("fighter_crew_loss_mult").modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "casualties suffered by fighter pilots launched from this ship");
+        }
+    },
     FIGHTER_REFIT_TIME_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {

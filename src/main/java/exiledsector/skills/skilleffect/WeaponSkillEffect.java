@@ -4,6 +4,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 
 import static exiledsector.skills.skilleffect.SkillEffectText.pct;
 import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
+import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
 
 public enum WeaponSkillEffect implements SkillEffect {
 
@@ -185,6 +186,140 @@ public enum WeaponSkillEffect implements SkillEffect {
         @Override
         public String describe(float magnitude) {
             return pctChange(magnitude, "missile guidance");
+        }
+    },
+    MISSILE_GUIDANCE_FLAT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getMissileGuidance().modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return flatChange(magnitude, "missile guidance");
+        }
+    },
+    BEAM_WEAPON_RANGE_FLAT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getBeamWeaponRangeBonus().modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return flatChange(magnitude, "beam weapon range");
+        }
+    },
+    BEAM_WEAPON_TURN_RATE {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getBeamWeaponTurnRateBonus().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "beam weapon turn rate");
+        }
+    },
+    WEAPON_RECOIL {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getMaxRecoilMult().modifyPercent(modId, magnitude);
+            stats.getRecoilPerShotMult().modifyPercent(modId, magnitude);
+            stats.getRecoilDecayMult().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "weapon recoil");
+        }
+    },
+    WEAPON_RANGE_THRESHOLD {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getWeaponRangeThreshold().modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return flatChange(magnitude, "range before falloff effectiveness applies");
+        }
+    },
+    MISSILE_SPEED {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getMissileMaxSpeedBonus().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "missile top speed");
+        }
+    },
+    MISSILE_RANGE {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getMissileWeaponRangeBonus().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "missile weapon range");
+        }
+    },
+    MISSILE_ACCELERATION {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getMissileAccelerationBonus().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "missile acceleration");
+        }
+    },
+    MISSILE_TURN_RATE {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getMissileMaxTurnRateBonus().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "missile turn rate");
+        }
+    },
+    MISSILE_TURN_ACCELERATION {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getMissileTurnAccelerationBonus().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "missile turn acceleration");
+        }
+    },
+    ECCM_CHANCE {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getEccmChance().modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return "Increases the chance for missiles to resist enemy ECM and flares by " + pct(magnitude * 100f) + "%.";
+        }
+    },
+    DAMAGE_TO_MISSILES {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDamageToMissiles().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "damage dealt to missiles");
         }
     };
 

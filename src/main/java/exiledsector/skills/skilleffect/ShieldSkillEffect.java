@@ -2,7 +2,10 @@ package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 
+import com.fs.starfarer.api.impl.campaign.ids.Stats;
+
 import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
+import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
 
 public enum ShieldSkillEffect implements SkillEffect {
 
@@ -15,6 +18,28 @@ public enum ShieldSkillEffect implements SkillEffect {
         @Override
         public String describe(float magnitude) {
             return pctChange(magnitude, "shield arc");
+        }
+    },
+    SHIELD_ARC_FLAT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getShieldArcBonus().modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return flatChange(magnitude, "shield arc, in degrees");
+        }
+    },
+    SHIELD_PIERCE_CHANCE_MULT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getStat(Stats.SHIELD_PIERCED_MULT).modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "chance for shields to be pierced by EMP arcs");
         }
     },
     SHIELD_UPKEEP {
