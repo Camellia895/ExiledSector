@@ -15,6 +15,7 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
+import lunalib.lunaRefit.BaseRefitButton;
 import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.ui.LazyFont;
 import org.lwjgl.opengl.GL11;
@@ -93,6 +94,7 @@ final class SkillTreeNodeRenderer {
     private final String symbolPath;
     private final FleetMemberAPI member;
     private final SkillTreePanelStyle style;
+    private final BaseRefitButton refitButton;
     private final SkillNode activeRoot;
     private final Set<String> loadedSprites = new HashSet<>();
     private final Map<String, SkillTreePanelStyle.TooltipText> tooltipTitles = new HashMap<>();
@@ -103,10 +105,11 @@ final class SkillTreeNodeRenderer {
     private final Map<String, Float> pulseElapsed = new HashMap<>();
     private SkillNode openDropdownNode;
 
-    SkillTreeNodeRenderer(String symbolPath, FleetMemberAPI member, SkillTreePanelStyle style) {
+    SkillTreeNodeRenderer(String symbolPath, FleetMemberAPI member, SkillTreePanelStyle style, BaseRefitButton refitButton) {
         this.symbolPath = symbolPath;
         this.member = member;
         this.style = style;
+        this.refitButton = refitButton;
         this.activeRoot = findRootNode(rootTypeId(ShipTechLevel.of(member)));
     }
 
@@ -271,6 +274,9 @@ final class SkillTreeNodeRenderer {
         member.setStatUpdateNeeded(true);
         member.updateStats();
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(member.getHullSpec().getHullSize(), member.getStats(), SkillTreeHullMod.ID);
+        if (refitButton != null) {
+            refitButton.refreshVariant();
+        }
         if (isAllocatedNow) {
             pulseElapsed.put(node.getId(), 0f);
         }

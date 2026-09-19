@@ -6,6 +6,7 @@ import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;
+import lunalib.lunaRefit.BaseRefitButton;
 
 import java.util.List;
 
@@ -31,9 +32,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private SkillNode pendingClickNode;
     private SkillType pendingDropdownOption;
 
-    public SkillTreeCanvasPlugin(String symbolPath, FleetMemberAPI member, float shipCardHeight) {
+    public SkillTreeCanvasPlugin(String symbolPath, FleetMemberAPI member, float shipCardHeight, BaseRefitButton refitButton) {
         this.style = new SkillTreePanelStyle(symbolPath);
-        this.nodeRenderer = new SkillTreeNodeRenderer(symbolPath, member, style);
+        this.nodeRenderer = new SkillTreeNodeRenderer(symbolPath, member, style, refitButton);
         this.statPanel = new SkillTreeStatPanel(member, style);
         this.shipCardHeight = shipCardHeight;
     }
