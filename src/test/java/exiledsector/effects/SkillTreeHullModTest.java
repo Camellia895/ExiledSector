@@ -192,6 +192,66 @@ class SkillTreeHullModTest {
         verify(stats, never()).getHullBonus();
     }
 
+    @Test
+    void delegatesToTheRealVanillaHullModEffectAfterShipCreationWhenTypeSpecifiesOne() {
+        SkillType keystoneType = new SkillType("frontshield", "Makeshift Shield Generator", "graphics/icons/skills/front_shield_generator.png", 4, 2000,
+                List.of(), SkillTier.KEYSTONE, "frontshield", null, null);
+        SkillNode keystoneNode = new SkillNode("frontshield_1", keystoneType, List.of(), 0f, 0f);
+        SkillTree.register(keystoneNode);
+
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        ShipSkillDataManager.get("ship-a").allocate(keystoneNode);
+
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        ShipAPI ship = mockShip(member, stats);
+
+        SettingsAPI settings = mock(SettingsAPI.class);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+        HullModSpecAPI spec = mock(HullModSpecAPI.class);
+        when(settings.getHullModSpec("frontshield")).thenReturn(spec);
+        HullModEffect vanillaEffect = mock(HullModEffect.class);
+        when(spec.getEffect()).thenReturn(vanillaEffect);
+
+        new SkillTreeHullMod().applyEffectsAfterShipCreation(ship, "exiledSector_core");
+
+        verify(vanillaEffect).applyEffectsAfterShipCreation(ship, "frontshield");
+    }
+
+    @Test
+    void afterShipCreationSkipsNodesWithoutAVanillaHullMod() {
+        SkillType hullType = new SkillType("hull", "Reinforced Hull", "graphics/hullmods/reinforced_bulkheads.png", 2, 500,
+                List.of(new SkillTypeEffect(DefenseSkillEffect.HULL, 10f)), SkillTier.SMALL, null, null, null);
+        SkillNode hullNode = new SkillNode("hull_1", hullType, List.of(), 0f, 0f);
+        SkillTree.register(hullNode);
+
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        ShipSkillDataManager.get("ship-a").allocate(hullNode);
+
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        ShipAPI ship = mockShip(member, stats);
+
+        SettingsAPI settings = mock(SettingsAPI.class);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+
+        new SkillTreeHullMod().applyEffectsAfterShipCreation(ship, "exiledSector_core");
+
+        verify(settings, never()).getHullModSpec(anyString());
+    }
+
+    @Test
+    void afterShipCreationDoesNothingWhenTheShipHasNoFleetMember() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        when(stats.getFleetMember()).thenReturn(null);
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.getMutableStats()).thenReturn(stats);
+
+        new SkillTreeHullMod().applyEffectsAfterShipCreation(ship, "exiledSector_core");
+
+        globalMock.verify(Global::getSettings, never());
+    }
+
     private ShipAPI mockShip(FleetMemberAPI member, MutableShipStatsAPI stats) {
         ShipAPI ship = mock(ShipAPI.class);
         when(ship.getMutableStats()).thenReturn(stats);

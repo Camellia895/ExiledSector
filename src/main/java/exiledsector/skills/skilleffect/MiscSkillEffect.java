@@ -6,11 +6,57 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Stats;
 
 import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
 import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
 
 public enum MiscSkillEffect implements SkillEffect {
+
+    ZERO_FLUX_ALWAYS_ON {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getZeroFluxMinimumFluxLevel().modifyFlat(modId, 2f);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return "Allows the zero-flux engine boost to take effect regardless of flux level.";
+        }
+    },
+    PD_IGNORES_DECOY_FLARES {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(Stats.PD_IGNORES_FLARES).modifyFlat(modId, 1f);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return "Point-defense weapons can identify and ignore decoy flares.";
+        }
+    },
+    PD_BEST_TARGET_LEADING {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(Stats.PD_BEST_TARGET_LEADING).modifyFlat(modId, 1f);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return "Point-defense weapons get the best possible target leading, regardless of combat readiness.";
+        }
+    },
+    ELECTRONIC_WARFARE_PENALTY_MULT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(Stats.ELECTRONIC_WARFARE_PENALTY_MOD).modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "electronic warfare penalty against this ship's weapon range");
+        }
+    },
 
     ELECTRONIC_WARFARE {
         @Override
