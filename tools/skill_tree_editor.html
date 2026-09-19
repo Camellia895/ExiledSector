@@ -596,7 +596,8 @@ var SHIPPED_TYPES = [
 {"id":"increased_crew","name":"Increased Crew Capacity","icon":"graphics/icons/circular/small_passives/crew_training.png","opCost":2,"xpCost":500,"effects":[{"effect":"CREW_CAPACITY","magnitude":10}],"tags":["logistics"]},
 {"id":"fighter_weapon_damage","name":"Fighter Weapon Damage","icon":"graphics/icons/circular/small_passives/fighter_uplink2.png","opCost":2,"xpCost":500,"description":"Increases the weapon damage of fighters launched from this ship.","todo":"Fighters are separate ships spawned from the carrier\u0027s bays, so this can\u0027t be applied through the carrier\u0027s own MutableShipStatsAPI like other effects - it needs a combat-time hook that finds each fighter\u0027s source ship and applies the bonus to the fighter\u0027s own stats. Not yet built.","tags":["fighter"]},
 {"id":"fighter_speed","name":"Fighter Speed","icon":"graphics/icons/circular/small_passives/wing_commander.png","opCost":2,"xpCost":500,"description":"Increases the top speed of fighters launched from this ship.","todo":"Same limitation as fighter_weapon_damage - needs a combat-time hook targeting launched fighters, not yet built.","tags":["fighter"]},
-{"id":"small_logistics_optional","name":"Fuel, Crew or Cargo","icon":"graphics/icons/circular/small_passives/compact_storage.png","opCost":4,"xpCost":2000,"optionalOptions":["increased_fuel","increased_cargo","increased_crew"],"tags":["logistics"]}
+{"id":"small_logistics_optional","name":"Fuel, Crew or Cargo","icon":"graphics/icons/circular/small_passives/compact_storage.png","opCost":4,"xpCost":2000,"optionalOptions":["increased_fuel","increased_cargo","increased_crew"],"tags":["logistics"]},
+{"id":"small_flux_optional","name":"Caps or Vents","icon":"","opCost":4,"xpCost":2000,"optionalOptions":["flux_capacity","flux_dissipation"],"tags":["flux"]}
 ];
 
 var SHIPPED_NODES = [
