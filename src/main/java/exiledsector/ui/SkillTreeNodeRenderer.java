@@ -38,14 +38,7 @@ import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE;
 
 final class SkillTreeNodeRenderer {
 
-    private static final float SYMBOL_SIZE = 128f;
     private static final float NODE_SIZE = 64f;
-
-    private static final int VIGNETTE_SEGMENTS = 48;
-    private static final float VIGNETTE_INNER_FRACTION = 0.88f;
-    private static final float VIGNETTE_OUTER_FRACTION = 1f;
-    private static final float VIGNETTE_MARGIN_FRACTION = 0.02f;
-    private static final String CIRCULAR_ICON_PATH_PREFIX = "graphics/icons/circular/";
 
     private static final float TOOLTIP_MAX_TEXT_WIDTH = 480f;
     private static final float TOOLTIP_MAX_TEXT_HEIGHT = 800f;
@@ -66,12 +59,12 @@ final class SkillTreeNodeRenderer {
 
     private static final float ICON_SIZE_MULTIPLIER_NOTABLE = 1.2f;
     private static final float ICON_SIZE_MULTIPLIER_KEYSTONE = 1.4f;
+    private static final float ICON_INSET_RATIO = 0.9f;
+    private static final float ROOT_CONNECTOR_OVERLAP_RATIO = 0.7f;
 
     private static final float PULSE_DURATION = 0.5f;
     private static final float PULSE_START_RADIUS_FRACTION = 1f;
     private static final float PULSE_END_RADIUS_FRACTION = 2.2f;
-
-    private static final float CENTER_RING_RADIUS_FRACTION = 1f;
 
     private static final float NODE_CONNECTOR_PARALLEL_GAP = 4f;
     private static final float NODE_CONNECTOR_LINE_THICKNESS = 1.5f;
@@ -91,7 +84,6 @@ final class SkillTreeNodeRenderer {
     private static final float DROPDOWN_TOP_OFFSET = 24f;
     private static final float DROPDOWN_HOVER_ALPHA = 0.35f;
 
-    private final String symbolPath;
     private final FleetMemberAPI member;
     private final SkillTreePanelStyle style;
     private final BaseRefitButton refitButton;
@@ -105,12 +97,11 @@ final class SkillTreeNodeRenderer {
     private final Map<String, Float> pulseElapsed = new HashMap<>();
     private SkillNode openDropdownNode;
 
-    SkillTreeNodeRenderer(String symbolPath, FleetMemberAPI member, SkillTreePanelStyle style, BaseRefitButton refitButton) {
-        this.symbolPath = symbolPath;
+    SkillTreeNodeRenderer(FleetMemberAPI member, SkillTreePanelStyle style, BaseRefitButton refitButton) {
         this.member = member;
         this.style = style;
         this.refitButton = refitButton;
-        this.activeRoot = findRootNode(rootTypeId(ShipTechLevel.of(member)));
+        this.activeRoot = findRootNode(ShipTechLevel.of(member).rootTypeId());
     }
 
     private String satisfiedRootId() {
@@ -135,25 +126,16 @@ final class SkillTreeNodeRenderer {
     void render(float centerX, float centerY, float zoom, float alphaMult, float mouseX, float mouseY, boolean mouseKnown) {
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
 
-        float shipX = centerX;
-        float shipY = centerY;
-        if (activeRoot != null) {
-            shipX = centerX + activeRoot.getOffsetX() * zoom;
-            shipY = centerY - activeRoot.getOffsetY() * zoom;
-        }
-        drawIcon(symbolPath, shipX, shipY, SYMBOL_SIZE * zoom, alphaMult, ALLOCATED_TINT);
-        drawCenterRing(shipX, shipY, SYMBOL_SIZE * zoom, alphaMult);
-
         for (SkillNode node : SkillTree.getAllNodes().values()) {
-            if (node.getType().getTier() == SkillTier.ROOT) continue;
+            SkillTier tier = node.getType().getTier();
+            if (tier == SkillTier.ROOT) continue;
 
             float nodeX = centerX + node.getOffsetX() * zoom;
             float nodeY = centerY - node.getOffsetY() * zoom;
             boolean allocated = data.isAllocated(node.getId());
-            SkillTier tier = node.getType().getTier();
             SkillType effectiveType = node.resolveEffectiveType(data);
             float footprintSize = NODE_SIZE * zoom * tier.getSizeMultiplier();
-            float iconSize = footprintSize * iconSizeMultiplier(tier);
+            float iconSize = footprintSize * iconSizeMultiplier(tier) * ICON_INSET_RATIO;
 
             Color tint = allocated ? ALLOCATED_TINT : UNALLOCATED_TINT;
             if (effectiveType.isOptional()) {
@@ -161,19 +143,23 @@ final class SkillTreeNodeRenderer {
             } else {
                 drawIcon(effectiveType.getIconPath(), nodeX, nodeY, iconSize, alphaMult, tint);
             }
-            drawRings(nodeX, nodeY, footprintSize, alphaMult, allocated, pulseElapsed.get(node.getId()), tier);
+            drawRings(nodeX, nodeY, footprintSize, alphaMult, allocated, pulseElapsed.get(node.getId()), tier, zoom);
         }
 
         drawNodeConnectors(centerX, centerY, zoom, data, alphaMult);
-        renderDropdown(centerX, centerY, zoom, mouseX, mouseY, mouseKnown, alphaMult);
-    }
 
-    private static String rootTypeId(ShipTechLevel techLevel) {
-        switch (techLevel) {
-            case LOW_TECH: return "root_low_tech";
-            case HIGH_TECH: return "root_high_tech";
-            default: return "root_midline";
+        for (SkillNode node : SkillTree.getAllNodes().values()) {
+            if (node.getType().getTier() != SkillTier.ROOT) continue;
+
+            float nodeX = centerX + node.getOffsetX() * zoom;
+            float nodeY = centerY - node.getOffsetY() * zoom;
+            boolean isActiveRoot = activeRoot != null && node.getId().equals(activeRoot.getId());
+            float footprintSize = NODE_SIZE * zoom * SkillTier.ROOT.getSizeMultiplier();
+            Color tint = isActiveRoot ? ALLOCATED_TINT : UNALLOCATED_TINT;
+            drawIcon(node.getType().getIconPath(), nodeX, nodeY, footprintSize, alphaMult, tint);
         }
+
+        renderDropdown(centerX, centerY, zoom, mouseX, mouseY, mouseKnown, alphaMult);
     }
 
     private static SkillNode findRootNode(String rootTypeId) {
@@ -418,10 +404,6 @@ final class SkillTreeNodeRenderer {
         sprite.setAlphaMult(alphaMult);
         sprite.setColor(tint);
         sprite.renderAtCenter(cx, cy);
-
-        if (!spritePath.startsWith(CIRCULAR_ICON_PATH_PREFIX)) {
-            drawVignette(cx, cy, size, alphaMult);
-        }
     }
 
     private List<SkillType> optionTypesOf(SkillType optionalType) {
@@ -475,17 +457,17 @@ final class SkillTreeNodeRenderer {
         GL11.glColorMask(true, true, true, true);
     }
 
-    private void drawRings(float cx, float cy, float footprintSize, float alphaMult, boolean allocated, Float pulseSeconds, SkillTier tier) {
+    private void drawRings(float cx, float cy, float footprintSize, float alphaMult, boolean allocated, Float pulseSeconds, SkillTier tier, float zoom) {
         float half = footprintSize / 2f;
 
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        drawNodeDonut(cx, cy, donutRadius(footprintSize, tier), tier.getSizeMultiplier(), allocated, alphaMult);
+        drawNodeDonut(cx, cy, donutRadius(footprintSize, tier), tier.getSizeMultiplier(), zoom, allocated, alphaMult);
 
         if (pulseSeconds != null) {
-            GL11.glLineWidth(RING_LINE_THICKNESS);
+            GL11.glLineWidth(RING_LINE_THICKNESS * zoom);
             float progress = pulseSeconds / PULSE_DURATION;
             float radiusFraction = PULSE_START_RADIUS_FRACTION + (PULSE_END_RADIUS_FRACTION - PULSE_START_RADIUS_FRACTION) * progress;
             drawRingOutline(cx, cy, half * radiusFraction, GLOW_COLOR, (1f - progress) * alphaMult);
@@ -494,31 +476,38 @@ final class SkillTreeNodeRenderer {
         GL11.glDisable(GL11.GL_BLEND);
     }
 
-    private void drawNodeDonut(float cx, float cy, float radius, float scale, boolean allocated, float alphaMult) {
+    private void drawNodeDonut(float cx, float cy, float radius, float scale, float zoom, boolean allocated, float alphaMult) {
         if (allocated) {
-            GL11.glLineWidth(NODE_CONNECTOR_GLOW_HALO_THICKNESS * scale);
+            GL11.glLineWidth(NODE_CONNECTOR_GLOW_HALO_THICKNESS * scale * zoom);
             drawRingOutline(cx, cy, radius, GLOW_COLOR, alphaMult * NODE_CONNECTOR_GLOW_HALO_ALPHA);
-            GL11.glLineWidth(NODE_CONNECTOR_GLOW_LINE_THICKNESS * scale);
+            GL11.glLineWidth(NODE_CONNECTOR_GLOW_LINE_THICKNESS * scale * zoom);
             drawRingOutline(cx, cy, radius, GLOW_COLOR, alphaMult);
             return;
         }
 
-        float gapRadius = donutGapRadius(scale);
-        GL11.glLineWidth(NODE_CONNECTOR_LINE_THICKNESS * scale);
+        float gapRadius = donutGapRadius(scale, zoom);
+        GL11.glLineWidth(NODE_CONNECTOR_LINE_THICKNESS * scale * zoom);
         drawRingOutline(cx, cy, radius - gapRadius, RING_DULL_COLOR, alphaMult * RING_DULL_ALPHA);
         drawRingOutline(cx, cy, radius + gapRadius, RING_DULL_COLOR, alphaMult * RING_DULL_ALPHA);
     }
 
-    private static float donutGapRadius(float scale) {
-        return (NODE_CONNECTOR_PARALLEL_GAP * scale) / 2f;
+    private static float donutGapRadius(float scale, float zoom) {
+        return (NODE_CONNECTOR_PARALLEL_GAP * scale * zoom) / 2f;
     }
 
     private static float donutRadius(float footprintSize, SkillTier tier) {
         return (footprintSize / 2f) * iconSizeMultiplier(tier);
     }
 
-    private static float donutOuterRadius(float footprintSize, SkillTier tier) {
-        return donutRadius(footprintSize, tier) + donutGapRadius(tier.getSizeMultiplier());
+    private static float donutOuterRadius(float footprintSize, SkillTier tier, float zoom) {
+        return donutRadius(footprintSize, tier) + donutGapRadius(tier.getSizeMultiplier(), zoom);
+    }
+
+    private static float connectorEndpointRadius(SkillTier tier, float footprintSize, float zoom) {
+        if (tier == SkillTier.ROOT) {
+            return donutRadius(footprintSize, tier) * ROOT_CONNECTOR_OVERLAP_RATIO;
+        }
+        return donutOuterRadius(footprintSize, tier, zoom);
     }
 
     private static float iconSizeMultiplier(SkillTier tier) {
@@ -539,19 +528,6 @@ final class SkillTreeNodeRenderer {
         GL11.glEnd();
     }
 
-    private void drawCenterRing(float cx, float cy, float symbolSize, float alphaMult) {
-        float radius = (symbolSize / 2f) * CENTER_RING_RADIUS_FRACTION;
-
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glLineWidth(RING_LINE_THICKNESS);
-
-        drawRingOutline(cx, cy, radius, GLOW_COLOR, alphaMult);
-
-        GL11.glDisable(GL11.GL_BLEND);
-    }
-
     private void drawNodeConnectors(float centerX, float centerY, float zoom, ShipSkillData data, float alphaMult) {
         String satisfiedRootId = satisfiedRootId();
 
@@ -564,7 +540,7 @@ final class SkillTreeNodeRenderer {
 
             float nodeX = centerX + node.getOffsetX() * zoom;
             float nodeY = centerY - node.getOffsetY() * zoom;
-            float nodeRadius = donutOuterRadius(NODE_SIZE * zoom * node.getType().getTier().getSizeMultiplier(), node.getType().getTier());
+            float nodeRadius = connectorEndpointRadius(node.getType().getTier(), NODE_SIZE * zoom * node.getType().getTier().getSizeMultiplier(), zoom);
 
             for (String connectedId : node.getConnectedNodeIds()) {
                 SkillNode other = SkillTree.get(connectedId);
@@ -573,7 +549,7 @@ final class SkillTreeNodeRenderer {
 
                 float otherX = centerX + other.getOffsetX() * zoom;
                 float otherY = centerY - other.getOffsetY() * zoom;
-                float otherRadius = donutOuterRadius(NODE_SIZE * zoom * other.getType().getTier().getSizeMultiplier(), other.getType().getTier());
+                float otherRadius = connectorEndpointRadius(other.getType().getTier(), NODE_SIZE * zoom * other.getType().getTier().getSizeMultiplier(), zoom);
                 boolean bothSatisfied = data.isSatisfied(node.getId(), satisfiedRootId) && data.isSatisfied(other.getId(), satisfiedRootId);
 
                 ConnectorCurve curve = SkillTree.getCurve(node.getId(), other.getId());
@@ -686,48 +662,6 @@ final class SkillTreeNodeRenderer {
         GL11.glEnd();
     }
 
-    private void drawVignette(float cx, float cy, float iconSize, float alphaMult) {
-        float half = iconSize / 2f;
-        float innerRadius = half * VIGNETTE_INNER_FRACTION;
-        float outerRadius = half * VIGNETTE_OUTER_FRACTION;
-        float margin = iconSize * VIGNETTE_MARGIN_FRACTION;
-        float boxHalfWidth = half + margin;
-        float boxHalfHeight = half + margin;
-
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-        GL11.glBegin(GL11.GL_QUAD_STRIP);
-        for (int i = 0; i <= VIGNETTE_SEGMENTS; i++) {
-            float angle = (float) (2 * Math.PI * i / VIGNETTE_SEGMENTS);
-            float cos = (float) Math.cos(angle);
-            float sin = (float) Math.sin(angle);
-
-            Misc.setColor(Color.BLACK, 0f);
-            GL11.glVertex2f(cx + cos * innerRadius, cy + sin * innerRadius);
-
-            Misc.setColor(Color.BLACK, alphaMult);
-            GL11.glVertex2f(cx + cos * outerRadius, cy + sin * outerRadius);
-        }
-        GL11.glEnd();
-
-        Misc.setColor(Color.BLACK, alphaMult);
-        GL11.glBegin(GL11.GL_QUAD_STRIP);
-        for (int i = 0; i <= VIGNETTE_SEGMENTS; i++) {
-            float angle = (float) (2 * Math.PI * i / VIGNETTE_SEGMENTS);
-            float cos = (float) Math.cos(angle);
-            float sin = (float) Math.sin(angle);
-            float boundary = boundaryRadius(cos, sin, boxHalfWidth, boxHalfHeight);
-
-            GL11.glVertex2f(cx + cos * outerRadius, cy + sin * outerRadius);
-            GL11.glVertex2f(cx + cos * boundary, cy + sin * boundary);
-        }
-        GL11.glEnd();
-
-        GL11.glDisable(GL11.GL_BLEND);
-    }
-
     private void renderTooltip(SkillNode node, float mouseX, float mouseY, float alphaMult) {
         LazyFont font = style.getFont();
         if (font == null) return;
@@ -788,11 +722,5 @@ final class SkillTreeNodeRenderer {
         drawable.setAlignment(LazyFont.TextAlignment.LEFT);
         drawable.setAnchor(LazyFont.TextAnchor.TOP_LEFT);
         return new SkillTreePanelStyle.TooltipText(drawable, width, height);
-    }
-
-    private static float boundaryRadius(float cos, float sin, float halfWidth, float halfHeight) {
-        float rx = cos != 0f ? halfWidth / Math.abs(cos) : Float.MAX_VALUE;
-        float ry = sin != 0f ? halfHeight / Math.abs(sin) : Float.MAX_VALUE;
-        return Math.min(rx, ry);
     }
 }

@@ -31,4 +31,12 @@ public enum ShipTechLevel {
         if (trimmed.equalsIgnoreCase("High Tech")) return HIGH_TECH;
         return MIDLINE;
     }
+
+    public String rootTypeId() {
+        switch (this) {
+            case LOW_TECH: return "root_low_tech";
+            case HIGH_TECH: return "root_high_tech";
+            default: return "root_midline";
+        }
+    }
 }

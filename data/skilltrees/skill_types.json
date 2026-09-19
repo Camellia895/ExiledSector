@@ -1255,7 +1255,7 @@
 		{
 			"id": "root_low_tech",
 			"name": "Low Tech Root",
-			"icon": "",
+			"icon": "graphics/icons/circular/roots/crest_lowtech.png",
 			"opCost": 0,
 			"xpCost": 0,
 			"tier": "ROOT"
@@ -1263,7 +1263,7 @@
 		{
 			"id": "root_midline",
 			"name": "Midline Root",
-			"icon": "",
+			"icon": "graphics/icons/circular/roots/crest_midline.png",
 			"opCost": 0,
 			"xpCost": 0,
 			"tier": "ROOT"
@@ -1271,7 +1271,7 @@
 		{
 			"id": "root_high_tech",
 			"name": "High Tech Root",
-			"icon": "",
+			"icon": "graphics/icons/circular/roots/crest_hightech.png",
 			"opCost": 0,
 			"xpCost": 0,
 			"tier": "ROOT"

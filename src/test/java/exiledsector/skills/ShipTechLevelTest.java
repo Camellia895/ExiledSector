@@ -69,4 +69,11 @@ class ShipTechLevelTest {
     void domainRestrictedHullIdOverridesToLowTech() {
         assertEquals(ShipTechLevel.LOW_TECH, ShipTechLevel.of(mockMember("onslaught_mk1", "Domain Restricted")));
     }
+
+    @Test
+    void rootTypeIdMapsEachTechLevelToItsRootType() {
+        assertEquals("root_low_tech", ShipTechLevel.LOW_TECH.rootTypeId());
+        assertEquals("root_high_tech", ShipTechLevel.HIGH_TECH.rootTypeId());
+        assertEquals("root_midline", ShipTechLevel.MIDLINE.rootTypeId());
+    }
 }

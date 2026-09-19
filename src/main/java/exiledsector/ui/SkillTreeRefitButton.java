@@ -49,7 +49,6 @@ public class SkillTreeRefitButton extends BaseRefitButton {
 
     @Override
     public void initPanel(CustomPanelAPI backgroundPanel, FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
-        String symbolPath = ShipSymbolResolver.resolveSymbolPath(member, variant);
         float panelWidth = getPanelWidth(member, variant);
         float panelHeight = getPanelHeight(member, variant);
 
@@ -61,7 +60,7 @@ public class SkillTreeRefitButton extends BaseRefitButton {
         backgroundPanel.addUIElement(element);
         element.getPosition().inTL(0f, 0f);
 
-        CustomPanelAPI canvas = Global.getSettings().createCustom(panelWidth, panelHeight, new SkillTreeCanvasPlugin(symbolPath, member, shipCardHeight, this));
+        CustomPanelAPI canvas = Global.getSettings().createCustom(panelWidth, panelHeight, new SkillTreeCanvasPlugin(member, shipCardHeight, this));
         element.addCustom(canvas, 0f).getPosition().inTL(0f, 0f);
 
         backgroundPanel.addUIElement(shipCard);

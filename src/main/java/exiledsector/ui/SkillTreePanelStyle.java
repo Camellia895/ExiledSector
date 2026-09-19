@@ -31,14 +31,14 @@ final class SkillTreePanelStyle {
     private static final int MIN_ALPHA_TO_SAMPLE = 128;
     private static final float HEADER_BACKGROUND_DARKEN_FACTOR = 0.2f;
 
-    private final String symbolPath;
+    private final String accentIconPath;
     private LazyFont tooltipFont;
     private boolean tooltipFontLoadFailed = false;
     private Color accentColor;
     private Color headerBackgroundColor;
 
-    SkillTreePanelStyle(String symbolPath) {
-        this.symbolPath = symbolPath;
+    SkillTreePanelStyle(String accentIconPath) {
+        this.accentIconPath = accentIconPath;
     }
 
     LazyFont getFont() {
@@ -80,7 +80,7 @@ final class SkillTreePanelStyle {
 
     Color getAccentColor() {
         if (accentColor == null) {
-            accentColor = computeDominantColor(symbolPath);
+            accentColor = computeDominantColor(accentIconPath);
         }
         return accentColor;
     }
@@ -97,6 +97,7 @@ final class SkillTreePanelStyle {
     }
 
     private static Color computeDominantColor(String path) {
+        if (path == null || path.isEmpty()) return DEFAULT_ACCENT_COLOR;
         try (InputStream in = Global.getSettings().openStream(path)) {
             BufferedImage image = ImageIO.read(in);
             if (image == null) return DEFAULT_ACCENT_COLOR;
