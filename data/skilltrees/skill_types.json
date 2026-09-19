@@ -1078,10 +1078,10 @@
 			"hullSizeEffects": [
 				{
 					"effect": "CREW_CAPACITY_FLAT",
-					"frigate": 30,
-					"destroyer": 60,
-					"cruiser": 100,
-					"capitalShip": 200
+					"frigate": 25,
+					"destroyer": 35,
+					"cruiser": 60,
+					"capitalShip": 125
 				}
 			],
 			"tags": [
@@ -1523,6 +1523,25 @@
 					"destroyer": 75,
 					"cruiser": 100,
 					"capitalShip": 150
+				}
+			],
+			"tags": [
+				"logistics"
+			]
+		},
+		{
+			"id": "crew_capacity_flat",
+			"name": "Crew capacity",
+			"icon": "",
+			"opCost": 4,
+			"xpCost": 2000,
+			"hullSizeEffects": [
+				{
+					"effect": "CREW_CAPACITY_FLAT",
+					"frigate": 5,
+					"destroyer": 15,
+					"cruiser": 25,
+					"capitalShip": 50
 				}
 			],
 			"tags": [

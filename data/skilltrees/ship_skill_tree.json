@@ -340,9 +340,13 @@
 		{
 			"id": "additional_berthing_1",
 			"type": "additional_berthing",
-			"connectedTo": [],
-			"x": -677,
-			"y": -245
+			"connectedTo": [
+				"crew_capacity_flat_2"
+			],
+			"x": -776,
+			"y": -462,
+			"orbitAnchorId": "additional_berthing_anchor",
+			"orbitAngle": 270
 		},
 		{
 			"id": "augmentedengines_1",
@@ -377,8 +381,8 @@
 			"id": "expanded_cargo_holds_1",
 			"type": "expanded_cargo_holds",
 			"connectedTo": [],
-			"x": -835,
-			"y": 92
+			"x": 798,
+			"y": 115
 		},
 		{
 			"id": "hiressensors_1",
@@ -393,15 +397,20 @@
 			"id": "insulatedengine_1",
 			"type": "insulatedengine",
 			"connectedTo": [],
-			"x": -332,
-			"y": -522
+			"x": -424,
+			"y": -520
 		},
 		{
 			"id": "militarized_subsystems_1",
 			"type": "militarized_subsystems",
-			"connectedTo": [],
-			"x": 799,
-			"y": -18
+			"connectedTo": [
+				"small_logistics_optional_15",
+				"small_logistics_optional_16"
+			],
+			"x": -786,
+			"y": 73,
+			"orbitAnchorId": "anchor_1",
+			"orbitAngle": -48.126779727329755
 		},
 		{
 			"id": "solar_shielding_1",
@@ -672,7 +681,8 @@
 			"type": "small_logistics_optional",
 			"connectedTo": [
 				"small_logistics_optional_19",
-				"small_logistics_optional_21"
+				"small_logistics_optional_21",
+				"crew_capacity_flat_1"
 			],
 			"x": -1226,
 			"y": -214,
@@ -684,7 +694,8 @@
 			"type": "small_logistics_optional",
 			"connectedTo": [
 				"small_logistics_optional_20",
-				"root_midline_1"
+				"root_midline_1",
+				"small_logistics_optional_16"
 			],
 			"x": -1226,
 			"y": 216,
@@ -853,7 +864,8 @@
 			"type": "small_logistics_optional",
 			"connectedTo": [
 				"root_midline_1",
-				"small_logistics_optional_2"
+				"small_logistics_optional_2",
+				"small_logistics_optional_15"
 			],
 			"x": -779,
 			"y": 453
@@ -863,7 +875,8 @@
 			"type": "small_logistics_optional",
 			"connectedTo": [
 				"small_logistics_optional_1",
-				"small_logistics_optional_4"
+				"small_logistics_optional_4",
+				"crew_capacity_flat_1"
 			],
 			"x": -507,
 			"y": 294
@@ -1061,6 +1074,55 @@
 			"y": -1060,
 			"orbitAnchorId": "augmented_drive_field_anchor_1",
 			"orbitAngle": 270
+		},
+		{
+			"id": "crew_capacity_flat_1",
+			"type": "crew_capacity_flat",
+			"connectedTo": [
+				"crew_capacity_flat_2",
+				"small_logistics_optional_2",
+				"small_logistics_optional_20"
+			],
+			"x": -776,
+			"y": -162,
+			"orbitAnchorId": "additional_berthing_anchor",
+			"orbitAngle": 90
+		},
+		{
+			"id": "crew_capacity_flat_2",
+			"type": "crew_capacity_flat",
+			"connectedTo": [
+				"crew_capacity_flat_1",
+				"additional_berthing_1"
+			],
+			"x": -626,
+			"y": -312,
+			"orbitAnchorId": "additional_berthing_anchor",
+			"orbitAngle": 0
+		},
+		{
+			"id": "small_logistics_optional_15",
+			"type": "small_logistics_optional",
+			"connectedTo": [
+				"small_logistics_optional_1",
+				"militarized_subsystems_1"
+			],
+			"x": -886,
+			"y": 335,
+			"orbitAnchorId": "anchor_1",
+			"orbitAngle": 90
+		},
+		{
+			"id": "small_logistics_optional_16",
+			"type": "small_logistics_optional",
+			"connectedTo": [
+				"small_logistics_optional_21",
+				"militarized_subsystems_1"
+			],
+			"x": -1036,
+			"y": 185,
+			"orbitAnchorId": "anchor_1",
+			"orbitAngle": 180
 		}
 	],
 	"connectorCurves": [
@@ -1243,6 +1305,42 @@
 			"b": "small_logistics_optional_23",
 			"controlX": 188,
 			"controlY": -948
+		},
+		{
+			"a": "crew_capacity_flat_1",
+			"b": "crew_capacity_flat_2",
+			"controlX": -670,
+			"controlY": -206
+		},
+		{
+			"a": "additional_berthing_1",
+			"b": "crew_capacity_flat_2",
+			"controlX": -670,
+			"controlY": -418
+		},
+		{
+			"a": "militarized_subsystems_1",
+			"b": "small_logistics_optional_15",
+			"controlX": -746,
+			"controlY": 239
+		},
+		{
+			"a": "militarized_subsystems_1",
+			"b": "small_logistics_optional_16",
+			"controlX": -947,
+			"controlY": 48
+		},
+		{
+			"a": "crew_capacity_flat_1",
+			"b": "small_logistics_optional_2",
+			"controlX": -591,
+			"controlY": 18
+		},
+		{
+			"a": "crew_capacity_flat_1",
+			"b": "small_logistics_optional_20",
+			"controlX": -992,
+			"controlY": -110
 		}
 	],
 	"orbitAnchors": [
@@ -1271,6 +1369,18 @@
 			"x": -344,
 			"y": -874,
 			"radius": 176
+		},
+		{
+			"id": "additional_berthing_anchor",
+			"x": -776,
+			"y": -312,
+			"radius": 150
+		},
+		{
+			"id": "anchor_1",
+			"x": -886,
+			"y": 185,
+			"radius": 150
 		}
 	]
 }
