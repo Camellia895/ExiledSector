@@ -241,6 +241,26 @@ class SkillTreeHullModTest {
     }
 
     @Test
+    void afterShipCreationCallsApplyAfterShipCreationOnNonPassthroughEffects() {
+        exiledsector.skills.skilleffect.SkillEffect listenerEffect = mock(exiledsector.skills.skilleffect.SkillEffect.class);
+        SkillType listenerType = new SkillType("high_scatter_amp", "High Scatter Amplifier", "graphics/hullmods/high_scatter_amp.png", 4, 2000,
+                List.of(new SkillTypeEffect(listenerEffect, 50f)), SkillTier.NOTABLE, null, null, null);
+        SkillNode listenerNode = new SkillNode("high_scatter_amp_1", listenerType, List.of(), 0f, 0f);
+        SkillTree.register(listenerNode);
+
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        ShipSkillDataManager.get("ship-a").allocate(listenerNode);
+
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        ShipAPI ship = mockShip(member, stats);
+
+        new SkillTreeHullMod().applyEffectsAfterShipCreation(ship, "exiledSector_core");
+
+        verify(listenerEffect).applyAfterShipCreation(ship, "exiledSector_skill_high_scatter_amp_1", 50f);
+    }
+
+    @Test
     void afterShipCreationDoesNothingWhenTheShipHasNoFleetMember() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         when(stats.getFleetMember()).thenReturn(null);

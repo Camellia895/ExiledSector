@@ -1,9 +1,15 @@
 package exiledsector.skills;
 
+import com.fs.starfarer.api.combat.BeamAPI;
+import com.fs.starfarer.api.combat.CombatEntityAPI;
+import com.fs.starfarer.api.combat.DamageAPI;
+import com.fs.starfarer.api.combat.FluxTrackerAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
+import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.FighterSkillEffect;
@@ -14,13 +20,19 @@ import exiledsector.skills.skilleffect.MovementSkillEffect;
 import exiledsector.skills.skilleffect.ShieldSkillEffect;
 import exiledsector.skills.skilleffect.WeaponSkillEffect;
 import org.junit.jupiter.api.Test;
+import org.lwjgl.util.vector.Vector2f;
+import org.mockito.ArgumentCaptor;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 class SkillEffectTest {
@@ -561,5 +573,101 @@ class SkillEffectTest {
     @Test
     void mostEffectsNeverBlockDeallocation() {
         assertNull(DefenseSkillEffect.HULL.blockDeallocationReason(mock(FleetMemberAPI.class), 10f));
+    }
+
+    @Test
+    void beamDamageHardFluxPercentDoesNotTouchStatsDirectly() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+
+        ShieldSkillEffect.BEAM_DAMAGE_HARD_FLUX_PERCENT.apply(stats, "mod_id", 50f);
+
+        verifyNoInteractions(stats);
+    }
+
+    @Test
+    void beamDamageHardFluxPercentAddsAListenerOnce() {
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.hasListenerOfClass(any())).thenReturn(false);
+
+        ShieldSkillEffect.BEAM_DAMAGE_HARD_FLUX_PERCENT.applyAfterShipCreation(ship, "mod_id", 50f);
+
+        verify(ship).addListener(any(DamageDealtModifier.class));
+    }
+
+    @Test
+    void beamDamageHardFluxPercentDoesNotDuplicateTheListener() {
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.hasListenerOfClass(any())).thenReturn(true);
+
+        ShieldSkillEffect.BEAM_DAMAGE_HARD_FLUX_PERCENT.applyAfterShipCreation(ship, "mod_id", 50f);
+
+        verify(ship, never()).addListener(any());
+    }
+
+    private DamageDealtModifier captureBeamHardFluxListener(float magnitude) {
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.hasListenerOfClass(any())).thenReturn(false);
+        ShieldSkillEffect.BEAM_DAMAGE_HARD_FLUX_PERCENT.applyAfterShipCreation(ship, "mod_id", magnitude);
+        ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
+        verify(ship).addListener(captor.capture());
+        return (DamageDealtModifier) captor.getValue();
+    }
+
+    @Test
+    void beamHardFluxListenerConvertsAPortionOfBeamShieldDamageToHardFlux() {
+        DamageDealtModifier listener = captureBeamHardFluxListener(50f);
+
+        BeamAPI beam = mock(BeamAPI.class);
+        ShipAPI target = mock(ShipAPI.class);
+        DamageAPI damage = mock(DamageAPI.class);
+        FluxTrackerAPI fluxTracker = mock(FluxTrackerAPI.class);
+        when(target.getFluxTracker()).thenReturn(fluxTracker);
+        when(damage.getDamage()).thenReturn(100f);
+        when(damage.computeFluxDealt(50f)).thenReturn(50f);
+
+        listener.modifyDamageDealt(beam, target, damage, mock(Vector2f.class), true);
+
+        verify(damage).setDamage(50f);
+        verify(fluxTracker).increaseFlux(50f, true);
+    }
+
+    @Test
+    void beamHardFluxListenerIgnoresNonShieldHits() {
+        DamageDealtModifier listener = captureBeamHardFluxListener(50f);
+
+        BeamAPI beam = mock(BeamAPI.class);
+        ShipAPI target = mock(ShipAPI.class);
+        DamageAPI damage = mock(DamageAPI.class);
+
+        listener.modifyDamageDealt(beam, target, damage, mock(Vector2f.class), false);
+
+        verify(damage, never()).setDamage(anyFloat());
+        verify(target, never()).getFluxTracker();
+    }
+
+    @Test
+    void beamHardFluxListenerIgnoresNonBeamSources() {
+        DamageDealtModifier listener = captureBeamHardFluxListener(50f);
+
+        ShipAPI target = mock(ShipAPI.class);
+        DamageAPI damage = mock(DamageAPI.class);
+
+        listener.modifyDamageDealt(new Object(), target, damage, mock(Vector2f.class), true);
+
+        verify(damage, never()).setDamage(anyFloat());
+        verify(target, never()).getFluxTracker();
+    }
+
+    @Test
+    void beamHardFluxListenerIgnoresNonShipTargets() {
+        DamageDealtModifier listener = captureBeamHardFluxListener(50f);
+
+        BeamAPI beam = mock(BeamAPI.class);
+        CombatEntityAPI target = mock(CombatEntityAPI.class);
+        DamageAPI damage = mock(DamageAPI.class);
+
+        listener.modifyDamageDealt(beam, target, damage, mock(Vector2f.class), true);
+
+        verify(damage, never()).setDamage(anyFloat());
     }
 }
