@@ -51,6 +51,18 @@ public enum LogisticsSkillEffect implements SkillEffect {
             return flatChange(magnitude, "cargo capacity");
         }
     },
+    CARGO_CAPACITY_PER_FIGHTER_BAY {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            float bays = stats.getNumFighterBays().getBaseValue();
+            stats.getCargoMod().modifyFlat(modId, bays * magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return flatChange(magnitude, "cargo capacity, per fighter bay");
+        }
+    },
     CREW_CAPACITY_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -193,6 +205,19 @@ public enum LogisticsSkillEffect implements SkillEffect {
         @Override
         public String describe(float magnitude) {
             return flatChange(magnitude, "minimum crew required, per fighter bay");
+        }
+    },
+    MIN_CREW_PERCENT_PER_FIGHTER_BAY {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            float bays = stats.getNumFighterBays().getBaseValue();
+            float total = Math.max(bays * magnitude, -80f);
+            stats.getMinCrewMod().modifyPercent(modId, total);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "minimum crew required, per fighter bay (capped at -80% total)");
         }
     },
     SUPPLIES_PER_MONTH_MULT {

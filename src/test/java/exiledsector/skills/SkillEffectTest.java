@@ -25,6 +25,7 @@ import org.mockito.ArgumentCaptor;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -614,6 +615,120 @@ class SkillEffectTest {
         FighterSkillEffect.FIGHTER_TOP_SPEED_PERCENT.applyToFighterSpawnedByShip(fighter, parentShip, "mod_id", 15f);
 
         verify(maxSpeed).modifyPercent("mod_id", 15f);
+    }
+
+    @Test
+    void removeAllFighterBaysZeroesOutTheShipSOwnBaseBayCount() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        MutableStat numFighterBays = mock(MutableStat.class);
+        when(stats.getNumFighterBays()).thenReturn(numFighterBays);
+        when(numFighterBays.getBaseValue()).thenReturn(3f);
+
+        FighterSkillEffect.REMOVE_ALL_FIGHTER_BAYS.apply(stats, "mod_id", 0f);
+
+        verify(numFighterBays).modifyFlat("mod_id", -3f);
+    }
+
+    @Test
+    void cargoCapacityPerFighterBayScalesWithTheShipSOwnBayCount() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        MutableStat numFighterBays = mock(MutableStat.class);
+        when(stats.getNumFighterBays()).thenReturn(numFighterBays);
+        when(numFighterBays.getBaseValue()).thenReturn(3f);
+        StatBonus cargoMod = mock(StatBonus.class);
+        when(stats.getCargoMod()).thenReturn(cargoMod);
+
+        LogisticsSkillEffect.CARGO_CAPACITY_PER_FIGHTER_BAY.apply(stats, "mod_id", 50f);
+
+        verify(cargoMod).modifyFlat("mod_id", 150f);
+    }
+
+    @Test
+    void minCrewPercentPerFighterBayScalesWithBayCount() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        MutableStat numFighterBays = mock(MutableStat.class);
+        when(stats.getNumFighterBays()).thenReturn(numFighterBays);
+        when(numFighterBays.getBaseValue()).thenReturn(2f);
+        StatBonus minCrewMod = mock(StatBonus.class);
+        when(stats.getMinCrewMod()).thenReturn(minCrewMod);
+
+        LogisticsSkillEffect.MIN_CREW_PERCENT_PER_FIGHTER_BAY.apply(stats, "mod_id", -20f);
+
+        verify(minCrewMod).modifyPercent("mod_id", -40f);
+    }
+
+    @Test
+    void minCrewPercentPerFighterBayIsCappedAtNegativeEighty() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        MutableStat numFighterBays = mock(MutableStat.class);
+        when(stats.getNumFighterBays()).thenReturn(numFighterBays);
+        when(numFighterBays.getBaseValue()).thenReturn(6f);
+        StatBonus minCrewMod = mock(StatBonus.class);
+        when(stats.getMinCrewMod()).thenReturn(minCrewMod);
+
+        LogisticsSkillEffect.MIN_CREW_PERCENT_PER_FIGHTER_BAY.apply(stats, "mod_id", -20f);
+
+        verify(minCrewMod).modifyPercent("mod_id", -80f);
+    }
+
+    @Test
+    void removeShieldSetsShieldTypeToNoneAfterShipCreation() {
+        ShipAPI ship = mock(ShipAPI.class);
+
+        ShieldSkillEffect.REMOVE_SHIELD.applyAfterShipCreation(ship, "mod_id", 0f);
+
+        verify(ship).setShield(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.NONE, 0f, 1f, 1f);
+    }
+
+    @Test
+    void createFrontShieldIfNoneInstallsAShieldWhenTheShipHasNone() {
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.getShield()).thenReturn(null);
+
+        ShieldSkillEffect.CREATE_FRONT_SHIELD_IF_NONE.applyAfterShipCreation(ship, "mod_id", 0f);
+
+        verify(ship).setShield(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.FRONT, 0.5f, 1.2f, 90f);
+    }
+
+    @Test
+    void createFrontShieldIfNoneDoesNothingWhenTheShipAlreadyHasAShield() {
+        ShipAPI ship = mock(ShipAPI.class);
+        com.fs.starfarer.api.combat.ShieldAPI existingShield = mock(com.fs.starfarer.api.combat.ShieldAPI.class);
+        when(ship.getShield()).thenReturn(existingShield);
+
+        ShieldSkillEffect.CREATE_FRONT_SHIELD_IF_NONE.applyAfterShipCreation(ship, "mod_id", 0f);
+
+        verify(ship, never()).setShield(any(), anyFloat(), anyFloat(), anyFloat());
+    }
+
+    @Test
+    void convertShieldToFrontChangesAnExistingShieldSType() {
+        ShipAPI ship = mock(ShipAPI.class);
+        com.fs.starfarer.api.combat.ShieldAPI shield = mock(com.fs.starfarer.api.combat.ShieldAPI.class);
+        when(ship.getShield()).thenReturn(shield);
+
+        ShieldSkillEffect.CONVERT_SHIELD_TO_FRONT.applyAfterShipCreation(ship, "mod_id", 0f);
+
+        verify(shield).setType(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.FRONT);
+    }
+
+    @Test
+    void convertShieldToFrontDoesNothingWhenTheShipHasNoShield() {
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.getShield()).thenReturn(null);
+
+        assertDoesNotThrow(() -> ShieldSkillEffect.CONVERT_SHIELD_TO_FRONT.applyAfterShipCreation(ship, "mod_id", 0f));
+    }
+
+    @Test
+    void convertShieldToOmniChangesAnExistingShieldSType() {
+        ShipAPI ship = mock(ShipAPI.class);
+        com.fs.starfarer.api.combat.ShieldAPI shield = mock(com.fs.starfarer.api.combat.ShieldAPI.class);
+        when(ship.getShield()).thenReturn(shield);
+
+        ShieldSkillEffect.CONVERT_SHIELD_TO_OMNI.applyAfterShipCreation(ship, "mod_id", 0f);
+
+        verify(shield).setType(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.OMNI);
     }
 
     @Test

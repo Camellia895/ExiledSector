@@ -4,6 +4,7 @@ import com.fs.starfarer.api.combat.BeamAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import org.lwjgl.util.vector.Vector2f;
@@ -31,6 +32,74 @@ public enum ShieldSkillEffect implements SkillEffect {
         @Override
         public String describe(float magnitude) {
             return "Causes " + pct(magnitude) + "% of beam weapon damage dealt to shields to be hard flux.";
+        }
+    },
+    REMOVE_SHIELD {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
+            ship.setShield(ShieldAPI.ShieldType.NONE, 0f, 1f, 1f);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return "Removes this ship's shield entirely.";
+        }
+    },
+    CREATE_FRONT_SHIELD_IF_NONE {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
+            if (ship.getShield() == null) {
+                ship.setShield(ShieldAPI.ShieldType.FRONT, 0.5f, 1.2f, 90f);
+            }
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return "Installs a makeshift, front-facing shield if this ship has none.";
+        }
+    },
+    CONVERT_SHIELD_TO_FRONT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
+            ShieldAPI shield = ship.getShield();
+            if (shield != null) {
+                shield.setType(ShieldAPI.ShieldType.FRONT);
+            }
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return "Converts this ship's shield to front-facing.";
+        }
+    },
+    CONVERT_SHIELD_TO_OMNI {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
+            ShieldAPI shield = ship.getShield();
+            if (shield != null) {
+                shield.setType(ShieldAPI.ShieldType.OMNI);
+            }
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return "Converts this ship's shield to omni-directional.";
         }
     },
     SHIELD_ARC_PERCENT {
