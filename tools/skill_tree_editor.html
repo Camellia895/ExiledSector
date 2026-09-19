@@ -272,6 +272,12 @@
   .orbit-resize { fill: var(--text-faint); opacity: .55; cursor: ew-resize; }
   .orbit-resize:hover { fill: var(--accent); opacity: 1; }
   .orbit-resize.dragging { fill: var(--accent); opacity: 1; }
+  .orbit-shape-cycle { fill: var(--text-faint); opacity: .55; cursor: pointer; }
+  .orbit-shape-cycle:hover { fill: var(--accent); opacity: 1; }
+  .orbit-rotate { fill: var(--text-faint); opacity: .55; cursor: grab; }
+  .orbit-rotate:hover { fill: var(--accent); opacity: 1; }
+  .orbit-rotate.dragging { fill: var(--accent); opacity: 1; cursor: grabbing; }
+  .shapeBtn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--text); }
   .center-mark { fill: none; stroke: var(--accent); stroke-width: 1.5; opacity: .8; }
   .marquee-rect { fill: var(--accent); fill-opacity: .12; stroke: var(--accent); stroke-width: 1; stroke-dasharray: 4 3; pointer-events: none; }
 
@@ -466,7 +472,13 @@
       <button class="modeBtn active" data-mode="select">Select / Move <span class="key">A</span></button>
       <button class="modeBtn" data-mode="add">Add Node <span class="key">S</span></button>
       <button class="modeBtn" data-mode="addAnchor">Add Anchor <span class="key">D</span></button>
-      <div class="hint">Select: drag a node to move it, drag empty canvas to pan, scroll to zoom. Shift-click a node to add/remove it from a multi-selection, or shift-drag empty canvas to marquee-select. Drag any selected node to move the whole group together. With a single node selected, Ctrl-click another node to link/unlink it to the selection - each is added to the other's connections, so allocating either one lets you allocate the other. Ctrl-click the same pair again to unlink.<br><br>Add: click empty canvas to place a node there.<br><br>Add Anchor: click empty canvas to place an orbit anchor - a ring you can resize by dragging its edge handle. Drag any node close to a ring in Select mode to snap it onto the ring; drag it along the ring to move it around the orbit, or pull it far enough away to detach. Click an anchor's center dot to select it, then press Delete/Q to remove it.</div>
+      <div class="btnRow" id="anchorShapeRow">
+        <button class="smallBtn shapeBtn active" data-anchor-shape="circle">Circle</button>
+        <button class="smallBtn shapeBtn" data-anchor-shape="square">Square</button>
+        <button class="smallBtn shapeBtn" data-anchor-shape="triangle">Triangle</button>
+        <button class="smallBtn shapeBtn" data-anchor-shape="rectangle">Rectangle</button>
+      </div>
+      <div class="hint">Select: drag a node to move it, drag empty canvas to pan, scroll to zoom. Shift-click a node to add/remove it from a multi-selection, or shift-drag empty canvas to marquee-select. Drag any selected node to move the whole group together. With a single node selected, Ctrl-click another node to link/unlink it to the selection - each is added to the other's connections, so allocating either one lets you allocate the other. Ctrl-click the same pair again to unlink.<br><br>Add: click empty canvas to place a node there.<br><br>Add Anchor: pick a shape above, then click empty canvas to place an anchor of that shape - a ring/polygon you can resize by dragging its edge handle. Drag any node close to its boundary in Select mode to snap it on; drag it along the boundary to move it around, or pull it far enough away to detach. Click an anchor's center dot to select it (and edit its exact fields on the right), click its small square handle to cycle its shape, drag its rotation handle (the extra round handle non-circle shapes get) to spin it in place, or press Delete/Q to remove it.</div>
     </div>
 
     <div class="toolSection">
@@ -790,7 +802,8 @@ var state = {
   selectedIds: [],
   selectedAnchorId: null,
   showLabels: true,
-  search: ''
+  search: '',
+  pendingAnchorShape: 'circle'
 };
 
 function deepCopy(x){ return JSON.parse(JSON.stringify(x)); }
@@ -840,9 +853,11 @@ function snapCurveToStraightIfClose(a, b){
 }
 
 // ---------- orbit anchors ----------
-// An anchor is a draggable, resizable ring. A node dragged close to a ring snaps onto its
-// circumference (orbitAnchorId/orbitAngle record the relationship) and can then be dragged
-// along it; pulling it far enough away detaches it and it moves freely again.
+// An anchor is a draggable, resizable shape (circle, square, triangle, or rectangle); non-circle
+// shapes can also be spun via anchor.rotation. A node dragged close to its boundary snaps onto it
+// (orbitAnchorId/orbitAngle record the relationship, with angle mapped to a boundary point via
+// positionOnAnchor) and can then be dragged along that boundary; pulling it far enough away
+// detaches it and it moves freely again.
 var ORBIT_SNAP_RADIUS = 18;
 var ORBIT_DETACH_RADIUS = 45;
 var ORBIT_CARDINAL_SNAP_DEGREES = 6;
@@ -854,23 +869,81 @@ function uniqueAnchorId(){
   do { id = 'anchor_' + i; i++; } while (anchorById(id));
   return id;
 }
+var ANCHOR_SHAPES = ['circle', 'square', 'triangle', 'rectangle'];
+var ANCHOR_RECTANGLE_ASPECT = 1.6;
+// Builds vertices centered on the origin (unrotated), then rotates by anchor.rotation and
+// translates to the anchor's position - so every polygon shape can be spun in place.
+function anchorShapeVertices(anchor){
+  var shape = anchor.shape || 'circle';
+  var r = anchor.radius;
+  var localVerts;
+  if (shape === 'square'){
+    var h = r / Math.SQRT2;
+    localVerts = [{ x: -h, y: -h }, { x: h, y: -h }, { x: h, y: h }, { x: -h, y: h }];
+  } else if (shape === 'rectangle'){
+    var ratio = anchor.aspectRatio || ANCHOR_RECTANGLE_ASPECT;
+    var halfH = r / Math.sqrt(1 + ratio * ratio);
+    var halfW = ratio * halfH;
+    localVerts = [{ x: -halfW, y: -halfH }, { x: halfW, y: -halfH }, { x: halfW, y: halfH }, { x: -halfW, y: halfH }];
+  } else if (shape === 'triangle'){
+    localVerts = [-90, 30, 150].map(function(a){
+      var rad = a * Math.PI / 180;
+      return { x: r * Math.cos(rad), y: r * Math.sin(rad) };
+    });
+  } else {
+    return null;
+  }
+  var rot = (anchor.rotation || 0) * Math.PI / 180;
+  var cos = Math.cos(rot), sin = Math.sin(rot);
+  return localVerts.map(function(v){
+    return { x: anchor.x + v.x * cos - v.y * sin, y: anchor.y + v.x * sin + v.y * cos };
+  });
+}
+// Casts a ray from the anchor's center at angleDeg and returns where it exits the polygon -
+// used so a stored orbitAngle maps back to a boundary point the same way for every shape.
+function rayPolygonIntersection(cx, cy, angleDeg, vertices){
+  var rad = angleDeg * Math.PI / 180;
+  var dx = Math.cos(rad), dy = Math.sin(rad);
+  for (var i = 0; i < vertices.length; i++){
+    var a = vertices[i], b = vertices[(i + 1) % vertices.length];
+    var v1x = cx - a.x, v1y = cy - a.y;
+    var v2x = b.x - a.x, v2y = b.y - a.y;
+    var v3x = -dy, v3y = dx;
+    var denom = v2x * v3x + v2y * v3y;
+    if (Math.abs(denom) < 1e-9) continue;
+    var t1 = (v2x * v1y - v2y * v1x) / denom;
+    var t2 = (v1x * v3x + v1y * v3y) / denom;
+    if (t1 >= 0 && t2 >= 0 && t2 <= 1) return { x: cx + dx * t1, y: cy + dy * t1 };
+  }
+  return { x: cx, y: cy };
+}
 function positionOnAnchor(anchor, angleDeg){
+  var verts = anchorShapeVertices(anchor);
+  if (verts) return rayPolygonIntersection(anchor.x, anchor.y, angleDeg, verts);
   var rad = angleDeg * Math.PI / 180;
   return { x: anchor.x + Math.cos(rad) * anchor.radius, y: anchor.y + Math.sin(rad) * anchor.radius };
 }
-function snapAngleToCardinal(angleDeg){
+function snapAngleToTargets(angleDeg, targets){
   var norm = ((angleDeg % 360) + 360) % 360;
-  for (var i=0;i<ORBIT_CARDINAL_ANGLES.length;i++){
-    var cardinal = ORBIT_CARDINAL_ANGLES[i];
-    var diff = Math.abs(norm - cardinal);
+  for (var i=0;i<targets.length;i++){
+    var target = ((targets[i] % 360) + 360) % 360;
+    var diff = Math.abs(norm - target);
     diff = Math.min(diff, 360 - diff);
-    if (diff <= ORBIT_CARDINAL_SNAP_DEGREES) return cardinal;
+    if (diff <= ORBIT_CARDINAL_SNAP_DEGREES) return targets[i];
   }
   return angleDeg;
 }
+// The snap targets for an anchor: the 4 cardinal directions plus, for polygon shapes, each
+// actual corner's angle from center - so a dragged node can lock onto a shape's corners.
+function anchorSnapAngles(anchor){
+  var verts = anchorShapeVertices(anchor);
+  if (!verts) return ORBIT_CARDINAL_ANGLES;
+  var corners = verts.map(function(v){ return Math.atan2(v.y - anchor.y, v.x - anchor.x) * 180 / Math.PI; });
+  return ORBIT_CARDINAL_ANGLES.concat(corners);
+}
 function snapNodeToAnchor(n, anchor, worldX, worldY){
   var angleDeg = Math.atan2(worldY - anchor.y, worldX - anchor.x) * 180 / Math.PI;
-  angleDeg = snapAngleToCardinal(angleDeg);
+  angleDeg = snapAngleToTargets(angleDeg, anchorSnapAngles(anchor));
   var pos = positionOnAnchor(anchor, angleDeg);
   n.x = Math.round(pos.x);
   n.y = Math.round(pos.y);
@@ -881,6 +954,54 @@ function snapNodeToAnchor(n, anchor, worldX, worldY){
 function detachNodeFromAnchor(n){
   delete n.orbitAnchorId;
   delete n.orbitAngle;
+}
+
+// ---------- connection alignment snap ----------
+// While free-dragging a single node (not orbit-snapped), pull it into perfect alignment with
+// its own connections. For every pair of neighbors, two candidate points compete on distance to
+// the drag: the closest point on the line through both (straightening the whole A-N-B chain),
+// and the closest point on their perpendicular bisector (keeping the node exactly as far from
+// each neighbor - the "exact middle" of an A-N-B chain, whether or not it's also on that line).
+// Falls back to snapping onto a single neighbor's exact X or Y when no pair candidate is close.
+var ALIGN_SNAP_THRESHOLD = 10;
+function computeAlignmentSnap(node, tentativeX, tentativeY){
+  var neighbors = node.connectedTo.map(nodeById).filter(function(n){ return n; });
+  if (neighbors.length === 0) return null;
+
+  var best = null, bestDist = ALIGN_SNAP_THRESHOLD;
+  function consider(px, py){
+    var dist = Math.sqrt((tentativeX-px)*(tentativeX-px) + (tentativeY-py)*(tentativeY-py));
+    if (dist < bestDist){ bestDist = dist; best = { x: px, y: py }; }
+  }
+  for (var i = 0; i < neighbors.length; i++){
+    for (var j = i + 1; j < neighbors.length; j++){
+      var a = neighbors[i], b = neighbors[j];
+      var ldx = b.x - a.x, ldy = b.y - a.y;
+      var lenSq = ldx*ldx + ldy*ldy;
+      if (lenSq < 1) continue;
+      var t = ((tentativeX - a.x) * ldx + (tentativeY - a.y) * ldy) / lenSq;
+      consider(a.x + t * ldx, a.y + t * ldy);
+
+      var mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+      var pdx = -ldy, pdy = ldx;
+      var pt = ((tentativeX - mx) * pdx + (tentativeY - my) * pdy) / lenSq;
+      consider(mx + pt * pdx, my + pt * pdy);
+    }
+  }
+  if (best) return best;
+
+  var bestX = null, bestXDist = ALIGN_SNAP_THRESHOLD;
+  var bestY = null, bestYDist = ALIGN_SNAP_THRESHOLD;
+  neighbors.forEach(function(n){
+    var dx = Math.abs(tentativeX - n.x);
+    if (dx < bestXDist){ bestXDist = dx; bestX = n.x; }
+    var dy = Math.abs(tentativeY - n.y);
+    if (dy < bestYDist){ bestYDist = dy; bestY = n.y; }
+  });
+  if (bestX !== null || bestY !== null){
+    return { x: bestX !== null ? bestX : tentativeX, y: bestY !== null ? bestY : tentativeY };
+  }
+  return null;
 }
 function resyncNodesOnAnchor(anchor){
   state.nodes.forEach(function(n){
@@ -1006,8 +1127,15 @@ function render(){
 
   state.anchors.forEach(function(a){
     var selected = state.selectedAnchorId === a.id;
-    var ring = document.createElementNS(NS, 'circle');
-    ring.setAttribute('cx', a.x); ring.setAttribute('cy', a.y); ring.setAttribute('r', a.radius);
+    var verts = anchorShapeVertices(a);
+    var ring;
+    if (verts) {
+      ring = document.createElementNS(NS, 'polygon');
+      ring.setAttribute('points', verts.map(function(v){ return v.x + ',' + v.y; }).join(' '));
+    } else {
+      ring = document.createElementNS(NS, 'circle');
+      ring.setAttribute('cx', a.x); ring.setAttribute('cy', a.y); ring.setAttribute('r', a.radius);
+    }
     ring.setAttribute('class', 'orbit-ring' + (selected ? ' selected' : ''));
     layerAnchors.appendChild(ring);
 
@@ -1027,6 +1155,25 @@ function render(){
       resizeHandle.setAttribute('class', 'orbit-resize' + (isResizing ? ' dragging' : ''));
       resizeHandle.dataset.anchorResizeId = a.id;
       layerAnchorHandles.appendChild(resizeHandle);
+
+      var shapeHandlePos = { x: a.x - a.radius / 2, y: a.y };
+      var shapeHandle = document.createElementNS(NS, 'rect');
+      shapeHandle.setAttribute('x', shapeHandlePos.x - 5); shapeHandle.setAttribute('y', shapeHandlePos.y - 5);
+      shapeHandle.setAttribute('width', 10); shapeHandle.setAttribute('height', 10);
+      shapeHandle.setAttribute('class', 'orbit-shape-cycle');
+      shapeHandle.dataset.anchorShapeCycleId = a.id;
+      layerAnchorHandles.appendChild(shapeHandle);
+
+      if (verts) {
+        var isRotating = drag && drag.anchorRotate === a.id;
+        var rotatePos = positionOnAnchor(a, (a.rotation || 0) - 90);
+        var rotateHandle = document.createElementNS(NS, 'circle');
+        rotateHandle.setAttribute('cx', rotatePos.x); rotateHandle.setAttribute('cy', rotatePos.y);
+        rotateHandle.setAttribute('r', isRotating ? 7 : 5);
+        rotateHandle.setAttribute('class', 'orbit-rotate' + (isRotating ? ' dragging' : ''));
+        rotateHandle.dataset.anchorRotateId = a.id;
+        layerAnchorHandles.appendChild(rotateHandle);
+      }
     }
   });
 
@@ -1182,16 +1329,46 @@ function attachOrbitAnchorHandlers(){
   layerAnchorHandles.querySelectorAll('.orbit-center').forEach(function(c){
     c.addEventListener('pointerdown', function(ev){
       ev.stopPropagation();
+      state.selectedIds = [];
       state.selectedAnchorId = c.dataset.anchorId;
       drag = { anchorMove: c.dataset.anchorId };
       ev.target.setPointerCapture(ev.pointerId);
+      document.getElementById('inspector').classList.add('open');
       render();
+      refreshInspector();
     });
   });
   layerAnchorHandles.querySelectorAll('.orbit-resize').forEach(function(c){
     c.addEventListener('pointerdown', function(ev){
       ev.stopPropagation();
       drag = { anchorResize: c.dataset.anchorResizeId };
+      ev.target.setPointerCapture(ev.pointerId);
+    });
+  });
+  layerAnchorHandles.querySelectorAll('.orbit-shape-cycle').forEach(function(c){
+    c.addEventListener('pointerdown', function(ev){ ev.stopPropagation(); });
+    c.addEventListener('click', function(ev){
+      ev.stopPropagation();
+      var a = anchorById(c.dataset.anchorShapeCycleId);
+      if (!a) return;
+      var idx = ANCHOR_SHAPES.indexOf(a.shape || 'circle');
+      var nextShape = ANCHOR_SHAPES[(idx + 1) % ANCHOR_SHAPES.length];
+      if (nextShape === 'circle') { delete a.shape; delete a.aspectRatio; delete a.rotation; }
+      else {
+        a.shape = nextShape;
+        if (nextShape === 'rectangle') a.aspectRatio = ANCHOR_RECTANGLE_ASPECT;
+        else delete a.aspectRatio;
+      }
+      resyncNodesOnAnchor(a);
+      saveLocal();
+      render();
+      refreshInspector();
+    });
+  });
+  layerAnchorHandles.querySelectorAll('.orbit-rotate').forEach(function(c){
+    c.addEventListener('pointerdown', function(ev){
+      ev.stopPropagation();
+      drag = { anchorRotate: c.dataset.anchorRotateId };
       ev.target.setPointerCapture(ev.pointerId);
     });
   });
@@ -1218,10 +1395,17 @@ canvasWrap.addEventListener('pointerdown', function(ev){
   if (state.mode === 'addAnchor') {
     var wa = screenPointToWorld(ev.clientX, ev.clientY);
     var newAnchor = { id: uniqueAnchorId(), x: Math.round(wa.x), y: Math.round(wa.y), radius: 150 };
+    if (state.pendingAnchorShape && state.pendingAnchorShape !== 'circle') {
+      newAnchor.shape = state.pendingAnchorShape;
+      if (state.pendingAnchorShape === 'rectangle') newAnchor.aspectRatio = ANCHOR_RECTANGLE_ASPECT;
+    }
     state.anchors.push(newAnchor);
+    state.selectedIds = [];
     state.selectedAnchorId = newAnchor.id;
+    document.getElementById('inspector').classList.add('open');
     saveLocal();
     render();
+    refreshInspector();
     return;
   }
   if (ev.shiftKey) {
@@ -1267,6 +1451,7 @@ window.addEventListener('pointermove', function(ev){
       resyncNodesOnAnchor(anchor);
     }
     render();
+    if (state.selectedAnchorId) refreshInspector();
     return;
   }
   if (drag.anchorResize) {
@@ -1278,6 +1463,21 @@ window.addEventListener('pointermove', function(ev){
       resyncNodesOnAnchor(rAnchor);
     }
     render();
+    if (state.selectedAnchorId) refreshInspector();
+    return;
+  }
+  if (drag.anchorRotate) {
+    var gAnchor = anchorById(drag.anchorRotate);
+    if (gAnchor) {
+      var wg = screenPointToWorld(ev.clientX, ev.clientY);
+      var angleDeg = Math.atan2(wg.y - gAnchor.y, wg.x - gAnchor.x) * 180 / Math.PI;
+      var rotation = angleDeg + 90;
+      rotation = snapAngleToTargets(rotation, ORBIT_CARDINAL_ANGLES);
+      gAnchor.rotation = Math.round((((rotation % 360) + 360) % 360) * 10) / 10;
+      resyncNodesOnAnchor(gAnchor);
+    }
+    render();
+    if (state.selectedAnchorId) refreshInspector();
     return;
   }
   var w = screenPointToWorld(ev.clientX, ev.clientY);
@@ -1290,7 +1490,11 @@ window.addEventListener('pointermove', function(ev){
     var bestAnchor = null, bestDelta = Infinity;
     state.anchors.forEach(function(a){
       var adx = tentativeX - a.x, ady = tentativeY - a.y;
-      var delta = Math.abs(Math.sqrt(adx*adx + ady*ady) - a.radius);
+      var dist = Math.sqrt(adx*adx + ady*ady);
+      var angleDeg = Math.atan2(ady, adx) * 180 / Math.PI;
+      var boundaryPt = positionOnAnchor(a, angleDeg);
+      var localRadius = Math.sqrt(Math.pow(boundaryPt.x - a.x, 2) + Math.pow(boundaryPt.y - a.y, 2));
+      var delta = Math.abs(dist - localRadius);
       var threshold = singleNode.orbitAnchorId === a.id ? ORBIT_DETACH_RADIUS : ORBIT_SNAP_RADIUS;
       if (delta <= threshold && delta < bestDelta) { bestDelta = delta; bestAnchor = a; }
     });
@@ -1298,8 +1502,9 @@ window.addEventListener('pointermove', function(ev){
       snapNodeToAnchor(singleNode, bestAnchor, tentativeX, tentativeY);
     } else {
       if (singleNode.orbitAnchorId) detachNodeFromAnchor(singleNode);
-      singleNode.x = Math.round(tentativeX);
-      singleNode.y = Math.round(tentativeY);
+      var aligned = computeAlignmentSnap(singleNode, tentativeX, tentativeY);
+      singleNode.x = Math.round(aligned ? aligned.x : tentativeX);
+      singleNode.y = Math.round(aligned ? aligned.y : tentativeY);
     }
   } else {
     drag.origPositions.forEach(function(op){
@@ -1320,7 +1525,7 @@ window.addEventListener('pointerup', function(ev){
   } else if (drag && drag.curve) {
     snapCurveToStraightIfClose(drag.curve.a, drag.curve.b);
     saveLocal();
-  } else if (drag && (drag.anchorMove || drag.anchorResize)) {
+  } else if (drag && (drag.anchorMove || drag.anchorResize || drag.anchorRotate)) {
     saveLocal();
   } else if (drag && !drag.pan && drag.moved) {
     saveLocal();
@@ -1404,6 +1609,13 @@ document.querySelectorAll('.modeBtn').forEach(function(btn){
     render();
   });
 });
+document.querySelectorAll('.shapeBtn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.shapeBtn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    state.pendingAnchorShape = btn.dataset.anchorShape;
+  });
+});
 document.addEventListener('keydown', function(ev){
   if (ev.target.tagName === 'INPUT' || ev.target.tagName === 'TEXTAREA' || ev.target.tagName === 'SELECT') return;
   if (!ev.ctrlKey && !ev.metaKey) {
@@ -1432,16 +1644,22 @@ function deleteSelectionOrAnchor(){
   } else if (state.selectedAnchorId) {
     deleteAnchor(state.selectedAnchorId);
     state.selectedAnchorId = null;
+    document.getElementById('inspector').classList.remove('open');
     saveLocal();
     render();
+    refreshInspector();
   }
 }
 
 // ---------- inspector ----------
 function refreshInspector(){
   var body = document.getElementById('inspectorBody');
+  if (state.selectedIds.length === 0 && state.selectedAnchorId) {
+    refreshAnchorInspector(body);
+    return;
+  }
   if (state.selectedIds.length === 0) {
-    body.innerHTML = '<div class="empty-inspector">Select a node to see and edit its details, or switch to Add mode and click the canvas to place a new one.<br><br>Shift-click a node to add it to a multi-selection, or shift-drag empty canvas to marquee-select. Drag any selected node to move the whole group.</div>';
+    body.innerHTML = '<div class="empty-inspector">Select a node or an anchor\'s center dot to see and edit its details, or switch to Add mode and click the canvas to place a new one.<br><br>Shift-click a node to add it to a multi-selection, or shift-drag empty canvas to marquee-select. Drag any selected node to move the whole group.</div>';
     return;
   }
   if (state.selectedIds.length > 1) {
@@ -1652,6 +1870,72 @@ function deleteSelectedNodes(){
   refreshInspector();
 }
 
+function refreshAnchorInspector(body){
+  var a = anchorById(state.selectedAnchorId);
+  if (!a) {
+    state.selectedAnchorId = null;
+    body.innerHTML = '<div class="empty-inspector">Select a node to see and edit its details, or switch to Add mode and click the canvas to place a new one.</div>';
+    return;
+  }
+  var shape = a.shape || 'circle';
+  var shapeOptions = ANCHOR_SHAPES.map(function(s){
+    return '<option value="' + s + '"' + (s === shape ? ' selected' : '') + '>' + s.charAt(0).toUpperCase() + s.slice(1) + '</option>';
+  }).join('');
+  body.innerHTML =
+    '<h2>Anchor</h2>' +
+    '<div class="field"><label>Anchor id</label><input value="' + a.id + '" data-anchor-field="id"></div>' +
+    '<div class="fieldRow">' +
+      '<div class="field"><label>X</label><input type="number" value="' + a.x + '" data-anchor-field="x"></div>' +
+      '<div class="field"><label>Y</label><input type="number" value="' + a.y + '" data-anchor-field="y"></div>' +
+    '</div>' +
+    '<div class="fieldRow">' +
+      '<div class="field"><label>Radius</label><input type="number" value="' + a.radius + '" data-anchor-field="radius"></div>' +
+      '<div class="field"><label>Shape</label><select data-anchor-field="shape">' + shapeOptions + '</select></div>' +
+    '</div>' +
+    (shape === 'rectangle' ? '<div class="field"><label>Aspect ratio (width/height)</label><input type="number" step="0.1" min="0.1" value="' + (a.aspectRatio || ANCHOR_RECTANGLE_ASPECT) + '" data-anchor-field="aspectRatio"></div>' : '') +
+    (shape !== 'circle' ? '<div class="field"><label>Rotation (degrees)</label><input type="number" step="1" value="' + (a.rotation || 0) + '" data-anchor-field="rotation"></div>' : '') +
+    '<hr class="sep">' +
+    '<div class="hint">Nodes attached to this anchor (orbitAnchorId) re-snap to its boundary as you edit these fields.</div>' +
+    '<button class="smallBtn danger" id="deleteAnchorBtn">Delete this anchor <span class="key">Q</span></button>';
+
+  body.querySelectorAll('[data-anchor-field]').forEach(function(inp){
+    inp.addEventListener('change', function(){
+      var field = inp.dataset.anchorField;
+      if (field === 'id') {
+        var newId = inp.value.trim();
+        if (!newId || anchorById(newId)) { showToast('Id must be unique and non-empty'); inp.value = a.id; return; }
+        var oldId = a.id;
+        a.id = newId;
+        state.nodes.forEach(function(n){ if (n.orbitAnchorId === oldId) n.orbitAnchorId = newId; });
+        state.selectedAnchorId = newId;
+      } else if (field === 'x' || field === 'y') {
+        a[field] = parseInt(inp.value, 10) || 0;
+      } else if (field === 'radius') {
+        a.radius = Math.max(10, parseInt(inp.value, 10) || 10);
+      } else if (field === 'shape') {
+        if (inp.value === 'circle') { delete a.shape; delete a.aspectRatio; delete a.rotation; }
+        else {
+          a.shape = inp.value;
+          if (inp.value === 'rectangle') a.aspectRatio = a.aspectRatio || ANCHOR_RECTANGLE_ASPECT;
+          else delete a.aspectRatio;
+        }
+      } else if (field === 'aspectRatio') {
+        a.aspectRatio = Math.max(0.1, parseFloat(inp.value) || ANCHOR_RECTANGLE_ASPECT);
+      } else if (field === 'rotation') {
+        var deg = parseFloat(inp.value);
+        a.rotation = ((isNaN(deg) ? 0 : deg) % 360 + 360) % 360;
+      }
+      resyncNodesOnAnchor(a);
+      saveLocal(); render(); refreshInspector();
+    });
+  });
+  document.getElementById('deleteAnchorBtn').addEventListener('click', function(){
+    deleteAnchor(a.id);
+    state.selectedAnchorId = null;
+    document.getElementById('inspector').classList.remove('open');
+    saveLocal(); render(); refreshInspector();
+  });
+}
 function refreshMultiInspector(body){
   var idsList = state.selectedIds.map(function(id){
     var n = nodeById(id);
@@ -1962,7 +2246,15 @@ function buildTreeExportObject(){
     out.connectorCurves = state.curves.map(function(c){ return { a: c.a, b: c.b, controlX: c.controlX, controlY: c.controlY }; });
   }
   if (state.anchors.length) {
-    out.orbitAnchors = state.anchors.map(function(a){ return { id: a.id, x: a.x, y: a.y, radius: a.radius }; });
+    out.orbitAnchors = state.anchors.map(function(a){
+      var ao = { id: a.id, x: a.x, y: a.y, radius: a.radius };
+      if (a.shape && a.shape !== 'circle') {
+        ao.shape = a.shape;
+        if (a.shape === 'rectangle') ao.aspectRatio = a.aspectRatio || ANCHOR_RECTANGLE_ASPECT;
+        if (a.rotation) ao.rotation = a.rotation;
+      }
+      return ao;
+    });
   }
   return out;
 }

@@ -412,9 +412,18 @@
 			"xpCost": 2000,
 			"tier": "KEYSTONE",
 			"effects": [
-				{ "effect": "REMOVE_ALL_FIGHTER_BAYS", "magnitude": 0 },
-				{ "effect": "MIN_CREW_PERCENT_PER_FIGHTER_BAY", "magnitude": -20 },
-				{ "effect": "CARGO_CAPACITY_PER_FIGHTER_BAY", "magnitude": 50 }
+				{
+					"effect": "REMOVE_ALL_FIGHTER_BAYS",
+					"magnitude": 0
+				},
+				{
+					"effect": "MIN_CREW_PERCENT_PER_FIGHTER_BAY",
+					"magnitude": -20
+				},
+				{
+					"effect": "CARGO_CAPACITY_PER_FIGHTER_BAY",
+					"magnitude": 50
+				}
 			],
 			"description": "Converts this ship's built-in fighter bays into cargo capacity, reducing crew requirements per bay converted.",
 			"tags": [
@@ -663,8 +672,14 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "ARMOR_PERCENT", "magnitude": 15 },
-				{ "effect": "REMOVE_SHIELD", "magnitude": 0 }
+				{
+					"effect": "ARMOR_PERCENT",
+					"magnitude": 15
+				},
+				{
+					"effect": "REMOVE_SHIELD",
+					"magnitude": 0
+				}
 			],
 			"description": "Removes this ship's shields entirely, increasing its armor rating in exchange.",
 			"tags": [
@@ -679,8 +694,14 @@
 			"xpCost": 2000,
 			"tier": "KEYSTONE",
 			"effects": [
-				{ "effect": "TOP_SPEED_PERCENT", "magnitude": -20 },
-				{ "effect": "CREATE_FRONT_SHIELD_IF_NONE", "magnitude": 0 }
+				{
+					"effect": "TOP_SPEED_PERCENT",
+					"magnitude": -20
+				},
+				{
+					"effect": "CREATE_FRONT_SHIELD_IF_NONE",
+					"magnitude": 0
+				}
 			],
 			"description": "Installs a makeshift, front-facing shield on a ship that would otherwise have none, at the cost of reduced top speed.",
 			"tags": [
@@ -860,8 +881,14 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "SHIELD_ARC_PERCENT", "magnitude": 100 },
-				{ "effect": "CONVERT_SHIELD_TO_FRONT", "magnitude": 0 }
+				{
+					"effect": "SHIELD_ARC_PERCENT",
+					"magnitude": 100
+				},
+				{
+					"effect": "CONVERT_SHIELD_TO_FRONT",
+					"magnitude": 0
+				}
 			],
 			"description": "Converts this ship's shield to a front-facing arc, extending its coverage but locking it to only cover the front.",
 			"tags": [
@@ -876,8 +903,14 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "SHIELD_ARC_PERCENT", "magnitude": -30 },
-				{ "effect": "CONVERT_SHIELD_TO_OMNI", "magnitude": 0 }
+				{
+					"effect": "SHIELD_ARC_PERCENT",
+					"magnitude": -30
+				},
+				{
+					"effect": "CONVERT_SHIELD_TO_OMNI",
+					"magnitude": 0
+				}
 			],
 			"description": "Converts this ship's shield to omni-directional coverage, reducing its arc in exchange.",
 			"tags": [
@@ -1255,7 +1288,7 @@
 		{
 			"id": "root_low_tech",
 			"name": "Low Tech Root",
-			"icon": "graphics/icons/circular/roots/crest_lowtech.png",
+			"icon": "graphics/factions/crest_lowtech.png",
 			"opCost": 0,
 			"xpCost": 0,
 			"tier": "ROOT"
@@ -1263,7 +1296,7 @@
 		{
 			"id": "root_midline",
 			"name": "Midline Root",
-			"icon": "graphics/icons/circular/roots/crest_midline.png",
+			"icon": "graphics/factions/crest_midline.png",
 			"opCost": 0,
 			"xpCost": 0,
 			"tier": "ROOT"
@@ -1271,7 +1304,7 @@
 		{
 			"id": "root_high_tech",
 			"name": "High Tech Root",
-			"icon": "graphics/icons/circular/roots/crest_hightech.png",
+			"icon": "graphics/factions/crest_hightech.png",
 			"opCost": 0,
 			"xpCost": 0,
 			"tier": "ROOT"
@@ -1375,16 +1408,18 @@
 		},
 		{
 			"id": "small_flux_optional",
-			"name": "Caps or Vents",
+			"name": "Caps, Vents or Hull",
 			"icon": "",
 			"opCost": 4,
 			"xpCost": 2000,
 			"optionalOptions": [
 				"flux_capacity",
-				"flux_dissipation"
+				"flux_dissipation",
+				"hull"
 			],
 			"tags": [
-				"flux"
+				"flux",
+				"hull"
 			]
 		},
 		{
