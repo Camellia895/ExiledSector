@@ -4,53 +4,77 @@
 			"id": "flux_capacity_1",
 			"type": "flux_capacity",
 			"connectedTo": [
-				"flux_capacity_3",
-				"small_flux_optional_4"
+				"flux_capacity_3"
 			],
-			"x": 85,
-			"y": -1217,
-			"orbitAnchorId": "flux_cap_anchor_1",
-			"orbitAngle": 180
+			"x": -1650,
+			"y": -1387
 		},
 		{
 			"id": "flux_dissipation_1",
 			"type": "flux_dissipation",
 			"connectedTo": [
-				"flux_dissipation_2",
-				"small_flux_optional_4"
+				"flux_dissipation_2"
 			],
-			"x": -81,
-			"y": -1216,
-			"orbitAnchorId": "vents_anchor_1",
-			"orbitAngle": 0
+			"x": -1135,
+			"y": -1388
 		},
 		{
 			"id": "missile_damage_1",
 			"type": "missile_damage",
 			"connectedTo": [],
-			"x": 1293,
-			"y": -274
+			"x": 2458,
+			"y": -460
 		},
 		{
 			"id": "ballistic_damage_1",
 			"type": "ballistic_damage",
 			"connectedTo": [],
-			"x": 1255,
-			"y": 791
+			"x": 1789,
+			"y": 1290
 		},
 		{
 			"id": "hull_1",
 			"type": "hull",
 			"connectedTo": [],
-			"x": -291,
-			"y": 1023
+			"x": -703,
+			"y": 1703
+		},
+		{
+			"id": "beam_damage_1",
+			"type": "beam_damage",
+			"connectedTo": [
+				"beam_damage_2",
+				"beam_damage_5"
+			],
+			"x": -2024,
+			"y": -411
+		},
+		{
+			"id": "non_beam_energy_damage_1",
+			"type": "non_beam_energy_damage",
+			"connectedTo": [
+				"energy_damage_1",
+				"non_beam_energy_damage_2"
+			],
+			"x": -1952,
+			"y": -511
+		},
+		{
+			"id": "energy_damage_1",
+			"type": "energy_damage",
+			"connectedTo": [
+				"non_beam_energy_damage_1",
+				"beam_damage_2"
+			],
+			"x": -1868,
+			"y": -482
 		},
 		{
 			"id": "armor_1",
 			"type": "armor",
 			"connectedTo": [],
-			"x": -378,
-			"y": 1038
+			"x": -790,
+			"y": 1718
 		},
 		{
 			"id": "packed_capacitors_1",
@@ -58,283 +82,283 @@
 			"connectedTo": [
 				"flux_capacity_3"
 			],
-			"x": 261,
-			"y": -1217,
-			"orbitAnchorId": "flux_cap_anchor_1",
-			"orbitAngle": 0
+			"x": -1590,
+			"y": -1495
 		},
 		{
 			"id": "safety_overrides_1",
 			"type": "safety_overrides",
 			"connectedTo": [],
-			"x": 1388,
-			"y": 661
+			"x": 2284,
+			"y": 1029
 		},
 		{
 			"id": "heavyarmor_1",
 			"type": "heavyarmor",
 			"connectedTo": [],
-			"x": -415,
-			"y": 964
+			"x": -827,
+			"y": 1644
 		},
 		{
 			"id": "armoredweapons_1",
 			"type": "armoredweapons",
 			"connectedTo": [],
-			"x": -613,
-			"y": 976
+			"x": -1025,
+			"y": 1656
 		},
 		{
 			"id": "reinforcedhull_1",
 			"type": "reinforcedhull",
 			"connectedTo": [],
-			"x": -176,
-			"y": 1023
+			"x": -588,
+			"y": 1703
 		},
 		{
 			"id": "blast_doors_1",
 			"type": "blast_doors",
 			"connectedTo": [],
-			"x": 1265,
-			"y": 444
+			"x": 562,
+			"y": 430
 		},
 		{
 			"id": "fluxcoil_1",
 			"type": "fluxcoil",
 			"connectedTo": [],
-			"x": -1281,
-			"y": -1370
+			"x": -2331,
+			"y": -1664
 		},
 		{
 			"id": "fluxbreakers_1",
 			"type": "fluxbreakers",
 			"connectedTo": [],
-			"x": -1203,
-			"y": -1154
+			"x": -1947,
+			"y": -1601
 		},
 		{
 			"id": "fluxdistributor_1",
 			"type": "fluxdistributor",
 			"connectedTo": [],
-			"x": -1136,
-			"y": -1444
+			"x": -2308,
+			"y": -1790
 		},
 		{
 			"id": "autorepair_1",
 			"type": "autorepair",
 			"connectedTo": [],
-			"x": 1314,
-			"y": 207
+			"x": 1922,
+			"y": 782
 		},
 		{
 			"id": "hardened_subsystems_1",
 			"type": "hardened_subsystems",
 			"connectedTo": [],
-			"x": 1200,
-			"y": 74
+			"x": 1808,
+			"y": 649
 		},
 		{
 			"id": "turretgyros_1",
 			"type": "turretgyros",
 			"connectedTo": [],
-			"x": 1316,
-			"y": 134
+			"x": 1924,
+			"y": 709
 		},
 		{
 			"id": "ballistic_rangefinder_1",
 			"type": "ballistic_rangefinder",
 			"connectedTo": [],
-			"x": 1131,
-			"y": 615
+			"x": 1739,
+			"y": 1383
 		},
 		{
 			"id": "magazines_1",
 			"type": "magazines",
 			"connectedTo": [],
-			"x": 1465,
-			"y": 67
+			"x": 2073,
+			"y": 642
 		},
 		{
 			"id": "pointdefenseai_1",
 			"type": "pointdefenseai",
 			"connectedTo": [],
-			"x": 1329,
-			"y": 51
+			"x": 1937,
+			"y": 626
 		},
 		{
 			"id": "missleracks_1",
 			"type": "missleracks",
 			"connectedTo": [],
-			"x": 1292,
-			"y": -402
+			"x": 2457,
+			"y": -588
 		},
 		{
 			"id": "missile_autoloader_1",
 			"type": "missile_autoloader",
 			"connectedTo": [],
-			"x": 1231,
-			"y": -336
+			"x": 2396,
+			"y": -522
 		},
 		{
 			"id": "eccm_1",
 			"type": "eccm",
 			"connectedTo": [],
-			"x": 1329,
-			"y": -344
+			"x": 2494,
+			"y": -530
 		},
 		{
 			"id": "high_scatter_amp_1",
 			"type": "high_scatter_amp",
 			"connectedTo": [],
-			"x": -1337,
-			"y": 90
+			"x": -2123,
+			"y": 587
 		},
 		{
 			"id": "advancedoptics_1",
 			"type": "advancedoptics",
 			"connectedTo": [],
-			"x": -1306,
-			"y": 197
+			"x": -2092,
+			"y": 694
 		},
 		{
 			"id": "dedicated_targeting_core_1",
 			"type": "dedicated_targeting_core",
 			"connectedTo": [],
-			"x": 1787,
-			"y": 153
+			"x": 2395,
+			"y": 728
 		},
 		{
 			"id": "targetingunit_1",
 			"type": "targetingunit",
 			"connectedTo": [],
-			"x": 1771,
-			"y": 227
+			"x": 2379,
+			"y": 802
 		},
 		{
 			"id": "ecm_1",
 			"type": "ecm",
 			"connectedTo": [],
-			"x": -1062,
-			"y": -424
+			"x": -1848,
+			"y": 73
 		},
 		{
 			"id": "defensive_targeting_array_1",
 			"type": "defensive_targeting_array",
 			"connectedTo": [],
-			"x": 1798,
-			"y": 396
+			"x": 2491,
+			"y": 777
 		},
 		{
 			"id": "advancedshieldemitter_1",
 			"type": "advancedshieldemitter",
 			"connectedTo": [],
-			"x": 921,
-			"y": -1212
+			"x": 2034,
+			"y": -1555
 		},
 		{
 			"id": "extendedshieldemitter_1",
 			"type": "extendedshieldemitter",
 			"connectedTo": [],
-			"x": 677,
-			"y": -1244
+			"x": 1790,
+			"y": -1587
 		},
 		{
 			"id": "hardenedshieldemitter_1",
 			"type": "hardenedshieldemitter",
 			"connectedTo": [],
-			"x": 778,
-			"y": -1204
+			"x": 1891,
+			"y": -1547
 		},
 		{
 			"id": "stabilizedshieldemitter_1",
 			"type": "stabilizedshieldemitter",
 			"connectedTo": [],
-			"x": 841,
-			"y": -1124
+			"x": 1954,
+			"y": -1467
 		},
 		{
 			"id": "shield_shunt_1",
 			"type": "shield_shunt",
 			"connectedTo": [],
-			"x": -582,
-			"y": 911
+			"x": -994,
+			"y": 1591
 		},
 		{
 			"id": "frontshield_1",
 			"type": "frontshield",
 			"connectedTo": [],
-			"x": 789,
-			"y": -1346
+			"x": 1902,
+			"y": -1689
 		},
 		{
 			"id": "frontemitter_1",
 			"type": "frontemitter",
 			"connectedTo": [],
-			"x": 873,
-			"y": -1296
+			"x": 1986,
+			"y": -1639
 		},
 		{
 			"id": "adaptiveshields_1",
 			"type": "adaptiveshields",
 			"connectedTo": [],
-			"x": 736,
-			"y": -1060
+			"x": 1849,
+			"y": -1403
 		},
 		{
 			"id": "auxiliarythrusters_1",
 			"type": "auxiliarythrusters",
 			"connectedTo": [],
-			"x": 1443,
-			"y": 222
+			"x": 2051,
+			"y": 797
 		},
 		{
 			"id": "unstable_injector_1",
 			"type": "unstable_injector",
 			"connectedTo": [],
-			"x": 1461,
-			"y": 478
+			"x": 2069,
+			"y": 1053
 		},
 		{
 			"id": "nav_relay_1",
 			"type": "nav_relay",
 			"connectedTo": [],
-			"x": -1151,
-			"y": -436
+			"x": -1939,
+			"y": 175
 		},
 		{
 			"id": "adaptive_coils_1",
 			"type": "adaptive_coils",
 			"connectedTo": [],
-			"x": -734,
-			"y": -1504
+			"x": -1734,
+			"y": -1870
 		},
 		{
 			"id": "phase_anchor_1",
 			"type": "phase_anchor",
 			"connectedTo": [],
-			"x": -673,
-			"y": -1298
+			"x": -1635,
+			"y": -1870
 		},
 		{
 			"id": "additional_berthing_1",
 			"type": "additional_berthing",
 			"connectedTo": [],
-			"x": -871,
-			"y": 368
+			"x": -1531,
+			"y": 814
 		},
 		{
 			"id": "augmentedengines_1",
 			"type": "augmentedengines",
 			"connectedTo": [],
-			"x": 173,
-			"y": -693
+			"x": -583,
+			"y": -321,
+			"orbitAnchorId": "anchor_1",
+			"orbitAngle": 180
 		},
 		{
 			"id": "auxiliary_fuel_tanks_1",
 			"type": "auxiliary_fuel_tanks",
 			"connectedTo": [],
-			"x": 1167,
-			"y": 409
+			"x": 687,
+			"y": 256
 		},
 		{
 			"id": "efficiency_overhaul_1",
@@ -343,45 +367,45 @@
 				"small_logistics_optional_4",
 				"small_logistics_optional_5"
 			],
-			"x": -181,
-			"y": -101
+			"x": -164,
+			"y": -106
 		},
 		{
 			"id": "expanded_cargo_holds_1",
 			"type": "expanded_cargo_holds",
 			"connectedTo": [],
-			"x": -818,
-			"y": 421
+			"x": -1478,
+			"y": 867
 		},
 		{
 			"id": "hiressensors_1",
 			"type": "hiressensors",
 			"connectedTo": [
-				"increased_sensor_range_2"
+				"increased_sensor_range_1"
 			],
-			"x": -192,
-			"y": -621
+			"x": -114,
+			"y": -610
 		},
 		{
 			"id": "insulatedengine_1",
 			"type": "insulatedengine",
 			"connectedTo": [],
-			"x": -887,
-			"y": 280
+			"x": -1547,
+			"y": 726
 		},
 		{
 			"id": "militarized_subsystems_1",
 			"type": "militarized_subsystems",
 			"connectedTo": [],
-			"x": 1158,
-			"y": 310
+			"x": 507,
+			"y": 94
 		},
 		{
 			"id": "solar_shielding_1",
 			"type": "solar_shielding",
 			"connectedTo": [],
-			"x": -769,
-			"y": 511
+			"x": -1429,
+			"y": 957
 		},
 		{
 			"id": "surveying_equipment_1",
@@ -390,14 +414,14 @@
 				"survey_generic_cost_reduction_2"
 			],
 			"x": 270,
-			"y": -400
+			"y": -411
 		},
 		{
 			"id": "converted_hangar_1",
 			"type": "converted_hangar",
 			"connectedTo": [],
-			"x": 1117,
-			"y": -528
+			"x": 2282,
+			"y": -714
 		},
 		{
 			"id": "converted_fighterbay_1",
@@ -406,22 +430,22 @@
 				"small_logistics_optional_5",
 				"small_logistics_optional_9"
 			],
-			"x": 182,
-			"y": -99
+			"x": 171,
+			"y": -105
 		},
 		{
 			"id": "expanded_deck_crew_1",
 			"type": "expanded_deck_crew",
 			"connectedTo": [],
-			"x": 1027,
-			"y": -734
+			"x": 2192,
+			"y": -920
 		},
 		{
 			"id": "recovery_shuttles_1",
 			"type": "recovery_shuttles",
 			"connectedTo": [],
-			"x": 965,
-			"y": -664
+			"x": 2130,
+			"y": -850
 		},
 		{
 			"id": "operations_center_1",
@@ -438,29 +462,53 @@
 			"id": "escort_package_1",
 			"type": "escort_package",
 			"connectedTo": [],
-			"x": 1453,
-			"y": 144
+			"x": 2061,
+			"y": 719
+		},
+		{
+			"id": "beam_damage_2",
+			"type": "beam_damage",
+			"connectedTo": [
+				"beam_damage_1",
+				"energy_damage_1"
+			],
+			"x": -1947,
+			"y": -440
 		},
 		{
 			"id": "beam_damage_5",
 			"type": "beam_damage",
-			"connectedTo": [],
-			"x": -967,
-			"y": -609
+			"connectedTo": [
+				"beam_damage_1"
+			],
+			"x": -2109,
+			"y": -420
 		},
 		{
 			"id": "flux_capacity_2",
 			"type": "flux_capacity",
 			"connectedTo": [],
-			"x": -562,
-			"y": -1040
+			"x": -1395,
+			"y": -1578
+		},
+		{
+			"id": "non_beam_energy_damage_2",
+			"type": "non_beam_energy_damage",
+			"connectedTo": [
+				"non_beam_energy_damage_1",
+				"non_beam_energy_damage_3"
+			],
+			"x": -2031,
+			"y": -523
 		},
 		{
 			"id": "non_beam_energy_damage_3",
 			"type": "non_beam_energy_damage",
-			"connectedTo": [],
-			"x": -955,
-			"y": -721
+			"connectedTo": [
+				"non_beam_energy_damage_2"
+			],
+			"x": -2115,
+			"y": -501
 		},
 		{
 			"id": "root_low_tech_1",
@@ -470,8 +518,8 @@
 				"small_logistics_optional_31",
 				"small_logistics_optional_14"
 			],
-			"x": 719,
-			"y": 415
+			"x": 1079,
+			"y": 623
 		},
 		{
 			"id": "root_midline_1",
@@ -481,8 +529,8 @@
 				"small_logistics_optional_27",
 				"small_logistics_optional_1"
 			],
-			"x": -719,
-			"y": 415
+			"x": -1079,
+			"y": 623
 		},
 		{
 			"id": "root_high_tech_1",
@@ -491,6 +539,7 @@
 				"small_logistics_optional_3",
 				"small_logistics_optional_17",
 				"small_flux_optional_1",
+				"small_flux_optional_2",
 				"small_logistics_optional_10"
 			],
 			"x": 0,
@@ -500,23 +549,22 @@
 			"id": "fighter_weapon_damage_1",
 			"type": "fighter_weapon_damage",
 			"connectedTo": [],
-			"x": 881,
-			"y": -595
+			"x": 2046,
+			"y": -781
 		},
 		{
 			"id": "fighter_speed_1",
 			"type": "fighter_speed",
 			"connectedTo": [],
-			"x": 997,
-			"y": -581
+			"x": 2162,
+			"y": -767
 		},
 		{
 			"id": "small_logistics_optional_3",
 			"type": "small_logistics_optional",
 			"connectedTo": [
 				"root_high_tech_1",
-				"small_logistics_optional_6",
-				"small_flux_optional_1"
+				"small_logistics_optional_6"
 			],
 			"x": 284,
 			"y": -780
@@ -556,20 +604,17 @@
 			"type": "small_logistics_optional",
 			"connectedTo": [
 				"small_logistics_optional_12",
-				"root_low_tech_1",
-				"small_logistics_optional_14"
+				"root_low_tech_1"
 			],
-			"x": 817,
-			"y": 144
+			"x": 1226,
+			"y": 216
 		},
 		{
 			"id": "small_logistics_optional_17",
 			"type": "small_logistics_optional",
 			"connectedTo": [
 				"root_high_tech_1",
-				"small_logistics_optional_18",
-				"small_flux_optional_2",
-				"increased_sensor_range_1"
+				"small_logistics_optional_18"
 			],
 			"x": -284,
 			"y": -780
@@ -601,30 +646,28 @@
 				"small_logistics_optional_19",
 				"small_logistics_optional_21"
 			],
-			"x": -817,
-			"y": -144
+			"x": -1226,
+			"y": -216
 		},
 		{
 			"id": "small_logistics_optional_21",
 			"type": "small_logistics_optional",
 			"connectedTo": [
 				"small_logistics_optional_20",
-				"root_midline_1",
-				"small_logistics_optional_1"
+				"root_midline_1"
 			],
-			"x": -817,
-			"y": 144
+			"x": -1226,
+			"y": 216
 		},
 		{
 			"id": "small_logistics_optional_27",
 			"type": "small_logistics_optional",
 			"connectedTo": [
 				"root_midline_1",
-				"small_logistics_optional_28",
-				"small_logistics_optional_1"
+				"small_logistics_optional_28"
 			],
-			"x": -534,
-			"y": 636
+			"x": -801,
+			"y": 954
 		},
 		{
 			"id": "small_logistics_optional_28",
@@ -633,8 +676,8 @@
 				"small_logistics_optional_27",
 				"small_logistics_optional_29"
 			],
-			"x": -284,
-			"y": 780
+			"x": -426,
+			"y": 1170
 		},
 		{
 			"id": "small_logistics_optional_29",
@@ -644,7 +687,7 @@
 				"small_logistics_optional_30"
 			],
 			"x": 0,
-			"y": 830
+			"y": 1245
 		},
 		{
 			"id": "small_logistics_optional_30",
@@ -653,31 +696,28 @@
 				"small_logistics_optional_29",
 				"small_logistics_optional_31"
 			],
-			"x": 284,
-			"y": 780
+			"x": 426,
+			"y": 1170
 		},
 		{
 			"id": "small_logistics_optional_31",
 			"type": "small_logistics_optional",
 			"connectedTo": [
 				"small_logistics_optional_30",
-				"root_low_tech_1",
-				"small_logistics_optional_14"
+				"root_low_tech_1"
 			],
-			"x": 534,
-			"y": 636
+			"x": 801,
+			"y": 954
 		},
 		{
 			"id": "small_flux_optional_1",
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"root_high_tech_1",
-				"small_flux_optional_4",
-				"small_logistics_optional_3",
-				"small_flux_optional_2"
+				"small_flux_optional_4"
 			],
-			"x": 0,
-			"y": -1000
+			"x": 99,
+			"y": -999
 		},
 		{
 			"id": "small_flux_optional_3",
@@ -686,20 +726,18 @@
 				"small_flux_optional_4",
 				"small_flux_optional_6"
 			],
-			"x": 0,
-			"y": -1425
+			"x": 336,
+			"y": -1390
 		},
 		{
 			"id": "small_flux_optional_4",
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_3",
-				"small_flux_optional_1",
-				"flux_dissipation_1",
-				"flux_capacity_1"
+				"small_flux_optional_1"
 			],
-			"x": 0,
-			"y": -1217
+			"x": 217,
+			"y": -1192
 		},
 		{
 			"id": "flux_capacity_3",
@@ -708,10 +746,8 @@
 				"packed_capacitors_1",
 				"flux_capacity_1"
 			],
-			"x": 173,
-			"y": -1129,
-			"orbitAnchorId": "flux_cap_anchor_1",
-			"orbitAngle": 90
+			"x": -1668,
+			"y": -1276
 		},
 		{
 			"id": "efficient_vents_1",
@@ -719,10 +755,8 @@
 			"connectedTo": [
 				"flux_dissipation_2"
 			],
-			"x": -256,
-			"y": -1225,
-			"orbitAnchorId": "vents_anchor_1",
-			"orbitAngle": -173.8176545187888
+			"x": -1339,
+			"y": -1162
 		},
 		{
 			"id": "flux_dissipation_2",
@@ -731,17 +765,15 @@
 				"efficient_vents_1",
 				"flux_dissipation_1"
 			],
-			"x": -169,
-			"y": -1304,
-			"orbitAnchorId": "vents_anchor_1",
-			"orbitAngle": 270
+			"x": -1292,
+			"y": -1310
 		},
 		{
 			"id": "small_flux_optional_5",
 			"type": "small_flux_optional",
 			"connectedTo": [],
-			"x": -652,
-			"y": -1061
+			"x": -1597,
+			"y": -1166
 		},
 		{
 			"id": "small_flux_optional_6",
@@ -750,8 +782,8 @@
 				"small_flux_optional_3",
 				"small_flux_optional_7"
 			],
-			"x": 0,
-			"y": -1697
+			"x": 445,
+			"y": -1580
 		},
 		{
 			"id": "small_flux_optional_7",
@@ -760,8 +792,8 @@
 				"small_flux_optional_6",
 				"small_flux_optional_8"
 			],
-			"x": 0,
-			"y": -1950
+			"x": 529,
+			"y": -1742
 		},
 		{
 			"id": "small_flux_optional_8",
@@ -769,29 +801,24 @@
 			"connectedTo": [
 				"small_flux_optional_7"
 			],
-			"x": 0,
-			"y": -2200,
-			"orbitAnchorId": "outer_ring_anchor",
-			"orbitAngle": 270
+			"x": 603,
+			"y": -1884
 		},
 		{
 			"id": "small_flux_optional_2",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"small_flux_optional_1",
-				"small_logistics_optional_17"
+				"root_high_tech_1"
 			],
-			"x": -130,
-			"y": -899
+			"x": -122,
+			"y": -990
 		},
 		{
 			"id": "small_logistics_optional_1",
 			"type": "small_logistics_optional",
 			"connectedTo": [
 				"root_midline_1",
-				"small_logistics_optional_2",
-				"small_logistics_optional_27",
-				"small_logistics_optional_21"
+				"small_logistics_optional_2"
 			],
 			"x": -529,
 			"y": 309
@@ -816,8 +843,8 @@
 				"small_logistics_optional_9",
 				"operations_center_1"
 			],
-			"x": -179,
-			"y": 103
+			"x": -146,
+			"y": 90
 		},
 		{
 			"id": "small_logistics_optional_5",
@@ -831,7 +858,7 @@
 				"operations_center_1"
 			],
 			"x": 0,
-			"y": -207
+			"y": -159
 		},
 		{
 			"id": "small_logistics_optional_7",
@@ -842,8 +869,8 @@
 				"survey_generic_cost_reduction_1",
 				"small_logistics_optional_15"
 			],
-			"x": 0,
-			"y": -414
+			"x": 1,
+			"y": -401
 		},
 		{
 			"id": "small_logistics_optional_9",
@@ -855,8 +882,8 @@
 				"converted_fighterbay_1",
 				"operations_center_1"
 			],
-			"x": 179,
-			"y": 103
+			"x": 153,
+			"y": 87
 		},
 		{
 			"id": "small_logistics_optional_10",
@@ -864,11 +891,10 @@
 			"connectedTo": [
 				"small_logistics_optional_7",
 				"root_high_tech_1",
-				"increased_sensor_range_3",
-				"small_logistics_optional_23"
+				"increased_sensor_range_3"
 			],
-			"x": 0,
-			"y": -622
+			"x": 2,
+			"y": -609
 		},
 		{
 			"id": "small_logistics_optional_13",
@@ -877,17 +903,15 @@
 				"small_logistics_optional_9",
 				"small_logistics_optional_14"
 			],
-			"x": 335,
-			"y": 189
+			"x": 348,
+			"y": 199
 		},
 		{
 			"id": "small_logistics_optional_14",
 			"type": "small_logistics_optional",
 			"connectedTo": [
 				"small_logistics_optional_13",
-				"root_low_tech_1",
-				"small_logistics_optional_11",
-				"small_logistics_optional_31"
+				"root_low_tech_1"
 			],
 			"x": 512,
 			"y": 293
@@ -899,8 +923,8 @@
 				"survey_generic_cost_reduction_1",
 				"survey_generic_cost_reduction_2"
 			],
-			"x": 274,
-			"y": -281
+			"x": 270,
+			"y": -325
 		},
 		{
 			"id": "survey_supplies_cost_reduction_1",
@@ -909,8 +933,8 @@
 				"survey_generic_cost_reduction_1",
 				"survey_generic_cost_reduction_2"
 			],
-			"x": 270,
-			"y": -515
+			"x": 264,
+			"y": -502
 		},
 		{
 			"id": "survey_generic_cost_reduction_1",
@@ -920,8 +944,8 @@
 				"survey_supplies_cost_reduction_1",
 				"survey_mach_cost_1"
 			],
-			"x": 151,
-			"y": -396
+			"x": 149,
+			"y": -403
 		},
 		{
 			"id": "survey_generic_cost_reduction_2",
@@ -931,45 +955,38 @@
 				"survey_supplies_cost_reduction_1",
 				"survey_mach_cost_1"
 			],
-			"x": 385,
-			"y": -400
+			"x": 394,
+			"y": -413
 		},
 		{
 			"id": "increased_sensor_range_1",
 			"type": "increased_sensor_range",
 			"connectedTo": [
-				"increased_sensor_range_2",
-				"small_logistics_optional_17"
+				"hiressensors_1",
+				"increased_sensor_range_2"
 			],
-			"x": -192,
-			"y": -715,
-			"orbitAnchorId": "high_res_sensors_anchor",
-			"orbitAngle": 270
+			"x": -115,
+			"y": -726
 		},
 		{
 			"id": "increased_sensor_range_2",
 			"type": "increased_sensor_range",
 			"connectedTo": [
 				"increased_sensor_range_1",
-				"increased_sensor_range_3",
-				"hiressensors_1"
+				"increased_sensor_range_3"
 			],
-			"x": -129,
-			"y": -691,
-			"orbitAnchorId": "high_res_sensors_anchor",
-			"orbitAngle": -48.094730242209906
+			"x": -232,
+			"y": -609
 		},
 		{
 			"id": "increased_sensor_range_3",
 			"type": "increased_sensor_range",
 			"connectedTo": [
-				"small_logistics_optional_10",
-				"increased_sensor_range_2"
+				"increased_sensor_range_2",
+				"small_logistics_optional_10"
 			],
-			"x": -98,
-			"y": -621,
-			"orbitAnchorId": "high_res_sensors_anchor",
-			"orbitAngle": 0
+			"x": -115,
+			"y": -492
 		},
 		{
 			"id": "small_logistics_optional_15",
@@ -979,8 +996,8 @@
 				"small_logistics_optional_16",
 				"small_logistics_optional_22"
 			],
-			"x": -114,
-			"y": -340
+			"x": -109,
+			"y": -335
 		},
 		{
 			"id": "small_logistics_optional_16",
@@ -1006,15 +1023,6 @@
 			"connectedTo": [],
 			"x": -445,
 			"y": 438
-		},
-		{
-			"id": "small_logistics_optional_23",
-			"type": "small_logistics_optional",
-			"connectedTo": [
-				"small_logistics_optional_10"
-			],
-			"x": 108,
-			"y": -622
 		}
 	],
 	"connectorCurves": [
@@ -1127,116 +1135,30 @@
 			"controlY": 534
 		},
 		{
-			"a": "increased_sensor_range_1",
-			"b": "increased_sensor_range_2",
-			"controlX": -158,
-			"controlY": -709
-		},
-		{
-			"a": "small_logistics_optional_5",
-			"b": "small_logistics_optional_9",
-			"controlX": 90,
-			"controlY": -52
-		},
-		{
-			"a": "small_logistics_optional_4",
-			"b": "small_logistics_optional_5",
-			"controlX": -90,
-			"controlY": -52
-		},
-		{
-			"a": "small_logistics_optional_4",
-			"b": "small_logistics_optional_9",
-			"controlX": 0,
-			"controlY": 103
-		},
-		{
-			"a": "survey_generic_cost_reduction_2",
-			"b": "survey_mach_cost_1",
-			"controlX": 331,
-			"controlY": -342
-		},
-		{
-			"a": "survey_generic_cost_reduction_1",
-			"b": "survey_mach_cost_1",
-			"controlX": 213,
-			"controlY": -338
-		},
-		{
-			"a": "survey_generic_cost_reduction_1",
-			"b": "survey_supplies_cost_reduction_1",
-			"controlX": 209,
-			"controlY": -458
-		},
-		{
-			"a": "survey_generic_cost_reduction_2",
-			"b": "survey_supplies_cost_reduction_1",
-			"controlX": 330,
-			"controlY": -460
-		},
-		{
 			"a": "increased_sensor_range_2",
 			"b": "increased_sensor_range_3",
-			"controlX": -106,
-			"controlY": -659
+			"controlX": -198,
+			"controlY": -526
 		},
 		{
-			"a": "flux_dissipation_1",
-			"b": "flux_dissipation_2",
-			"controlX": -107,
-			"controlY": -1278
+			"a": "increased_sensor_range_1",
+			"b": "increased_sensor_range_2",
+			"controlX": -198,
+			"controlY": -692
 		},
 		{
-			"a": "efficient_vents_1",
-			"b": "flux_dissipation_2",
-			"controlX": -228,
-			"controlY": -1281
-		},
-		{
-			"a": "flux_capacity_3",
-			"b": "packed_capacitors_1",
-			"controlX": 235,
-			"controlY": -1155
-		},
-		{
-			"a": "flux_capacity_1",
-			"b": "flux_capacity_3",
-			"controlX": 111,
-			"controlY": -1155
+			"a": "increased_sensor_range_3",
+			"b": "small_logistics_optional_10",
+			"controlX": -32,
+			"controlY": -526
 		}
 	],
 	"orbitAnchors": [
 		{
-			"id": "outer_ring_anchor",
-			"x": 0,
-			"y": 0,
-			"radius": 2200
-		},
-		{
-			"id": "vents_anchor_1",
-			"x": -169,
-			"y": -1216,
-			"radius": 88
-		},
-		{
-			"id": "flux_cap_anchor_1",
-			"x": 173,
-			"y": -1217,
-			"radius": 88
-		},
-		{
-			"id": "high_res_sensors_anchor",
-			"x": -192,
-			"y": -621,
-			"radius": 94
-		},
-		{
 			"id": "anchor_1",
-			"x": -3,
-			"y": 210,
-			"radius": 207,
-			"shape": "triangle",
-			"rotation": 180
+			"x": -488,
+			"y": -321,
+			"radius": 95
 		}
 	]
 }

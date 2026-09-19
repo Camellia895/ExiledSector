@@ -1288,7 +1288,7 @@
 		{
 			"id": "root_low_tech",
 			"name": "Low Tech Root",
-			"icon": "graphics/factions/crest_lowtech.png",
+			"icon": "graphics/icons/circular/roots/crest_lowtech.png",
 			"opCost": 0,
 			"xpCost": 0,
 			"tier": "ROOT"
@@ -1296,7 +1296,7 @@
 		{
 			"id": "root_midline",
 			"name": "Midline Root",
-			"icon": "graphics/factions/crest_midline.png",
+			"icon": "graphics/icons/circular/roots/crest_midline.png",
 			"opCost": 0,
 			"xpCost": 0,
 			"tier": "ROOT"
@@ -1304,7 +1304,7 @@
 		{
 			"id": "root_high_tech",
 			"name": "High Tech Root",
-			"icon": "graphics/factions/crest_hightech.png",
+			"icon": "graphics/icons/circular/roots/crest_hightech.png",
 			"opCost": 0,
 			"xpCost": 0,
 			"tier": "ROOT"
@@ -1408,18 +1408,16 @@
 		},
 		{
 			"id": "small_flux_optional",
-			"name": "Caps, Vents or Hull",
+			"name": "Caps or Vents",
 			"icon": "",
 			"opCost": 4,
 			"xpCost": 2000,
 			"optionalOptions": [
 				"flux_capacity",
-				"flux_dissipation",
-				"hull"
+				"flux_dissipation"
 			],
 			"tags": [
-				"flux",
-				"hull"
+				"flux"
 			]
 		},
 		{

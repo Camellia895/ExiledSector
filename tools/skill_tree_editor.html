@@ -777,7 +777,10 @@ var SHIPPED_ANCHORS = [
 {"id":"anchor_1","x":-488,"y":-321,"radius":95}
 ];
 
-var SMALL_R = 11, NOTABLE_R = 17, KEYSTONE_R = 23, ROOT_R = 20;
+// Matches the in-game ring/icon radius at zoom 1.0: NODE_SIZE(64) * iconSizeMultiplier(tier) / 2
+// from SkillTreeNodeRenderer.java (Small=1, Notable=1.2, Keystone=1.4; Root has no ring, so its
+// icon radius - NODE_SIZE * ROOT sizeMultiplier(2.5) / 2 - is used instead).
+var SMALL_R = 32, NOTABLE_R = 38.4, KEYSTONE_R = 44.8, ROOT_R = 80;
 function tierOf(type){ return (type && type.tier) ? type.tier : 'SMALL'; }
 function radiusFor(tier){
   if (tier === 'KEYSTONE') return KEYSTONE_R;
