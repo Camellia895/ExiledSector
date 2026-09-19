@@ -67,13 +67,21 @@ public class SkillTreeHullMod extends BaseHullMod {
             SkillType type = node.resolveEffectiveType(data);
 
             String vanillaHullModId = type.getVanillaHullModId();
-            if (vanillaHullModId == null) continue;
+            if (vanillaHullModId != null) {
+                HullModSpecAPI spec = Global.getSettings().getHullModSpec(vanillaHullModId);
+                if (spec == null) continue;
+                HullModEffect vanillaEffect = spec.getEffect();
+                if (vanillaEffect != null) {
+                    vanillaEffect.applyEffectsAfterShipCreation(ship, vanillaHullModId);
+                }
+                continue;
+            }
 
-            HullModSpecAPI spec = Global.getSettings().getHullModSpec(vanillaHullModId);
-            if (spec == null) continue;
-            HullModEffect vanillaEffect = spec.getEffect();
-            if (vanillaEffect != null) {
-                vanillaEffect.applyEffectsAfterShipCreation(ship, vanillaHullModId);
+            for (SkillTypeEffect effect : type.getEffects()) {
+                effect.effect().applyAfterShipCreation(ship, MOD_ID_PREFIX + node.getId(), effect.magnitude());
+            }
+            for (HullSizeSkillEffect effect : type.getHullSizeEffects()) {
+                effect.effect().applyAfterShipCreation(ship, MOD_ID_PREFIX + node.getId(), effect.valueFor(ship.getHullSize()));
             }
         }
     }

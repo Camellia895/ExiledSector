@@ -1,14 +1,38 @@
 package exiledsector.skills.skilleffect;
 
+import com.fs.starfarer.api.combat.BeamAPI;
+import com.fs.starfarer.api.combat.CombatEntityAPI;
+import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
+import org.lwjgl.util.vector.Vector2f;
 
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 
+import static exiledsector.skills.skilleffect.SkillEffectText.pct;
 import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
 import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
 
 public enum ShieldSkillEffect implements SkillEffect {
 
+    BEAM_DAMAGE_HARD_FLUX_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
+            if (!ship.hasListenerOfClass(BeamHardFluxListener.class)) {
+                ship.addListener(new BeamHardFluxListener(magnitude));
+            }
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return "Causes " + pct(magnitude) + "% of beam weapon damage dealt to shields to be hard flux.";
+        }
+    },
     SHIELD_ARC {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -81,4 +105,28 @@ public enum ShieldSkillEffect implements SkillEffect {
 
     @Override
     public abstract String describe(float magnitude);
+
+    private static final class BeamHardFluxListener implements DamageDealtModifier {
+
+        private final float percent;
+
+        private BeamHardFluxListener(float percent) {
+            this.percent = percent;
+        }
+
+        @Override
+        public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
+            if (!shieldHit) return null;
+            if (!(param instanceof BeamAPI)) return null;
+            if (!(target instanceof ShipAPI)) return null;
+
+            float hardPortion = damage.getDamage() * (percent / 100f);
+            if (hardPortion <= 0f) return null;
+
+            damage.setDamage(damage.getDamage() - hardPortion);
+            float hardFlux = damage.computeFluxDealt(hardPortion);
+            ((ShipAPI) target).getFluxTracker().increaseFlux(hardFlux, true);
+            return null;
+        }
+    }
 }

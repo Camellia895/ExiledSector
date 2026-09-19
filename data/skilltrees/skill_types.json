@@ -236,7 +236,7 @@
 			"icon": "graphics/icons/circular/notable_passives/ballistic_rangefinder.png",
 			"opCost": 4,
 			"xpCost": 2000,
-			"tier": "NOTABLE",
+			"tier": "KEYSTONE",
 			"vanillaHullMod": "ballistic_rangefinder",
 			"todo": "Real vanilla effect is a per-weapon-slot range bonus (WeaponBaseRangeModifier) that varies by the ship's largest ballistic slot size and is capped per weapon, with a separate larger bonus for hybrid mounts - not a fixed magnitude on a single MutableShipStatsAPI stat. Deliberately left on vanillaHullMod passthrough rather than approximate it with a flat/percent BALLISTIC_WEAPON_RANGE effect, since that would only be correct for one specific loadout."
 		},
@@ -512,7 +512,7 @@
 			"icon": "graphics/icons/circular/notable_passives/missile_autoloader.png",
 			"opCost": 4,
 			"xpCost": 2000,
-			"tier": "NOTABLE",
+			"tier": "KEYSTONE",
 			"vanillaHullMod": "missile_autoloader",
 			"todo": "Real vanilla effect is a stateful per-weapon reload simulation (advanceInCombat tracks a shared reload-capacity pool by hull size/small-missile-mount count, per-weapon cooldowns, partial reloads) - not a stat modifier at all, and not expressible as a SkillEffect magnitude. Deliberately left on vanillaHullMod passthrough.",
 			"tags": [
@@ -567,8 +567,11 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "high_scatter_amp",
-			"todo": "The +10% beam damage part is a simple fixed effect and safe to convert (matches existing BEAM_DAMAGE), but the real vanilla effect also forces all beam hits to deal hard flux (a DamageDealtModifier listener) and reduces beam base range past a 200-unit threshold via a WeaponBaseRangeModifier listener - neither is a stat modifier. Since our apply loop is all-or-nothing per node, deliberately left entirely on vanillaHullMod passthrough rather than half-convert and silently drop the hard-flux-on-hit and range-falloff parts that define this hullmod's tradeoff.",
+			"effects": [
+				{ "effect": "BEAM_DAMAGE_HARD_FLUX_PERCENT", "magnitude": 50 },
+				{ "effect": "BEAM_WEAPON_RANGE", "magnitude": -25 }
+			],
+			"todo": "Placeholder magnitudes (50% hard flux, -25% range) pending real balance numbers. Reimplemented as a scalable percentage instead of vanilla's all-or-nothing forced-hard-flux-on-every-beam-hit, and the range reduction is a flat percentage instead of vanilla's reduce-only-the-portion-past-200-units logic - deliberate simplifications, not oversights. The +10% beam damage part (vanilla BEAM_DAMAGE) is not yet added; can reuse the existing BEAM_DAMAGE effect for that later.",
 			"tags": [
 				"energy",
 				"beam"

@@ -17,6 +17,9 @@ public interface SkillEffect {
     default void advanceInCombat(ShipAPI ship, String modId, float magnitude) {
     }
 
+    default void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
+    }
+
     default String blockDeallocationReason(FleetMemberAPI member, float magnitude) {
         return null;
     }
