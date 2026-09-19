@@ -36,8 +36,8 @@
 			"id": "hull_1",
 			"type": "hull",
 			"connectedTo": [],
-			"x": -703,
-			"y": 1703
+			"x": -696,
+			"y": 1574
 		},
 		{
 			"id": "beam_damage_1",
@@ -343,8 +343,8 @@
 			"connectedTo": [
 				"crew_capacity_flat_2"
 			],
-			"x": -776,
-			"y": -462,
+			"x": -678,
+			"y": -482,
 			"orbitAnchorId": "additional_berthing_anchor",
 			"orbitAngle": 270
 		},
@@ -355,17 +355,21 @@
 				"small_logistics_optional_24",
 				"small_logistics_optional_23"
 			],
-			"x": 232,
-			"y": -1010,
+			"x": 416,
+			"y": -816,
 			"orbitAnchorId": "augmented_drive_field_anchor_1",
-			"orbitAngle": -132.8431769231297
+			"orbitAngle": 40.7964882464631
 		},
 		{
 			"id": "auxiliary_fuel_tanks_1",
 			"type": "auxiliary_fuel_tanks",
-			"connectedTo": [],
-			"x": 375,
-			"y": 630
+			"connectedTo": [
+				"fuel_flat_1"
+			],
+			"x": 356,
+			"y": 891,
+			"orbitAnchorId": "flat_fuel_anchor",
+			"orbitAngle": 90
 		},
 		{
 			"id": "efficiency_overhaul_1",
@@ -380,9 +384,13 @@
 		{
 			"id": "expanded_cargo_holds_1",
 			"type": "expanded_cargo_holds",
-			"connectedTo": [],
-			"x": 798,
-			"y": 115
+			"connectedTo": [
+				"cargo_capacity_flat_1"
+			],
+			"x": 609,
+			"y": -228,
+			"orbitAnchorId": "flat_cargo_anchor",
+			"orbitAngle": 270
 		},
 		{
 			"id": "hiressensors_1",
@@ -396,9 +404,13 @@
 		{
 			"id": "insulatedengine_1",
 			"type": "insulatedengine",
-			"connectedTo": [],
-			"x": -424,
-			"y": -520
+			"connectedTo": [
+				"engine_durability_1"
+			],
+			"x": -179,
+			"y": 697,
+			"orbitAnchorId": "insulated_engine_assembly_anchor",
+			"orbitAngle": 0
 		},
 		{
 			"id": "militarized_subsystems_1",
@@ -409,15 +421,18 @@
 			],
 			"x": -786,
 			"y": 73,
-			"orbitAnchorId": "anchor_1",
+			"orbitAnchorId": "militarized_subsystems_anchor",
 			"orbitAngle": -48.126779727329755
 		},
 		{
 			"id": "solar_shielding_1",
 			"type": "solar_shielding",
-			"connectedTo": [],
-			"x": -317,
-			"y": 629
+			"connectedTo": [
+				"small_logistics_optional_4",
+				"small_logistics_optional_9"
+			],
+			"x": 0,
+			"y": 289
 		},
 		{
 			"id": "surveying_equipment_1",
@@ -439,8 +454,8 @@
 			"id": "converted_fighterbay_1",
 			"type": "converted_fighterbay",
 			"connectedTo": [
-				"small_logistics_optional_5",
-				"small_logistics_optional_9"
+				"small_logistics_optional_9",
+				"small_logistics_optional_5"
 			],
 			"x": 252,
 			"y": -146
@@ -631,7 +646,8 @@
 			"type": "small_logistics_optional",
 			"connectedTo": [
 				"small_logistics_optional_12",
-				"root_low_tech_1"
+				"root_low_tech_1",
+				"small_logistics_optional_26"
 			],
 			"x": 1227,
 			"y": 213,
@@ -719,7 +735,8 @@
 			"type": "small_logistics_optional",
 			"connectedTo": [
 				"small_logistics_optional_27",
-				"small_logistics_optional_29"
+				"small_logistics_optional_29",
+				"engine_durability_1"
 			],
 			"x": -422,
 			"y": 1171,
@@ -865,7 +882,8 @@
 			"connectedTo": [
 				"root_midline_1",
 				"small_logistics_optional_2",
-				"small_logistics_optional_15"
+				"small_logistics_optional_15",
+				"engine_durability_2"
 			],
 			"x": -779,
 			"y": 453
@@ -887,9 +905,8 @@
 			"connectedTo": [
 				"small_logistics_optional_2",
 				"efficiency_overhaul_1",
-				"small_logistics_optional_5",
-				"small_logistics_optional_9",
-				"operations_center_1"
+				"operations_center_1",
+				"solar_shielding_1"
 			],
 			"x": -250,
 			"y": 144
@@ -898,12 +915,10 @@
 			"id": "small_logistics_optional_5",
 			"type": "small_logistics_optional",
 			"connectedTo": [
-				"small_logistics_optional_4",
 				"small_logistics_optional_7",
-				"small_logistics_optional_9",
-				"efficiency_overhaul_1",
+				"operations_center_1",
 				"converted_fighterbay_1",
-				"operations_center_1"
+				"efficiency_overhaul_1"
 			],
 			"x": 0,
 			"y": -289
@@ -923,11 +938,10 @@
 			"id": "small_logistics_optional_9",
 			"type": "small_logistics_optional",
 			"connectedTo": [
-				"small_logistics_optional_5",
-				"small_logistics_optional_4",
 				"small_logistics_optional_13",
 				"converted_fighterbay_1",
-				"operations_center_1"
+				"operations_center_1",
+				"solar_shielding_1"
 			],
 			"x": 250,
 			"y": 144
@@ -949,7 +963,9 @@
 			"type": "small_logistics_optional",
 			"connectedTo": [
 				"small_logistics_optional_9",
-				"small_logistics_optional_14"
+				"small_logistics_optional_14",
+				"cargo_capacity_flat_2",
+				"fuel_flat_2"
 			],
 			"x": 496,
 			"y": 285
@@ -959,7 +975,8 @@
 			"type": "small_logistics_optional",
 			"connectedTo": [
 				"small_logistics_optional_13",
-				"root_low_tech_1"
+				"root_low_tech_1",
+				"small_logistics_optional_22"
 			],
 			"x": 770,
 			"y": 442
@@ -1058,8 +1075,8 @@
 				"small_logistics_optional_10",
 				"augmentedengines_1"
 			],
-			"x": 172,
-			"y": -874,
+			"x": 198,
+			"y": -897,
 			"orbitAnchorId": "augmented_drive_field_anchor_1",
 			"orbitAngle": 180
 		},
@@ -1070,8 +1087,8 @@
 				"augmentedengines_1",
 				"small_logistics_optional_3"
 			],
-			"x": 358,
-			"y": -1060,
+			"x": 322,
+			"y": -1021,
 			"orbitAnchorId": "augmented_drive_field_anchor_1",
 			"orbitAngle": 270
 		},
@@ -1083,8 +1100,8 @@
 				"small_logistics_optional_2",
 				"small_logistics_optional_20"
 			],
-			"x": -776,
-			"y": -162,
+			"x": -678,
+			"y": -142,
 			"orbitAnchorId": "additional_berthing_anchor",
 			"orbitAngle": 90
 		},
@@ -1095,7 +1112,7 @@
 				"crew_capacity_flat_1",
 				"additional_berthing_1"
 			],
-			"x": -626,
+			"x": -508,
 			"y": -312,
 			"orbitAnchorId": "additional_berthing_anchor",
 			"orbitAngle": 0
@@ -1109,7 +1126,7 @@
 			],
 			"x": -886,
 			"y": 335,
-			"orbitAnchorId": "anchor_1",
+			"orbitAnchorId": "militarized_subsystems_anchor",
 			"orbitAngle": 90
 		},
 		{
@@ -1121,8 +1138,117 @@
 			],
 			"x": -1036,
 			"y": 185,
-			"orbitAnchorId": "anchor_1",
+			"orbitAnchorId": "militarized_subsystems_anchor",
 			"orbitAngle": 180
+		},
+		{
+			"id": "engine_durability_1",
+			"type": "engine_durability",
+			"connectedTo": [
+				"engine_durability_2",
+				"insulatedengine_1",
+				"small_logistics_optional_28"
+			],
+			"x": -379,
+			"y": 897,
+			"orbitAnchorId": "insulated_engine_assembly_anchor",
+			"orbitAngle": 90
+		},
+		{
+			"id": "engine_durability_2",
+			"type": "engine_durability",
+			"connectedTo": [
+				"small_logistics_optional_1",
+				"engine_durability_1"
+			],
+			"x": -579,
+			"y": 697,
+			"orbitAnchorId": "insulated_engine_assembly_anchor",
+			"orbitAngle": 180
+		},
+		{
+			"id": "cargo_capacity_flat_1",
+			"type": "cargo_capacity_flat",
+			"connectedTo": [
+				"cargo_capacity_flat_2",
+				"expanded_cargo_holds_1"
+			],
+			"x": 439,
+			"y": -58,
+			"orbitAnchorId": "flat_cargo_anchor",
+			"orbitAngle": 180
+		},
+		{
+			"id": "cargo_capacity_flat_2",
+			"type": "cargo_capacity_flat",
+			"connectedTo": [
+				"cargo_capacity_flat_1",
+				"small_logistics_optional_13"
+			],
+			"x": 609,
+			"y": 112,
+			"orbitAnchorId": "flat_cargo_anchor",
+			"orbitAngle": 90
+		},
+		{
+			"id": "augmentedengines_2",
+			"type": "augmentedengines",
+			"connectedTo": [
+				"small_logistics_optional_26",
+				"small_logistics_optional_22"
+			],
+			"x": 875,
+			"y": 42,
+			"orbitAnchorId": "augmented_drive_field_anchor_2",
+			"orbitAngle": -114.41709759097895
+		},
+		{
+			"id": "small_logistics_optional_22",
+			"type": "small_logistics_optional",
+			"connectedTo": [
+				"augmentedengines_2",
+				"small_logistics_optional_14"
+			],
+			"x": 876,
+			"y": 289,
+			"orbitAnchorId": "augmented_drive_field_anchor_2",
+			"orbitAngle": 113.81728991685331
+		},
+		{
+			"id": "small_logistics_optional_26",
+			"type": "small_logistics_optional",
+			"connectedTo": [
+				"augmentedengines_2",
+				"small_logistics_optional_11"
+			],
+			"x": 1062,
+			"y": 196,
+			"orbitAnchorId": "augmented_drive_field_anchor_2",
+			"orbitAngle": 13.12793600001239
+		},
+		{
+			"id": "fuel_flat_1",
+			"type": "fuel_flat",
+			"connectedTo": [
+				"fuel_flat_2",
+				"auxiliary_fuel_tanks_1"
+			],
+			"x": 556,
+			"y": 691,
+			"orbitAnchorId": "flat_fuel_anchor",
+			"orbitAngle": 0
+		},
+		{
+			"id": "fuel_flat_2",
+			"type": "fuel_flat",
+			"connectedTo": [
+				"fuel_flat_1",
+				"small_logistics_optional_13"
+			],
+			"x": 356,
+			"y": 491,
+			"orbitAnchorId": "flat_fuel_anchor",
+			"orbitAngle": 270
 		}
 	],
 	"connectorCurves": [
@@ -1277,46 +1403,28 @@
 			"controlY": -942
 		},
 		{
-			"a": "small_logistics_optional_4",
-			"b": "small_logistics_optional_9",
-			"controlX": 0,
-			"controlY": 144
-		},
-		{
-			"a": "small_logistics_optional_4",
-			"b": "small_logistics_optional_5",
-			"controlX": -125,
-			"controlY": -72
-		},
-		{
-			"a": "small_logistics_optional_5",
-			"b": "small_logistics_optional_9",
-			"controlX": 125,
-			"controlY": -72
-		},
-		{
 			"a": "augmentedengines_1",
 			"b": "small_logistics_optional_24",
-			"controlX": 290,
-			"controlY": -1047
+			"controlX": 435,
+			"controlY": -949
 		},
 		{
 			"a": "augmentedengines_1",
 			"b": "small_logistics_optional_23",
-			"controlX": 188,
-			"controlY": -948
+			"controlX": 279,
+			"controlY": -781
 		},
 		{
 			"a": "crew_capacity_flat_1",
 			"b": "crew_capacity_flat_2",
-			"controlX": -670,
-			"controlY": -206
+			"controlX": -558,
+			"controlY": -192
 		},
 		{
 			"a": "additional_berthing_1",
 			"b": "crew_capacity_flat_2",
-			"controlX": -670,
-			"controlY": -418
+			"controlX": -558,
+			"controlY": -432
 		},
 		{
 			"a": "militarized_subsystems_1",
@@ -1331,24 +1439,60 @@
 			"controlY": 48
 		},
 		{
-			"a": "crew_capacity_flat_1",
-			"b": "small_logistics_optional_2",
-			"controlX": -591,
-			"controlY": 18
+			"a": "cargo_capacity_flat_1",
+			"b": "expanded_cargo_holds_1",
+			"controlX": 489,
+			"controlY": -178
 		},
 		{
-			"a": "crew_capacity_flat_1",
-			"b": "small_logistics_optional_20",
-			"controlX": -992,
-			"controlY": -110
+			"a": "cargo_capacity_flat_1",
+			"b": "cargo_capacity_flat_2",
+			"controlX": 489,
+			"controlY": 62
+		},
+		{
+			"a": "augmentedengines_2",
+			"b": "small_logistics_optional_26",
+			"controlX": 1017,
+			"controlY": 61
+		},
+		{
+			"a": "augmentedengines_2",
+			"b": "small_logistics_optional_22",
+			"controlX": 796,
+			"controlY": 166
+		},
+		{
+			"a": "fuel_flat_1",
+			"b": "fuel_flat_2",
+			"controlX": 497,
+			"controlY": 550
+		},
+		{
+			"a": "auxiliary_fuel_tanks_1",
+			"b": "fuel_flat_1",
+			"controlX": 497,
+			"controlY": 832
+		},
+		{
+			"a": "engine_durability_1",
+			"b": "engine_durability_2",
+			"controlX": -520,
+			"controlY": 838
+		},
+		{
+			"a": "engine_durability_1",
+			"b": "insulatedengine_1",
+			"controlX": -238,
+			"controlY": 838
 		}
 	],
 	"orbitAnchors": [
 		{
 			"id": "augmented_drive_field_anchor_1",
-			"x": 358,
-			"y": -874,
-			"radius": 186
+			"x": 322,
+			"y": -897,
+			"radius": 124
 		},
 		{
 			"id": "inner_circle_anchor",
@@ -1372,15 +1516,39 @@
 		},
 		{
 			"id": "additional_berthing_anchor",
-			"x": -776,
+			"x": -678,
 			"y": -312,
-			"radius": 150
+			"radius": 170
 		},
 		{
-			"id": "anchor_1",
+			"id": "militarized_subsystems_anchor",
 			"x": -886,
 			"y": 185,
 			"radius": 150
+		},
+		{
+			"id": "insulated_engine_assembly_anchor",
+			"x": -379,
+			"y": 697,
+			"radius": 200
+		},
+		{
+			"id": "flat_cargo_anchor",
+			"x": 609,
+			"y": -58,
+			"radius": 170
+		},
+		{
+			"id": "augmented_drive_field_anchor_2",
+			"x": 931,
+			"y": 165,
+			"radius": 135
+		},
+		{
+			"id": "flat_fuel_anchor",
+			"x": 356,
+			"y": 691,
+			"radius": 200
 		}
 	]
 }

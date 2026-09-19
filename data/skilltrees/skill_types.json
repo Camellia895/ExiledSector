@@ -1168,10 +1168,10 @@
 			"hullSizeEffects": [
 				{
 					"effect": "CARGO_CAPACITY_FLAT",
-					"frigate": 30,
-					"destroyer": 60,
-					"cruiser": 100,
-					"capitalShip": 200
+					"frigate": 25,
+					"destroyer": 35,
+					"cruiser": 60,
+					"capitalShip": 125
 				}
 			],
 			"tags": [
@@ -1208,7 +1208,7 @@
 			"effects": [
 				{
 					"effect": "ENGINE_DURABILITY_PERCENT",
-					"magnitude": 100
+					"magnitude": 50
 				},
 				{
 					"effect": "HULL_PERCENT",
@@ -1544,6 +1544,51 @@
 					"capitalShip": 50
 				}
 			],
+			"tags": [
+				"logistics"
+			]
+		},
+		{
+			"id": "engine_durability",
+			"name": "Engine Durability",
+			"icon": "",
+			"opCost": 4,
+			"xpCost": 2000,
+			"effects": [
+				{
+					"effect": "ENGINE_DURABILITY_PERCENT",
+					"magnitude": 25
+				}
+			],
+			"tags": [
+				"logistics"
+			]
+		},
+		{
+			"id": "cargo_capacity_flat",
+			"name": "Cargo Capacity",
+			"icon": "",
+			"opCost": 4,
+			"xpCost": 2000,
+			"hullSizeEffects": [
+				{
+					"effect": "CARGO_CAPACITY_FLAT",
+					"frigate": 5,
+					"destroyer": 15,
+					"cruiser": 25,
+					"capitalShip": 50
+				}
+			],
+			"tags": [
+				"logistics"
+			]
+		},
+		{
+			"id": "fuel_flat",
+			"name": "Fuel",
+			"icon": "",
+			"opCost": 4,
+			"xpCost": 2000,
 			"tags": [
 				"logistics"
 			]

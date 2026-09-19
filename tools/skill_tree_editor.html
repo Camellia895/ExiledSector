@@ -1965,12 +1965,25 @@ document.getElementById('closeInspector').addEventListener('click', function(){
 });
 
 // ---------- add node modal ----------
+function addNodeTypeOptionsHtml(sizeFilter){
+  return state.types.filter(function(t){
+    return sizeFilter === 'ALL' || tierOf(t) === sizeFilter;
+  }).map(function(t){
+    return '<option value="'+t.id+'">'+t.name+' ('+t.id+')</option>';
+  }).join('') || '<option value="" disabled selected>No types of this size</option>';
+}
 function openAddNodeModal(x, y){
-  var typeOptions = state.types.map(function(t){ return '<option value="'+t.id+'">'+t.name+' ('+t.id+')</option>'; }).join('');
   var html =
     '<div class="modalOverlay"><div class="modal">' +
     '<h3>Add node at (' + x + ', ' + y + ')</h3>' +
-    '<div class="field"><label>Type</label><select id="mAddType">' + typeOptions + '</select></div>' +
+    '<div class="field"><label>Size</label><select id="mAddSizeFilter">' +
+      '<option value="ALL">All sizes</option>' +
+      '<option value="SMALL">Small</option>' +
+      '<option value="NOTABLE">Notable</option>' +
+      '<option value="KEYSTONE">Keystone</option>' +
+      '<option value="ROOT">Root</option>' +
+    '</select></div>' +
+    '<div class="field"><label>Type</label><select id="mAddType">' + addNodeTypeOptionsHtml('ALL') + '</select></div>' +
     '<div class="hint">Placed with no connections - link it afterward in Link mode.</div>' +
     '<div class="modalBtns">' +
       '<button class="smallBtn" id="mAddNewType">Define new type instead</button>' +
@@ -1981,6 +1994,9 @@ function openAddNodeModal(x, y){
   var root = document.getElementById('modalRoot');
   root.innerHTML = html;
   document.getElementById('mCancel').addEventListener('click', function(){ root.innerHTML=''; });
+  document.getElementById('mAddSizeFilter').addEventListener('change', function(){
+    document.getElementById('mAddType').innerHTML = addNodeTypeOptionsHtml(this.value);
+  });
   document.getElementById('mAddNewType').addEventListener('click', function(){
     root.innerHTML = '';
     openTypeModal(null, function(newType){
@@ -1989,6 +2005,7 @@ function openAddNodeModal(x, y){
   });
   document.getElementById('mConfirm').addEventListener('click', function(){
     var typeId = document.getElementById('mAddType').value;
+    if (!typeId) { showToast('Pick a type first'); return; }
     root.innerHTML = '';
     addNodeOfType(typeId, x, y);
   });
