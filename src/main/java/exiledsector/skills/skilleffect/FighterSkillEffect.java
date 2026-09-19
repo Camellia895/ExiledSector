@@ -128,6 +128,18 @@ public enum FighterSkillEffect implements SkillEffect {
             return flatChange(magnitude, "fighter relaunch time, as a % of base refit time");
         }
     },
+    REMOVE_ALL_FIGHTER_BAYS {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            float bays = stats.getNumFighterBays().getBaseValue();
+            stats.getNumFighterBays().modifyFlat(modId, -bays);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return "Removes all of this ship's fighter bays.";
+        }
+    },
     FIGHTER_BAYS_FLAT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {

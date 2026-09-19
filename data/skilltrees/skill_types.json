@@ -238,6 +238,7 @@
 			"xpCost": 2000,
 			"tier": "KEYSTONE",
 			"vanillaHullMod": "ballistic_rangefinder",
+			"description": "Extends the base range of small and medium ballistic weapons, based on the size of this ship's largest ballistic weapon slot. Also extends hybrid weapon range, with a larger bonus.",
 			"todo": "Real vanilla effect is a per-weapon-slot range bonus (WeaponBaseRangeModifier) that varies by the ship's largest ballistic slot size and is capped per weapon, with a separate larger bonus for hybrid mounts - not a fixed magnitude on a single MutableShipStatsAPI stat. Deliberately left on vanillaHullMod passthrough rather than approximate it with a flat/percent BALLISTIC_WEAPON_RANGE effect, since that would only be correct for one specific loadout."
 		},
 		{
@@ -302,8 +303,12 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "KEYSTONE",
-			"vanillaHullMod": "converted_fighterbay",
-			"todo": "Real vanilla effect scales its crew reduction (20% per bay, capped at 80%) and cargo bonus (+50 per bay) off the ship's own base fighter bay count, then zeroes out that many bays - none of which is a fixed magnitude independent of the specific hull. Deliberately left on vanillaHullMod passthrough rather than hardcode numbers that would only be correct for one specific hull's built-in bay count.",
+			"effects": [
+				{ "effect": "REMOVE_ALL_FIGHTER_BAYS", "magnitude": 0 },
+				{ "effect": "MIN_CREW_PERCENT_PER_FIGHTER_BAY", "magnitude": -20 },
+				{ "effect": "CARGO_CAPACITY_PER_FIGHTER_BAY", "magnitude": 50 }
+			],
+			"description": "Converts this ship's built-in fighter bays into cargo capacity, reducing crew requirements per bay converted.",
 			"tags": [
 				"logistics"
 			]
@@ -331,6 +336,7 @@
 			"xpCost": 2000,
 			"tier": "KEYSTONE",
 			"vanillaHullMod": "defensive_targeting_array",
+			"description": "Increases the damage fighters launched from this ship deal to other fighters and missiles. Also locks launched fighters to stay near the ship instead of patrolling freely.",
 			"todo": "Deliberately kept on vanillaHullMod passthrough as a design choice, not a technical limitation - the fighter-spawn hook needed to convert this now exists (see FIGHTER_PD_DAMAGE_BONUS, reused by other nodes). Real vanilla effect also zeroes the launched fighters' patrol range (locking them near the ship) and tags certain fighter types to stay in front of the ship; neither of those is implemented as a reusable effect yet.",
 			"tags": [
 				"range"
@@ -385,6 +391,7 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"vanillaHullMod": "escort_package",
+			"description": "While within range of a larger friendly ship, increases this ship's maneuverability, top speed, and ballistic/energy weapon range.",
 			"todo": "Real vanilla effect is a continuous proximity check against nearby larger friendly ships each combat frame - magnitude fades in/out with distance (full within ~700su, fading to 0 by ~1200su) and doubles for a destroyer escorting a capital ship. This is a dynamic, position-dependent combat mechanic, not a fixed per-ship magnitude - deliberately left on vanillaHullMod passthrough rather than approximate it as an always-on bonus."
 		},
 		{
@@ -490,8 +497,11 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "shield_shunt",
-			"todo": "Real vanilla effect's defining change is removing the ship's shield entirely (ship.setShield(NONE)) - a structural change to the ship, not a stat modifier, and SkillEffect.apply only receives MutableShipStatsAPI, not ShipAPI. Note SkillTreeHullMod also never calls applyEffectsAfterShipCreation (only applyEffectsBeforeShipCreation), so even the vanillaHullMod passthrough for this node cannot remove the shield today - only the +15% armor bonus actually applies. Needs an architecture change (a new ship-level lifecycle hook) before this can be fixed at all, converted or not.",
+			"effects": [
+				{ "effect": "ARMOR", "magnitude": 15 },
+				{ "effect": "REMOVE_SHIELD", "magnitude": 0 }
+			],
+			"description": "Removes this ship's shields entirely, increasing its armor rating in exchange.",
 			"tags": [
 				"armour"
 			]
@@ -503,8 +513,11 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "KEYSTONE",
-			"vanillaHullMod": "frontshield",
-			"todo": "Real vanilla effect's defining change is creating a front-facing shield where the ship has none (ship.setShield(FRONT,...)) - a structural change to the ship, not a stat modifier, and SkillEffect.apply only receives MutableShipStatsAPI, not ShipAPI. Note SkillTreeHullMod also never calls applyEffectsAfterShipCreation (only applyEffectsBeforeShipCreation), so even the vanillaHullMod passthrough for this node cannot create the shield today - only the -20% top speed penalty actually applies. Needs an architecture change (a new ship-level lifecycle hook) before this can be fixed at all, converted or not.",
+			"effects": [
+				{ "effect": "TOP_SPEED", "magnitude": -20 },
+				{ "effect": "CREATE_FRONT_SHIELD_IF_NONE", "magnitude": 0 }
+			],
+			"description": "Installs a makeshift, front-facing shield on a ship that would otherwise have none, at the cost of reduced top speed.",
 			"tags": [
 				"shield"
 			]
@@ -517,6 +530,7 @@
 			"xpCost": 2000,
 			"tier": "KEYSTONE",
 			"vanillaHullMod": "missile_autoloader",
+			"description": "Grants a limited number of automatic reloads to missile weapons in small missile mounts, drawn from a shared capacity pool that depends on hull size and mount count.",
 			"todo": "Real vanilla effect is a stateful per-weapon reload simulation (advanceInCombat tracks a shared reload-capacity pool by hull size/small-missile-mount count, per-weapon cooldowns, partial reloads) - not a stat modifier at all, and not expressible as a SkillEffect magnitude. Deliberately left on vanillaHullMod passthrough.",
 			"tags": [
 				"missile"
@@ -635,8 +649,11 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "frontemitter",
-			"todo": "Real vanilla effect's defining change is converting the ship's existing shield to front-facing (shield.setType(FRONT)) - a structural change to the ship, not a stat modifier, and SkillEffect.apply only receives MutableShipStatsAPI, not ShipAPI. Note SkillTreeHullMod also never calls applyEffectsAfterShipCreation (only applyEffectsBeforeShipCreation), so even the vanillaHullMod passthrough for this node cannot convert the shield type today - only the +100% shield arc bonus actually applies. Needs an architecture change (a new ship-level lifecycle hook) before this can be fixed at all, converted or not.",
+			"effects": [
+				{ "effect": "SHIELD_ARC", "magnitude": 100 },
+				{ "effect": "CONVERT_SHIELD_TO_FRONT", "magnitude": 0 }
+			],
+			"description": "Converts this ship's shield to a front-facing arc, extending its coverage but locking it to only cover the front.",
 			"tags": [
 				"shield"
 			]
@@ -648,8 +665,11 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "adaptiveshields",
-			"todo": "Real vanilla effect's defining change is converting the ship's existing shield to omni-directional (shield.setType(OMNI)) - a structural change to the ship, not a stat modifier, and SkillEffect.apply only receives MutableShipStatsAPI, not ShipAPI. Note SkillTreeHullMod also never calls applyEffectsAfterShipCreation (only applyEffectsBeforeShipCreation), so even the vanillaHullMod passthrough for this node cannot convert the shield type today - only the -30% shield arc penalty actually applies. Needs an architecture change (a new ship-level lifecycle hook) before this can be fixed at all, converted or not.",
+			"effects": [
+				{ "effect": "SHIELD_ARC", "magnitude": -30 },
+				{ "effect": "CONVERT_SHIELD_TO_OMNI", "magnitude": 0 }
+			],
+			"description": "Converts this ship's shield to omni-directional coverage, reducing its arc in exchange.",
 			"tags": [
 				"shield"
 			]
@@ -959,6 +979,7 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"vanillaHullMod": "solar_shielding",
+			"description": "Reduces energy damage taken in combat, and greatly reduces combat readiness loss from solar coronas and deep hyperspace storms.",
 			"todo": "Real effect is -75% CR loss from solar corona/deep hyperspace storms, plus -10% energy damage taken in combat. The energy damage part is trivial and safe (existing ENERGY_DAMAGE_TAKEN effect, magnitude -10) whenever we want it. The corona/storm part is NOT safe to implement yet - found the real dynamic stat key ('corona_resistance', confirmed shared by both StarCoronaTerrainPlugin and HyperspaceTerrainPlugin, matching the tooltip's 'same effect against storms' claim) but decompiling StarCoronaTerrainPlugin showed corona_resistance actually GATES whether a CR-loss event fires (if (corona_resistance > 0) applyCREvent(...) else <computes what looks like an interval/frequency ratio instead>) rather than scaling a loss percentage directly - the sign/semantics don't resolve cleanly and getting it backward could make ships MORE vulnerable, not less. Deliberately left the whole hullmod on vanillaHullMod passthrough (both effects still work correctly via vanilla's own code) rather than partially convert, since our apply loop is all-or-nothing per node and converting now would silently drop corona/storm protection. Needs more investigation (or someone who already knows this mechanic) before touching.",
 			"tags": [
 				"logistics"
