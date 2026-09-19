@@ -136,7 +136,7 @@
 		{
 			"id": "safety_overrides",
 			"name": "Safety Overrides",
-			"icon": "graphics/icons/circular/keystones/helmsmanship.png",
+			"icon": "graphics/icons/circular/keystones/safety_overrides.png",
 			"opCost": 5,
 			"xpCost": 3000,
 			"tier": "KEYSTONE",
@@ -1188,10 +1188,10 @@
 			"hullSizeEffects": [
 				{
 					"effect": "SENSOR_RANGE",
-					"frigate": 50,
-					"destroyer": 75,
-					"cruiser": 100,
-					"capitalShip": 150
+					"frigate": 40,
+					"destroyer": 50,
+					"cruiser": 40,
+					"capitalShip": 70
 				}
 			],
 			"tags": [
@@ -1519,10 +1519,10 @@
 			"hullSizeEffects": [
 				{
 					"effect": "SENSOR_RANGE",
-					"frigate": 50,
-					"destroyer": 75,
-					"cruiser": 100,
-					"capitalShip": 150
+					"frigate": 10,
+					"destroyer": 12,
+					"cruiser": 20,
+					"capitalShip": 30
 				}
 			],
 			"tags": [
@@ -1532,7 +1532,7 @@
 		{
 			"id": "crew_capacity_flat",
 			"name": "Crew capacity",
-			"icon": "",
+			"icon": "graphics/icons/circular/small_passives/crew_training_blue.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"hullSizeEffects": [
@@ -1551,7 +1551,7 @@
 		{
 			"id": "engine_durability",
 			"name": "Engine Durability",
-			"icon": "",
+			"icon": "graphics/icons/circular/notable_passives/insulated_engine_assembly_red.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"effects": [
