@@ -6,6 +6,7 @@ import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.ConnectorCurve;
 import exiledsector.skills.HullSizeSkillEffect;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTechLevel;
@@ -76,6 +77,8 @@ final class SkillTreeNodeRenderer {
     private static final float NODE_CONNECTOR_GLOW_LINE_THICKNESS = 2.5f;
     private static final float NODE_CONNECTOR_GLOW_HALO_THICKNESS = 7f;
     private static final float NODE_CONNECTOR_GLOW_HALO_ALPHA = 0.35f;
+    private static final int CURVE_ARC_SAMPLES = 40;
+    private static final int CURVE_RENDER_SEGMENTS = 20;
 
     private static final String OPTIONAL_NODE_HINT = "Click to choose an option.";
     private static final float DROPDOWN_FONT_SIZE = TOOLTIP_BODY_FONT_SIZE;
@@ -507,14 +510,22 @@ final class SkillTreeNodeRenderer {
                 float otherY = centerY - other.getOffsetY() * zoom;
                 float otherRadius = donutOuterRadius(NODE_SIZE * zoom * other.getType().getTier().getSizeMultiplier(), other.getType().getTier());
                 boolean bothSatisfied = data.isSatisfied(node.getId(), satisfiedRootId) && data.isSatisfied(other.getId(), satisfiedRootId);
-                drawNodeConnectorLine(otherX, otherY, otherRadius, nodeX, nodeY, nodeRadius, bothSatisfied, alphaMult);
+
+                ConnectorCurve curve = SkillTree.getCurve(node.getId(), other.getId());
+                if (curve == null) {
+                    drawStraightNodeConnectorLine(otherX, otherY, otherRadius, nodeX, nodeY, nodeRadius, bothSatisfied, alphaMult);
+                } else {
+                    float throughX = centerX + curve.getControlOffsetX() * zoom;
+                    float throughY = centerY - curve.getControlOffsetY() * zoom;
+                    drawCurvedNodeConnectorLine(otherX, otherY, otherRadius, throughX, throughY, nodeX, nodeY, nodeRadius, bothSatisfied, alphaMult);
+                }
             }
         }
 
         GL11.glDisable(GL11.GL_BLEND);
     }
 
-    private void drawNodeConnectorLine(float x1, float y1, float r1, float x2, float y2, float r2, boolean glowing, float alphaMult) {
+    private void drawStraightNodeConnectorLine(float x1, float y1, float r1, float x2, float y2, float r2, boolean glowing, float alphaMult) {
         float dx = x2 - x1;
         float dy = y2 - y1;
         float length = (float) Math.sqrt(dx * dx + dy * dy);
@@ -527,17 +538,78 @@ final class SkillTreeNodeRenderer {
         float endX = x2 - dirX * r2;
         float endY = y2 - dirY * r2;
 
+        drawConnectorSegment(startX, startY, endX, endY, glowing, alphaMult);
+    }
+
+    private void drawCurvedNodeConnectorLine(float x0, float y0, float r1, float throughX, float throughY, float x2, float y2, float r2, boolean glowing, float alphaMult) {
+        float cx = 2f * throughX - (x0 + x2) / 2f;
+        float cy = 2f * throughY - (y0 + y2) / 2f;
+        float[] xs = new float[CURVE_ARC_SAMPLES + 1];
+        float[] ys = new float[CURVE_ARC_SAMPLES + 1];
+        float[] cumLen = new float[CURVE_ARC_SAMPLES + 1];
+        for (int i = 0; i <= CURVE_ARC_SAMPLES; i++) {
+            float t = (float) i / CURVE_ARC_SAMPLES;
+            float omt = 1f - t;
+            xs[i] = omt * omt * x0 + 2f * omt * t * cx + t * t * x2;
+            ys[i] = omt * omt * y0 + 2f * omt * t * cy + t * t * y2;
+            if (i > 0) {
+                float dx = xs[i] - xs[i - 1];
+                float dy = ys[i] - ys[i - 1];
+                cumLen[i] = cumLen[i - 1] + (float) Math.sqrt(dx * dx + dy * dy);
+            }
+        }
+        float totalLength = cumLen[CURVE_ARC_SAMPLES];
+        if (totalLength <= r1 + r2) return;
+
+        float tStart = curveParamAtArcLength(cumLen, r1);
+        float tEnd = curveParamAtArcLength(cumLen, totalLength - r2);
+        if (tEnd <= tStart) return;
+
+        float prevX = 0, prevY = 0;
+        for (int i = 0; i <= CURVE_RENDER_SEGMENTS; i++) {
+            float t = tStart + (tEnd - tStart) * i / CURVE_RENDER_SEGMENTS;
+            float omt = 1f - t;
+            float x = omt * omt * x0 + 2f * omt * t * cx + t * t * x2;
+            float y = omt * omt * y0 + 2f * omt * t * cy + t * t * y2;
+            if (i > 0) {
+                drawConnectorSegment(prevX, prevY, x, y, glowing, alphaMult);
+            }
+            prevX = x;
+            prevY = y;
+        }
+    }
+
+    private float curveParamAtArcLength(float[] cumLen, float targetLength) {
+        if (targetLength <= 0f) return 0f;
+        if (targetLength >= cumLen[CURVE_ARC_SAMPLES]) return 1f;
+        for (int i = 1; i <= CURVE_ARC_SAMPLES; i++) {
+            if (cumLen[i] >= targetLength) {
+                float segLength = cumLen[i] - cumLen[i - 1];
+                float frac = segLength <= 0f ? 0f : (targetLength - cumLen[i - 1]) / segLength;
+                return ((i - 1) + frac) / CURVE_ARC_SAMPLES;
+            }
+        }
+        return 1f;
+    }
+
+    private void drawConnectorSegment(float x1, float y1, float x2, float y2, boolean glowing, float alphaMult) {
         if (glowing) {
-            drawLine(startX, startY, endX, endY, GLOW_COLOR, alphaMult * NODE_CONNECTOR_GLOW_HALO_ALPHA, NODE_CONNECTOR_GLOW_HALO_THICKNESS);
-            drawLine(startX, startY, endX, endY, GLOW_COLOR, alphaMult, NODE_CONNECTOR_GLOW_LINE_THICKNESS);
+            drawLine(x1, y1, x2, y2, GLOW_COLOR, alphaMult * NODE_CONNECTOR_GLOW_HALO_ALPHA, NODE_CONNECTOR_GLOW_HALO_THICKNESS);
+            drawLine(x1, y1, x2, y2, GLOW_COLOR, alphaMult, NODE_CONNECTOR_GLOW_LINE_THICKNESS);
             return;
         }
 
+        float dx = x2 - x1;
+        float dy = y2 - y1;
+        float length = (float) Math.sqrt(dx * dx + dy * dy);
+        if (length <= 0.0001f) return;
+        float dirX = dx / length;
+        float dirY = dy / length;
         float perpX = -dirY * (NODE_CONNECTOR_PARALLEL_GAP / 2f);
         float perpY = dirX * (NODE_CONNECTOR_PARALLEL_GAP / 2f);
 
-        drawLine(startX + perpX, startY + perpY, endX + perpX, endY + perpY, RING_DULL_COLOR, alphaMult * RING_DULL_ALPHA, NODE_CONNECTOR_LINE_THICKNESS);
-        drawLine(startX - perpX, startY - perpY, endX - perpX, endY - perpY, RING_DULL_COLOR, alphaMult * RING_DULL_ALPHA, NODE_CONNECTOR_LINE_THICKNESS);
+        drawLine(x1 + perpX, y1 + perpY, x2 + perpX, y2 + perpY, RING_DULL_COLOR, alphaMult * RING_DULL_ALPHA, NODE_CONNECTOR_LINE_THICKNESS);
+        drawLine(x1 - perpX, y1 - perpY, x2 - perpX, y2 - perpY, RING_DULL_COLOR, alphaMult * RING_DULL_ALPHA, NODE_CONNECTOR_LINE_THICKNESS);
     }
 
     private void drawLine(float x1, float y1, float x2, float y2, Color color, float alpha, float thickness) {

@@ -76,4 +76,31 @@ class SkillTreeLoaderTest {
 
         assertThrows(org.json.JSONException.class, () -> SkillTreeLoader.parseNodes(root, SKILL_TYPES));
     }
+
+    @Test
+    void missingConnectorCurvesFieldMeansNoCurves() throws Exception {
+        JSONObject root = new JSONObject("{ \"nodes\": [] }");
+
+        Map<String, ConnectorCurve> curves = SkillTreeLoader.parseConnectorCurves(root);
+
+        assertTrue(curves.isEmpty());
+    }
+
+    @Test
+    void parsesConnectorCurvesKeyedByCanonicalPair() throws Exception {
+        JSONObject root = new JSONObject("{ \"nodes\": [], \"connectorCurves\": [ {"
+                + "\"a\": \"capacitors_1\","
+                + "\"b\": \"bare_node\","
+                + "\"controlX\": 12.5,"
+                + "\"controlY\": -8"
+                + "} ] }");
+
+        Map<String, ConnectorCurve> curves = SkillTreeLoader.parseConnectorCurves(root);
+
+        assertEquals(1, curves.size());
+        ConnectorCurve curve = curves.get(SkillTree.curveKey("capacitors_1", "bare_node"));
+        assertEquals(12.5f, curve.getControlOffsetX());
+        assertEquals(-8f, curve.getControlOffsetY());
+        assertEquals(curves.get(SkillTree.curveKey("bare_node", "capacitors_1")), curve);
+    }
 }

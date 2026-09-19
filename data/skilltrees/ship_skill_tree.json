@@ -499,30 +499,31 @@
 			"id": "root_low_tech_1",
 			"type": "root_low_tech",
 			"connectedTo": [
-				"small_logistics_optional_15",
-				"small_logistics_optional_16",
-				"small_logistics_optional_17"
+				"small_logistics_optional_11",
+				"small_logistics_optional_31"
 			],
-			"x": 806,
-			"y": 468
+			"x": 719,
+			"y": 415
 		},
 		{
 			"id": "root_midline_1",
 			"type": "root_midline",
-			"connectedTo": [],
-			"x": -837,
-			"y": 536
+			"connectedTo": [
+				"small_logistics_optional_21",
+				"small_logistics_optional_27"
+			],
+			"x": -719,
+			"y": 415
 		},
 		{
 			"id": "root_high_tech_1",
 			"type": "root_high_tech",
 			"connectedTo": [
-				"small_logistics_optional_1",
-				"small_logistics_optional_2",
-				"small_logistics_optional_3"
+				"small_logistics_optional_3",
+				"small_logistics_optional_17"
 			],
-			"x": -4,
-			"y": -577
+			"x": 0,
+			"y": -830
 		},
 		{
 			"id": "fighter_weapon_damage_1",
@@ -539,46 +540,14 @@
 			"y": -581
 		},
 		{
-			"id": "small_logistics_optional_1",
-			"type": "small_logistics_optional",
-			"connectedTo": [
-				"root_high_tech_1",
-				"small_logistics_optional_2",
-				"small_logistics_optional_3"
-			],
-			"x": -1,
-			"y": -448
-		},
-		{
-			"id": "small_logistics_optional_2",
-			"type": "small_logistics_optional",
-			"connectedTo": [
-				"root_high_tech_1",
-				"small_logistics_optional_4",
-				"small_logistics_optional_1"
-			],
-			"x": -114,
-			"y": -454
-		},
-		{
 			"id": "small_logistics_optional_3",
 			"type": "small_logistics_optional",
 			"connectedTo": [
 				"root_high_tech_1",
-				"small_logistics_optional_1",
 				"small_logistics_optional_6"
 			],
-			"x": 128,
-			"y": -455
-		},
-		{
-			"id": "small_logistics_optional_4",
-			"type": "small_logistics_optional",
-			"connectedTo": [
-				"small_logistics_optional_2"
-			],
-			"x": -196,
-			"y": -368
+			"x": 120,
+			"y": -622
 		},
 		{
 			"id": "small_logistics_optional_6",
@@ -587,15 +556,8 @@
 				"small_logistics_optional_8",
 				"small_logistics_optional_3"
 			],
-			"x": 197,
-			"y": -399
-		},
-		{
-			"id": "small_logistics_optional_7",
-			"type": "small_logistics_optional",
-			"connectedTo": [],
-			"x": 3,
-			"y": -370
+			"x": 240,
+			"y": -415
 		},
 		{
 			"id": "small_logistics_optional_8",
@@ -604,38 +566,8 @@
 				"small_logistics_optional_6",
 				"small_logistics_optional_12"
 			],
-			"x": 275,
-			"y": -325
-		},
-		{
-			"id": "small_logistics_optional_9",
-			"type": "small_logistics_optional",
-			"connectedTo": [
-				"small_logistics_optional_10",
-				"small_logistics_optional_13"
-			],
-			"x": 552,
-			"y": 38
-		},
-		{
-			"id": "small_logistics_optional_10",
-			"type": "small_logistics_optional",
-			"connectedTo": [
-				"small_logistics_optional_11",
-				"small_logistics_optional_9"
-			],
-			"x": 495,
-			"y": -60
-		},
-		{
-			"id": "small_logistics_optional_11",
-			"type": "small_logistics_optional",
-			"connectedTo": [
-				"small_logistics_optional_12",
-				"small_logistics_optional_10"
-			],
-			"x": 426,
-			"y": -140
+			"x": 360,
+			"y": -207
 		},
 		{
 			"id": "small_logistics_optional_12",
@@ -644,56 +576,118 @@
 				"small_logistics_optional_8",
 				"small_logistics_optional_11"
 			],
-			"x": 354,
-			"y": -228
+			"x": 479,
+			"y": 0
 		},
 		{
-			"id": "small_logistics_optional_13",
+			"id": "small_logistics_optional_11",
 			"type": "small_logistics_optional",
 			"connectedTo": [
-				"small_logistics_optional_9",
-				"small_logistics_optional_14"
-			],
-			"x": 625,
-			"y": 143
-		},
-		{
-			"id": "small_logistics_optional_14",
-			"type": "small_logistics_optional",
-			"connectedTo": [
-				"small_logistics_optional_13",
-				"small_logistics_optional_15"
-			],
-			"x": 686,
-			"y": 232
-		},
-		{
-			"id": "small_logistics_optional_15",
-			"type": "small_logistics_optional",
-			"connectedTo": [
-				"small_logistics_optional_14",
+				"small_logistics_optional_12",
 				"root_low_tech_1"
 			],
-			"x": 756,
-			"y": 363
-		},
-		{
-			"id": "small_logistics_optional_16",
-			"type": "small_logistics_optional",
-			"connectedTo": [
-				"root_low_tech_1"
-			],
-			"x": 660,
-			"y": 488
+			"x": 599,
+			"y": 208
 		},
 		{
 			"id": "small_logistics_optional_17",
 			"type": "small_logistics_optional",
 			"connectedTo": [
+				"root_high_tech_1",
+				"small_logistics_optional_18"
+			],
+			"x": -120,
+			"y": -622
+		},
+		{
+			"id": "small_logistics_optional_18",
+			"type": "small_logistics_optional",
+			"connectedTo": [
+				"small_logistics_optional_17",
+				"small_logistics_optional_19"
+			],
+			"x": -240,
+			"y": -415
+		},
+		{
+			"id": "small_logistics_optional_19",
+			"type": "small_logistics_optional",
+			"connectedTo": [
+				"small_logistics_optional_18",
+				"small_logistics_optional_20"
+			],
+			"x": -360,
+			"y": -207
+		},
+		{
+			"id": "small_logistics_optional_20",
+			"type": "small_logistics_optional",
+			"connectedTo": [
+				"small_logistics_optional_19",
+				"small_logistics_optional_21"
+			],
+			"x": -479,
+			"y": 0
+		},
+		{
+			"id": "small_logistics_optional_21",
+			"type": "small_logistics_optional",
+			"connectedTo": [
+				"small_logistics_optional_20",
+				"root_midline_1"
+			],
+			"x": -599,
+			"y": 208
+		},
+		{
+			"id": "small_logistics_optional_27",
+			"type": "small_logistics_optional",
+			"connectedTo": [
+				"root_midline_1",
+				"small_logistics_optional_28"
+			],
+			"x": -479,
+			"y": 415
+		},
+		{
+			"id": "small_logistics_optional_28",
+			"type": "small_logistics_optional",
+			"connectedTo": [
+				"small_logistics_optional_27",
+				"small_logistics_optional_29"
+			],
+			"x": -240,
+			"y": 415
+		},
+		{
+			"id": "small_logistics_optional_29",
+			"type": "small_logistics_optional",
+			"connectedTo": [
+				"small_logistics_optional_28",
+				"small_logistics_optional_30"
+			],
+			"x": 0,
+			"y": 415
+		},
+		{
+			"id": "small_logistics_optional_30",
+			"type": "small_logistics_optional",
+			"connectedTo": [
+				"small_logistics_optional_29",
+				"small_logistics_optional_31"
+			],
+			"x": 240,
+			"y": 415
+		},
+		{
+			"id": "small_logistics_optional_31",
+			"type": "small_logistics_optional",
+			"connectedTo": [
+				"small_logistics_optional_30",
 				"root_low_tech_1"
 			],
-			"x": 707,
-			"y": 438
+			"x": 479,
+			"y": 415
 		}
 	]
 }

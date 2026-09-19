@@ -991,7 +991,7 @@
 		{
 			"id": "small_logistics_optional",
 			"name": "Fuel, Crew or Cargo",
-			"icon": "",
+			"icon": "graphics/icons/circular/small_passives/compact_storage.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"optionalOptions": [

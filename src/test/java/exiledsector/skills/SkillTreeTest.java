@@ -62,4 +62,14 @@ class SkillTreeTest {
         assertTrue(SkillTree.getAllNodes().containsKey("hull_1"));
         assertTrue(SkillTree.getAllNodes().containsKey("hull_2"));
     }
+
+    @Test
+    void curveKeyIsOrderIndependent() {
+        assertEquals(SkillTree.curveKey("a", "b"), SkillTree.curveKey("b", "a"));
+    }
+
+    @Test
+    void getCurveReturnsNullWhenConnectorIsNotCurved() {
+        assertNull(SkillTree.getCurve("hull_1", "hull_2"));
+    }
 }

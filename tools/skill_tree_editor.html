@@ -257,8 +257,11 @@
     pointer-events: none;
     user-select: none;
   }
-  .edge-line { stroke: var(--text-faint); stroke-width: 1.4; opacity: .55; }
+  .edge-line { fill: none; stroke: var(--text-faint); stroke-width: 1.4; opacity: .55; }
   .edge-line.bad { stroke: var(--danger); opacity: .9; stroke-dasharray: 4 3; }
+  .curve-anchor { fill: var(--text-faint); opacity: .45; cursor: grab; }
+  .curve-anchor:hover { fill: var(--accent); opacity: 1; }
+  .curve-anchor.dragging { fill: var(--accent); opacity: 1; cursor: grabbing; }
   .center-mark { fill: none; stroke: var(--accent); stroke-width: 1.5; opacity: .8; }
   .marquee-rect { fill: var(--accent); fill-opacity: .12; stroke: var(--accent); stroke-width: 1; stroke-dasharray: 4 3; pointer-events: none; }
 
@@ -665,28 +668,30 @@ var SHIPPED_NODES = [
 {"id":"flux_capacity_2","type":"flux_capacity","connectedTo":[],"x":-633,"y":-898},
 {"id":"non_beam_energy_damage_2","type":"non_beam_energy_damage","connectedTo":["non_beam_energy_damage_1","non_beam_energy_damage_3"],"x":-959,"y":-105},
 {"id":"non_beam_energy_damage_3","type":"non_beam_energy_damage","connectedTo":["non_beam_energy_damage_2"],"x":-1043,"y":-83},
-{"id":"root_low_tech_1","type":"root_low_tech","connectedTo":["increased_cargo_2","increased_crew_2","increased_fuel_3"],"x":806,"y":468},
-{"id":"root_midline_1","type":"root_midline","connectedTo":["increased_cargo_3","increased_crew_3","increased_fuel_2"],"x":-837,"y":536},
-{"id":"root_high_tech_1","type":"root_high_tech","connectedTo":["increased_crew_1","increased_cargo_1","increased_fuel_1","small_logistics_optional_1"],"x":-4,"y":-577},
-{"id":"increased_fuel_1","type":"increased_fuel","connectedTo":["root_high_tech_1","increased_cargo_1","increased_fuel_4"],"x":-167,"y":-420},
-{"id":"increased_cargo_1","type":"increased_cargo","connectedTo":["root_high_tech_1","increased_fuel_1","increased_crew_1"],"x":-3,"y":-467},
-{"id":"increased_crew_1","type":"increased_crew","connectedTo":["root_high_tech_1","increased_cargo_1"],"x":178,"y":-425},
+{"id":"root_low_tech_1","type":"root_low_tech","connectedTo":["small_logistics_optional_11","small_logistics_optional_31"],"x":719,"y":415},
+{"id":"root_midline_1","type":"root_midline","connectedTo":["small_logistics_optional_21","small_logistics_optional_27"],"x":-719,"y":415},
+{"id":"root_high_tech_1","type":"root_high_tech","connectedTo":["small_logistics_optional_3","small_logistics_optional_17"],"x":0,"y":-830},
 {"id":"fighter_weapon_damage_1","type":"fighter_weapon_damage","connectedTo":[],"x":881,"y":-595},
 {"id":"fighter_speed_1","type":"fighter_speed","connectedTo":[],"x":997,"y":-581},
-{"id":"increased_fuel_2","type":"increased_fuel","connectedTo":["root_midline_1","increased_cargo_3"],"x":-653,"y":607},
-{"id":"increased_fuel_3","type":"increased_fuel","connectedTo":["root_low_tech_1","increased_cargo_2"],"x":750,"y":318},
-{"id":"increased_cargo_2","type":"increased_cargo","connectedTo":["root_low_tech_1","increased_fuel_3","increased_crew_2"],"x":681,"y":406},
-{"id":"increased_crew_2","type":"increased_crew","connectedTo":["root_low_tech_1","increased_cargo_2"],"x":654,"y":518},
-{"id":"increased_crew_3","type":"increased_crew","connectedTo":["root_midline_1","increased_cargo_3","increased_crew_4"],"x":-773,"y":338},
-{"id":"increased_cargo_3","type":"increased_cargo","connectedTo":["root_midline_1","increased_fuel_2","increased_crew_3"],"x":-668,"y":454},
-{"id":"increased_fuel_4","type":"increased_fuel","connectedTo":["increased_fuel_7","increased_fuel_1"],"x":-269,"y":-349},
-{"id":"increased_fuel_5","type":"increased_fuel","connectedTo":[],"x":-498,"y":632},
-{"id":"increased_fuel_6","type":"increased_fuel","connectedTo":["increased_fuel_7"],"x":-459,"y":-179},
-{"id":"increased_fuel_7","type":"increased_fuel","connectedTo":["increased_fuel_6","increased_fuel_4"],"x":-365,"y":-273},
-{"id":"increased_crew_4","type":"increased_crew","connectedTo":["increased_crew_3","increased_crew_5"],"x":-732,"y":222},
-{"id":"increased_crew_5","type":"increased_crew","connectedTo":["increased_crew_4","increased_crew_6"],"x":-686,"y":120},
-{"id":"increased_crew_6","type":"increased_crew","connectedTo":["increased_crew_5"],"x":-627,"y":7},
-{"id":"small_logistics_optional_1","type":"small_logistics_optional","connectedTo":["root_high_tech_1"],"x":79,"y":-337}
+{"id":"small_logistics_optional_3","type":"small_logistics_optional","connectedTo":["root_high_tech_1","small_logistics_optional_6"],"x":120,"y":-622},
+{"id":"small_logistics_optional_6","type":"small_logistics_optional","connectedTo":["small_logistics_optional_8","small_logistics_optional_3"],"x":240,"y":-415},
+{"id":"small_logistics_optional_8","type":"small_logistics_optional","connectedTo":["small_logistics_optional_6","small_logistics_optional_12"],"x":360,"y":-207},
+{"id":"small_logistics_optional_12","type":"small_logistics_optional","connectedTo":["small_logistics_optional_8","small_logistics_optional_11"],"x":479,"y":0},
+{"id":"small_logistics_optional_11","type":"small_logistics_optional","connectedTo":["small_logistics_optional_12","root_low_tech_1"],"x":599,"y":208},
+{"id":"small_logistics_optional_17","type":"small_logistics_optional","connectedTo":["root_high_tech_1","small_logistics_optional_18"],"x":-120,"y":-622},
+{"id":"small_logistics_optional_18","type":"small_logistics_optional","connectedTo":["small_logistics_optional_17","small_logistics_optional_19"],"x":-240,"y":-415},
+{"id":"small_logistics_optional_19","type":"small_logistics_optional","connectedTo":["small_logistics_optional_18","small_logistics_optional_20"],"x":-360,"y":-207},
+{"id":"small_logistics_optional_20","type":"small_logistics_optional","connectedTo":["small_logistics_optional_19","small_logistics_optional_21"],"x":-479,"y":0},
+{"id":"small_logistics_optional_21","type":"small_logistics_optional","connectedTo":["small_logistics_optional_20","root_midline_1"],"x":-599,"y":208},
+{"id":"small_logistics_optional_27","type":"small_logistics_optional","connectedTo":["root_midline_1","small_logistics_optional_28"],"x":-479,"y":415},
+{"id":"small_logistics_optional_28","type":"small_logistics_optional","connectedTo":["small_logistics_optional_27","small_logistics_optional_29"],"x":-240,"y":415},
+{"id":"small_logistics_optional_29","type":"small_logistics_optional","connectedTo":["small_logistics_optional_28","small_logistics_optional_30"],"x":0,"y":415},
+{"id":"small_logistics_optional_30","type":"small_logistics_optional","connectedTo":["small_logistics_optional_29","small_logistics_optional_31"],"x":240,"y":415},
+{"id":"small_logistics_optional_31","type":"small_logistics_optional","connectedTo":["small_logistics_optional_30","root_low_tech_1"],"x":479,"y":415}
+];
+
+var SHIPPED_CURVES = [
+
 ];
 
 var SMALL_R = 11, NOTABLE_R = 17, KEYSTONE_R = 23, ROOT_R = 20;
@@ -707,6 +712,7 @@ function colorVarFor(tier){
 var state = {
   types: [],
   nodes: [],
+  curves: [],
   view: { panX: 0, panY: 0, zoom: 0.55 },
   mode: 'select',
   selectedIds: [],
@@ -718,14 +724,57 @@ function deepCopy(x){ return JSON.parse(JSON.stringify(x)); }
 function typeById(id){ for (var i=0;i<state.types.length;i++) if (state.types[i].id === id) return state.types[i]; return null; }
 function nodeById(id){ for (var i=0;i<state.nodes.length;i++) if (state.nodes[i].id === id) return state.nodes[i]; return null; }
 
+// ---------- connector curves ----------
+// A connector between two nodes is a straight line by default. state.curves only holds
+// entries for connectors the user has bent - the control point is stored, everything else
+// stays an implicit straight line (control point = midpoint) with no data footprint.
+function curveKey(a, b){ return a < b ? a + '|' + b : b + '|' + a; }
+function findCurve(a, b){
+  var key = curveKey(a, b);
+  for (var i=0;i<state.curves.length;i++) if (curveKey(state.curves[i].a, state.curves[i].b) === key) return state.curves[i];
+  return null;
+}
+function defaultControlPoint(a, b){
+  var na = nodeById(a), nb = nodeById(b);
+  if (!na || !nb) return { x: 0, y: 0 };
+  return { x: (na.x + nb.x) / 2, y: (na.y + nb.y) / 2 };
+}
+function controlPointFor(a, b){
+  var c = findCurve(a, b);
+  return c ? { x: c.controlX, y: c.controlY } : defaultControlPoint(a, b);
+}
+function bezierHandleFor(throughPoint, ax, ay, bx, by){
+  return { x: 2*throughPoint.x - (ax+bx)/2, y: 2*throughPoint.y - (ay+by)/2 };
+}
+function setCurveControl(a, b, x, y){
+  var c = findCurve(a, b);
+  if (c) { c.controlX = x; c.controlY = y; }
+  else { state.curves.push({ a: a, b: b, controlX: x, controlY: y }); }
+}
+function removeCurve(a, b){
+  var key = curveKey(a, b);
+  state.curves = state.curves.filter(function(c){ return curveKey(c.a, c.b) !== key; });
+}
+function removeCurvesForNode(id){
+  state.curves = state.curves.filter(function(c){ return c.a !== id && c.b !== id; });
+}
+function snapCurveToStraightIfClose(a, b){
+  var c = findCurve(a, b);
+  if (!c) return;
+  var def = defaultControlPoint(a, b);
+  var dx = c.controlX - def.x, dy = c.controlY - def.y;
+  if (Math.sqrt(dx*dx + dy*dy) < 8) removeCurve(a, b);
+}
+
 function loadShipped(){
   state.types = deepCopy(SHIPPED_TYPES);
   state.nodes = deepCopy(SHIPPED_NODES);
+  state.curves = deepCopy(SHIPPED_CURVES);
 }
 
 function saveLocal(){
   try {
-    localStorage.setItem('skillTreeEditor.v1', JSON.stringify({ types: state.types, nodes: state.nodes }));
+    localStorage.setItem('skillTreeEditor.v1', JSON.stringify({ types: state.types, nodes: state.nodes, curves: state.curves }));
   } catch(e){}
 }
 function loadLocal(){
@@ -736,6 +785,7 @@ function loadLocal(){
     if (!parsed || !parsed.types || !parsed.nodes) return false;
     state.types = parsed.types;
     state.nodes = parsed.nodes;
+    state.curves = parsed.curves || [];
     return true;
   } catch(e){ return false; }
 }
@@ -827,11 +877,22 @@ function render(){
       // connectedTo is symmetric, so each edge appears in both nodes' lists - only draw it once.
       if (n.id >= pid) return;
       var ppos = worldToScreenXY(p.x, p.y);
-      var line = document.createElementNS(NS, 'line');
-      line.setAttribute('x1', ppos.sx); line.setAttribute('y1', ppos.sy);
-      line.setAttribute('x2', pos.sx); line.setAttribute('y2', pos.sy);
-      line.setAttribute('class', 'edge-line');
-      layerEdges.appendChild(line);
+      var control = controlPointFor(n.id, pid);
+      var handle = bezierHandleFor(control, p.x, p.y, n.x, n.y);
+      var path = document.createElementNS(NS, 'path');
+      path.setAttribute('d', 'M ' + ppos.sx + ' ' + ppos.sy + ' Q ' + handle.x + ' ' + handle.y + ' ' + pos.sx + ' ' + pos.sy);
+      path.setAttribute('class', 'edge-line');
+      layerEdges.appendChild(path);
+
+      if (state.mode === 'select') {
+        var isDragging = drag && drag.curve && curveKey(drag.curve.a, drag.curve.b) === curveKey(n.id, pid);
+        var anchor = document.createElementNS(NS, 'circle');
+        anchor.setAttribute('cx', control.x); anchor.setAttribute('cy', control.y);
+        anchor.setAttribute('r', isDragging ? 7 : 5);
+        anchor.setAttribute('class', 'curve-anchor' + (isDragging ? ' dragging' : ''));
+        anchor.dataset.a = n.id; anchor.dataset.b = pid;
+        layerEdges.appendChild(anchor);
+      }
     });
   });
 
@@ -879,6 +940,7 @@ function render(){
   }
 
   attachNodeHandlers();
+  attachCurveAnchorHandlers();
   updateStats();
   updateWarnBadge();
 }
@@ -921,6 +983,17 @@ function attachNodeHandlers(){
         selectNode(id);
       }
       startGroupDrag(ev);
+      ev.target.setPointerCapture(ev.pointerId);
+    });
+  });
+}
+
+function attachCurveAnchorHandlers(){
+  var anchors = layerEdges.querySelectorAll('.curve-anchor');
+  anchors.forEach(function(c){
+    c.addEventListener('pointerdown', function(ev){
+      ev.stopPropagation();
+      drag = { curve: { a: c.dataset.a, b: c.dataset.b } };
       ev.target.setPointerCapture(ev.pointerId);
     });
   });
@@ -971,6 +1044,12 @@ window.addEventListener('pointermove', function(ev){
     render();
     return;
   }
+  if (drag.curve) {
+    var wc = screenPointToWorld(ev.clientX, ev.clientY);
+    setCurveControl(drag.curve.a, drag.curve.b, Math.round(wc.x), Math.round(wc.y));
+    render();
+    return;
+  }
   var w = screenPointToWorld(ev.clientX, ev.clientY);
   var dx = w.x - drag.startWorld.x, dy = w.y - drag.startWorld.y;
   if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) drag.moved = true;
@@ -988,6 +1067,9 @@ window.addEventListener('pointermove', function(ev){
 window.addEventListener('pointerup', function(ev){
   if (drag && drag.marquee) {
     finishMarqueeSelect(ev);
+  } else if (drag && drag.curve) {
+    snapCurveToStraightIfClose(drag.curve.a, drag.curve.b);
+    saveLocal();
   } else if (drag && !drag.pan && drag.moved) {
     saveLocal();
   }
@@ -1042,6 +1124,7 @@ function toggleLink(aId, bId){
     a.connectedTo.splice(idx, 1);
     var backIdx = b.connectedTo.indexOf(a.id);
     if (backIdx !== -1) b.connectedTo.splice(backIdx, 1);
+    removeCurve(a.id, b.id);
     showToast('Unlinked ' + a.id + ' from ' + b.id);
   }
   saveLocal();
@@ -1295,6 +1378,7 @@ function deleteSelectedNodes(){
   state.nodes.forEach(function(o){
     o.connectedTo = o.connectedTo.filter(function(pid){ return ids.indexOf(pid) === -1; });
   });
+  ids.forEach(removeCurvesForNode);
   state.selectedIds = [];
   document.getElementById('inspector').classList.remove('open');
   saveLocal();
@@ -1605,12 +1689,19 @@ function toTabbedJson(obj, rootKey){
   var raw = JSON.stringify(wrapper, null, '\t');
   return raw;
 }
+function buildTreeExportObject(){
+  var nodesOut = state.nodes.map(function(n){ return { id: n.id, type: n.type, connectedTo: n.connectedTo, x: n.x, y: n.y }; });
+  var out = { nodes: nodesOut };
+  if (state.curves.length) {
+    out.connectorCurves = state.curves.map(function(c){ return { a: c.a, b: c.b, controlX: c.controlX, controlY: c.controlY }; });
+  }
+  return out;
+}
 var currentExportTab = 'tree';
 function refreshExport(){
   var text;
   if (currentExportTab === 'tree') {
-    var nodesOut = state.nodes.map(function(n){ return { id: n.id, type: n.type, connectedTo: n.connectedTo, x: n.x, y: n.y }; });
-    text = toTabbedJson(nodesOut, 'nodes');
+    text = JSON.stringify(buildTreeExportObject(), null, '\t');
     document.getElementById('exportHint').textContent = 'Paste over data/skilltrees/ship_skill_tree.json';
   } else {
     var typesOut = state.types.map(serializeType);
@@ -1629,8 +1720,7 @@ document.querySelectorAll('.exportTab').forEach(function(tab){
 });
 document.getElementById('refreshExportBtn').addEventListener('click', refreshExport);
 function saveToProject(reason){
-  var nodesOut = state.nodes.map(function(n){ return { id: n.id, type: n.type, connectedTo: n.connectedTo, x: n.x, y: n.y }; });
-  var treeText = toTabbedJson(nodesOut, 'nodes');
+  var treeText = JSON.stringify(buildTreeExportObject(), null, '\t');
   var typesOut = state.types.map(serializeType);
   var typesText = toTabbedJson(typesOut, 'skillTypes');
   return fetch('/save', {
@@ -1679,7 +1769,7 @@ document.getElementById('importBtn').addEventListener('click', function(){
     var nodesRaw = document.getElementById('impNodes').value.trim();
     try {
       if (typesRaw) { var pt = JSON.parse(typesRaw); state.types = pt.skillTypes || pt; }
-      if (nodesRaw) { var pn = JSON.parse(nodesRaw); state.nodes = pn.nodes || pn; }
+      if (nodesRaw) { var pn = JSON.parse(nodesRaw); state.nodes = pn.nodes || pn; state.curves = pn.connectorCurves || []; }
       root.innerHTML = '';
       state.selectedIds = [];
       saveLocal();
@@ -1702,6 +1792,7 @@ document.getElementById('resetBtn').addEventListener('click', function(){
     var typesJson = results[0], treeJson = results[1];
     state.types = typesJson.skillTypes || typesJson;
     state.nodes = treeJson.nodes || treeJson;
+    state.curves = treeJson.connectorCurves || [];
     try { localStorage.removeItem('skillTreeEditor.v1'); } catch(e){}
     state.selectedIds = [];
     render();

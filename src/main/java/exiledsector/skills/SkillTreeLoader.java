@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +27,30 @@ public final class SkillTreeLoader {
             Logger.getLogger(SkillTreeLoader.class).error("Failed to load " + DATA_PATH, e);
             return new ArrayList<>();
         }
+    }
+
+    public static Map<String, ConnectorCurve> loadConnectorCurves() {
+        try {
+            return parseConnectorCurves(Global.getSettings().loadJSON(DATA_PATH));
+        } catch (IOException | JSONException e) {
+            Logger.getLogger(SkillTreeLoader.class).error("Failed to load connector curves from " + DATA_PATH, e);
+            return new LinkedHashMap<>();
+        }
+    }
+
+    public static Map<String, ConnectorCurve> parseConnectorCurves(JSONObject root) throws JSONException {
+        Map<String, ConnectorCurve> curves = new LinkedHashMap<>();
+        JSONArray curveArray = root.optJSONArray("connectorCurves");
+        if (curveArray == null) return curves;
+        for (int i = 0; i < curveArray.length(); i++) {
+            JSONObject curveJson = curveArray.getJSONObject(i);
+            String a = curveJson.getString("a");
+            String b = curveJson.getString("b");
+            float controlX = (float) curveJson.getDouble("controlX");
+            float controlY = (float) curveJson.getDouble("controlY");
+            curves.put(SkillTree.curveKey(a, b), new ConnectorCurve(controlX, controlY));
+        }
+        return curves;
     }
 
     public static List<SkillNode> parseNodes(JSONObject root, Map<String, SkillType> skillTypes) throws JSONException {
