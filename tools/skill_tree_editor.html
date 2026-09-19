@@ -1486,10 +1486,10 @@ function renderTagChips(idPrefix, activeTags){
   }).join('') + '</div>';
 }
 
-function renderOptionalOptionsSelect(currentTier, selectedIds, selfId){
-  var candidates = state.types.filter(function(ty){ return tierOf(ty) === currentTier && ty.id !== selfId; });
+function renderOptionalOptionsSelect(selectedIds, selfId){
+  var candidates = state.types.filter(function(ty){ return ty.id !== selfId; });
   if (!candidates.length) {
-    return '<select id="tOptionalOptions" multiple size="6" disabled><option disabled>No other ' + currentTier + ' types exist yet</option></select>';
+    return '<select id="tOptionalOptions" multiple size="6" disabled><option disabled>No other types exist yet</option></select>';
   }
   var opts = candidates.map(function(ty){
     var sel = selectedIds.indexOf(ty.id) !== -1 ? ' selected' : '';
@@ -1591,8 +1591,8 @@ function openTypeModal(existingType, onSave){
       '<hr class="sep">' +
       '<div class="field"><label>vanillaHullMod id</label><input id="tVanilla" value="' + (t.vanillaHullMod||'') + '"></div>' +
       '<hr class="sep">' +
-      '<div class="hint">Optional slot options - pick other types of the same tier this node can resolve to (ctrl/cmd-click to select several). Non-empty means this node renders as a dropdown picker instead of a fixed effect: clicking it while unallocated opens the dropdown, picking an option allocates and applies that option\\u0027s cost/effects, and deallocating it reverts it to this unselected placeholder.</div>' +
-      '<div class="field"><label>Optional slot options</label>' + renderOptionalOptionsSelect(tierOf(t), t.optionalOptions||[], t.id) + '</div>' +
+      '<div class="hint">Optional slot options - pick other types this node can resolve to (ctrl/cmd-click to select several; any tier is allowed, so a notable or keystone can offer small effects). Non-empty means this node renders as a dropdown picker instead of a fixed effect: clicking it while unallocated opens the dropdown, picking an option allocates and applies that option\\u0027s cost/effects, and deallocating it reverts it to this unselected placeholder.</div>' +
+      '<div class="field"><label>Optional slot options</label>' + renderOptionalOptionsSelect(t.optionalOptions||[], t.id) + '</div>' +
       '<div class="field"><label>Description override (optional)</label><input id="tDescription" value="' + (t.description||'') + '"></div>' +
       '<div class="hint">Leave the description blank to auto-generate one line per effect from its magnitude. Only set it for custom flavor text.</div>' +
       '<div class="field"><label>Todo (optional)</label><input id="tTodo" value="' + (t.todo||'') + '"></div>' +
@@ -1604,10 +1604,6 @@ function openTypeModal(existingType, onSave){
     root.innerHTML = html;
 
     document.getElementById('mCancel2').addEventListener('click', function(){ root.innerHTML=''; });
-    document.getElementById('tTier').addEventListener('change', function(){
-      syncDraftFromInputs();
-      renderModal();
-    });
     document.getElementById('addEffectRowBtn').addEventListener('click', function(){
       syncDraftFromInputs();
       effectsDraft.push({ effect: EFFECT_NAMES[0], magnitude: 10 });

@@ -6,6 +6,12 @@
 			"icon": "graphics/icons/circular/small_passives/containment_procedures.png",
 			"opCost": 2,
 			"xpCost": 500,
+			"effects": [
+				{
+					"effect": "FLUX_CAPACITY_PERCENT",
+					"magnitude": 1
+				}
+			],
 			"tags": [
 				"flux"
 			]
@@ -16,6 +22,12 @@
 			"icon": "graphics/icons/circular/small_passives/systems_expertise.png",
 			"opCost": 2,
 			"xpCost": 500,
+			"effects": [
+				{
+					"effect": "FLUX_DISSIPATION_PERCENT",
+					"magnitude": 1
+				}
+			],
 			"tags": [
 				"flux"
 			]
@@ -102,6 +114,21 @@
 			"opCost": 3,
 			"xpCost": 1200,
 			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "FLUX_CAPACITY_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"hullSizeEffects": [
+				{
+					"effect": "FLUX_CAPACITY_FLAT",
+					"frigate": 200,
+					"destroyer": 400,
+					"cruiser": 600,
+					"capitalShip": 1000
+				}
+			],
 			"tags": [
 				"flux"
 			]
@@ -114,17 +141,53 @@
 			"xpCost": 3000,
 			"tier": "KEYSTONE",
 			"effects": [
-				{ "effect": "ZERO_FLUX_ALWAYS_ON", "magnitude": 0 },
-				{ "effect": "FLUX_DISSIPATION_PERCENT", "magnitude": 100 },
-				{ "effect": "PEAK_CR_DURATION_PERCENT", "magnitude": -67 },
-				{ "effect": "VENT_RATE_PERCENT", "magnitude": -100 },
-				{ "effect": "WEAPON_RANGE_THRESHOLD", "magnitude": 450 },
-				{ "effect": "WEAPON_RANGE_FALLOFF_PERCENT", "magnitude": -75 }
+				{
+					"effect": "ZERO_FLUX_ALWAYS_ON",
+					"magnitude": 0
+				},
+				{
+					"effect": "FLUX_DISSIPATION_PERCENT",
+					"magnitude": 100
+				},
+				{
+					"effect": "PEAK_CR_DURATION_PERCENT",
+					"magnitude": -67
+				},
+				{
+					"effect": "VENT_RATE_PERCENT",
+					"magnitude": -100
+				},
+				{
+					"effect": "WEAPON_RANGE_THRESHOLD",
+					"magnitude": 450
+				},
+				{
+					"effect": "WEAPON_RANGE_FALLOFF_PERCENT",
+					"magnitude": -75
+				}
 			],
 			"hullSizeEffects": [
-				{ "effect": "TOP_SPEED_FLAT", "frigate": 50, "destroyer": 30, "cruiser": 20, "capitalShip": 10 },
-				{ "effect": "ACCELERATION_FLAT", "frigate": 100, "destroyer": 60, "cruiser": 40, "capitalShip": 20 },
-				{ "effect": "DECELERATION_FLAT", "frigate": 100, "destroyer": 60, "cruiser": 40, "capitalShip": 20 }
+				{
+					"effect": "TOP_SPEED_FLAT",
+					"frigate": 50,
+					"destroyer": 30,
+					"cruiser": 20,
+					"capitalShip": 10
+				},
+				{
+					"effect": "ACCELERATION_FLAT",
+					"frigate": 100,
+					"destroyer": 60,
+					"cruiser": 40,
+					"capitalShip": 20
+				},
+				{
+					"effect": "DECELERATION_FLAT",
+					"frigate": 100,
+					"destroyer": 60,
+					"cruiser": 40,
+					"capitalShip": 20
+				}
 			]
 		},
 		{
@@ -135,8 +198,14 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "SHIELD_TURN_RATE_PERCENT", "magnitude": 100 },
-				{ "effect": "SHIELD_RAISE_RATE_PERCENT", "magnitude": 100 }
+				{
+					"effect": "SHIELD_TURN_RATE_PERCENT",
+					"magnitude": 100
+				},
+				{
+					"effect": "SHIELD_RAISE_RATE_PERCENT",
+					"magnitude": 100
+				}
 			],
 			"tags": [
 				"shield"
@@ -168,8 +237,14 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "BEAM_WEAPON_RANGE_FLAT", "magnitude": 200 },
-				{ "effect": "BEAM_WEAPON_TURN_RATE_PERCENT", "magnitude": -30 }
+				{
+					"effect": "BEAM_WEAPON_RANGE_FLAT",
+					"magnitude": 200
+				},
+				{
+					"effect": "BEAM_WEAPON_TURN_RATE_PERCENT",
+					"magnitude": -30
+				}
 			],
 			"tags": [
 				"energy",
@@ -184,8 +259,14 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "WEAPON_TURN_RATE_PERCENT", "magnitude": 75 },
-				{ "effect": "BEAM_WEAPON_TURN_RATE_PERCENT", "magnitude": 75 }
+				{
+					"effect": "WEAPON_TURN_RATE_PERCENT",
+					"magnitude": 75
+				},
+				{
+					"effect": "BEAM_WEAPON_TURN_RATE_PERCENT",
+					"magnitude": 75
+				}
 			]
 		},
 		{
@@ -196,10 +277,22 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "ARMOR_PERCENT", "magnitude": 10 },
-				{ "effect": "WEAPON_DURABILITY_PERCENT", "magnitude": 100 },
-				{ "effect": "WEAPON_TURN_RATE_PERCENT", "magnitude": -25 },
-				{ "effect": "WEAPON_RECOIL_PERCENT", "magnitude": -25 }
+				{
+					"effect": "ARMOR_PERCENT",
+					"magnitude": 10
+				},
+				{
+					"effect": "WEAPON_DURABILITY_PERCENT",
+					"magnitude": 100
+				},
+				{
+					"effect": "WEAPON_TURN_RATE_PERCENT",
+					"magnitude": -25
+				},
+				{
+					"effect": "WEAPON_RECOIL_PERCENT",
+					"magnitude": -25
+				}
 			],
 			"tags": [
 				"armour"
@@ -213,7 +306,10 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "REPAIR_TIME_PERCENT", "magnitude": -50 }
+				{
+					"effect": "REPAIR_TIME_PERCENT",
+					"magnitude": -50
+				}
 			]
 		},
 		{
@@ -224,10 +320,22 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "ACCELERATION_PERCENT", "magnitude": 100 },
-				{ "effect": "DECELERATION_PERCENT", "magnitude": 50 },
-				{ "effect": "TURN_ACCELERATION_PERCENT", "magnitude": 100 },
-				{ "effect": "MANEUVERABILITY_PERCENT", "magnitude": 50 }
+				{
+					"effect": "ACCELERATION_PERCENT",
+					"magnitude": 100
+				},
+				{
+					"effect": "DECELERATION_PERCENT",
+					"magnitude": 50
+				},
+				{
+					"effect": "TURN_ACCELERATION_PERCENT",
+					"magnitude": 100
+				},
+				{
+					"effect": "MANEUVERABILITY_PERCENT",
+					"magnitude": 50
+				}
 			]
 		},
 		{
@@ -316,8 +424,20 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
-				{ "effect": "BALLISTIC_WEAPON_RANGE_PERCENT", "frigate": 0, "destroyer": 0, "cruiser": 35, "capitalShip": 50 },
-				{ "effect": "ENERGY_WEAPON_RANGE_PERCENT", "frigate": 0, "destroyer": 0, "cruiser": 35, "capitalShip": 50 }
+				{
+					"effect": "BALLISTIC_WEAPON_RANGE_PERCENT",
+					"frigate": 0,
+					"destroyer": 0,
+					"cruiser": 35,
+					"capitalShip": 50
+				},
+				{
+					"effect": "ENERGY_WEAPON_RANGE_PERCENT",
+					"frigate": 0,
+					"destroyer": 0,
+					"cruiser": 35,
+					"capitalShip": 50
+				}
 			],
 			"tags": [
 				"range"
@@ -344,14 +464,38 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "ECCM_CHANCE", "magnitude": 0.5 },
-				{ "effect": "MISSILE_GUIDANCE_FLAT", "magnitude": 1 },
-				{ "effect": "MISSILE_SPEED_PERCENT", "magnitude": 25 },
-				{ "effect": "MISSILE_RANGE_PERCENT", "magnitude": -20 },
-				{ "effect": "MISSILE_ACCELERATION_PERCENT", "magnitude": 150 },
-				{ "effect": "MISSILE_TURN_RATE_PERCENT", "magnitude": 50 },
-				{ "effect": "MISSILE_TURN_ACCELERATION_PERCENT", "magnitude": 150 },
-				{ "effect": "ELECTRONIC_WARFARE_PENALTY_PERCENT", "magnitude": -50 }
+				{
+					"effect": "ECCM_CHANCE",
+					"magnitude": 0.5
+				},
+				{
+					"effect": "MISSILE_GUIDANCE_FLAT",
+					"magnitude": 1
+				},
+				{
+					"effect": "MISSILE_SPEED_PERCENT",
+					"magnitude": 25
+				},
+				{
+					"effect": "MISSILE_RANGE_PERCENT",
+					"magnitude": -20
+				},
+				{
+					"effect": "MISSILE_ACCELERATION_PERCENT",
+					"magnitude": 150
+				},
+				{
+					"effect": "MISSILE_TURN_RATE_PERCENT",
+					"magnitude": 50
+				},
+				{
+					"effect": "MISSILE_TURN_ACCELERATION_PERCENT",
+					"magnitude": 150
+				},
+				{
+					"effect": "ELECTRONIC_WARFARE_PENALTY_PERCENT",
+					"magnitude": -50
+				}
 			],
 			"tags": [
 				"missile"
@@ -395,9 +539,18 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "FIGHTER_REPLACEMENT_DECAY_PERCENT", "magnitude": -15 },
-				{ "effect": "FIGHTER_REPLACEMENT_RECOVERY_PERCENT", "magnitude": 25 },
-				{ "effect": "MIN_CREW_PER_FIGHTER_BAY", "magnitude": 20 }
+				{
+					"effect": "FIGHTER_REPLACEMENT_DECAY_PERCENT",
+					"magnitude": -15
+				},
+				{
+					"effect": "FIGHTER_REPLACEMENT_RECOVERY_PERCENT",
+					"magnitude": 25
+				},
+				{
+					"effect": "MIN_CREW_PER_FIGHTER_BAY",
+					"magnitude": 20
+				}
 			],
 			"tags": [
 				"fighter"
@@ -411,8 +564,14 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "BALLISTIC_AMMO_PERCENT", "magnitude": 50 },
-				{ "effect": "ENERGY_AMMO_PERCENT", "magnitude": 50 }
+				{
+					"effect": "BALLISTIC_AMMO_PERCENT",
+					"magnitude": 50
+				},
+				{
+					"effect": "ENERGY_AMMO_PERCENT",
+					"magnitude": 50
+				}
 			]
 		},
 		{
@@ -423,7 +582,10 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "MISSILE_AMMO_PERCENT", "magnitude": 100 }
+				{
+					"effect": "MISSILE_AMMO_PERCENT",
+					"magnitude": 100
+				}
 			],
 			"tags": [
 				"missile"
@@ -437,7 +599,10 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "SHIELD_ARC_FLAT", "magnitude": 60 }
+				{
+					"effect": "SHIELD_ARC_FLAT",
+					"magnitude": 60
+				}
 			],
 			"tags": [
 				"shield"
@@ -530,8 +695,14 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "SHIELD_ABSORPTION_PERCENT", "magnitude": -20 },
-				{ "effect": "SHIELD_PIERCE_CHANCE_PERCENT", "magnitude": -50 }
+				{
+					"effect": "SHIELD_ABSORPTION_PERCENT",
+					"magnitude": -20
+				},
+				{
+					"effect": "SHIELD_PIERCE_CHANCE_PERCENT",
+					"magnitude": -50
+				}
 			],
 			"tags": [
 				"shield"
@@ -545,8 +716,14 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "PEAK_CR_DURATION_PERCENT", "magnitude": 50 },
-				{ "effect": "CR_LOSS_PER_SECOND_PERCENT", "magnitude": -25 }
+				{
+					"effect": "PEAK_CR_DURATION_PERCENT",
+					"magnitude": 50
+				},
+				{
+					"effect": "CR_LOSS_PER_SECOND_PERCENT",
+					"magnitude": -25
+				}
 			]
 		},
 		{
@@ -557,7 +734,13 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
-				{ "effect": "ARMOR_FLAT", "frigate": 150, "destroyer": 300, "cruiser": 400, "capitalShip": 500 }
+				{
+					"effect": "ARMOR_FLAT",
+					"frigate": 150,
+					"destroyer": 300,
+					"cruiser": 400,
+					"capitalShip": 500
+				}
 			],
 			"tags": [
 				"armour"
@@ -571,8 +754,14 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "BEAM_DAMAGE_HARD_FLUX_PERCENT", "magnitude": 50 },
-				{ "effect": "BEAM_WEAPON_RANGE_PERCENT", "magnitude": -25 }
+				{
+					"effect": "BEAM_DAMAGE_HARD_FLUX_PERCENT",
+					"magnitude": 50
+				},
+				{
+					"effect": "BEAM_WEAPON_RANGE_PERCENT",
+					"magnitude": -25
+				}
 			],
 			"todo": "Placeholder magnitudes (50% hard flux, -25% range) pending real balance numbers. Reimplemented as a scalable percentage instead of vanilla's all-or-nothing forced-hard-flux-on-every-beam-hit, and the range reduction is a flat percentage instead of vanilla's reduce-only-the-portion-past-200-units logic - deliberate simplifications, not oversights. The +10% beam damage part (vanilla BEAM_DAMAGE_PERCENT) is not yet added; can reuse the existing BEAM_DAMAGE_PERCENT effect for that later.",
 			"tags": [
@@ -588,9 +777,18 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "PD_IGNORES_DECOY_FLARES", "magnitude": 0 },
-				{ "effect": "PD_BEST_TARGET_LEADING", "magnitude": 0 },
-				{ "effect": "DAMAGE_TO_MISSILES_PERCENT", "magnitude": 50 }
+				{
+					"effect": "PD_IGNORES_DECOY_FLARES",
+					"magnitude": 0
+				},
+				{
+					"effect": "PD_BEST_TARGET_LEADING",
+					"magnitude": 0
+				},
+				{
+					"effect": "DAMAGE_TO_MISSILES_PERCENT",
+					"magnitude": 50
+				}
 			]
 		},
 		{
@@ -601,8 +799,20 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
-				{ "effect": "BALLISTIC_WEAPON_RANGE_PERCENT", "frigate": 10, "destroyer": 20, "cruiser": 40, "capitalShip": 60 },
-				{ "effect": "ENERGY_WEAPON_RANGE_PERCENT", "frigate": 10, "destroyer": 20, "cruiser": 40, "capitalShip": 60 }
+				{
+					"effect": "BALLISTIC_WEAPON_RANGE_PERCENT",
+					"frigate": 10,
+					"destroyer": 20,
+					"cruiser": 40,
+					"capitalShip": 60
+				},
+				{
+					"effect": "ENERGY_WEAPON_RANGE_PERCENT",
+					"frigate": 10,
+					"destroyer": 20,
+					"cruiser": 40,
+					"capitalShip": 60
+				}
 			],
 			"tags": [
 				"range"
@@ -701,7 +911,10 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "FIGHTER_CREW_LOSS_PERCENT", "magnitude": -75 }
+				{
+					"effect": "FIGHTER_CREW_LOSS_PERCENT",
+					"magnitude": -75
+				}
 			],
 			"tags": [
 				"fighter"
@@ -715,9 +928,18 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "HULL_PERCENT", "magnitude": 40 },
-				{ "effect": "SHIP_RECOVERY_CHANCE_BONUS", "magnitude": 1000 },
-				{ "effect": "BREAK_PROBABILITY_PERCENT", "magnitude": -100 }
+				{
+					"effect": "HULL_PERCENT",
+					"magnitude": 40
+				},
+				{
+					"effect": "SHIP_RECOVERY_CHANCE_BONUS",
+					"magnitude": 1000
+				},
+				{
+					"effect": "BREAK_PROBABILITY_PERCENT",
+					"magnitude": -100
+				}
 			],
 			"tags": [
 				"hull"
@@ -753,7 +975,10 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "SHIELD_UPKEEP_PERCENT", "magnitude": -50 }
+				{
+					"effect": "SHIELD_UPKEEP_PERCENT",
+					"magnitude": -50
+				}
 			],
 			"tags": [
 				"shield"
@@ -767,12 +992,27 @@
 			"xpCost": 2000,
 			"tier": "KEYSTONE",
 			"effects": [
-				{ "effect": "BALLISTIC_WEAPON_RANGE_PERCENT", "magnitude": -15 },
-				{ "effect": "ENERGY_WEAPON_RANGE_PERCENT", "magnitude": -15 },
-				{ "effect": "FIGHTER_REFIT_TIME_MULT", "magnitude": 25 }
+				{
+					"effect": "BALLISTIC_WEAPON_RANGE_PERCENT",
+					"magnitude": -15
+				},
+				{
+					"effect": "ENERGY_WEAPON_RANGE_PERCENT",
+					"magnitude": -15
+				},
+				{
+					"effect": "FIGHTER_REFIT_TIME_MULT",
+					"magnitude": 25
+				}
 			],
 			"hullSizeEffects": [
-				{ "effect": "TOP_SPEED_FLAT", "frigate": 25, "destroyer": 20, "cruiser": 15, "capitalShip": 15 }
+				{
+					"effect": "TOP_SPEED_FLAT",
+					"frigate": 25,
+					"destroyer": 20,
+					"cruiser": 15,
+					"capitalShip": 15
+				}
 			]
 		},
 		{
@@ -974,17 +1214,17 @@
 			"hullSizeEffects": [
 				{
 					"effect": "SURVEY_COST_REDUCTION_HEAVY_MACHINERY",
-					"frigate": 5,
-					"destroyer": 10,
-					"cruiser": 20,
-					"capitalShip": 40
+					"frigate": 3,
+					"destroyer": 5,
+					"cruiser": 10,
+					"capitalShip": 20
 				},
 				{
 					"effect": "SURVEY_COST_REDUCTION_SUPPLIES",
-					"frigate": 5,
-					"destroyer": 10,
-					"cruiser": 20,
-					"capitalShip": 40
+					"frigate": 3,
+					"destroyer": 5,
+					"cruiser": 10,
+					"capitalShip": 20
 				}
 			],
 			"tags": [
@@ -1070,7 +1310,10 @@
 			"opCost": 2,
 			"xpCost": 500,
 			"effects": [
-				{ "effect": "FIGHTER_WEAPON_DAMAGE_PERCENT", "magnitude": 15 }
+				{
+					"effect": "FIGHTER_WEAPON_DAMAGE_PERCENT",
+					"magnitude": 15
+				}
 			],
 			"todo": "Placeholder magnitude (15%) pending real balance numbers.",
 			"tags": [
@@ -1084,7 +1327,10 @@
 			"opCost": 2,
 			"xpCost": 500,
 			"effects": [
-				{ "effect": "FIGHTER_TOP_SPEED_PERCENT", "magnitude": 15 }
+				{
+					"effect": "FIGHTER_TOP_SPEED_PERCENT",
+					"magnitude": 15
+				}
 			],
 			"todo": "Placeholder magnitude (15%) pending real balance numbers.",
 			"tags": [
@@ -1118,6 +1364,96 @@
 			],
 			"tags": [
 				"flux"
+			]
+		},
+		{
+			"id": "efficient_vents",
+			"name": "Efficient Vents",
+			"icon": "",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "FLUX_DISSIPATION_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"hullSizeEffects": [
+				{
+					"effect": "FLUX_DISSIPATION_FLAT",
+					"frigate": 10,
+					"destroyer": 20,
+					"cruiser": 30,
+					"capitalShip": 50
+				}
+			],
+			"tags": [
+				"flux"
+			]
+		},
+		{
+			"id": "survey_mach_cost",
+			"name": "Survey Heavy Machinery Cost Reduction",
+			"icon": "",
+			"opCost": 4,
+			"xpCost": 2000,
+			"hullSizeEffects": [
+				{
+					"effect": "SURVEY_COST_REDUCTION_HEAVY_MACHINERY",
+					"frigate": 2,
+					"destroyer": 4,
+					"cruiser": 7,
+					"capitalShip": 15
+				}
+			],
+			"tags": [
+				"logistics"
+			]
+		},
+		{
+			"id": "survey_supplies_cost_reduction",
+			"name": "Survey supplies cost reduction",
+			"icon": "",
+			"opCost": 4,
+			"xpCost": 2000,
+			"hullSizeEffects": [
+				{
+					"effect": "SURVEY_COST_REDUCTION_SUPPLIES",
+					"frigate": 2,
+					"destroyer": 4,
+					"cruiser": 7,
+					"capitalShip": 15
+				}
+			],
+			"tags": [
+				"logistics"
+			]
+		},
+		{
+			"id": "survey_generic_cost_reduction",
+			"name": "Survey cost reduction",
+			"icon": "",
+			"opCost": 4,
+			"xpCost": 2000,
+			"hullSizeEffects": [
+				{
+					"effect": "SURVEY_COST_REDUCTION_HEAVY_MACHINERY",
+					"frigate": 1,
+					"destroyer": 3,
+					"cruiser": 5,
+					"capitalShip": 10
+				},
+				{
+					"effect": "SURVEY_COST_REDUCTION_SUPPLIES",
+					"frigate": 1,
+					"destroyer": 3,
+					"cruiser": 5,
+					"capitalShip": 10
+				}
+			],
+			"tags": [
+				"logistics"
 			]
 		}
 	]

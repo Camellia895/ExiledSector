@@ -1,25 +1,22 @@
 {
 	"nodes": [
 		{
-			"id": "hybrid_flux_1",
-			"type": "hybrid_flux",
-			"connectedTo": [],
-			"x": -500,
-			"y": -941
-		},
-		{
 			"id": "flux_capacity_1",
 			"type": "flux_capacity",
-			"connectedTo": [],
-			"x": -535,
-			"y": -1017
+			"connectedTo": [
+				"flux_capacity_3"
+			],
+			"x": -859,
+			"y": -1086
 		},
 		{
 			"id": "flux_dissipation_1",
 			"type": "flux_dissipation",
-			"connectedTo": [],
-			"x": -614,
-			"y": -1008
+			"connectedTo": [
+				"flux_dissipation_2"
+			],
+			"x": -344,
+			"y": -1087
 		},
 		{
 			"id": "missile_damage_1",
@@ -49,8 +46,8 @@
 				"beam_damage_2",
 				"beam_damage_5"
 			],
-			"x": -1267,
-			"y": -115
+			"x": -1457,
+			"y": -675
 		},
 		{
 			"id": "non_beam_energy_damage_1",
@@ -59,8 +56,8 @@
 				"energy_damage_1",
 				"non_beam_energy_damage_2"
 			],
-			"x": -1195,
-			"y": -215
+			"x": -1385,
+			"y": -775
 		},
 		{
 			"id": "energy_damage_1",
@@ -69,8 +66,8 @@
 				"non_beam_energy_damage_1",
 				"beam_damage_2"
 			],
-			"x": -1111,
-			"y": -186
+			"x": -1301,
+			"y": -746
 		},
 		{
 			"id": "armor_1",
@@ -82,9 +79,11 @@
 		{
 			"id": "packed_capacitors_1",
 			"type": "packed_capacitors",
-			"connectedTo": [],
-			"x": -580,
-			"y": -1101
+			"connectedTo": [
+				"flux_capacity_3"
+			],
+			"x": -799,
+			"y": -1194
 		},
 		{
 			"id": "safety_overrides_1",
@@ -118,29 +117,29 @@
 			"id": "blast_doors_1",
 			"type": "blast_doors",
 			"connectedTo": [],
-			"x": 100,
-			"y": 223
+			"x": 562,
+			"y": 430
 		},
 		{
 			"id": "fluxcoil_1",
 			"type": "fluxcoil",
 			"connectedTo": [],
-			"x": -751,
-			"y": -957
+			"x": -1540,
+			"y": -1363
 		},
 		{
 			"id": "fluxbreakers_1",
 			"type": "fluxbreakers",
 			"connectedTo": [],
-			"x": -952,
-			"y": -905
+			"x": -1156,
+			"y": -1300
 		},
 		{
 			"id": "fluxdistributor_1",
 			"type": "fluxdistributor",
 			"connectedTo": [],
-			"x": -698,
-			"y": -1045
+			"x": -1517,
+			"y": -1489
 		},
 		{
 			"id": "autorepair_1",
@@ -237,8 +236,8 @@
 			"id": "ecm_1",
 			"type": "ecm",
 			"connectedTo": [],
-			"x": 67,
-			"y": 79
+			"x": -349,
+			"y": -436
 		},
 		{
 			"id": "defensive_targeting_array_1",
@@ -286,15 +285,15 @@
 			"id": "frontshield_1",
 			"type": "frontshield",
 			"connectedTo": [],
-			"x": 698,
-			"y": -1133
+			"x": 789,
+			"y": -1346
 		},
 		{
 			"id": "frontemitter_1",
 			"type": "frontemitter",
 			"connectedTo": [],
-			"x": 580,
-			"y": -1159
+			"x": 873,
+			"y": -1296
 		},
 		{
 			"id": "adaptiveshields_1",
@@ -321,92 +320,97 @@
 			"id": "nav_relay_1",
 			"type": "nav_relay",
 			"connectedTo": [],
-			"x": -24,
-			"y": 255
+			"x": -268,
+			"y": -320
 		},
 		{
 			"id": "adaptive_coils_1",
 			"type": "adaptive_coils",
 			"connectedTo": [],
-			"x": -873,
-			"y": -940
+			"x": -943,
+			"y": -1569
 		},
 		{
 			"id": "phase_anchor_1",
 			"type": "phase_anchor",
 			"connectedTo": [],
-			"x": -958,
-			"y": -977
+			"x": -844,
+			"y": -1569
 		},
 		{
 			"id": "additional_berthing_1",
 			"type": "additional_berthing",
 			"connectedTo": [],
-			"x": -14,
-			"y": -168
+			"x": -673,
+			"y": 263
 		},
 		{
 			"id": "augmentedengines_1",
 			"type": "augmentedengines",
 			"connectedTo": [],
-			"x": 287,
-			"y": 61
+			"x": -418,
+			"y": -520
 		},
 		{
 			"id": "auxiliary_fuel_tanks_1",
 			"type": "auxiliary_fuel_tanks",
 			"connectedTo": [],
-			"x": -44,
-			"y": 72
+			"x": 687,
+			"y": 256
 		},
 		{
 			"id": "efficiency_overhaul_1",
 			"type": "efficiency_overhaul",
-			"connectedTo": [],
-			"x": 0,
-			"y": 0
+			"connectedTo": [
+				"small_logistics_optional_4",
+				"small_logistics_optional_5"
+			],
+			"x": -173,
+			"y": -96
 		},
 		{
 			"id": "expanded_cargo_holds_1",
 			"type": "expanded_cargo_holds",
 			"connectedTo": [],
-			"x": 102,
-			"y": -116
+			"x": -610,
+			"y": 438
 		},
 		{
 			"id": "hiressensors_1",
 			"type": "hiressensors",
 			"connectedTo": [],
-			"x": 129,
-			"y": -12
+			"x": -199,
+			"y": -630
 		},
 		{
 			"id": "insulatedengine_1",
 			"type": "insulatedengine",
 			"connectedTo": [],
-			"x": -206,
-			"y": -26
+			"x": -652,
+			"y": 180
 		},
 		{
 			"id": "militarized_subsystems_1",
 			"type": "militarized_subsystems",
 			"connectedTo": [],
-			"x": -220,
-			"y": 80
+			"x": 596,
+			"y": 192
 		},
 		{
 			"id": "solar_shielding_1",
 			"type": "solar_shielding",
 			"connectedTo": [],
-			"x": -138,
-			"y": -122
+			"x": -552,
+			"y": 242
 		},
 		{
 			"id": "surveying_equipment_1",
 			"type": "surveying_equipment",
-			"connectedTo": [],
-			"x": 221,
-			"y": 166
+			"connectedTo": [
+				"survey_generic_cost_reduction_2"
+			],
+			"x": 270,
+			"y": -411
 		},
 		{
 			"id": "converted_hangar_1",
@@ -418,9 +422,12 @@
 		{
 			"id": "converted_fighterbay_1",
 			"type": "converted_fighterbay",
-			"connectedTo": [],
-			"x": 293,
-			"y": -50
+			"connectedTo": [
+				"small_logistics_optional_5",
+				"small_logistics_optional_9"
+			],
+			"x": 171,
+			"y": -105
 		},
 		{
 			"id": "expanded_deck_crew_1",
@@ -439,9 +446,13 @@
 		{
 			"id": "operations_center_1",
 			"type": "operations_center",
-			"connectedTo": [],
-			"x": -146,
-			"y": 199
+			"connectedTo": [
+				"small_logistics_optional_5",
+				"small_logistics_optional_4",
+				"small_logistics_optional_9"
+			],
+			"x": 2,
+			"y": -1
 		},
 		{
 			"id": "escort_package_1",
@@ -457,8 +468,8 @@
 				"beam_damage_1",
 				"energy_damage_1"
 			],
-			"x": -1190,
-			"y": -144
+			"x": -1380,
+			"y": -704
 		},
 		{
 			"id": "beam_damage_5",
@@ -466,15 +477,15 @@
 			"connectedTo": [
 				"beam_damage_1"
 			],
-			"x": -1352,
-			"y": -124
+			"x": -1542,
+			"y": -684
 		},
 		{
 			"id": "flux_capacity_2",
 			"type": "flux_capacity",
 			"connectedTo": [],
-			"x": -633,
-			"y": -898
+			"x": -604,
+			"y": -1277
 		},
 		{
 			"id": "non_beam_energy_damage_2",
@@ -483,8 +494,8 @@
 				"non_beam_energy_damage_1",
 				"non_beam_energy_damage_3"
 			],
-			"x": -1274,
-			"y": -227
+			"x": -1464,
+			"y": -787
 		},
 		{
 			"id": "non_beam_energy_damage_3",
@@ -492,15 +503,16 @@
 			"connectedTo": [
 				"non_beam_energy_damage_2"
 			],
-			"x": -1358,
-			"y": -205
+			"x": -1548,
+			"y": -765
 		},
 		{
 			"id": "root_low_tech_1",
 			"type": "root_low_tech",
 			"connectedTo": [
 				"small_logistics_optional_11",
-				"small_logistics_optional_31"
+				"small_logistics_optional_31",
+				"small_logistics_optional_14"
 			],
 			"x": 719,
 			"y": 415
@@ -510,7 +522,8 @@
 			"type": "root_midline",
 			"connectedTo": [
 				"small_logistics_optional_21",
-				"small_logistics_optional_27"
+				"small_logistics_optional_27",
+				"small_logistics_optional_1"
 			],
 			"x": -719,
 			"y": 415
@@ -521,7 +534,9 @@
 			"connectedTo": [
 				"small_logistics_optional_3",
 				"small_logistics_optional_17",
-				"small_flux_optional_1"
+				"small_flux_optional_1",
+				"small_flux_optional_2",
+				"small_logistics_optional_10"
 			],
 			"x": 0,
 			"y": -830
@@ -694,10 +709,248 @@
 			"id": "small_flux_optional_1",
 			"type": "small_flux_optional",
 			"connectedTo": [
+				"root_high_tech_1",
+				"small_flux_optional_4"
+			],
+			"x": 99,
+			"y": -999
+		},
+		{
+			"id": "small_flux_optional_3",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_4",
+				"small_flux_optional_6"
+			],
+			"x": 336,
+			"y": -1390
+		},
+		{
+			"id": "small_flux_optional_4",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_3",
+				"small_flux_optional_1"
+			],
+			"x": 217,
+			"y": -1192
+		},
+		{
+			"id": "flux_capacity_3",
+			"type": "flux_capacity",
+			"connectedTo": [
+				"packed_capacitors_1",
+				"flux_capacity_1"
+			],
+			"x": -877,
+			"y": -975
+		},
+		{
+			"id": "efficient_vents_1",
+			"type": "efficient_vents",
+			"connectedTo": [
+				"flux_dissipation_2"
+			],
+			"x": -548,
+			"y": -861
+		},
+		{
+			"id": "flux_dissipation_2",
+			"type": "flux_dissipation",
+			"connectedTo": [
+				"efficient_vents_1",
+				"flux_dissipation_1"
+			],
+			"x": -501,
+			"y": -1009
+		},
+		{
+			"id": "small_flux_optional_5",
+			"type": "small_flux_optional",
+			"connectedTo": [],
+			"x": -806,
+			"y": -865
+		},
+		{
+			"id": "small_flux_optional_6",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_3",
+				"small_flux_optional_7"
+			],
+			"x": 445,
+			"y": -1580
+		},
+		{
+			"id": "small_flux_optional_7",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_6",
+				"small_flux_optional_8"
+			],
+			"x": 529,
+			"y": -1742
+		},
+		{
+			"id": "small_flux_optional_8",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_7"
+			],
+			"x": 603,
+			"y": -1884
+		},
+		{
+			"id": "small_flux_optional_2",
+			"type": "small_flux_optional",
+			"connectedTo": [
 				"root_high_tech_1"
 			],
-			"x": -2,
-			"y": -986
+			"x": -122,
+			"y": -990
+		},
+		{
+			"id": "small_logistics_optional_1",
+			"type": "small_logistics_optional",
+			"connectedTo": [
+				"root_midline_1",
+				"small_logistics_optional_2"
+			],
+			"x": -529,
+			"y": 309
+		},
+		{
+			"id": "small_logistics_optional_2",
+			"type": "small_logistics_optional",
+			"connectedTo": [
+				"small_logistics_optional_1",
+				"small_logistics_optional_4"
+			],
+			"x": -325,
+			"y": 196
+		},
+		{
+			"id": "small_logistics_optional_4",
+			"type": "small_logistics_optional",
+			"connectedTo": [
+				"small_logistics_optional_2",
+				"efficiency_overhaul_1",
+				"small_logistics_optional_5",
+				"small_logistics_optional_9",
+				"operations_center_1"
+			],
+			"x": -146,
+			"y": 90
+		},
+		{
+			"id": "small_logistics_optional_5",
+			"type": "small_logistics_optional",
+			"connectedTo": [
+				"small_logistics_optional_4",
+				"small_logistics_optional_7",
+				"small_logistics_optional_9",
+				"efficiency_overhaul_1",
+				"converted_fighterbay_1",
+				"operations_center_1"
+			],
+			"x": 0,
+			"y": -159
+		},
+		{
+			"id": "small_logistics_optional_7",
+			"type": "small_logistics_optional",
+			"connectedTo": [
+				"small_logistics_optional_5",
+				"small_logistics_optional_10",
+				"survey_generic_cost_reduction_1"
+			],
+			"x": 1,
+			"y": -401
+		},
+		{
+			"id": "small_logistics_optional_9",
+			"type": "small_logistics_optional",
+			"connectedTo": [
+				"small_logistics_optional_5",
+				"small_logistics_optional_4",
+				"small_logistics_optional_13",
+				"converted_fighterbay_1",
+				"operations_center_1"
+			],
+			"x": 153,
+			"y": 87
+		},
+		{
+			"id": "small_logistics_optional_10",
+			"type": "small_logistics_optional",
+			"connectedTo": [
+				"small_logistics_optional_7",
+				"root_high_tech_1"
+			],
+			"x": 0,
+			"y": -610
+		},
+		{
+			"id": "small_logistics_optional_13",
+			"type": "small_logistics_optional",
+			"connectedTo": [
+				"small_logistics_optional_9",
+				"small_logistics_optional_14"
+			],
+			"x": 339,
+			"y": 184
+		},
+		{
+			"id": "small_logistics_optional_14",
+			"type": "small_logistics_optional",
+			"connectedTo": [
+				"small_logistics_optional_13",
+				"root_low_tech_1"
+			],
+			"x": 512,
+			"y": 293
+		},
+		{
+			"id": "survey_mach_cost_1",
+			"type": "survey_mach_cost",
+			"connectedTo": [
+				"survey_generic_cost_reduction_1",
+				"survey_generic_cost_reduction_2"
+			],
+			"x": 270,
+			"y": -325
+		},
+		{
+			"id": "survey_supplies_cost_reduction_1",
+			"type": "survey_supplies_cost_reduction",
+			"connectedTo": [
+				"survey_generic_cost_reduction_1",
+				"survey_generic_cost_reduction_2"
+			],
+			"x": 264,
+			"y": -502
+		},
+		{
+			"id": "survey_generic_cost_reduction_1",
+			"type": "survey_generic_cost_reduction",
+			"connectedTo": [
+				"small_logistics_optional_7",
+				"survey_supplies_cost_reduction_1",
+				"survey_mach_cost_1"
+			],
+			"x": 149,
+			"y": -403
+		},
+		{
+			"id": "survey_generic_cost_reduction_2",
+			"type": "survey_generic_cost_reduction",
+			"connectedTo": [
+				"surveying_equipment_1",
+				"survey_supplies_cost_reduction_1",
+				"survey_mach_cost_1"
+			],
+			"x": 394,
+			"y": -413
 		}
 	],
 	"connectorCurves": [
