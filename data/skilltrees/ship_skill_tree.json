@@ -121,25 +121,11 @@
 			"y": 1151
 		},
 		{
-			"id": "fluxcoil_1",
-			"type": "fluxcoil",
-			"connectedTo": [],
-			"x": -2742,
-			"y": -1672
-		},
-		{
 			"id": "fluxbreakers_1",
 			"type": "fluxbreakers",
 			"connectedTo": [],
 			"x": -2358,
 			"y": -1609
-		},
-		{
-			"id": "fluxdistributor_1",
-			"type": "fluxdistributor",
-			"connectedTo": [],
-			"x": -2719,
-			"y": -1798
 		},
 		{
 			"id": "autorepair_1",

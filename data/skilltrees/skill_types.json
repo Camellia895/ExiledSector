@@ -3,7 +3,7 @@
 		{
 			"id": "flux_capacity",
 			"name": "Flux Capacity",
-			"icon": "graphics/icons/circular/small_passives/containment_procedures.png",
+			"icon": "graphics/icons/circular/notable_passives/flux_coil_adjunct.png",
 			"opCost": 2,
 			"xpCost": 500,
 			"effects": [
@@ -19,7 +19,7 @@
 		{
 			"id": "flux_dissipation",
 			"name": "Flux Dissipation",
-			"icon": "graphics/icons/circular/small_passives/systems_expertise.png",
+			"icon": "graphics/icons/circular/notable_passives/flux_distributor.png",
 			"opCost": 2,
 			"xpCost": 500,
 			"effects": [
@@ -622,46 +622,6 @@
 			],
 			"tags": [
 				"shield"
-			]
-		},
-		{
-			"id": "fluxcoil",
-			"name": "Flux Coil Adjunct",
-			"icon": "graphics/icons/circular/notable_passives/flux_coil_adjunct.png",
-			"opCost": 4,
-			"xpCost": 2000,
-			"tier": "NOTABLE",
-			"hullSizeEffects": [
-				{
-					"effect": "FLUX_CAPACITY_FLAT",
-					"frigate": 600,
-					"destroyer": 1200,
-					"cruiser": 1800,
-					"capitalShip": 3000
-				}
-			],
-			"tags": [
-				"flux"
-			]
-		},
-		{
-			"id": "fluxdistributor",
-			"name": "Flux Distributor",
-			"icon": "graphics/icons/circular/notable_passives/flux_distributor.png",
-			"opCost": 4,
-			"xpCost": 2000,
-			"tier": "NOTABLE",
-			"hullSizeEffects": [
-				{
-					"effect": "FLUX_DISSIPATION_FLAT",
-					"frigate": 30,
-					"destroyer": 60,
-					"cruiser": 90,
-					"capitalShip": 150
-				}
-			],
-			"tags": [
-				"flux"
 			]
 		},
 		{
@@ -1513,7 +1473,7 @@
 		{
 			"id": "increased_sensor_range",
 			"name": "Increased Sensor Range",
-			"icon": "",
+			"icon": "graphics/icons/circular/notable_passives/high_res_sensors_green.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"hullSizeEffects": [
