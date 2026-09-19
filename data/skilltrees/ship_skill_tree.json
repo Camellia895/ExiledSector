@@ -117,8 +117,8 @@
 			"id": "blast_doors_1",
 			"type": "blast_doors",
 			"connectedTo": [],
-			"x": 1253,
-			"y": 736
+			"x": 1629,
+			"y": 1151
 		},
 		{
 			"id": "fluxcoil_1",
@@ -341,24 +341,27 @@
 			"id": "additional_berthing_1",
 			"type": "additional_berthing",
 			"connectedTo": [],
-			"x": -1591,
-			"y": 752
+			"x": -677,
+			"y": -245
 		},
 		{
 			"id": "augmentedengines_1",
 			"type": "augmentedengines",
-			"connectedTo": [],
-			"x": -875,
-			"y": -167,
-			"orbitAnchorId": "anchor_1",
-			"orbitAngle": 180
+			"connectedTo": [
+				"small_logistics_optional_24",
+				"small_logistics_optional_23"
+			],
+			"x": 232,
+			"y": -1010,
+			"orbitAnchorId": "augmented_drive_field_anchor_1",
+			"orbitAngle": -132.8431769231297
 		},
 		{
 			"id": "auxiliary_fuel_tanks_1",
 			"type": "auxiliary_fuel_tanks",
 			"connectedTo": [],
-			"x": 1292,
-			"y": 556
+			"x": 375,
+			"y": 630
 		},
 		{
 			"id": "efficiency_overhaul_1",
@@ -367,20 +370,22 @@
 				"small_logistics_optional_4",
 				"small_logistics_optional_5"
 			],
-			"x": -335,
-			"y": -159
+			"x": -251,
+			"y": -145
 		},
 		{
 			"id": "expanded_cargo_holds_1",
 			"type": "expanded_cargo_holds",
 			"connectedTo": [],
-			"x": -1432,
-			"y": 798
+			"x": -835,
+			"y": 92
 		},
 		{
 			"id": "hiressensors_1",
 			"type": "hiressensors",
-			"connectedTo": [],
+			"connectedTo": [
+				"increased_sensor_range_3"
+			],
 			"x": -344,
 			"y": -874
 		},
@@ -388,22 +393,22 @@
 			"id": "insulatedengine_1",
 			"type": "insulatedengine",
 			"connectedTo": [],
-			"x": -1501,
-			"y": 657
+			"x": -332,
+			"y": -522
 		},
 		{
 			"id": "militarized_subsystems_1",
 			"type": "militarized_subsystems",
 			"connectedTo": [],
-			"x": 1377,
-			"y": 686
+			"x": 799,
+			"y": -18
 		},
 		{
 			"id": "solar_shielding_1",
 			"type": "solar_shielding",
 			"connectedTo": [],
-			"x": -1383,
-			"y": 888
+			"x": -317,
+			"y": 629
 		},
 		{
 			"id": "surveying_equipment_1",
@@ -411,8 +416,8 @@
 			"connectedTo": [
 				"survey_generic_cost_reduction_2"
 			],
-			"x": 408,
-			"y": -541
+			"x": 346,
+			"y": -538
 		},
 		{
 			"id": "converted_hangar_1",
@@ -428,8 +433,8 @@
 				"small_logistics_optional_5",
 				"small_logistics_optional_9"
 			],
-			"x": 450,
-			"y": -159
+			"x": 252,
+			"y": -146
 		},
 		{
 			"id": "expanded_deck_crew_1",
@@ -568,7 +573,8 @@
 			"connectedTo": [
 				"root_high_tech_1",
 				"small_logistics_optional_6",
-				"small_flux_optional_1"
+				"small_flux_optional_1",
+				"small_logistics_optional_24"
 			],
 			"x": 425,
 			"y": -1170,
@@ -755,7 +761,7 @@
 				"small_logistics_optional_3"
 			],
 			"x": 0,
-			"y": -1546
+			"y": -1600
 		},
 		{
 			"id": "small_flux_optional_3",
@@ -775,7 +781,7 @@
 				"small_flux_optional_1"
 			],
 			"x": 0,
-			"y": -1803
+			"y": -1929
 		},
 		{
 			"id": "flux_capacity_3",
@@ -849,8 +855,8 @@
 				"root_midline_1",
 				"small_logistics_optional_2"
 			],
-			"x": -707,
-			"y": 412
+			"x": -779,
+			"y": 453
 		},
 		{
 			"id": "small_logistics_optional_2",
@@ -859,8 +865,8 @@
 				"small_logistics_optional_1",
 				"small_logistics_optional_4"
 			],
-			"x": -436,
-			"y": 257
+			"x": -507,
+			"y": 294
 		},
 		{
 			"id": "small_logistics_optional_4",
@@ -872,8 +878,8 @@
 				"small_logistics_optional_9",
 				"operations_center_1"
 			],
-			"x": -146,
-			"y": 90
+			"x": -250,
+			"y": 144
 		},
 		{
 			"id": "small_logistics_optional_5",
@@ -887,7 +893,7 @@
 				"operations_center_1"
 			],
 			"x": 0,
-			"y": -159
+			"y": -289
 		},
 		{
 			"id": "small_logistics_optional_7",
@@ -895,8 +901,7 @@
 			"connectedTo": [
 				"small_logistics_optional_5",
 				"small_logistics_optional_10",
-				"survey_generic_cost_reduction_1",
-				"small_logistics_optional_15"
+				"survey_generic_cost_reduction_1"
 			],
 			"x": 0,
 			"y": -538
@@ -911,8 +916,8 @@
 				"converted_fighterbay_1",
 				"operations_center_1"
 			],
-			"x": 153,
-			"y": 87
+			"x": 250,
+			"y": 144
 		},
 		{
 			"id": "small_logistics_optional_10",
@@ -920,7 +925,8 @@
 			"connectedTo": [
 				"small_logistics_optional_7",
 				"root_high_tech_1",
-				"increased_sensor_range_2"
+				"increased_sensor_range_2",
+				"small_logistics_optional_23"
 			],
 			"x": 0,
 			"y": -875
@@ -932,8 +938,8 @@
 				"small_logistics_optional_9",
 				"small_logistics_optional_14"
 			],
-			"x": 348,
-			"y": 199
+			"x": 496,
+			"y": 285
 		},
 		{
 			"id": "small_logistics_optional_14",
@@ -942,8 +948,8 @@
 				"small_logistics_optional_13",
 				"root_low_tech_1"
 			],
-			"x": 512,
-			"y": 293
+			"x": 770,
+			"y": 442
 		},
 		{
 			"id": "survey_mach_cost_1",
@@ -952,8 +958,8 @@
 				"survey_generic_cost_reduction_1",
 				"survey_generic_cost_reduction_2"
 			],
-			"x": 408,
-			"y": -393,
+			"x": 346,
+			"y": -389,
 			"orbitAnchorId": "survey_anchor",
 			"orbitAngle": 90
 		},
@@ -964,8 +970,8 @@
 				"survey_generic_cost_reduction_1",
 				"survey_generic_cost_reduction_2"
 			],
-			"x": 408,
-			"y": -689,
+			"x": 346,
+			"y": -685,
 			"orbitAnchorId": "survey_anchor",
 			"orbitAngle": 270
 		},
@@ -977,8 +983,8 @@
 				"survey_supplies_cost_reduction_1",
 				"survey_mach_cost_1"
 			],
-			"x": 260,
-			"y": -541,
+			"x": 198,
+			"y": -537,
 			"orbitAnchorId": "survey_anchor",
 			"orbitAngle": 180
 		},
@@ -990,8 +996,8 @@
 				"survey_mach_cost_1",
 				"surveying_equipment_1"
 			],
-			"x": 556,
-			"y": -541,
+			"x": 494,
+			"y": -537,
 			"orbitAnchorId": "survey_anchor",
 			"orbitAngle": 0
 		},
@@ -1004,7 +1010,7 @@
 			],
 			"x": -344,
 			"y": -1050,
-			"orbitAnchorId": "anchor_3",
+			"orbitAnchorId": "high_res_sensors_anchor",
 			"orbitAngle": 270
 		},
 		{
@@ -1016,7 +1022,7 @@
 			],
 			"x": -168,
 			"y": -874,
-			"orbitAnchorId": "anchor_3",
+			"orbitAnchorId": "high_res_sensors_anchor",
 			"orbitAngle": 0
 		},
 		{
@@ -1024,50 +1030,37 @@
 			"type": "increased_sensor_range",
 			"connectedTo": [
 				"increased_sensor_range_1",
-				"increased_sensor_range_2"
+				"increased_sensor_range_2",
+				"hiressensors_1"
 			],
 			"x": -221,
 			"y": -999,
-			"orbitAnchorId": "anchor_3",
+			"orbitAnchorId": "high_res_sensors_anchor",
 			"orbitAngle": -45.454408225219744
 		},
 		{
-			"id": "small_logistics_optional_15",
+			"id": "small_logistics_optional_23",
 			"type": "small_logistics_optional",
 			"connectedTo": [
-				"small_logistics_optional_7",
-				"small_logistics_optional_16",
-				"small_logistics_optional_22"
+				"small_logistics_optional_10",
+				"augmentedengines_1"
 			],
-			"x": -439,
-			"y": -379
+			"x": 172,
+			"y": -874,
+			"orbitAnchorId": "augmented_drive_field_anchor_1",
+			"orbitAngle": 180
 		},
 		{
-			"id": "small_logistics_optional_16",
+			"id": "small_logistics_optional_24",
 			"type": "small_logistics_optional",
 			"connectedTo": [
-				"small_logistics_optional_15"
+				"augmentedengines_1",
+				"small_logistics_optional_3"
 			],
-			"x": -551,
-			"y": -411
-		},
-		{
-			"id": "small_logistics_optional_22",
-			"type": "small_logistics_optional",
-			"connectedTo": [
-				"small_logistics_optional_15"
-			],
-			"x": -514,
-			"y": -292
-		},
-		{
-			"id": "augmentedengines_2",
-			"type": "augmentedengines",
-			"connectedTo": [],
-			"x": -780,
-			"y": -72,
-			"orbitAnchorId": "anchor_1",
-			"orbitAngle": 90
+			"x": 358,
+			"y": -1060,
+			"orbitAnchorId": "augmented_drive_field_anchor_1",
+			"orbitAngle": 270
 		}
 	],
 	"connectorCurves": [
@@ -1188,26 +1181,26 @@
 		{
 			"a": "survey_generic_cost_reduction_2",
 			"b": "survey_mach_cost_1",
-			"controlX": 483,
-			"controlY": -466
+			"controlX": 421,
+			"controlY": -462
 		},
 		{
 			"a": "survey_generic_cost_reduction_2",
 			"b": "survey_supplies_cost_reduction_1",
-			"controlX": 483,
-			"controlY": -616
+			"controlX": 421,
+			"controlY": -612
 		},
 		{
 			"a": "survey_generic_cost_reduction_1",
 			"b": "survey_supplies_cost_reduction_1",
-			"controlX": 333,
-			"controlY": -616
+			"controlX": 271,
+			"controlY": -612
 		},
 		{
 			"a": "survey_generic_cost_reduction_1",
 			"b": "survey_mach_cost_1",
-			"controlX": 333,
-			"controlY": -466
+			"controlX": 271,
+			"controlY": -462
 		},
 		{
 			"a": "increased_sensor_range_1",
@@ -1220,14 +1213,44 @@
 			"b": "increased_sensor_range_3",
 			"controlX": -182,
 			"controlY": -942
+		},
+		{
+			"a": "small_logistics_optional_4",
+			"b": "small_logistics_optional_9",
+			"controlX": 0,
+			"controlY": 144
+		},
+		{
+			"a": "small_logistics_optional_4",
+			"b": "small_logistics_optional_5",
+			"controlX": -125,
+			"controlY": -72
+		},
+		{
+			"a": "small_logistics_optional_5",
+			"b": "small_logistics_optional_9",
+			"controlX": 125,
+			"controlY": -72
+		},
+		{
+			"a": "augmentedengines_1",
+			"b": "small_logistics_optional_24",
+			"controlX": 290,
+			"controlY": -1047
+		},
+		{
+			"a": "augmentedengines_1",
+			"b": "small_logistics_optional_23",
+			"controlX": 188,
+			"controlY": -948
 		}
 	],
 	"orbitAnchors": [
 		{
-			"id": "anchor_1",
-			"x": -780,
-			"y": -167,
-			"radius": 95
+			"id": "augmented_drive_field_anchor_1",
+			"x": 358,
+			"y": -874,
+			"radius": 186
 		},
 		{
 			"id": "inner_circle_anchor",
@@ -1236,22 +1259,15 @@
 			"radius": 1245
 		},
 		{
-			"id": "anchor_2",
-			"x": 7,
-			"y": 298,
-			"radius": 150,
-			"shape": "triangle"
-		},
-		{
 			"id": "survey_anchor",
-			"x": 408,
-			"y": -541,
+			"x": 346,
+			"y": -537,
 			"radius": 150,
 			"shape": "square",
 			"rotation": 44.3
 		},
 		{
-			"id": "anchor_3",
+			"id": "high_res_sensors_anchor",
 			"x": -344,
 			"y": -874,
 			"radius": 176
