@@ -1374,11 +1374,8 @@ function duplicateNode(n){
   var copy = deepCopy(n);
   copy.id = uniqueNodeId(n.type);
   copy.x = n.x + 40; copy.y = n.y - 40;
-  copy.connectedTo = deepCopy(n.connectedTo);
-  copy.connectedTo.forEach(function(pid){
-    var other = nodeById(pid);
-    if (other && other.connectedTo.indexOf(copy.id) === -1) other.connectedTo.push(copy.id);
-  });
+  copy.connectedTo = [n.id];
+  n.connectedTo.push(copy.id);
   state.nodes.push(copy);
   selectNode(copy.id);
   saveLocal();
