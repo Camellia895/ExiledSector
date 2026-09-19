@@ -7,7 +7,7 @@ import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
 
 public enum MovementSkillEffect implements SkillEffect {
 
-    MANEUVERABILITY {
+    MANEUVERABILITY_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getMaxTurnRate().modifyPercent(modId, magnitude);
@@ -18,7 +18,7 @@ public enum MovementSkillEffect implements SkillEffect {
             return pctChange(magnitude, "maneuverability");
         }
     },
-    TOP_SPEED {
+    TOP_SPEED_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getMaxSpeed().modifyPercent(modId, magnitude);
@@ -40,7 +40,7 @@ public enum MovementSkillEffect implements SkillEffect {
             return flatChange(magnitude, "top speed");
         }
     },
-    ACCELERATION {
+    ACCELERATION_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getAcceleration().modifyPercent(modId, magnitude);
@@ -62,7 +62,7 @@ public enum MovementSkillEffect implements SkillEffect {
             return flatChange(magnitude, "acceleration");
         }
     },
-    DECELERATION {
+    DECELERATION_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getDeceleration().modifyPercent(modId, magnitude);
@@ -84,7 +84,7 @@ public enum MovementSkillEffect implements SkillEffect {
             return flatChange(magnitude, "deceleration");
         }
     },
-    TURN_ACCELERATION {
+    TURN_ACCELERATION_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getTurnAcceleration().modifyPercent(modId, magnitude);

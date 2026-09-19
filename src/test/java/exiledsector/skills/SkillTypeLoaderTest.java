@@ -21,7 +21,7 @@ class SkillTypeLoaderTest {
                 + "\"icon\": \"graphics/hullmods/reinforced_bulkheads.png\","
                 + "\"opCost\": 2,"
                 + "\"xpCost\": 500,"
-                + "\"effects\": [ { \"effect\": \"HULL\", \"magnitude\": 10 } ]"
+                + "\"effects\": [ { \"effect\": \"HULL_PERCENT\", \"magnitude\": 10 } ]"
                 + "} ] }");
 
         Map<String, SkillType> types = SkillTypeLoader.parseSkillTypes(root);
@@ -32,7 +32,7 @@ class SkillTypeLoaderTest {
         assertEquals(2, hull.getOpCost());
         assertEquals(500f, hull.getXpCost());
         assertEquals(1, hull.getEffects().size());
-        assertEquals(DefenseSkillEffect.HULL, hull.getEffects().get(0).effect());
+        assertEquals(DefenseSkillEffect.HULL_PERCENT, hull.getEffects().get(0).effect());
         assertEquals(10f, hull.getEffects().get(0).magnitude());
     }
 
@@ -42,14 +42,14 @@ class SkillTypeLoaderTest {
                 + "\"id\": \"heavyarmor\","
                 + "\"name\": \"Heavy Armor\","
                 + "\"icon\": \"graphics/icons/notable_hullmods/heavy_armor.png\","
-                + "\"effects\": [ { \"effect\": \"ARMOR\", \"magnitude\": 15 }, { \"effect\": \"HULL\", \"magnitude\": 5 } ]"
+                + "\"effects\": [ { \"effect\": \"ARMOR_PERCENT\", \"magnitude\": 15 }, { \"effect\": \"HULL_PERCENT\", \"magnitude\": 5 } ]"
                 + "} ] }");
 
         SkillType heavyArmor = SkillTypeLoader.parseSkillTypes(root).get("heavyarmor");
 
         assertEquals(2, heavyArmor.getEffects().size());
-        assertEquals(DefenseSkillEffect.ARMOR, heavyArmor.getEffects().get(0).effect());
-        assertEquals(DefenseSkillEffect.HULL, heavyArmor.getEffects().get(1).effect());
+        assertEquals(DefenseSkillEffect.ARMOR_PERCENT, heavyArmor.getEffects().get(0).effect());
+        assertEquals(DefenseSkillEffect.HULL_PERCENT, heavyArmor.getEffects().get(1).effect());
     }
 
     @Test

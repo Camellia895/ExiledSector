@@ -137,7 +137,7 @@ class SkillTreeInstallerTest {
     @Test
     void reappliesEffectsOnEveryQualifyingTickRegardlessOfWhetherTheModWasJustAdded() {
         SkillType hullType = new SkillType("hull", "Hull", "graphics/hullmods/reinforced_bulkheads.png", 2, 500,
-                List.of(new SkillTypeEffect(DefenseSkillEffect.HULL, 10f)), SkillTier.SMALL, null, null, null);
+                List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)), SkillTier.SMALL, null, null, null);
         SkillNode hullNode = new SkillNode("hull_1", hullType, List.of(), 0f, 0f);
         SkillTree.register(hullNode);
 

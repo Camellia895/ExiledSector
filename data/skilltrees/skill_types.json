@@ -115,11 +115,11 @@
 			"tier": "KEYSTONE",
 			"effects": [
 				{ "effect": "ZERO_FLUX_ALWAYS_ON", "magnitude": 0 },
-				{ "effect": "FLUX_DISSIPATION", "magnitude": 100 },
-				{ "effect": "PEAK_CR_DURATION", "magnitude": -67 },
-				{ "effect": "VENT_RATE_MULT", "magnitude": -100 },
+				{ "effect": "FLUX_DISSIPATION_PERCENT", "magnitude": 100 },
+				{ "effect": "PEAK_CR_DURATION_PERCENT", "magnitude": -67 },
+				{ "effect": "VENT_RATE_PERCENT", "magnitude": -100 },
 				{ "effect": "WEAPON_RANGE_THRESHOLD", "magnitude": 450 },
-				{ "effect": "WEAPON_RANGE_FALLOFF", "magnitude": -75 }
+				{ "effect": "WEAPON_RANGE_FALLOFF_PERCENT", "magnitude": -75 }
 			],
 			"hullSizeEffects": [
 				{ "effect": "TOP_SPEED_FLAT", "frigate": 50, "destroyer": 30, "cruiser": 20, "capitalShip": 10 },
@@ -135,8 +135,8 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "SHIELD_TURN_RATE", "magnitude": 100 },
-				{ "effect": "SHIELD_RAISE_RATE", "magnitude": 100 }
+				{ "effect": "SHIELD_TURN_RATE_PERCENT", "magnitude": 100 },
+				{ "effect": "SHIELD_RAISE_RATE_PERCENT", "magnitude": 100 }
 			],
 			"tags": [
 				"shield"
@@ -151,7 +151,7 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "PHASE_CLOAK_FLUX_THRESHOLD",
+					"effect": "PHASE_CLOAK_FLUX_THRESHOLD_PERCENT",
 					"magnitude": 50
 				}
 			],
@@ -169,7 +169,7 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{ "effect": "BEAM_WEAPON_RANGE_FLAT", "magnitude": 200 },
-				{ "effect": "BEAM_WEAPON_TURN_RATE", "magnitude": -30 }
+				{ "effect": "BEAM_WEAPON_TURN_RATE_PERCENT", "magnitude": -30 }
 			],
 			"tags": [
 				"energy",
@@ -184,8 +184,8 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "WEAPON_TURN_RATE", "magnitude": 75 },
-				{ "effect": "BEAM_WEAPON_TURN_RATE", "magnitude": 75 }
+				{ "effect": "WEAPON_TURN_RATE_PERCENT", "magnitude": 75 },
+				{ "effect": "BEAM_WEAPON_TURN_RATE_PERCENT", "magnitude": 75 }
 			]
 		},
 		{
@@ -196,10 +196,10 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "ARMOR", "magnitude": 10 },
-				{ "effect": "WEAPON_DURABILITY", "magnitude": 100 },
-				{ "effect": "WEAPON_TURN_RATE", "magnitude": -25 },
-				{ "effect": "WEAPON_RECOIL", "magnitude": -25 }
+				{ "effect": "ARMOR_PERCENT", "magnitude": 10 },
+				{ "effect": "WEAPON_DURABILITY_PERCENT", "magnitude": 100 },
+				{ "effect": "WEAPON_TURN_RATE_PERCENT", "magnitude": -25 },
+				{ "effect": "WEAPON_RECOIL_PERCENT", "magnitude": -25 }
 			],
 			"tags": [
 				"armour"
@@ -213,7 +213,7 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "REPAIR_TIME", "magnitude": -50 }
+				{ "effect": "REPAIR_TIME_PERCENT", "magnitude": -50 }
 			]
 		},
 		{
@@ -224,10 +224,10 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "ACCELERATION", "magnitude": 100 },
-				{ "effect": "DECELERATION", "magnitude": 50 },
-				{ "effect": "TURN_ACCELERATION", "magnitude": 100 },
-				{ "effect": "MANEUVERABILITY", "magnitude": 50 }
+				{ "effect": "ACCELERATION_PERCENT", "magnitude": 100 },
+				{ "effect": "DECELERATION_PERCENT", "magnitude": 50 },
+				{ "effect": "TURN_ACCELERATION_PERCENT", "magnitude": 100 },
+				{ "effect": "MANEUVERABILITY_PERCENT", "magnitude": 50 }
 			]
 		},
 		{
@@ -238,7 +238,7 @@
 			"xpCost": 2000,
 			"tier": "KEYSTONE",
 			"vanillaHullMod": "ballistic_rangefinder",
-			"todo": "Real vanilla effect is a per-weapon-slot range bonus (WeaponBaseRangeModifier) that varies by the ship's largest ballistic slot size and is capped per weapon, with a separate larger bonus for hybrid mounts - not a fixed magnitude on a single MutableShipStatsAPI stat. Deliberately left on vanillaHullMod passthrough rather than approximate it with a flat/percent BALLISTIC_WEAPON_RANGE effect, since that would only be correct for one specific loadout."
+			"todo": "Real vanilla effect is a per-weapon-slot range bonus (WeaponBaseRangeModifier) that varies by the ship's largest ballistic slot size and is capped per weapon, with a separate larger bonus for hybrid mounts - not a fixed magnitude on a single MutableShipStatsAPI stat. Deliberately left on vanillaHullMod passthrough rather than approximate it with a flat/percent BALLISTIC_WEAPON_RANGE_PERCENT effect, since that would only be correct for one specific loadout."
 		},
 		{
 			"id": "blast_doors",
@@ -249,11 +249,11 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "HULL",
+					"effect": "HULL_PERCENT",
 					"magnitude": 20
 				},
 				{
-					"effect": "CREW_LOSS",
+					"effect": "CREW_LOSS_PERCENT",
 					"magnitude": -60
 				}
 			],
@@ -316,8 +316,8 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
-				{ "effect": "BALLISTIC_WEAPON_RANGE", "frigate": 0, "destroyer": 0, "cruiser": 35, "capitalShip": 50 },
-				{ "effect": "ENERGY_WEAPON_RANGE", "frigate": 0, "destroyer": 0, "cruiser": 35, "capitalShip": 50 }
+				{ "effect": "BALLISTIC_WEAPON_RANGE_PERCENT", "frigate": 0, "destroyer": 0, "cruiser": 35, "capitalShip": 50 },
+				{ "effect": "ENERGY_WEAPON_RANGE_PERCENT", "frigate": 0, "destroyer": 0, "cruiser": 35, "capitalShip": 50 }
 			],
 			"tags": [
 				"range"
@@ -331,7 +331,7 @@
 			"xpCost": 2000,
 			"tier": "KEYSTONE",
 			"vanillaHullMod": "defensive_targeting_array",
-			"todo": "Deliberately kept on vanillaHullMod passthrough as a design choice, not a technical limitation - the fighter-spawn hook needed to convert this now exists (see FIGHTER_PD_DAMAGE_BONUS, reused by other nodes). Real vanilla effect also zeroes the launched fighters' patrol range (locking them near the ship) and tags certain fighter types to stay in front of the ship; neither of those is implemented as a reusable effect yet.",
+			"todo": "Deliberately kept on vanillaHullMod passthrough as a design choice, not a technical limitation - the fighter-spawn hook needed to convert this now exists (see FIGHTER_PD_DAMAGE_BONUS_PERCENT, reused by other nodes). Real vanilla effect also zeroes the launched fighters' patrol range (locking them near the ship) and tags certain fighter types to stay in front of the ship; neither of those is implemented as a reusable effect yet.",
 			"tags": [
 				"range"
 			]
@@ -346,12 +346,12 @@
 			"effects": [
 				{ "effect": "ECCM_CHANCE", "magnitude": 0.5 },
 				{ "effect": "MISSILE_GUIDANCE_FLAT", "magnitude": 1 },
-				{ "effect": "MISSILE_SPEED", "magnitude": 25 },
-				{ "effect": "MISSILE_RANGE", "magnitude": -20 },
-				{ "effect": "MISSILE_ACCELERATION", "magnitude": 150 },
-				{ "effect": "MISSILE_TURN_RATE", "magnitude": 50 },
-				{ "effect": "MISSILE_TURN_ACCELERATION", "magnitude": 150 },
-				{ "effect": "ELECTRONIC_WARFARE_PENALTY_MULT", "magnitude": -50 }
+				{ "effect": "MISSILE_SPEED_PERCENT", "magnitude": 25 },
+				{ "effect": "MISSILE_RANGE_PERCENT", "magnitude": -20 },
+				{ "effect": "MISSILE_ACCELERATION_PERCENT", "magnitude": 150 },
+				{ "effect": "MISSILE_TURN_RATE_PERCENT", "magnitude": 50 },
+				{ "effect": "MISSILE_TURN_ACCELERATION_PERCENT", "magnitude": 150 },
+				{ "effect": "ELECTRONIC_WARFARE_PENALTY_PERCENT", "magnitude": -50 }
 			],
 			"tags": [
 				"missile"
@@ -395,8 +395,8 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "FIGHTER_REPLACEMENT_DECAY_MULT", "magnitude": -15 },
-				{ "effect": "FIGHTER_REPLACEMENT_RECOVERY_MULT", "magnitude": 25 },
+				{ "effect": "FIGHTER_REPLACEMENT_DECAY_PERCENT", "magnitude": -15 },
+				{ "effect": "FIGHTER_REPLACEMENT_RECOVERY_PERCENT", "magnitude": 25 },
 				{ "effect": "MIN_CREW_PER_FIGHTER_BAY", "magnitude": 20 }
 			],
 			"tags": [
@@ -411,8 +411,8 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "BALLISTIC_AMMO", "magnitude": 50 },
-				{ "effect": "ENERGY_AMMO", "magnitude": 50 }
+				{ "effect": "BALLISTIC_AMMO_PERCENT", "magnitude": 50 },
+				{ "effect": "ENERGY_AMMO_PERCENT", "magnitude": 50 }
 			]
 		},
 		{
@@ -423,7 +423,7 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "MISSILE_AMMO", "magnitude": 100 }
+				{ "effect": "MISSILE_AMMO_PERCENT", "magnitude": 100 }
 			],
 			"tags": [
 				"missile"
@@ -530,8 +530,8 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "SHIELD_ABSORPTION", "magnitude": -20 },
-				{ "effect": "SHIELD_PIERCE_CHANCE_MULT", "magnitude": -50 }
+				{ "effect": "SHIELD_ABSORPTION_PERCENT", "magnitude": -20 },
+				{ "effect": "SHIELD_PIERCE_CHANCE_PERCENT", "magnitude": -50 }
 			],
 			"tags": [
 				"shield"
@@ -545,8 +545,8 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "PEAK_CR_DURATION", "magnitude": 50 },
-				{ "effect": "CR_LOSS_PER_SECOND_MULT", "magnitude": -25 }
+				{ "effect": "PEAK_CR_DURATION_PERCENT", "magnitude": 50 },
+				{ "effect": "CR_LOSS_PER_SECOND_PERCENT", "magnitude": -25 }
 			]
 		},
 		{
@@ -572,9 +572,9 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{ "effect": "BEAM_DAMAGE_HARD_FLUX_PERCENT", "magnitude": 50 },
-				{ "effect": "BEAM_WEAPON_RANGE", "magnitude": -25 }
+				{ "effect": "BEAM_WEAPON_RANGE_PERCENT", "magnitude": -25 }
 			],
-			"todo": "Placeholder magnitudes (50% hard flux, -25% range) pending real balance numbers. Reimplemented as a scalable percentage instead of vanilla's all-or-nothing forced-hard-flux-on-every-beam-hit, and the range reduction is a flat percentage instead of vanilla's reduce-only-the-portion-past-200-units logic - deliberate simplifications, not oversights. The +10% beam damage part (vanilla BEAM_DAMAGE) is not yet added; can reuse the existing BEAM_DAMAGE effect for that later.",
+			"todo": "Placeholder magnitudes (50% hard flux, -25% range) pending real balance numbers. Reimplemented as a scalable percentage instead of vanilla's all-or-nothing forced-hard-flux-on-every-beam-hit, and the range reduction is a flat percentage instead of vanilla's reduce-only-the-portion-past-200-units logic - deliberate simplifications, not oversights. The +10% beam damage part (vanilla BEAM_DAMAGE_PERCENT) is not yet added; can reuse the existing BEAM_DAMAGE_PERCENT effect for that later.",
 			"tags": [
 				"energy",
 				"beam"
@@ -590,7 +590,7 @@
 			"effects": [
 				{ "effect": "PD_IGNORES_DECOY_FLARES", "magnitude": 0 },
 				{ "effect": "PD_BEST_TARGET_LEADING", "magnitude": 0 },
-				{ "effect": "DAMAGE_TO_MISSILES", "magnitude": 50 }
+				{ "effect": "DAMAGE_TO_MISSILES_PERCENT", "magnitude": 50 }
 			]
 		},
 		{
@@ -601,8 +601,8 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
-				{ "effect": "BALLISTIC_WEAPON_RANGE", "frigate": 10, "destroyer": 20, "cruiser": 40, "capitalShip": 60 },
-				{ "effect": "ENERGY_WEAPON_RANGE", "frigate": 10, "destroyer": 20, "cruiser": 40, "capitalShip": 60 }
+				{ "effect": "BALLISTIC_WEAPON_RANGE_PERCENT", "frigate": 10, "destroyer": 20, "cruiser": 40, "capitalShip": 60 },
+				{ "effect": "ENERGY_WEAPON_RANGE_PERCENT", "frigate": 10, "destroyer": 20, "cruiser": 40, "capitalShip": 60 }
 			],
 			"tags": [
 				"range"
@@ -701,7 +701,7 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "FIGHTER_CREW_LOSS", "magnitude": -75 }
+				{ "effect": "FIGHTER_CREW_LOSS_PERCENT", "magnitude": -75 }
 			],
 			"tags": [
 				"fighter"
@@ -715,9 +715,9 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "HULL", "magnitude": 40 },
+				{ "effect": "HULL_PERCENT", "magnitude": 40 },
 				{ "effect": "SHIP_RECOVERY_CHANCE_BONUS", "magnitude": 1000 },
-				{ "effect": "BREAK_PROBABILITY_MULT", "magnitude": -100 }
+				{ "effect": "BREAK_PROBABILITY_PERCENT", "magnitude": -100 }
 			],
 			"tags": [
 				"hull"
@@ -732,11 +732,11 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "EMP_DAMAGE_TAKEN",
+					"effect": "EMP_DAMAGE_TAKEN_PERCENT",
 					"magnitude": -50
 				},
 				{
-					"effect": "FLUX_DISSIPATION_WHILE_VENTING",
+					"effect": "FLUX_DISSIPATION_WHILE_VENTING_PERCENT",
 					"magnitude": 25
 				}
 			],
@@ -753,7 +753,7 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
-				{ "effect": "SHIELD_UPKEEP", "magnitude": -50 }
+				{ "effect": "SHIELD_UPKEEP_PERCENT", "magnitude": -50 }
 			],
 			"tags": [
 				"shield"
@@ -767,8 +767,8 @@
 			"xpCost": 2000,
 			"tier": "KEYSTONE",
 			"effects": [
-				{ "effect": "BALLISTIC_WEAPON_RANGE", "magnitude": -15 },
-				{ "effect": "ENERGY_WEAPON_RANGE", "magnitude": -15 },
+				{ "effect": "BALLISTIC_WEAPON_RANGE_PERCENT", "magnitude": -15 },
+				{ "effect": "ENERGY_WEAPON_RANGE_PERCENT", "magnitude": -15 },
 				{ "effect": "FIGHTER_REFIT_TIME_MULT", "magnitude": 25 }
 			],
 			"hullSizeEffects": [
@@ -853,11 +853,11 @@
 					"magnitude": -20
 				},
 				{
-					"effect": "CR_RECOVERY_RATE",
+					"effect": "CR_RECOVERY_RATE_PERCENT",
 					"magnitude": 50
 				},
 				{
-					"effect": "REPAIR_RATE_PER_DAY",
+					"effect": "REPAIR_RATE_PER_DAY_PERCENT",
 					"magnitude": 50
 				}
 			],
@@ -914,11 +914,11 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "ENGINE_DURABILITY",
+					"effect": "ENGINE_DURABILITY_PERCENT",
 					"magnitude": 100
 				},
 				{
-					"effect": "HULL",
+					"effect": "HULL_PERCENT",
 					"magnitude": 10
 				}
 			],
@@ -959,7 +959,7 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"vanillaHullMod": "solar_shielding",
-			"todo": "Real effect is -75% CR loss from solar corona/deep hyperspace storms, plus -10% energy damage taken in combat. The energy damage part is trivial and safe (existing ENERGY_DAMAGE_TAKEN effect, magnitude -10) whenever we want it. The corona/storm part is NOT safe to implement yet - found the real dynamic stat key ('corona_resistance', confirmed shared by both StarCoronaTerrainPlugin and HyperspaceTerrainPlugin, matching the tooltip's 'same effect against storms' claim) but decompiling StarCoronaTerrainPlugin showed corona_resistance actually GATES whether a CR-loss event fires (if (corona_resistance > 0) applyCREvent(...) else <computes what looks like an interval/frequency ratio instead>) rather than scaling a loss percentage directly - the sign/semantics don't resolve cleanly and getting it backward could make ships MORE vulnerable, not less. Deliberately left the whole hullmod on vanillaHullMod passthrough (both effects still work correctly via vanilla's own code) rather than partially convert, since our apply loop is all-or-nothing per node and converting now would silently drop corona/storm protection. Needs more investigation (or someone who already knows this mechanic) before touching.",
+			"todo": "Real effect is -75% CR loss from solar corona/deep hyperspace storms, plus -10% energy damage taken in combat. The energy damage part is trivial and safe (existing ENERGY_DAMAGE_TAKEN_PERCENT effect, magnitude -10) whenever we want it. The corona/storm part is NOT safe to implement yet - found the real dynamic stat key ('corona_resistance', confirmed shared by both StarCoronaTerrainPlugin and HyperspaceTerrainPlugin, matching the tooltip's 'same effect against storms' claim) but decompiling StarCoronaTerrainPlugin showed corona_resistance actually GATES whether a CR-loss event fires (if (corona_resistance > 0) applyCREvent(...) else <computes what looks like an interval/frequency ratio instead>) rather than scaling a loss percentage directly - the sign/semantics don't resolve cleanly and getting it backward could make ships MORE vulnerable, not less. Deliberately left the whole hullmod on vanillaHullMod passthrough (both effects still work correctly via vanilla's own code) rather than partially convert, since our apply loop is all-or-nothing per node and converting now would silently drop corona/storm protection. Needs more investigation (or someone who already knows this mechanic) before touching.",
 			"tags": [
 				"logistics"
 			]
@@ -1023,7 +1023,7 @@
 			"xpCost": 500,
 			"effects": [
 				{
-					"effect": "FUEL_CAPACITY",
+					"effect": "FUEL_CAPACITY_PERCENT",
 					"magnitude": 15
 				}
 			],
@@ -1039,7 +1039,7 @@
 			"xpCost": 500,
 			"effects": [
 				{
-					"effect": "CARGO_CAPACITY",
+					"effect": "CARGO_CAPACITY_PERCENT",
 					"magnitude": 15
 				}
 			],
@@ -1055,7 +1055,7 @@
 			"xpCost": 500,
 			"effects": [
 				{
-					"effect": "CREW_CAPACITY",
+					"effect": "CREW_CAPACITY_PERCENT",
 					"magnitude": 10
 				}
 			],
@@ -1070,7 +1070,7 @@
 			"opCost": 2,
 			"xpCost": 500,
 			"effects": [
-				{ "effect": "FIGHTER_WEAPON_DAMAGE", "magnitude": 15 }
+				{ "effect": "FIGHTER_WEAPON_DAMAGE_PERCENT", "magnitude": 15 }
 			],
 			"todo": "Placeholder magnitude (15%) pending real balance numbers.",
 			"tags": [
@@ -1084,7 +1084,7 @@
 			"opCost": 2,
 			"xpCost": 500,
 			"effects": [
-				{ "effect": "FIGHTER_TOP_SPEED", "magnitude": 15 }
+				{ "effect": "FIGHTER_TOP_SPEED_PERCENT", "magnitude": 15 }
 			],
 			"todo": "Placeholder magnitude (15%) pending real balance numbers.",
 			"tags": [

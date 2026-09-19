@@ -33,7 +33,7 @@ public enum ShieldSkillEffect implements SkillEffect {
             return "Causes " + pct(magnitude) + "% of beam weapon damage dealt to shields to be hard flux.";
         }
     },
-    SHIELD_ARC {
+    SHIELD_ARC_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getShieldArcBonus().modifyPercent(modId, magnitude);
@@ -55,7 +55,7 @@ public enum ShieldSkillEffect implements SkillEffect {
             return flatChange(magnitude, "shield arc, in degrees");
         }
     },
-    SHIELD_PIERCE_CHANCE_MULT {
+    SHIELD_PIERCE_CHANCE_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getDynamic().getStat(Stats.SHIELD_PIERCED_MULT).modifyPercent(modId, magnitude);
@@ -66,7 +66,7 @@ public enum ShieldSkillEffect implements SkillEffect {
             return pctChange(magnitude, "chance for shields to be pierced by EMP arcs");
         }
     },
-    SHIELD_UPKEEP {
+    SHIELD_UPKEEP_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getShieldUpkeepMult().modifyPercent(modId, magnitude);
@@ -77,7 +77,7 @@ public enum ShieldSkillEffect implements SkillEffect {
             return pctChange(magnitude, "shield flux upkeep");
         }
     },
-    SHIELD_TURN_RATE {
+    SHIELD_TURN_RATE_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getShieldTurnRateMult().modifyPercent(modId, magnitude);
@@ -88,7 +88,7 @@ public enum ShieldSkillEffect implements SkillEffect {
             return pctChange(magnitude, "shield turn rate");
         }
     },
-    SHIELD_RAISE_RATE {
+    SHIELD_RAISE_RATE_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getShieldUnfoldRateMult().modifyPercent(modId, magnitude);

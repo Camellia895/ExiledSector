@@ -20,7 +20,7 @@ public enum PhaseSkillEffect implements SkillEffect {
             return pctChange(magnitude, "phase cloak activation cost");
         }
     },
-    PHASE_CLOAK_FLUX_THRESHOLD {
+    PHASE_CLOAK_FLUX_THRESHOLD_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getDynamic().getMod("phase_cloak_flux_level_for_min_speed_mod").modifyPercent(modId, magnitude);

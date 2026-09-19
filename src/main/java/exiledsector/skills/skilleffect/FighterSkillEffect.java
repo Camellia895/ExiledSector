@@ -9,7 +9,7 @@ import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
 
 public enum FighterSkillEffect implements SkillEffect {
 
-    FIGHTER_WEAPON_DAMAGE {
+    FIGHTER_WEAPON_DAMAGE_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
         }
@@ -28,7 +28,7 @@ public enum FighterSkillEffect implements SkillEffect {
             return pctChange(magnitude, "weapon damage of fighters launched from this ship");
         }
     },
-    FIGHTER_TOP_SPEED {
+    FIGHTER_TOP_SPEED_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
         }
@@ -43,7 +43,7 @@ public enum FighterSkillEffect implements SkillEffect {
             return pctChange(magnitude, "top speed of fighters launched from this ship");
         }
     },
-    FIGHTER_CREW_LOSS {
+    FIGHTER_CREW_LOSS_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getDynamic().getStat("fighter_crew_loss_mult").modifyPercent(modId, magnitude);
@@ -78,7 +78,7 @@ public enum FighterSkillEffect implements SkillEffect {
             return pctChange(magnitude, "fighter replacement rate (both decay and recovery)");
         }
     },
-    FIGHTER_REPLACEMENT_DECAY_MULT {
+    FIGHTER_REPLACEMENT_DECAY_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getDynamic().getStat("replacement_rate_decrease_mult").modifyPercent(modId, magnitude);
@@ -89,7 +89,7 @@ public enum FighterSkillEffect implements SkillEffect {
             return pctChange(magnitude, "rate at which fighter replacement capability decays from losses");
         }
     },
-    FIGHTER_REPLACEMENT_RECOVERY_MULT {
+    FIGHTER_REPLACEMENT_RECOVERY_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getDynamic().getStat("replacement_rate_increase_mult").modifyPercent(modId, magnitude);
@@ -100,7 +100,7 @@ public enum FighterSkillEffect implements SkillEffect {
             return pctChange(magnitude, "rate at which fighter replacement capability recovers");
         }
     },
-    FIGHTER_PD_DAMAGE_BONUS {
+    FIGHTER_PD_DAMAGE_BONUS_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
         }

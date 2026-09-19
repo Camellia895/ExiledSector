@@ -9,7 +9,7 @@ import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
 
 public enum FluxSkillEffect implements SkillEffect {
 
-    FLUX_CAPACITY {
+    FLUX_CAPACITY_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getFluxCapacity().modifyPercent(modId, magnitude);
@@ -31,7 +31,7 @@ public enum FluxSkillEffect implements SkillEffect {
             return flatChange(magnitude, "flux capacity");
         }
     },
-    FLUX_DISSIPATION {
+    FLUX_DISSIPATION_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getFluxDissipation().modifyPercent(modId, magnitude);
@@ -53,7 +53,7 @@ public enum FluxSkillEffect implements SkillEffect {
             return flatChange(magnitude, "flux dissipation");
         }
     },
-    HYBRID_FLUX {
+    HYBRID_FLUX_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getFluxCapacity().modifyPercent(modId, magnitude);
@@ -65,7 +65,7 @@ public enum FluxSkillEffect implements SkillEffect {
             return "Increases flux capacity and dissipation by " + pct(magnitude) + "% each.";
         }
     },
-    VENT_RATE_MULT {
+    VENT_RATE_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getVentRateMult().modifyPercent(modId, magnitude);
@@ -76,7 +76,18 @@ public enum FluxSkillEffect implements SkillEffect {
             return pctChange(magnitude, "venting speed");
         }
     },
-    FLUX_DISSIPATION_WHILE_VENTING {
+    ZERO_FLUX_ALWAYS_ON {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getZeroFluxMinimumFluxLevel().modifyFlat(modId, 2f);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return "Allows the zero-flux engine boost to take effect regardless of flux level.";
+        }
+    },
+    FLUX_DISSIPATION_WHILE_VENTING_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
         }

@@ -43,7 +43,7 @@ class SkillEffectTest {
         StatBonus hullBonus = mock(StatBonus.class);
         when(stats.getHullBonus()).thenReturn(hullBonus);
 
-        DefenseSkillEffect.HULL.apply(stats, "mod_id", 10f);
+        DefenseSkillEffect.HULL_PERCENT.apply(stats, "mod_id", 10f);
 
         verify(hullBonus).modifyPercent("mod_id", 10f);
     }
@@ -54,7 +54,7 @@ class SkillEffectTest {
         StatBonus armorBonus = mock(StatBonus.class);
         when(stats.getArmorBonus()).thenReturn(armorBonus);
 
-        DefenseSkillEffect.ARMOR.apply(stats, "mod_id", 10f);
+        DefenseSkillEffect.ARMOR_PERCENT.apply(stats, "mod_id", 10f);
 
         verify(armorBonus).modifyPercent("mod_id", 10f);
     }
@@ -65,7 +65,7 @@ class SkillEffectTest {
         MutableStat fluxCapacity = mock(MutableStat.class);
         when(stats.getFluxCapacity()).thenReturn(fluxCapacity);
 
-        FluxSkillEffect.FLUX_CAPACITY.apply(stats, "mod_id", 1f);
+        FluxSkillEffect.FLUX_CAPACITY_PERCENT.apply(stats, "mod_id", 1f);
 
         verify(fluxCapacity).modifyPercent("mod_id", 1f);
     }
@@ -76,7 +76,7 @@ class SkillEffectTest {
         MutableStat fluxDissipation = mock(MutableStat.class);
         when(stats.getFluxDissipation()).thenReturn(fluxDissipation);
 
-        FluxSkillEffect.FLUX_DISSIPATION.apply(stats, "mod_id", 10f);
+        FluxSkillEffect.FLUX_DISSIPATION_PERCENT.apply(stats, "mod_id", 10f);
 
         verify(fluxDissipation).modifyPercent("mod_id", 10f);
     }
@@ -89,7 +89,7 @@ class SkillEffectTest {
         when(stats.getFluxCapacity()).thenReturn(fluxCapacity);
         when(stats.getFluxDissipation()).thenReturn(fluxDissipation);
 
-        FluxSkillEffect.HYBRID_FLUX.apply(stats, "mod_id", 0.5f);
+        FluxSkillEffect.HYBRID_FLUX_PERCENT.apply(stats, "mod_id", 0.5f);
 
         verify(fluxCapacity).modifyPercent("mod_id", 0.5f);
         verify(fluxDissipation).modifyPercent("mod_id", 0.5f);
@@ -101,7 +101,7 @@ class SkillEffectTest {
         MutableStat ballistic = mock(MutableStat.class);
         when(stats.getBallisticWeaponDamageMult()).thenReturn(ballistic);
 
-        WeaponSkillEffect.BALLISTIC_DAMAGE.apply(stats, "mod_id", 5f);
+        WeaponSkillEffect.BALLISTIC_DAMAGE_PERCENT.apply(stats, "mod_id", 5f);
 
         verify(ballistic).modifyPercent("mod_id", 5f);
     }
@@ -112,7 +112,7 @@ class SkillEffectTest {
         MutableStat missile = mock(MutableStat.class);
         when(stats.getMissileWeaponDamageMult()).thenReturn(missile);
 
-        WeaponSkillEffect.MISSILE_DAMAGE.apply(stats, "mod_id", 5f);
+        WeaponSkillEffect.MISSILE_DAMAGE_PERCENT.apply(stats, "mod_id", 5f);
 
         verify(missile).modifyPercent("mod_id", 5f);
     }
@@ -123,7 +123,7 @@ class SkillEffectTest {
         MutableStat energy = mock(MutableStat.class);
         when(stats.getEnergyWeaponDamageMult()).thenReturn(energy);
 
-        WeaponSkillEffect.NON_BEAM_ENERGY_DAMAGE.apply(stats, "mod_id", 5f);
+        WeaponSkillEffect.NON_BEAM_ENERGY_DAMAGE_PERCENT.apply(stats, "mod_id", 5f);
 
         verify(energy).modifyPercent("mod_id", 5f);
     }
@@ -134,7 +134,7 @@ class SkillEffectTest {
         MutableStat beam = mock(MutableStat.class);
         when(stats.getBeamWeaponDamageMult()).thenReturn(beam);
 
-        WeaponSkillEffect.BEAM_DAMAGE.apply(stats, "mod_id", 5f);
+        WeaponSkillEffect.BEAM_DAMAGE_PERCENT.apply(stats, "mod_id", 5f);
 
         verify(beam).modifyPercent("mod_id", 5f);
     }
@@ -147,7 +147,7 @@ class SkillEffectTest {
         when(stats.getEnergyWeaponDamageMult()).thenReturn(energy);
         when(stats.getBeamWeaponDamageMult()).thenReturn(beam);
 
-        WeaponSkillEffect.ENERGY_DAMAGE.apply(stats, "mod_id", 5f);
+        WeaponSkillEffect.ENERGY_DAMAGE_PERCENT.apply(stats, "mod_id", 5f);
 
         verify(energy).modifyPercent("mod_id", 5f);
         verify(beam).modifyPercent("mod_id", 5f);
@@ -165,7 +165,7 @@ class SkillEffectTest {
         when(stats.getEnergyWeaponDamageMult()).thenReturn(energy);
         when(stats.getBeamWeaponDamageMult()).thenReturn(beam);
 
-        WeaponSkillEffect.ALL_WEAPON_DAMAGE.apply(stats, "mod_id", 5f);
+        WeaponSkillEffect.ALL_WEAPON_DAMAGE_PERCENT.apply(stats, "mod_id", 5f);
 
         verify(ballistic).modifyPercent("mod_id", 5f);
         verify(missile).modifyPercent("mod_id", 5f);
@@ -175,17 +175,17 @@ class SkillEffectTest {
 
     @Test
     void describeFormatsAWholeNumberMagnitudeWithoutADecimal() {
-        assertEquals("Increases hull points by 10%.", DefenseSkillEffect.HULL.describe(10f));
+        assertEquals("Increases hull points by 10%.", DefenseSkillEffect.HULL_PERCENT.describe(10f));
     }
 
     @Test
     void describeFormatsAFractionalMagnitudeWithADecimal() {
-        assertEquals("Increases flux capacity and dissipation by 0.5% each.", FluxSkillEffect.HYBRID_FLUX.describe(0.5f));
+        assertEquals("Increases flux capacity and dissipation by 0.5% each.", FluxSkillEffect.HYBRID_FLUX_PERCENT.describe(0.5f));
     }
 
     @Test
     void describeMentionsBothStatsForTheAllWeaponDamageHybrid() {
-        assertEquals("Increases damage of all weapon types by 5%.", WeaponSkillEffect.ALL_WEAPON_DAMAGE.describe(5f));
+        assertEquals("Increases damage of all weapon types by 5%.", WeaponSkillEffect.ALL_WEAPON_DAMAGE_PERCENT.describe(5f));
     }
 
     @Test
@@ -194,7 +194,7 @@ class SkillEffectTest {
         MutableStat turnRate = mock(MutableStat.class);
         when(stats.getMaxTurnRate()).thenReturn(turnRate);
 
-        MovementSkillEffect.MANEUVERABILITY.apply(stats, "mod_id", 15f);
+        MovementSkillEffect.MANEUVERABILITY_PERCENT.apply(stats, "mod_id", 15f);
 
         verify(turnRate).modifyPercent("mod_id", 15f);
     }
@@ -205,7 +205,7 @@ class SkillEffectTest {
         StatBonus fuelMod = mock(StatBonus.class);
         when(stats.getFuelMod()).thenReturn(fuelMod);
 
-        LogisticsSkillEffect.FUEL_CAPACITY.apply(stats, "mod_id", 20f);
+        LogisticsSkillEffect.FUEL_CAPACITY_PERCENT.apply(stats, "mod_id", 20f);
 
         verify(fuelMod).modifyPercent("mod_id", 20f);
     }
@@ -216,7 +216,7 @@ class SkillEffectTest {
         StatBonus cargoMod = mock(StatBonus.class);
         when(stats.getCargoMod()).thenReturn(cargoMod);
 
-        LogisticsSkillEffect.CARGO_CAPACITY.apply(stats, "mod_id", 20f);
+        LogisticsSkillEffect.CARGO_CAPACITY_PERCENT.apply(stats, "mod_id", 20f);
 
         verify(cargoMod).modifyPercent("mod_id", 20f);
     }
@@ -227,7 +227,7 @@ class SkillEffectTest {
         StatBonus maxCrewMod = mock(StatBonus.class);
         when(stats.getMaxCrewMod()).thenReturn(maxCrewMod);
 
-        LogisticsSkillEffect.CREW_CAPACITY.apply(stats, "mod_id", 20f);
+        LogisticsSkillEffect.CREW_CAPACITY_PERCENT.apply(stats, "mod_id", 20f);
 
         verify(maxCrewMod).modifyPercent("mod_id", 20f);
     }
@@ -238,7 +238,7 @@ class SkillEffectTest {
         MutableStat sensorProfile = mock(MutableStat.class);
         when(stats.getSensorProfile()).thenReturn(sensorProfile);
 
-        LogisticsSkillEffect.SENSOR_PROFILE.apply(stats, "mod_id", -10f);
+        LogisticsSkillEffect.SENSOR_PROFILE_PERCENT.apply(stats, "mod_id", -10f);
 
         verify(sensorProfile).modifyPercent("mod_id", -10f);
     }
@@ -249,7 +249,7 @@ class SkillEffectTest {
         MutableStat sensorStrength = mock(MutableStat.class);
         when(stats.getSensorStrength()).thenReturn(sensorStrength);
 
-        LogisticsSkillEffect.SENSOR_STRENGTH.apply(stats, "mod_id", 20f);
+        LogisticsSkillEffect.SENSOR_STRENGTH_PERCENT.apply(stats, "mod_id", 20f);
 
         verify(sensorStrength).modifyPercent("mod_id", 20f);
     }
@@ -260,7 +260,7 @@ class SkillEffectTest {
         StatBonus rangeBonus = mock(StatBonus.class);
         when(stats.getBallisticWeaponRangeBonus()).thenReturn(rangeBonus);
 
-        WeaponSkillEffect.BALLISTIC_WEAPON_RANGE.apply(stats, "mod_id", 15f);
+        WeaponSkillEffect.BALLISTIC_WEAPON_RANGE_PERCENT.apply(stats, "mod_id", 15f);
 
         verify(rangeBonus).modifyPercent("mod_id", 15f);
     }
@@ -271,7 +271,7 @@ class SkillEffectTest {
         StatBonus rangeBonus = mock(StatBonus.class);
         when(stats.getEnergyWeaponRangeBonus()).thenReturn(rangeBonus);
 
-        WeaponSkillEffect.ENERGY_WEAPON_RANGE.apply(stats, "mod_id", 15f);
+        WeaponSkillEffect.ENERGY_WEAPON_RANGE_PERCENT.apply(stats, "mod_id", 15f);
 
         verify(rangeBonus).modifyPercent("mod_id", 15f);
     }
@@ -282,7 +282,7 @@ class SkillEffectTest {
         StatBonus rangeBonus = mock(StatBonus.class);
         when(stats.getBeamWeaponRangeBonus()).thenReturn(rangeBonus);
 
-        WeaponSkillEffect.BEAM_WEAPON_RANGE.apply(stats, "mod_id", 15f);
+        WeaponSkillEffect.BEAM_WEAPON_RANGE_PERCENT.apply(stats, "mod_id", 15f);
 
         verify(rangeBonus).modifyPercent("mod_id", 15f);
     }
@@ -293,7 +293,7 @@ class SkillEffectTest {
         StatBonus ammoBonus = mock(StatBonus.class);
         when(stats.getBallisticAmmoBonus()).thenReturn(ammoBonus);
 
-        WeaponSkillEffect.BALLISTIC_AMMO.apply(stats, "mod_id", 20f);
+        WeaponSkillEffect.BALLISTIC_AMMO_PERCENT.apply(stats, "mod_id", 20f);
 
         verify(ammoBonus).modifyPercent("mod_id", 20f);
     }
@@ -304,7 +304,7 @@ class SkillEffectTest {
         StatBonus ammoBonus = mock(StatBonus.class);
         when(stats.getEnergyAmmoBonus()).thenReturn(ammoBonus);
 
-        WeaponSkillEffect.ENERGY_AMMO.apply(stats, "mod_id", 20f);
+        WeaponSkillEffect.ENERGY_AMMO_PERCENT.apply(stats, "mod_id", 20f);
 
         verify(ammoBonus).modifyPercent("mod_id", 20f);
     }
@@ -315,7 +315,7 @@ class SkillEffectTest {
         StatBonus ammoBonus = mock(StatBonus.class);
         when(stats.getMissileAmmoBonus()).thenReturn(ammoBonus);
 
-        WeaponSkillEffect.MISSILE_AMMO.apply(stats, "mod_id", 25f);
+        WeaponSkillEffect.MISSILE_AMMO_PERCENT.apply(stats, "mod_id", 25f);
 
         verify(ammoBonus).modifyPercent("mod_id", 25f);
     }
@@ -326,7 +326,7 @@ class SkillEffectTest {
         StatBonus turnRateBonus = mock(StatBonus.class);
         when(stats.getWeaponTurnRateBonus()).thenReturn(turnRateBonus);
 
-        WeaponSkillEffect.WEAPON_TURN_RATE.apply(stats, "mod_id", 20f);
+        WeaponSkillEffect.WEAPON_TURN_RATE_PERCENT.apply(stats, "mod_id", 20f);
 
         verify(turnRateBonus).modifyPercent("mod_id", 20f);
     }
@@ -337,7 +337,7 @@ class SkillEffectTest {
         StatBonus arcBonus = mock(StatBonus.class);
         when(stats.getShieldArcBonus()).thenReturn(arcBonus);
 
-        ShieldSkillEffect.SHIELD_ARC.apply(stats, "mod_id", 20f);
+        ShieldSkillEffect.SHIELD_ARC_PERCENT.apply(stats, "mod_id", 20f);
 
         verify(arcBonus).modifyPercent("mod_id", 20f);
     }
@@ -348,7 +348,7 @@ class SkillEffectTest {
         MutableStat upkeepMult = mock(MutableStat.class);
         when(stats.getShieldUpkeepMult()).thenReturn(upkeepMult);
 
-        ShieldSkillEffect.SHIELD_UPKEEP.apply(stats, "mod_id", -15f);
+        ShieldSkillEffect.SHIELD_UPKEEP_PERCENT.apply(stats, "mod_id", -15f);
 
         verify(upkeepMult).modifyPercent("mod_id", -15f);
     }
@@ -359,7 +359,7 @@ class SkillEffectTest {
         MutableStat absorptionMult = mock(MutableStat.class);
         when(stats.getShieldAbsorptionMult()).thenReturn(absorptionMult);
 
-        DefenseSkillEffect.SHIELD_ABSORPTION.apply(stats, "mod_id", -10f);
+        DefenseSkillEffect.SHIELD_ABSORPTION_PERCENT.apply(stats, "mod_id", -10f);
 
         verify(absorptionMult).modifyPercent("mod_id", -10f);
     }
@@ -370,7 +370,7 @@ class SkillEffectTest {
         MutableStat turnRateMult = mock(MutableStat.class);
         when(stats.getShieldTurnRateMult()).thenReturn(turnRateMult);
 
-        ShieldSkillEffect.SHIELD_TURN_RATE.apply(stats, "mod_id", 15f);
+        ShieldSkillEffect.SHIELD_TURN_RATE_PERCENT.apply(stats, "mod_id", 15f);
 
         verify(turnRateMult).modifyPercent("mod_id", 15f);
     }
@@ -381,7 +381,7 @@ class SkillEffectTest {
         MutableStat unfoldRateMult = mock(MutableStat.class);
         when(stats.getShieldUnfoldRateMult()).thenReturn(unfoldRateMult);
 
-        ShieldSkillEffect.SHIELD_RAISE_RATE.apply(stats, "mod_id", 15f);
+        ShieldSkillEffect.SHIELD_RAISE_RATE_PERCENT.apply(stats, "mod_id", 15f);
 
         verify(unfoldRateMult).modifyPercent("mod_id", 15f);
     }
@@ -392,7 +392,7 @@ class SkillEffectTest {
         StatBonus healthBonus = mock(StatBonus.class);
         when(stats.getWeaponHealthBonus()).thenReturn(healthBonus);
 
-        WeaponSkillEffect.WEAPON_DURABILITY.apply(stats, "mod_id", 20f);
+        WeaponSkillEffect.WEAPON_DURABILITY_PERCENT.apply(stats, "mod_id", 20f);
 
         verify(healthBonus).modifyPercent("mod_id", 20f);
     }
@@ -403,7 +403,7 @@ class SkillEffectTest {
         StatBonus healthBonus = mock(StatBonus.class);
         when(stats.getEngineHealthBonus()).thenReturn(healthBonus);
 
-        DefenseSkillEffect.ENGINE_DURABILITY.apply(stats, "mod_id", 15f);
+        DefenseSkillEffect.ENGINE_DURABILITY_PERCENT.apply(stats, "mod_id", 15f);
 
         verify(healthBonus).modifyPercent("mod_id", 15f);
     }
@@ -414,7 +414,7 @@ class SkillEffectTest {
         MutableStat maxSpeed = mock(MutableStat.class);
         when(stats.getMaxSpeed()).thenReturn(maxSpeed);
 
-        MovementSkillEffect.TOP_SPEED.apply(stats, "mod_id", 15f);
+        MovementSkillEffect.TOP_SPEED_PERCENT.apply(stats, "mod_id", 15f);
 
         verify(maxSpeed).modifyPercent("mod_id", 15f);
     }
@@ -425,7 +425,7 @@ class SkillEffectTest {
         StatBonus peakCrDuration = mock(StatBonus.class);
         when(stats.getPeakCRDuration()).thenReturn(peakCrDuration);
 
-        MiscSkillEffect.PEAK_CR_DURATION.apply(stats, "mod_id", 20f);
+        MiscSkillEffect.PEAK_CR_DURATION_PERCENT.apply(stats, "mod_id", 20f);
 
         verify(peakCrDuration).modifyPercent("mod_id", 20f);
     }
@@ -436,7 +436,7 @@ class SkillEffectTest {
         MutableStat rangeMultPastThreshold = mock(MutableStat.class);
         when(stats.getWeaponRangeMultPastThreshold()).thenReturn(rangeMultPastThreshold);
 
-        WeaponSkillEffect.WEAPON_RANGE_FALLOFF.apply(stats, "mod_id", -15f);
+        WeaponSkillEffect.WEAPON_RANGE_FALLOFF_PERCENT.apply(stats, "mod_id", -15f);
 
         verify(rangeMultPastThreshold).modifyPercent("mod_id", -15f);
     }
@@ -449,7 +449,7 @@ class SkillEffectTest {
         when(stats.getCombatWeaponRepairTimeMult()).thenReturn(weaponRepairTime);
         when(stats.getCombatEngineRepairTimeMult()).thenReturn(engineRepairTime);
 
-        DefenseSkillEffect.REPAIR_TIME.apply(stats, "mod_id", -20f);
+        DefenseSkillEffect.REPAIR_TIME_PERCENT.apply(stats, "mod_id", -20f);
 
         verify(weaponRepairTime).modifyPercent("mod_id", -20f);
         verify(engineRepairTime).modifyPercent("mod_id", -20f);
@@ -461,7 +461,7 @@ class SkillEffectTest {
         MutableStat missileGuidance = mock(MutableStat.class);
         when(stats.getMissileGuidance()).thenReturn(missileGuidance);
 
-        WeaponSkillEffect.MISSILE_GUIDANCE.apply(stats, "mod_id", 20f);
+        WeaponSkillEffect.MISSILE_GUIDANCE_PERCENT.apply(stats, "mod_id", 20f);
 
         verify(missileGuidance).modifyPercent("mod_id", 20f);
     }
@@ -472,7 +472,7 @@ class SkillEffectTest {
         MutableStat crRecoveryRate = mock(MutableStat.class);
         when(stats.getBaseCRRecoveryRatePercentPerDay()).thenReturn(crRecoveryRate);
 
-        LogisticsSkillEffect.CR_RECOVERY_RATE.apply(stats, "mod_id", 15f);
+        LogisticsSkillEffect.CR_RECOVERY_RATE_PERCENT.apply(stats, "mod_id", 15f);
 
         verify(crRecoveryRate).modifyPercent("mod_id", 15f);
     }
@@ -483,7 +483,7 @@ class SkillEffectTest {
         MutableStat crewLossMult = mock(MutableStat.class);
         when(stats.getCrewLossMult()).thenReturn(crewLossMult);
 
-        LogisticsSkillEffect.CREW_LOSS.apply(stats, "mod_id", -15f);
+        LogisticsSkillEffect.CREW_LOSS_PERCENT.apply(stats, "mod_id", -15f);
 
         verify(crewLossMult).modifyPercent("mod_id", -15f);
     }
@@ -494,19 +494,19 @@ class SkillEffectTest {
         MutableStat damageTakenMult = mock(MutableStat.class);
         when(stats.getEnergyDamageTakenMult()).thenReturn(damageTakenMult);
 
-        DefenseSkillEffect.ENERGY_DAMAGE_TAKEN.apply(stats, "mod_id", -10f);
+        DefenseSkillEffect.ENERGY_DAMAGE_TAKEN_PERCENT.apply(stats, "mod_id", -10f);
 
         verify(damageTakenMult).modifyPercent("mod_id", -10f);
     }
 
     @Test
     void describeUsesIncreasesForAPositiveBidirectionalMagnitude() {
-        assertEquals("Increases peak combat readiness duration by 20%.", MiscSkillEffect.PEAK_CR_DURATION.describe(20f));
+        assertEquals("Increases peak combat readiness duration by 20%.", MiscSkillEffect.PEAK_CR_DURATION_PERCENT.describe(20f));
     }
 
     @Test
     void describeUsesDecreasesForANegativeBidirectionalMagnitude() {
-        assertEquals("Decreases peak combat readiness duration by 20%.", MiscSkillEffect.PEAK_CR_DURATION.describe(-20f));
+        assertEquals("Decreases peak combat readiness duration by 20%.", MiscSkillEffect.PEAK_CR_DURATION_PERCENT.describe(-20f));
     }
 
     @Test
@@ -533,7 +533,7 @@ class SkillEffectTest {
 
     @Test
     void mostEffectsHaveNoDeallocationWarning() {
-        assertNull(DefenseSkillEffect.HULL.deallocationWarning(10f));
+        assertNull(DefenseSkillEffect.HULL_PERCENT.deallocationWarning(10f));
     }
 
     @Test
@@ -572,14 +572,14 @@ class SkillEffectTest {
 
     @Test
     void mostEffectsNeverBlockDeallocation() {
-        assertNull(DefenseSkillEffect.HULL.blockDeallocationReason(mock(FleetMemberAPI.class), 10f));
+        assertNull(DefenseSkillEffect.HULL_PERCENT.blockDeallocationReason(mock(FleetMemberAPI.class), 10f));
     }
 
     @Test
     void fighterWeaponDamageDoesNotTouchTheCarrierStatsDirectly() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
 
-        FighterSkillEffect.FIGHTER_WEAPON_DAMAGE.apply(stats, "mod_id", 15f);
+        FighterSkillEffect.FIGHTER_WEAPON_DAMAGE_PERCENT.apply(stats, "mod_id", 15f);
 
         verifyNoInteractions(stats);
     }
@@ -599,7 +599,7 @@ class SkillEffectTest {
         when(fighterStats.getEnergyWeaponDamageMult()).thenReturn(energy);
         when(fighterStats.getBeamWeaponDamageMult()).thenReturn(beam);
 
-        FighterSkillEffect.FIGHTER_WEAPON_DAMAGE.applyToFighterSpawnedByShip(fighter, parentShip, "mod_id", 15f);
+        FighterSkillEffect.FIGHTER_WEAPON_DAMAGE_PERCENT.applyToFighterSpawnedByShip(fighter, parentShip, "mod_id", 15f);
 
         verify(ballistic).modifyPercent("mod_id", 15f);
         verify(missile).modifyPercent("mod_id", 15f);
@@ -611,7 +611,7 @@ class SkillEffectTest {
     void fighterTopSpeedDoesNotTouchTheCarrierStatsDirectly() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
 
-        FighterSkillEffect.FIGHTER_TOP_SPEED.apply(stats, "mod_id", 15f);
+        FighterSkillEffect.FIGHTER_TOP_SPEED_PERCENT.apply(stats, "mod_id", 15f);
 
         verifyNoInteractions(stats);
     }
@@ -625,7 +625,7 @@ class SkillEffectTest {
         MutableStat maxSpeed = mock(MutableStat.class);
         when(fighterStats.getMaxSpeed()).thenReturn(maxSpeed);
 
-        FighterSkillEffect.FIGHTER_TOP_SPEED.applyToFighterSpawnedByShip(fighter, parentShip, "mod_id", 15f);
+        FighterSkillEffect.FIGHTER_TOP_SPEED_PERCENT.applyToFighterSpawnedByShip(fighter, parentShip, "mod_id", 15f);
 
         verify(maxSpeed).modifyPercent("mod_id", 15f);
     }
@@ -652,7 +652,7 @@ class SkillEffectTest {
         MutableStat decreaseMult = mock(MutableStat.class);
         when(dynamic.getStat("replacement_rate_decrease_mult")).thenReturn(decreaseMult);
 
-        FighterSkillEffect.FIGHTER_REPLACEMENT_DECAY_MULT.apply(stats, "mod_id", -15f);
+        FighterSkillEffect.FIGHTER_REPLACEMENT_DECAY_PERCENT.apply(stats, "mod_id", -15f);
 
         verify(decreaseMult).modifyPercent("mod_id", -15f);
     }
@@ -665,7 +665,7 @@ class SkillEffectTest {
         MutableStat increaseMult = mock(MutableStat.class);
         when(dynamic.getStat("replacement_rate_increase_mult")).thenReturn(increaseMult);
 
-        FighterSkillEffect.FIGHTER_REPLACEMENT_RECOVERY_MULT.apply(stats, "mod_id", 25f);
+        FighterSkillEffect.FIGHTER_REPLACEMENT_RECOVERY_PERCENT.apply(stats, "mod_id", 25f);
 
         verify(increaseMult).modifyPercent("mod_id", 25f);
     }
@@ -674,7 +674,7 @@ class SkillEffectTest {
     void fighterPdDamageBonusDoesNotTouchTheCarrierStatsDirectly() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
 
-        FighterSkillEffect.FIGHTER_PD_DAMAGE_BONUS.apply(stats, "mod_id", 50f);
+        FighterSkillEffect.FIGHTER_PD_DAMAGE_BONUS_PERCENT.apply(stats, "mod_id", 50f);
 
         verifyNoInteractions(stats);
     }
@@ -690,7 +690,7 @@ class SkillEffectTest {
         when(fighterStats.getDamageToFighters()).thenReturn(damageToFighters);
         when(fighterStats.getDamageToMissiles()).thenReturn(damageToMissiles);
 
-        FighterSkillEffect.FIGHTER_PD_DAMAGE_BONUS.applyToFighterSpawnedByShip(fighter, parentShip, "mod_id", 50f);
+        FighterSkillEffect.FIGHTER_PD_DAMAGE_BONUS_PERCENT.applyToFighterSpawnedByShip(fighter, parentShip, "mod_id", 50f);
 
         verify(damageToFighters).modifyPercent("mod_id", 50f);
         verify(damageToMissiles).modifyPercent("mod_id", 50f);

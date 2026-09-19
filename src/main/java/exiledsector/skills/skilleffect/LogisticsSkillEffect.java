@@ -7,7 +7,7 @@ import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
 
 public enum LogisticsSkillEffect implements SkillEffect {
 
-    FUEL_CAPACITY {
+    FUEL_CAPACITY_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getFuelMod().modifyPercent(modId, magnitude);
@@ -29,7 +29,7 @@ public enum LogisticsSkillEffect implements SkillEffect {
             return flatChange(magnitude, "fuel capacity");
         }
     },
-    CARGO_CAPACITY {
+    CARGO_CAPACITY_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getCargoMod().modifyPercent(modId, magnitude);
@@ -51,7 +51,7 @@ public enum LogisticsSkillEffect implements SkillEffect {
             return flatChange(magnitude, "cargo capacity");
         }
     },
-    CREW_CAPACITY {
+    CREW_CAPACITY_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getMaxCrewMod().modifyPercent(modId, magnitude);
@@ -84,7 +84,7 @@ public enum LogisticsSkillEffect implements SkillEffect {
             return flatChange(magnitude, "max burn level");
         }
     },
-    SENSOR_PROFILE {
+    SENSOR_PROFILE_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getSensorProfile().modifyPercent(modId, magnitude);
@@ -95,7 +95,7 @@ public enum LogisticsSkillEffect implements SkillEffect {
             return pctChange(magnitude, "sensor profile");
         }
     },
-    SENSOR_STRENGTH {
+    SENSOR_STRENGTH_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getSensorStrength().modifyPercent(modId, magnitude);
@@ -117,7 +117,7 @@ public enum LogisticsSkillEffect implements SkillEffect {
             return flatChange(magnitude, "in-combat sensor/vision range");
         }
     },
-    CR_RECOVERY_RATE {
+    CR_RECOVERY_RATE_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getBaseCRRecoveryRatePercentPerDay().modifyPercent(modId, magnitude);
@@ -128,7 +128,7 @@ public enum LogisticsSkillEffect implements SkillEffect {
             return pctChange(magnitude, "combat readiness recovery rate");
         }
     },
-    REPAIR_RATE_PER_DAY {
+    REPAIR_RATE_PER_DAY_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getRepairRatePercentPerDay().modifyPercent(modId, magnitude);
@@ -139,7 +139,7 @@ public enum LogisticsSkillEffect implements SkillEffect {
             return pctChange(magnitude, "repair rate per day");
         }
     },
-    CR_LOSS_PER_SECOND_MULT {
+    CR_LOSS_PER_SECOND_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getCRLossPerSecondPercent().modifyPercent(modId, magnitude);
@@ -229,7 +229,7 @@ public enum LogisticsSkillEffect implements SkillEffect {
             return "Removes the sensor strength and sensor profile penalties of a civilian-grade hull.";
         }
     },
-    CREW_LOSS {
+    CREW_LOSS_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getCrewLossMult().modifyPercent(modId, magnitude);

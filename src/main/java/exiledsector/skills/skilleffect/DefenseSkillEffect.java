@@ -9,7 +9,7 @@ import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
 
 public enum DefenseSkillEffect implements SkillEffect {
 
-    HULL {
+    HULL_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getHullBonus().modifyPercent(modId, magnitude);
@@ -42,7 +42,7 @@ public enum DefenseSkillEffect implements SkillEffect {
             return "If disabled, this ship is almost always recoverable after the battle.";
         }
     },
-    BREAK_PROBABILITY_MULT {
+    BREAK_PROBABILITY_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getBreakProb().modifyPercent(modId, magnitude);
@@ -53,7 +53,7 @@ public enum DefenseSkillEffect implements SkillEffect {
             return pctChange(magnitude, "chance of this ship breaking apart when destroyed");
         }
     },
-    ARMOR {
+    ARMOR_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getArmorBonus().modifyPercent(modId, magnitude);
@@ -64,7 +64,7 @@ public enum DefenseSkillEffect implements SkillEffect {
             return "Increases armor rating by " + pct(magnitude) + "%.";
         }
     },
-    SHIELD_ABSORPTION {
+    SHIELD_ABSORPTION_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getShieldAbsorptionMult().modifyPercent(modId, magnitude);
@@ -75,7 +75,7 @@ public enum DefenseSkillEffect implements SkillEffect {
             return pctChange(magnitude, "damage taken by shields");
         }
     },
-    ENGINE_DURABILITY {
+    ENGINE_DURABILITY_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getEngineHealthBonus().modifyPercent(modId, magnitude);
@@ -86,7 +86,7 @@ public enum DefenseSkillEffect implements SkillEffect {
             return pctChange(magnitude, "engine durability");
         }
     },
-    REPAIR_TIME {
+    REPAIR_TIME_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getCombatWeaponRepairTimeMult().modifyPercent(modId, magnitude);
@@ -98,7 +98,7 @@ public enum DefenseSkillEffect implements SkillEffect {
             return pctChange(magnitude, "weapon and engine repair time");
         }
     },
-    EMP_DAMAGE_TAKEN {
+    EMP_DAMAGE_TAKEN_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getEmpDamageTakenMult().modifyPercent(modId, magnitude);
@@ -109,7 +109,7 @@ public enum DefenseSkillEffect implements SkillEffect {
             return pctChange(magnitude, "EMP damage taken");
         }
     },
-    ENERGY_DAMAGE_TAKEN {
+    ENERGY_DAMAGE_TAKEN_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getEnergyDamageTakenMult().modifyPercent(modId, magnitude);
