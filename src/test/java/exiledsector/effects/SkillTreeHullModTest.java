@@ -241,6 +241,67 @@ class SkillTreeHullModTest {
     }
 
     @Test
+    void fighterSpawnDelegatesToTheRealVanillaHullModEffectWhenTypeSpecifiesOne() {
+        SkillType passthroughType = new SkillType("defensive_targeting_array", "Defensive Targeting Array", "graphics/icons/skills/defensive_targeting_array.png", 4, 2000,
+                List.of(), SkillTier.NOTABLE, "defensive_targeting_array", null, null);
+        SkillNode passthroughNode = new SkillNode("defensive_targeting_array_1", passthroughType, List.of(), 0f, 0f);
+        SkillTree.register(passthroughNode);
+
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        ShipSkillDataManager.get("ship-a").allocate(passthroughNode);
+
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        ShipAPI ship = mockShip(member, stats);
+        ShipAPI fighter = mock(ShipAPI.class);
+
+        SettingsAPI settings = mock(SettingsAPI.class);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+        HullModSpecAPI spec = mock(HullModSpecAPI.class);
+        when(settings.getHullModSpec("defensive_targeting_array")).thenReturn(spec);
+        HullModEffect vanillaEffect = mock(HullModEffect.class);
+        when(spec.getEffect()).thenReturn(vanillaEffect);
+
+        new SkillTreeHullMod().applyEffectsToFighterSpawnedByShip(fighter, ship, "exiledSector_core");
+
+        verify(vanillaEffect).applyEffectsToFighterSpawnedByShip(fighter, ship, "defensive_targeting_array");
+    }
+
+    @Test
+    void fighterSpawnCallsApplyToFighterSpawnedByShipOnNonPassthroughEffects() {
+        exiledsector.skills.skilleffect.SkillEffect fighterEffect = mock(exiledsector.skills.skilleffect.SkillEffect.class);
+        SkillType fighterType = new SkillType("fighter_weapon_damage", "Fighter Weapon Damage", "graphics/hullmods/fighter_uplink2.png", 2, 500,
+                List.of(new SkillTypeEffect(fighterEffect, 15f)), SkillTier.SMALL, null, null, null);
+        SkillNode fighterNode = new SkillNode("fighter_weapon_damage_1", fighterType, List.of(), 0f, 0f);
+        SkillTree.register(fighterNode);
+
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        ShipSkillDataManager.get("ship-a").allocate(fighterNode);
+
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        ShipAPI ship = mockShip(member, stats);
+        ShipAPI fighter = mock(ShipAPI.class);
+
+        new SkillTreeHullMod().applyEffectsToFighterSpawnedByShip(fighter, ship, "exiledSector_core");
+
+        verify(fighterEffect).applyToFighterSpawnedByShip(fighter, ship, "exiledSector_skill_fighter_weapon_damage_1", 15f);
+    }
+
+    @Test
+    void fighterSpawnDoesNothingWhenTheShipHasNoFleetMember() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        when(stats.getFleetMember()).thenReturn(null);
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.getMutableStats()).thenReturn(stats);
+        ShipAPI fighter = mock(ShipAPI.class);
+
+        new SkillTreeHullMod().applyEffectsToFighterSpawnedByShip(fighter, ship, "exiledSector_core");
+
+        globalMock.verify(Global::getSettings, never());
+    }
+
+    @Test
     void afterShipCreationCallsApplyAfterShipCreationOnNonPassthroughEffects() {
         exiledsector.skills.skilleffect.SkillEffect listenerEffect = mock(exiledsector.skills.skilleffect.SkillEffect.class);
         SkillType listenerType = new SkillType("high_scatter_amp", "High Scatter Amplifier", "graphics/hullmods/high_scatter_amp.png", 4, 2000,

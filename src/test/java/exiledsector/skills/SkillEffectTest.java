@@ -576,6 +576,127 @@ class SkillEffectTest {
     }
 
     @Test
+    void fighterWeaponDamageDoesNotTouchTheCarrierStatsDirectly() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+
+        FighterSkillEffect.FIGHTER_WEAPON_DAMAGE.apply(stats, "mod_id", 15f);
+
+        verifyNoInteractions(stats);
+    }
+
+    @Test
+    void fighterWeaponDamageModifiesTheFighterSOwnWeaponDamageStats() {
+        ShipAPI fighter = mock(ShipAPI.class);
+        ShipAPI parentShip = mock(ShipAPI.class);
+        MutableShipStatsAPI fighterStats = mock(MutableShipStatsAPI.class);
+        when(fighter.getMutableStats()).thenReturn(fighterStats);
+        MutableStat ballistic = mock(MutableStat.class);
+        MutableStat missile = mock(MutableStat.class);
+        MutableStat energy = mock(MutableStat.class);
+        MutableStat beam = mock(MutableStat.class);
+        when(fighterStats.getBallisticWeaponDamageMult()).thenReturn(ballistic);
+        when(fighterStats.getMissileWeaponDamageMult()).thenReturn(missile);
+        when(fighterStats.getEnergyWeaponDamageMult()).thenReturn(energy);
+        when(fighterStats.getBeamWeaponDamageMult()).thenReturn(beam);
+
+        FighterSkillEffect.FIGHTER_WEAPON_DAMAGE.applyToFighterSpawnedByShip(fighter, parentShip, "mod_id", 15f);
+
+        verify(ballistic).modifyPercent("mod_id", 15f);
+        verify(missile).modifyPercent("mod_id", 15f);
+        verify(energy).modifyPercent("mod_id", 15f);
+        verify(beam).modifyPercent("mod_id", 15f);
+    }
+
+    @Test
+    void fighterTopSpeedDoesNotTouchTheCarrierStatsDirectly() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+
+        FighterSkillEffect.FIGHTER_TOP_SPEED.apply(stats, "mod_id", 15f);
+
+        verifyNoInteractions(stats);
+    }
+
+    @Test
+    void fighterTopSpeedModifiesTheFighterSOwnMaxSpeedStat() {
+        ShipAPI fighter = mock(ShipAPI.class);
+        ShipAPI parentShip = mock(ShipAPI.class);
+        MutableShipStatsAPI fighterStats = mock(MutableShipStatsAPI.class);
+        when(fighter.getMutableStats()).thenReturn(fighterStats);
+        MutableStat maxSpeed = mock(MutableStat.class);
+        when(fighterStats.getMaxSpeed()).thenReturn(maxSpeed);
+
+        FighterSkillEffect.FIGHTER_TOP_SPEED.applyToFighterSpawnedByShip(fighter, parentShip, "mod_id", 15f);
+
+        verify(maxSpeed).modifyPercent("mod_id", 15f);
+    }
+
+    @Test
+    void minCrewPerFighterBayScalesWithTheShipSOwnBayCount() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        MutableStat numFighterBays = mock(MutableStat.class);
+        when(stats.getNumFighterBays()).thenReturn(numFighterBays);
+        when(numFighterBays.getBaseValue()).thenReturn(3f);
+        StatBonus minCrewMod = mock(StatBonus.class);
+        when(stats.getMinCrewMod()).thenReturn(minCrewMod);
+
+        LogisticsSkillEffect.MIN_CREW_PER_FIGHTER_BAY.apply(stats, "mod_id", 20f);
+
+        verify(minCrewMod).modifyFlat("mod_id", 60f);
+    }
+
+    @Test
+    void fighterReplacementDecayMultModifiesTheDecreaseMultStat() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
+        when(stats.getDynamic()).thenReturn(dynamic);
+        MutableStat decreaseMult = mock(MutableStat.class);
+        when(dynamic.getStat("replacement_rate_decrease_mult")).thenReturn(decreaseMult);
+
+        FighterSkillEffect.FIGHTER_REPLACEMENT_DECAY_MULT.apply(stats, "mod_id", -15f);
+
+        verify(decreaseMult).modifyPercent("mod_id", -15f);
+    }
+
+    @Test
+    void fighterReplacementRecoveryMultModifiesTheIncreaseMultStat() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
+        when(stats.getDynamic()).thenReturn(dynamic);
+        MutableStat increaseMult = mock(MutableStat.class);
+        when(dynamic.getStat("replacement_rate_increase_mult")).thenReturn(increaseMult);
+
+        FighterSkillEffect.FIGHTER_REPLACEMENT_RECOVERY_MULT.apply(stats, "mod_id", 25f);
+
+        verify(increaseMult).modifyPercent("mod_id", 25f);
+    }
+
+    @Test
+    void fighterPdDamageBonusDoesNotTouchTheCarrierStatsDirectly() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+
+        FighterSkillEffect.FIGHTER_PD_DAMAGE_BONUS.apply(stats, "mod_id", 50f);
+
+        verifyNoInteractions(stats);
+    }
+
+    @Test
+    void fighterPdDamageBonusModifiesTheFighterSOwnDamageToFightersAndMissiles() {
+        ShipAPI fighter = mock(ShipAPI.class);
+        ShipAPI parentShip = mock(ShipAPI.class);
+        MutableShipStatsAPI fighterStats = mock(MutableShipStatsAPI.class);
+        when(fighter.getMutableStats()).thenReturn(fighterStats);
+        MutableStat damageToFighters = mock(MutableStat.class);
+        MutableStat damageToMissiles = mock(MutableStat.class);
+        when(fighterStats.getDamageToFighters()).thenReturn(damageToFighters);
+        when(fighterStats.getDamageToMissiles()).thenReturn(damageToMissiles);
+
+        FighterSkillEffect.FIGHTER_PD_DAMAGE_BONUS.applyToFighterSpawnedByShip(fighter, parentShip, "mod_id", 50f);
+
+        verify(damageToFighters).modifyPercent("mod_id", 50f);
+        verify(damageToMissiles).modifyPercent("mod_id", 50f);
+    }
+
+    @Test
     void beamDamageHardFluxPercentDoesNotTouchStatsDirectly() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
 

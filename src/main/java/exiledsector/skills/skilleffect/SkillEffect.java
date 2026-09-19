@@ -20,6 +20,9 @@ public interface SkillEffect {
     default void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
     }
 
+    default void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+    }
+
     default String blockDeallocationReason(FleetMemberAPI member, float magnitude) {
         return null;
     }

@@ -329,9 +329,9 @@
 			"icon": "graphics/icons/circular/notable_passives/defensive_targeting_array.png",
 			"opCost": 4,
 			"xpCost": 2000,
-			"tier": "NOTABLE",
+			"tier": "KEYSTONE",
 			"vanillaHullMod": "defensive_targeting_array",
-			"todo": "Real vanilla effect applies its damage-to-fighters/missiles bonus to the fighters this ship LAUNCHES, not to the carrier itself - same limitation as fighter_weapon_damage/fighter_speed (fighters are separate ships spawned from the carrier's bays; our apply loop only touches the carrier's own MutableShipStatsAPI). It also zeroes the launched fighters' patrol range, locking them near the ship. Needs the same not-yet-built combat-time hook targeting spawned fighters before this can convert.",
+			"todo": "Deliberately kept on vanillaHullMod passthrough as a design choice, not a technical limitation - the fighter-spawn hook needed to convert this now exists (see FIGHTER_PD_DAMAGE_BONUS, reused by other nodes). Real vanilla effect also zeroes the launched fighters' patrol range (locking them near the ship) and tags certain fighter types to stay in front of the ship; neither of those is implemented as a reusable effect yet.",
 			"tags": [
 				"range"
 			]
@@ -394,8 +394,11 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
-			"vanillaHullMod": "expanded_deck_crew",
-			"todo": "The fighter replacement rate part (asymmetric: -15% decay, +25% recovery) is a simple fixed effect and safe to convert, but the real vanilla effect also adds min crew requirement equal to 20 per fighter bay, scaled off the ship's OWN base fighter bay count - not a fixed magnitude independent of the specific hull. Since our apply loop is all-or-nothing per node, deliberately left entirely on vanillaHullMod passthrough rather than half-convert and silently drop the crew requirement change.",
+			"effects": [
+				{ "effect": "FIGHTER_REPLACEMENT_DECAY_MULT", "magnitude": -15 },
+				{ "effect": "FIGHTER_REPLACEMENT_RECOVERY_MULT", "magnitude": 25 },
+				{ "effect": "MIN_CREW_PER_FIGHTER_BAY", "magnitude": 20 }
+			],
 			"tags": [
 				"fighter"
 			]
@@ -1066,8 +1069,10 @@
 			"icon": "graphics/icons/circular/small_passives/fighter_uplink2.png",
 			"opCost": 2,
 			"xpCost": 500,
-			"description": "Increases the weapon damage of fighters launched from this ship.",
-			"todo": "Fighters are separate ships spawned from the carrier's bays, so this can't be applied through the carrier's own MutableShipStatsAPI like other effects - it needs a combat-time hook that finds each fighter's source ship and applies the bonus to the fighter's own stats. Not yet built.",
+			"effects": [
+				{ "effect": "FIGHTER_WEAPON_DAMAGE", "magnitude": 15 }
+			],
+			"todo": "Placeholder magnitude (15%) pending real balance numbers.",
 			"tags": [
 				"fighter"
 			]
@@ -1078,8 +1083,10 @@
 			"icon": "graphics/icons/circular/small_passives/wing_commander.png",
 			"opCost": 2,
 			"xpCost": 500,
-			"description": "Increases the top speed of fighters launched from this ship.",
-			"todo": "Same limitation as fighter_weapon_damage - needs a combat-time hook targeting launched fighters, not yet built.",
+			"effects": [
+				{ "effect": "FIGHTER_TOP_SPEED", "magnitude": 15 }
+			],
+			"todo": "Placeholder magnitude (15%) pending real balance numbers.",
 			"tags": [
 				"fighter"
 			]
