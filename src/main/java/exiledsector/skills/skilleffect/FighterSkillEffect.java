@@ -1,6 +1,7 @@
 package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 
 import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
@@ -8,6 +9,40 @@ import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
 
 public enum FighterSkillEffect implements SkillEffect {
 
+    FIGHTER_WEAPON_DAMAGE {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            MutableShipStatsAPI fighterStats = fighter.getMutableStats();
+            fighterStats.getBallisticWeaponDamageMult().modifyPercent(modId, magnitude);
+            fighterStats.getMissileWeaponDamageMult().modifyPercent(modId, magnitude);
+            fighterStats.getEnergyWeaponDamageMult().modifyPercent(modId, magnitude);
+            fighterStats.getBeamWeaponDamageMult().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "weapon damage of fighters launched from this ship");
+        }
+    },
+    FIGHTER_TOP_SPEED {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            fighter.getMutableStats().getMaxSpeed().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "top speed of fighters launched from this ship");
+        }
+    },
     FIGHTER_CREW_LOSS {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -41,6 +76,45 @@ public enum FighterSkillEffect implements SkillEffect {
         @Override
         public String describe(float magnitude) {
             return pctChange(magnitude, "fighter replacement rate (both decay and recovery)");
+        }
+    },
+    FIGHTER_REPLACEMENT_DECAY_MULT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getStat("replacement_rate_decrease_mult").modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "rate at which fighter replacement capability decays from losses");
+        }
+    },
+    FIGHTER_REPLACEMENT_RECOVERY_MULT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getStat("replacement_rate_increase_mult").modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "rate at which fighter replacement capability recovers");
+        }
+    },
+    FIGHTER_PD_DAMAGE_BONUS {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            MutableShipStatsAPI fighterStats = fighter.getMutableStats();
+            fighterStats.getDamageToFighters().modifyPercent(modId, magnitude);
+            fighterStats.getDamageToMissiles().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "damage dealt by fighters launched from this ship to other fighters and missiles");
         }
     },
     FIGHTER_RELAUNCH_TIME_FLAT {

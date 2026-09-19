@@ -183,6 +183,18 @@ public enum LogisticsSkillEffect implements SkillEffect {
             return flatChange(magnitude, "minimum crew required");
         }
     },
+    MIN_CREW_PER_FIGHTER_BAY {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            float bays = stats.getNumFighterBays().getBaseValue();
+            stats.getMinCrewMod().modifyFlat(modId, bays * magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return flatChange(magnitude, "minimum crew required, per fighter bay");
+        }
+    },
     SUPPLIES_PER_MONTH_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
