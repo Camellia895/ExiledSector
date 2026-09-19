@@ -4,9 +4,7 @@ import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledsector.skills.ShipTechLevel;
 import exiledsector.skills.SkillNode;
-import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import lunalib.lunaRefit.BaseRefitButton;
 
@@ -35,15 +33,10 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private SkillType pendingDropdownOption;
 
     public SkillTreeCanvasPlugin(FleetMemberAPI member, float shipCardHeight, BaseRefitButton refitButton) {
-        this.style = new SkillTreePanelStyle(rootCrestPath(member));
+        this.style = new SkillTreePanelStyle(RootCrestResolver.resolve(member));
         this.nodeRenderer = new SkillTreeNodeRenderer(member, style, refitButton);
         this.statPanel = new SkillTreeStatPanel(member, style);
         this.shipCardHeight = shipCardHeight;
-    }
-
-    private static String rootCrestPath(FleetMemberAPI member) {
-        SkillType rootType = SkillTree.getType(ShipTechLevel.of(member).rootTypeId());
-        return rootType != null ? rootType.getIconPath() : null;
     }
 
     @Override

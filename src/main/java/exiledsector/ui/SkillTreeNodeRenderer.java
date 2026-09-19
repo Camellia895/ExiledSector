@@ -165,7 +165,8 @@ final class SkillTreeNodeRenderer {
             boolean isActiveRoot = activeRoot != null && node.getId().equals(activeRoot.getId());
             float footprintSize = NODE_SIZE * zoom * SkillTier.ROOT.getSizeMultiplier();
             Color tint = isActiveRoot ? ALLOCATED_TINT : UNALLOCATED_TINT;
-            drawIcon(node.getType().getIconPath(), nodeX, nodeY, footprintSize, alphaMult, tint);
+            String iconPath = isActiveRoot ? RootCrestResolver.resolve(member) : node.getType().getIconPath();
+            drawIcon(iconPath, nodeX, nodeY, footprintSize, alphaMult, tint);
         }
 
         renderDropdown(centerX, centerY, zoom, mouseX, mouseY, mouseKnown, alphaMult);
@@ -481,14 +482,14 @@ final class SkillTreeNodeRenderer {
             float breathingT = (float) (0.5 + 0.5 * Math.sin(2 * Math.PI * breathingPhase / BREATHING_PERIOD_SECONDS));
             float breathingAlpha = (BREATHING_MIN_ALPHA + (BREATHING_MAX_ALPHA - BREATHING_MIN_ALPHA) * breathingT) * alphaMult;
             GL11.glLineWidth(NODE_CONNECTOR_GLOW_LINE_THICKNESS * scale * zoom);
-            drawRingOutline(cx, cy, ringRadius, GLOW_COLOR, breathingAlpha);
+            drawRingOutline(cx, cy, ringRadius, style.getAccentColor(), breathingAlpha);
         }
 
         if (pulseSeconds != null) {
             GL11.glLineWidth(RING_LINE_THICKNESS * zoom);
             float progress = pulseSeconds / PULSE_DURATION;
             float radiusFraction = PULSE_START_RADIUS_FRACTION + (PULSE_END_RADIUS_FRACTION - PULSE_START_RADIUS_FRACTION) * progress;
-            drawRingOutline(cx, cy, half * radiusFraction, GLOW_COLOR, (1f - progress) * alphaMult);
+            drawRingOutline(cx, cy, half * radiusFraction, style.getAccentColor(), (1f - progress) * alphaMult);
         }
 
         GL11.glDisable(GL11.GL_BLEND);
@@ -497,9 +498,9 @@ final class SkillTreeNodeRenderer {
     private void drawNodeDonut(float cx, float cy, float radius, float scale, float zoom, boolean allocated, float alphaMult) {
         if (allocated) {
             GL11.glLineWidth(NODE_CONNECTOR_GLOW_HALO_THICKNESS * scale * zoom);
-            drawRingOutline(cx, cy, radius, GLOW_COLOR, alphaMult * NODE_CONNECTOR_GLOW_HALO_ALPHA);
+            drawRingOutline(cx, cy, radius, style.getAccentColor(), alphaMult * NODE_CONNECTOR_GLOW_HALO_ALPHA);
             GL11.glLineWidth(NODE_CONNECTOR_GLOW_LINE_THICKNESS * scale * zoom);
-            drawRingOutline(cx, cy, radius, GLOW_COLOR, alphaMult);
+            drawRingOutline(cx, cy, radius, style.getAccentColor(), alphaMult);
             return;
         }
 
@@ -653,8 +654,8 @@ final class SkillTreeNodeRenderer {
 
     private void drawConnectorSegment(float x1, float y1, float x2, float y2, boolean glowing, float alphaMult) {
         if (glowing) {
-            drawLine(x1, y1, x2, y2, GLOW_COLOR, alphaMult * NODE_CONNECTOR_GLOW_HALO_ALPHA, NODE_CONNECTOR_GLOW_HALO_THICKNESS);
-            drawLine(x1, y1, x2, y2, GLOW_COLOR, alphaMult, NODE_CONNECTOR_GLOW_LINE_THICKNESS);
+            drawLine(x1, y1, x2, y2, style.getAccentColor(), alphaMult * NODE_CONNECTOR_GLOW_HALO_ALPHA, NODE_CONNECTOR_GLOW_HALO_THICKNESS);
+            drawLine(x1, y1, x2, y2, style.getAccentColor(), alphaMult, NODE_CONNECTOR_GLOW_LINE_THICKNESS);
             return;
         }
 
