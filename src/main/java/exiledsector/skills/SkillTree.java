@@ -10,7 +10,7 @@ public class SkillTree {
     private static final Map<String, SkillNode> NODES = new LinkedHashMap<>();
     private static final Map<String, SkillType> TYPES = new LinkedHashMap<>();
     private static final Map<String, ConnectorCurve> CURVES = new LinkedHashMap<>();
-    private static final List<Cloud> CLOUDS = new ArrayList<>();
+    private static final List<StaticImage> STATIC_IMAGES = new ArrayList<>();
 
     private SkillTree() {
     }
@@ -19,13 +19,13 @@ public class SkillTree {
         NODES.clear();
         TYPES.clear();
         CURVES.clear();
-        CLOUDS.clear();
+        STATIC_IMAGES.clear();
         TYPES.putAll(SkillTypeLoader.loadSkillTypes());
         for (SkillNode node : SkillTreeLoader.loadNodes()) {
             register(node);
         }
         CURVES.putAll(SkillTreeLoader.loadConnectorCurves());
-        CLOUDS.addAll(SkillTreeLoader.loadClouds());
+        STATIC_IMAGES.addAll(SkillTreeLoader.loadStaticImages());
     }
 
     public static void register(SkillNode node) {
@@ -60,7 +60,7 @@ public class SkillTree {
         return aId.compareTo(bId) <= 0 ? aId + "|" + bId : bId + "|" + aId;
     }
 
-    public static List<Cloud> getClouds() {
-        return CLOUDS;
+    public static List<StaticImage> getStaticImages() {
+        return STATIC_IMAGES;
     }
 }

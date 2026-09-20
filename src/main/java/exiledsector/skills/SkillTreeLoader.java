@@ -38,31 +38,30 @@ public final class SkillTreeLoader {
         }
     }
 
-    public static List<Cloud> loadClouds() {
+    public static List<StaticImage> loadStaticImages() {
         try {
-            return parseClouds(Global.getSettings().loadJSON(DATA_PATH));
+            return parseStaticImages(Global.getSettings().loadJSON(DATA_PATH));
         } catch (IOException | JSONException e) {
-            Logger.getLogger(SkillTreeLoader.class).error("Failed to load clouds from " + DATA_PATH, e);
+            Logger.getLogger(SkillTreeLoader.class).error("Failed to load static images from " + DATA_PATH, e);
             return new ArrayList<>();
         }
     }
 
-    public static List<Cloud> parseClouds(JSONObject root) throws JSONException {
-        List<Cloud> clouds = new ArrayList<>();
-        JSONArray cloudArray = root.optJSONArray("clouds");
-        if (cloudArray == null) return clouds;
-        for (int i = 0; i < cloudArray.length(); i++) {
-            JSONObject cloudJson = cloudArray.getJSONObject(i);
-            String colorRaw = cloudJson.optString("color", "vanilla");
-            String colorHex = "vanilla".equals(colorRaw) ? null : colorRaw;
-            clouds.add(new Cloud(
-                    cloudJson.getString("id"),
-                    (float) cloudJson.getDouble("x"),
-                    (float) cloudJson.getDouble("y"),
-                    (float) cloudJson.getDouble("radius"),
-                    colorHex));
+    public static List<StaticImage> parseStaticImages(JSONObject root) throws JSONException {
+        List<StaticImage> images = new ArrayList<>();
+        JSONArray imageArray = root.optJSONArray("staticImages");
+        if (imageArray == null) return images;
+        for (int i = 0; i < imageArray.length(); i++) {
+            JSONObject imageJson = imageArray.getJSONObject(i);
+            images.add(new StaticImage(
+                    imageJson.getString("id"),
+                    (float) imageJson.getDouble("x"),
+                    (float) imageJson.getDouble("y"),
+                    (float) imageJson.getDouble("width"),
+                    (float) imageJson.getDouble("height"),
+                    imageJson.getString("imagePath")));
         }
-        return clouds;
+        return images;
     }
 
     public static Map<String, ConnectorCurve> parseConnectorCurves(JSONObject root) throws JSONException {

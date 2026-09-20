@@ -1545,13 +1545,14 @@
 			"radius": 200
 		}
 	],
-	"clouds": [
+	"staticImages": [
 		{
 			"id": "cloud_inner_ring",
 			"x": -687,
 			"y": -307,
-			"radius": 225,
-			"color": "vanilla"
+			"width": 450,
+			"height": 450,
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_06.png"
 		}
 	]
 }

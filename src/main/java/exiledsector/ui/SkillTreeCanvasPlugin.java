@@ -17,7 +17,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private static final float ZOOM_STEP = 1.1f;
 
     private final SkillTreePanelStyle style;
-    private final SkillTreeCloudRenderer cloudRenderer;
+    private final SkillTreeStaticImageRenderer staticImageRenderer;
     private final SkillTreeNodeRenderer nodeRenderer;
     private final SkillTreeStatPanel statPanel;
     private final float shipCardHeight;
@@ -35,7 +35,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     public SkillTreeCanvasPlugin(FleetMemberAPI member, float shipCardHeight, BaseRefitButton refitButton) {
         this.style = new SkillTreePanelStyle(RootCrestResolver.resolve(member));
-        this.cloudRenderer = new SkillTreeCloudRenderer();
+        this.staticImageRenderer = new SkillTreeStaticImageRenderer();
         this.nodeRenderer = new SkillTreeNodeRenderer(member, style, refitButton);
         this.statPanel = new SkillTreeStatPanel(member, style);
         this.shipCardHeight = shipCardHeight;
@@ -48,7 +48,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     @Override
     public void advance(float amount) {
-        cloudRenderer.advance(amount);
+        staticImageRenderer.advance(amount);
         nodeRenderer.advance(amount);
     }
 
@@ -114,7 +114,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         float centerX = centerX();
         float centerY = centerY();
 
-        cloudRenderer.render(centerX, centerY, zoom, alphaMult, position);
+        staticImageRenderer.render(centerX, centerY, zoom, alphaMult, position);
         nodeRenderer.render(centerX, centerY, zoom, alphaMult, mouseX, mouseY, mouseKnown);
         statPanel.render(position, alphaMult);
         drawShipCardFrame(alphaMult);

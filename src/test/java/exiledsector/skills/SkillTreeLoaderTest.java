@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -106,63 +105,46 @@ class SkillTreeLoaderTest {
     }
 
     @Test
-    void missingCloudsFieldMeansNoClouds() throws Exception {
+    void missingStaticImagesFieldMeansNoImages() throws Exception {
         JSONObject root = new JSONObject("{ \"nodes\": [] }");
 
-        List<Cloud> clouds = SkillTreeLoader.parseClouds(root);
+        List<StaticImage> images = SkillTreeLoader.parseStaticImages(root);
 
-        assertTrue(clouds.isEmpty());
+        assertTrue(images.isEmpty());
     }
 
     @Test
-    void parsesCloudWithVanillaColorAsNullColorHex() throws Exception {
-        JSONObject root = new JSONObject("{ \"nodes\": [], \"clouds\": [ {"
-                + "\"id\": \"cloud_1\","
-                + "\"x\": 0,"
-                + "\"y\": 0,"
-                + "\"radius\": 1400,"
-                + "\"color\": \"vanilla\""
-                + "} ] }");
-
-        List<Cloud> clouds = SkillTreeLoader.parseClouds(root);
-
-        assertEquals(1, clouds.size());
-        Cloud cloud = clouds.get(0);
-        assertEquals("cloud_1", cloud.getId());
-        assertEquals(0f, cloud.getX());
-        assertEquals(0f, cloud.getY());
-        assertEquals(1400f, cloud.getRadius());
-        assertTrue(cloud.isVanillaColor());
-        assertEquals(null, cloud.getColorHex());
-    }
-
-    @Test
-    void parsesCloudWithCustomHexColor() throws Exception {
-        JSONObject root = new JSONObject("{ \"nodes\": [], \"clouds\": [ {"
-                + "\"id\": \"cloud_2\","
+    void parsesAllFieldsOfAStaticImage() throws Exception {
+        JSONObject root = new JSONObject("{ \"nodes\": [], \"staticImages\": [ {"
+                + "\"id\": \"image_1\","
                 + "\"x\": 1800,"
                 + "\"y\": 600,"
-                + "\"radius\": 900,"
-                + "\"color\": \"#8B1A1A\""
+                + "\"width\": 900,"
+                + "\"height\": 750,"
+                + "\"imagePath\": \"graphics/backgrounds/static_images/hyperspace_cloud_03.png\""
                 + "} ] }");
 
-        Cloud cloud = SkillTreeLoader.parseClouds(root).get(0);
+        List<StaticImage> images = SkillTreeLoader.parseStaticImages(root);
 
-        assertFalse(cloud.isVanillaColor());
-        assertEquals("#8B1A1A", cloud.getColorHex());
+        assertEquals(1, images.size());
+        StaticImage image = images.get(0);
+        assertEquals("image_1", image.getId());
+        assertEquals(1800f, image.getX());
+        assertEquals(600f, image.getY());
+        assertEquals(900f, image.getWidth());
+        assertEquals(750f, image.getHeight());
+        assertEquals("graphics/backgrounds/static_images/hyperspace_cloud_03.png", image.getImagePath());
     }
 
     @Test
-    void cloudColorDefaultsToVanillaWhenFieldMissing() throws Exception {
-        JSONObject root = new JSONObject("{ \"nodes\": [], \"clouds\": [ {"
-                + "\"id\": \"cloud_3\","
-                + "\"x\": 0,"
-                + "\"y\": 0,"
-                + "\"radius\": 500"
-                + "} ] }");
+    void parsesMultipleStaticImagesInOrder() throws Exception {
+        JSONObject root = new JSONObject("{ \"nodes\": [], \"staticImages\": ["
+                + "{\"id\": \"a\", \"x\": 0, \"y\": 0, \"width\": 100, \"height\": 100, \"imagePath\": \"a.png\"},"
+                + "{\"id\": \"b\", \"x\": 0, \"y\": 0, \"width\": 100, \"height\": 100, \"imagePath\": \"b.png\"}"
+                + "] }");
 
-        Cloud cloud = SkillTreeLoader.parseClouds(root).get(0);
+        List<StaticImage> images = SkillTreeLoader.parseStaticImages(root);
 
-        assertTrue(cloud.isVanillaColor());
+        assertEquals(List.of("a", "b"), List.of(images.get(0).getId(), images.get(1).getId()));
     }
 }

@@ -6,6 +6,7 @@ $projectRoot = Split-Path -Parent $toolsDir
 $editorPath = Join-Path $toolsDir "skill_tree_editor.html"
 $typesPath = Join-Path $projectRoot "data\skilltrees\skill_types.json"
 $treePath = Join-Path $projectRoot "data\skilltrees\ship_skill_tree.json"
+$staticImagesDir = Join-Path $projectRoot "graphics\backgrounds\static_images"
 
 function Write-JsonResponse($response, $statusCode, $payload) {
     $response.StatusCode = $statusCode
@@ -65,6 +66,18 @@ try {
                     [System.IO.File]::WriteAllText($treePath, $body.tree, $utf8NoBom)
                     Write-JsonResponse $response 200 @{ ok = $true; message = "Saved." }
                 }
+            }
+            elseif ($request.HttpMethod -eq "GET" -and $request.Url.LocalPath -eq "/list-images") {
+                $files = @()
+                if (Test-Path $staticImagesDir) {
+                    $files = Get-ChildItem -Path $staticImagesDir -Filter "*.png" -File |
+                        Sort-Object Name |
+                        ForEach-Object { "graphics/backgrounds/static_images/" + $_.Name }
+                }
+                $json = ConvertTo-Json -InputObject @($files)
+                $bytes = [System.Text.Encoding]::UTF8.GetBytes($json)
+                $response.ContentType = "application/json; charset=utf-8"
+                $response.OutputStream.Write($bytes, 0, $bytes.Length)
             }
             elseif ($request.HttpMethod -eq "GET") {
                 $relPath = [Uri]::UnescapeDataString($request.Url.LocalPath.TrimStart('/'))
