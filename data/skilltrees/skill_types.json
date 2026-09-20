@@ -1173,6 +1173,10 @@
 				{
 					"effect": "HULL_PERCENT",
 					"magnitude": 10
+				},
+				{
+					"effect": "SENSOR_PROFILE_PERCENT",
+					"magnitude": 70
 				}
 			],
 			"tags": [
@@ -1409,7 +1413,7 @@
 		{
 			"id": "survey_mach_cost",
 			"name": "Survey Heavy Machinery Cost Reduction",
-			"icon": "",
+			"icon": "graphics/icons/circular/notable_passives/surveying_equipment_red.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"hullSizeEffects": [
@@ -1428,7 +1432,7 @@
 		{
 			"id": "survey_supplies_cost_reduction",
 			"name": "Survey supplies cost reduction",
-			"icon": "",
+			"icon": "graphics/icons/circular/notable_passives/surveying_equipment_orange.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"hullSizeEffects": [
@@ -1447,7 +1451,7 @@
 		{
 			"id": "survey_generic_cost_reduction",
 			"name": "Survey cost reduction",
-			"icon": "",
+			"icon": "graphics/icons/circular/notable_passives/surveying_equipment_green.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"hullSizeEffects": [
@@ -1510,7 +1514,7 @@
 		},
 		{
 			"id": "engine_durability",
-			"name": "Engine Durability",
+			"name": "Engine Durability and Sensor Profile",
 			"icon": "graphics/icons/circular/notable_passives/insulated_engine_assembly_red.png",
 			"opCost": 4,
 			"xpCost": 2000,
@@ -1518,6 +1522,10 @@
 				{
 					"effect": "ENGINE_DURABILITY_PERCENT",
 					"magnitude": 25
+				},
+				{
+					"effect": "SENSOR_PROFILE_PERCENT",
+					"magnitude": 10
 				}
 			],
 			"tags": [
@@ -1527,7 +1535,7 @@
 		{
 			"id": "cargo_capacity_flat",
 			"name": "Cargo Capacity",
-			"icon": "",
+			"icon": "graphics/icons/cargo_circular.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"hullSizeEffects": [

@@ -1,4 +1,5 @@
 $ErrorActionPreference = "Stop"
+Add-Type -AssemblyName System.Drawing
 
 $port = 8791
 $toolsDir = $PSScriptRoot
@@ -7,6 +8,78 @@ $editorPath = Join-Path $toolsDir "skill_tree_editor.html"
 $typesPath = Join-Path $projectRoot "data\skilltrees\skill_types.json"
 $treePath = Join-Path $projectRoot "data\skilltrees\ship_skill_tree.json"
 $staticImagesDir = Join-Path $projectRoot "graphics\backgrounds\static_images"
+$graphicsDir = Join-Path $projectRoot "graphics"
+
+function HueToRgbChannel($p, $q, $t) {
+    if ($t -lt 0) { $t += 1 }
+    if ($t -gt 1) { $t -= 1 }
+    if ($t -lt (1.0/6)) { return $p + ($q - $p) * 6 * $t }
+    if ($t -lt 0.5) { return $q }
+    if ($t -lt (2.0/3)) { return $p + ($q - $p) * (2.0/3 - $t) * 6 }
+    return $p
+}
+
+function ColorFromAhsl($a, $h, $s, $l) {
+    if ($s -le 0) {
+        $v = [int]([math]::Round($l * 255))
+        return [System.Drawing.Color]::FromArgb($a, $v, $v, $v)
+    }
+    $q = if ($l -lt 0.5) { $l * (1 + $s) } else { $l + $s - $l * $s }
+    $p = 2 * $l - $q
+    $hk = ((($h % 360) + 360) % 360) / 360.0
+    $r = HueToRgbChannel $p $q ($hk + 1.0/3)
+    $g = HueToRgbChannel $p $q $hk
+    $b = HueToRgbChannel $p $q ($hk - 1.0/3)
+    return [System.Drawing.Color]::FromArgb($a, [int]([math]::Round($r*255)), [int]([math]::Round($g*255)), [int]([math]::Round($b*255)))
+}
+
+function HueShiftImage($srcPath, $destPath, $hueShift) {
+    $src = New-Object System.Drawing.Bitmap($srcPath)
+    try {
+        $out = New-Object System.Drawing.Bitmap($src.Width, $src.Height, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+        for ($y = 0; $y -lt $src.Height; $y++) {
+            for ($x = 0; $x -lt $src.Width; $x++) {
+                $c = $src.GetPixel($x, $y)
+                if ($c.A -eq 0) {
+                    $out.SetPixel($x, $y, $c)
+                    continue
+                }
+                $h = $c.GetHue() + $hueShift
+                $out.SetPixel($x, $y, (ColorFromAhsl $c.A $h $c.GetSaturation() $c.GetBrightness()))
+            }
+        }
+        $out.Save($destPath, [System.Drawing.Imaging.ImageFormat]::Png)
+        $out.Dispose()
+    } finally {
+        $src.Dispose()
+    }
+}
+
+function MakeCircularImage($srcPath, $destPath) {
+    $src = New-Object System.Drawing.Bitmap($srcPath)
+    try {
+        $out = New-Object System.Drawing.Bitmap($src.Width, $src.Height, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+        $g = [System.Drawing.Graphics]::FromImage($out)
+        try {
+            $g.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
+            $g.PixelOffsetMode = [System.Drawing.Drawing2D.PixelOffsetMode]::HighQuality
+            $g.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
+            $g.CompositingQuality = [System.Drawing.Drawing2D.CompositingQuality]::HighQuality
+            $brush = New-Object System.Drawing.TextureBrush($src, [System.Drawing.Drawing2D.WrapMode]::Clamp)
+            try {
+                $g.FillEllipse($brush, 0, 0, $src.Width, $src.Height)
+            } finally {
+                $brush.Dispose()
+            }
+        } finally {
+            $g.Dispose()
+        }
+        $out.Save($destPath, [System.Drawing.Imaging.ImageFormat]::Png)
+        $out.Dispose()
+    } finally {
+        $src.Dispose()
+    }
+}
 
 function Write-JsonResponse($response, $statusCode, $payload) {
     $response.StatusCode = $statusCode
@@ -78,6 +151,98 @@ try {
                 $bytes = [System.Text.Encoding]::UTF8.GetBytes($json)
                 $response.ContentType = "application/json; charset=utf-8"
                 $response.OutputStream.Write($bytes, 0, $bytes.Length)
+            }
+            elseif ($request.HttpMethod -eq "GET" -and $request.Url.LocalPath -eq "/list-all-images") {
+                $files = @()
+                if (Test-Path $graphicsDir) {
+                    $files = Get-ChildItem -Path $graphicsDir -Filter "*.png" -File -Recurse |
+                        ForEach-Object {
+                            $rel = $_.FullName.Substring($projectRoot.Length + 1) -replace '\\', '/'
+                            $rel
+                        } | Sort-Object
+                }
+                $json = ConvertTo-Json -InputObject @($files)
+                $bytes = [System.Text.Encoding]::UTF8.GetBytes($json)
+                $response.ContentType = "application/json; charset=utf-8"
+                $response.OutputStream.Write($bytes, 0, $bytes.Length)
+            }
+            elseif ($request.HttpMethod -eq "POST" -and $request.Url.LocalPath -eq "/colorshift") {
+                $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
+                $bodyText = $reader.ReadToEnd()
+                $body = $bodyText | ConvertFrom-Json
+
+                $relPath = [string]$body.path
+                $suffix = ([string]$body.suffix).Trim()
+                $hueShift = 0
+                try { $hueShift = [double]$body.hueShift } catch { $hueShift = 0 }
+
+                $srcFull = [System.IO.Path]::GetFullPath((Join-Path $projectRoot $relPath))
+                $fullProjectRoot = [System.IO.Path]::GetFullPath($projectRoot)
+
+                if (-not $relPath -or -not $srcFull.StartsWith($fullProjectRoot, [StringComparison]::OrdinalIgnoreCase) -or -not (Test-Path $srcFull -PathType Leaf)) {
+                    Write-JsonResponse $response 400 @{ ok = $false; message = "Source image not found." }
+                } elseif (-not $suffix -or $suffix -match '[\\/:]') {
+                    Write-JsonResponse $response 400 @{ ok = $false; message = "Suffix is required and cannot contain path separators." }
+                } else {
+                    $dir = [System.IO.Path]::GetDirectoryName($srcFull)
+                    $baseName = [System.IO.Path]::GetFileNameWithoutExtension($srcFull)
+                    $destFull = Join-Path $dir ($baseName + "_" + $suffix + ".png")
+                    try {
+                        HueShiftImage $srcFull $destFull $hueShift
+                        $destRel = $destFull.Substring($fullProjectRoot.Length + 1) -replace '\\', '/'
+                        Write-JsonResponse $response 200 @{ ok = $true; path = $destRel }
+                    } catch {
+                        Write-JsonResponse $response 500 @{ ok = $false; message = $_.Exception.Message }
+                    }
+                }
+            }
+            elseif ($request.HttpMethod -eq "POST" -and $request.Url.LocalPath -eq "/make-circular") {
+                $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
+                $bodyText = $reader.ReadToEnd()
+                $body = $bodyText | ConvertFrom-Json
+
+                $relPath = [string]$body.path
+                $suffix = ([string]$body.suffix).Trim()
+
+                $srcFull = [System.IO.Path]::GetFullPath((Join-Path $projectRoot $relPath))
+                $fullProjectRoot = [System.IO.Path]::GetFullPath($projectRoot)
+
+                if (-not $relPath -or -not $srcFull.StartsWith($fullProjectRoot, [StringComparison]::OrdinalIgnoreCase) -or -not (Test-Path $srcFull -PathType Leaf)) {
+                    Write-JsonResponse $response 400 @{ ok = $false; message = "Source image not found." }
+                } elseif (-not $suffix -or $suffix -match '[\\/:]') {
+                    Write-JsonResponse $response 400 @{ ok = $false; message = "Suffix is required and cannot contain path separators." }
+                } else {
+                    $dir = [System.IO.Path]::GetDirectoryName($srcFull)
+                    $baseName = [System.IO.Path]::GetFileNameWithoutExtension($srcFull)
+                    $destFull = Join-Path $dir ($baseName + "_" + $suffix + ".png")
+                    try {
+                        MakeCircularImage $srcFull $destFull
+                        $destRel = $destFull.Substring($fullProjectRoot.Length + 1) -replace '\\', '/'
+                        Write-JsonResponse $response 200 @{ ok = $true; path = $destRel }
+                    } catch {
+                        Write-JsonResponse $response 500 @{ ok = $false; message = $_.Exception.Message }
+                    }
+                }
+            }
+            elseif ($request.HttpMethod -eq "POST" -and $request.Url.LocalPath -eq "/delete-image") {
+                $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
+                $bodyText = $reader.ReadToEnd()
+                $body = $bodyText | ConvertFrom-Json
+
+                $relPath = [string]$body.path
+                $srcFull = [System.IO.Path]::GetFullPath((Join-Path $projectRoot $relPath))
+                $fullProjectRoot = [System.IO.Path]::GetFullPath($projectRoot)
+
+                if (-not $relPath -or -not $srcFull.StartsWith($fullProjectRoot, [StringComparison]::OrdinalIgnoreCase) -or -not (Test-Path $srcFull -PathType Leaf)) {
+                    Write-JsonResponse $response 400 @{ ok = $false; message = "Image not found." }
+                } else {
+                    try {
+                        Remove-Item -Path $srcFull -Force
+                        Write-JsonResponse $response 200 @{ ok = $true }
+                    } catch {
+                        Write-JsonResponse $response 500 @{ ok = $false; message = $_.Exception.Message }
+                    }
+                }
             }
             elseif ($request.HttpMethod -eq "GET") {
                 $relPath = [Uri]::UnescapeDataString($request.Url.LocalPath.TrimStart('/'))
