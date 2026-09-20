@@ -152,6 +152,66 @@ public enum FighterSkillEffect implements SkillEffect {
             return flatChange(magnitude, "fighter relaunch time, as a % of base refit time");
         }
     },
+    FIGHTER_ARMOR_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            applyRoleArmor(fighter, modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "armor rating of fighters launched from this ship");
+        }
+    },
+    FIGHTER_SHIELD_DAMAGE_TAKEN_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            applyRoleShieldDamageTaken(fighter, modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "damage taken by shields of fighters launched from this ship");
+        }
+    },
+    FIGHTER_RATE_OF_FIRE_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            applyRoleRateOfFire(fighter, modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "weapon rate of fire of fighters launched from this ship");
+        }
+    },
+    FIGHTER_ENGAGEMENT_RANGE_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            applyRoleEngagementRange(fighter, modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "engagement range of fighters launched from this ship");
+        }
+    },
     FIGHTER_ROLE_DAMAGE_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
