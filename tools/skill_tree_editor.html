@@ -279,6 +279,15 @@
   .orbit-rotate.dragging { fill: var(--accent); opacity: 1; cursor: grabbing; }
   .shapeBtn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--text); }
   .center-mark { fill: none; stroke: var(--accent); stroke-width: 1.5; opacity: .8; }
+  .cloud-circle { stroke: var(--text-faint); stroke-width: 1; stroke-dasharray: 4 6; opacity: .7; pointer-events: none; }
+  .cloud-circle.selected { stroke: var(--accent); opacity: 1; }
+  .cloud-center { fill: var(--panel-2); stroke: var(--text-faint); stroke-width: 1.5; cursor: move; }
+  .cloud-center:hover { stroke: var(--accent); }
+  .cloud-center.selected { stroke: var(--accent); fill: var(--accent-dim); }
+  .cloud-center.moving { stroke: var(--accent); fill: var(--accent-dim); }
+  .cloud-resize { fill: var(--text-faint); opacity: .55; cursor: nwse-resize; }
+  .cloud-resize:hover { fill: var(--accent); opacity: 1; }
+  .cloud-resize.dragging { fill: var(--accent); opacity: 1; }
   .marquee-rect { fill: var(--accent); fill-opacity: .12; stroke: var(--accent); stroke-width: 1; stroke-dasharray: 4 3; pointer-events: none; }
 
   .zoomControls {
@@ -478,7 +487,8 @@
         <button class="smallBtn shapeBtn" data-anchor-shape="triangle">Triangle</button>
         <button class="smallBtn shapeBtn" data-anchor-shape="rectangle">Rectangle</button>
       </div>
-      <div class="hint">Select: drag a node to move it, drag empty canvas to pan, scroll to zoom. Shift-click a node to add/remove it from a multi-selection, or shift-drag empty canvas to marquee-select. Drag any selected node to move the whole group together. With a single node selected, Ctrl-click another node to link/unlink it to the selection - each is added to the other's connections, so allocating either one lets you allocate the other. Ctrl-click the same pair again to unlink.<br><br>Add: click empty canvas to place a node there.<br><br>Add Anchor: pick a shape above, then click empty canvas to place an anchor of that shape - a ring/polygon you can resize by dragging its edge handle. Drag any node close to its boundary in Select mode to snap it on; drag it along the boundary to move it around, or pull it far enough away to detach. Click an anchor's center dot to select it (and edit its exact fields on the right), click its small square handle to cycle its shape, drag its rotation handle (the extra round handle non-circle shapes get) to spin it in place, or press Delete/Q to remove it.</div>
+      <button class="modeBtn" data-mode="addCloud">Add Cloud <span class="key">F</span></button>
+      <div class="hint">Select: drag a node to move it, drag empty canvas to pan, scroll to zoom. Shift-click a node to add/remove it from a multi-selection, or shift-drag empty canvas to marquee-select. Drag any selected node to move the whole group together. With a single node selected, Ctrl-click another node to link/unlink it to the selection - each is added to the other's connections, so allocating either one lets you allocate the other. Ctrl-click the same pair again to unlink.<br><br>Add: click empty canvas to place a node there.<br><br>Add Anchor: pick a shape above, then click empty canvas to place an anchor of that shape - a ring/polygon you can resize by dragging its edge handle. Drag any node close to its boundary in Select mode to snap it on; drag it along the boundary to move it around, or pull it far enough away to detach. Click an anchor's center dot to select it (and edit its exact fields on the right), click its small square handle to cycle its shape, drag its rotation handle (the extra round handle non-circle shapes get) to spin it in place, or press Delete/Q to remove it.<br><br>Add Cloud: click empty canvas to place a hyperspace-cloud background circle - a soft, resizable region rendered behind the tree in game (with its own periodic lightning crackle). Click one to select it and edit its X/Y/radius/color on the right; drag its edge handle to resize. Overlapping clouds blend into each other automatically. Press Delete/Q to remove.</div>
     </div>
 
     <div class="toolSection">
@@ -776,6 +786,7 @@ var SHIPPED_CURVES = [
 var SHIPPED_ANCHORS = [
 {"id":"anchor_1","x":-488,"y":-321,"radius":95}
 ];
+var SHIPPED_CLOUDS = [];
 
 // Matches the in-game ring/icon radius at zoom 1.0: NODE_SIZE(64) * iconSizeMultiplier(tier) / 2
 // from SkillTreeNodeRenderer.java (Small=1, Notable=1.2, Keystone=1.4; Root has no ring, so its
@@ -800,10 +811,12 @@ var state = {
   nodes: [],
   curves: [],
   anchors: [],
+  clouds: [],
   view: { panX: 0, panY: 0, zoom: 0.55 },
   mode: 'select',
   selectedIds: [],
   selectedAnchorId: null,
+  selectedCloudId: null,
   showLabels: true,
   search: '',
   pendingAnchorShape: 'circle'
@@ -812,6 +825,20 @@ var state = {
 function deepCopy(x){ return JSON.parse(JSON.stringify(x)); }
 function typeById(id){ for (var i=0;i<state.types.length;i++) if (state.types[i].id === id) return state.types[i]; return null; }
 function nodeById(id){ for (var i=0;i<state.nodes.length;i++) if (state.nodes[i].id === id) return state.nodes[i]; return null; }
+function cloudById(id){ for (var i=0;i<state.clouds.length;i++) if (state.clouds[i].id === id) return state.clouds[i]; return null; }
+function uniqueCloudId(){
+  var i = 1, id;
+  do { id = 'cloud_' + i; i++; } while (cloudById(id));
+  return id;
+}
+var VANILLA_CLOUD_SWATCH = '#6a5acd';
+function normalizeClouds(clouds){
+  return (clouds || []).map(function(c){
+    var out = { id: c.id, x: c.x, y: c.y, radius: c.radius };
+    out.color = (!c.color || c.color === 'vanilla') ? null : c.color;
+    return out;
+  });
+}
 
 // ---------- connector curves ----------
 // A connector between two nodes is a straight line by default. state.curves only holds
@@ -1041,11 +1068,12 @@ function loadShipped(){
   state.nodes = deepCopy(SHIPPED_NODES);
   state.curves = deepCopy(SHIPPED_CURVES);
   state.anchors = deepCopy(SHIPPED_ANCHORS);
+  state.clouds = deepCopy(SHIPPED_CLOUDS);
 }
 
 function saveLocal(){
   try {
-    localStorage.setItem('skillTreeEditor.v1', JSON.stringify({ types: state.types, nodes: state.nodes, curves: state.curves, anchors: state.anchors }));
+    localStorage.setItem('skillTreeEditor.v1', JSON.stringify({ types: state.types, nodes: state.nodes, curves: state.curves, anchors: state.anchors, clouds: state.clouds }));
   } catch(e){}
 }
 function loadLocal(){
@@ -1058,6 +1086,7 @@ function loadLocal(){
     state.nodes = parsed.nodes;
     state.curves = parsed.curves || [];
     state.anchors = parsed.anchors || [];
+    state.clouds = parsed.clouds || [];
     return true;
   } catch(e){ return false; }
 }
@@ -1068,7 +1097,7 @@ if (!loadLocal()) loadShipped();
 var svg = document.getElementById('stage');
 var canvasWrap = document.getElementById('canvasWrap');
 var NS = 'http://www.w3.org/2000/svg';
-var layerRoot, layerAnchors, layerEdges, layerNodes, layerLabels, layerAnchorHandles;
+var layerRoot, layerClouds, layerAnchors, layerEdges, layerNodes, layerLabels, layerAnchorHandles, layerCloudHandles;
 
 var NODE_ICON_CLIP_IDS = { SMALL: 'nodeClipSmall', NOTABLE: 'nodeClipNotable', KEYSTONE: 'nodeClipKeystone', ROOT: 'nodeClipRoot' };
 function buildIconClipDefs(){
@@ -1088,16 +1117,20 @@ function buildLayers(){
   svg.innerHTML = '';
   svg.appendChild(buildIconClipDefs());
   layerRoot = document.createElementNS(NS, 'g');
+  layerClouds = document.createElementNS(NS, 'g');
   layerAnchors = document.createElementNS(NS, 'g');
   layerEdges = document.createElementNS(NS, 'g');
   layerNodes = document.createElementNS(NS, 'g');
   layerLabels = document.createElementNS(NS, 'g');
   layerAnchorHandles = document.createElementNS(NS, 'g');
+  layerCloudHandles = document.createElementNS(NS, 'g');
+  layerRoot.appendChild(layerClouds);
   layerRoot.appendChild(layerAnchors);
   layerRoot.appendChild(layerEdges);
   layerRoot.appendChild(layerNodes);
   layerRoot.appendChild(layerLabels);
   layerRoot.appendChild(layerAnchorHandles);
+  layerRoot.appendChild(layerCloudHandles);
   svg.appendChild(layerRoot);
 }
 buildLayers();
@@ -1136,6 +1169,50 @@ function validate(){
 function render(){
   buildLayers();
   layerRoot.setAttribute('transform', worldToScreenTransform());
+
+  var cloudDefs = document.createElementNS(NS, 'defs');
+  layerClouds.appendChild(cloudDefs);
+  state.clouds.forEach(function(c, ci){
+    var selected = state.selectedCloudId === c.id;
+    var swatch = c.color ? c.color : VANILLA_CLOUD_SWATCH;
+    var gradId = 'cloudGrad' + ci;
+
+    var grad = document.createElementNS(NS, 'radialGradient');
+    grad.setAttribute('id', gradId);
+    grad.setAttribute('gradientUnits', 'userSpaceOnUse');
+    grad.setAttribute('cx', c.x); grad.setAttribute('cy', c.y); grad.setAttribute('r', c.radius);
+    var stop0 = document.createElementNS(NS, 'stop');
+    stop0.setAttribute('offset', '60%'); stop0.setAttribute('stop-color', swatch); stop0.setAttribute('stop-opacity', '0.55');
+    var stop1 = document.createElementNS(NS, 'stop');
+    stop1.setAttribute('offset', '100%'); stop1.setAttribute('stop-color', swatch); stop1.setAttribute('stop-opacity', '0');
+    grad.appendChild(stop0); grad.appendChild(stop1);
+    cloudDefs.appendChild(grad);
+
+    var circle = document.createElementNS(NS, 'circle');
+    circle.setAttribute('cx', c.x); circle.setAttribute('cy', c.y); circle.setAttribute('r', c.radius);
+    circle.setAttribute('fill', 'url(#' + gradId + ')');
+    circle.setAttribute('class', 'cloud-circle' + (selected ? ' selected' : ''));
+    circle.dataset.cloudId = c.id;
+    layerClouds.appendChild(circle);
+
+    if (state.mode === 'select' || state.mode === 'addCloud') {
+      var isMoving = drag && drag.cloudMove === c.id;
+      var center = document.createElementNS(NS, 'circle');
+      center.setAttribute('cx', c.x); center.setAttribute('cy', c.y); center.setAttribute('r', isMoving ? 8 : 6);
+      center.setAttribute('class', 'cloud-center' + (selected ? ' selected' : '') + (isMoving ? ' moving' : ''));
+      center.dataset.cloudId = c.id;
+      layerCloudHandles.appendChild(center);
+
+      var isResizing = drag && drag.cloudResize === c.id;
+      var handlePos = { x: c.x + c.radius / Math.SQRT2, y: c.y + c.radius / Math.SQRT2 };
+      var resizeHandle = document.createElementNS(NS, 'circle');
+      resizeHandle.setAttribute('cx', handlePos.x); resizeHandle.setAttribute('cy', handlePos.y);
+      resizeHandle.setAttribute('r', isResizing ? 7 : 5);
+      resizeHandle.setAttribute('class', 'cloud-resize' + (isResizing ? ' dragging' : ''));
+      resizeHandle.dataset.cloudResizeId = c.id;
+      layerCloudHandles.appendChild(resizeHandle);
+    }
+  });
 
   var centerMark = document.createElementNS(NS, 'path');
   var s = 14;
@@ -1304,6 +1381,7 @@ function render(){
   attachNodeHandlers();
   attachCurveAnchorHandlers();
   attachOrbitAnchorHandlers();
+  attachCloudHandlers();
   updateStats();
   updateWarnBadge();
 }
@@ -1411,6 +1489,29 @@ function attachOrbitAnchorHandlers(){
   });
 }
 
+function attachCloudHandlers(){
+  layerCloudHandles.querySelectorAll('.cloud-center').forEach(function(c){
+    c.addEventListener('pointerdown', function(ev){
+      ev.stopPropagation();
+      state.selectedIds = [];
+      state.selectedAnchorId = null;
+      state.selectedCloudId = c.dataset.cloudId;
+      drag = { cloudMove: c.dataset.cloudId };
+      ev.target.setPointerCapture(ev.pointerId);
+      document.getElementById('inspector').classList.add('open');
+      render();
+      refreshInspector();
+    });
+  });
+  layerCloudHandles.querySelectorAll('.cloud-resize').forEach(function(c){
+    c.addEventListener('pointerdown', function(ev){
+      ev.stopPropagation();
+      drag = { cloudResize: c.dataset.cloudResizeId };
+      ev.target.setPointerCapture(ev.pointerId);
+    });
+  });
+}
+
 function startGroupDrag(ev){
   drag = {
     startWorld: screenPointToWorld(ev.clientX, ev.clientY),
@@ -1445,13 +1546,27 @@ canvasWrap.addEventListener('pointerdown', function(ev){
     refreshInspector();
     return;
   }
+  if (state.mode === 'addCloud') {
+    var wc0 = screenPointToWorld(ev.clientX, ev.clientY);
+    var newCloud = { id: uniqueCloudId(), x: Math.round(wc0.x), y: Math.round(wc0.y), radius: 800, color: null };
+    state.clouds.push(newCloud);
+    state.selectedIds = [];
+    state.selectedAnchorId = null;
+    state.selectedCloudId = newCloud.id;
+    document.getElementById('inspector').classList.add('open');
+    saveLocal();
+    render();
+    refreshInspector();
+    return;
+  }
   if (ev.shiftKey) {
     drag = { marquee: true, startClientX: ev.clientX, startClientY: ev.clientY };
     return;
   }
-  if (state.selectedIds.length > 0 || state.selectedAnchorId) {
+  if (state.selectedIds.length > 0 || state.selectedAnchorId || state.selectedCloudId) {
     state.selectedIds = [];
     state.selectedAnchorId = null;
+    state.selectedCloudId = null;
     document.getElementById('inspector').classList.remove('open');
     refreshInspector();
     render();
@@ -1517,6 +1632,28 @@ window.addEventListener('pointermove', function(ev){
     if (state.selectedAnchorId) refreshInspector();
     return;
   }
+  if (drag.cloudMove) {
+    var cloud = cloudById(drag.cloudMove);
+    if (cloud) {
+      var wcm = screenPointToWorld(ev.clientX, ev.clientY);
+      cloud.x = Math.round(wcm.x);
+      cloud.y = Math.round(wcm.y);
+    }
+    render();
+    if (state.selectedCloudId) refreshInspector();
+    return;
+  }
+  if (drag.cloudResize) {
+    var rCloud = cloudById(drag.cloudResize);
+    if (rCloud) {
+      var wcr = screenPointToWorld(ev.clientX, ev.clientY);
+      var cdx = wcr.x - rCloud.x, cdy = wcr.y - rCloud.y;
+      rCloud.radius = Math.max(20, Math.round(Math.sqrt(cdx*cdx + cdy*cdy)));
+    }
+    render();
+    if (state.selectedCloudId) refreshInspector();
+    return;
+  }
   var w = screenPointToWorld(ev.clientX, ev.clientY);
   var dx = w.x - drag.startWorld.x, dy = w.y - drag.startWorld.y;
   if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) drag.moved = true;
@@ -1563,6 +1700,8 @@ window.addEventListener('pointerup', function(ev){
     snapCurveToStraightIfClose(drag.curve.a, drag.curve.b);
     saveLocal();
   } else if (drag && (drag.anchorMove || drag.anchorResize || drag.anchorRotate)) {
+    saveLocal();
+  } else if (drag && (drag.cloudMove || drag.cloudResize)) {
     saveLocal();
   } else if (drag && !drag.pan && drag.moved) {
     saveLocal();
@@ -1656,7 +1795,7 @@ document.querySelectorAll('.shapeBtn').forEach(function(btn){
 document.addEventListener('keydown', function(ev){
   if (ev.target.tagName === 'INPUT' || ev.target.tagName === 'TEXTAREA' || ev.target.tagName === 'SELECT') return;
   if (!ev.ctrlKey && !ev.metaKey) {
-    var map = { 'a': 'select', 's': 'add', 'd': 'addAnchor' };
+    var map = { 'a': 'select', 's': 'add', 'd': 'addAnchor', 'f': 'addCloud' };
     var m = map[ev.key.toLowerCase()];
     if (m) { document.querySelector('.modeBtn[data-mode="'+m+'"]').click(); }
     if (ev.key === 'q' || ev.key === 'Q') { deleteSelectionOrAnchor(); }
@@ -1666,9 +1805,10 @@ document.addEventListener('keydown', function(ev){
     ev.preventDefault();
     if (state.selectedIds.length === 1) { duplicateNode(nodeById(state.selectedIds[0])); }
   }
-  if (ev.key === 'Escape' && (state.selectedIds.length > 0 || state.selectedAnchorId)) {
+  if (ev.key === 'Escape' && (state.selectedIds.length > 0 || state.selectedAnchorId || state.selectedCloudId)) {
     state.selectedIds = [];
     state.selectedAnchorId = null;
+    state.selectedCloudId = null;
     document.getElementById('inspector').classList.remove('open');
     render();
     refreshInspector();
@@ -1685,6 +1825,13 @@ function deleteSelectionOrAnchor(){
     saveLocal();
     render();
     refreshInspector();
+  } else if (state.selectedCloudId) {
+    state.clouds = state.clouds.filter(function(c){ return c.id !== state.selectedCloudId; });
+    state.selectedCloudId = null;
+    document.getElementById('inspector').classList.remove('open');
+    saveLocal();
+    render();
+    refreshInspector();
   }
 }
 
@@ -1695,8 +1842,12 @@ function refreshInspector(){
     refreshAnchorInspector(body);
     return;
   }
+  if (state.selectedIds.length === 0 && state.selectedCloudId) {
+    refreshCloudInspector(body);
+    return;
+  }
   if (state.selectedIds.length === 0) {
-    body.innerHTML = '<div class="empty-inspector">Select a node or an anchor\'s center dot to see and edit its details, or switch to Add mode and click the canvas to place a new one.<br><br>Shift-click a node to add it to a multi-selection, or shift-drag empty canvas to marquee-select. Drag any selected node to move the whole group.</div>';
+    body.innerHTML = '<div class="empty-inspector">Select a node, an anchor\'s center dot, or a cloud\'s center dot to see and edit its details, or switch to Add mode and click the canvas to place a new one.<br><br>Shift-click a node to add it to a multi-selection, or shift-drag empty canvas to marquee-select. Drag any selected node to move the whole group.</div>';
     return;
   }
   if (state.selectedIds.length > 1) {
@@ -1969,6 +2120,58 @@ function refreshAnchorInspector(body){
   document.getElementById('deleteAnchorBtn').addEventListener('click', function(){
     deleteAnchor(a.id);
     state.selectedAnchorId = null;
+    document.getElementById('inspector').classList.remove('open');
+    saveLocal(); render(); refreshInspector();
+  });
+}
+
+function refreshCloudInspector(body){
+  var c = cloudById(state.selectedCloudId);
+  if (!c) {
+    state.selectedCloudId = null;
+    body.innerHTML = '<div class="empty-inspector">Select a node to see and edit its details, or switch to Add mode and click the canvas to place a new one.</div>';
+    return;
+  }
+  var isVanilla = !c.color;
+  body.innerHTML =
+    '<h2>Cloud</h2>' +
+    '<div class="field"><label>Cloud id</label><input value="' + c.id + '" data-cloud-field="id"></div>' +
+    '<div class="fieldRow">' +
+      '<div class="field"><label>X</label><input type="number" value="' + c.x + '" data-cloud-field="x"></div>' +
+      '<div class="field"><label>Y</label><input type="number" value="' + c.y + '" data-cloud-field="y"></div>' +
+    '</div>' +
+    '<div class="field"><label>Radius</label><input type="number" value="' + c.radius + '" data-cloud-field="radius"></div>' +
+    '<div class="fieldRow" style="align-items:flex-end">' +
+      '<div class="field"><label><input type="checkbox" data-cloud-field="vanilla"' + (isVanilla ? ' checked' : '') + '> Use vanilla color</label></div>' +
+      '<div class="field"><label>Color</label><input type="color" value="' + (c.color || VANILLA_CLOUD_SWATCH) + '" data-cloud-field="color"' + (isVanilla ? ' disabled' : '') + '></div>' +
+    '</div>' +
+    '<hr class="sep">' +
+    '<div class="hint">A soft, resizable hyperspace-cloud background circle with its own periodic lightning crackle. Overlapping clouds blend into each other in game. "Vanilla color" uses the game\'s own blue-purple hyperspace tint.</div>' +
+    '<button class="smallBtn danger" id="deleteCloudBtn">Delete this cloud <span class="key">Q</span></button>';
+
+  body.querySelectorAll('[data-cloud-field]').forEach(function(inp){
+    inp.addEventListener('change', function(){
+      var field = inp.dataset.cloudField;
+      if (field === 'id') {
+        var newId = inp.value.trim();
+        if (!newId || cloudById(newId)) { showToast('Id must be unique and non-empty'); inp.value = c.id; return; }
+        c.id = newId;
+        state.selectedCloudId = newId;
+      } else if (field === 'x' || field === 'y') {
+        c[field] = parseInt(inp.value, 10) || 0;
+      } else if (field === 'radius') {
+        c.radius = Math.max(20, parseInt(inp.value, 10) || 20);
+      } else if (field === 'vanilla') {
+        c.color = inp.checked ? null : VANILLA_CLOUD_SWATCH;
+      } else if (field === 'color') {
+        c.color = inp.value;
+      }
+      saveLocal(); render(); refreshInspector();
+    });
+  });
+  document.getElementById('deleteCloudBtn').addEventListener('click', function(){
+    state.clouds = state.clouds.filter(function(o){ return o.id !== c.id; });
+    state.selectedCloudId = null;
     document.getElementById('inspector').classList.remove('open');
     saveLocal(); render(); refreshInspector();
   });
@@ -2310,6 +2513,11 @@ function buildTreeExportObject(){
       return ao;
     });
   }
+  if (state.clouds.length) {
+    out.clouds = state.clouds.map(function(c){
+      return { id: c.id, x: c.x, y: c.y, radius: c.radius, color: c.color || 'vanilla' };
+    });
+  }
   return out;
 }
 var currentExportTab = 'tree';
@@ -2384,7 +2592,7 @@ document.getElementById('importBtn').addEventListener('click', function(){
     var nodesRaw = document.getElementById('impNodes').value.trim();
     try {
       if (typesRaw) { var pt = JSON.parse(typesRaw); state.types = pt.skillTypes || pt; }
-      if (nodesRaw) { var pn = JSON.parse(nodesRaw); state.nodes = pn.nodes || pn; state.curves = pn.connectorCurves || []; state.anchors = pn.orbitAnchors || []; }
+      if (nodesRaw) { var pn = JSON.parse(nodesRaw); state.nodes = pn.nodes || pn; state.curves = pn.connectorCurves || []; state.anchors = pn.orbitAnchors || []; state.clouds = normalizeClouds(pn.clouds); }
       root.innerHTML = '';
       state.selectedIds = [];
       saveLocal();
@@ -2409,9 +2617,11 @@ document.getElementById('resetBtn').addEventListener('click', function(){
     state.nodes = treeJson.nodes || treeJson;
     state.curves = treeJson.connectorCurves || [];
     state.anchors = treeJson.orbitAnchors || [];
+    state.clouds = normalizeClouds(treeJson.clouds);
     try { localStorage.removeItem('skillTreeEditor.v1'); } catch(e){}
     state.selectedIds = [];
     state.selectedAnchorId = null;
+    state.selectedCloudId = null;
     render();
     refreshInspector();
     fitToScreen();

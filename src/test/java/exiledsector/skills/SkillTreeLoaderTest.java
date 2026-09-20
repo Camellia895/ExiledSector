@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -102,5 +103,66 @@ class SkillTreeLoaderTest {
         assertEquals(12.5f, curve.getControlOffsetX());
         assertEquals(-8f, curve.getControlOffsetY());
         assertEquals(curves.get(SkillTree.curveKey("bare_node", "capacitors_1")), curve);
+    }
+
+    @Test
+    void missingCloudsFieldMeansNoClouds() throws Exception {
+        JSONObject root = new JSONObject("{ \"nodes\": [] }");
+
+        List<Cloud> clouds = SkillTreeLoader.parseClouds(root);
+
+        assertTrue(clouds.isEmpty());
+    }
+
+    @Test
+    void parsesCloudWithVanillaColorAsNullColorHex() throws Exception {
+        JSONObject root = new JSONObject("{ \"nodes\": [], \"clouds\": [ {"
+                + "\"id\": \"cloud_1\","
+                + "\"x\": 0,"
+                + "\"y\": 0,"
+                + "\"radius\": 1400,"
+                + "\"color\": \"vanilla\""
+                + "} ] }");
+
+        List<Cloud> clouds = SkillTreeLoader.parseClouds(root);
+
+        assertEquals(1, clouds.size());
+        Cloud cloud = clouds.get(0);
+        assertEquals("cloud_1", cloud.getId());
+        assertEquals(0f, cloud.getX());
+        assertEquals(0f, cloud.getY());
+        assertEquals(1400f, cloud.getRadius());
+        assertTrue(cloud.isVanillaColor());
+        assertEquals(null, cloud.getColorHex());
+    }
+
+    @Test
+    void parsesCloudWithCustomHexColor() throws Exception {
+        JSONObject root = new JSONObject("{ \"nodes\": [], \"clouds\": [ {"
+                + "\"id\": \"cloud_2\","
+                + "\"x\": 1800,"
+                + "\"y\": 600,"
+                + "\"radius\": 900,"
+                + "\"color\": \"#8B1A1A\""
+                + "} ] }");
+
+        Cloud cloud = SkillTreeLoader.parseClouds(root).get(0);
+
+        assertFalse(cloud.isVanillaColor());
+        assertEquals("#8B1A1A", cloud.getColorHex());
+    }
+
+    @Test
+    void cloudColorDefaultsToVanillaWhenFieldMissing() throws Exception {
+        JSONObject root = new JSONObject("{ \"nodes\": [], \"clouds\": [ {"
+                + "\"id\": \"cloud_3\","
+                + "\"x\": 0,"
+                + "\"y\": 0,"
+                + "\"radius\": 500"
+                + "} ] }");
+
+        Cloud cloud = SkillTreeLoader.parseClouds(root).get(0);
+
+        assertTrue(cloud.isVanillaColor());
     }
 }

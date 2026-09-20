@@ -1544,5 +1544,14 @@
 			"y": 691,
 			"radius": 200
 		}
+	],
+	"clouds": [
+		{
+			"id": "cloud_inner_ring",
+			"x": -687,
+			"y": -307,
+			"radius": 225,
+			"color": "vanilla"
+		}
 	]
 }
