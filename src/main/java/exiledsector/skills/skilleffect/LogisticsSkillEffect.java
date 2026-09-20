@@ -60,7 +60,7 @@ public enum LogisticsSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return flatChange(magnitude, "cargo capacity, per fighter bay");
+            return flatChange(magnitude, "cargo capacity per fighter bay");
         }
     },
     CREW_CAPACITY_PERCENT {
@@ -226,7 +226,7 @@ public enum LogisticsSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return flatChange(magnitude, "minimum crew required, per fighter bay");
+            return flatChange(magnitude, "minimum crew required per fighter bay");
         }
     },
     MIN_CREW_PERCENT_PER_FIGHTER_BAY {
@@ -239,7 +239,7 @@ public enum LogisticsSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "minimum crew required, per fighter bay (capped at -80% total)");
+            return pctChange(magnitude, "minimum crew required per fighter bay (capped at -80% total)");
         }
     },
     SUPPLIES_PER_MONTH_MULT {

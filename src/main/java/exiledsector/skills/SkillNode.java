@@ -55,24 +55,26 @@ public class SkillNode {
     }
 
     public static String describeType(SkillType type, HullSize hullSize) {
-        if (type.getDescriptionOverride() != null) {
-            return type.getDescriptionOverride();
-        }
         List<String> lines = new ArrayList<>();
+        if (type.getDescriptionOverride() != null) {
+            lines.add(type.getDescriptionOverride());
+        }
+        List<String> effectLines = new ArrayList<>();
         List<String> warnings = new ArrayList<>();
         for (SkillTypeEffect effect : type.getEffects()) {
-            lines.add(effect.effect().describe(effect.magnitude()));
+            effectLines.add(effect.effect().describe(effect.magnitude()));
             String warning = effect.effect().deallocationWarning(effect.magnitude());
             if (warning != null) warnings.add(warning);
         }
         if (hullSize != null) {
             for (HullSizeSkillEffect effect : type.getHullSizeEffects()) {
                 float magnitude = effect.valueFor(hullSize);
-                lines.add(effect.effect().describe(magnitude));
+                effectLines.add(effect.effect().describe(magnitude));
                 String warning = effect.effect().deallocationWarning(magnitude);
                 if (warning != null) warnings.add(warning);
             }
         }
+        lines.addAll(effectLines);
         lines.addAll(warnings);
         return String.join("\n\n", lines);
     }

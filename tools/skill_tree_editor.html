@@ -2095,6 +2095,10 @@ function refreshInspector(){
     }).join('') || '<div class="hint">No effects yet.' + (t.vanillaHullMod ? ' Still on vanillaHullMod passthrough ("' + t.vanillaHullMod + '") - adding effects here does not switch that off, use "Edit type" for that.' : '') + '</div>';
     if (!t.hullSizeEffects) t.hullSizeEffects = [];
     statsHtml =
+      '<div class="field"><label>Description override (optional, shared by type "' + t.id + '")</label>' +
+        '<textarea id="inspDescription" rows="3" style="width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12.5px;padding:7px 9px;resize:vertical;">' + (t.description||'') + '</textarea>' +
+      '</div>' +
+      '<div class="hint">Leave blank to auto-generate one line per effect. If set, it shows above the effect lines rather than replacing them.</div>' +
       '<div class="field"><label>Stats granted by type "' + t.id + '"</label>' + statRows + '</div>' +
       '<div class="btnRow"><button class="smallBtn" id="addStatRowBtn">+ Add effect</button></div>' +
       '<div class="field"><label>Hull-size-dependent stats</label>' + renderHullSizeEffectRows('insp', t.hullSizeEffects) + '</div>' +
@@ -2173,6 +2177,13 @@ function refreshInspector(){
     });
   });
   if (t) {
+    var inspDescInput = document.getElementById('inspDescription');
+    if (inspDescInput) {
+      inspDescInput.addEventListener('change', function(){
+        t.description = inspDescInput.value;
+        saveLocal(); refreshInspector();
+      });
+    }
     body.querySelectorAll('[data-insp-toggle-tag]').forEach(function(chip){
       chip.addEventListener('click', function(){
         if (!t.tags) t.tags = [];

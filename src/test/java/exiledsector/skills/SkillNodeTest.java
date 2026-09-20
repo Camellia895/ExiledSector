@@ -64,12 +64,12 @@ class SkillNodeTest {
     }
 
     @Test
-    void descriptionOverrideTakesPriorityOverEffects() {
+    void descriptionOverrideIsFollowedByEffectLines() {
         SkillType type = new SkillType("hull", "Hull", "graphics/hullmods/reinforced_bulkheads.png", 2, 500,
                 List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)), SkillTier.SMALL, null, "Custom flavor text.", null);
         SkillNode node = new SkillNode("hull_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Custom flavor text.", node.getDescription());
+        assertEquals("Custom flavor text.\n\nIncreases hull points by 10%.", node.getDescription());
     }
 
     @Test
