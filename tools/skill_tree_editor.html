@@ -1070,8 +1070,23 @@ var canvasWrap = document.getElementById('canvasWrap');
 var NS = 'http://www.w3.org/2000/svg';
 var layerRoot, layerAnchors, layerEdges, layerNodes, layerLabels, layerAnchorHandles;
 
+var NODE_ICON_CLIP_IDS = { SMALL: 'nodeClipSmall', NOTABLE: 'nodeClipNotable', KEYSTONE: 'nodeClipKeystone', ROOT: 'nodeClipRoot' };
+function buildIconClipDefs(){
+  var defs = document.createElementNS(NS, 'defs');
+  var radiusByTier = { SMALL: SMALL_R, NOTABLE: NOTABLE_R, KEYSTONE: KEYSTONE_R, ROOT: ROOT_R };
+  Object.keys(NODE_ICON_CLIP_IDS).forEach(function(tier){
+    var clip = document.createElementNS(NS, 'clipPath');
+    clip.setAttribute('id', NODE_ICON_CLIP_IDS[tier]);
+    var circle = document.createElementNS(NS, 'circle');
+    circle.setAttribute('cx', 0); circle.setAttribute('cy', 0); circle.setAttribute('r', radiusByTier[tier]);
+    clip.appendChild(circle);
+    defs.appendChild(clip);
+  });
+  return defs;
+}
 function buildLayers(){
   svg.innerHTML = '';
+  svg.appendChild(buildIconClipDefs());
   layerRoot = document.createElementNS(NS, 'g');
   layerAnchors = document.createElementNS(NS, 'g');
   layerEdges = document.createElementNS(NS, 'g');
@@ -1230,16 +1245,35 @@ function render(){
     var r = radiusFor(tier);
     var pos = worldToScreenXY(n.x, n.y);
     var dim = matchIds && !matchIds[n.id];
-
     var isSelected = state.selectedIds.indexOf(n.id) !== -1;
+    var isBad = !!badIds[n.id];
+    var hasIcon = !isBad && t && t.icon;
+    var color = isBad ? getComputedStyle(document.documentElement).getPropertyValue('--danger') : getComputedStyle(document.documentElement).getPropertyValue(colorVarFor(tier));
+    color = color.trim();
+
+    if (hasIcon) {
+      var iconGroup = document.createElementNS(NS, 'g');
+      iconGroup.setAttribute('transform', 'translate(' + pos.sx + ',' + pos.sy + ')');
+      var img = document.createElementNS(NS, 'image');
+      img.setAttributeNS('http://www.w3.org/1999/xlink', 'href', t.icon);
+      img.setAttribute('href', t.icon);
+      img.setAttribute('x', -r); img.setAttribute('y', -r);
+      img.setAttribute('width', r * 2); img.setAttribute('height', r * 2);
+      img.setAttribute('clip-path', 'url(#' + NODE_ICON_CLIP_IDS[tier] + ')');
+      img.setAttribute('opacity', dim ? 0.25 : 1);
+      img.style.pointerEvents = 'none';
+      iconGroup.appendChild(img);
+      layerNodes.appendChild(iconGroup);
+    }
+
     var c = document.createElementNS(NS, 'circle');
     c.setAttribute('cx', pos.sx); c.setAttribute('cy', pos.sy); c.setAttribute('r', r);
     c.setAttribute('class', 'node-circle');
-    var color = badIds[n.id] ? getComputedStyle(document.documentElement).getPropertyValue('--danger') : getComputedStyle(document.documentElement).getPropertyValue(colorVarFor(tier));
-    c.setAttribute('fill', color.trim());
-    c.setAttribute('fill-opacity', dim ? 0.25 : (isSelected ? 1 : 0.85));
-    c.setAttribute('stroke', isSelected ? getComputedStyle(document.documentElement).getPropertyValue('--text').trim() : 'rgba(0,0,0,.25)');
-    c.setAttribute('stroke-width', isSelected ? 2.5 : 1);
+    c.setAttribute('fill', color);
+    c.setAttribute('fill-opacity', hasIcon ? 0 : (dim ? 0.25 : (isSelected ? 1 : 0.85)));
+    c.setAttribute('stroke', isSelected ? getComputedStyle(document.documentElement).getPropertyValue('--text').trim() : (hasIcon ? color : 'rgba(0,0,0,.25)'));
+    c.setAttribute('stroke-width', isSelected ? 2.5 : (hasIcon ? 2 : 1));
+    c.setAttribute('stroke-opacity', hasIcon && dim ? 0.25 : 1);
     c.dataset.nodeId = n.id;
     layerNodes.appendChild(c);
 

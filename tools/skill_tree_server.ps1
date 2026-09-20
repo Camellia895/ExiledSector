@@ -66,6 +66,26 @@ try {
                     Write-JsonResponse $response 200 @{ ok = $true; message = "Saved." }
                 }
             }
+            elseif ($request.HttpMethod -eq "GET") {
+                $relPath = [Uri]::UnescapeDataString($request.Url.LocalPath.TrimStart('/'))
+                $filePath = Join-Path $projectRoot $relPath
+                $fullFilePath = [System.IO.Path]::GetFullPath($filePath)
+                $fullProjectRoot = [System.IO.Path]::GetFullPath($projectRoot)
+                if ($fullFilePath.StartsWith($fullProjectRoot, [StringComparison]::OrdinalIgnoreCase) -and (Test-Path $fullFilePath -PathType Leaf)) {
+                    $ext = [System.IO.Path]::GetExtension($fullFilePath).ToLowerInvariant()
+                    $contentType = switch ($ext) {
+                        ".png" { "image/png" }
+                        ".jpg" { "image/jpeg" }
+                        ".jpeg" { "image/jpeg" }
+                        default { "application/octet-stream" }
+                    }
+                    $bytes = [System.IO.File]::ReadAllBytes($fullFilePath)
+                    $response.ContentType = $contentType
+                    $response.OutputStream.Write($bytes, 0, $bytes.Length)
+                } else {
+                    $response.StatusCode = 404
+                }
+            }
             else {
                 $response.StatusCode = 404
             }

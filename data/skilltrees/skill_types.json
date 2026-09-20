@@ -1546,7 +1546,7 @@
 		{
 			"id": "fuel_flat",
 			"name": "Fuel",
-			"icon": "",
+			"icon": "graphics/icons/circular/small_passives/fuel_tanks_flat.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tags": [
