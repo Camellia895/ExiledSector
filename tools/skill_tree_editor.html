@@ -1254,6 +1254,7 @@ function render(){
       el.setAttribute('href', img.imagePath);
       el.setAttribute('x', x0); el.setAttribute('y', y0);
       el.setAttribute('width', img.width); el.setAttribute('height', img.height);
+      el.setAttribute('pointer-events', 'none');
       if (rotateAttr) el.setAttribute('transform', rotateAttr);
       layerImages.appendChild(el);
     } else {
