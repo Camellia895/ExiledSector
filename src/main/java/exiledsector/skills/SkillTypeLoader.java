@@ -79,7 +79,7 @@ public final class SkillTypeLoader {
         for (int i = 0; i < effectsArray.length(); i++) {
             JSONObject entry = effectsArray.getJSONObject(i);
             SkillEffect effect = SkillEffect.byName(entry.getString("effect"));
-            float magnitude = (float) entry.getDouble("magnitude");
+            float magnitude = (float) entry.optDouble("magnitude", 0.0);
             effects.add(new SkillTypeEffect(effect, magnitude));
         }
         return effects;

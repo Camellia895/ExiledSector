@@ -64,10 +64,13 @@
 			"icon": "graphics/icons/circular/small_passives/polarized_armor.png",
 			"opCost": 2,
 			"xpCost": 500,
-			"effects": [
+			"hullSizeEffects": [
 				{
-					"effect": "ARMOR_PERCENT",
-					"magnitude": 5
+					"effect": "ARMOR_FLAT",
+					"frigate": 30,
+					"destroyer": 50,
+					"cruiser": 100,
+					"capitalShip": 125
 				}
 			],
 			"tags": [
@@ -169,8 +172,7 @@
 			"tier": "KEYSTONE",
 			"effects": [
 				{
-					"effect": "ZERO_FLUX_ALWAYS_ON",
-					"magnitude": 0
+					"effect": "ZERO_FLUX_ALWAYS_ON"
 				},
 				{
 					"effect": "FLUX_DISSIPATION_MULT",
@@ -444,8 +446,7 @@
 			"tier": "KEYSTONE",
 			"effects": [
 				{
-					"effect": "REMOVE_ALL_FIGHTER_BAYS",
-					"magnitude": 0
+					"effect": "REMOVE_ALL_FIGHTER_BAYS"
 				},
 				{
 					"effect": "MIN_CREW_PERCENT_PER_FIGHTER_BAY",
@@ -668,8 +669,7 @@
 					"magnitude": 15
 				},
 				{
-					"effect": "REMOVE_SHIELD",
-					"magnitude": 0
+					"effect": "REMOVE_SHIELD"
 				}
 			],
 			"description": "Removes this ship's shields entirely, increasing its armor rating in exchange.",
@@ -690,8 +690,7 @@
 					"magnitude": -20
 				},
 				{
-					"effect": "CREATE_FRONT_SHIELD_IF_NONE",
-					"magnitude": 0
+					"effect": "CREATE_FRONT_SHIELD_IF_NONE"
 				}
 			],
 			"description": "Installs a makeshift, front-facing shield on a ship that would otherwise have none, at the cost of reduced top speed.",
@@ -774,11 +773,11 @@
 					"capitalShip": 500
 				},
 				{
-					"effect": "ARMOR_PERCENT",
-					"frigate": 10,
-					"destroyer": 20,
-					"cruiser": 40,
-					"capitalShip": 60
+					"effect": "ARMOR_FLAT",
+					"frigate": 80,
+					"destroyer": 180,
+					"cruiser": 150,
+					"capitalShip": 175
 				}
 			],
 			"tags": [
@@ -817,20 +816,17 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "PD_IGNORES_DECOY_FLARES",
-					"magnitude": 0
+					"effect": "PD_IGNORES_DECOY_FLARES"
 				},
 				{
-					"effect": "PD_BEST_TARGET_LEADING",
-					"magnitude": 0
+					"effect": "PD_BEST_TARGET_LEADING"
 				},
 				{
 					"effect": "PD_DAMAGE_TO_MISSILES_PERCENT",
 					"magnitude": 50
 				},
 				{
-					"effect": "PD_RECLASSIFY_SMALL_WEAPONS",
-					"magnitude": 0
+					"effect": "PD_RECLASSIFY_SMALL_WEAPONS"
 				}
 			]
 		},
@@ -894,8 +890,7 @@
 					"magnitude": 100
 				},
 				{
-					"effect": "CONVERT_SHIELD_TO_FRONT",
-					"magnitude": 0
+					"effect": "CONVERT_SHIELD_TO_FRONT"
 				}
 			],
 			"description": "Converts this ship's shield to a front-facing arc, extending its coverage but locking it to only cover the front. As with all frontal emitters, the shield will also deploy twice as quickly.",
@@ -916,8 +911,7 @@
 					"magnitude": -30
 				},
 				{
-					"effect": "CONVERT_SHIELD_TO_OMNI",
-					"magnitude": 0
+					"effect": "CONVERT_SHIELD_TO_OMNI"
 				}
 			],
 			"description": "Converts this ship's shield to omni-directional coverage, reducing its arc in exchange.",
@@ -1251,8 +1245,7 @@
 					"magnitude": 100
 				},
 				{
-					"effect": "REMOVE_CIVILIAN_HULL_PENALTY",
-					"magnitude": 0
+					"effect": "REMOVE_CIVILIAN_HULL_PENALTY"
 				}
 			],
 			"tags": [

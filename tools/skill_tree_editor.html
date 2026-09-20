@@ -171,6 +171,38 @@
     display: flex;
     flex-direction: column;
     gap: 18px;
+    position: relative;
+  }
+  .panelToggle {
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 1;
+    padding: 5px 7px;
+    flex-shrink: 0;
+  }
+  .panelToggle:hover { color: var(--text); border-color: var(--accent-dim); }
+  #toolbar.collapsed { padding: 14px 6px; overflow: hidden; }
+  #toolbar.collapsed .toolSection { display: none; }
+  #inspector.collapsed { padding: 16px 6px; overflow: hidden; }
+  #inspector.collapsed #inspectorBody, #inspector.collapsed .closeMobile { display: none; }
+  #exportBar.collapsed .exportBody { display: none; }
+  .panelHeaderRow { display: flex; align-items: center; justify-content: space-between; }
+  .resizeHandle { position: absolute; z-index: 5; background: transparent; }
+  .resizeHandle:hover, .resizeHandle.dragging { background: var(--accent-dim); }
+  .resizeHandle-v { top: 0; bottom: 0; width: 6px; cursor: col-resize; }
+  .resizeHandle-h { left: 0; right: 0; height: 6px; cursor: row-resize; }
+  #toolbarResize { right: -3px; }
+  #inspectorResize { left: -3px; }
+  #exportResize { top: -3px; }
+  #toolbar.collapsed #toolbarResize,
+  #inspector.collapsed #inspectorResize,
+  #exportBar.collapsed #exportResize { display: none; }
+  @media (max-width: 860px) {
+    .resizeHandle { display: none; }
   }
   .toolSection { display: flex; flex-direction: column; gap: 8px; }
   .toolSection .label {
@@ -343,6 +375,7 @@
     display: flex;
     flex-direction: column;
     gap: 14px;
+    position: relative;
   }
   #inspector .closeMobile { display: none; }
   @media (max-width: 860px) {
@@ -416,8 +449,11 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    position: relative;
   }
-  .exportTabs { display: flex; border-bottom: 1px solid var(--line); }
+  .exportTabs { display: flex; align-items: center; border-bottom: 1px solid var(--line); }
+  .exportTabs .spacer { flex: 1; }
+  .exportTabs .panelToggle { margin-right: 10px; }
   .exportTab {
     padding: 8px 16px;
     font-size: 12px;
@@ -516,6 +552,11 @@
   </div>
 
   <div id="toolbar">
+    <div class="resizeHandle resizeHandle-v" id="toolbarResize"></div>
+    <div class="panelHeaderRow">
+      <div class="label">Toolbar</div>
+      <button class="panelToggle" id="toolbarToggle" title="Collapse/expand toolbar">&laquo;</button>
+    </div>
     <div class="toolSection">
       <div class="label">Mode</div>
       <button class="modeBtn active" data-mode="select">Select / Move <span class="key">A</span></button>
@@ -573,14 +614,21 @@
   </div>
 
   <div id="inspector">
-    <button class="closeMobile" id="closeInspector">X</button>
+    <div class="resizeHandle resizeHandle-v" id="inspectorResize"></div>
+    <div class="panelHeaderRow">
+      <button class="panelToggle" id="inspectorToggle" title="Collapse/expand inspector">&raquo;</button>
+      <button class="closeMobile" id="closeInspector">X</button>
+    </div>
     <div id="inspectorBody"><div class="empty-inspector">Select a node to see and edit its details, or switch to Add mode and click the canvas to place a new one.</div></div>
   </div>
 
   <div id="exportBar">
+    <div class="resizeHandle resizeHandle-h" id="exportResize"></div>
     <div class="exportTabs">
       <div class="exportTab active" data-tab="tree">ship_skill_tree.json</div>
       <div class="exportTab" data-tab="types">skill_types.json</div>
+      <div class="spacer"></div>
+      <button class="panelToggle" id="exportToggle" title="Collapse/expand file panel">&or;</button>
     </div>
     <div class="exportBody">
       <textarea id="exportText" readonly spellcheck="false"></textarea>
@@ -2041,7 +2089,7 @@ function refreshInspector(){
       var options = EFFECT_NAMES.map(function(name){ return '<option value="'+name+'"'+(name===e.effect?' selected':'')+'>'+name+'</option>'; }).join('');
       return '<div class="fieldRow" style="align-items:flex-end">' +
         '<div class="field" style="flex:2"><label>Effect ' + (i+1) + '</label><select data-stat-effect="' + i + '">' + options + '</select></div>' +
-        '<div class="field" style="flex:1"><label>Magnitude</label><input type="number" step="0.1" value="' + e.magnitude + '" data-stat-magnitude="' + i + '"></div>' +
+        '<div class="field" style="flex:1"><label>Magnitude</label><input type="number" step="0.1" value="' + (e.magnitude || 0) + '" data-stat-magnitude="' + i + '"></div>' +
         '<button class="smallBtn danger" data-remove-stat-row="' + i + '">X</button>' +
       '</div>';
     }).join('') || '<div class="hint">No effects yet.' + (t.vanillaHullMod ? ' Still on vanillaHullMod passthrough ("' + t.vanillaHullMod + '") - adding effects here does not switch that off, use "Edit type" for that.' : '') + '</div>';
@@ -2476,7 +2524,7 @@ function addNodeOfType(typeId, x, y){
 }
 
 // ---------- type editor modal ----------
-var EFFECT_NAMES = ['HULL_PERCENT','ARMOR_PERCENT','FLUX_CAPACITY_PERCENT','FLUX_CAPACITY_FLAT','FLUX_DISSIPATION_PERCENT','FLUX_DISSIPATION_FLAT','BALLISTIC_DAMAGE_PERCENT','MISSILE_DAMAGE_PERCENT',
+var EFFECT_NAMES = ['HULL_PERCENT','ARMOR_PERCENT','ARMOR_FLAT','FLUX_CAPACITY_PERCENT','FLUX_CAPACITY_FLAT','FLUX_DISSIPATION_PERCENT','FLUX_DISSIPATION_FLAT','BALLISTIC_DAMAGE_PERCENT','MISSILE_DAMAGE_PERCENT',
   'NON_BEAM_ENERGY_DAMAGE_PERCENT','BEAM_DAMAGE_PERCENT','ENERGY_DAMAGE_PERCENT','ALL_WEAPON_DAMAGE_PERCENT','MANEUVERABILITY_PERCENT','FUEL_CAPACITY_PERCENT','FUEL_CAPACITY_FLAT',
   'CARGO_CAPACITY_PERCENT','CARGO_CAPACITY_FLAT','CREW_CAPACITY_PERCENT','CREW_CAPACITY_FLAT','BURN_LEVEL_FLAT','SENSOR_PROFILE_PERCENT','SENSOR_STRENGTH_PERCENT','SENSOR_RANGE','ELECTRONIC_WARFARE','NAV_RATING','BALLISTIC_WEAPON_RANGE_PERCENT',
   'ENERGY_WEAPON_RANGE_PERCENT','BEAM_WEAPON_RANGE_PERCENT','BALLISTIC_AMMO_PERCENT','ENERGY_AMMO_PERCENT','MISSILE_AMMO_PERCENT','WEAPON_TURN_RATE_PERCENT',
@@ -2815,7 +2863,7 @@ function openTypeModal(existingType, onSave, onClose){
       var options = EFFECT_NAMES.map(function(name){ return '<option value="'+name+'"'+(name===e.effect?' selected':'')+'>'+name+'</option>'; }).join('');
       return '<div class="fieldRow" style="align-items:flex-end">' +
         '<div class="field" style="flex:2"><label>Effect ' + (i+1) + '</label><select id="tEffect' + i + '">' + options + '</select></div>' +
-        '<div class="field" style="flex:1"><label>Magnitude</label><input id="tMag' + i + '" type="number" step="0.1" value="' + e.magnitude + '"></div>' +
+        '<div class="field" style="flex:1"><label>Magnitude</label><input id="tMag' + i + '" type="number" step="0.1" value="' + (e.magnitude || 0) + '"></div>' +
         '<button class="smallBtn danger" type="button" data-remove-effect-row="' + i + '">X</button>' +
       '</div>';
     }).join('') || '<div class="hint">No effects yet - click "+ Add effect" below, or set a vanillaHullMod id instead.</div>';
@@ -3147,6 +3195,110 @@ document.getElementById('themeToggle').addEventListener('click', function(){
   else { root.setAttribute('data-theme', 'dark'); }
   render();
 });
+
+var PANEL_STATE_KEY = 'skillTreeEditor.panels';
+var PANEL_LIMITS = {
+  toolbarWidth: { min: 160, max: 480, def: 240 },
+  inspectorWidth: { min: 220, max: 560, def: 320 },
+  exportHeight: { min: 120, max: 520, def: 220 }
+};
+function loadPanelState(){
+  var state = {};
+  try {
+    var raw = localStorage.getItem(PANEL_STATE_KEY);
+    if (raw) state = JSON.parse(raw);
+  } catch(e){}
+  for (var key in PANEL_LIMITS) {
+    if (typeof state[key] !== 'number') state[key] = PANEL_LIMITS[key].def;
+  }
+  return state;
+}
+var panelState = loadPanelState();
+
+function applyPanelState(){
+  var appEl = document.querySelector('.app');
+  var toolbarCollapsed = !!panelState.toolbar;
+  var inspectorCollapsed = !!panelState.inspector;
+  var exportCollapsed = !!panelState.export;
+
+  document.getElementById('toolbar').classList.toggle('collapsed', toolbarCollapsed);
+  document.getElementById('inspector').classList.toggle('collapsed', inspectorCollapsed);
+  document.getElementById('exportBar').classList.toggle('collapsed', exportCollapsed);
+
+  var colLeft = toolbarCollapsed ? '36px' : panelState.toolbarWidth + 'px';
+  var colRight = inspectorCollapsed ? '36px' : panelState.inspectorWidth + 'px';
+  var rowBottom = exportCollapsed ? '36px' : panelState.exportHeight + 'px';
+  appEl.style.gridTemplateColumns = colLeft + ' 1fr ' + colRight;
+  appEl.style.gridTemplateRows = '52px 1fr 1px ' + rowBottom;
+
+  document.getElementById('toolbarToggle').textContent = toolbarCollapsed ? '»' : '«';
+  document.getElementById('inspectorToggle').textContent = inspectorCollapsed ? '«' : '»';
+  document.getElementById('exportToggle').textContent = exportCollapsed ? '▴' : '▾';
+}
+
+function savePanelState(){
+  try { localStorage.setItem(PANEL_STATE_KEY, JSON.stringify(panelState)); } catch(e){}
+}
+
+document.getElementById('toolbarToggle').addEventListener('click', function(){
+  panelState.toolbar = !panelState.toolbar;
+  applyPanelState();
+  savePanelState();
+});
+document.getElementById('inspectorToggle').addEventListener('click', function(){
+  panelState.inspector = !panelState.inspector;
+  applyPanelState();
+  savePanelState();
+});
+document.getElementById('exportToggle').addEventListener('click', function(){
+  panelState.export = !panelState.export;
+  applyPanelState();
+  savePanelState();
+});
+
+function setupResizeHandle(handleId, opts){
+  var handle = document.getElementById(handleId);
+  var dragging = false, startPos = 0, startSize = 0;
+  handle.addEventListener('mousedown', function(e){
+    if (opts.isCollapsed()) return;
+    dragging = true;
+    startPos = opts.axis === 'x' ? e.clientX : e.clientY;
+    startSize = panelState[opts.key];
+    handle.classList.add('dragging');
+    document.body.style.userSelect = 'none';
+    e.preventDefault();
+  });
+  window.addEventListener('mousemove', function(e){
+    if (!dragging) return;
+    var pos = opts.axis === 'x' ? e.clientX : e.clientY;
+    var delta = (pos - startPos) * (opts.invert ? -1 : 1);
+    var limits = PANEL_LIMITS[opts.key];
+    panelState[opts.key] = Math.max(limits.min, Math.min(limits.max, startSize + delta));
+    applyPanelState();
+  });
+  window.addEventListener('mouseup', function(){
+    if (!dragging) return;
+    dragging = false;
+    handle.classList.remove('dragging');
+    document.body.style.userSelect = '';
+    savePanelState();
+  });
+}
+
+setupResizeHandle('toolbarResize', {
+  axis: 'x', invert: false, key: 'toolbarWidth',
+  isCollapsed: function(){ return !!panelState.toolbar; }
+});
+setupResizeHandle('inspectorResize', {
+  axis: 'x', invert: true, key: 'inspectorWidth',
+  isCollapsed: function(){ return !!panelState.inspector; }
+});
+setupResizeHandle('exportResize', {
+  axis: 'y', invert: true, key: 'exportHeight',
+  isCollapsed: function(){ return !!panelState.export; }
+});
+
+applyPanelState();
 
 window.addEventListener('resize', render);
 

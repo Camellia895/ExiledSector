@@ -43,8 +43,8 @@
 				"ballistic_damage_2",
 				"ballistic_rangefinder_1"
 			],
-			"x": 1656,
-			"y": 1770,
+			"x": 1637,
+			"y": 1875,
 			"orbitAnchorId": "anchor_4",
 			"orbitAngle": 177.29999999999995
 		},
@@ -101,7 +101,7 @@
 			"x": 533,
 			"y": 2440,
 			"orbitAnchorId": "anchor_5",
-			"orbitAngle": -45
+			"orbitAngle": -45.000000000000064
 		},
 		{
 			"id": "packed_capacitors_1",
@@ -120,8 +120,8 @@
 			"connectedTo": [
 				"small_logistics_optional_29"
 			],
-			"x": -7,
-			"y": 1524
+			"x": 0,
+			"y": 1531
 		},
 		{
 			"id": "heavyarmor_1",
@@ -133,7 +133,7 @@
 			"x": 533,
 			"y": 2652,
 			"orbitAnchorId": "anchor_5",
-			"orbitAngle": 45
+			"orbitAngle": 45.000000000000064
 		},
 		{
 			"id": "armoredweapons_1",
@@ -201,8 +201,8 @@
 				"ballistic_damage_3",
 				"ballistic_damage_1"
 			],
-			"x": 1813,
-			"y": 1913,
+			"x": 1794,
+			"y": 2018,
 			"orbitAnchorId": "anchor_4",
 			"orbitAngle": 87.29999999999994
 		},
@@ -399,8 +399,8 @@
 			"connectedTo": [
 				"crew_capacity_flat_2"
 			],
-			"x": -677,
-			"y": -485,
+			"x": -632,
+			"y": -547,
 			"orbitAnchorId": "additional_berthing_anchor",
 			"orbitAngle": 270
 		},
@@ -411,7 +411,7 @@
 				"small_logistics_optional_24",
 				"small_logistics_optional_23"
 			],
-			"x": 416,
+			"x": 399,
 			"y": -816,
 			"orbitAnchorId": "augmented_drive_field_anchor_1",
 			"orbitAngle": 40.7964882464631
@@ -474,8 +474,8 @@
 				"small_logistics_optional_15",
 				"small_logistics_optional_16"
 			],
-			"x": -786,
-			"y": 73,
+			"x": -800,
+			"y": 50,
 			"orbitAnchorId": "militarized_subsystems_anchor",
 			"orbitAngle": -48.126779727329755
 		},
@@ -1106,7 +1106,7 @@
 				"small_logistics_optional_10",
 				"augmentedengines_1"
 			],
-			"x": 200,
+			"x": 183,
 			"y": -876,
 			"orbitAnchorId": "augmented_drive_field_anchor_1",
 			"orbitAngle": 170.16310695606623
@@ -1118,7 +1118,7 @@
 				"augmentedengines_1",
 				"small_logistics_optional_3"
 			],
-			"x": 369,
+			"x": 352,
 			"y": -1012,
 			"orbitAnchorId": "augmented_drive_field_anchor_1",
 			"orbitAngle": -67.70058265189768
@@ -1131,8 +1131,8 @@
 				"small_logistics_optional_2",
 				"small_logistics_optional_20"
 			],
-			"x": -677,
-			"y": -145,
+			"x": -632,
+			"y": -207,
 			"orbitAnchorId": "additional_berthing_anchor",
 			"orbitAngle": 90
 		},
@@ -1143,8 +1143,8 @@
 				"crew_capacity_flat_1",
 				"additional_berthing_1"
 			],
-			"x": -507,
-			"y": -315,
+			"x": -462,
+			"y": -377,
 			"orbitAnchorId": "additional_berthing_anchor",
 			"orbitAngle": 0
 		},
@@ -1155,10 +1155,10 @@
 				"small_logistics_optional_1",
 				"militarized_subsystems_1"
 			],
-			"x": -886,
-			"y": 335,
+			"x": -862,
+			"y": 307,
 			"orbitAnchorId": "militarized_subsystems_anchor",
-			"orbitAngle": 90
+			"orbitAngle": 75.49776323473914
 		},
 		{
 			"id": "small_logistics_optional_16",
@@ -1167,8 +1167,8 @@
 				"small_logistics_optional_21",
 				"militarized_subsystems_1"
 			],
-			"x": -1036,
-			"y": 185,
+			"x": -1050,
+			"y": 162,
 			"orbitAnchorId": "militarized_subsystems_anchor",
 			"orbitAngle": 180
 		},
@@ -1969,8 +1969,8 @@
 				"ballistic_damage_3",
 				"small_flux_optional_31"
 			],
-			"x": 1799,
-			"y": 1613,
+			"x": 1780,
+			"y": 1718,
 			"orbitAnchorId": "anchor_4",
 			"orbitAngle": -92.70000000000005
 		},
@@ -1981,8 +1981,8 @@
 				"ballistic_damage_2",
 				"ballistic_rangefinder_1"
 			],
-			"x": 1956,
-			"y": 1756,
+			"x": 1937,
+			"y": 1861,
 			"orbitAnchorId": "anchor_4",
 			"orbitAngle": -2.700000000000048
 		},
@@ -2192,38 +2192,38 @@
 		{
 			"a": "augmentedengines_1",
 			"b": "small_logistics_optional_24",
-			"controlX": 443,
+			"controlX": 426,
 			"controlY": -926
 		},
 		{
 			"a": "augmentedengines_1",
 			"b": "small_logistics_optional_23",
-			"controlX": 289,
+			"controlX": 272,
 			"controlY": -777
 		},
 		{
 			"a": "crew_capacity_flat_1",
 			"b": "crew_capacity_flat_2",
-			"controlX": -557,
-			"controlY": -195
+			"controlX": -512,
+			"controlY": -257
 		},
 		{
 			"a": "additional_berthing_1",
 			"b": "crew_capacity_flat_2",
-			"controlX": -557,
-			"controlY": -435
+			"controlX": -512,
+			"controlY": -497
 		},
 		{
 			"a": "militarized_subsystems_1",
 			"b": "small_logistics_optional_15",
-			"controlX": -746,
-			"controlY": 239
+			"controlX": -754,
+			"controlY": 197
 		},
 		{
 			"a": "militarized_subsystems_1",
 			"b": "small_logistics_optional_16",
-			"controlX": -947,
-			"controlY": 48
+			"controlX": -961,
+			"controlY": 25
 		},
 		{
 			"a": "cargo_capacity_flat_1",
@@ -2606,26 +2606,26 @@
 		{
 			"a": "ballistic_damage_1",
 			"b": "ballistic_damage_2",
-			"controlX": 1728,
-			"controlY": 1692
+			"controlX": 1709,
+			"controlY": 1797
 		},
 		{
 			"a": "ballistic_damage_2",
 			"b": "ballistic_damage_3",
-			"controlX": 1877,
-			"controlY": 1685
+			"controlX": 1858,
+			"controlY": 1790
 		},
 		{
 			"a": "ballistic_damage_3",
 			"b": "ballistic_rangefinder_1",
-			"controlX": 1884,
-			"controlY": 1834
+			"controlX": 1865,
+			"controlY": 1939
 		},
 		{
 			"a": "ballistic_damage_1",
 			"b": "ballistic_rangefinder_1",
-			"controlX": 1735,
-			"controlY": 1841
+			"controlX": 1716,
+			"controlY": 1946
 		},
 		{
 			"a": "hull_4",
@@ -2697,7 +2697,7 @@
 	"orbitAnchors": [
 		{
 			"id": "augmented_drive_field_anchor_1",
-			"x": 322,
+			"x": 305,
 			"y": -897,
 			"radius": 124
 		},
@@ -2723,14 +2723,14 @@
 		},
 		{
 			"id": "additional_berthing_anchor",
-			"x": -677,
-			"y": -315,
+			"x": -632,
+			"y": -377,
 			"radius": 170
 		},
 		{
 			"id": "militarized_subsystems_anchor",
-			"x": -886,
-			"y": 185,
+			"x": -900,
+			"y": 162,
 			"radius": 150
 		},
 		{
@@ -2804,8 +2804,8 @@
 		},
 		{
 			"id": "anchor_4",
-			"x": 1806,
-			"y": 1763,
+			"x": 1787,
+			"y": 1868,
 			"radius": 150,
 			"shape": "square",
 			"rotation": 42.3
@@ -2833,8 +2833,8 @@
 	"staticImages": [
 		{
 			"id": "image_1",
-			"x": -673,
-			"y": -260,
+			"x": -608,
+			"y": -344,
 			"width": 588,
 			"height": 485,
 			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_10.png",
