@@ -1,33 +1,46 @@
 package exiledsector.skills;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.BeamAPI;
+import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.FluxTrackerAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipSystemAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
+import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
+import com.fs.starfarer.api.combat.listeners.HullDamageAboutToBeTakenListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.fleet.RepairTrackerAPI;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.FighterSkillEffect;
 import exiledsector.skills.skilleffect.FluxSkillEffect;
 import exiledsector.skills.skilleffect.LogisticsSkillEffect;
 import exiledsector.skills.skilleffect.MiscSkillEffect;
 import exiledsector.skills.skilleffect.MovementSkillEffect;
+import exiledsector.skills.skilleffect.PhaseSkillEffect;
 import exiledsector.skills.skilleffect.ShieldSkillEffect;
 import exiledsector.skills.skilleffect.WeaponSkillEffect;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.ArgumentCaptor;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.Mockito.mock;
@@ -891,5 +904,183 @@ class SkillEffectTest {
         listener.modifyDamageDealt(beam, target, damage, mock(Vector2f.class), true);
 
         verify(damage, never()).setDamage(anyFloat());
+    }
+
+    @Test
+    void phaseAnchorEmergencyDiveDoesNotTouchStatsDirectly() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+
+        PhaseSkillEffect.PHASE_ANCHOR_EMERGENCY_DIVE.apply(stats, "mod_id", 100f);
+
+        verifyNoInteractions(stats);
+    }
+
+    @Test
+    void phaseAnchorEmergencyDiveAddsAListenerOnce() {
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.hasListenerOfClass(any())).thenReturn(false);
+
+        PhaseSkillEffect.PHASE_ANCHOR_EMERGENCY_DIVE.applyAfterShipCreation(ship, "mod_id", 100f);
+
+        verify(ship).addListener(any(HullDamageAboutToBeTakenListener.class));
+    }
+
+    @Test
+    void phaseAnchorEmergencyDiveDoesNotDuplicateTheListener() {
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.hasListenerOfClass(any())).thenReturn(true);
+
+        PhaseSkillEffect.PHASE_ANCHOR_EMERGENCY_DIVE.applyAfterShipCreation(ship, "mod_id", 100f);
+
+        verify(ship, never()).addListener(any());
+    }
+
+    private Object capturePhaseAnchorDiveListener(ShipAPI ship, float magnitude) {
+        when(ship.hasListenerOfClass(any())).thenReturn(false);
+        PhaseSkillEffect.PHASE_ANCHOR_EMERGENCY_DIVE.applyAfterShipCreation(ship, "mod_id", magnitude);
+        ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
+        verify(ship).addListener(captor.capture());
+        return captor.getValue();
+    }
+
+    @Test
+    void phaseAnchorDiveIgnoresNonLethalDamage() {
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.getHitpoints()).thenReturn(100f);
+        HullDamageAboutToBeTakenListener listener = (HullDamageAboutToBeTakenListener) capturePhaseAnchorDiveListener(ship, 100f);
+
+        boolean saved = listener.notifyAboutToTakeHullDamage(new Object(), ship, mock(Vector2f.class), 50f);
+
+        assertFalse(saved);
+        verify(ship, never()).setHitpoints(anyFloat());
+    }
+
+    @Test
+    void phaseAnchorDiveSavesTheShipOnLethalDamageAndAppliesTheCrPenalty() {
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.getHitpoints()).thenReturn(100f);
+        when(ship.getCurrentCR()).thenReturn(20f);
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        RepairTrackerAPI repairTracker = mock(RepairTrackerAPI.class);
+        when(member.getDeployCost()).thenReturn(10f);
+        when(member.getRepairTracker()).thenReturn(repairTracker);
+        when(ship.getFleetMember()).thenReturn(member);
+        HullDamageAboutToBeTakenListener listener = (HullDamageAboutToBeTakenListener) capturePhaseAnchorDiveListener(ship, 100f);
+
+        Map<String, Object> customData = new HashMap<>();
+        try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
+            CombatEngineAPI engine = mock(CombatEngineAPI.class);
+            globalMock.when(Global::getCombatEngine).thenReturn(engine);
+            when(engine.getCustomData()).thenReturn(customData);
+
+            boolean saved = listener.notifyAboutToTakeHullDamage(new Object(), ship, mock(Vector2f.class), 150f);
+
+            assertTrue(saved);
+        }
+        verify(ship).setHitpoints(1f);
+        verify(repairTracker).applyCREvent(-10f, "Emergency phase dive");
+        assertEquals(Boolean.TRUE, customData.get("phaseAnchor_canDive"));
+    }
+
+    @Test
+    void phaseAnchorDiveTreatsAMissingFleetMemberAsZeroDeployCost() {
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.getHitpoints()).thenReturn(100f);
+        when(ship.getCurrentCR()).thenReturn(0f);
+        when(ship.getFleetMember()).thenReturn(null);
+        HullDamageAboutToBeTakenListener listener = (HullDamageAboutToBeTakenListener) capturePhaseAnchorDiveListener(ship, 100f);
+
+        try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
+            CombatEngineAPI engine = mock(CombatEngineAPI.class);
+            globalMock.when(Global::getCombatEngine).thenReturn(engine);
+            when(engine.getCustomData()).thenReturn(new HashMap<>());
+
+            boolean saved = listener.notifyAboutToTakeHullDamage(new Object(), ship, mock(Vector2f.class), 150f);
+
+            assertTrue(saved);
+        }
+        verify(ship).setHitpoints(1f);
+    }
+
+    @Test
+    void phaseAnchorDiveIsBlockedWhenAnotherShipAlreadyDoveThisBattle() {
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.getHitpoints()).thenReturn(100f);
+        HullDamageAboutToBeTakenListener listener = (HullDamageAboutToBeTakenListener) capturePhaseAnchorDiveListener(ship, 100f);
+
+        Map<String, Object> customData = new HashMap<>();
+        customData.put("phaseAnchor_canDive", Boolean.TRUE);
+        try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
+            CombatEngineAPI engine = mock(CombatEngineAPI.class);
+            globalMock.when(Global::getCombatEngine).thenReturn(engine);
+            when(engine.getCustomData()).thenReturn(customData);
+
+            boolean saved = listener.notifyAboutToTakeHullDamage(new Object(), ship, mock(Vector2f.class), 150f);
+
+            assertFalse(saved);
+        }
+        verify(ship, never()).setHitpoints(anyFloat());
+    }
+
+    @Test
+    void phaseAnchorDiveIsBlockedByInsufficientCombatReadiness() {
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.getHitpoints()).thenReturn(100f);
+        when(ship.getCurrentCR()).thenReturn(5f);
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getDeployCost()).thenReturn(10f);
+        when(ship.getFleetMember()).thenReturn(member);
+        HullDamageAboutToBeTakenListener listener = (HullDamageAboutToBeTakenListener) capturePhaseAnchorDiveListener(ship, 100f);
+
+        try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
+            CombatEngineAPI engine = mock(CombatEngineAPI.class);
+            globalMock.when(Global::getCombatEngine).thenReturn(engine);
+            when(engine.getCustomData()).thenReturn(new HashMap<>());
+
+            boolean saved = listener.notifyAboutToTakeHullDamage(new Object(), ship, mock(Vector2f.class), 150f);
+
+            assertFalse(saved);
+        }
+        verify(ship, never()).setHitpoints(anyFloat());
+    }
+
+    @Test
+    void phaseAnchorDiveAdvanceDoesNothingWhenNotDiving() {
+        ShipAPI ship = mock(ShipAPI.class);
+        AdvanceableListener listener = (AdvanceableListener) capturePhaseAnchorDiveListener(ship, 100f);
+
+        listener.advance(0.1f);
+
+        verify(ship, never()).setRetreating(true, false);
+    }
+
+    @Test
+    void phaseAnchorDiveAdvanceForcesPhaseAndRetreatWhileDiving() {
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.getHitpoints()).thenReturn(100f);
+        when(ship.getCurrentCR()).thenReturn(1f);
+        when(ship.getFleetMember()).thenReturn(null);
+        ShipSystemAPI phaseCloak = mock(ShipSystemAPI.class);
+        when(ship.getPhaseCloak()).thenReturn(phaseCloak);
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        MutableStat hullDamageTakenMult = mock(MutableStat.class);
+        when(stats.getHullDamageTakenMult()).thenReturn(hullDamageTakenMult);
+        when(ship.getMutableStats()).thenReturn(stats);
+        Object listenerObj = capturePhaseAnchorDiveListener(ship, 100f);
+        HullDamageAboutToBeTakenListener damageListener = (HullDamageAboutToBeTakenListener) listenerObj;
+        AdvanceableListener advanceListener = (AdvanceableListener) listenerObj;
+
+        try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
+            CombatEngineAPI engine = mock(CombatEngineAPI.class);
+            globalMock.when(Global::getCombatEngine).thenReturn(engine);
+            when(engine.getCustomData()).thenReturn(new HashMap<>());
+            damageListener.notifyAboutToTakeHullDamage(new Object(), ship, mock(Vector2f.class), 150f);
+        }
+
+        advanceListener.advance(0.1f);
+
+        verify(phaseCloak).forceState(ShipSystemAPI.SystemState.IN, 1f);
+        verify(ship).setRetreating(true, false);
+        verify(hullDamageTakenMult).modifyMult("phaseAnchor_canDive", 0f);
     }
 }

@@ -461,8 +461,8 @@
 			"connectedTo": [
 				"fuel_flat_1"
 			],
-			"x": 356,
-			"y": 891,
+			"x": 392,
+			"y": 917,
 			"orbitAnchorId": "flat_fuel_anchor",
 			"orbitAngle": 90
 		},
@@ -501,8 +501,8 @@
 			"connectedTo": [
 				"engine_durability_1"
 			],
-			"x": -179,
-			"y": 697,
+			"x": -392,
+			"y": 702,
 			"orbitAnchorId": "insulated_engine_assembly_anchor",
 			"orbitAngle": 0
 		},
@@ -524,8 +524,8 @@
 			"connectedTo": [
 				"small_logistics_optional_2"
 			],
-			"x": -330,
-			"y": 459
+			"x": -252,
+			"y": 432
 		},
 		{
 			"id": "surveying_equipment_1",
@@ -573,7 +573,7 @@
 				"small_logistics_optional_25"
 			],
 			"x": 0,
-			"y": 306
+			"y": 223
 		},
 		{
 			"id": "escort_package_1",
@@ -800,8 +800,7 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_logistics_optional_27",
-				"small_logistics_optional_29",
-				"engine_durability_1"
+				"small_logistics_optional_29"
 			],
 			"x": -422,
 			"y": 1171,
@@ -1172,11 +1171,10 @@
 			"type": "engine_durability",
 			"connectedTo": [
 				"engine_durability_2",
-				"insulatedengine_1",
-				"small_logistics_optional_28"
+				"insulatedengine_1"
 			],
-			"x": -379,
-			"y": 897,
+			"x": -541,
+			"y": 851,
 			"orbitAnchorId": "insulated_engine_assembly_anchor",
 			"orbitAngle": 90
 		},
@@ -1187,8 +1185,8 @@
 				"small_logistics_optional_1",
 				"engine_durability_1"
 			],
-			"x": -579,
-			"y": 697,
+			"x": -690,
+			"y": 702,
 			"orbitAnchorId": "insulated_engine_assembly_anchor",
 			"orbitAngle": 180
 		},
@@ -1259,8 +1257,8 @@
 				"fuel_flat_2",
 				"auxiliary_fuel_tanks_1"
 			],
-			"x": 156,
-			"y": 691,
+			"x": 192,
+			"y": 717,
 			"orbitAnchorId": "flat_fuel_anchor",
 			"orbitAngle": 180
 		},
@@ -1271,8 +1269,8 @@
 				"fuel_flat_1",
 				"small_logistics_optional_13"
 			],
-			"x": 356,
-			"y": 491,
+			"x": 392,
+			"y": 517,
 			"orbitAnchorId": "flat_fuel_anchor",
 			"orbitAngle": 270
 		},
@@ -2580,26 +2578,26 @@
 		{
 			"a": "fuel_flat_1",
 			"b": "fuel_flat_2",
-			"controlX": 215,
-			"controlY": 550
+			"controlX": 251,
+			"controlY": 576
 		},
 		{
 			"a": "auxiliary_fuel_tanks_1",
 			"b": "fuel_flat_1",
-			"controlX": 215,
-			"controlY": 832
+			"controlX": 251,
+			"controlY": 858
 		},
 		{
 			"a": "engine_durability_1",
 			"b": "engine_durability_2",
-			"controlX": -520,
-			"controlY": 838
+			"controlX": -646,
+			"controlY": 807
 		},
 		{
 			"a": "engine_durability_1",
 			"b": "insulatedengine_1",
-			"controlX": -238,
-			"controlY": 838
+			"controlX": -436,
+			"controlY": 807
 		},
 		{
 			"a": "small_logistics_optional_11",
@@ -3183,9 +3181,9 @@
 		},
 		{
 			"id": "insulated_engine_assembly_anchor",
-			"x": -379,
-			"y": 697,
-			"radius": 200
+			"x": -541,
+			"y": 702,
+			"radius": 149
 		},
 		{
 			"id": "flat_cargo_anchor",
@@ -3201,8 +3199,8 @@
 		},
 		{
 			"id": "flat_fuel_anchor",
-			"x": 356,
-			"y": 691,
+			"x": 392,
+			"y": 717,
 			"radius": 200
 		},
 		{
@@ -3355,8 +3353,8 @@
 		},
 		{
 			"id": "image_2",
-			"x": -477,
-			"y": 788,
+			"x": -571,
+			"y": 758,
 			"width": 582,
 			"height": 691,
 			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_09.png"

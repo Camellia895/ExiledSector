@@ -259,6 +259,7 @@
 					"magnitude": 40
 				}
 			],
+			"description": "Phase coils are less able to maintain a connection with normal space as the ship's hard flux levels rise, resulting in a greatly reduced top speed as the coils struggle to gain traction.\n\nThis modification allows the coils to handle higher levels of hard flux, increasing the threshold at which speed bottoms out.",
 			"tags": [
 				"flux",
 				"phase"
@@ -570,6 +571,7 @@
 					"capitalShip": 4
 				}
 			],
+			"description": "Electronic countermeasures (ECM) represents the effects of electronic warfare as fleets with superior capability imposing range penalties upon their opponents.",
 			"tags": [
 				"range"
 			]
@@ -695,7 +697,7 @@
 					"effect": "CREATE_FRONT_SHIELD_IF_NONE"
 				}
 			],
-			"description": "Installs a makeshift, front-facing shield on a ship that would otherwise have none, at the cost of reduced top speed.",
+			"description": "Installs a makeshift, inefficient shield generator on the ship. The shield emitter is locked in a forward-facing position and has a 90 degree arc.\n\nThe shield generator draws much of its power from engines and reduces the ship's top speed by 20%.",
 			"tags": [
 				"shield"
 			]
@@ -895,7 +897,7 @@
 					"effect": "CONVERT_SHIELD_TO_FRONT"
 				}
 			],
-			"description": "Converts this ship's shield to a front-facing arc, extending its coverage but locking it to only cover the front. As with all frontal emitters, the shield will also deploy twice as quickly.",
+			"description": "Locks the ship's omni-directional shield emitter to a front-facing position and extends its arc. As with all frontal emitters, the shield will also deploy twice as quickly.",
 			"tags": [
 				"shield"
 			]
@@ -953,6 +955,10 @@
 				},
 				{
 					"effect": "COMBAT_BOOST_WHILE_PHASED",
+					"magnitude": 100
+				},
+				{
+					"effect": "PHASE_ANCHOR_EMERGENCY_DIVE",
 					"magnitude": 100
 				}
 			],
@@ -1263,7 +1269,7 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"vanillaHullMod": "solar_shielding",
-			"description": "Reduces energy damage taken in combat, and greatly reduces combat readiness loss from solar coronas and deep hyperspace storms.",
+			"description": "Originally developed by Diktat engineers after spending cycles dealing with the unique conditions of the inner Askonia system. Decreases the effect operating in a solar corona has on combat readiness by 75%; also has the same effect against storms in deep hyperspace.\n\nIn combat, reduces energy damage taken by 10%.",
 			"todo": "Real effect is -75% CR loss from solar corona/deep hyperspace storms, plus -10% energy damage taken in combat. The energy damage part is trivial and safe (existing ENERGY_DAMAGE_TAKEN_PERCENT effect, magnitude -10) whenever we want it. The corona/storm part is NOT safe to implement yet - found the real dynamic stat key ('corona_resistance', confirmed shared by both StarCoronaTerrainPlugin and HyperspaceTerrainPlugin, matching the tooltip's 'same effect against storms' claim) but decompiling StarCoronaTerrainPlugin showed corona_resistance actually GATES whether a CR-loss event fires (if (corona_resistance > 0) applyCREvent(...) else <computes what looks like an interval/frequency ratio instead>) rather than scaling a loss percentage directly - the sign/semantics don't resolve cleanly and getting it backward could make ships MORE vulnerable, not less. Deliberately left the whole hullmod on vanillaHullMod passthrough (both effects still work correctly via vanilla's own code) rather than partially convert, since our apply loop is all-or-nothing per node and converting now would silently drop corona/storm protection. Needs more investigation (or someone who already knows this mechanic) before touching.",
 			"tags": [
 				"logistics"
