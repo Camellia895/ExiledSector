@@ -17,7 +17,7 @@
 			"type": "flux_dissipation",
 			"connectedTo": [
 				"flux_dissipation_2",
-				"small_flux_optional_3"
+				"small_flux_optional_4"
 			],
 			"x": -250,
 			"y": -2597,
@@ -128,9 +128,13 @@
 		{
 			"id": "armoredweapons_1",
 			"type": "armoredweapons",
-			"connectedTo": [],
-			"x": 0,
-			"y": 1857
+			"connectedTo": [
+				"weapon_durability_1"
+			],
+			"x": 734,
+			"y": 1570,
+			"orbitAnchorId": "anchor_18",
+			"orbitAngle": -29.999999999999996
 		},
 		{
 			"id": "reinforcedhull_1",
@@ -184,8 +188,8 @@
 			"id": "turretgyros_1",
 			"type": "turretgyros",
 			"connectedTo": [],
-			"x": 3420,
-			"y": -32
+			"x": -2299,
+			"y": 1165
 		},
 		{
 			"id": "ballistic_rangefinder_1",
@@ -210,8 +214,8 @@
 			"id": "pointdefenseai_1",
 			"type": "pointdefenseai",
 			"connectedTo": [],
-			"x": 3658,
-			"y": 189
+			"x": -1776,
+			"y": 1896
 		},
 		{
 			"id": "missleracks_1",
@@ -280,8 +284,8 @@
 			"connectedTo": [
 				"Ballistic and Energy Weapon Range_6"
 			],
-			"x": -1582,
-			"y": 551,
+			"x": -1586,
+			"y": 569,
 			"orbitAnchorId": "anchor_15",
 			"orbitAngle": 38.30000000000001
 		},
@@ -289,8 +293,8 @@
 			"id": "defensive_targeting_array_1",
 			"type": "defensive_targeting_array",
 			"connectedTo": [],
-			"x": -1256,
-			"y": 2258
+			"x": -1205,
+			"y": 2293
 		},
 		{
 			"id": "advancedshieldemitter_1",
@@ -677,7 +681,7 @@
 			"x": 800,
 			"y": -954,
 			"orbitAnchorId": "inner_circle_anchor",
-			"orbitAngle": -50.017625841460664
+			"orbitAngle": -50.017663386146516
 		},
 		{
 			"id": "small_logistics_optional_8",
@@ -689,7 +693,7 @@
 			"x": 1077,
 			"y": -625,
 			"orbitAnchorId": "inner_circle_anchor",
-			"orbitAngle": -30.15007187068861
+			"orbitAngle": -30.127266019806466
 		},
 		{
 			"id": "small_logistics_optional_12",
@@ -701,7 +705,7 @@
 			"x": 1226,
 			"y": -215,
 			"orbitAnchorId": "inner_circle_anchor",
-			"orbitAngle": -9.94790239227257
+			"orbitAngle": -9.946649581983348
 		},
 		{
 			"id": "small_logistics_optional_11",
@@ -714,7 +718,7 @@
 			"x": 1227,
 			"y": 213,
 			"orbitAnchorId": "inner_circle_anchor",
-			"orbitAngle": 9.830767179868737
+			"orbitAngle": 9.848070142645968
 		},
 		{
 			"id": "small_logistics_optional_17",
@@ -854,24 +858,14 @@
 			"y": -1730
 		},
 		{
-			"id": "small_flux_optional_3",
-			"type": "small_flux_optional",
-			"connectedTo": [
-				"small_flux_optional_4",
-				"small_flux_optional_2",
-				"flux_dissipation_1"
-			],
-			"x": 0,
-			"y": -2602
-		},
-		{
 			"id": "small_flux_optional_4",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"small_flux_optional_3",
 				"small_flux_optional_1",
 				"small_flux_optional_25",
-				"small_flux_optional_44"
+				"small_flux_optional_44",
+				"small_flux_optional_2",
+				"flux_dissipation_1"
 			],
 			"x": 0,
 			"y": -2200,
@@ -1300,9 +1294,9 @@
 			"id": "small_flux_optional_2",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"small_flux_optional_3",
 				"small_flux_optional_24",
-				"small_flux_optional_6"
+				"small_flux_optional_6",
+				"small_flux_optional_4"
 			],
 			"x": 0,
 			"y": -3000,
@@ -1611,7 +1605,8 @@
 			"id": "shield_turn_rate_2",
 			"type": "shield_turn_rate",
 			"connectedTo": [
-				"shield_turn_rate_1"
+				"shield_turn_rate_1",
+				"shield_turn_raise_rate_optional_1"
 			],
 			"x": 369,
 			"y": -2472,
@@ -1733,7 +1728,8 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_32",
-				"small_flux_optional_35"
+				"small_flux_optional_35",
+				"weapon_durability_2"
 			],
 			"x": 696,
 			"y": 2087,
@@ -1758,7 +1754,8 @@
 			"type": "shield_turn_raise_rate_optional",
 			"connectedTo": [
 				"small_flux_optional_25",
-				"shield_raise_rate_2"
+				"shield_raise_rate_2",
+				"shield_turn_rate_2"
 			],
 			"x": 498,
 			"y": -2398,
@@ -2205,8 +2202,8 @@
 				"small_flux_optional_39",
 				"Ballistic and Energy Weapon Range_6"
 			],
-			"x": -1839,
-			"y": 513,
+			"x": -1843,
+			"y": 531,
 			"orbitAnchorId": "anchor_15",
 			"orbitAngle": 158.30000000000004
 		},
@@ -2217,8 +2214,8 @@
 				"ecm_1",
 				"Ballistic and Energy Weapon Range_5"
 			],
-			"x": -1678,
-			"y": 310,
+			"x": -1682,
+			"y": 328,
 			"orbitAnchorId": "anchor_15",
 			"orbitAngle": -81.69999999999999
 		},
@@ -2349,6 +2346,30 @@
 			],
 			"x": -2280,
 			"y": -1658
+		},
+		{
+			"id": "weapon_durability_1",
+			"type": "weapon_durability",
+			"connectedTo": [
+				"weapon_durability_2",
+				"armoredweapons_1"
+			],
+			"x": 474,
+			"y": 1570,
+			"orbitAnchorId": "anchor_18",
+			"orbitAngle": -150.00000000000003
+		},
+		{
+			"id": "weapon_durability_2",
+			"type": "weapon_durability",
+			"connectedTo": [
+				"weapon_durability_1",
+				"small_flux_optional_33"
+			],
+			"x": 604,
+			"y": 1795,
+			"orbitAnchorId": "anchor_18",
+			"orbitAngle": 90
 		}
 	],
 	"connectorCurves": [
@@ -2368,7 +2389,7 @@
 			"a": "small_logistics_optional_6",
 			"b": "small_logistics_optional_8",
 			"controlX": 953,
-			"controlY": -802
+			"controlY": -801
 		},
 		{
 			"a": "small_logistics_optional_8",
@@ -3069,14 +3090,14 @@
 		{
 			"a": "Ballistic and Energy Weapon Range_6",
 			"b": "ecm_1",
-			"controlX": -1630,
-			"controlY": 430
+			"controlX": -1634,
+			"controlY": 448
 		},
 		{
 			"a": "Ballistic and Energy Weapon Range_5",
 			"b": "Ballistic and Energy Weapon Range_6",
-			"controlX": -1759,
-			"controlY": 412
+			"controlX": -1763,
+			"controlY": 430
 		},
 		{
 			"a": "top_speed_1",
@@ -3101,6 +3122,24 @@
 			"b": "phase_cloak_flux_threshold_2",
 			"controlX": -1017,
 			"controlY": -2329
+		},
+		{
+			"a": "shield_turn_raise_rate_optional_1",
+			"b": "shield_turn_rate_2",
+			"controlX": 424,
+			"controlY": -2418
+		},
+		{
+			"a": "weapon_durability_1",
+			"b": "weapon_durability_2",
+			"controlX": 539,
+			"controlY": 1683
+		},
+		{
+			"a": "armoredweapons_1",
+			"b": "weapon_durability_1",
+			"controlX": 604,
+			"controlY": 1570
 		}
 	],
 	"orbitAnchors": [
@@ -3275,8 +3314,8 @@
 		},
 		{
 			"id": "anchor_15",
-			"x": -1700,
-			"y": 458,
+			"x": -1704,
+			"y": 476,
 			"radius": 150,
 			"shape": "triangle",
 			"rotation": 8.3
@@ -3294,6 +3333,14 @@
 			"x": -1123,
 			"y": -2223,
 			"radius": 150
+		},
+		{
+			"id": "anchor_18",
+			"x": 604,
+			"y": 1645,
+			"radius": 150,
+			"shape": "triangle",
+			"rotation": 180
 		}
 	],
 	"staticImages": [
@@ -3343,8 +3390,8 @@
 		},
 		{
 			"id": "image_6",
-			"x": 1080,
-			"y": 620,
+			"x": 1074,
+			"y": 621,
 			"width": 531,
 			"height": 485,
 			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_07_lowtech.png",

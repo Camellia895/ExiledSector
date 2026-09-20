@@ -318,7 +318,7 @@
 				},
 				{
 					"effect": "WEAPON_DURABILITY_PERCENT",
-					"magnitude": 100
+					"magnitude": 80
 				},
 				{
 					"effect": "WEAPON_TURN_RATE_MULT",
@@ -1702,7 +1702,6 @@
 			"icon": "graphics/icons/circular/notable_passives/accelerated_shields_red.png",
 			"opCost": 4,
 			"xpCost": 2000,
-			"tier": "NOTABLE",
 			"effects": [
 				{
 					"effect": "SHIELD_TURN_RATE_PERCENT",
@@ -1733,7 +1732,6 @@
 			"icon": "graphics/icons/circular/notable_passives/integrated_targeting_unit_purple_green.png",
 			"opCost": 4,
 			"xpCost": 2000,
-			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
 					"effect": "BALLISTIC_WEAPON_RANGE_PERCENT",
@@ -1907,6 +1905,19 @@
 			"tags": [
 				"energy",
 				"ammo"
+			]
+		},
+		{
+			"id": "weapon_durability",
+			"name": "Weapon Durability",
+			"icon": "graphics/icons/weapon_durability_circular_blue.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"effects": [
+				{
+					"effect": "WEAPON_DURABILITY_PERCENT",
+					"magnitude": 15
+				}
 			]
 		}
 	]

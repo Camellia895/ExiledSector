@@ -91,13 +91,26 @@ public class ShipSkillData {
     }
 
     /**
-     * A node can be deallocated only if every other currently-allocated node would still be
-     * reachable from a root afterward, walking only through currently-allocated nodes - i.e.
-     * deallocating it must not sever the link between the root and any other allocated node. This
-     * is a full graph reachability check (BFS seeded from the satisfied root plus any other
-     * allocated root-tier node, walking the "child lists its prerequisites" edges reversed so we
-     * can walk root-outward), not just a check of the node's immediate neighbors - a local-only
-     * check can't detect a break further down the chain.
+     * A node can be deallocated only if it doesn't cause any currently-reachable allocated node to
+     * become unreachable - i.e. deallocating it must not sever the link between the root and any
+     * other allocated node that's presently connected. This is done by computing the full set of
+     * root-reachable allocated nodes twice (BFS seeded from the satisfied root plus any allocated
+     * node with no prerequisites at all, walking the "child lists its prerequisites" edges reversed
+     * so we can walk root-outward) - once with everything as-is, once with the candidate node
+     * excluded - and comparing the two sets, rather than just checking the node's immediate
+     * neighbors (a local-only check can't detect a break further down the chain).
+     *
+     * Comparing against the "before" set (rather than requiring every allocated node to be
+     * reachable "after", full stop) matters: it means a node that's already stranded for some
+     * unrelated reason - e.g. a leftover node from an earlier version of this logic, or manual
+     * editor surgery - doesn't block deallocation everywhere else in the tree. Only removing this
+     * specific node is checked; pre-existing disconnection elsewhere is not this action's problem.
+     *
+     * Only the ship's own starting root (satisfiedRootId) is an unconditional anchor. Any other
+     * allocated ROOT-tier node (from the multi-root-per-ship feature) is NOT automatically treated
+     * as reachable just because it's a root - it has to trace its own path back to the starting
+     * root like any other node, otherwise a loop built entirely off a second root could pass this
+     * check without ever actually connecting back to the ship's real root.
      */
     public boolean canDeallocate(SkillNode node, Collection<SkillNode> allNodes, String satisfiedRootId) {
         Map<String, SkillNode> byId = new HashMap<>();
@@ -109,17 +122,30 @@ public class ShipSkillData {
             }
         }
 
+        Set<String> reachableBefore = reachableAllocatedNodeIds(byId, childrenOf, satisfiedRootId, null);
+        Set<String> reachableAfter = reachableAllocatedNodeIds(byId, childrenOf, satisfiedRootId, node.getId());
+
+        for (String allocatedId : reachableBefore) {
+            if (allocatedId.equals(node.getId())) continue;
+            if (!reachableAfter.contains(allocatedId)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private Set<String> reachableAllocatedNodeIds(Map<String, SkillNode> byId, Map<String, List<String>> childrenOf,
+                                                    String satisfiedRootId, String excludedNodeId) {
         Set<String> reachable = new HashSet<>();
         Deque<String> queue = new ArrayDeque<>();
-        if (satisfiedRootId != null && reachable.add(satisfiedRootId)) {
+        if (satisfiedRootId != null && !satisfiedRootId.equals(excludedNodeId) && reachable.add(satisfiedRootId)) {
             queue.add(satisfiedRootId);
         }
         for (String allocatedId : allocatedNodeIds) {
-            if (allocatedId.equals(node.getId())) continue;
+            if (allocatedId.equals(excludedNodeId)) continue;
             SkillNode allocatedNode = byId.get(allocatedId);
             if (allocatedNode == null) continue;
-            boolean isAnchor = allocatedNode.getConnectedNodeIds().isEmpty() || allocatedNode.getType().getTier() == SkillTier.ROOT;
-            if (isAnchor && reachable.add(allocatedId)) {
+            if (allocatedNode.getConnectedNodeIds().isEmpty() && reachable.add(allocatedId)) {
                 queue.add(allocatedId);
             }
         }
@@ -127,23 +153,14 @@ public class ShipSkillData {
         while (!queue.isEmpty()) {
             String currentId = queue.poll();
             for (String childId : childrenOf.getOrDefault(currentId, List.of())) {
-                if (childId.equals(node.getId())) continue;
+                if (childId.equals(excludedNodeId)) continue;
                 if (!isAllocated(childId)) continue;
                 if (reachable.add(childId)) {
                     queue.add(childId);
                 }
             }
         }
-
-        for (String allocatedId : allocatedNodeIds) {
-            if (allocatedId.equals(node.getId())) continue;
-            SkillNode allocatedNode = byId.get(allocatedId);
-            if (allocatedNode == null || allocatedNode.getConnectedNodeIds().isEmpty()) continue;
-            if (!reachable.contains(allocatedId)) {
-                return false;
-            }
-        }
-        return true;
+        return reachable;
     }
 
     public void toggle(SkillNode node, Collection<SkillNode> allNodes, String satisfiedRootId) {
