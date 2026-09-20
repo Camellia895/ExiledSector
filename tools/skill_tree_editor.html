@@ -279,8 +279,6 @@
   .orbit-rotate.dragging { fill: var(--accent); opacity: 1; cursor: grabbing; }
   .shapeBtn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--text); }
   .center-mark { fill: none; stroke: var(--accent); stroke-width: 1.5; opacity: .8; }
-  .image-outline { stroke: var(--text-faint); stroke-width: 1; stroke-dasharray: 4 6; opacity: .7; fill: none; pointer-events: none; }
-  .image-outline.selected { stroke: var(--accent); opacity: 1; }
   .image-placeholder { fill: var(--panel-2); stroke: var(--text-faint); stroke-width: 1; stroke-dasharray: 4 6; opacity: .5; pointer-events: none; }
   .image-center { fill: var(--panel-2); stroke: var(--text-faint); stroke-width: 1.5; cursor: move; }
   .image-center:hover { stroke: var(--accent); }
@@ -289,6 +287,10 @@
   .image-resize { fill: var(--text-faint); opacity: .55; cursor: nwse-resize; }
   .image-resize:hover { fill: var(--accent); opacity: 1; }
   .image-resize.dragging { fill: var(--accent); opacity: 1; }
+  .image-rotate-line { stroke: var(--text-faint); stroke-width: 1; opacity: .5; pointer-events: none; }
+  .image-rotate { fill: var(--text-faint); opacity: .55; cursor: grab; }
+  .image-rotate:hover { fill: var(--accent); opacity: 1; }
+  .image-rotate.dragging { fill: var(--accent); opacity: 1; cursor: grabbing; }
   .image-picker { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; max-height: 220px; overflow-y: auto; padding: 4px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 6px; }
   .image-picker-item { aspect-ratio: 1; border: 2px solid var(--line); border-radius: 4px; overflow: hidden; cursor: pointer; background: #000; display: flex; align-items: center; justify-content: center; }
   .image-picker-item:hover { border-color: var(--accent-dim); }
@@ -393,6 +395,8 @@
   .prereqItem span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .prereqItem button { background: none; border: none; color: var(--text-faint); cursor: pointer; font-size: 13px; line-height: 1; }
   .prereqItem button:hover { color: var(--danger); }
+  .selectableRow { cursor: pointer; }
+  .selectableRow:hover { border-color: var(--accent-dim); }
   hr.sep { border: none; border-top: 1px solid var(--line-soft); margin: 2px 0; }
 
   #exportBar {
@@ -570,7 +574,7 @@ var SHIPPED_TYPES = [
 {"id":"armor","name":"Armor","icon":"graphics/icons/circular/small_passives/polarized_armor.png","opCost":2,"xpCost":500,"tags":["armour"]},
 {"id":"ballistic_damage","name":"Ballistic Weapon Damage","icon":"graphics/icons/circular/small_passives/ranged_specialization.png","opCost":2,"xpCost":500},
 {"id":"missile_damage","name":"Missile Weapon Damage","icon":"graphics/icons/circular/small_passives/missile_specialization2.png","opCost":2,"xpCost":500,"tags":["missile"]},
-{"id":"non_beam_energy_damage","name":"Non-Beam Energy Weapon Damage","icon":"graphics/icons/circular/small_passives/special_modifications.png","opCost":2,"xpCost":500},
+{"id":"non_beam_energy_damage","name":"Non-Beam Energy Weapon Damage","icon":"graphics/icons/circular/small_passives/non_beam_energy_weapon_blue.png","opCost":2,"xpCost":500},
 {"id":"beam_damage","name":"Beam Weapon Damage","icon":"graphics/icons/circular/small_passives/hypercognition.png","opCost":2,"xpCost":500},
 {"id":"energy_damage","name":"Energy Weapon Damage","icon":"graphics/icons/circular/small_passives/energy_weapon_mastery.png","opCost":2,"xpCost":500},
 {"id":"weapon_damage","name":"All Weapon Damage","icon":"graphics/icons/circular/small_passives/weapon_drills.png","opCost":2,"xpCost":500},
@@ -822,8 +826,8 @@ var state = {
   view: { panX: 0, panY: 0, zoom: 0.55 },
   mode: 'select',
   selectedIds: [],
-  selectedAnchorId: null,
-  selectedImageId: null,
+  selectedAnchorIds: [],
+  selectedImageIds: [],
   showLabels: true,
   search: '',
   pendingAnchorShape: 'circle'
@@ -840,13 +844,18 @@ function uniqueImageId(){
 }
 function normalizeImages(images){
   return (images || []).map(function(img){
-    return { id: img.id, x: img.x, y: img.y, width: img.width, height: img.height, imagePath: img.imagePath || null };
+    return { id: img.id, x: img.x, y: img.y, width: img.width, height: img.height, imagePath: img.imagePath || null, rotation: img.rotation || 0 };
   });
+}
+function rotateAroundOrigin(localX, localY, deg){
+  var rad = deg * Math.PI / 180;
+  var cos = Math.cos(rad), sin = Math.sin(rad);
+  return { x: localX * cos - localY * sin, y: localX * sin + localY * cos };
 }
 function fetchAvailableImages(){
   fetch('/list-images').then(function(r){ if (!r.ok) throw new Error('list-images ' + r.status); return r.json(); }).then(function(paths){
     state.availableImages = paths || [];
-    if (state.selectedImageId) refreshInspector();
+    if (state.selectedImageIds.length === 1) refreshInspector();
   }).catch(function(){
     state.availableImages = [];
   });
@@ -1184,8 +1193,10 @@ function render(){
   layerRoot.setAttribute('transform', worldToScreenTransform());
 
   state.images.forEach(function(img){
-    var selected = state.selectedImageId === img.id;
+    var selected = state.selectedImageIds.indexOf(img.id) !== -1;
+    var rot = img.rotation || 0;
     var x0 = img.x - img.width / 2, y0 = img.y - img.height / 2;
+    var rotateAttr = rot ? ('rotate(' + rot + ' ' + img.x + ' ' + img.y + ')') : null;
 
     if (img.imagePath) {
       var el = document.createElementNS(NS, 'image');
@@ -1193,15 +1204,16 @@ function render(){
       el.setAttribute('href', img.imagePath);
       el.setAttribute('x', x0); el.setAttribute('y', y0);
       el.setAttribute('width', img.width); el.setAttribute('height', img.height);
+      if (rotateAttr) el.setAttribute('transform', rotateAttr);
       layerImages.appendChild(el);
+    } else {
+      var placeholder = document.createElementNS(NS, 'rect');
+      placeholder.setAttribute('x', x0); placeholder.setAttribute('y', y0);
+      placeholder.setAttribute('width', img.width); placeholder.setAttribute('height', img.height);
+      placeholder.setAttribute('class', 'image-placeholder');
+      if (rotateAttr) placeholder.setAttribute('transform', rotateAttr);
+      layerImages.appendChild(placeholder);
     }
-
-    var outline = document.createElementNS(NS, 'rect');
-    outline.setAttribute('x', x0); outline.setAttribute('y', y0);
-    outline.setAttribute('width', img.width); outline.setAttribute('height', img.height);
-    outline.setAttribute('class', (img.imagePath ? 'image-outline' : 'image-placeholder') + (selected ? ' selected' : ''));
-    outline.dataset.imageId = img.id;
-    layerImages.appendChild(outline);
 
     if (state.mode === 'select' || state.mode === 'addImage') {
       var isMoving = drag && drag.imageMove === img.id;
@@ -1211,14 +1223,32 @@ function render(){
       center.dataset.imageId = img.id;
       layerImageHandles.appendChild(center);
 
-      var isResizing = drag && drag.imageResize === img.id;
-      var handlePos = { x: img.x + img.width / 2, y: img.y + img.height / 2 };
-      var resizeHandle = document.createElementNS(NS, 'circle');
-      resizeHandle.setAttribute('cx', handlePos.x); resizeHandle.setAttribute('cy', handlePos.y);
-      resizeHandle.setAttribute('r', isResizing ? 7 : 5);
-      resizeHandle.setAttribute('class', 'image-resize' + (isResizing ? ' dragging' : ''));
-      resizeHandle.dataset.imageResizeId = img.id;
-      layerImageHandles.appendChild(resizeHandle);
+      if (selected) {
+        var isResizing = drag && drag.imageResize === img.id;
+        var cornerLocal = rotateAroundOrigin(img.width / 2, img.height / 2, rot);
+        var handlePos = { x: img.x + cornerLocal.x, y: img.y + cornerLocal.y };
+        var resizeHandle = document.createElementNS(NS, 'circle');
+        resizeHandle.setAttribute('cx', handlePos.x); resizeHandle.setAttribute('cy', handlePos.y);
+        resizeHandle.setAttribute('r', isResizing ? 7 : 5);
+        resizeHandle.setAttribute('class', 'image-resize' + (isResizing ? ' dragging' : ''));
+        resizeHandle.dataset.imageResizeId = img.id;
+        layerImageHandles.appendChild(resizeHandle);
+
+        var isRotating = drag && drag.imageRotate === img.id;
+        var rotateLocal = rotateAroundOrigin(0, -(img.height / 2) - 24, rot);
+        var rotatePos = { x: img.x + rotateLocal.x, y: img.y + rotateLocal.y };
+        var rotateLine = document.createElementNS(NS, 'line');
+        rotateLine.setAttribute('x1', img.x); rotateLine.setAttribute('y1', img.y);
+        rotateLine.setAttribute('x2', rotatePos.x); rotateLine.setAttribute('y2', rotatePos.y);
+        rotateLine.setAttribute('class', 'image-rotate-line');
+        layerImageHandles.appendChild(rotateLine);
+        var rotateHandle = document.createElementNS(NS, 'circle');
+        rotateHandle.setAttribute('cx', rotatePos.x); rotateHandle.setAttribute('cy', rotatePos.y);
+        rotateHandle.setAttribute('r', isRotating ? 7 : 5);
+        rotateHandle.setAttribute('class', 'image-rotate' + (isRotating ? ' dragging' : ''));
+        rotateHandle.dataset.imageRotateId = img.id;
+        layerImageHandles.appendChild(rotateHandle);
+      }
     }
   });
 
@@ -1229,7 +1259,7 @@ function render(){
   layerEdges.appendChild(centerMark);
 
   state.anchors.forEach(function(a){
-    var selected = state.selectedAnchorId === a.id;
+    var selected = state.selectedAnchorIds.indexOf(a.id) !== -1;
     var verts = anchorShapeVertices(a);
     var ring;
     if (verts) {
@@ -1250,15 +1280,6 @@ function render(){
       center.dataset.anchorId = a.id;
       layerAnchorHandles.appendChild(center);
 
-      var isResizing = drag && drag.anchorResize === a.id;
-      var handlePos = { x: a.x + a.radius / 2, y: a.y };
-      var resizeHandle = document.createElementNS(NS, 'circle');
-      resizeHandle.setAttribute('cx', handlePos.x); resizeHandle.setAttribute('cy', handlePos.y);
-      resizeHandle.setAttribute('r', isResizing ? 7 : 5);
-      resizeHandle.setAttribute('class', 'orbit-resize' + (isResizing ? ' dragging' : ''));
-      resizeHandle.dataset.anchorResizeId = a.id;
-      layerAnchorHandles.appendChild(resizeHandle);
-
       var shapeHandlePos = { x: a.x - a.radius / 2, y: a.y };
       var shapeHandle = document.createElementNS(NS, 'rect');
       shapeHandle.setAttribute('x', shapeHandlePos.x - 5); shapeHandle.setAttribute('y', shapeHandlePos.y - 5);
@@ -1267,15 +1288,26 @@ function render(){
       shapeHandle.dataset.anchorShapeCycleId = a.id;
       layerAnchorHandles.appendChild(shapeHandle);
 
-      if (verts) {
-        var isRotating = drag && drag.anchorRotate === a.id;
-        var rotatePos = positionOnAnchor(a, (a.rotation || 0) - 90);
-        var rotateHandle = document.createElementNS(NS, 'circle');
-        rotateHandle.setAttribute('cx', rotatePos.x); rotateHandle.setAttribute('cy', rotatePos.y);
-        rotateHandle.setAttribute('r', isRotating ? 7 : 5);
-        rotateHandle.setAttribute('class', 'orbit-rotate' + (isRotating ? ' dragging' : ''));
-        rotateHandle.dataset.anchorRotateId = a.id;
-        layerAnchorHandles.appendChild(rotateHandle);
+      if (selected) {
+        var isResizing = drag && drag.anchorResize === a.id;
+        var handlePos = { x: a.x + a.radius / 2, y: a.y };
+        var resizeHandle = document.createElementNS(NS, 'circle');
+        resizeHandle.setAttribute('cx', handlePos.x); resizeHandle.setAttribute('cy', handlePos.y);
+        resizeHandle.setAttribute('r', isResizing ? 7 : 5);
+        resizeHandle.setAttribute('class', 'orbit-resize' + (isResizing ? ' dragging' : ''));
+        resizeHandle.dataset.anchorResizeId = a.id;
+        layerAnchorHandles.appendChild(resizeHandle);
+
+        if (verts) {
+          var isRotating = drag && drag.anchorRotate === a.id;
+          var rotatePos = positionOnAnchor(a, (a.rotation || 0) - 90);
+          var rotateHandle = document.createElementNS(NS, 'circle');
+          rotateHandle.setAttribute('cx', rotatePos.x); rotateHandle.setAttribute('cy', rotatePos.y);
+          rotateHandle.setAttribute('r', isRotating ? 7 : 5);
+          rotateHandle.setAttribute('class', 'orbit-rotate' + (isRotating ? ' dragging' : ''));
+          rotateHandle.dataset.anchorRotateId = a.id;
+          layerAnchorHandles.appendChild(rotateHandle);
+        }
       }
     }
   });
@@ -1452,13 +1484,16 @@ function attachOrbitAnchorHandlers(){
   layerAnchorHandles.querySelectorAll('.orbit-center').forEach(function(c){
     c.addEventListener('pointerdown', function(ev){
       ev.stopPropagation();
-      state.selectedIds = [];
-      state.selectedAnchorId = c.dataset.anchorId;
-      drag = { anchorMove: c.dataset.anchorId };
+      var id = c.dataset.anchorId;
+      if (ev.shiftKey) {
+        toggleAnchorSelection(id);
+        return;
+      }
+      if (state.selectedAnchorIds.indexOf(id) === -1) {
+        selectAnchor(id);
+      }
+      drag = { anchorMove: id };
       ev.target.setPointerCapture(ev.pointerId);
-      document.getElementById('inspector').classList.add('open');
-      render();
-      refreshInspector();
     });
   });
   layerAnchorHandles.querySelectorAll('.orbit-resize').forEach(function(c){
@@ -1501,20 +1536,29 @@ function attachImageHandlers(){
   layerImageHandles.querySelectorAll('.image-center').forEach(function(c){
     c.addEventListener('pointerdown', function(ev){
       ev.stopPropagation();
-      state.selectedIds = [];
-      state.selectedAnchorId = null;
-      state.selectedImageId = c.dataset.imageId;
-      drag = { imageMove: c.dataset.imageId };
+      var id = c.dataset.imageId;
+      if (ev.shiftKey) {
+        toggleImageSelection(id);
+        return;
+      }
+      if (state.selectedImageIds.indexOf(id) === -1) {
+        selectImage(id);
+      }
+      drag = { imageMove: id };
       ev.target.setPointerCapture(ev.pointerId);
-      document.getElementById('inspector').classList.add('open');
-      render();
-      refreshInspector();
     });
   });
   layerImageHandles.querySelectorAll('.image-resize').forEach(function(c){
     c.addEventListener('pointerdown', function(ev){
       ev.stopPropagation();
       drag = { imageResize: c.dataset.imageResizeId };
+      ev.target.setPointerCapture(ev.pointerId);
+    });
+  });
+  layerImageHandles.querySelectorAll('.image-rotate').forEach(function(c){
+    c.addEventListener('pointerdown', function(ev){
+      ev.stopPropagation();
+      drag = { imageRotate: c.dataset.imageRotateId };
       ev.target.setPointerCapture(ev.pointerId);
     });
   });
@@ -1546,8 +1590,8 @@ canvasWrap.addEventListener('pointerdown', function(ev){
       if (state.pendingAnchorShape === 'rectangle') newAnchor.aspectRatio = ANCHOR_RECTANGLE_ASPECT;
     }
     state.anchors.push(newAnchor);
-    state.selectedIds = [];
-    state.selectedAnchorId = newAnchor.id;
+    clearAllSelection();
+    state.selectedAnchorIds = [newAnchor.id];
     document.getElementById('inspector').classList.add('open');
     saveLocal();
     render();
@@ -1562,9 +1606,8 @@ canvasWrap.addEventListener('pointerdown', function(ev){
       imagePath: state.availableImages.length ? state.availableImages[0] : null
     };
     state.images.push(newImage);
-    state.selectedIds = [];
-    state.selectedAnchorId = null;
-    state.selectedImageId = newImage.id;
+    clearAllSelection();
+    state.selectedImageIds = [newImage.id];
     document.getElementById('inspector').classList.add('open');
     saveLocal();
     render();
@@ -1575,10 +1618,8 @@ canvasWrap.addEventListener('pointerdown', function(ev){
     drag = { marquee: true, startClientX: ev.clientX, startClientY: ev.clientY };
     return;
   }
-  if (state.selectedIds.length > 0 || state.selectedAnchorId || state.selectedImageId) {
-    state.selectedIds = [];
-    state.selectedAnchorId = null;
-    state.selectedImageId = null;
+  if (anySelected()) {
+    clearAllSelection();
     document.getElementById('inspector').classList.remove('open');
     refreshInspector();
     render();
@@ -1615,7 +1656,7 @@ window.addEventListener('pointermove', function(ev){
       resyncNodesOnAnchor(anchor);
     }
     render();
-    if (state.selectedAnchorId) refreshInspector();
+    if (state.selectedAnchorIds.length === 1) refreshInspector();
     return;
   }
   if (drag.anchorResize) {
@@ -1627,7 +1668,7 @@ window.addEventListener('pointermove', function(ev){
       resyncNodesOnAnchor(rAnchor);
     }
     render();
-    if (state.selectedAnchorId) refreshInspector();
+    if (state.selectedAnchorIds.length === 1) refreshInspector();
     return;
   }
   if (drag.anchorRotate) {
@@ -1641,7 +1682,7 @@ window.addEventListener('pointermove', function(ev){
       resyncNodesOnAnchor(gAnchor);
     }
     render();
-    if (state.selectedAnchorId) refreshInspector();
+    if (state.selectedAnchorIds.length === 1) refreshInspector();
     return;
   }
   if (drag.imageMove) {
@@ -1652,18 +1693,32 @@ window.addEventListener('pointermove', function(ev){
       img.y = Math.round(wim.y);
     }
     render();
-    if (state.selectedImageId) refreshInspector();
+    if (state.selectedImageIds.length === 1) refreshInspector();
     return;
   }
   if (drag.imageResize) {
     var rImg = imageById(drag.imageResize);
     if (rImg) {
       var wir = screenPointToWorld(ev.clientX, ev.clientY);
-      rImg.width = Math.max(20, Math.round(Math.abs(wir.x - rImg.x) * 2));
-      rImg.height = Math.max(20, Math.round(Math.abs(wir.y - rImg.y) * 2));
+      var rdx = wir.x - rImg.x, rdy = wir.y - rImg.y;
+      var rLocal = (rImg.rotation) ? rotateAroundOrigin(rdx, rdy, -rImg.rotation) : { x: rdx, y: rdy };
+      rImg.width = Math.max(20, Math.round(Math.abs(rLocal.x) * 2));
+      rImg.height = Math.max(20, Math.round(Math.abs(rLocal.y) * 2));
     }
     render();
-    if (state.selectedImageId) refreshInspector();
+    if (state.selectedImageIds.length === 1) refreshInspector();
+    return;
+  }
+  if (drag.imageRotate) {
+    var rotImg = imageById(drag.imageRotate);
+    if (rotImg) {
+      var wrot = screenPointToWorld(ev.clientX, ev.clientY);
+      var angleDeg = Math.atan2(wrot.y - rotImg.y, wrot.x - rotImg.x) * 180 / Math.PI;
+      var rotation = angleDeg + 90;
+      rotImg.rotation = Math.round(((rotation % 360) + 360) % 360);
+    }
+    render();
+    if (state.selectedImageIds.length === 1) refreshInspector();
     return;
   }
   var w = screenPointToWorld(ev.clientX, ev.clientY);
@@ -1713,7 +1768,7 @@ window.addEventListener('pointerup', function(ev){
     saveLocal();
   } else if (drag && (drag.anchorMove || drag.anchorResize || drag.anchorRotate)) {
     saveLocal();
-  } else if (drag && (drag.imageMove || drag.imageResize)) {
+  } else if (drag && (drag.imageMove || drag.imageResize || drag.imageRotate)) {
     saveLocal();
   } else if (drag && !drag.pan && drag.moved) {
     saveLocal();
@@ -1727,20 +1782,53 @@ function finishMarqueeSelect(ev){
   var w2 = screenPointToWorld(ev.clientX, ev.clientY);
   var minX = Math.min(w1.x, w2.x), maxX = Math.max(w1.x, w2.x);
   var minY = Math.min(w1.y, w2.y), maxY = Math.max(w1.y, w2.y);
+  var inRect = function(x, y){ return x >= minX && x <= maxX && y >= minY && y <= maxY; };
   state.selectedIds = state.nodes.filter(function(n){
-    return n.x >= minX && n.x <= maxX && n.y >= minY && n.y <= maxY;
+    return inRect(n.x, n.y);
   }).map(function(n){ return n.id; });
-  document.getElementById('inspector').classList.toggle('open', state.selectedIds.length > 0);
+  state.selectedAnchorIds = state.anchors.filter(function(a){
+    return inRect(a.x, a.y);
+  }).map(function(a){ return a.id; });
+  state.selectedImageIds = state.images.filter(function(img){
+    return inRect(img.x, img.y);
+  }).map(function(img){ return img.id; });
+  document.getElementById('inspector').classList.toggle('open', anySelected());
   refreshInspector();
 }
 
+function selectionCount(){
+  return state.selectedIds.length + state.selectedAnchorIds.length + state.selectedImageIds.length;
+}
+function anySelected(){
+  return selectionCount() > 0;
+}
+function clearAllSelection(){
+  state.selectedIds = [];
+  state.selectedAnchorIds = [];
+  state.selectedImageIds = [];
+}
+function afterSelectionToggle(){
+  document.getElementById('inspector').classList.toggle('open', anySelected());
+  render();
+  refreshInspector();
+}
 function toggleNodeSelection(id){
   var idx = state.selectedIds.indexOf(id);
   if (idx === -1) state.selectedIds.push(id);
   else state.selectedIds.splice(idx, 1);
-  document.getElementById('inspector').classList.toggle('open', state.selectedIds.length > 0);
-  render();
-  refreshInspector();
+  afterSelectionToggle();
+}
+function toggleAnchorSelection(id){
+  var idx = state.selectedAnchorIds.indexOf(id);
+  if (idx === -1) state.selectedAnchorIds.push(id);
+  else state.selectedAnchorIds.splice(idx, 1);
+  afterSelectionToggle();
+}
+function toggleImageSelection(id){
+  var idx = state.selectedImageIds.indexOf(id);
+  if (idx === -1) state.selectedImageIds.push(id);
+  else state.selectedImageIds.splice(idx, 1);
+  afterSelectionToggle();
 }
 
 canvasWrap.addEventListener('wheel', function(ev){
@@ -1781,7 +1869,22 @@ function toggleLink(aId, bId){
 }
 
 function selectNode(id){
+  clearAllSelection();
   state.selectedIds = [id];
+  document.getElementById('inspector').classList.add('open');
+  render();
+  refreshInspector();
+}
+function selectAnchor(id){
+  clearAllSelection();
+  state.selectedAnchorIds = [id];
+  document.getElementById('inspector').classList.add('open');
+  render();
+  refreshInspector();
+}
+function selectImage(id){
+  clearAllSelection();
+  state.selectedImageIds = [id];
   document.getElementById('inspector').classList.add('open');
   render();
   refreshInspector();
@@ -1817,10 +1920,8 @@ document.addEventListener('keydown', function(ev){
     ev.preventDefault();
     if (state.selectedIds.length === 1) { duplicateNode(nodeById(state.selectedIds[0])); }
   }
-  if (ev.key === 'Escape' && (state.selectedIds.length > 0 || state.selectedAnchorId || state.selectedImageId)) {
-    state.selectedIds = [];
-    state.selectedAnchorId = null;
-    state.selectedImageId = null;
+  if (ev.key === 'Escape' && anySelected()) {
+    clearAllSelection();
     document.getElementById('inspector').classList.remove('open');
     render();
     refreshInspector();
@@ -1828,18 +1929,14 @@ document.addEventListener('keydown', function(ev){
 });
 
 function deleteSelectionOrAnchor(){
-  if (state.selectedIds.length > 0) {
-    deleteSelectedNodes();
-  } else if (state.selectedAnchorId) {
-    deleteAnchor(state.selectedAnchorId);
-    state.selectedAnchorId = null;
-    document.getElementById('inspector').classList.remove('open');
-    saveLocal();
-    render();
-    refreshInspector();
-  } else if (state.selectedImageId) {
-    state.images = state.images.filter(function(img){ return img.id !== state.selectedImageId; });
-    state.selectedImageId = null;
+  if (!anySelected()) return;
+  if (state.selectedIds.length > 0) deleteSelectedNodes();
+  if (state.selectedAnchorIds.length > 0 || state.selectedImageIds.length > 0) {
+    state.selectedAnchorIds.forEach(deleteAnchor);
+    var imgIds = state.selectedImageIds;
+    if (imgIds.length) state.images = state.images.filter(function(img){ return imgIds.indexOf(img.id) === -1; });
+    state.selectedAnchorIds = [];
+    state.selectedImageIds = [];
     document.getElementById('inspector').classList.remove('open');
     saveLocal();
     render();
@@ -1850,20 +1947,21 @@ function deleteSelectionOrAnchor(){
 // ---------- inspector ----------
 function refreshInspector(){
   var body = document.getElementById('inspectorBody');
-  if (state.selectedIds.length === 0 && state.selectedAnchorId) {
+  var total = selectionCount();
+  if (total === 0) {
+    body.innerHTML = '<div class="empty-inspector">Select a node, an anchor\'s center dot, or an image\'s center dot to see and edit its details, or switch to Add mode and click the canvas to place a new one.<br><br>Shift-click or shift-drag to select multiple nodes, anchors, and images together. Drag any selected node to move the whole group of nodes.</div>';
+    return;
+  }
+  if (total > 1) {
+    refreshMultiInspector(body);
+    return;
+  }
+  if (state.selectedAnchorIds.length === 1) {
     refreshAnchorInspector(body);
     return;
   }
-  if (state.selectedIds.length === 0 && state.selectedImageId) {
+  if (state.selectedImageIds.length === 1) {
     refreshImageInspector(body);
-    return;
-  }
-  if (state.selectedIds.length === 0) {
-    body.innerHTML = '<div class="empty-inspector">Select a node, an anchor\'s center dot, or an image\'s center dot to see and edit its details, or switch to Add mode and click the canvas to place a new one.<br><br>Shift-click a node to add it to a multi-selection, or shift-drag empty canvas to marquee-select. Drag any selected node to move the whole group.</div>';
-    return;
-  }
-  if (state.selectedIds.length > 1) {
-    refreshMultiInspector(body);
     return;
   }
   var n = nodeById(state.selectedIds[0]);
@@ -2071,9 +2169,9 @@ function deleteSelectedNodes(){
 }
 
 function refreshAnchorInspector(body){
-  var a = anchorById(state.selectedAnchorId);
+  var a = anchorById(state.selectedAnchorIds[0]);
   if (!a) {
-    state.selectedAnchorId = null;
+    state.selectedAnchorIds = [];
     body.innerHTML = '<div class="empty-inspector">Select a node to see and edit its details, or switch to Add mode and click the canvas to place a new one.</div>';
     return;
   }
@@ -2107,7 +2205,7 @@ function refreshAnchorInspector(body){
         var oldId = a.id;
         a.id = newId;
         state.nodes.forEach(function(n){ if (n.orbitAnchorId === oldId) n.orbitAnchorId = newId; });
-        state.selectedAnchorId = newId;
+        state.selectedAnchorIds = [newId];
       } else if (field === 'x' || field === 'y') {
         a[field] = parseInt(inp.value, 10) || 0;
       } else if (field === 'radius') {
@@ -2131,16 +2229,16 @@ function refreshAnchorInspector(body){
   });
   document.getElementById('deleteAnchorBtn').addEventListener('click', function(){
     deleteAnchor(a.id);
-    state.selectedAnchorId = null;
+    state.selectedAnchorIds = [];
     document.getElementById('inspector').classList.remove('open');
     saveLocal(); render(); refreshInspector();
   });
 }
 
 function refreshImageInspector(body){
-  var img = imageById(state.selectedImageId);
+  var img = imageById(state.selectedImageIds[0]);
   if (!img) {
-    state.selectedImageId = null;
+    state.selectedImageIds = [];
     body.innerHTML = '<div class="empty-inspector">Select a node to see and edit its details, or switch to Add mode and click the canvas to place a new one.</div>';
     return;
   }
@@ -2168,9 +2266,10 @@ function refreshImageInspector(body){
       '<div class="field"><label>Width</label><input type="number" value="' + img.width + '" data-image-field="width"></div>' +
       '<div class="field"><label>Height</label><input type="number" value="' + img.height + '" data-image-field="height"></div>' +
     '</div>' +
+    '<div class="field"><label>Rotation (deg)</label><input type="number" value="' + (img.rotation || 0) + '" data-image-field="rotation"></div>' +
     '<div class="field"><label>Image</label>' + pickerHtml + '</div>' +
     '<hr class="sep">' +
-    '<div class="hint">A static PNG rendered behind the whole tree in game, at this position/size. Drag its edge handle in Select mode to resize.</div>' +
+    '<div class="hint">A static PNG rendered behind the whole tree in game, at this position/size. Drag its edge handle in Select mode to resize, or its top handle to rotate.</div>' +
     '<button class="smallBtn danger" id="deleteImageBtn">Delete this image <span class="key">Q</span></button>';
 
   body.querySelectorAll('[data-image-field]').forEach(function(inp){
@@ -2180,11 +2279,14 @@ function refreshImageInspector(body){
         var newId = inp.value.trim();
         if (!newId || imageById(newId)) { showToast('Id must be unique and non-empty'); inp.value = img.id; return; }
         img.id = newId;
-        state.selectedImageId = newId;
+        state.selectedImageIds = [newId];
       } else if (field === 'x' || field === 'y') {
         img[field] = parseInt(inp.value, 10) || 0;
       } else if (field === 'width' || field === 'height') {
         img[field] = Math.max(20, parseInt(inp.value, 10) || 20);
+      } else if (field === 'rotation') {
+        var deg = parseFloat(inp.value);
+        img.rotation = ((isNaN(deg) ? 0 : deg) % 360 + 360) % 360;
       }
       saveLocal(); render(); refreshInspector();
     });
@@ -2197,30 +2299,47 @@ function refreshImageInspector(body){
   });
   document.getElementById('deleteImageBtn').addEventListener('click', function(){
     state.images = state.images.filter(function(o){ return o.id !== img.id; });
-    state.selectedImageId = null;
+    state.selectedImageIds = [];
     document.getElementById('inspector').classList.remove('open');
     saveLocal(); render(); refreshInspector();
   });
 }
 function refreshMultiInspector(body){
-  var idsList = state.selectedIds.map(function(id){
+  var rows = [];
+  state.selectedIds.forEach(function(id){
     var n = nodeById(id);
     var t = n ? typeById(n.type) : null;
-    return '<div class="prereqItem"><span>' + id + (t ? ' (' + t.name + ')' : '') + '</span></div>';
-  }).join('');
+    rows.push('<div class="prereqItem selectableRow" data-select-only-node="' + id + '"><span>' + id + (t ? ' (' + t.name + ')' : '') + '</span></div>');
+  });
+  state.selectedAnchorIds.forEach(function(id){
+    rows.push('<div class="prereqItem selectableRow" data-select-only-anchor="' + id + '"><span>' + id + ' (anchor)</span></div>');
+  });
+  state.selectedImageIds.forEach(function(id){
+    rows.push('<div class="prereqItem selectableRow" data-select-only-image="' + id + '"><span>' + id + ' (image)</span></div>');
+  });
+  var total = selectionCount();
   body.innerHTML =
-    '<h2>' + state.selectedIds.length + ' nodes selected</h2>' +
-    '<div class="hint">Drag any of them to move the whole group together. Shift-click a node to add/remove it from this selection.</div>' +
-    '<div class="prereqList">' + idsList + '</div>' +
+    '<h2>' + total + ' objects selected</h2>' +
+    '<div class="hint">Drag any selected node to move the whole group of nodes together. Shift-click/shift-drag to add or remove from this selection. Click an item below to select only it.</div>' +
+    '<div class="prereqList">' + rows.join('') + '</div>' +
     '<div class="btnRow"><button class="smallBtn" id="clearSelectionBtn">Clear selection</button></div>' +
-    '<button class="smallBtn danger" id="deleteNodesBtn">Delete ' + state.selectedIds.length + ' nodes <span class="key">Q</span></button>';
+    '<button class="smallBtn danger" id="deleteAllSelectedBtn">Delete ' + total + ' selected <span class="key">Q</span></button>';
+  body.querySelectorAll('[data-select-only-node]').forEach(function(el){
+    el.addEventListener('click', function(){ selectNode(el.dataset.selectOnlyNode); });
+  });
+  body.querySelectorAll('[data-select-only-anchor]').forEach(function(el){
+    el.addEventListener('click', function(){ selectAnchor(el.dataset.selectOnlyAnchor); });
+  });
+  body.querySelectorAll('[data-select-only-image]').forEach(function(el){
+    el.addEventListener('click', function(){ selectImage(el.dataset.selectOnlyImage); });
+  });
   document.getElementById('clearSelectionBtn').addEventListener('click', function(){
-    state.selectedIds = [];
+    clearAllSelection();
     document.getElementById('inspector').classList.remove('open');
     render();
     refreshInspector();
   });
-  document.getElementById('deleteNodesBtn').addEventListener('click', deleteSelectedNodes);
+  document.getElementById('deleteAllSelectedBtn').addEventListener('click', deleteSelectionOrAnchor);
 }
 
 document.getElementById('closeInspector').addEventListener('click', function(){
@@ -2541,7 +2660,9 @@ function buildTreeExportObject(){
   }
   if (state.images.length) {
     out.staticImages = state.images.map(function(img){
-      return { id: img.id, x: img.x, y: img.y, width: img.width, height: img.height, imagePath: img.imagePath || '' };
+      var io = { id: img.id, x: img.x, y: img.y, width: img.width, height: img.height, imagePath: img.imagePath || '' };
+      if (img.rotation) io.rotation = img.rotation;
+      return io;
     });
   }
   return out;
@@ -2645,9 +2766,7 @@ document.getElementById('resetBtn').addEventListener('click', function(){
     state.anchors = treeJson.orbitAnchors || [];
     state.images = normalizeImages(treeJson.staticImages);
     try { localStorage.removeItem('skillTreeEditor.v1'); } catch(e){}
-    state.selectedIds = [];
-    state.selectedAnchorId = null;
-    state.selectedImageId = null;
+    clearAllSelection();
     render();
     refreshInspector();
     fitToScreen();

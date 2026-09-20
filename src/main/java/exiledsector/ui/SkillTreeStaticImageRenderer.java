@@ -41,6 +41,7 @@ public class SkillTreeStaticImageRenderer {
             float screenY = centerY - image.getY() * zoom;
             sprite.setSize(image.getWidth() * zoom, image.getHeight() * zoom);
             sprite.setAlphaMult(alphaMult);
+            sprite.setAngle(image.getRotation());
             sprite.renderAtCenter(screenX, screenY);
         }
 

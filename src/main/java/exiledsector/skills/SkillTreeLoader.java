@@ -59,7 +59,8 @@ public final class SkillTreeLoader {
                     (float) imageJson.getDouble("y"),
                     (float) imageJson.getDouble("width"),
                     (float) imageJson.getDouble("height"),
-                    imageJson.getString("imagePath")));
+                    imageJson.getString("imagePath"),
+                    (float) imageJson.optDouble("rotation", 0.0)));
         }
         return images;
     }

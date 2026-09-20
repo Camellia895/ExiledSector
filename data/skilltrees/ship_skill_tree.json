@@ -1548,11 +1548,12 @@
 	"staticImages": [
 		{
 			"id": "cloud_inner_ring",
-			"x": -687,
-			"y": -307,
+			"x": -712,
+			"y": -345,
 			"width": 450,
 			"height": 450,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_06.png"
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_06.png",
+			"rotation": 297
 		}
 	]
 }

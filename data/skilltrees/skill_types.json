@@ -82,7 +82,7 @@
 		{
 			"id": "non_beam_energy_damage",
 			"name": "Non-Beam Energy Weapon Damage",
-			"icon": "graphics/icons/circular/small_passives/special_modifications.png",
+			"icon": "graphics/icons/circular/small_passives/non_beam_energy_weapon_blue.png",
 			"opCost": 2,
 			"xpCost": 500
 		},

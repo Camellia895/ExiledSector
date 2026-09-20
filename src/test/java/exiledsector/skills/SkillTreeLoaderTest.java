@@ -121,7 +121,8 @@ class SkillTreeLoaderTest {
                 + "\"y\": 600,"
                 + "\"width\": 900,"
                 + "\"height\": 750,"
-                + "\"imagePath\": \"graphics/backgrounds/static_images/hyperspace_cloud_03.png\""
+                + "\"imagePath\": \"graphics/backgrounds/static_images/hyperspace_cloud_03.png\","
+                + "\"rotation\": 45"
                 + "} ] }");
 
         List<StaticImage> images = SkillTreeLoader.parseStaticImages(root);
@@ -134,6 +135,23 @@ class SkillTreeLoaderTest {
         assertEquals(900f, image.getWidth());
         assertEquals(750f, image.getHeight());
         assertEquals("graphics/backgrounds/static_images/hyperspace_cloud_03.png", image.getImagePath());
+        assertEquals(45f, image.getRotation());
+    }
+
+    @Test
+    void rotationDefaultsToZeroWhenFieldMissing() throws Exception {
+        JSONObject root = new JSONObject("{ \"nodes\": [], \"staticImages\": [ {"
+                + "\"id\": \"image_1\","
+                + "\"x\": 0,"
+                + "\"y\": 0,"
+                + "\"width\": 100,"
+                + "\"height\": 100,"
+                + "\"imagePath\": \"a.png\""
+                + "} ] }");
+
+        StaticImage image = SkillTreeLoader.parseStaticImages(root).get(0);
+
+        assertEquals(0f, image.getRotation());
     }
 
     @Test
