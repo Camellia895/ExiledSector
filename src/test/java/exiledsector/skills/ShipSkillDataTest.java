@@ -271,6 +271,41 @@ class ShipSkillDataTest {
     }
 
     @Test
+    void canDeallocateIsFalseWhenTheOnlyAlternatePathIsItselfNotConnectedToTheRoot() {
+        // a is the only link back to the root; b's "other" connection (x) is an allocated dead end
+        // that isn't itself reachable from the root, so removing a would strand both b and x even
+        // though b technically has another allocated neighbor. A check that only looks at b's
+        // immediate neighbors (without confirming they trace back to the root) would wrongly allow
+        // this.
+        ShipSkillData data = new ShipSkillData();
+        SkillNode a = node("a", List.of());
+        SkillNode b = node("b", List.of("a", "x"));
+        SkillNode x = node("x", List.of("b"));
+        data.allocate(a);
+        data.allocate(b);
+        data.allocate(x);
+
+        assertFalse(data.canDeallocate(a, List.of(a, b, x), null));
+    }
+
+    @Test
+    void canDeallocateIsTrueWhenTheAlternatePathTracesBackToTheRoot() {
+        // b's alternate connection (x) itself traces back to a second allocated anchor (a2), so
+        // removing a1 leaves b and x still reachable overall.
+        ShipSkillData data = new ShipSkillData();
+        SkillNode a1 = node("a1", List.of());
+        SkillNode a2 = node("a2", List.of());
+        SkillNode b = node("b", List.of("a1", "x"));
+        SkillNode x = node("x", List.of("b", "a2"));
+        data.allocate(a1);
+        data.allocate(a2);
+        data.allocate(b);
+        data.allocate(x);
+
+        assertTrue(data.canDeallocate(a1, List.of(a1, a2, b, x), null));
+    }
+
+    @Test
     void getOptionalSelectionIsNullWhenNothingHasBeenSelected() {
         ShipSkillData data = new ShipSkillData();
 

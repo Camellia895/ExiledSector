@@ -814,21 +814,7 @@
 			"icon": "graphics/icons/circular/notable_passives/integrated_point_defense_ai.png",
 			"opCost": 4,
 			"xpCost": 2000,
-			"tier": "NOTABLE",
-			"effects": [
-				{
-					"effect": "PD_IGNORES_DECOY_FLARES",
-					"magnitude": 0
-				},
-				{
-					"effect": "PD_BEST_TARGET_LEADING",
-					"magnitude": 0
-				},
-				{
-					"effect": "DAMAGE_TO_MISSILES_PERCENT",
-					"magnitude": 50
-				}
-			]
+			"tier": "NOTABLE"
 		},
 		{
 			"id": "targetingunit",
@@ -847,10 +833,10 @@
 				},
 				{
 					"effect": "ENERGY_WEAPON_RANGE_PERCENT",
-					"frigate": 10,
-					"destroyer": 20,
-					"cruiser": 40,
-					"capitalShip": 60
+					"frigate": 5,
+					"destroyer": 12,
+					"cruiser": 25,
+					"capitalShip": 40
 				}
 			],
 			"tags": [
@@ -1286,7 +1272,7 @@
 		},
 		{
 			"id": "root_low_tech",
-			"name": "Low Tech Root",
+			"name": "Low Tech",
 			"icon": "graphics/icons/circular/roots/crest_lowtech.png",
 			"opCost": 0,
 			"xpCost": 0,
@@ -1300,7 +1286,7 @@
 		},
 		{
 			"id": "root_midline",
-			"name": "Midline Root",
+			"name": "Midline",
 			"icon": "graphics/icons/circular/roots/crest_midline.png",
 			"opCost": 0,
 			"xpCost": 0,
@@ -1323,7 +1309,7 @@
 		},
 		{
 			"id": "root_high_tech",
-			"name": "High Tech Root",
+			"name": "High Tech",
 			"icon": "graphics/icons/circular/roots/crest_hightech.png",
 			"opCost": 0,
 			"xpCost": 0,
@@ -1649,7 +1635,6 @@
 			"icon": "graphics/icons/Shield_icon_2_circle.png",
 			"opCost": 4,
 			"xpCost": 2000,
-			"tier": "NOTABLE",
 			"effects": [
 				{
 					"effect": "SHIELD_ARC_PERCENT",
@@ -1724,10 +1709,10 @@
 				},
 				{
 					"effect": "ENERGY_WEAPON_RANGE_PERCENT",
-					"frigate": 0,
-					"destroyer": 0,
-					"cruiser": 0,
-					"capitalShip": 0
+					"frigate": 3,
+					"destroyer": 5,
+					"cruiser": 10,
+					"capitalShip": 15
 				}
 			],
 			"tags": [

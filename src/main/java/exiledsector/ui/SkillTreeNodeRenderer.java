@@ -569,13 +569,19 @@ final class SkillTreeNodeRenderer {
 
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        drawNodeDonut(cx, cy, ringRadius, scale, zoom, allocated, alphaMult);
 
-        if (breathing) {
-            float breathingT = (float) (0.5 + 0.5 * Math.sin(2 * Math.PI * breathingPhase / BREATHING_PERIOD_SECONDS));
-            float breathingAlpha = (BREATHING_MIN_ALPHA + (BREATHING_MAX_ALPHA - BREATHING_MIN_ALPHA) * breathingT) * alphaMult;
-            GL11.glLineWidth(NODE_CONNECTOR_GLOW_LINE_THICKNESS * scale * zoom);
-            drawRingOutline(cx, cy, ringRadius, style.getAccentColor(), breathingAlpha);
+        if (tier == SkillTier.NOTABLE || tier == SkillTier.KEYSTONE) {
+            float iconRadius = footprintSize * ICON_INSET_RATIO / 2f;
+            drawSingleDonut(cx, cy, iconRadius, allocated, breathing, zoom, alphaMult);
+        } else {
+            drawNodeDonut(cx, cy, ringRadius, scale, zoom, allocated, alphaMult);
+
+            if (breathing) {
+                float breathingT = (float) (0.5 + 0.5 * Math.sin(2 * Math.PI * breathingPhase / BREATHING_PERIOD_SECONDS));
+                float breathingAlpha = (BREATHING_MIN_ALPHA + (BREATHING_MAX_ALPHA - BREATHING_MIN_ALPHA) * breathingT) * alphaMult;
+                GL11.glLineWidth(NODE_CONNECTOR_GLOW_LINE_THICKNESS * scale * zoom);
+                drawRingOutline(cx, cy, ringRadius, style.getAccentColor(), breathingAlpha);
+            }
         }
 
         if (pulseSeconds != null) {
@@ -601,6 +607,32 @@ final class SkillTreeNodeRenderer {
         GL11.glLineWidth(NODE_CONNECTOR_LINE_THICKNESS * scale * zoom);
         drawRingOutline(cx, cy, radius - gapRadius, RING_DULL_COLOR, alphaMult * RING_DULL_ALPHA);
         drawRingOutline(cx, cy, radius + gapRadius, RING_DULL_COLOR, alphaMult * RING_DULL_ALPHA);
+    }
+
+    /**
+     * Notable/keystone already get plenty of visual weight from the ring stack and corona glow
+     * behind them, so their own allocation indicator is simplified to one single ring (rather than
+     * the double-line donut band small/root nodes use) - dull gray to match small nodes' unallocated
+     * ring color, or the ship's accent color once allocated. "Breathing" (available to allocate)
+     * pulses that same single ring in the accent color instead of drawing a second ring on top.
+     */
+    private void drawSingleDonut(float cx, float cy, float radius, boolean allocated, boolean breathing, float zoom, float alphaMult) {
+        Color color;
+        float alpha;
+        if (allocated) {
+            color = style.getAccentColor();
+            alpha = alphaMult;
+        } else if (breathing) {
+            float breathingT = (float) (0.5 + 0.5 * Math.sin(2 * Math.PI * breathingPhase / BREATHING_PERIOD_SECONDS));
+            color = style.getAccentColor();
+            alpha = (BREATHING_MIN_ALPHA + (BREATHING_MAX_ALPHA - BREATHING_MIN_ALPHA) * breathingT) * alphaMult;
+        } else {
+            color = RING_DULL_COLOR;
+            alpha = alphaMult * RING_DULL_ALPHA;
+        }
+
+        GL11.glLineWidth(NODE_CONNECTOR_GLOW_LINE_THICKNESS * zoom);
+        drawRingOutline(cx, cy, radius, color, alpha);
     }
 
     /**
