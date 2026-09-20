@@ -53,10 +53,32 @@ public enum FluxSkillEffect implements SkillEffect {
             return flatChange(magnitude, "flux dissipation");
         }
     },
+    FLUX_DISSIPATION_MULT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getFluxDissipation().modifyMult(modId, 1f + magnitude / 100f);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "flux dissipation");
+        }
+    },
     VENT_RATE_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getVentRateMult().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "venting speed");
+        }
+    },
+    VENT_RATE_MULT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getVentRateMult().modifyMult(modId, 1f + magnitude / 100f);
         }
 
         @Override

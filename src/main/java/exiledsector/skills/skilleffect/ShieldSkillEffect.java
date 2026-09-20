@@ -124,6 +124,17 @@ public enum ShieldSkillEffect implements SkillEffect {
             return flatChange(magnitude, "shield arc, in degrees");
         }
     },
+    SHIELD_ARC_MULT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getShieldArcBonus().modifyMult(modId, 1f + magnitude / 100f);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "shield arc");
+        }
+    },
     SHIELD_PIERCE_CHANCE_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -135,10 +146,32 @@ public enum ShieldSkillEffect implements SkillEffect {
             return pctChange(magnitude, "chance for shields to be pierced by EMP arcs");
         }
     },
+    SHIELD_PIERCE_CHANCE_MULT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getStat(Stats.SHIELD_PIERCED_MULT).modifyMult(modId, 1f + magnitude / 100f);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "chance for shields to be pierced by EMP arcs");
+        }
+    },
     SHIELD_UPKEEP_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getShieldUpkeepMult().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "shield flux upkeep");
+        }
+    },
+    SHIELD_UPKEEP_MULT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getShieldUpkeepMult().modifyMult(modId, 1f + magnitude / 100f);
         }
 
         @Override

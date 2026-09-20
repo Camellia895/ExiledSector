@@ -1106,10 +1106,10 @@
 				"small_logistics_optional_10",
 				"augmentedengines_1"
 			],
-			"x": 198,
-			"y": -897,
+			"x": 200,
+			"y": -876,
 			"orbitAnchorId": "augmented_drive_field_anchor_1",
-			"orbitAngle": 180
+			"orbitAngle": 170.16310695606623
 		},
 		{
 			"id": "small_logistics_optional_24",
@@ -1118,10 +1118,10 @@
 				"augmentedengines_1",
 				"small_logistics_optional_3"
 			],
-			"x": 322,
-			"y": -1021,
+			"x": 369,
+			"y": -1012,
 			"orbitAnchorId": "augmented_drive_field_anchor_1",
-			"orbitAngle": 270
+			"orbitAngle": -67.70058265189768
 		},
 		{
 			"id": "crew_capacity_flat_1",
@@ -2192,14 +2192,14 @@
 		{
 			"a": "augmentedengines_1",
 			"b": "small_logistics_optional_24",
-			"controlX": 435,
-			"controlY": -949
+			"controlX": 443,
+			"controlY": -926
 		},
 		{
 			"a": "augmentedengines_1",
 			"b": "small_logistics_optional_23",
-			"controlX": 279,
-			"controlY": -781
+			"controlX": 289,
+			"controlY": -777
 		},
 		{
 			"a": "crew_capacity_flat_1",

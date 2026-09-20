@@ -173,15 +173,15 @@
 					"magnitude": 0
 				},
 				{
-					"effect": "FLUX_DISSIPATION_PERCENT",
+					"effect": "FLUX_DISSIPATION_MULT",
 					"magnitude": 100
 				},
 				{
-					"effect": "PEAK_CR_DURATION_PERCENT",
+					"effect": "PEAK_CR_DURATION_MULT",
 					"magnitude": -67
 				},
 				{
-					"effect": "VENT_RATE_PERCENT",
+					"effect": "VENT_RATE_MULT",
 					"magnitude": -100
 				},
 				{
@@ -189,7 +189,7 @@
 					"magnitude": 450
 				},
 				{
-					"effect": "WEAPON_RANGE_FALLOFF_PERCENT",
+					"effect": "WEAPON_RANGE_FALLOFF_MULT",
 					"magnitude": -75
 				}
 			],
@@ -269,7 +269,7 @@
 					"magnitude": 200
 				},
 				{
-					"effect": "BEAM_WEAPON_TURN_RATE_PERCENT",
+					"effect": "BEAM_WEAPON_TURN_RATE_MULT",
 					"magnitude": -30
 				}
 			],
@@ -313,11 +313,11 @@
 					"magnitude": 100
 				},
 				{
-					"effect": "WEAPON_TURN_RATE_PERCENT",
+					"effect": "WEAPON_TURN_RATE_MULT",
 					"magnitude": -25
 				},
 				{
-					"effect": "WEAPON_RECOIL_PERCENT",
+					"effect": "WEAPON_RECOIL_MULT",
 					"magnitude": -25
 				}
 			],
@@ -334,7 +334,7 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "REPAIR_TIME_PERCENT",
+					"effect": "REPAIR_TIME_MULT",
 					"magnitude": -50
 				}
 			]
@@ -393,7 +393,7 @@
 					"magnitude": 20
 				},
 				{
-					"effect": "CREW_LOSS_PERCENT",
+					"effect": "CREW_LOSS_MULT",
 					"magnitude": -60
 				}
 			],
@@ -523,7 +523,7 @@
 					"magnitude": 25
 				},
 				{
-					"effect": "MISSILE_RANGE_PERCENT",
+					"effect": "MISSILE_RANGE_MULT",
 					"magnitude": -20
 				},
 				{
@@ -539,7 +539,7 @@
 					"magnitude": 150
 				},
 				{
-					"effect": "ELECTRONIC_WARFARE_PENALTY_PERCENT",
+					"effect": "ELECTRONIC_WARFARE_PENALTY_MULT",
 					"magnitude": -50
 				}
 			],
@@ -647,8 +647,8 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "SHIELD_ARC_PERCENT",
-					"magnitude": 50
+					"effect": "SHIELD_ARC_FLAT",
+					"magnitude": 60
 				}
 			],
 			"tags": [
@@ -686,7 +686,7 @@
 			"tier": "KEYSTONE",
 			"effects": [
 				{
-					"effect": "TOP_SPEED_PERCENT",
+					"effect": "TOP_SPEED_MULT",
 					"magnitude": -20
 				},
 				{
@@ -722,11 +722,11 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "SHIELD_ABSORPTION_PERCENT",
+					"effect": "SHIELD_DAMAGE_TAKEN_MULT",
 					"magnitude": -20
 				},
 				{
-					"effect": "SHIELD_PIERCE_CHANCE_PERCENT",
+					"effect": "SHIELD_PIERCE_CHANCE_MULT",
 					"magnitude": -50
 				}
 			],
@@ -747,7 +747,7 @@
 					"magnitude": 50
 				},
 				{
-					"effect": "CR_LOSS_PER_SECOND_PERCENT",
+					"effect": "CR_LOSS_PER_SECOND_MULT",
 					"magnitude": -25
 				}
 			]
@@ -814,7 +814,25 @@
 			"icon": "graphics/icons/circular/notable_passives/integrated_point_defense_ai.png",
 			"opCost": 4,
 			"xpCost": 2000,
-			"tier": "NOTABLE"
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "PD_IGNORES_DECOY_FLARES",
+					"magnitude": 0
+				},
+				{
+					"effect": "PD_BEST_TARGET_LEADING",
+					"magnitude": 0
+				},
+				{
+					"effect": "PD_DAMAGE_TO_MISSILES_PERCENT",
+					"magnitude": 50
+				},
+				{
+					"effect": "PD_RECLASSIFY_SMALL_WEAPONS",
+					"magnitude": 0
+				}
+			]
 		},
 		{
 			"id": "targetingunit",
@@ -874,9 +892,13 @@
 				{
 					"effect": "SHIELD_ARC_PERCENT",
 					"magnitude": 100
+				},
+				{
+					"effect": "CONVERT_SHIELD_TO_FRONT",
+					"magnitude": 0
 				}
 			],
-			"description": "Converts this ship's shield to a front-facing arc, extending its coverage but locking it to only cover the front.",
+			"description": "Converts this ship's shield to a front-facing arc, extending its coverage but locking it to only cover the front. As with all frontal emitters, the shield will also deploy twice as quickly.",
 			"tags": [
 				"shield"
 			]
@@ -890,7 +912,7 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "SHIELD_ARC_PERCENT",
+					"effect": "SHIELD_ARC_MULT",
 					"magnitude": -30
 				},
 				{
@@ -951,7 +973,7 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "FIGHTER_CREW_LOSS_PERCENT",
+					"effect": "FIGHTER_CREW_LOSS_MULT",
 					"magnitude": -75
 				}
 			],
@@ -970,6 +992,14 @@
 				{
 					"effect": "HULL_PERCENT",
 					"magnitude": 40
+				},
+				{
+					"effect": "SHIP_RECOVERY_CHANCE_BONUS",
+					"magnitude": 1000
+				},
+				{
+					"effect": "BREAK_PROBABILITY_PERCENT",
+					"magnitude": -100
 				}
 			],
 			"tags": [
@@ -985,11 +1015,11 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "EMP_DAMAGE_TAKEN_PERCENT",
+					"effect": "EMP_DAMAGE_TAKEN_MULT",
 					"magnitude": -50
 				},
 				{
-					"effect": "FLUX_DISSIPATION_WHILE_VENTING_PERCENT",
+					"effect": "VENT_RATE_PERCENT",
 					"magnitude": 25
 				}
 			],
@@ -1007,7 +1037,7 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "SHIELD_UPKEEP_PERCENT",
+					"effect": "SHIELD_UPKEEP_MULT",
 					"magnitude": -50
 				}
 			],
@@ -1024,15 +1054,15 @@
 			"tier": "KEYSTONE",
 			"effects": [
 				{
-					"effect": "BALLISTIC_WEAPON_RANGE_PERCENT",
+					"effect": "BALLISTIC_WEAPON_RANGE_MULT",
 					"magnitude": -15
 				},
 				{
-					"effect": "ENERGY_WEAPON_RANGE_PERCENT",
+					"effect": "ENERGY_WEAPON_RANGE_MULT",
 					"magnitude": -15
 				},
 				{
-					"effect": "FIGHTER_REFIT_TIME_MULT",
+					"effect": "FIGHTER_REFIT_TIME_PERCENT",
 					"magnitude": 25
 				}
 			],
@@ -1196,8 +1226,8 @@
 					"magnitude": 10
 				},
 				{
-					"effect": "SENSOR_PROFILE_PERCENT",
-					"magnitude": 70
+					"effect": "SENSOR_PROFILE_MULT",
+					"magnitude": -50
 				}
 			],
 			"tags": [
@@ -1584,7 +1614,7 @@
 				},
 				{
 					"effect": "SENSOR_PROFILE_PERCENT",
-					"magnitude": 10
+					"magnitude": -10
 				}
 			],
 			"tags": [

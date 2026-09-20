@@ -5,6 +5,10 @@ import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
+import com.fs.starfarer.api.combat.WeaponAPI;
+import com.fs.starfarer.api.combat.WeaponAPI.AIHints;
+import com.fs.starfarer.api.combat.WeaponAPI.WeaponSize;
+import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 
@@ -35,10 +39,52 @@ public enum MiscSkillEffect implements SkillEffect {
             return "Point-defense weapons get the best possible target leading, regardless of combat readiness.";
         }
     },
+    PD_DAMAGE_TO_MISSILES_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDamageToMissiles().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "damage dealt to missiles");
+        }
+    },
+    PD_RECLASSIFY_SMALL_WEAPONS {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
+            for (WeaponAPI weapon : ship.getAllWeapons()) {
+                boolean sizeMatches = weapon.getSize() == WeaponSize.SMALL;
+                if (sizeMatches && weapon.getType() != WeaponType.MISSILE && !weapon.hasAIHint(AIHints.STRIKE)) {
+                    weapon.setPD(true);
+                }
+            }
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return "All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.";
+        }
+    },
     ELECTRONIC_WARFARE_PENALTY_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getDynamic().getMod(Stats.ELECTRONIC_WARFARE_PENALTY_MOD).modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "electronic warfare penalty against this ship's weapon range");
+        }
+    },
+    ELECTRONIC_WARFARE_PENALTY_MULT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(Stats.ELECTRONIC_WARFARE_PENALTY_MOD).modifyMult(modId, 1f + magnitude / 100f);
         }
 
         @Override
@@ -73,6 +119,17 @@ public enum MiscSkillEffect implements SkillEffect {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getPeakCRDuration().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "peak combat readiness duration");
+        }
+    },
+    PEAK_CR_DURATION_MULT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getPeakCRDuration().modifyMult(modId, 1f + magnitude / 100f);
         }
 
         @Override

@@ -54,10 +54,32 @@ public enum FighterSkillEffect implements SkillEffect {
             return pctChange(magnitude, "casualties suffered by fighter pilots launched from this ship");
         }
     },
+    FIGHTER_CREW_LOSS_MULT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getStat("fighter_crew_loss_mult").modifyMult(modId, 1f + magnitude / 100f);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "casualties suffered by fighter pilots launched from this ship");
+        }
+    },
     FIGHTER_REFIT_TIME_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getFighterRefitTimeMult().modifyMult(modId, 1f + magnitude / 100f);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "fighter refit time");
+        }
+    },
+    FIGHTER_REFIT_TIME_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getFighterRefitTimeMult().modifyPercent(modId, magnitude);
         }
 
         @Override

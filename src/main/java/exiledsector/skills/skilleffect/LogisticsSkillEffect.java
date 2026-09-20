@@ -107,6 +107,17 @@ public enum LogisticsSkillEffect implements SkillEffect {
             return pctChange(magnitude, "sensor profile");
         }
     },
+    SENSOR_PROFILE_MULT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getSensorProfile().modifyMult(modId, 1f + magnitude / 100f);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "sensor profile");
+        }
+    },
     SENSOR_STRENGTH_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -155,6 +166,17 @@ public enum LogisticsSkillEffect implements SkillEffect {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getCRLossPerSecondPercent().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "rate of combat readiness loss from extended deployment");
+        }
+    },
+    CR_LOSS_PER_SECOND_MULT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getCRLossPerSecondPercent().modifyMult(modId, 1f + magnitude / 100f);
         }
 
         @Override
@@ -258,6 +280,17 @@ public enum LogisticsSkillEffect implements SkillEffect {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getCrewLossMult().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "crew casualties");
+        }
+    },
+    CREW_LOSS_MULT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getCrewLossMult().modifyMult(modId, 1f + magnitude / 100f);
         }
 
         @Override
