@@ -1305,6 +1305,15 @@
 					"effect": "HULL_PERCENT",
 					"magnitude": 10
 				}
+			],
+			"hullSizeEffects": [
+				{
+					"effect": "ARMOR_FLAT",
+					"frigate": 30,
+					"destroyer": 70,
+					"cruiser": 100,
+					"capitalShip": 120
+				}
 			]
 		},
 		{

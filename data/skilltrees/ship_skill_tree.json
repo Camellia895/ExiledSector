@@ -184,8 +184,8 @@
 			"id": "hardened_subsystems_1",
 			"type": "hardened_subsystems",
 			"connectedTo": [],
-			"x": 1830,
-			"y": 21
+			"x": 2298,
+			"y": 1157
 		},
 		{
 			"id": "turretgyros_1",
@@ -242,8 +242,8 @@
 			"id": "eccm_1",
 			"type": "eccm",
 			"connectedTo": [],
-			"x": 2514,
-			"y": -469
+			"x": 2537,
+			"y": -355
 		},
 		{
 			"id": "high_scatter_amp_1",
@@ -262,9 +262,11 @@
 		{
 			"id": "dedicated_targeting_core_1",
 			"type": "dedicated_targeting_core",
-			"connectedTo": [],
-			"x": 2327,
-			"y": 1177
+			"connectedTo": [
+				"Ballistic and Energy Weapon Range_3"
+			],
+			"x": 2717,
+			"y": 409
 		},
 		{
 			"id": "targetingunit_1",
@@ -286,8 +288,8 @@
 			"id": "defensive_targeting_array_1",
 			"type": "defensive_targeting_array",
 			"connectedTo": [],
-			"x": -882,
-			"y": 2402
+			"x": -1218,
+			"y": 2250
 		},
 		{
 			"id": "advancedshieldemitter_1",
@@ -329,9 +331,13 @@
 		{
 			"id": "shield_shunt_1",
 			"type": "shield_shunt",
-			"connectedTo": [],
-			"x": 574,
-			"y": 1520
+			"connectedTo": [
+				"armor_5"
+			],
+			"x": -379,
+			"y": 2657,
+			"orbitAnchorId": "anchor_10",
+			"orbitAngle": 90
 		},
 		{
 			"id": "frontshield_1",
@@ -503,8 +509,8 @@
 			"id": "converted_hangar_1",
 			"type": "converted_hangar",
 			"connectedTo": [],
-			"x": 2480,
-			"y": -1031
+			"x": 3487,
+			"y": -1556
 		},
 		{
 			"id": "converted_fighterbay_1",
@@ -1688,7 +1694,8 @@
 				"small_flux_optional_29",
 				"small_flux_optional_31",
 				"small_flux_optional_11",
-				"small_flux_optional_34"
+				"small_flux_optional_34",
+				"Ballistic and Energy Weapon Range_4"
 			],
 			"x": 2061,
 			"y": 770,
@@ -1791,7 +1798,8 @@
 				"small_flux_optional_33",
 				"small_flux_optional_36",
 				"small_flux_optional_15",
-				"armor_2"
+				"armor_2",
+				"armor_4"
 			],
 			"x": 0,
 			"y": 2200,
@@ -2042,6 +2050,50 @@
 			],
 			"x": -1560,
 			"y": -1221
+		},
+		{
+			"id": "Ballistic and Energy Weapon Range_3",
+			"type": "Ballistic and Energy Weapon Range",
+			"connectedTo": [
+				"Ballistic and Energy Weapon Range_4",
+				"dedicated_targeting_core_1"
+			],
+			"x": 2500,
+			"y": 529
+		},
+		{
+			"id": "Ballistic and Energy Weapon Range_4",
+			"type": "Ballistic and Energy Weapon Range",
+			"connectedTo": [
+				"Ballistic and Energy Weapon Range_3",
+				"small_flux_optional_30"
+			],
+			"x": 2292,
+			"y": 641
+		},
+		{
+			"id": "armor_4",
+			"type": "armor",
+			"connectedTo": [
+				"armor_5",
+				"small_flux_optional_35"
+			],
+			"x": -249,
+			"y": 2432,
+			"orbitAnchorId": "anchor_10",
+			"orbitAngle": -29.999999999999996
+		},
+		{
+			"id": "armor_5",
+			"type": "armor",
+			"connectedTo": [
+				"armor_4",
+				"shield_shunt_1"
+			],
+			"x": -509,
+			"y": 2432,
+			"orbitAnchorId": "anchor_10",
+			"orbitAngle": -150.00000000000003
 		}
 	],
 	"connectorCurves": [
@@ -2692,6 +2744,18 @@
 			"b": "shield_turn_rate_1",
 			"controlX": 420,
 			"controlY": -2676
+		},
+		{
+			"a": "armor_4",
+			"b": "armor_5",
+			"controlX": -379,
+			"controlY": 2432
+		},
+		{
+			"a": "armor_5",
+			"b": "shield_shunt_1",
+			"controlX": -444,
+			"controlY": 2545
 		}
 	],
 	"orbitAnchors": [
@@ -2828,6 +2892,14 @@
 			"x": -400,
 			"y": -2597,
 			"radius": 150
+		},
+		{
+			"id": "anchor_10",
+			"x": -379,
+			"y": 2507,
+			"radius": 150,
+			"shape": "triangle",
+			"rotation": 180
 		}
 	],
 	"staticImages": [

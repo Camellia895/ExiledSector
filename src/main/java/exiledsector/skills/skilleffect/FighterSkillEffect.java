@@ -1,8 +1,10 @@
 package exiledsector.skills.skilleffect;
 
+import com.fs.starfarer.api.combat.FighterWingAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.loading.WingRole;
 
 import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
 import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
@@ -150,6 +152,366 @@ public enum FighterSkillEffect implements SkillEffect {
             return flatChange(magnitude, "fighter relaunch time, as a % of base refit time");
         }
     },
+    FIGHTER_ROLE_DAMAGE_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            if (matchesRole(fighter, WingRole.FIGHTER)) applyRoleDamage(fighter, modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "weapon damage of Fighter-role wings launched from this ship");
+        }
+    },
+    FIGHTER_ROLE_TOP_SPEED_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            if (matchesRole(fighter, WingRole.FIGHTER)) applyRoleTopSpeed(fighter, modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "top speed of Fighter-role wings launched from this ship");
+        }
+    },
+    FIGHTER_ROLE_ARMOR_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            if (matchesRole(fighter, WingRole.FIGHTER)) applyRoleArmor(fighter, modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "armor rating of Fighter-role wings launched from this ship");
+        }
+    },
+    FIGHTER_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            if (matchesRole(fighter, WingRole.FIGHTER)) applyRoleShieldDamageTaken(fighter, modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "damage taken by shields of Fighter-role wings launched from this ship");
+        }
+    },
+    FIGHTER_ROLE_RATE_OF_FIRE_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            if (matchesRole(fighter, WingRole.FIGHTER)) applyRoleRateOfFire(fighter, modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "weapon rate of fire of Fighter-role wings launched from this ship");
+        }
+    },
+    FIGHTER_ROLE_ENGAGEMENT_RANGE_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            if (matchesRole(fighter, WingRole.FIGHTER)) applyRoleEngagementRange(fighter, modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "engagement range of Fighter-role wings launched from this ship");
+        }
+    },
+    INTERCEPTOR_ROLE_DAMAGE_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            if (matchesRole(fighter, WingRole.INTERCEPTOR)) applyRoleDamage(fighter, modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "weapon damage of Interceptor-role wings launched from this ship");
+        }
+    },
+    INTERCEPTOR_ROLE_TOP_SPEED_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            if (matchesRole(fighter, WingRole.INTERCEPTOR)) applyRoleTopSpeed(fighter, modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "top speed of Interceptor-role wings launched from this ship");
+        }
+    },
+    INTERCEPTOR_ROLE_ARMOR_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            if (matchesRole(fighter, WingRole.INTERCEPTOR)) applyRoleArmor(fighter, modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "armor rating of Interceptor-role wings launched from this ship");
+        }
+    },
+    INTERCEPTOR_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            if (matchesRole(fighter, WingRole.INTERCEPTOR)) applyRoleShieldDamageTaken(fighter, modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "damage taken by shields of Interceptor-role wings launched from this ship");
+        }
+    },
+    INTERCEPTOR_ROLE_RATE_OF_FIRE_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            if (matchesRole(fighter, WingRole.INTERCEPTOR)) applyRoleRateOfFire(fighter, modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "weapon rate of fire of Interceptor-role wings launched from this ship");
+        }
+    },
+    INTERCEPTOR_ROLE_ENGAGEMENT_RANGE_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            if (matchesRole(fighter, WingRole.INTERCEPTOR)) applyRoleEngagementRange(fighter, modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "engagement range of Interceptor-role wings launched from this ship");
+        }
+    },
+    BOMBER_ROLE_DAMAGE_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            if (matchesRole(fighter, WingRole.BOMBER)) applyRoleDamage(fighter, modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "weapon damage of Bomber-role wings launched from this ship");
+        }
+    },
+    BOMBER_ROLE_TOP_SPEED_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            if (matchesRole(fighter, WingRole.BOMBER)) applyRoleTopSpeed(fighter, modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "top speed of Bomber-role wings launched from this ship");
+        }
+    },
+    BOMBER_ROLE_ARMOR_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            if (matchesRole(fighter, WingRole.BOMBER)) applyRoleArmor(fighter, modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "armor rating of Bomber-role wings launched from this ship");
+        }
+    },
+    BOMBER_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            if (matchesRole(fighter, WingRole.BOMBER)) applyRoleShieldDamageTaken(fighter, modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "damage taken by shields of Bomber-role wings launched from this ship");
+        }
+    },
+    BOMBER_ROLE_RATE_OF_FIRE_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            if (matchesRole(fighter, WingRole.BOMBER)) applyRoleRateOfFire(fighter, modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "weapon rate of fire of Bomber-role wings launched from this ship");
+        }
+    },
+    BOMBER_ROLE_ENGAGEMENT_RANGE_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            if (matchesRole(fighter, WingRole.BOMBER)) applyRoleEngagementRange(fighter, modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "engagement range of Bomber-role wings launched from this ship");
+        }
+    },
+    SUPPORT_ROLE_DAMAGE_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            if (matchesRole(fighter, WingRole.SUPPORT)) applyRoleDamage(fighter, modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "weapon damage of Support-role wings launched from this ship");
+        }
+    },
+    SUPPORT_ROLE_TOP_SPEED_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            if (matchesRole(fighter, WingRole.SUPPORT)) applyRoleTopSpeed(fighter, modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "top speed of Support-role wings launched from this ship");
+        }
+    },
+    SUPPORT_ROLE_ARMOR_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            if (matchesRole(fighter, WingRole.SUPPORT)) applyRoleArmor(fighter, modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "armor rating of Support-role wings launched from this ship");
+        }
+    },
+    SUPPORT_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            if (matchesRole(fighter, WingRole.SUPPORT)) applyRoleShieldDamageTaken(fighter, modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "damage taken by shields of Support-role wings launched from this ship");
+        }
+    },
+    SUPPORT_ROLE_RATE_OF_FIRE_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            if (matchesRole(fighter, WingRole.SUPPORT)) applyRoleRateOfFire(fighter, modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "weapon rate of fire of Support-role wings launched from this ship");
+        }
+    },
+    SUPPORT_ROLE_ENGAGEMENT_RANGE_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            if (matchesRole(fighter, WingRole.SUPPORT)) applyRoleEngagementRange(fighter, modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "engagement range of Support-role wings launched from this ship");
+        }
+    },
     REMOVE_ALL_FIGHTER_BAYS {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -188,6 +550,50 @@ public enum FighterSkillEffect implements SkillEffect {
             return "Cannot be unallocated without at least 1 empty fighter bay.";
         }
     };
+
+    private static WingRole effectiveRole(ShipAPI fighter) {
+        FighterWingAPI wing = fighter.getWing();
+        WingRole role = wing == null ? null : wing.getRole();
+        if (role == WingRole.FIGHTER || role == WingRole.INTERCEPTOR || role == WingRole.BOMBER || role == WingRole.SUPPORT) {
+            return role;
+        }
+        return WingRole.FIGHTER;
+    }
+
+    private static boolean matchesRole(ShipAPI fighter, WingRole role) {
+        return effectiveRole(fighter) == role;
+    }
+
+    private static void applyRoleDamage(ShipAPI fighter, String modId, float magnitude) {
+        MutableShipStatsAPI fighterStats = fighter.getMutableStats();
+        fighterStats.getBallisticWeaponDamageMult().modifyPercent(modId, magnitude);
+        fighterStats.getMissileWeaponDamageMult().modifyPercent(modId, magnitude);
+        fighterStats.getEnergyWeaponDamageMult().modifyPercent(modId, magnitude);
+        fighterStats.getBeamWeaponDamageMult().modifyPercent(modId, magnitude);
+    }
+
+    private static void applyRoleTopSpeed(ShipAPI fighter, String modId, float magnitude) {
+        fighter.getMutableStats().getMaxSpeed().modifyPercent(modId, magnitude);
+    }
+
+    private static void applyRoleArmor(ShipAPI fighter, String modId, float magnitude) {
+        fighter.getMutableStats().getArmorBonus().modifyPercent(modId, magnitude);
+    }
+
+    private static void applyRoleShieldDamageTaken(ShipAPI fighter, String modId, float magnitude) {
+        fighter.getMutableStats().getShieldDamageTakenMult().modifyPercent(modId, magnitude);
+    }
+
+    private static void applyRoleRateOfFire(ShipAPI fighter, String modId, float magnitude) {
+        MutableShipStatsAPI fighterStats = fighter.getMutableStats();
+        fighterStats.getBallisticRoFMult().modifyPercent(modId, magnitude);
+        fighterStats.getEnergyRoFMult().modifyPercent(modId, magnitude);
+        fighterStats.getMissileRoFMult().modifyPercent(modId, magnitude);
+    }
+
+    private static void applyRoleEngagementRange(ShipAPI fighter, String modId, float magnitude) {
+        fighter.getMutableStats().getFighterWingRange().modifyPercent(modId, magnitude);
+    }
 
     @Override
     public abstract void apply(MutableShipStatsAPI stats, String modId, float magnitude);
