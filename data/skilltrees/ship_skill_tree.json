@@ -1194,7 +1194,7 @@
 		},
 		{
 			"id": "small_logistics_optional_26",
-			"type": "hybrid_flux",
+			"type": "small_flux_optional",
 			"connectedTo": [
 				"augmentedengines_2",
 				"small_logistics_optional_11"

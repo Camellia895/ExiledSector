@@ -57,8 +57,6 @@ final class SkillTreeNodeRenderer {
     private static final Color RING_DULL_COLOR = new Color(150, 150, 150);
     private static final float RING_DULL_ALPHA = 0.5f;
 
-    private static final float ICON_SIZE_MULTIPLIER_NOTABLE = 1.2f;
-    private static final float ICON_SIZE_MULTIPLIER_KEYSTONE = 1.4f;
     private static final float ICON_INSET_RATIO = 0.9f;
     private static final float ROOT_CONNECTOR_OVERLAP_RATIO = 0.7f;
 
@@ -107,10 +105,21 @@ final class SkillTreeNodeRenderer {
         this.style = style;
         this.refitButton = refitButton;
         this.activeRoot = findRootNode(ShipTechLevel.of(member).rootTypeId());
+
+        if (activeRoot != null) {
+            ShipSkillData data = ShipSkillDataManager.get(member.getId());
+            if (!data.isAllocated(activeRoot.getId())) {
+                data.allocate(activeRoot);
+            }
+        }
     }
 
     private String satisfiedRootId() {
         return activeRoot == null ? null : activeRoot.getId();
+    }
+
+    private boolean isStartingRoot(SkillNode node) {
+        return activeRoot != null && node.getType().getTier() == SkillTier.ROOT && node.getId().equals(activeRoot.getId());
     }
 
     void advance(float amount) {
@@ -144,7 +153,7 @@ final class SkillTreeNodeRenderer {
             boolean breathing = !allocated && data.canAllocate(node, satisfiedRootId);
             SkillType effectiveType = node.resolveEffectiveType(data);
             float footprintSize = NODE_SIZE * zoom * tier.getSizeMultiplier();
-            float iconSize = footprintSize * iconSizeMultiplier(tier) * ICON_INSET_RATIO;
+            float iconSize = footprintSize * ICON_INSET_RATIO;
 
             Color tint = allocated ? ALLOCATED_TINT : UNALLOCATED_TINT;
             if (effectiveType.isOptional()) {
@@ -163,10 +172,13 @@ final class SkillTreeNodeRenderer {
             float nodeX = centerX + node.getOffsetX() * zoom;
             float nodeY = centerY - node.getOffsetY() * zoom;
             boolean isActiveRoot = activeRoot != null && node.getId().equals(activeRoot.getId());
+            boolean allocated = data.isAllocated(node.getId());
+            boolean breathing = !allocated && data.canAllocate(node, satisfiedRootId);
             float footprintSize = NODE_SIZE * zoom * SkillTier.ROOT.getSizeMultiplier();
-            Color tint = isActiveRoot ? ALLOCATED_TINT : UNALLOCATED_TINT;
+            Color tint = allocated ? ALLOCATED_TINT : UNALLOCATED_TINT;
             String iconPath = isActiveRoot ? RootCrestResolver.resolve(member) : node.getType().getIconPath();
             drawIcon(iconPath, nodeX, nodeY, footprintSize, alphaMult, tint);
+            drawRings(nodeX, nodeY, footprintSize, alphaMult, allocated, breathing, pulseElapsed.get(node.getId()), SkillTier.ROOT, zoom);
         }
 
         renderDropdown(centerX, centerY, zoom, mouseX, mouseY, mouseKnown, alphaMult);
@@ -202,8 +214,6 @@ final class SkillTreeNodeRenderer {
 
     SkillNode findNodeAt(float centerX, float centerY, float zoom, float x, float y) {
         for (SkillNode node : SkillTree.getAllNodes().values()) {
-            if (node.getType().getTier() == SkillTier.ROOT) continue;
-
             float nodeX = centerX + node.getOffsetX() * zoom;
             float nodeY = centerY - node.getOffsetY() * zoom;
             float halfSize = NODE_SIZE * zoom * node.getType().getTier().getSizeMultiplier() / 2f;
@@ -225,6 +235,9 @@ final class SkillTreeNodeRenderer {
             return;
         }
 
+        if (wasAllocated && isStartingRoot(node)) {
+            return;
+        }
         if (wasAllocated && blockDeallocationReason(node) != null) {
             return;
         }
@@ -475,7 +488,7 @@ final class SkillTreeNodeRenderer {
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        float ringRadius = donutRadius(footprintSize, tier);
+        float ringRadius = donutRadius(footprintSize);
         drawNodeDonut(cx, cy, ringRadius, scale, zoom, allocated, alphaMult);
 
         if (breathing) {
@@ -514,27 +527,19 @@ final class SkillTreeNodeRenderer {
         return (NODE_CONNECTOR_PARALLEL_GAP * scale * zoom) / 2f;
     }
 
-    private static float donutRadius(float footprintSize, SkillTier tier) {
-        return (footprintSize / 2f) * iconSizeMultiplier(tier);
+    private static float donutRadius(float footprintSize) {
+        return footprintSize / 2f;
     }
 
     private static float donutOuterRadius(float footprintSize, SkillTier tier, float zoom) {
-        return donutRadius(footprintSize, tier) + donutGapRadius(tier.getSizeMultiplier(), zoom);
+        return donutRadius(footprintSize) + donutGapRadius(tier.getSizeMultiplier(), zoom);
     }
 
     private static float connectorEndpointRadius(SkillTier tier, float footprintSize, float zoom) {
         if (tier == SkillTier.ROOT) {
-            return donutRadius(footprintSize, tier) * ROOT_CONNECTOR_OVERLAP_RATIO;
+            return donutRadius(footprintSize) * ROOT_CONNECTOR_OVERLAP_RATIO;
         }
         return donutOuterRadius(footprintSize, tier, zoom);
-    }
-
-    private static float iconSizeMultiplier(SkillTier tier) {
-        switch (tier) {
-            case KEYSTONE: return ICON_SIZE_MULTIPLIER_KEYSTONE / tier.getSizeMultiplier();
-            case NOTABLE: return ICON_SIZE_MULTIPLIER_NOTABLE / tier.getSizeMultiplier();
-            default: return 1f;
-        }
     }
 
     private void drawRingOutline(float cx, float cy, float radius, Color color, float alpha) {
