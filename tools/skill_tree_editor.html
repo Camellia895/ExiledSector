@@ -528,7 +528,6 @@
         <button class="smallBtn shapeBtn" data-anchor-shape="rectangle">Rectangle</button>
       </div>
       <button class="modeBtn" data-mode="addImage">Add Image <span class="key">F</span></button>
-      <div class="hint">Select: drag a node to move it, drag empty canvas to pan, scroll to zoom. Shift-click a node to add/remove it from a multi-selection, or shift-drag empty canvas to marquee-select. Drag any selected node to move the whole group together. With a single node selected, Ctrl-click another node to link/unlink it to the selection - each is added to the other's connections, so allocating either one lets you allocate the other. Ctrl-click the same pair again to unlink.<br><br>Add: click empty canvas to place a node there.<br><br>Add Anchor: pick a shape above, then click empty canvas to place an anchor of that shape - a ring/polygon you can resize by dragging its edge handle. Drag any node close to its boundary in Select mode to snap it on; drag it along the boundary to move it around, or pull it far enough away to detach. Click an anchor's center dot to select it (and edit its exact fields on the right), click its small square handle to cycle its shape, drag its rotation handle (the extra round handle non-circle shapes get) to spin it in place, or press Delete/Q to remove it.<br><br>Add Image: click empty canvas to place a static background image (rendered behind the whole tree in game) - pick which .png from the picker on the right once it's selected, and drag its corner handle to resize. Any PNG dropped into graphics/backgrounds/static_images/ shows up in the picker automatically. Press Delete/Q to remove.</div>
     </div>
 
     <div class="toolSection">
@@ -554,7 +553,6 @@
         <button class="smallBtn" id="importBtn">Import JSON...</button>
         <button class="smallBtn danger" id="resetBtn">Reload from disk</button>
       </div>
-      <div class="hint">Autosaves to this browser as you edit. Use Save to project (below) to write changes to the real files, or Reload from disk to discard changes and pull the current files back in.</div>
     </div>
 
     <div class="toolSection">
@@ -562,7 +560,6 @@
       <div class="btnRow">
         <button class="smallBtn" id="imageEditorBtn">Image Editor...</button>
       </div>
-      <div class="hint">Browse every image in the project and make colour-shifted copies of any icon (hue-rotate by any number of degrees, saved as a new file alongside the original).</div>
     </div>
   </div>
 
@@ -1645,7 +1642,7 @@ canvasWrap.addEventListener('pointerdown', function(ev){
     state.selectedAnchorIds = [newAnchor.id];
     document.getElementById('inspector').classList.add('open');
     saveLocal();
-    render();
+    setMode('select');
     refreshInspector();
     return;
   }
@@ -1661,7 +1658,7 @@ canvasWrap.addEventListener('pointerdown', function(ev){
     state.selectedImageIds = [newImage.id];
     document.getElementById('inspector').classList.add('open');
     saveLocal();
-    render();
+    setMode('select');
     refreshInspector();
     return;
   }
@@ -1942,13 +1939,17 @@ function selectImage(id){
 }
 
 // ---------- mode buttons ----------
+function setMode(m){
+  document.querySelectorAll('.modeBtn').forEach(function(b){ b.classList.remove('active'); });
+  var btn = document.querySelector('.modeBtn[data-mode="' + m + '"]');
+  if (btn) btn.classList.add('active');
+  state.mode = m;
+  canvasWrap.className = 'mode-' + state.mode;
+  render();
+}
 document.querySelectorAll('.modeBtn').forEach(function(btn){
   btn.addEventListener('click', function(){
-    document.querySelectorAll('.modeBtn').forEach(function(b){ b.classList.remove('active'); });
-    btn.classList.add('active');
-    state.mode = btn.dataset.mode;
-    canvasWrap.className = 'mode-' + state.mode;
-    render();
+    setMode(btn.dataset.mode);
   });
 });
 document.querySelectorAll('.shapeBtn').forEach(function(btn){
@@ -2470,6 +2471,7 @@ function addNodeOfType(typeId, x, y){
   var node = { id: uniqueNodeId(typeId), type: typeId, connectedTo: [], x: x, y: y };
   state.nodes.push(node);
   saveLocal();
+  setMode('select');
   selectNode(node.id);
 }
 

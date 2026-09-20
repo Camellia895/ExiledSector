@@ -36,8 +36,8 @@
 			"id": "hull_1",
 			"type": "hull",
 			"connectedTo": [],
-			"x": -696,
-			"y": 1574
+			"x": 1348,
+			"y": 770
 		},
 		{
 			"id": "beam_damage_1",
@@ -73,8 +73,8 @@
 			"id": "armor_1",
 			"type": "armor",
 			"connectedTo": [],
-			"x": -790,
-			"y": 1718
+			"x": -836,
+			"y": 1830
 		},
 		{
 			"id": "packed_capacitors_1",
@@ -110,8 +110,8 @@
 			"id": "reinforcedhull_1",
 			"type": "reinforcedhull",
 			"connectedTo": [],
-			"x": -588,
-			"y": 1703
+			"x": -660,
+			"y": 1766
 		},
 		{
 			"id": "blast_doors_1",
@@ -222,8 +222,8 @@
 			"id": "ecm_1",
 			"type": "ecm",
 			"connectedTo": [],
-			"x": -2323,
-			"y": -88
+			"x": -1911,
+			"y": -866
 		},
 		{
 			"id": "defensive_targeting_array_1",
@@ -264,8 +264,8 @@
 			"id": "shield_shunt_1",
 			"type": "shield_shunt",
 			"connectedTo": [],
-			"x": -994,
-			"y": 1591
+			"x": -956,
+			"y": 1523
 		},
 		{
 			"id": "frontshield_1",
@@ -306,22 +306,22 @@
 			"id": "nav_relay_1",
 			"type": "nav_relay",
 			"connectedTo": [],
-			"x": -2414,
-			"y": 14
+			"x": -2079,
+			"y": -644
 		},
 		{
 			"id": "adaptive_coils_1",
 			"type": "adaptive_coils",
 			"connectedTo": [],
-			"x": -2145,
-			"y": -1878
+			"x": -1522,
+			"y": -1971
 		},
 		{
 			"id": "phase_anchor_1",
 			"type": "phase_anchor",
 			"connectedTo": [],
-			"x": -2046,
-			"y": -1878
+			"x": -1323,
+			"y": -2164
 		},
 		{
 			"id": "additional_berthing_1",
@@ -329,8 +329,8 @@
 			"connectedTo": [
 				"crew_capacity_flat_2"
 			],
-			"x": -680,
-			"y": -486,
+			"x": -677,
+			"y": -485,
 			"orbitAnchorId": "additional_berthing_anchor",
 			"orbitAngle": 270
 		},
@@ -580,7 +580,6 @@
 			"connectedTo": [
 				"root_high_tech_1",
 				"small_logistics_optional_6",
-				"small_flux_optional_1",
 				"small_logistics_optional_24"
 			],
 			"x": 425,
@@ -628,9 +627,9 @@
 			"id": "small_logistics_optional_11",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"small_logistics_optional_12",
 				"root_low_tech_1",
-				"small_logistics_optional_26"
+				"small_logistics_optional_26",
+				"small_logistics_optional_12"
 			],
 			"x": 1227,
 			"y": 213,
@@ -643,7 +642,6 @@
 			"connectedTo": [
 				"root_high_tech_1",
 				"small_logistics_optional_18",
-				"small_flux_optional_1",
 				"increased_sensor_range_1"
 			],
 			"x": -426,
@@ -767,22 +765,20 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"root_high_tech_1",
-				"small_flux_optional_4",
-				"small_logistics_optional_17",
-				"small_logistics_optional_3"
+				"small_flux_optional_4"
 			],
 			"x": 0,
-			"y": -1600
+			"y": -1659
 		},
 		{
 			"id": "small_flux_optional_3",
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_4",
-				"small_flux_optional_6"
+				"small_flux_optional_2"
 			],
 			"x": 0,
-			"y": -2104
+			"y": -2535
 		},
 		{
 			"id": "small_flux_optional_4",
@@ -792,7 +788,7 @@
 				"small_flux_optional_1"
 			],
 			"x": 0,
-			"y": -1929
+			"y": -2080
 		},
 		{
 			"id": "flux_capacity_3",
@@ -829,35 +825,6 @@
 			"connectedTo": [],
 			"x": -2008,
 			"y": -1174
-		},
-		{
-			"id": "small_flux_optional_6",
-			"type": "small_flux_optional",
-			"connectedTo": [
-				"small_flux_optional_3",
-				"small_flux_optional_7"
-			],
-			"x": 0,
-			"y": -2424
-		},
-		{
-			"id": "small_flux_optional_7",
-			"type": "small_flux_optional",
-			"connectedTo": [
-				"small_flux_optional_6",
-				"small_flux_optional_8"
-			],
-			"x": 0,
-			"y": -2738
-		},
-		{
-			"id": "small_flux_optional_8",
-			"type": "small_flux_optional",
-			"connectedTo": [
-				"small_flux_optional_7"
-			],
-			"x": 0,
-			"y": -3063
 		},
 		{
 			"id": "small_logistics_optional_1",
@@ -1078,8 +1045,8 @@
 				"small_logistics_optional_2",
 				"small_logistics_optional_20"
 			],
-			"x": -680,
-			"y": -146,
+			"x": -677,
+			"y": -145,
 			"orbitAnchorId": "additional_berthing_anchor",
 			"orbitAngle": 90
 		},
@@ -1090,8 +1057,8 @@
 				"crew_capacity_flat_1",
 				"additional_berthing_1"
 			],
-			"x": -510,
-			"y": -316,
+			"x": -507,
+			"y": -315,
 			"orbitAnchorId": "additional_berthing_anchor",
 			"orbitAngle": 0
 		},
@@ -1241,6 +1208,17 @@
 			],
 			"x": 0,
 			"y": 0
+		},
+		{
+			"id": "small_flux_optional_2",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_3"
+			],
+			"x": 0,
+			"y": -3000,
+			"orbitAnchorId": "outer_ring",
+			"orbitAngle": 270
 		}
 	],
 	"connectorCurves": [
@@ -1267,12 +1245,6 @@
 			"b": "small_logistics_optional_12",
 			"controlX": 1170,
 			"controlY": -427
-		},
-		{
-			"a": "small_logistics_optional_12",
-			"b": "small_logistics_optional_11",
-			"controlX": 1245,
-			"controlY": -1
 		},
 		{
 			"a": "small_logistics_optional_11",
@@ -1409,14 +1381,14 @@
 		{
 			"a": "crew_capacity_flat_1",
 			"b": "crew_capacity_flat_2",
-			"controlX": -560,
-			"controlY": -196
+			"controlX": -557,
+			"controlY": -195
 		},
 		{
 			"a": "additional_berthing_1",
 			"b": "crew_capacity_flat_2",
-			"controlX": -560,
-			"controlY": -436
+			"controlX": -557,
+			"controlY": -435
 		},
 		{
 			"a": "militarized_subsystems_1",
@@ -1477,6 +1449,12 @@
 			"b": "insulatedengine_1",
 			"controlX": -238,
 			"controlY": 838
+		},
+		{
+			"a": "small_logistics_optional_11",
+			"b": "small_logistics_optional_12",
+			"controlX": 1245,
+			"controlY": -1
 		}
 	],
 	"orbitAnchors": [
@@ -1508,8 +1486,8 @@
 		},
 		{
 			"id": "additional_berthing_anchor",
-			"x": -680,
-			"y": -316,
+			"x": -677,
+			"y": -315,
 			"radius": 170
 		},
 		{
@@ -1541,17 +1519,40 @@
 			"x": 356,
 			"y": 691,
 			"radius": 200
+		},
+		{
+			"id": "outer_ring",
+			"x": 0,
+			"y": 0,
+			"radius": 3000
 		}
 	],
 	"staticImages": [
 		{
-			"id": "cloud_inner_ring",
-			"x": -701,
-			"y": -338,
-			"width": 450,
-			"height": 450,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_06.png",
-			"rotation": 297
+			"id": "image_1",
+			"x": -673,
+			"y": -260,
+			"width": 588,
+			"height": 485,
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_10.png",
+			"rotation": 178
+		},
+		{
+			"id": "image_2",
+			"x": -477,
+			"y": 788,
+			"width": 582,
+			"height": 691,
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_09.png"
+		},
+		{
+			"id": "image_3",
+			"x": 608,
+			"y": -16,
+			"width": 477,
+			"height": 644,
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_08.png",
+			"rotation": 60
 		}
 	]
 }

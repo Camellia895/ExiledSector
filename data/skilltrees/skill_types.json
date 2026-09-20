@@ -9,7 +9,7 @@
 			"effects": [
 				{
 					"effect": "FLUX_CAPACITY_PERCENT",
-					"magnitude": 1
+					"magnitude": 2
 				}
 			],
 			"tags": [
@@ -25,7 +25,7 @@
 			"effects": [
 				{
 					"effect": "FLUX_DISSIPATION_PERCENT",
-					"magnitude": 1
+					"magnitude": 2
 				}
 			],
 			"tags": [
@@ -1255,7 +1255,13 @@
 			"icon": "graphics/icons/circular/roots/crest_lowtech.png",
 			"opCost": 0,
 			"xpCost": 0,
-			"tier": "ROOT"
+			"tier": "ROOT",
+			"effects": [
+				{
+					"effect": "HULL_PERCENT",
+					"magnitude": 10
+				}
+			]
 		},
 		{
 			"id": "root_midline",
@@ -1263,7 +1269,22 @@
 			"icon": "graphics/icons/circular/roots/crest_midline.png",
 			"opCost": 0,
 			"xpCost": 0,
-			"tier": "ROOT"
+			"tier": "ROOT",
+			"effects": [
+				{
+					"effect": "HULL_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"hullSizeEffects": [
+				{
+					"effect": "FLUX_CAPACITY_PERCENT",
+					"frigate": 5,
+					"destroyer": 0,
+					"cruiser": 0,
+					"capitalShip": 0
+				}
+			]
 		},
 		{
 			"id": "root_high_tech",
@@ -1271,7 +1292,22 @@
 			"icon": "graphics/icons/circular/roots/crest_hightech.png",
 			"opCost": 0,
 			"xpCost": 0,
-			"tier": "ROOT"
+			"tier": "ROOT",
+			"effects": [
+				{
+					"effect": "FLUX_DISSIPATION_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"hullSizeEffects": [
+				{
+					"effect": "FLUX_CAPACITY_FLAT",
+					"frigate": 20,
+					"destroyer": 40,
+					"cruiser": 60,
+					"capitalShip": 80
+				}
+			]
 		},
 		{
 			"id": "increased_fuel",
@@ -1282,7 +1318,7 @@
 			"effects": [
 				{
 					"effect": "FUEL_CAPACITY_PERCENT",
-					"magnitude": 15
+					"magnitude": 2
 				}
 			],
 			"tags": [
@@ -1298,7 +1334,7 @@
 			"effects": [
 				{
 					"effect": "CARGO_CAPACITY_PERCENT",
-					"magnitude": 15
+					"magnitude": 2
 				}
 			],
 			"tags": [
@@ -1314,7 +1350,7 @@
 			"effects": [
 				{
 					"effect": "CREW_CAPACITY_PERCENT",
-					"magnitude": 10
+					"magnitude": 2
 				}
 			],
 			"tags": [
@@ -1373,7 +1409,7 @@
 		{
 			"id": "small_flux_optional",
 			"name": "Caps or Vents",
-			"icon": "",
+			"icon": "graphics/icons/circular/notable_passives/flux_distributor.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"optionalOptions": [
