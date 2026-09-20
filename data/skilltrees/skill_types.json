@@ -19,13 +19,13 @@
 		{
 			"id": "flux_dissipation",
 			"name": "Flux Dissipation",
-			"icon": "graphics/icons/circular/notable_passives/flux_distributor.png",
+			"icon": "graphics/icons/circular/notable_passives/flux_distributor_purple.png",
 			"opCost": 2,
 			"xpCost": 500,
 			"effects": [
 				{
 					"effect": "FLUX_DISSIPATION_PERCENT",
-					"magnitude": 2
+					"magnitude": 5
 				}
 			],
 			"tags": [
@@ -48,6 +48,12 @@
 			"icon": "graphics/icons/circular/small_passives/damage_control2.png",
 			"opCost": 2,
 			"xpCost": 500,
+			"effects": [
+				{
+					"effect": "HULL_PERCENT",
+					"magnitude": 5
+				}
+			],
 			"tags": [
 				"hull"
 			]
@@ -58,6 +64,12 @@
 			"icon": "graphics/icons/circular/small_passives/polarized_armor.png",
 			"opCost": 2,
 			"xpCost": 500,
+			"effects": [
+				{
+					"effect": "ARMOR_PERCENT",
+					"magnitude": 5
+				}
+			],
 			"tags": [
 				"armour"
 			]
@@ -67,7 +79,16 @@
 			"name": "Ballistic Weapon Damage",
 			"icon": "graphics/icons/circular/small_passives/ranged_specialization.png",
 			"opCost": 2,
-			"xpCost": 500
+			"xpCost": 500,
+			"effects": [
+				{
+					"effect": "BALLISTIC_DAMAGE_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"tags": [
+				"ballistic"
+			]
 		},
 		{
 			"id": "missile_damage",
@@ -75,6 +96,12 @@
 			"icon": "graphics/icons/circular/small_passives/missile_specialization2.png",
 			"opCost": 2,
 			"xpCost": 500,
+			"effects": [
+				{
+					"effect": "MISSILE_DAMAGE_PERCENT",
+					"magnitude": 10
+				}
+			],
 			"tags": [
 				"missile"
 			]
@@ -200,11 +227,11 @@
 			"effects": [
 				{
 					"effect": "SHIELD_TURN_RATE_PERCENT",
-					"magnitude": 100
+					"magnitude": 50
 				},
 				{
 					"effect": "SHIELD_RAISE_RATE_PERCENT",
-					"magnitude": 100
+					"magnitude": 50
 				}
 			],
 			"tags": [
@@ -347,7 +374,11 @@
 			"tier": "KEYSTONE",
 			"vanillaHullMod": "ballistic_rangefinder",
 			"description": "Extends the base range of small and medium ballistic weapons, based on the size of this ship's largest ballistic weapon slot. Also extends hybrid weapon range, with a larger bonus.",
-			"todo": "Real vanilla effect is a per-weapon-slot range bonus (WeaponBaseRangeModifier) that varies by the ship's largest ballistic slot size and is capped per weapon, with a separate larger bonus for hybrid mounts - not a fixed magnitude on a single MutableShipStatsAPI stat. Deliberately left on vanillaHullMod passthrough rather than approximate it with a flat/percent BALLISTIC_WEAPON_RANGE_PERCENT effect, since that would only be correct for one specific loadout."
+			"todo": "Real vanilla effect is a per-weapon-slot range bonus (WeaponBaseRangeModifier) that varies by the ship's largest ballistic slot size and is capped per weapon, with a separate larger bonus for hybrid mounts - not a fixed magnitude on a single MutableShipStatsAPI stat. Deliberately left on vanillaHullMod passthrough rather than approximate it with a flat/percent BALLISTIC_WEAPON_RANGE_PERCENT effect, since that would only be correct for one specific loadout.",
+			"tags": [
+				"ballistic",
+				"range"
+			]
 		},
 		{
 			"id": "blast_doors",
@@ -616,8 +647,8 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "SHIELD_ARC_FLAT",
-					"magnitude": 60
+					"effect": "SHIELD_ARC_PERCENT",
+					"magnitude": 50
 				}
 			],
 			"tags": [
@@ -728,13 +759,26 @@
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "MANEUVERABILITY_PERCENT",
+					"magnitude": -50
+				}
+			],
 			"hullSizeEffects": [
 				{
-					"effect": "ARMOR_FLAT",
+					"effect": "HULL_PERCENT",
 					"frigate": 150,
 					"destroyer": 300,
 					"cruiser": 400,
 					"capitalShip": 500
+				},
+				{
+					"effect": "ARMOR_PERCENT",
+					"frigate": 10,
+					"destroyer": 20,
+					"cruiser": 40,
+					"capitalShip": 60
 				}
 			],
 			"tags": [
@@ -796,10 +840,10 @@
 			"hullSizeEffects": [
 				{
 					"effect": "BALLISTIC_WEAPON_RANGE_PERCENT",
-					"frigate": 10,
-					"destroyer": 20,
-					"cruiser": 40,
-					"capitalShip": 60
+					"frigate": 5,
+					"destroyer": 12,
+					"cruiser": 25,
+					"capitalShip": 40
 				},
 				{
 					"effect": "ENERGY_WEAPON_RANGE_PERCENT",
@@ -844,10 +888,6 @@
 				{
 					"effect": "SHIELD_ARC_PERCENT",
 					"magnitude": 100
-				},
-				{
-					"effect": "CONVERT_SHIELD_TO_FRONT",
-					"magnitude": 0
 				}
 			],
 			"description": "Converts this ship's shield to a front-facing arc, extending its coverage but locking it to only cover the front.",
@@ -944,14 +984,6 @@
 				{
 					"effect": "HULL_PERCENT",
 					"magnitude": 40
-				},
-				{
-					"effect": "SHIP_RECOVERY_CHANCE_BONUS",
-					"magnitude": 1000
-				},
-				{
-					"effect": "BREAK_PROBABILITY_PERCENT",
-					"magnitude": -100
 				}
 			],
 			"tags": [
@@ -1026,6 +1058,9 @@
 					"cruiser": 15,
 					"capitalShip": 15
 				}
+			],
+			"tags": [
+				"range"
 			]
 		},
 		{
@@ -1408,38 +1443,40 @@
 		},
 		{
 			"id": "small_flux_optional",
-			"name": "Caps or Vents",
+			"name": "Caps, Vents or Hull",
 			"icon": "graphics/icons/circular/notable_passives/flux_distributor.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"optionalOptions": [
 				"flux_capacity",
-				"flux_dissipation"
+				"flux_dissipation",
+				"hull"
 			],
 			"tags": [
-				"flux"
+				"flux",
+				"hull"
 			]
 		},
 		{
 			"id": "efficient_vents",
 			"name": "Efficient Vents",
-			"icon": "",
+			"icon": "graphics/icons/circular/notable_passives/flux_distributor_red.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
 					"effect": "FLUX_DISSIPATION_PERCENT",
-					"magnitude": 5
+					"magnitude": 10
 				}
 			],
 			"hullSizeEffects": [
 				{
 					"effect": "FLUX_DISSIPATION_FLAT",
-					"frigate": 10,
-					"destroyer": 20,
-					"cruiser": 30,
-					"capitalShip": 50
+					"frigate": 30,
+					"destroyer": 50,
+					"cruiser": 80,
+					"capitalShip": 150
 				}
 			],
 			"tags": [
@@ -1604,6 +1641,97 @@
 			],
 			"tags": [
 				"logistics"
+			]
+		},
+		{
+			"id": "shield_arc",
+			"name": "Shield Arc",
+			"icon": "graphics/icons/Shield_icon_2_circle.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "SHIELD_ARC_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"tags": [
+				"shield"
+			]
+		},
+		{
+			"id": "shield_raise_rate",
+			"name": "Shield Raise Rate",
+			"icon": "graphics/icons/circular/notable_passives/accelerated_shields_purple.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"effects": [
+				{
+					"effect": "SHIELD_RAISE_RATE_PERCENT",
+					"magnitude": 25
+				}
+			],
+			"tags": [
+				"shield"
+			]
+		},
+		{
+			"id": "shield_turn_rate",
+			"name": "Shield Turn Rate",
+			"icon": "graphics/icons/circular/notable_passives/accelerated_shields_red.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "SHIELD_TURN_RATE_PERCENT",
+					"magnitude": 25
+				}
+			],
+			"tags": [
+				"shield"
+			]
+		},
+		{
+			"id": "shield_turn_raise_rate_optional",
+			"name": "Shield Raise rate or Shield Turn rate",
+			"icon": "graphics/icons/circular/notable_passives/accelerated_shields.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"optionalOptions": [
+				"shield_raise_rate",
+				"shield_turn_rate"
+			],
+			"tags": [
+				"shield"
+			]
+		},
+		{
+			"id": "Ballistic and Energy Weapon Range",
+			"name": "Ballistic and Energy Weapon Range",
+			"icon": "graphics/icons/circular/notable_passives/integrated_targeting_unit_purple_green.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"hullSizeEffects": [
+				{
+					"effect": "BALLISTIC_WEAPON_RANGE_PERCENT",
+					"frigate": 3,
+					"destroyer": 5,
+					"cruiser": 10,
+					"capitalShip": 15
+				},
+				{
+					"effect": "ENERGY_WEAPON_RANGE_PERCENT",
+					"frigate": 0,
+					"destroyer": 0,
+					"cruiser": 0,
+					"capitalShip": 0
+				}
+			],
+			"tags": [
+				"range"
 			]
 		}
 	]

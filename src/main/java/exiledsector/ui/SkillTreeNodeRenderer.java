@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import static exiledsector.ui.SkillTreePanelStyle.FONT_LINE_HEIGHT_FACTOR;
@@ -56,6 +57,64 @@ final class SkillTreeNodeRenderer {
     private static final float RING_LINE_THICKNESS = 1.5f;
     private static final Color RING_DULL_COLOR = new Color(150, 150, 150);
     private static final float RING_DULL_ALPHA = 0.5f;
+
+    // Notable/keystone rings mirror vanilla's wormhole/jump-point "nested ring stack" effect
+    // (com.fs.starfarer.campaign.JumpPoint) rather than the plainer star-corona ring: a pile of
+    // independently rotating, jittering, alternating-texture ring sprites at decaying radii,
+    // additively blended, is what actually produces the swirling look - not a single sprite.
+    // Left at their native (blue) texture color, exactly as JumpPoint itself never tints them.
+    private static final String[] RING_STACK_TEXTURES = {
+            "graphics/fx/wormhole_ring_bright2.png",
+            "graphics/fx/wormhole_ring_bright3.png"
+    };
+    private static final String CORONA_SPIKE_TEXTURE_PATH = "graphics/fx/wormhole_corona.png";
+
+    private static final float RING_INSTANCE_MIN_ROTATION_SPEED_DEG = 20f;
+    private static final float RING_INSTANCE_MAX_ROTATION_SPEED_DEG = 60f;
+    private static final float RING_INSTANCE_JITTER_RATIO = 0.05f;
+    private static final float RING_INSTANCE_BASE_ALPHA = 0.5f;
+    // Every instance's radius fraction is linearly remapped into this range (instead of clamped),
+    // so the spread never decays down inside the small allocation donut's radius - clamping
+    // instead of remapping caused many instances to pile up at the exact same floored radius,
+    // which additively bled into a solid bright ring rather than a soft nested spread.
+    private static final float RING_MIN_RADIUS_FRACTION = 0.62f;
+    // Constant, not animated: the ring stack (and the pink layer, and the ambient glow, and the
+    // corona spikes) are always fully present at their full size - unallocated nodes are simply
+    // dimmer, no expand/contract transition.
+    private static final float UNALLOCATED_ALPHA_MULT = 0.45f;
+
+    // A second, independently-positioned pass of the same ring stack tinted a vivid pink/magenta -
+    // in actual play a jump point/wormhole shows both a native-blue ring layer AND a separate pink
+    // layer simultaneously (the pink comes from the one-shot jump-travel VFX, a different class
+    // entirely from JumpPoint's own always-blue render() - not something worth chasing exactly for
+    // a persistent UI decoration), so this reproduces that "multiple layers of blue and pink rings"
+    // look directly rather than trying to replicate the transient animation.
+    private static final Color RING_PINK_COLOR = new Color(255, 60, 220);
+    private static final float RING_PINK_SCALE_RATIO = 0.85f;
+
+    // An always-on ambient backdrop glow behind notable/keystone nodes. This is vanilla's actual
+    // star/black-hole corona mechanic (PlanetSpecAPI.starCoronaSprite/starCoronaColor in
+    // planets.json - not JumpPoint, and not AuroraRenderer/aurorae.png, both dead ends chased
+    // earlier): every star and black hole renders a single soft halo sprite, graphics/fx/star_halo.png,
+    // tinted per body and scaled by starCoronaSizeMult. The black_hole entry uses
+    // starCoronaColor [255,170,255,255] (full opacity, unlike ordinary stars which use a subtle
+    // ~60 alpha) at starCoronaSizeMult 5.12 - copied here directly, since that's an exact match for
+    // the vivid pink halo in the reference image.
+    private static final String GLOW_TEXTURE_PATH = "graphics/fx/star_halo.png";
+    private static final Color AMBIENT_GLOW_COLOR = new Color(255, 170, 255);
+    private static final float AMBIENT_GLOW_ALPHA = 1f;
+    private static final float AMBIENT_GLOW_SIZE_RATIO = 3.2f;
+
+    private static final float NOTABLE_RING_OUTER_RADIUS_RATIO = 1.05f;
+    private static final float NOTABLE_RING_RADIUS_DECAY = 0.88f;
+    private static final int NOTABLE_RING_COUNT = 10;
+
+    private static final float KEYSTONE_RING_OUTER_RADIUS_RATIO = 1.4f;
+    private static final float KEYSTONE_RING_RADIUS_DECAY = 0.9f;
+    private static final int KEYSTONE_RING_COUNT = 16;
+    private static final int KEYSTONE_CORONA_COUNT = 3;
+    private static final float KEYSTONE_CORONA_SIZE_RATIO = 1.6f;
+    private static final float KEYSTONE_CORONA_BASE_ALPHA = 0.4f;
 
     private static final float ICON_INSET_RATIO = 0.9f;
     private static final float ROOT_CONNECTOR_OVERLAP_RATIO = 0.7f;
@@ -97,8 +156,12 @@ final class SkillTreeNodeRenderer {
     private final Map<String, SkillTreePanelStyle.TooltipText> typeTooltipBodies = new HashMap<>();
     private final Map<String, LazyFont.DrawableString> dropdownRowText = new HashMap<>();
     private final Map<String, Float> pulseElapsed = new HashMap<>();
+    private final Map<String, List<RingInstance>> ringStacks = new HashMap<>();
+    private final Map<String, List<RingInstance>> pinkRingStacks = new HashMap<>();
+    private final Map<String, List<RingInstance>> coronaSpikes = new HashMap<>();
     private SkillNode openDropdownNode;
     private float breathingPhase = 0f;
+    private float ringElapsedSeconds = 0f;
 
     SkillTreeNodeRenderer(FleetMemberAPI member, SkillTreePanelStyle style, BaseRefitButton refitButton) {
         this.member = member;
@@ -124,7 +187,7 @@ final class SkillTreeNodeRenderer {
 
     void advance(float amount) {
         breathingPhase = (breathingPhase + amount) % BREATHING_PERIOD_SECONDS;
-
+        ringElapsedSeconds += amount;
         if (pulseElapsed.isEmpty()) return;
 
         Iterator<Map.Entry<String, Float>> it = pulseElapsed.entrySet().iterator();
@@ -155,13 +218,14 @@ final class SkillTreeNodeRenderer {
             float footprintSize = NODE_SIZE * zoom * tier.getSizeMultiplier();
             float iconSize = footprintSize * ICON_INSET_RATIO;
 
+            drawRings(nodeX, nodeY, footprintSize, alphaMult, allocated, breathing, pulseElapsed.get(node.getId()), tier, zoom, node.getId());
+
             Color tint = allocated ? ALLOCATED_TINT : UNALLOCATED_TINT;
             if (effectiveType.isOptional()) {
                 drawSplitIcon(optionTypesOf(effectiveType), nodeX, nodeY, iconSize, alphaMult, tint);
             } else {
                 drawIcon(effectiveType.getIconPath(), nodeX, nodeY, iconSize, alphaMult, tint);
             }
-            drawRings(nodeX, nodeY, footprintSize, alphaMult, allocated, breathing, pulseElapsed.get(node.getId()), tier, zoom);
         }
 
         drawNodeConnectors(centerX, centerY, zoom, data, alphaMult);
@@ -175,10 +239,11 @@ final class SkillTreeNodeRenderer {
             boolean allocated = data.isAllocated(node.getId());
             boolean breathing = !allocated && data.canAllocate(node, satisfiedRootId);
             float footprintSize = NODE_SIZE * zoom * SkillTier.ROOT.getSizeMultiplier();
+            drawRings(nodeX, nodeY, footprintSize, alphaMult, allocated, breathing, pulseElapsed.get(node.getId()), SkillTier.ROOT, zoom, node.getId());
+
             Color tint = allocated ? ALLOCATED_TINT : UNALLOCATED_TINT;
             String iconPath = isActiveRoot ? RootCrestResolver.resolve(member) : node.getType().getIconPath();
             drawIcon(iconPath, nodeX, nodeY, footprintSize, alphaMult, tint);
-            drawRings(nodeX, nodeY, footprintSize, alphaMult, allocated, breathing, pulseElapsed.get(node.getId()), SkillTier.ROOT, zoom);
         }
 
         renderDropdown(centerX, centerY, zoom, mouseX, mouseY, mouseKnown, alphaMult);
@@ -480,15 +545,30 @@ final class SkillTreeNodeRenderer {
         GL11.glColorMask(true, true, true, true);
     }
 
-    private void drawRings(float cx, float cy, float footprintSize, float alphaMult, boolean allocated, boolean breathing, Float pulseSeconds, SkillTier tier, float zoom) {
+    private void drawRings(float cx, float cy, float footprintSize, float alphaMult, boolean allocated, boolean breathing, Float pulseSeconds, SkillTier tier, float zoom, String nodeId) {
         float half = footprintSize / 2f;
         float scale = tier.getSizeMultiplier();
 
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         float ringRadius = donutRadius(footprintSize);
+        if (tier == SkillTier.NOTABLE || tier == SkillTier.KEYSTONE) {
+            float stateAlpha = allocated ? 1f : UNALLOCATED_ALPHA_MULT;
+
+            if (tier == SkillTier.NOTABLE) {
+                drawRingStack(cx, cy, footprintSize * NOTABLE_RING_OUTER_RADIUS_RATIO, ringRadius, nodeId,
+                        NOTABLE_RING_COUNT, NOTABLE_RING_RADIUS_DECAY, stateAlpha, alphaMult);
+            } else {
+                drawRingStack(cx, cy, footprintSize * KEYSTONE_RING_OUTER_RADIUS_RATIO, ringRadius, nodeId,
+                        KEYSTONE_RING_COUNT, KEYSTONE_RING_RADIUS_DECAY, stateAlpha, alphaMult);
+                drawCoronaSpikes(cx, cy, footprintSize, nodeId, stateAlpha, alphaMult);
+            }
+            drawAmbientGlow(cx, cy, footprintSize, stateAlpha, alphaMult);
+        }
+
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         drawNodeDonut(cx, cy, ringRadius, scale, zoom, allocated, alphaMult);
 
         if (breathing) {
@@ -521,6 +601,128 @@ final class SkillTreeNodeRenderer {
         GL11.glLineWidth(NODE_CONNECTOR_LINE_THICKNESS * scale * zoom);
         drawRingOutline(cx, cy, radius - gapRadius, RING_DULL_COLOR, alphaMult * RING_DULL_ALPHA);
         drawRingOutline(cx, cy, radius + gapRadius, RING_DULL_COLOR, alphaMult * RING_DULL_ALPHA);
+    }
+
+    /**
+     * A pile of independently rotating, drifting, alternating-texture ring sprites at decaying
+     * nested radii, additively blended - mirrors vanilla's wormhole/jump-point ring stack
+     * (com.fs.starfarer.campaign.JumpPoint), which is what actually produces a swirling ring look
+     * (a single sprite or a clean sine wobble reads as static/flat by comparison).
+     */
+    private void drawRingStack(float cx, float cy, float outerRadius, float donutRadiusValue, String nodeId,
+                                int count, float radiusDecay, float stateAlpha, float alphaMult) {
+        drawRingStackPass(cx, cy, outerRadius, ringStacks.computeIfAbsent(nodeId, id -> generateRingInstances(id, count, radiusDecay)),
+                Color.WHITE, 1f, stateAlpha, alphaMult);
+        drawRingStackPass(cx, cy, outerRadius, pinkRingStacks.computeIfAbsent(nodeId + "_pink", id -> generateRingInstances(id, count, radiusDecay)),
+                RING_PINK_COLOR, RING_PINK_SCALE_RATIO, stateAlpha, alphaMult);
+    }
+
+    private void drawRingStackPass(float cx, float cy, float outerRadius, List<RingInstance> instances,
+                                    Color color, float scaleRatio, float stateAlpha, float alphaMult) {
+        float alpha = RING_INSTANCE_BASE_ALPHA * stateAlpha * alphaMult;
+
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+
+        for (RingInstance instance : instances) {
+            String path = RING_STACK_TEXTURES[instance.textureIndex];
+            if (!ensureTextureLoaded(path)) continue;
+
+            float radius = outerRadius * scaleRatio * instance.radiusFraction;
+            float jitterMag = radius * RING_INSTANCE_JITTER_RATIO;
+
+            float angle = instance.baseAngleDeg + ringElapsedSeconds * instance.rotationSpeedDeg;
+            float wanderRad = instance.jitterPhase + ringElapsedSeconds * instance.jitterSpeed;
+            float jx = (float) Math.cos(wanderRad) * jitterMag;
+            float jy = (float) Math.sin(wanderRad) * jitterMag;
+            float size = radius * 2f * instance.sizeJitter;
+
+            SpriteAPI sprite = Global.getSettings().getSprite(path);
+            sprite.setSize(size, size);
+            sprite.setAngle(angle);
+            sprite.setColor(color);
+            sprite.setAlphaMult(alpha);
+            sprite.renderAtCenter(cx + jx, cy + jy);
+        }
+    }
+
+    private void drawCoronaSpikes(float cx, float cy, float footprintSize, String nodeId, float stateAlpha, float alphaMult) {
+        if (!ensureTextureLoaded(CORONA_SPIKE_TEXTURE_PATH)) return;
+
+        List<RingInstance> instances = coronaSpikes.computeIfAbsent(nodeId, id -> generateRingInstances(id, KEYSTONE_CORONA_COUNT, 1f));
+        float alpha = KEYSTONE_CORONA_BASE_ALPHA * stateAlpha * alphaMult;
+        float size = footprintSize * KEYSTONE_CORONA_SIZE_RATIO;
+
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+
+        SpriteAPI sprite = Global.getSettings().getSprite(CORONA_SPIKE_TEXTURE_PATH);
+        for (RingInstance instance : instances) {
+            float angle = instance.baseAngleDeg + ringElapsedSeconds * instance.rotationSpeedDeg;
+            sprite.setSize(size * instance.sizeJitter, size * instance.sizeJitter);
+            sprite.setAngle(angle);
+            sprite.setColor(Color.WHITE);
+            sprite.setAlphaMult(alpha);
+            sprite.renderAtCenter(cx, cy);
+        }
+    }
+
+    /**
+     * An always-present ambient backdrop glow behind notable/keystone nodes - vanilla's actual
+     * star/black-hole corona (star_halo.png, tinted/sized per planets.json's starCoronaColor /
+     * starCoronaSizeMult), additively blended so its soft black center contributes nothing and
+     * only the halo band shows. Constant size, dimmed (not animated) when unallocated.
+     */
+    private void drawAmbientGlow(float cx, float cy, float footprintSize, float stateAlpha, float alphaMult) {
+        if (!ensureTextureLoaded(GLOW_TEXTURE_PATH)) return;
+
+        float size = footprintSize * AMBIENT_GLOW_SIZE_RATIO;
+
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+
+        SpriteAPI sprite = Global.getSettings().getSprite(GLOW_TEXTURE_PATH);
+        sprite.setSize(size, size);
+        sprite.setColor(AMBIENT_GLOW_COLOR);
+        sprite.setAlphaMult(AMBIENT_GLOW_ALPHA * stateAlpha * alphaMult);
+        sprite.renderAtCenter(cx, cy);
+    }
+
+    private static List<RingInstance> generateRingInstances(String seedKey, int count, float radiusDecay) {
+        Random random = new Random(seedKey.hashCode());
+        List<RingInstance> instances = new ArrayList<>(count);
+        // Geometric decay gives the raw per-instance shape (nested, denser toward the center), then
+        // that whole [decay^(count-1), 1] range is linearly remapped into [RING_MIN_RADIUS_FRACTION, 1]
+        // - a remap rather than a per-instance clamp, so instances that would have decayed past the
+        // floor spread out across it instead of all piling up at the exact same radius.
+        float rawMin = (float) Math.pow(radiusDecay, count - 1);
+        float rawRange = 1f - rawMin;
+        for (int i = 0; i < count; i++) {
+            RingInstance instance = new RingInstance();
+            instance.baseAngleDeg = random.nextFloat() * 360f;
+            float speed = RING_INSTANCE_MIN_ROTATION_SPEED_DEG
+                    + random.nextFloat() * (RING_INSTANCE_MAX_ROTATION_SPEED_DEG - RING_INSTANCE_MIN_ROTATION_SPEED_DEG);
+            instance.rotationSpeedDeg = random.nextBoolean() ? speed : -speed;
+            float raw = (float) Math.pow(radiusDecay, i);
+            float t = rawRange > 0.0001f ? (raw - rawMin) / rawRange : 1f;
+            instance.radiusFraction = RING_MIN_RADIUS_FRACTION + (1f - RING_MIN_RADIUS_FRACTION) * t;
+            instance.jitterPhase = random.nextFloat() * (float) (Math.PI * 2);
+            instance.jitterSpeed = 0.5f + random.nextFloat();
+            instance.textureIndex = i % RING_STACK_TEXTURES.length;
+            instance.sizeJitter = 0.9f + random.nextFloat() * 0.2f;
+            instances.add(instance);
+        }
+        return instances;
+    }
+
+    private static final class RingInstance {
+        float baseAngleDeg;
+        float rotationSpeedDeg;
+        float radiusFraction;
+        float jitterPhase;
+        float jitterSpeed;
+        int textureIndex;
+        float sizeJitter;
     }
 
     private static float donutGapRadius(float scale, float zoom) {
