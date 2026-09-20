@@ -2086,9 +2086,9 @@ function refreshInspector(){
   var statsHtml = '';
   if (t) {
     var statRows = (t.effects || []).map(function(e, i){
-      var options = EFFECT_NAMES.map(function(name){ return '<option value="'+name+'"'+(name===e.effect?' selected':'')+'>'+name+'</option>'; }).join('');
+      var options = sortedEffectOptionsHtml(e.effect);
       return '<div class="fieldRow" style="align-items:flex-end">' +
-        '<div class="field" style="flex:2"><label>Effect ' + (i+1) + '</label><select data-stat-effect="' + i + '">' + options + '</select></div>' +
+        '<div class="field" style="flex:2"><label>Effect ' + (i+1) + '</label>' + effectFilterHtml('inspEffect' + i) + '<select id="inspEffect' + i + '" data-stat-effect="' + i + '">' + options + '</select></div>' +
         '<div class="field" style="flex:1"><label>Magnitude</label><input type="number" step="0.1" value="' + (e.magnitude || 0) + '" data-stat-magnitude="' + i + '"></div>' +
         '<button class="smallBtn danger" data-remove-stat-row="' + i + '">X</button>' +
       '</div>';
@@ -2188,6 +2188,7 @@ function refreshInspector(){
         saveLocal(); refreshInspector();
       });
     });
+    wireEffectFilters(body);
     body.querySelectorAll('[data-stat-magnitude]').forEach(function(inp){
       inp.addEventListener('change', function(){
         t.effects[parseInt(inp.dataset.statMagnitude, 10)].magnitude = parseFloat(inp.value) || 0;
@@ -2527,7 +2528,7 @@ function addNodeOfType(typeId, x, y){
 var EFFECT_NAMES = ['HULL_PERCENT','ARMOR_PERCENT','ARMOR_FLAT','FLUX_CAPACITY_PERCENT','FLUX_CAPACITY_FLAT','FLUX_DISSIPATION_PERCENT','FLUX_DISSIPATION_FLAT','BALLISTIC_DAMAGE_PERCENT','MISSILE_DAMAGE_PERCENT',
   'NON_BEAM_ENERGY_DAMAGE_PERCENT','BEAM_DAMAGE_PERCENT','ENERGY_DAMAGE_PERCENT','ALL_WEAPON_DAMAGE_PERCENT','MANEUVERABILITY_PERCENT','FUEL_CAPACITY_PERCENT','FUEL_CAPACITY_FLAT',
   'CARGO_CAPACITY_PERCENT','CARGO_CAPACITY_FLAT','CREW_CAPACITY_PERCENT','CREW_CAPACITY_FLAT','BURN_LEVEL_FLAT','SENSOR_PROFILE_PERCENT','SENSOR_STRENGTH_PERCENT','SENSOR_RANGE','ELECTRONIC_WARFARE','NAV_RATING','BALLISTIC_WEAPON_RANGE_PERCENT',
-  'ENERGY_WEAPON_RANGE_PERCENT','BEAM_WEAPON_RANGE_PERCENT','BALLISTIC_AMMO_PERCENT','ENERGY_AMMO_PERCENT','MISSILE_AMMO_PERCENT','WEAPON_TURN_RATE_PERCENT',
+  'ENERGY_WEAPON_RANGE_PERCENT','ENERGY_WEAPON_RANGE_FLAT','BEAM_WEAPON_RANGE_PERCENT','BALLISTIC_AMMO_PERCENT','ENERGY_AMMO_PERCENT','MISSILE_AMMO_PERCENT','WEAPON_TURN_RATE_PERCENT',
   'SHIELD_ARC_PERCENT','SHIELD_UPKEEP_PERCENT','SHIELD_ABSORPTION_PERCENT','SHIELD_TURN_RATE_PERCENT','SHIELD_RAISE_RATE_PERCENT','WEAPON_DURABILITY_PERCENT',
   'ENGINE_DURABILITY_PERCENT','TOP_SPEED_PERCENT','PEAK_CR_DURATION_PERCENT','WEAPON_RANGE_FALLOFF_PERCENT','REPAIR_TIME_PERCENT','MISSILE_GUIDANCE_PERCENT',
   'CR_RECOVERY_RATE_PERCENT','REPAIR_RATE_PER_DAY_PERCENT','MIN_CREW_MULT','MIN_CREW_PERCENT','SUPPLIES_PER_MONTH_MULT','FUEL_USE_MULT',
@@ -2555,7 +2556,29 @@ var EFFECT_NAMES = ['HULL_PERCENT','ARMOR_PERCENT','ARMOR_FLAT','FLUX_CAPACITY_P
   'BOMBER_ROLE_DAMAGE_PERCENT','BOMBER_ROLE_TOP_SPEED_PERCENT','BOMBER_ROLE_ARMOR_PERCENT','BOMBER_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT','BOMBER_ROLE_RATE_OF_FIRE_PERCENT','BOMBER_ROLE_ENGAGEMENT_RANGE_PERCENT',
   'SUPPORT_ROLE_DAMAGE_PERCENT','SUPPORT_ROLE_TOP_SPEED_PERCENT','SUPPORT_ROLE_ARMOR_PERCENT','SUPPORT_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT','SUPPORT_ROLE_RATE_OF_FIRE_PERCENT','SUPPORT_ROLE_ENGAGEMENT_RANGE_PERCENT'];
 
-var ALL_TAGS = ['flux','shield','armour','hull','logistics','missile','fighter','energy','ballistic','phase','beam','range','ammo','dmgtypekinetic','dmgtypehighexplosive','dmgtypefragmentation','dmgtypeenergy'];
+var EFFECT_NAMES_SORTED = EFFECT_NAMES.slice().sort();
+function sortedEffectOptionsHtml(selected){
+  return EFFECT_NAMES_SORTED.map(function(name){
+    return '<option value="'+name+'"'+(name===selected?' selected':'')+'>'+name+'</option>';
+  }).join('');
+}
+function effectFilterHtml(selectId){
+  return '<input type="text" class="effectFilterInput" data-effect-filter-for="' + selectId + '" placeholder="Filter effects...">';
+}
+function wireEffectFilters(root){
+  root.querySelectorAll('[data-effect-filter-for]').forEach(function(inp){
+    inp.addEventListener('input', function(){
+      var select = document.getElementById(inp.dataset.effectFilterFor);
+      if (!select) return;
+      var q = inp.value.trim().toLowerCase();
+      Array.prototype.forEach.call(select.options, function(opt){
+        opt.style.display = (!q || opt.value.toLowerCase().indexOf(q) !== -1) ? '' : 'none';
+      });
+    });
+  });
+}
+
+var ALL_TAGS = ['flux','shield','armour','hull','speed','logistics','missile','fighter','energy','ballistic','phase','beam','range','ammo','dmgtypekinetic','dmgtypehighexplosive','dmgtypefragmentation','dmgtypeenergy'];
 
 function renderTagChips(idPrefix, activeTags){
   return '<div class="tagChipRow">' + ALL_TAGS.map(function(tag){
@@ -2589,9 +2612,10 @@ function renderOptionEditRows(optionIds){
 
 function renderHullSizeEffectRows(idPrefix, hullSizeEffectsDraft){
   var rows = hullSizeEffectsDraft.map(function(e, i){
-    var options = EFFECT_NAMES.map(function(name){ return '<option value="'+name+'"'+(name===e.effect?' selected':'')+'>'+name+'</option>'; }).join('');
+    var options = sortedEffectOptionsHtml(e.effect);
+    var selectId = idPrefix + 'HsEffect' + i;
     return '<div class="fieldRow" style="align-items:flex-end;flex-wrap:wrap">' +
-      '<div class="field" style="flex:2 1 160px"><label>Effect ' + (i+1) + '</label><select id="' + idPrefix + 'HsEffect' + i + '">' + options + '</select></div>' +
+      '<div class="field" style="flex:2 1 160px"><label>Effect ' + (i+1) + '</label>' + effectFilterHtml(selectId) + '<select id="' + selectId + '">' + options + '</select></div>' +
       '<div class="field" style="flex:1 1 70px"><label>Frigate</label><input id="' + idPrefix + 'HsFrigate' + i + '" type="number" step="0.1" value="' + e.frigate + '"></div>' +
       '<div class="field" style="flex:1 1 70px"><label>Destroyer</label><input id="' + idPrefix + 'HsDestroyer' + i + '" type="number" step="0.1" value="' + e.destroyer + '"></div>' +
       '<div class="field" style="flex:1 1 70px"><label>Cruiser</label><input id="' + idPrefix + 'HsCruiser' + i + '" type="number" step="0.1" value="' + e.cruiser + '"></div>' +
@@ -2865,9 +2889,9 @@ function openTypeModal(existingType, onSave, onClose){
   function renderModal(){
     var tierOptions = ['SMALL','NOTABLE','KEYSTONE','ROOT'].map(function(tr){ return '<option value="'+tr+'"'+(tr===tierOf(t)?' selected':'')+'>'+tr+'</option>'; }).join('');
     var effectRows = effectsDraft.map(function(e, i){
-      var options = EFFECT_NAMES.map(function(name){ return '<option value="'+name+'"'+(name===e.effect?' selected':'')+'>'+name+'</option>'; }).join('');
+      var options = sortedEffectOptionsHtml(e.effect);
       return '<div class="fieldRow" style="align-items:flex-end">' +
-        '<div class="field" style="flex:2"><label>Effect ' + (i+1) + '</label><select id="tEffect' + i + '">' + options + '</select></div>' +
+        '<div class="field" style="flex:2"><label>Effect ' + (i+1) + '</label>' + effectFilterHtml('tEffect' + i) + '<select id="tEffect' + i + '">' + options + '</select></div>' +
         '<div class="field" style="flex:1"><label>Magnitude</label><input id="tMag' + i + '" type="number" step="0.1" value="' + (e.magnitude || 0) + '"></div>' +
         '<button class="smallBtn danger" type="button" data-remove-effect-row="' + i + '">X</button>' +
       '</div>';
@@ -2910,6 +2934,7 @@ function openTypeModal(existingType, onSave, onClose){
     root.innerHTML = html;
 
     document.getElementById('mCancel2').addEventListener('click', function(){ root.innerHTML=''; if (onClose) onClose(); });
+    wireEffectFilters(root);
     document.getElementById('addEffectRowBtn').addEventListener('click', function(){
       syncDraftFromInputs();
       effectsDraft.push({ effect: EFFECT_NAMES[0], magnitude: 10 });

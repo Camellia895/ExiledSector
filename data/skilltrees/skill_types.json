@@ -119,9 +119,15 @@
 		{
 			"id": "beam_damage",
 			"name": "Beam Weapon Damage",
-			"icon": "graphics/icons/circular/small_passives/hypercognition.png",
+			"icon": "graphics/icons/beam_damage_circular.png",
 			"opCost": 2,
-			"xpCost": 500
+			"xpCost": 500,
+			"effects": [
+				{
+					"effect": "BEAM_DAMAGE_PERCENT",
+					"magnitude": 10
+				}
+			]
 		},
 		{
 			"id": "energy_damage",
@@ -250,7 +256,7 @@
 			"effects": [
 				{
 					"effect": "PHASE_CLOAK_FLUX_THRESHOLD_PERCENT",
-					"magnitude": 50
+					"magnitude": 40
 				}
 			],
 			"tags": [
@@ -565,7 +571,7 @@
 				}
 			],
 			"tags": [
-				"logistics"
+				"range"
 			]
 		},
 		{
@@ -606,18 +612,14 @@
 		},
 		{
 			"id": "magazines",
-			"name": "Expanded Magazines",
-			"icon": "graphics/icons/circular/notable_passives/expanded_magazines2.png",
+			"name": "Expanded Ballistic Magazines",
+			"icon": "graphics/icons/circular/notable_passives/expanded_magazines2_red.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
 					"effect": "BALLISTIC_AMMO_PERCENT",
-					"magnitude": 50
-				},
-				{
-					"effect": "ENERGY_AMMO_PERCENT",
 					"magnitude": 50
 				}
 			]
@@ -649,7 +651,7 @@
 			"effects": [
 				{
 					"effect": "SHIELD_ARC_FLAT",
-					"magnitude": 60
+					"magnitude": 40
 				}
 			],
 			"tags": [
@@ -722,7 +724,7 @@
 			"effects": [
 				{
 					"effect": "SHIELD_DAMAGE_TAKEN_MULT",
-					"magnitude": -20
+					"magnitude": -10
 				},
 				{
 					"effect": "SHIELD_PIERCE_CHANCE_MULT",
@@ -874,7 +876,7 @@
 				}
 			],
 			"tags": [
-				"logistics"
+				"speed"
 			]
 		},
 		{
@@ -886,7 +888,7 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "SHIELD_ARC_PERCENT",
+					"effect": "SHIELD_ARC_FLAT",
 					"magnitude": 100
 				},
 				{
@@ -904,14 +906,15 @@
 			"icon": "graphics/icons/circular/notable_passives/omni_shield_emitter_mod.png",
 			"opCost": 4,
 			"xpCost": 2000,
-			"tier": "NOTABLE",
+			"tier": "KEYSTONE",
 			"effects": [
 				{
 					"effect": "SHIELD_ARC_MULT",
 					"magnitude": -30
 				},
 				{
-					"effect": "CONVERT_SHIELD_TO_OMNI"
+					"effect": "CONVERT_SHIELD_TO_OMNI",
+					"magnitude": 0
 				}
 			],
 			"description": "Converts this ship's shield to omni-directional coverage, reducing its arc in exchange.",
@@ -942,7 +945,7 @@
 			"icon": "graphics/icons/circular/notable_passives/phase_anchor.png",
 			"opCost": 4,
 			"xpCost": 2000,
-			"tier": "NOTABLE",
+			"tier": "KEYSTONE",
 			"effects": [
 				{
 					"effect": "PHASE_CLOAK_ACTIVATION_COST_MULT",
@@ -1010,16 +1013,16 @@
 			"effects": [
 				{
 					"effect": "EMP_DAMAGE_TAKEN_MULT",
-					"magnitude": -50
+					"magnitude": -30
 				},
 				{
 					"effect": "VENT_RATE_PERCENT",
-					"magnitude": 25
+					"magnitude": 10
 				}
 			],
 			"tags": [
 				"flux",
-				"phase"
+				"shield"
 			]
 		},
 		{
@@ -1032,7 +1035,7 @@
 			"effects": [
 				{
 					"effect": "SHIELD_UPKEEP_MULT",
-					"magnitude": -50
+					"magnitude": -40
 				}
 			],
 			"tags": [
@@ -1669,8 +1672,8 @@
 			"xpCost": 2000,
 			"effects": [
 				{
-					"effect": "SHIELD_ARC_PERCENT",
-					"magnitude": 5
+					"effect": "SHIELD_ARC_FLAT",
+					"magnitude": 15
 				}
 			],
 			"tags": [
@@ -1749,6 +1752,161 @@
 			],
 			"tags": [
 				"range"
+			]
+		},
+		{
+			"id": "shield_arc_mult",
+			"name": "Shield Arc Multiplier",
+			"icon": "graphics/icons/circular/notable_passives/omni_shield_emitter_mod_purple.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "SHIELD_ARC_MULT",
+					"magnitude": 15
+				}
+			],
+			"tags": [
+				"shield"
+			]
+		},
+		{
+			"id": "shield_damage_taken_multi",
+			"name": "Shield flux/damage reduction",
+			"icon": "graphics/icons/circular/notable_passives/hardened_shields_red.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"effects": [
+				{
+					"effect": "SHIELD_DAMAGE_TAKEN_MULT",
+					"magnitude": 5
+				}
+			],
+			"tags": [
+				"shield"
+			]
+		},
+		{
+			"id": "shield_upkeep_multi",
+			"name": "Shield Upkeep Reduction",
+			"icon": "graphics/icons/circular/notable_passives/stabilized_shields_green.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"effects": [
+				{
+					"effect": "SHIELD_UPKEEP_MULT",
+					"magnitude": -10
+				}
+			],
+			"tags": [
+				"shield"
+			]
+		},
+		{
+			"id": "top_speed",
+			"name": "Top Speed",
+			"icon": "graphics/icons/top_speed_circular.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"hullSizeEffects": [
+				{
+					"effect": "TOP_SPEED_FLAT",
+					"frigate": 30,
+					"destroyer": 20,
+					"cruiser": 10,
+					"capitalShip": 5
+				}
+			],
+			"tags": [
+				"speed"
+			]
+		},
+		{
+			"id": "phase_cloak_flux_threshold",
+			"name": "Phase Cloak Flux Threshold",
+			"icon": "graphics/icons/circular/notable_passives/phase_field_red.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"effects": [
+				{
+					"effect": "PHASE_CLOAK_FLUX_THRESHOLD_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"phase"
+			]
+		},
+		{
+			"id": "emp_damage_taken_multi",
+			"name": "Less EMP damage taken",
+			"icon": "graphics/icons/circular/notable_passives/resistant_flux_conduits_green.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"effects": [
+				{
+					"effect": "EMP_DAMAGE_TAKEN_MULT",
+					"magnitude": -15
+				}
+			],
+			"tags": [
+				"shield"
+			]
+		},
+		{
+			"id": "increased_vent_rate",
+			"name": "Increased vent rate",
+			"icon": "graphics/icons/circular/notable_passives/resistant_flux_conduits_red.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"effects": [
+				{
+					"effect": "VENT_RATE_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"flux"
+			]
+		},
+		{
+			"id": "vent_rate_and_emp_damage",
+			"name": "Vent rate and EMP damage",
+			"icon": "graphics/icons/circular/notable_passives/resistant_flux_conduits.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"effects": [
+				{
+					"effect": "VENT_RATE_PERCENT",
+					"magnitude": 5
+				},
+				{
+					"effect": "EMP_DAMAGE_TAKEN_MULT",
+					"magnitude": -10
+				}
+			],
+			"tags": [
+				"flux",
+				"shield"
+			]
+		},
+		{
+			"id": "expanded_magazines_energy",
+			"name": "Expanded Energy Magazines",
+			"icon": "graphics/icons/circular/notable_passives/expanded_magazines2.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "ENERGY_AMMO_PERCENT",
+					"magnitude": 50
+				}
+			],
+			"tags": [
+				"energy",
+				"ammo"
 			]
 		}
 	]
