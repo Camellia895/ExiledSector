@@ -24,7 +24,10 @@ class SkillTreeLoaderTest {
                 + "\"type\": \"capacitors\","
                 + "\"connectedTo\": [\"vents_1\"],"
                 + "\"x\": -180,"
-                + "\"y\": 180"
+                + "\"y\": 180,"
+                + "\"ringBeltPath\": \"graphics/planets/ring_band_ice.png\","
+                + "\"ringBeltColor\": \"#8c78ff\","
+                + "\"ringBeltWidth\": 1.4"
                 + "} ] }");
 
         List<SkillNode> nodes = SkillTreeLoader.parseNodes(root, SKILL_TYPES);
@@ -39,6 +42,9 @@ class SkillTreeLoaderTest {
         assertEquals(List.of("vents_1"), node.getConnectedNodeIds());
         assertEquals(-180f, node.getOffsetX());
         assertEquals(180f, node.getOffsetY());
+        assertEquals("graphics/planets/ring_band_ice.png", node.getRingBeltPath());
+        assertEquals("#8c78ff", node.getRingBeltColor());
+        assertEquals(1.4f, node.getRingBeltWidth());
     }
 
     @Test
@@ -53,6 +59,9 @@ class SkillTreeLoaderTest {
         assertTrue(node.getConnectedNodeIds().isEmpty());
         assertEquals(0f, node.getOffsetX());
         assertEquals(0f, node.getOffsetY());
+        assertEquals(null, node.getRingBeltPath());
+        assertEquals(null, node.getRingBeltColor());
+        assertEquals(null, node.getRingBeltWidth());
     }
 
     @Test
@@ -152,6 +161,39 @@ class SkillTreeLoaderTest {
         StaticImage image = SkillTreeLoader.parseStaticImages(root).get(0);
 
         assertEquals(0f, image.getRotation());
+    }
+
+    @Test
+    void rotationSpeedDefaultsToZeroWhenFieldMissing() throws Exception {
+        JSONObject root = new JSONObject("{ \"nodes\": [], \"staticImages\": [ {"
+                + "\"id\": \"image_1\","
+                + "\"x\": 0,"
+                + "\"y\": 0,"
+                + "\"width\": 100,"
+                + "\"height\": 100,"
+                + "\"imagePath\": \"a.png\""
+                + "} ] }");
+
+        StaticImage image = SkillTreeLoader.parseStaticImages(root).get(0);
+
+        assertEquals(0f, image.getRotationSpeed());
+    }
+
+    @Test
+    void parsesRotationSpeedWhenPresent() throws Exception {
+        JSONObject root = new JSONObject("{ \"nodes\": [], \"staticImages\": [ {"
+                + "\"id\": \"image_1\","
+                + "\"x\": 0,"
+                + "\"y\": 0,"
+                + "\"width\": 100,"
+                + "\"height\": 100,"
+                + "\"imagePath\": \"a.png\","
+                + "\"rotationSpeed\": 0.75"
+                + "} ] }");
+
+        StaticImage image = SkillTreeLoader.parseStaticImages(root).get(0);
+
+        assertEquals(0.75f, image.getRotationSpeed());
     }
 
     @Test

@@ -929,7 +929,7 @@ function uniqueImageId(){
 }
 function normalizeImages(images){
   return (images || []).map(function(img){
-    return { id: img.id, x: img.x, y: img.y, width: img.width, height: img.height, imagePath: img.imagePath || null, rotation: img.rotation || 0 };
+    return { id: img.id, x: img.x, y: img.y, width: img.width, height: img.height, imagePath: img.imagePath || null, rotation: img.rotation || 0, rotationSpeed: img.rotationSpeed || 0 };
   });
 }
 function rotateAroundOrigin(localX, localY, deg){
@@ -1025,6 +1025,11 @@ var RING_BELT_STYLES = [
   { id: 'dust', label: 'Dust' },
   { id: 'special', label: 'Special' }
 ];
+var AURORA_RING_BELT_PATH = 'graphics/planets/aurorae.png';
+var KEYSTONE_BELT_DEFAULT_WIDTH = 1.1;
+function isAuroraBelt(n){
+  return n.ringBeltPath === AURORA_RING_BELT_PATH;
+}
 var ANCHOR_RECTANGLE_ASPECT = 1.6;
 // Builds vertices centered on the origin (unrotated), then rotates by anchor.rotation and
 // translates to the anchor's position - so every polygon shape can be spun in place.
@@ -1222,13 +1227,18 @@ function generateAsteroidBelt(anchor, style, bandWidth){
   }, function(result){
     removeAsteroidBelt(anchor.id, false);
     var size = Math.round(outerRadius * 2);
+    // Slow, ambient spin like vanilla planet rings - degrees/sec, random direction and a
+    // full turn taking roughly 15-40 minutes so it's noticeable without being distracting.
+    var spinMagnitude = 0.15 + Math.random() * 0.25;
+    var rotationSpeed = Math.random() < 0.5 ? spinMagnitude : -spinMagnitude;
     state.images.push({
       id: ringBeltIds(anchor.id).ringId,
       x: anchor.x,
       y: anchor.y,
       width: size,
       height: size,
-      imagePath: result.path
+      imagePath: result.path,
+      rotationSpeed: Math.round(rotationSpeed * 1000) / 1000
     });
     saveLocal();
     render();
@@ -2174,6 +2184,17 @@ function refreshInspector(){
       '<div class="field"><label>X</label><input type="number" value="' + n.x + '" data-field="x"></div>' +
       '<div class="field"><label>Y</label><input type="number" value="' + n.y + '" data-field="y"></div>' +
     '</div>' +
+    (tier === 'KEYSTONE' ?
+      '<div class="field"><label>Ring belt art (optional)</label><div class="fieldRow">' +
+        '<input value="' + (n.ringBeltPath || '') + '" placeholder="graphics/planets/ring_band_asteroids.png" data-field="ringBeltPath" style="flex:1">' +
+        '<button class="smallBtn" type="button" id="selectRingBeltBtn">Select Image</button>' +
+      '</div></div>' +
+      '<div class="hint">Every Keystone gets a thin rotating ring belt beyond its rings automatically. Leave blank for the default asteroid band, pick a graphics/planets/ring_band_*.png (or any similarly-shaped band texture), or use graphics/planets/aurorae.png for a moving, colour-tinted aurora instead of a static band.</div>' +
+      (isAuroraBelt(n) ?
+        '<div class="field"><label>Aurora colour</label><input type="color" value="' + (n.ringBeltColor || '#8c78ff') + '" data-field="ringBeltColor"></div>'
+      : '') +
+      '<div class="field"><label>Ring belt width (× node size, default ' + KEYSTONE_BELT_DEFAULT_WIDTH + ')</label><input type="number" step="0.1" min="0.1" value="' + (n.ringBeltWidth || '') + '" placeholder="' + KEYSTONE_BELT_DEFAULT_WIDTH + '" data-field="ringBeltWidth"></div>'
+    : '') +
     '<hr class="sep">' +
     statsHtml +
     '<div class="field"><label>Connected to</label><div class="prereqList">' + prereqHtml + '</div></div>' +
@@ -2207,10 +2228,28 @@ function refreshInspector(){
         n.type = inp.value;
       } else if (field === 'x' || field === 'y') {
         n[field] = parseInt(inp.value, 10) || 0;
+      } else if (field === 'ringBeltPath') {
+        var val = inp.value.trim();
+        if (val) n.ringBeltPath = val; else delete n.ringBeltPath;
+      } else if (field === 'ringBeltColor') {
+        n.ringBeltColor = inp.value;
+      } else if (field === 'ringBeltWidth') {
+        var width = parseFloat(inp.value);
+        if (!isNaN(width) && width > 0) n.ringBeltWidth = width; else delete n.ringBeltWidth;
       }
       saveLocal(); render(); refreshInspector();
     });
   });
+  var selectRingBeltBtn = document.getElementById('selectRingBeltBtn');
+  if (selectRingBeltBtn) {
+    selectRingBeltBtn.addEventListener('click', function(){
+      openImagePickerModal(function(path){
+        n.ringBeltPath = path;
+        saveLocal(); render(); refreshInspector();
+        showToast('Ring belt art set to "' + path + '"');
+      });
+    });
+  }
   var addSel = document.getElementById('addPrereqSelect');
   addSel.addEventListener('change', function(){
     if (addSel.value) {
@@ -2488,7 +2527,10 @@ function refreshImageInspector(body){
       '<div class="field"><label>Width</label><input type="number" value="' + img.width + '" data-image-field="width"></div>' +
       '<div class="field"><label>Height</label><input type="number" value="' + img.height + '" data-image-field="height"></div>' +
     '</div>' +
-    '<div class="field"><label>Rotation (deg)</label><input type="number" value="' + (img.rotation || 0) + '" data-image-field="rotation"></div>' +
+    '<div class="fieldRow">' +
+      '<div class="field"><label>Rotation (deg)</label><input type="number" value="' + (img.rotation || 0) + '" data-image-field="rotation"></div>' +
+      '<div class="field"><label>Spin (deg/sec)</label><div class="fieldRow"><input type="number" step="0.05" value="' + (img.rotationSpeed || 0) + '" data-image-field="rotationSpeed" style="flex:1"><button class="smallBtn" type="button" id="reverseSpinBtn" title="Flip spin direction">Reverse</button></div></div>' +
+    '</div>' +
     '<div class="field"><label>Image</label>' + pickerHtml + '</div>' +
     '<hr class="sep">' +
     '<div class="hint">A static PNG rendered behind the whole tree in game, at this position/size. Drag its edge handle in Select mode to resize, or its top handle to rotate.</div>' +
@@ -2509,6 +2551,9 @@ function refreshImageInspector(body){
       } else if (field === 'rotation') {
         var deg = parseFloat(inp.value);
         img.rotation = ((isNaN(deg) ? 0 : deg) % 360 + 360) % 360;
+      } else if (field === 'rotationSpeed') {
+        var speed = parseFloat(inp.value);
+        img.rotationSpeed = isNaN(speed) ? 0 : speed;
       }
       saveLocal(); render(); refreshInspector();
     });
@@ -2518,6 +2563,10 @@ function refreshImageInspector(body){
       img.imagePath = el.dataset.pickImage;
       saveLocal(); render(); refreshInspector();
     });
+  });
+  document.getElementById('reverseSpinBtn').addEventListener('click', function(){
+    img.rotationSpeed = -(img.rotationSpeed || 0);
+    saveLocal(); render(); refreshInspector();
   });
   document.getElementById('deleteImageBtn').addEventListener('click', function(){
     state.images = state.images.filter(function(o){ return o.id !== img.id; });
@@ -3160,6 +3209,9 @@ function buildTreeExportObject(){
   var nodesOut = state.nodes.map(function(n){
     var out = { id: n.id, type: n.type, connectedTo: n.connectedTo, x: n.x, y: n.y };
     if (n.orbitAnchorId) { out.orbitAnchorId = n.orbitAnchorId; out.orbitAngle = n.orbitAngle; }
+    if (n.ringBeltPath) out.ringBeltPath = n.ringBeltPath;
+    if (n.ringBeltColor) out.ringBeltColor = n.ringBeltColor;
+    if (n.ringBeltWidth) out.ringBeltWidth = n.ringBeltWidth;
     return out;
   });
   var out = { nodes: nodesOut };
@@ -3185,6 +3237,7 @@ function buildTreeExportObject(){
     out.staticImages = state.images.map(function(img){
       var io = { id: img.id, x: img.x, y: img.y, width: img.width, height: img.height, imagePath: img.imagePath || '' };
       if (img.rotation) io.rotation = img.rotation;
+      if (img.rotationSpeed) io.rotationSpeed = img.rotationSpeed;
       return io;
     });
   }

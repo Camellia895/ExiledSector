@@ -60,7 +60,8 @@ public final class SkillTreeLoader {
                     (float) imageJson.getDouble("width"),
                     (float) imageJson.getDouble("height"),
                     imageJson.getString("imagePath"),
-                    (float) imageJson.optDouble("rotation", 0.0)));
+                    (float) imageJson.optDouble("rotation", 0.0),
+                    (float) imageJson.optDouble("rotationSpeed", 0.0)));
         }
         return images;
     }
@@ -109,6 +110,9 @@ public final class SkillTreeLoader {
                 type,
                 connectedTo,
                 (float) json.optDouble("x", 0),
-                (float) json.optDouble("y", 0));
+                (float) json.optDouble("y", 0),
+                json.optString("ringBeltPath", null),
+                json.optString("ringBeltColor", null),
+                json.has("ringBeltWidth") ? (float) json.getDouble("ringBeltWidth") : null);
     }
 }

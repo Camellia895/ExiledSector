@@ -13,13 +13,31 @@ public class SkillNode {
     private final List<String> connectedNodeIds;
     private final float offsetX;
     private final float offsetY;
+    private final String ringBeltPath;
+    private final String ringBeltColor;
+    private final Float ringBeltWidth;
 
     public SkillNode(String id, SkillType type, List<String> connectedNodeIds, float offsetX, float offsetY) {
+        this(id, type, connectedNodeIds, offsetX, offsetY, null, null);
+    }
+
+    public SkillNode(String id, SkillType type, List<String> connectedNodeIds, float offsetX, float offsetY, String ringBeltPath) {
+        this(id, type, connectedNodeIds, offsetX, offsetY, ringBeltPath, null);
+    }
+
+    public SkillNode(String id, SkillType type, List<String> connectedNodeIds, float offsetX, float offsetY, String ringBeltPath, String ringBeltColor) {
+        this(id, type, connectedNodeIds, offsetX, offsetY, ringBeltPath, ringBeltColor, null);
+    }
+
+    public SkillNode(String id, SkillType type, List<String> connectedNodeIds, float offsetX, float offsetY, String ringBeltPath, String ringBeltColor, Float ringBeltWidth) {
         this.id = id;
         this.type = type;
         this.connectedNodeIds = connectedNodeIds == null ? Collections.emptyList() : connectedNodeIds;
         this.offsetX = offsetX;
         this.offsetY = offsetY;
+        this.ringBeltPath = ringBeltPath;
+        this.ringBeltColor = ringBeltColor;
+        this.ringBeltWidth = ringBeltWidth;
     }
 
     public String getId() {
@@ -97,5 +115,17 @@ public class SkillNode {
 
     public float getOffsetY() {
         return offsetY;
+    }
+
+    public String getRingBeltPath() {
+        return ringBeltPath;
+    }
+
+    public String getRingBeltColor() {
+        return ringBeltColor;
+    }
+
+    public Float getRingBeltWidth() {
+        return ringBeltWidth;
     }
 }

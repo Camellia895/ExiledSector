@@ -9,8 +9,9 @@ public class StaticImage {
     private final float height;
     private final String imagePath;
     private final float rotation;
+    private final float rotationSpeed;
 
-    public StaticImage(String id, float x, float y, float width, float height, String imagePath, float rotation) {
+    public StaticImage(String id, float x, float y, float width, float height, String imagePath, float rotation, float rotationSpeed) {
         this.id = id;
         this.x = x;
         this.y = y;
@@ -18,6 +19,7 @@ public class StaticImage {
         this.height = height;
         this.imagePath = imagePath;
         this.rotation = rotation;
+        this.rotationSpeed = rotationSpeed;
     }
 
     public String getId() {
@@ -46,5 +48,9 @@ public class StaticImage {
 
     public float getRotation() {
         return rotation;
+    }
+
+    public float getRotationSpeed() {
+        return rotationSpeed;
     }
 }

@@ -67,7 +67,6 @@ final class SkillTreeNodeRenderer {
             "graphics/fx/wormhole_ring_bright2.png",
             "graphics/fx/wormhole_ring_bright3.png"
     };
-    private static final String CORONA_SPIKE_TEXTURE_PATH = "graphics/fx/wormhole_corona.png";
 
     private static final float RING_INSTANCE_MIN_ROTATION_SPEED_DEG = 20f;
     private static final float RING_INSTANCE_MAX_ROTATION_SPEED_DEG = 60f;
@@ -109,12 +108,18 @@ final class SkillTreeNodeRenderer {
     private static final float NOTABLE_RING_RADIUS_DECAY = 0.88f;
     private static final int NOTABLE_RING_COUNT = 10;
 
-    private static final float KEYSTONE_RING_OUTER_RADIUS_RATIO = 1.4f;
-    private static final float KEYSTONE_RING_RADIUS_DECAY = 0.9f;
-    private static final int KEYSTONE_RING_COUNT = 16;
-    private static final int KEYSTONE_CORONA_COUNT = 3;
-    private static final float KEYSTONE_CORONA_SIZE_RATIO = 1.6f;
-    private static final float KEYSTONE_CORONA_BASE_ALPHA = 0.4f;
+    // Keystones no longer get the notable-style wormhole ring stack/corona/glow cluster - their
+    // decoration is the belt band below instead, starting right at the icon's own ring (touching
+    // it, no gap) rather than sitting further out beyond a now-removed stack. Both belt styles are
+    // rendered by direct ports of vanilla's own renderers - see RingBeltRenderer/AuroraBeltRenderer.
+    private static final String DEFAULT_KEYSTONE_RING_BELT_PATH = "graphics/planets/ring_band_asteroids.png";
+    private static final float KEYSTONE_BELT_WIDTH_RATIO = 1.1f;
+
+    // Picking this exact art (rather than a "belt type" property) switches drawRings() over to
+    // AuroraBeltRenderer instead of RingBeltRenderer - aurorae.png isn't a radial-fade band like
+    // the other ring art, it needs vanilla's own two-pass split-texture technique to look right.
+    private static final String AURORA_TEXTURE_PATH = "graphics/planets/aurorae.png";
+    private static final Color DEFAULT_AURORA_COLOR = new Color(140, 120, 255);
 
     private static final float ICON_INSET_RATIO = 0.9f;
     private static final float ROOT_CONNECTOR_OVERLAP_RATIO = 0.7f;
@@ -158,7 +163,6 @@ final class SkillTreeNodeRenderer {
     private final Map<String, Float> pulseElapsed = new HashMap<>();
     private final Map<String, List<RingInstance>> ringStacks = new HashMap<>();
     private final Map<String, List<RingInstance>> pinkRingStacks = new HashMap<>();
-    private final Map<String, List<RingInstance>> coronaSpikes = new HashMap<>();
     private SkillNode openDropdownNode;
     private float breathingPhase = 0f;
     private float ringElapsedSeconds = 0f;
@@ -218,7 +222,10 @@ final class SkillTreeNodeRenderer {
             float footprintSize = NODE_SIZE * zoom * tier.getSizeMultiplier();
             float iconSize = footprintSize * ICON_INSET_RATIO;
 
-            drawRings(nodeX, nodeY, footprintSize, alphaMult, allocated, breathing, pulseElapsed.get(node.getId()), tier, zoom, node.getId());
+            String ringBeltPath = tier == SkillTier.KEYSTONE ? resolveRingBeltPath(node) : null;
+            Color ringBeltColor = tier == SkillTier.KEYSTONE ? resolveRingBeltColor(node) : null;
+            float ringBeltWidth = tier == SkillTier.KEYSTONE ? resolveRingBeltWidth(node) : 0f;
+            drawRings(nodeX, nodeY, footprintSize, alphaMult, allocated, breathing, pulseElapsed.get(node.getId()), tier, zoom, node.getId(), ringBeltPath, ringBeltColor, ringBeltWidth);
 
             Color tint = allocated ? ALLOCATED_TINT : UNALLOCATED_TINT;
             if (effectiveType.isOptional()) {
@@ -239,7 +246,7 @@ final class SkillTreeNodeRenderer {
             boolean allocated = data.isAllocated(node.getId());
             boolean breathing = !allocated && data.canAllocate(node, satisfiedRootId);
             float footprintSize = NODE_SIZE * zoom * SkillTier.ROOT.getSizeMultiplier();
-            drawRings(nodeX, nodeY, footprintSize, alphaMult, allocated, breathing, pulseElapsed.get(node.getId()), SkillTier.ROOT, zoom, node.getId());
+            drawRings(nodeX, nodeY, footprintSize, alphaMult, allocated, breathing, pulseElapsed.get(node.getId()), SkillTier.ROOT, zoom, node.getId(), null, null, 0f);
 
             Color tint = allocated ? ALLOCATED_TINT : UNALLOCATED_TINT;
             String iconPath = isActiveRoot ? RootCrestResolver.resolve(member) : node.getType().getIconPath();
@@ -247,6 +254,32 @@ final class SkillTreeNodeRenderer {
         }
 
         renderDropdown(centerX, centerY, zoom, mouseX, mouseY, mouseKnown, alphaMult);
+    }
+
+    private static String resolveRingBeltPath(SkillNode node) {
+        String path = node.getRingBeltPath();
+        return path != null && !path.isEmpty() ? path : DEFAULT_KEYSTONE_RING_BELT_PATH;
+    }
+
+    /** Only meaningful when the resolved ring belt art is the aurora texture - ignored otherwise,
+     * since the other ring art is already colored in the source image. */
+    private static Color resolveRingBeltColor(SkillNode node) {
+        String hex = node.getRingBeltColor();
+        if (hex == null || hex.isEmpty()) return DEFAULT_AURORA_COLOR;
+        try {
+            String cleaned = hex.startsWith("#") ? hex.substring(1) : hex;
+            if (cleaned.length() == 6) cleaned = "FF" + cleaned;
+            long argb = Long.parseLong(cleaned, 16);
+            return new Color((int) argb, true);
+        } catch (NumberFormatException e) {
+            Logger.getLogger(SkillTreeNodeRenderer.class).warn("Invalid ringBeltColor \"" + hex + "\" on node \"" + node.getId() + "\", using default");
+            return DEFAULT_AURORA_COLOR;
+        }
+    }
+
+    private static float resolveRingBeltWidth(SkillNode node) {
+        Float width = node.getRingBeltWidth();
+        return width != null && width > 0f ? width : KEYSTONE_BELT_WIDTH_RATIO;
     }
 
     private static SkillNode findRootNode(String rootTypeId) {
@@ -545,7 +578,7 @@ final class SkillTreeNodeRenderer {
         GL11.glColorMask(true, true, true, true);
     }
 
-    private void drawRings(float cx, float cy, float footprintSize, float alphaMult, boolean allocated, boolean breathing, Float pulseSeconds, SkillTier tier, float zoom, String nodeId) {
+    private void drawRings(float cx, float cy, float footprintSize, float alphaMult, boolean allocated, boolean breathing, Float pulseSeconds, SkillTier tier, float zoom, String nodeId, String ringBeltPath, Color ringBeltColor, float ringBeltWidth) {
         float half = footprintSize / 2f;
         float scale = tier.getSizeMultiplier();
 
@@ -553,18 +586,18 @@ final class SkillTreeNodeRenderer {
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         float ringRadius = donutRadius(footprintSize);
-        if (tier == SkillTier.NOTABLE || tier == SkillTier.KEYSTONE) {
+        if (tier == SkillTier.NOTABLE) {
             float stateAlpha = allocated ? 1f : UNALLOCATED_ALPHA_MULT;
-
-            if (tier == SkillTier.NOTABLE) {
-                drawRingStack(cx, cy, footprintSize * NOTABLE_RING_OUTER_RADIUS_RATIO, ringRadius, nodeId,
-                        NOTABLE_RING_COUNT, NOTABLE_RING_RADIUS_DECAY, stateAlpha, alphaMult);
-            } else {
-                drawRingStack(cx, cy, footprintSize * KEYSTONE_RING_OUTER_RADIUS_RATIO, ringRadius, nodeId,
-                        KEYSTONE_RING_COUNT, KEYSTONE_RING_RADIUS_DECAY, stateAlpha, alphaMult);
-                drawCoronaSpikes(cx, cy, footprintSize, nodeId, stateAlpha, alphaMult);
-            }
+            drawRingStack(cx, cy, footprintSize * NOTABLE_RING_OUTER_RADIUS_RATIO, ringRadius, nodeId,
+                    NOTABLE_RING_COUNT, NOTABLE_RING_RADIUS_DECAY, stateAlpha, alphaMult);
             drawAmbientGlow(cx, cy, footprintSize, stateAlpha, alphaMult);
+        } else if (tier == SkillTier.KEYSTONE) {
+            float stateAlpha = allocated ? 1f : UNALLOCATED_ALPHA_MULT;
+            if (AURORA_TEXTURE_PATH.equals(ringBeltPath)) {
+                drawKeystoneAuroraBelt(cx, cy, footprintSize, ringBeltWidth, ringBeltColor, stateAlpha, alphaMult);
+            } else {
+                drawKeystoneRingBelt(cx, cy, footprintSize, ringBeltWidth, ringBeltPath, stateAlpha, alphaMult);
+            }
         }
 
         GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -678,27 +711,6 @@ final class SkillTreeNodeRenderer {
         }
     }
 
-    private void drawCoronaSpikes(float cx, float cy, float footprintSize, String nodeId, float stateAlpha, float alphaMult) {
-        if (!ensureTextureLoaded(CORONA_SPIKE_TEXTURE_PATH)) return;
-
-        List<RingInstance> instances = coronaSpikes.computeIfAbsent(nodeId, id -> generateRingInstances(id, KEYSTONE_CORONA_COUNT, 1f));
-        float alpha = KEYSTONE_CORONA_BASE_ALPHA * stateAlpha * alphaMult;
-        float size = footprintSize * KEYSTONE_CORONA_SIZE_RATIO;
-
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-
-        SpriteAPI sprite = Global.getSettings().getSprite(CORONA_SPIKE_TEXTURE_PATH);
-        for (RingInstance instance : instances) {
-            float angle = instance.baseAngleDeg + ringElapsedSeconds * instance.rotationSpeedDeg;
-            sprite.setSize(size * instance.sizeJitter, size * instance.sizeJitter);
-            sprite.setAngle(angle);
-            sprite.setColor(Color.WHITE);
-            sprite.setAlphaMult(alpha);
-            sprite.renderAtCenter(cx, cy);
-        }
-    }
-
     /**
      * An always-present ambient backdrop glow behind notable/keystone nodes - vanilla's actual
      * star/black-hole corona (star_halo.png, tinted/sized per planets.json's starCoronaColor /
@@ -718,6 +730,39 @@ final class SkillTreeNodeRenderer {
         sprite.setColor(AMBIENT_GLOW_COLOR);
         sprite.setAlphaMult(AMBIENT_GLOW_ALPHA * stateAlpha * alphaMult);
         sprite.renderAtCenter(cx, cy);
+    }
+
+    /**
+     * The plain ring-band art (asteroids/ice/dust/special) rendered via a direct port of
+     * vanilla's own RingRenderer - see RingBeltRenderer for why that matters over a hand-rolled
+     * approximation.
+     */
+    private void drawKeystoneRingBelt(float cx, float cy, float footprintSize, float widthRatio, String ringArtPath, float stateAlpha, float alphaMult) {
+        if (!ensureTextureLoaded(ringArtPath)) return;
+        SpriteAPI sprite = Global.getSettings().getSprite(ringArtPath);
+        RingBeltRenderer.render(sprite, cx, cy, beltInnerRadius(footprintSize), beltOuterRadius(footprintSize, widthRatio),
+                Color.WHITE, stateAlpha * alphaMult);
+    }
+
+    /**
+     * The aurora art rendered via a direct port of vanilla's own AuroraRenderer - see
+     * AuroraBeltRenderer for why that matters over a hand-rolled approximation.
+     */
+    private void drawKeystoneAuroraBelt(float cx, float cy, float footprintSize, float widthRatio, Color tint, float stateAlpha, float alphaMult) {
+        if (!ensureTextureLoaded(AURORA_TEXTURE_PATH)) return;
+        SpriteAPI sprite = Global.getSettings().getSprite(AURORA_TEXTURE_PATH);
+        AuroraBeltRenderer.render(sprite, cx, cy, beltInnerRadius(footprintSize), beltOuterRadius(footprintSize, widthRatio),
+                tint, stateAlpha * alphaMult, ringElapsedSeconds);
+    }
+
+    private static float beltInnerRadius(float footprintSize) {
+        // Touches the icon's own ring (drawSingleDonut, at footprintSize * ICON_INSET_RATIO / 2)
+        // directly - no gap, now that the wormhole stack that used to sit in between is gone.
+        return footprintSize * ICON_INSET_RATIO / 2f;
+    }
+
+    private static float beltOuterRadius(float footprintSize, float widthRatio) {
+        return beltInnerRadius(footprintSize) + footprintSize * widthRatio;
     }
 
     private static List<RingInstance> generateRingInstances(String seedKey, int count, float radiusDecay) {

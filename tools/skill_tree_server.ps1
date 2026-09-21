@@ -341,7 +341,18 @@ try {
                             $destFull = Join-Path $staticImagesDir ($anchorId + "_ringbelt.png")
                             $canvasPixels = 1200
                             $circumference = [Math]::PI * ($innerRadius + $outerRadius)
-                            $tileCount = [Math]::Max(3, [int][Math]::Round($circumference / 500))
+                            # Tile count derived from the source band's own aspect ratio (height/width,
+                            # 512/256 = 2 for all our band textures) rather than an arbitrary
+                            # world-units-per-tile constant, so each repeat stays roughly as long
+                            # (along the ring) as the band is thick regardless of the anchor's actual
+                            # size - matches the same reasoning used in RingBeltRenderer.java for the
+                            # live in-game belts (see that file for why a fixed pixels-per-tile number
+                            # doesn't work: it's calibrated for vanilla's campaign-scale planet rings,
+                            # not an editor-placed anchor whose radius could be anything).
+                            $thickness = $outerRadius - $innerRadius
+                            $bandAspectRatio = 2.0
+                            $tileDensity = 3.0
+                            $tileCount = [Math]::Max(1, [int][Math]::Round($tileDensity * $circumference / ($thickness * $bandAspectRatio)))
                             $bandIndex = Get-Random -Minimum 0 -Maximum 4
                             GenerateRingBelt $srcFull $destFull $innerRadius $outerRadius $bandIndex $tileCount $canvasPixels
                             $fullProjectRoot = [System.IO.Path]::GetFullPath($projectRoot)

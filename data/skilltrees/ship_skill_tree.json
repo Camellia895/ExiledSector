@@ -108,10 +108,12 @@
 			"id": "safety_overrides_1",
 			"type": "safety_overrides",
 			"connectedTo": [
-				"small_logistics_optional_29"
+				"small_flux_optional_3"
 			],
-			"x": 0,
-			"y": 1531
+			"x": 265,
+			"y": 1711,
+			"ringBeltPath": "graphics/planets/aurorae.png",
+			"ringBeltColor": "#f73b3b"
 		},
 		{
 			"id": "heavyarmor_1",
@@ -201,7 +203,9 @@
 			"x": 1794,
 			"y": 2018,
 			"orbitAnchorId": "anchor_4",
-			"orbitAngle": 87.29999999999994
+			"orbitAngle": 87.29999999999994,
+			"ringBeltPath": "graphics/planets/aurorae.png",
+			"ringBeltColor": "#ff9466"
 		},
 		{
 			"id": "magazines_1",
@@ -239,8 +243,8 @@
 			"id": "eccm_1",
 			"type": "eccm",
 			"connectedTo": [],
-			"x": 2599,
-			"y": -360
+			"x": 1925,
+			"y": -302
 		},
 		{
 			"id": "high_scatter_amp_1",
@@ -293,8 +297,10 @@
 			"id": "defensive_targeting_array_1",
 			"type": "defensive_targeting_array",
 			"connectedTo": [],
-			"x": -1205,
-			"y": 2293
+			"x": -1045,
+			"y": 2306,
+			"ringBeltPath": "graphics/planets/aurorae.png",
+			"ringBeltColor": "#99ffb3"
 		},
 		{
 			"id": "advancedshieldemitter_1",
@@ -359,7 +365,9 @@
 				"small_flux_optional_28"
 			],
 			"x": 1720,
-			"y": -524
+			"y": -524,
+			"ringBeltPath": "graphics/planets/aurorae.png",
+			"ringBeltColor": "#3e1cfd"
 		},
 		{
 			"id": "frontemitter_1",
@@ -383,14 +391,16 @@
 			"x": -1119,
 			"y": -1607,
 			"orbitAnchorId": "anchor_12",
-			"orbitAngle": -131.89999999999995
+			"orbitAngle": -131.89999999999995,
+			"ringBeltPath": "graphics/planets/aurorae.png",
+			"ringBeltColor": "#85caff"
 		},
 		{
 			"id": "auxiliarythrusters_1",
 			"type": "auxiliarythrusters",
 			"connectedTo": [],
-			"x": 1729,
-			"y": -91
+			"x": 1702,
+			"y": -160
 		},
 		{
 			"id": "unstable_injector_1",
@@ -398,8 +408,9 @@
 			"connectedTo": [
 				"small_flux_optional_34"
 			],
-			"x": 1775,
-			"y": 956
+			"x": 1764,
+			"y": 945,
+			"ringBeltPath": "graphics/planets/aurorae.png"
 		},
 		{
 			"id": "nav_relay_1",
@@ -473,7 +484,9 @@
 				"small_logistics_optional_25"
 			],
 			"x": -251,
-			"y": -145
+			"y": -145,
+			"ringBeltPath": "graphics/planets/aurorae.png",
+			"ringBeltColor": "#d2bcdc"
 		},
 		{
 			"id": "expanded_cargo_holds_1",
@@ -550,7 +563,9 @@
 				"small_logistics_optional_25"
 			],
 			"x": 252,
-			"y": -146
+			"y": -146,
+			"ringBeltPath": "graphics/planets/aurorae.png",
+			"ringBeltColor": "#ffca80"
 		},
 		{
 			"id": "expanded_deck_crew_1",
@@ -573,7 +588,9 @@
 				"small_logistics_optional_25"
 			],
 			"x": 0,
-			"y": 274
+			"y": 274,
+			"ringBeltPath": "graphics/planets/aurorae.png",
+			"ringBeltColor": "#7d67fe"
 		},
 		{
 			"id": "escort_package_1",
@@ -813,7 +830,7 @@
 			"connectedTo": [
 				"small_logistics_optional_28",
 				"small_logistics_optional_30",
-				"safety_overrides_1"
+				"small_flux_optional_3"
 			],
 			"x": 0,
 			"y": 1245,
@@ -1792,7 +1809,8 @@
 				"small_flux_optional_36",
 				"small_flux_optional_15",
 				"armor_2",
-				"armor_4"
+				"armor_4",
+				"small_flux_optional_3"
 			],
 			"x": 0,
 			"y": 2200,
@@ -2368,6 +2386,17 @@
 			"y": 1795,
 			"orbitAnchorId": "anchor_18",
 			"orbitAngle": 90
+		},
+		{
+			"id": "small_flux_optional_3",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_logistics_optional_29",
+				"small_flux_optional_35",
+				"safety_overrides_1"
+			],
+			"x": 0,
+			"y": 1714
 		}
 	],
 	"connectorCurves": [
@@ -3370,8 +3399,8 @@
 			"y": 0,
 			"radius": 2200,
 			"shape": "asteroidBelt",
-			"beltBandWidth": 20,
-			"beltStyle": "asteroids"
+			"beltBandWidth": 150,
+			"beltStyle": "dust"
 		},
 		{
 			"id": "outer_ringbelt",
@@ -3414,9 +3443,10 @@
 			"id": "middle_ringbelt_ringbelt",
 			"x": 0,
 			"y": 0,
-			"width": 4420,
-			"height": 4420,
-			"imagePath": "graphics/backgrounds/static_images/middle_ringbelt_ringbelt.png"
+			"width": 4550,
+			"height": 4550,
+			"imagePath": "graphics/backgrounds/static_images/middle_ringbelt_ringbelt.png",
+			"rotationSpeed": 0.6
 		},
 		{
 			"id": "outer_ringbelt_ringbelt",
@@ -3424,7 +3454,8 @@
 			"y": 0,
 			"width": 6300,
 			"height": 6300,
-			"imagePath": "graphics/backgrounds/static_images/outer_ringbelt_ringbelt.png"
+			"imagePath": "graphics/backgrounds/static_images/outer_ringbelt_ringbelt.png",
+			"rotationSpeed": -0.8
 		}
 	]
 }
