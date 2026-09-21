@@ -567,6 +567,7 @@
         <button class="smallBtn shapeBtn" data-anchor-shape="square">Square</button>
         <button class="smallBtn shapeBtn" data-anchor-shape="triangle">Triangle</button>
         <button class="smallBtn shapeBtn" data-anchor-shape="rectangle">Rectangle</button>
+        <button class="smallBtn shapeBtn" data-anchor-shape="asteroidBelt">Asteroid Belt</button>
       </div>
       <button class="modeBtn" data-mode="addImage">Add Image <span class="key">F</span></button>
     </div>
@@ -1016,7 +1017,14 @@ function uniqueAnchorId(){
   do { id = 'anchor_' + i; i++; } while (anchorById(id));
   return id;
 }
-var ANCHOR_SHAPES = ['circle', 'square', 'triangle', 'rectangle'];
+var ANCHOR_SHAPES = ['circle', 'square', 'triangle', 'rectangle', 'asteroidBelt'];
+var ANCHOR_SHAPE_LABELS = { circle: 'Circle', square: 'Square', triangle: 'Triangle', rectangle: 'Rectangle', asteroidBelt: 'Asteroid Belt' };
+var RING_BELT_STYLES = [
+  { id: 'asteroids', label: 'Asteroids' },
+  { id: 'ice', label: 'Ice' },
+  { id: 'dust', label: 'Dust' },
+  { id: 'special', label: 'Special' }
+];
 var ANCHOR_RECTANGLE_ASPECT = 1.6;
 // Builds vertices centered on the origin (unrotated), then rotates by anchor.rotation and
 // translates to the anchor's position - so every polygon shape can be spun in place.
@@ -1178,6 +1186,55 @@ function syncRingArcCurves(anchor){
 function deleteAnchor(id){
   state.anchors = state.anchors.filter(function(a){ return a.id !== id; });
   state.nodes.forEach(function(n){ if (n.orbitAnchorId === id) detachNodeFromAnchor(n); });
+  removeAsteroidBelt(id, false);
+}
+// Ring belt images are namespaced off the anchor id (e.g. "outer_ring_ringbelt") so regenerating
+// can find and clear only this anchor's own belt, not anyone else's images. The prefix also
+// matches the old per-asteroid scatter ids ("<id>_asteroid_3") from before this became a single
+// baked ring image, so switching an older anchor over cleans up its leftover scatter images too.
+function ringBeltIds(anchorId){
+  return { ringId: anchorId + '_ringbelt', scatterPrefix: anchorId + '_asteroid_' };
+}
+function removeAsteroidBelt(anchorId, notify){
+  var ids = ringBeltIds(anchorId);
+  var before = state.images.length;
+  state.images = state.images.filter(function(img){
+    return img.id !== ids.ringId && img.id.indexOf(ids.scatterPrefix) !== 0;
+  });
+  var removed = before - state.images.length;
+  if (notify !== false) {
+    saveLocal();
+    render();
+    refreshInspector();
+    if (removed) showToast('Removed belt image(s)');
+  }
+  return removed;
+}
+function generateAsteroidBelt(anchor, style, bandWidth){
+  var half = bandWidth / 2;
+  var innerRadius = Math.max(0, anchor.radius - half);
+  var outerRadius = anchor.radius + half;
+  postImageOp('/generate-ring-belt', {
+    anchorId: anchor.id,
+    style: style,
+    innerRadius: innerRadius,
+    outerRadius: outerRadius
+  }, function(result){
+    removeAsteroidBelt(anchor.id, false);
+    var size = Math.round(outerRadius * 2);
+    state.images.push({
+      id: ringBeltIds(anchor.id).ringId,
+      x: anchor.x,
+      y: anchor.y,
+      width: size,
+      height: size,
+      imagePath: result.path
+    });
+    saveLocal();
+    render();
+    refreshInspector();
+    showToast('Generated ' + style + ' ring belt around ' + anchor.id);
+  });
 }
 
 function loadShipped(){
@@ -2312,7 +2369,13 @@ function refreshAnchorInspector(body){
   }
   var shape = a.shape || 'circle';
   var shapeOptions = ANCHOR_SHAPES.map(function(s){
-    return '<option value="' + s + '"' + (s === shape ? ' selected' : '') + '>' + s.charAt(0).toUpperCase() + s.slice(1) + '</option>';
+    return '<option value="' + s + '"' + (s === shape ? ' selected' : '') + '>' + (ANCHOR_SHAPE_LABELS[s] || s) + '</option>';
+  }).join('');
+  var isAsteroidBelt = shape === 'asteroidBelt';
+  var beltStyleVal = a.beltStyle || 'asteroids';
+  var beltBandWidthVal = a.beltBandWidth || Math.max(60, Math.round(a.radius * 0.2));
+  var beltStyleOptions = RING_BELT_STYLES.map(function(s){
+    return '<option value="' + s.id + '"' + (s.id === beltStyleVal ? ' selected' : '') + '>' + s.label + '</option>';
   }).join('');
   body.innerHTML =
     '<h2>Anchor</h2>' +
@@ -2326,7 +2389,19 @@ function refreshAnchorInspector(body){
       '<div class="field"><label>Shape</label><select data-anchor-field="shape">' + shapeOptions + '</select></div>' +
     '</div>' +
     (shape === 'rectangle' ? '<div class="field"><label>Aspect ratio (width/height)</label><input type="number" step="0.1" min="0.1" value="' + (a.aspectRatio || ANCHOR_RECTANGLE_ASPECT) + '" data-anchor-field="aspectRatio"></div>' : '') +
-    (shape !== 'circle' ? '<div class="field"><label>Rotation (degrees)</label><input type="number" step="1" value="' + (a.rotation || 0) + '" data-anchor-field="rotation"></div>' : '') +
+    (shape !== 'circle' && !isAsteroidBelt ? '<div class="field"><label>Rotation (degrees)</label><input type="number" step="1" value="' + (a.rotation || 0) + '" data-anchor-field="rotation"></div>' : '') +
+    (isAsteroidBelt ?
+      '<hr class="sep">' +
+      '<div class="fieldRow">' +
+        '<div class="field"><label>Band width</label><input type="number" min="10" value="' + beltBandWidthVal + '" data-anchor-field="beltBandWidth"></div>' +
+        '<div class="field"><label>Ring style</label><select data-anchor-field="beltStyle">' + beltStyleOptions + '</select></div>' +
+      '</div>' +
+      '<div class="btnRow">' +
+        '<button class="smallBtn primary" id="generateBeltBtn">Generate Ring Belt</button>' +
+        '<button class="smallBtn danger" id="removeBeltBtn">Remove Ring Belt</button>' +
+      '</div>' +
+      '<div class="hint" id="ringBeltHint">Bakes a single ring-band image (from the vanilla planet-ring textures) into the band width given, centered on this anchor\u0027s radius. Generating again replaces this anchor\u0027s previous belt image, so it\u0027s safe to re-roll.</div>'
+    : '') +
     '<hr class="sep">' +
     '<div class="hint">Nodes attached to this anchor (orbitAnchorId) re-snap to its boundary as you edit these fields.</div>' +
     '<button class="smallBtn danger" id="deleteAnchorBtn">Delete this anchor <span class="key">Q</span></button>';
@@ -2357,6 +2432,10 @@ function refreshAnchorInspector(body){
       } else if (field === 'rotation') {
         var deg = parseFloat(inp.value);
         a.rotation = ((isNaN(deg) ? 0 : deg) % 360 + 360) % 360;
+      } else if (field === 'beltBandWidth') {
+        a.beltBandWidth = Math.max(10, parseInt(inp.value, 10) || 10);
+      } else if (field === 'beltStyle') {
+        a.beltStyle = inp.value;
       }
       resyncNodesOnAnchor(a);
       saveLocal(); render(); refreshInspector();
@@ -2368,6 +2447,14 @@ function refreshAnchorInspector(body){
     document.getElementById('inspector').classList.remove('open');
     saveLocal(); render(); refreshInspector();
   });
+  if (isAsteroidBelt) {
+    document.getElementById('generateBeltBtn').addEventListener('click', function(){
+      generateAsteroidBelt(a, beltStyleVal, beltBandWidthVal);
+    });
+    document.getElementById('removeBeltBtn').addEventListener('click', function(){
+      removeAsteroidBelt(a.id, true);
+    });
+  }
 }
 
 function refreshImageInspector(body){
@@ -3086,6 +3173,10 @@ function buildTreeExportObject(){
         ao.shape = a.shape;
         if (a.shape === 'rectangle') ao.aspectRatio = a.aspectRatio || ANCHOR_RECTANGLE_ASPECT;
         if (a.rotation) ao.rotation = a.rotation;
+        if (a.shape === 'asteroidBelt') {
+          if (a.beltBandWidth) ao.beltBandWidth = a.beltBandWidth;
+          if (a.beltStyle) ao.beltStyle = a.beltStyle;
+        }
       }
       return ao;
     });
@@ -3272,9 +3363,9 @@ function applyPanelState(){
   appEl.style.gridTemplateColumns = colLeft + ' 1fr ' + colRight;
   appEl.style.gridTemplateRows = '52px 1fr 1px ' + rowBottom;
 
-  document.getElementById('toolbarToggle').textContent = toolbarCollapsed ? '»' : '«';
-  document.getElementById('inspectorToggle').textContent = inspectorCollapsed ? '«' : '»';
-  document.getElementById('exportToggle').textContent = exportCollapsed ? '▴' : '▾';
+  document.getElementById('toolbarToggle').textContent = toolbarCollapsed ? '?' : '?';
+  document.getElementById('inspectorToggle').textContent = inspectorCollapsed ? '?' : '?';
+  document.getElementById('exportToggle').textContent = exportCollapsed ? '?' : '?';
 }
 
 function savePanelState(){

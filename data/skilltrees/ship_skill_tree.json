@@ -3363,6 +3363,24 @@
 			"radius": 2764,
 			"shape": "triangle",
 			"rotation": 180
+		},
+		{
+			"id": "middle_ringbelt",
+			"x": 0,
+			"y": 0,
+			"radius": 2200,
+			"shape": "asteroidBelt",
+			"beltBandWidth": 20,
+			"beltStyle": "asteroids"
+		},
+		{
+			"id": "outer_ringbelt",
+			"x": 0,
+			"y": 0,
+			"radius": 3000,
+			"shape": "asteroidBelt",
+			"beltBandWidth": 300,
+			"beltStyle": "dust"
 		}
 	],
 	"staticImages": [
@@ -3391,6 +3409,22 @@
 			"width": 548,
 			"height": 485,
 			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_10_orange.png"
+		},
+		{
+			"id": "middle_ringbelt_ringbelt",
+			"x": 0,
+			"y": 0,
+			"width": 4420,
+			"height": 4420,
+			"imagePath": "graphics/backgrounds/static_images/middle_ringbelt_ringbelt.png"
+		},
+		{
+			"id": "outer_ringbelt_ringbelt",
+			"x": 0,
+			"y": 0,
+			"width": 6300,
+			"height": 6300,
+			"imagePath": "graphics/backgrounds/static_images/outer_ringbelt_ringbelt.png"
 		}
 	]
 }
