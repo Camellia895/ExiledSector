@@ -189,7 +189,7 @@
 			"type": "turretgyros",
 			"connectedTo": [],
 			"x": -2299,
-			"y": 1165
+			"y": 1185
 		},
 		{
 			"id": "ballistic_rangefinder_1",
@@ -257,8 +257,8 @@
 			"connectedTo": [
 				"beam_damage_2"
 			],
-			"x": -2664,
-			"y": 655
+			"x": -2652,
+			"y": 641
 		},
 		{
 			"id": "dedicated_targeting_core_1",
@@ -339,7 +339,7 @@
 			"x": -2484,
 			"y": -1129,
 			"orbitAnchorId": "anchor_14",
-			"orbitAngle": -145.27956529678133
+			"orbitAngle": -145.35332004392947
 		},
 		{
 			"id": "shield_shunt_1",
@@ -573,14 +573,14 @@
 				"small_logistics_optional_25"
 			],
 			"x": 0,
-			"y": 223
+			"y": 274
 		},
 		{
 			"id": "escort_package_1",
 			"type": "escort_package",
 			"connectedTo": [],
-			"x": -709,
-			"y": 1568
+			"x": -1108,
+			"y": 1286
 		},
 		{
 			"id": "beam_damage_5",

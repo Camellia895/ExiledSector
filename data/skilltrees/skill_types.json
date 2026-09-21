@@ -584,7 +584,7 @@
 			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"vanillaHullMod": "escort_package",
-			"description": "While within range of a larger friendly ship, increases this ship's maneuverability, top speed, and ballistic/energy weapon range.",
+			"description": "When this ship is within approximately 1000 su of a larger friendly vessel, increases this ship's maneuverability by 25%, and top speed by 10%. Also increases ballistic and energy weapon range by 20%.\n\nThese bonuses are doubled for destroyers when the nearby friendly is a capital ship.",
 			"todo": "Real vanilla effect is a continuous proximity check against nearby larger friendly ships each combat frame - magnitude fades in/out with distance (full within ~700su, fading to 0 by ~1200su) and doubles for a destroyer escorting a capital ship. This is a dynamic, position-dependent combat mechanic, not a fixed per-ship magnitude - deliberately left on vanillaHullMod passthrough rather than approximate it as an always-on bonus."
 		},
 		{
@@ -930,7 +930,7 @@
 			"icon": "graphics/icons/circular/notable_passives/operations_center.png",
 			"opCost": 4,
 			"xpCost": 2000,
-			"tier": "NOTABLE",
+			"tier": "KEYSTONE",
 			"effects": [
 				{
 					"effect": "COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP",
