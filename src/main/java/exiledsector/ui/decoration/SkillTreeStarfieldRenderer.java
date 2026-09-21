@@ -155,6 +155,7 @@ public class SkillTreeStarfieldRenderer {
         return wrapped;
     }
 
+    // TODO: this loadedSprites/failedSprites/ensureTextureLoaded pattern is copy-pasted across 5 renderer classes - extract a shared SpriteCache utility.
     private boolean ensureTextureLoaded(String path) {
         if (loadedSprites.contains(path)) return true;
         if (failedSprites.contains(path)) return false;

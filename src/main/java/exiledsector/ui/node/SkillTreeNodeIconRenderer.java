@@ -83,6 +83,7 @@ final class SkillTreeNodeIconRenderer {
         GL11.glColorMask(true, true, true, true);
     }
 
+    // TODO: this loadedSprites/ensureTextureLoaded pattern is copy-pasted across 5 renderer classes - extract a shared SpriteCache utility.
     private boolean ensureTextureLoaded(String spritePath) {
         if (loadedSprites.add(spritePath)) {
             try {

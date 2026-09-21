@@ -93,6 +93,7 @@ final class SkillTreeNodeTooltipRenderer {
         body.drawable.draw(boxX + TOOLTIP_PADDING, bodyY);
     }
 
+    // TODO: this wrap/measure/cache logic duplicates SkillTreeStatPanel.buildMultiLineText - extract a shared DrawableTextCache/TooltipTextBuilder utility.
     private SkillTreePanelStyle.TooltipText buildTooltipText(LazyFont font, String rawText, float fontSize, Color color) {
         String wrapped = font.wrapString(rawText, fontSize, TOOLTIP_MAX_TEXT_WIDTH, TOOLTIP_MAX_TEXT_HEIGHT);
         String[] lines = wrapped.split("\n", -1);

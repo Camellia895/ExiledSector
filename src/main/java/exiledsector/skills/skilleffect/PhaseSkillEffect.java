@@ -19,18 +19,19 @@ import java.util.Map;
 
 import static exiledsector.skills.skilleffect.SkillEffectText.pct;
 import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
+import static exiledsector.skills.skilleffect.SkillEffectText.pctMore;
 
 public enum PhaseSkillEffect implements SkillEffect {
 
     PHASE_CLOAK_ACTIVATION_COST_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getPhaseCloakActivationCostBonus().modifyMult(modId, 1f + magnitude / 100f);
+            SkillEffectSupport.applyMult(stats.getPhaseCloakActivationCostBonus(), modId, magnitude);
         }
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "phase cloak activation cost");
+            return pctMore(magnitude, "phase cloak activation cost");
         }
     },
     PHASE_CLOAK_FLUX_THRESHOLD_PERCENT {
@@ -63,7 +64,7 @@ public enum PhaseSkillEffect implements SkillEffect {
             }
 
             MutableShipStatsAPI stats = ship.getMutableStats();
-            float mult = 1f + magnitude / 100f;
+            float mult = SkillEffectSupport.multFrom(magnitude);
             MutableStat[] boosted = {
                     stats.getFluxDissipation(),
                     stats.getBallisticRoFMult(),
@@ -84,7 +85,7 @@ public enum PhaseSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "flux dissipation, weapon rate of fire, and ammo regeneration while phased");
+            return pctMore(magnitude, "flux dissipation, weapon rate of fire, and ammo regeneration while phased");
         }
     },
     PHASE_ANCHOR_EMERGENCY_DIVE {

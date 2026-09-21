@@ -13,6 +13,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Stats;
 
 import static exiledsector.skills.skilleffect.SkillEffectText.pct;
 import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
+import static exiledsector.skills.skilleffect.SkillEffectText.pctMore;
 import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
 
 public enum ShieldSkillEffect implements SkillEffect {
@@ -127,12 +128,12 @@ public enum ShieldSkillEffect implements SkillEffect {
     SHIELD_ARC_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getShieldArcBonus().modifyMult(modId, 1f + magnitude / 100f);
+            SkillEffectSupport.applyMult(stats.getShieldArcBonus(), modId, magnitude);
         }
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "shield arc");
+            return pctMore(magnitude, "shield arc");
         }
     },
     SHIELD_PIERCE_CHANCE_PERCENT {
@@ -149,12 +150,12 @@ public enum ShieldSkillEffect implements SkillEffect {
     SHIELD_PIERCE_CHANCE_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getStat(Stats.SHIELD_PIERCED_MULT).modifyMult(modId, 1f + magnitude / 100f);
+            SkillEffectSupport.applyMult(stats.getDynamic().getStat(Stats.SHIELD_PIERCED_MULT), modId, magnitude);
         }
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "chance for shields to be pierced by EMP arcs");
+            return pctMore(magnitude, "chance for shields to be pierced by EMP arcs");
         }
     },
     SHIELD_UPKEEP_PERCENT {
@@ -171,12 +172,12 @@ public enum ShieldSkillEffect implements SkillEffect {
     SHIELD_UPKEEP_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getShieldUpkeepMult().modifyMult(modId, 1f + magnitude / 100f);
+            SkillEffectSupport.applyMult(stats.getShieldUpkeepMult(), modId, magnitude);
         }
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "shield flux upkeep");
+            return pctMore(magnitude, "shield flux upkeep");
         }
     },
     SHIELD_TURN_RATE_PERCENT {

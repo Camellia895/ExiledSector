@@ -21,4 +21,9 @@ final class SkillEffectText {
         String verb = magnitude >= 0 ? "Increases " : "Decreases ";
         return verb + stat + " by " + pct(Math.abs(magnitude)) + ".";
     }
+
+    static String pctMore(float magnitude, String stat) {
+        String verb = magnitude >= 0 ? "more " : "less ";
+        return pct(Math.abs(magnitude)) + "% " + verb + stat + ".";
+    }
 }

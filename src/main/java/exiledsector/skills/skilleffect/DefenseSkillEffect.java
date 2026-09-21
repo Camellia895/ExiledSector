@@ -3,8 +3,8 @@ package exiledsector.skills.skilleffect;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 
-import static exiledsector.skills.skilleffect.SkillEffectText.pct;
 import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
+import static exiledsector.skills.skilleffect.SkillEffectText.pctMore;
 import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
 
 public enum DefenseSkillEffect implements SkillEffect {
@@ -17,7 +17,7 @@ public enum DefenseSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return "Increases hull points by " + pct(magnitude) + "%.";
+            return pctChange(magnitude, "hull points");
         }
     },
     ARMOR_FLAT {
@@ -61,7 +61,7 @@ public enum DefenseSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return "Increases armor rating by " + pct(magnitude) + "%.";
+            return pctChange(magnitude, "armor rating");
         }
     },
     SHIELD_ABSORPTION_PERCENT {
@@ -78,12 +78,12 @@ public enum DefenseSkillEffect implements SkillEffect {
     SHIELD_DAMAGE_TAKEN_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getShieldDamageTakenMult().modifyMult(modId, 1f + magnitude / 100f);
+            SkillEffectSupport.applyMult(stats.getShieldDamageTakenMult(), modId, magnitude);
         }
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "damage taken by shields");
+            return pctMore(magnitude, "damage taken by shields");
         }
     },
     ENGINE_DURABILITY_PERCENT {
@@ -112,14 +112,14 @@ public enum DefenseSkillEffect implements SkillEffect {
     REPAIR_TIME_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            float mult = 1f + magnitude / 100f;
+            float mult = SkillEffectSupport.multFrom(magnitude);
             stats.getCombatWeaponRepairTimeMult().modifyMult(modId, mult);
             stats.getCombatEngineRepairTimeMult().modifyMult(modId, mult);
         }
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "weapon and engine repair time");
+            return pctMore(magnitude, "weapon and engine repair time");
         }
     },
     EMP_DAMAGE_TAKEN_PERCENT {
@@ -136,12 +136,12 @@ public enum DefenseSkillEffect implements SkillEffect {
     EMP_DAMAGE_TAKEN_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getEmpDamageTakenMult().modifyMult(modId, 1f + magnitude / 100f);
+            SkillEffectSupport.applyMult(stats.getEmpDamageTakenMult(), modId, magnitude);
         }
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "EMP damage taken");
+            return pctMore(magnitude, "EMP damage taken");
         }
     },
     ENERGY_DAMAGE_TAKEN_PERCENT {

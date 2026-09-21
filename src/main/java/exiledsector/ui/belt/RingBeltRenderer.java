@@ -13,6 +13,7 @@ public final class RingBeltRenderer {
     private RingBeltRenderer() {
     }
 
+    // TODO: setup/teardown and segment-count math here duplicates AuroraBeltRenderer - extract shared beginRadialBand/endRadialBand + computeSegments helpers.
     public static void render(SpriteAPI texture, float cx, float cy, float innerRadius, float outerRadius, Color color, float alphaMult) {
         float middleRadius = (innerRadius + outerRadius) / 2f;
         float circumference = (float) (2 * Math.PI * middleRadius);

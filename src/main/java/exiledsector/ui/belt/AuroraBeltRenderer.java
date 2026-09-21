@@ -20,6 +20,7 @@ public final class AuroraBeltRenderer {
     private AuroraBeltRenderer() {
     }
 
+    // TODO: setup/teardown and segment-count math here duplicates RingBeltRenderer - extract shared beginRadialBand/endRadialBand + computeSegments helpers.
     public static void render(SpriteAPI texture, float cx, float cy, float innerRadius, float outerRadius,
                                Color color, float alphaMult, float elapsedSeconds) {
         float phaseAngleDeg = (elapsedSeconds * PHASE_DEG_PER_SEC) % 360f;

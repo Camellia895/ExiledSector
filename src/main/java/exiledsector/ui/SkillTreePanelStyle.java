@@ -53,6 +53,7 @@ public final class SkillTreePanelStyle {
         return tooltipFont;
     }
 
+    // TODO: this filled-quad GL setup/teardown is duplicated in SkillTreeStatPanel and SkillTreeNodeDropdownRenderer - extract a shared GLDraw.fillQuad(x,y,w,h,color,alpha) helper.
     public void drawTooltipBackground(float x, float y, float width, float height, float alphaMult, Color borderColor) {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);

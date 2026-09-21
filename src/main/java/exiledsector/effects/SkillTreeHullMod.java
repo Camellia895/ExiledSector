@@ -22,6 +22,7 @@ public class SkillTreeHullMod extends BaseHullMod {
 
     private static final String MOD_ID_PREFIX = "exiledSector_skill_";
 
+    // TODO: these 4 methods repeat the same fetch-data/loop-allocated-nodes/resolve-type/dispatch skeleton - extract a shared forEachAllocatedEffect(member, hullSize, callback) helper.
     @Override
     public void applyEffectsBeforeShipCreation(HullSize hullSize, MutableShipStatsAPI stats, String id) {
         FleetMemberAPI member = stats.getFleetMember();

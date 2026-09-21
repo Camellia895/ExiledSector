@@ -4,6 +4,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 
 import static exiledsector.skills.skilleffect.SkillEffectText.pct;
 import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
+import static exiledsector.skills.skilleffect.SkillEffectText.pctMore;
 import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
 
 public enum WeaponSkillEffect implements SkillEffect {
@@ -16,7 +17,7 @@ public enum WeaponSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return "Increases ballistic weapon damage by " + pct(magnitude) + "%.";
+            return pctChange(magnitude, "ballistic weapon damage");
         }
     },
     MISSILE_DAMAGE_PERCENT {
@@ -27,7 +28,7 @@ public enum WeaponSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return "Increases missile weapon damage by " + pct(magnitude) + "%.";
+            return pctChange(magnitude, "missile weapon damage");
         }
     },
     NON_BEAM_ENERGY_DAMAGE_PERCENT {
@@ -38,7 +39,7 @@ public enum WeaponSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return "Increases non-beam energy weapon damage by " + pct(magnitude) + "%.";
+            return pctChange(magnitude, "non-beam energy weapon damage");
         }
     },
     BEAM_DAMAGE_PERCENT {
@@ -49,7 +50,7 @@ public enum WeaponSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return "Increases beam weapon damage by " + pct(magnitude) + "%.";
+            return pctChange(magnitude, "beam weapon damage");
         }
     },
     ENERGY_DAMAGE_PERCENT {
@@ -61,21 +62,18 @@ public enum WeaponSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return "Increases beam and non-beam energy weapon damage by " + pct(magnitude) + "%.";
+            return pctChange(magnitude, "beam and non-beam energy weapon damage");
         }
     },
     ALL_WEAPON_DAMAGE_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getBallisticWeaponDamageMult().modifyPercent(modId, magnitude);
-            stats.getMissileWeaponDamageMult().modifyPercent(modId, magnitude);
-            stats.getEnergyWeaponDamageMult().modifyPercent(modId, magnitude);
-            stats.getBeamWeaponDamageMult().modifyPercent(modId, magnitude);
+            SkillEffectSupport.applyAllWeaponDamagePercent(stats, modId, magnitude);
         }
 
         @Override
         public String describe(float magnitude) {
-            return "Increases damage of all weapon types by " + pct(magnitude) + "%.";
+            return pctChange(magnitude, "damage of all weapon types");
         }
     },
     BALLISTIC_WEAPON_RANGE_PERCENT {
@@ -92,12 +90,12 @@ public enum WeaponSkillEffect implements SkillEffect {
     BALLISTIC_WEAPON_RANGE_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getBallisticWeaponRangeBonus().modifyMult(modId, 1f + magnitude / 100f);
+            SkillEffectSupport.applyMult(stats.getBallisticWeaponRangeBonus(), modId, magnitude);
         }
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "ballistic weapon range");
+            return pctMore(magnitude, "ballistic weapon range");
         }
     },
     ENERGY_WEAPON_RANGE_PERCENT {
@@ -114,12 +112,12 @@ public enum WeaponSkillEffect implements SkillEffect {
     ENERGY_WEAPON_RANGE_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getEnergyWeaponRangeBonus().modifyMult(modId, 1f + magnitude / 100f);
+            SkillEffectSupport.applyMult(stats.getEnergyWeaponRangeBonus(), modId, magnitude);
         }
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "energy weapon range");
+            return pctMore(magnitude, "energy weapon range");
         }
     },
     ENERGY_WEAPON_RANGE_FLAT {
@@ -147,12 +145,12 @@ public enum WeaponSkillEffect implements SkillEffect {
     BEAM_WEAPON_RANGE_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getBeamWeaponRangeBonus().modifyMult(modId, 1f + magnitude / 100f);
+            SkillEffectSupport.applyMult(stats.getBeamWeaponRangeBonus(), modId, magnitude);
         }
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "beam weapon range");
+            return pctMore(magnitude, "beam weapon range");
         }
     },
     BALLISTIC_AMMO_PERCENT {
@@ -202,12 +200,12 @@ public enum WeaponSkillEffect implements SkillEffect {
     WEAPON_TURN_RATE_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getWeaponTurnRateBonus().modifyMult(modId, 1f + magnitude / 100f);
+            SkillEffectSupport.applyMult(stats.getWeaponTurnRateBonus(), modId, magnitude);
         }
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "turret turn rate");
+            return pctMore(magnitude, "turret turn rate");
         }
     },
     WEAPON_DURABILITY_PERCENT {
@@ -235,12 +233,12 @@ public enum WeaponSkillEffect implements SkillEffect {
     WEAPON_RANGE_FALLOFF_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getWeaponRangeMultPastThreshold().modifyMult(modId, 1f + magnitude / 100f);
+            SkillEffectSupport.applyMult(stats.getWeaponRangeMultPastThreshold(), modId, magnitude);
         }
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "weapon effectiveness past normal range");
+            return pctMore(magnitude, "weapon effectiveness past normal range");
         }
     },
     MISSILE_GUIDANCE_PERCENT {
@@ -290,12 +288,12 @@ public enum WeaponSkillEffect implements SkillEffect {
     BEAM_WEAPON_TURN_RATE_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getBeamWeaponTurnRateBonus().modifyMult(modId, 1f + magnitude / 100f);
+            SkillEffectSupport.applyMult(stats.getBeamWeaponTurnRateBonus(), modId, magnitude);
         }
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "beam weapon turn rate");
+            return pctMore(magnitude, "beam weapon turn rate");
         }
     },
     WEAPON_RECOIL_PERCENT {
@@ -314,7 +312,7 @@ public enum WeaponSkillEffect implements SkillEffect {
     WEAPON_RECOIL_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            float mult = 1f + magnitude / 100f;
+            float mult = SkillEffectSupport.multFrom(magnitude);
             stats.getMaxRecoilMult().modifyMult(modId, mult);
             stats.getRecoilPerShotMult().modifyMult(modId, mult);
             stats.getRecoilDecayMult().modifyMult(modId, mult);
@@ -322,7 +320,7 @@ public enum WeaponSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "weapon recoil");
+            return pctMore(magnitude, "weapon recoil");
         }
     },
     WEAPON_RANGE_THRESHOLD {
@@ -361,12 +359,12 @@ public enum WeaponSkillEffect implements SkillEffect {
     MISSILE_RANGE_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getMissileWeaponRangeBonus().modifyMult(modId, 1f + magnitude / 100f);
+            SkillEffectSupport.applyMult(stats.getMissileWeaponRangeBonus(), modId, magnitude);
         }
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "missile weapon range");
+            return pctMore(magnitude, "missile weapon range");
         }
     },
     MISSILE_ACCELERATION_PERCENT {
@@ -411,17 +409,6 @@ public enum WeaponSkillEffect implements SkillEffect {
         @Override
         public String describe(float magnitude) {
             return "Increases the chance for missiles to resist enemy ECM and flares by " + pct(magnitude * 100f) + "%.";
-        }
-    },
-    DAMAGE_TO_MISSILES_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDamageToMissiles().modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "damage dealt to missiles");
         }
     };
 

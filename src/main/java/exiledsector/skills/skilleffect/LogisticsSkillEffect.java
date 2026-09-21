@@ -3,6 +3,7 @@ package exiledsector.skills.skilleffect;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 
 import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
+import static exiledsector.skills.skilleffect.SkillEffectText.pctMore;
 import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
 
 public enum LogisticsSkillEffect implements SkillEffect {
@@ -110,12 +111,12 @@ public enum LogisticsSkillEffect implements SkillEffect {
     SENSOR_PROFILE_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getSensorProfile().modifyMult(modId, 1f + magnitude / 100f);
+            SkillEffectSupport.applyMult(stats.getSensorProfile(), modId, magnitude);
         }
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "sensor profile");
+            return pctMore(magnitude, "sensor profile");
         }
     },
     SENSOR_STRENGTH_PERCENT {
@@ -176,23 +177,23 @@ public enum LogisticsSkillEffect implements SkillEffect {
     CR_LOSS_PER_SECOND_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getCRLossPerSecondPercent().modifyMult(modId, 1f + magnitude / 100f);
+            SkillEffectSupport.applyMult(stats.getCRLossPerSecondPercent(), modId, magnitude);
         }
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "rate of combat readiness loss from extended deployment");
+            return pctMore(magnitude, "rate of combat readiness loss from extended deployment");
         }
     },
     MIN_CREW_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getMinCrewMod().modifyMult(modId, 1f + magnitude / 100f);
+            SkillEffectSupport.applyMult(stats.getMinCrewMod(), modId, magnitude);
         }
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "minimum crew required");
+            return pctMore(magnitude, "minimum crew required");
         }
     },
     MIN_CREW_PERCENT {
@@ -245,23 +246,23 @@ public enum LogisticsSkillEffect implements SkillEffect {
     SUPPLIES_PER_MONTH_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getSuppliesPerMonth().modifyMult(modId, 1f + magnitude / 100f);
+            SkillEffectSupport.applyMult(stats.getSuppliesPerMonth(), modId, magnitude);
         }
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "supply use for maintenance");
+            return pctMore(magnitude, "supply use for maintenance");
         }
     },
     FUEL_USE_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getFuelUseMod().modifyMult(modId, 1f + magnitude / 100f);
+            SkillEffectSupport.applyMult(stats.getFuelUseMod(), modId, magnitude);
         }
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "fuel use rate");
+            return pctMore(magnitude, "fuel use rate");
         }
     },
     REMOVE_CIVILIAN_HULL_PENALTY {
@@ -290,12 +291,12 @@ public enum LogisticsSkillEffect implements SkillEffect {
     CREW_LOSS_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getCrewLossMult().modifyMult(modId, 1f + magnitude / 100f);
+            SkillEffectSupport.applyMult(stats.getCrewLossMult(), modId, magnitude);
         }
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "crew casualties");
+            return pctMore(magnitude, "crew casualties");
         }
     },
     SURVEY_COST_REDUCTION_HEAVY_MACHINERY {

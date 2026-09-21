@@ -119,6 +119,7 @@ final class SkillTreeNodeDropdownRenderer {
         return rows;
     }
 
+    // TODO: this filled-quad GL setup/teardown is duplicated in SkillTreePanelStyle and SkillTreeStatPanel - extract a shared GLDraw.fillQuad(x,y,w,h,color,alpha) helper.
     private void drawDropdownRowHighlight(DropdownRow row, float alphaMult) {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
@@ -133,6 +134,7 @@ final class SkillTreeNodeDropdownRenderer {
         GL11.glDisable(GL11.GL_BLEND);
     }
 
+    // TODO: this hand-rolled Map<String, DrawableString> computeIfAbsent cache duplicates the pattern in SkillTreeStatPanel's header/toggle text caches - extract a shared DrawableTextCache utility.
     private LazyFont.DrawableString getDropdownRowText(LazyFont font, SkillType option) {
         return dropdownRowText.computeIfAbsent(option.getId(), id -> {
             LazyFont.DrawableString text = font.createText(option.getDisplayName(), TOOLTIP_BODY_COLOR, DROPDOWN_FONT_SIZE);

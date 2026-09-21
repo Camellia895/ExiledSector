@@ -110,6 +110,7 @@ final class SkillTreeStatPanel {
         return layouts;
     }
 
+    // TODO: this filled-quad GL setup/teardown is duplicated in SkillTreePanelStyle and SkillTreeNodeDropdownRenderer - extract a shared GLDraw.fillQuad(x,y,w,h,color,alpha) helper.
     private void drawHeaderBarBackground(float x, float y, float width, float height, float alphaMult) {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
@@ -282,6 +283,7 @@ final class SkillTreeStatPanel {
         return String.format("%.1f", value);
     }
 
+    // TODO: this wrap/measure/cache logic duplicates SkillTreeNodeTooltipRenderer.buildTooltipText - extract a shared DrawableTextCache/TooltipTextBuilder utility.
     private SkillTreePanelStyle.TooltipText buildMultiLineText(LazyFont font, List<String> lines, float fontSize, Color color) {
         String joined = String.join("\n", lines);
 

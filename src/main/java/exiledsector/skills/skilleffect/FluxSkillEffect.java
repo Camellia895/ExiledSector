@@ -3,8 +3,8 @@ package exiledsector.skills.skilleffect;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 
-import static exiledsector.skills.skilleffect.SkillEffectText.pct;
 import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
+import static exiledsector.skills.skilleffect.SkillEffectText.pctMore;
 import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
 
 public enum FluxSkillEffect implements SkillEffect {
@@ -17,7 +17,7 @@ public enum FluxSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return "Increases flux capacity by " + pct(magnitude) + "%.";
+            return pctChange(magnitude, "flux capacity");
         }
     },
     FLUX_CAPACITY_FLAT {
@@ -39,7 +39,7 @@ public enum FluxSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return "Increases flux dissipation by " + pct(magnitude) + "%.";
+            return pctChange(magnitude, "flux dissipation");
         }
     },
     FLUX_DISSIPATION_FLAT {
@@ -56,12 +56,12 @@ public enum FluxSkillEffect implements SkillEffect {
     FLUX_DISSIPATION_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getFluxDissipation().modifyMult(modId, 1f + magnitude / 100f);
+            SkillEffectSupport.applyMult(stats.getFluxDissipation(), modId, magnitude);
         }
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "flux dissipation");
+            return pctMore(magnitude, "flux dissipation");
         }
     },
     VENT_RATE_PERCENT {
@@ -78,12 +78,12 @@ public enum FluxSkillEffect implements SkillEffect {
     VENT_RATE_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getVentRateMult().modifyMult(modId, 1f + magnitude / 100f);
+            SkillEffectSupport.applyMult(stats.getVentRateMult(), modId, magnitude);
         }
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "venting speed");
+            return pctMore(magnitude, "venting speed");
         }
     },
     ZERO_FLUX_ALWAYS_ON {

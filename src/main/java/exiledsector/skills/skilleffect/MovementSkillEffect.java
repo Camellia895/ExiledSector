@@ -3,6 +3,7 @@ package exiledsector.skills.skilleffect;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 
 import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
+import static exiledsector.skills.skilleffect.SkillEffectText.pctMore;
 import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
 
 public enum MovementSkillEffect implements SkillEffect {
@@ -43,12 +44,12 @@ public enum MovementSkillEffect implements SkillEffect {
     TOP_SPEED_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getMaxSpeed().modifyMult(modId, 1f + magnitude / 100f);
+            SkillEffectSupport.applyMult(stats.getMaxSpeed(), modId, magnitude);
         }
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "top speed");
+            return pctMore(magnitude, "top speed");
         }
     },
     ACCELERATION_PERCENT {

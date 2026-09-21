@@ -14,6 +14,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Stats;
 
 import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
 import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
+import static exiledsector.skills.skilleffect.SkillEffectText.pctMore;
 
 public enum MiscSkillEffect implements SkillEffect {
 
@@ -84,12 +85,12 @@ public enum MiscSkillEffect implements SkillEffect {
     ELECTRONIC_WARFARE_PENALTY_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod(Stats.ELECTRONIC_WARFARE_PENALTY_MOD).modifyMult(modId, 1f + magnitude / 100f);
+            SkillEffectSupport.applyMult(stats.getDynamic().getMod(Stats.ELECTRONIC_WARFARE_PENALTY_MOD), modId, magnitude);
         }
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "electronic warfare penalty against this ship's weapon range");
+            return pctMore(magnitude, "electronic warfare penalty against this ship's weapon range");
         }
     },
 
@@ -129,12 +130,12 @@ public enum MiscSkillEffect implements SkillEffect {
     PEAK_CR_DURATION_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getPeakCRDuration().modifyMult(modId, 1f + magnitude / 100f);
+            SkillEffectSupport.applyMult(stats.getPeakCRDuration(), modId, magnitude);
         }
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "peak combat readiness duration");
+            return pctMore(magnitude, "peak combat readiness duration");
         }
     },
     COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP {

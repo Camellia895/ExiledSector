@@ -424,14 +424,16 @@
   }
   .tagChip.active { background: var(--accent-dim); border-color: var(--accent); color: var(--text); }
   .prereqList { display: flex; flex-direction: column; gap: 5px; }
+  .prereqRow { display: flex; align-items: center; gap: 6px; }
   .prereqItem {
-    display: flex; align-items: center; gap: 6px;
+    display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0;
     background: var(--panel-2); border: 1px solid var(--line-soft);
     border-radius: 5px; padding: 5px 8px; font-size: 12px; font-family: var(--font-mono);
   }
   .prereqItem span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .prereqItem button { background: none; border: none; color: var(--text-faint); cursor: pointer; font-size: 13px; line-height: 1; }
   .prereqItem button:hover { color: var(--danger); }
+  .prereqRow input[type="checkbox"] { flex: none; }
   .selectableRow { cursor: pointer; }
   .selectableRow:hover { border-color: var(--accent-dim); }
   .typePickerList { display: flex; flex-direction: column; gap: 5px; max-height: 60vh; overflow-y: auto; padding: 4px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 6px; }
@@ -2091,10 +2093,12 @@ function refreshInspector(){
   }).join('');
   var prereqHtml = (n.connectedTo||[]).map(function(pid){
     var pn = nodeById(pid);
-    return '<div class="prereqItem">' +
+    return '<div class="prereqRow">' +
+      '<div class="prereqItem">' +
+        '<span>' + pid + (pn ? '' : ' (missing!)') + '</span>' +
+        '<button data-remove-prereq="' + pid + '">X</button>' +
+      '</div>' +
       '<input type="checkbox" data-toggle-hidden-connector="' + pid + '"' + (isConnectorHidden(n.id, pid) ? ' checked' : '') + ' title="Hide this connector\u0027s line in-game (the connection still counts for unlocking)">' +
-      '<span>' + pid + (pn ? '' : ' (missing!)') + '</span>' +
-      '<button data-remove-prereq="' + pid + '">X</button>' +
     '</div>';
   }).join('') || '<div class="hint">None - renders with no connector line until you add one (e.g. a root node).</div>';
   var otherNodeOptions = state.nodes.filter(function(o){ return o.id !== n.id; }).map(function(o){
@@ -2103,6 +2107,7 @@ function refreshInspector(){
 
   var statsHtml = '';
   if (t) {
+    // TODO: this plain effect-row builder duplicates the type-editor modal's copy below - both should share a renderEffectRows/syncEffectRowsFromInputs pair, mirroring the existing renderHullSizeEffectRows/syncHullSizeEffectsFromInputs pattern.
     var statRows = (t.effects || []).map(function(e, i){
       var options = sortedEffectOptionsHtml(e.effect);
       return '<div class="fieldRow" style="align-items:flex-end">' +
@@ -2148,7 +2153,7 @@ function refreshInspector(){
     : '') +
     (tier === 'WORMHOLE' ?
       '<div class="field"><label>Wormhole colour</label><input type="color" value="' + (n.wormholeColor || '#ffffff') + '" data-field="wormholeColor"></div>' +
-      '<div class="hint">To pair this wormhole with another, add it as a normal connection below, then double-click that connector line on the canvas to hide it. It stays a real prerequisite edge (allocating/deallocating behaves exactly like any other connection) - only the line is hidden.</div>'
+      '<div class="hint">To pair this wormhole with another, add it as a normal connection below, then check its box to hide the line. It stays a real prerequisite edge (allocating/deallocating behaves exactly like any other connection) - only the line is hidden.</div>'
     : '') +
     '<hr class="sep">' +
     statsHtml +
@@ -2989,6 +2994,7 @@ function openTypeModal(existingType, onSave, onClose){
 
   function renderModal(){
     var tierOptions = ['SMALL','NOTABLE','KEYSTONE','WORMHOLE','ROOT'].map(function(tr){ return '<option value="'+tr+'"'+(tr===tierOf(t)?' selected':'')+'>'+tr+'</option>'; }).join('');
+    // TODO: duplicates the node inspector's plain effect-row builder above - see the TODO there.
     var effectRows = effectsDraft.map(function(e, i){
       var options = sortedEffectOptionsHtml(e.effect);
       return '<div class="fieldRow" style="align-items:flex-end">' +

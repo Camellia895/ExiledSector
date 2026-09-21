@@ -7,6 +7,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.WingRole;
 
 import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
+import static exiledsector.skills.skilleffect.SkillEffectText.pctMore;
 import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
 
 public enum FighterSkillEffect implements SkillEffect {
@@ -18,11 +19,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
-            MutableShipStatsAPI fighterStats = fighter.getMutableStats();
-            fighterStats.getBallisticWeaponDamageMult().modifyPercent(modId, magnitude);
-            fighterStats.getMissileWeaponDamageMult().modifyPercent(modId, magnitude);
-            fighterStats.getEnergyWeaponDamageMult().modifyPercent(modId, magnitude);
-            fighterStats.getBeamWeaponDamageMult().modifyPercent(modId, magnitude);
+            applyRoleDamage(fighter, modId, magnitude);
         }
 
         @Override
@@ -37,7 +34,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
-            fighter.getMutableStats().getMaxSpeed().modifyPercent(modId, magnitude);
+            applyRoleTopSpeed(fighter, modId, magnitude);
         }
 
         @Override
@@ -59,23 +56,23 @@ public enum FighterSkillEffect implements SkillEffect {
     FIGHTER_CREW_LOSS_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getStat("fighter_crew_loss_mult").modifyMult(modId, 1f + magnitude / 100f);
+            SkillEffectSupport.applyMult(stats.getDynamic().getStat("fighter_crew_loss_mult"), modId, magnitude);
         }
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "casualties suffered by fighter pilots launched from this ship");
+            return pctMore(magnitude, "casualties suffered by fighter pilots launched from this ship");
         }
     },
     FIGHTER_REFIT_TIME_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getFighterRefitTimeMult().modifyMult(modId, 1f + magnitude / 100f);
+            SkillEffectSupport.applyMult(stats.getFighterRefitTimeMult(), modId, magnitude);
         }
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "fighter refit time");
+            return pctMore(magnitude, "fighter refit time");
         }
     },
     FIGHTER_REFIT_TIME_PERCENT {
@@ -92,14 +89,14 @@ public enum FighterSkillEffect implements SkillEffect {
     FIGHTER_REPLACEMENT_RATE_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            float mult = 1f / (1f + magnitude / 100f);
+            float mult = 1f / SkillEffectSupport.multFrom(magnitude);
             stats.getDynamic().getStat("replacement_rate_decrease_mult").modifyMult(modId, mult);
             stats.getDynamic().getStat("replacement_rate_increase_mult").modifyMult(modId, mult);
         }
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "fighter replacement rate (both decay and recovery)");
+            return pctMore(magnitude, "fighter replacement rate (both decay and recovery)");
         }
     },
     FIGHTER_REPLACEMENT_DECAY_PERCENT {
@@ -625,11 +622,7 @@ public enum FighterSkillEffect implements SkillEffect {
     }
 
     private static void applyRoleDamage(ShipAPI fighter, String modId, float magnitude) {
-        MutableShipStatsAPI fighterStats = fighter.getMutableStats();
-        fighterStats.getBallisticWeaponDamageMult().modifyPercent(modId, magnitude);
-        fighterStats.getMissileWeaponDamageMult().modifyPercent(modId, magnitude);
-        fighterStats.getEnergyWeaponDamageMult().modifyPercent(modId, magnitude);
-        fighterStats.getBeamWeaponDamageMult().modifyPercent(modId, magnitude);
+        SkillEffectSupport.applyAllWeaponDamagePercent(fighter.getMutableStats(), modId, magnitude);
     }
 
     private static void applyRoleTopSpeed(ShipAPI fighter, String modId, float magnitude) {

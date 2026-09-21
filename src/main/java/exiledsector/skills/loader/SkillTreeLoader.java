@@ -27,6 +27,7 @@ public final class SkillTreeLoader {
     private SkillTreeLoader() {
     }
 
+    // TODO: these 4 load methods repeat the same try/catch/log/fallback wrapper - extract a shared loadJsonOrDefault(context, parser, fallback) helper.
     public static List<SkillNode> loadNodes() {
         try {
             Map<String, SkillType> skillTypes = SkillTypeLoader.loadSkillTypes();
