@@ -34,15 +34,40 @@ import java.awt.Color;
  * size - that sub-pixel repeat noise, worse here than on the plain ring belt because additive
  * blending doesn't average it away the way alpha blending does, is what "glitchy" actually was.
  * Tile count is instead derived from the texture band's own aspect ratio (height/width) so each
- * repeat is roughly as long (along the ring) as the band is thick - scale-independent - and the
- * wobble distance is derived from segment size the same way RingBeltRenderer's tessellation is,
- * keeping every distance in this method proportionate to the small ring it's actually drawing.
+ * repeat is roughly as long (along the ring) as the band is thick - scale-independent.
+ * <p>
+ * The outer-edge wobble is what actually animates in steady state (texture content itself never
+ * scrolls - texProgress restarts at 0 every frame - and vanilla's radius-pulse is flare-only,
+ * zero for us). Vanilla ties its wobble distance to the same pixelsPerSegment=50 constant, which
+ * happens to still read as "small but visible" against a campaign-scale ring; naively shrinking
+ * that same constant 10x for tessellation (above) shrinks the wobble 10x too, to a fraction of a
+ * screen pixel - present in the math, invisible on screen, which is why nothing appeared to move.
+ * The wobble is instead sized as a fraction of the belt's own thickness, decoupled from
+ * tessellation granularity, so it stays visible regardless of the ring's absolute size.
+ * <p>
+ * That wobble oscillates with angle at up to x10 cycles per revolution (the iter=0 pass's phase
+ * multiplier). PIXELS_PER_SEGMENT=5 alone gives a small ring only ~80 segments total, i.e. ~8
+ * samples per wobble cycle - well under the ~16+ a wave needs to read as smooth. MIN_SEGMENTS_FOR_WOBBLE
+ * fixes that, but sampling density was never the whole story: between two adjacent segments, the
+ * wobble vector's direction rotates by (anglePerSegment * frequency), so the outer vertex moves by
+ * roughly (wobble * anglePerSegment * frequency) - purely from the wobble - versus a "base" gap of
+ * (outerRadius * anglePerSegment) from the ring's own geometry. Their ratio, wobble * frequency /
+ * outerRadius, is independent of segment count entirely: once it approaches 1, the wobble outruns
+ * the ring's own circumference between consecutive vertices and the outer boundary folds back on
+ * itself every cycle - a real self-intersecting star shape, not a sampling artifact, which is why
+ * adding segments alone didn't fix the "edges intersecting" look. MAX_SAFE_WOBBLE_FRACTION caps the
+ * wobble so that ratio stays comfortably under 1 for any ring size.
  */
 final class AuroraBeltRenderer {
     private static final float PIXELS_PER_SEGMENT = 5f;
     private static final float BAND_WIDTH_IN_TEXTURE = 256f;
     private static final float TILE_DENSITY = 3f;
+    private static final float WOBBLE_RATIO = 0.06f;
+    private static final float MAX_SAFE_WOBBLE_FRACTION = 0.3f;
     private static final float PHASE_DEG_PER_SEC = 12f;
+    private static final float MAX_WOBBLE_FREQUENCY = 10f;
+    private static final float MIN_SAMPLES_PER_WOBBLE_CYCLE = 16f;
+    private static final float MIN_SEGMENTS_FOR_WOBBLE = MAX_WOBBLE_FREQUENCY * MIN_SAMPLES_PER_WOBBLE_CYCLE;
 
     private AuroraBeltRenderer() {
     }
@@ -52,7 +77,7 @@ final class AuroraBeltRenderer {
         float phaseAngleDeg = (elapsedSeconds * PHASE_DEG_PER_SEC) % 360f;
 
         float circumference = (float) (2 * Math.PI * (innerRadius + outerRadius) / 2f);
-        float segments = Math.round(circumference / PIXELS_PER_SEGMENT);
+        float segments = Math.max(MIN_SEGMENTS_FOR_WOBBLE, Math.round(circumference / PIXELS_PER_SEGMENT));
         float anglePerSegment = (float) (2 * Math.PI) / segments;
         float thickness = outerRadius - innerRadius;
 
@@ -62,6 +87,7 @@ final class AuroraBeltRenderer {
         float aspectRatio = imageHeight / BAND_WIDTH_IN_TEXTURE;
         float tileCount = Math.max(1f, TILE_DENSITY * circumference / (thickness * aspectRatio));
         float texPerSegment = tileCount / segments;
+        float wobble = Math.min(thickness * WOBBLE_RATIO, outerRadius * MAX_SAFE_WOBBLE_FRACTION / MAX_WOBBLE_FREQUENCY);
 
         GL11.glPushMatrix();
         GL11.glTranslatef(cx, cy, 0f);
@@ -89,7 +115,6 @@ final class AuroraBeltRenderer {
                 float sin = (float) Math.sin(theta);
                 float x1 = cos * innerRadius;
                 float y1 = sin * innerRadius;
-                float wobble = PIXELS_PER_SEGMENT * 0.33f;
                 float x2 = cos * outerRadius + (float) Math.cos(phaseAngleRad) * wobble;
                 float y2 = sin * outerRadius + (float) Math.sin(phaseAngleRad) * wobble;
 
