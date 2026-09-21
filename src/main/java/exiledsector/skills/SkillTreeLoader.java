@@ -47,6 +47,32 @@ public final class SkillTreeLoader {
         }
     }
 
+    public static List<RingBelt> loadRingBelts() {
+        try {
+            return parseRingBelts(Global.getSettings().loadJSON(DATA_PATH));
+        } catch (IOException | JSONException e) {
+            Logger.getLogger(SkillTreeLoader.class).error("Failed to load ring belts from " + DATA_PATH, e);
+            return new ArrayList<>();
+        }
+    }
+
+    public static List<RingBelt> parseRingBelts(JSONObject root) throws JSONException {
+        List<RingBelt> ringBelts = new ArrayList<>();
+        JSONArray beltArray = root.optJSONArray("ringBelts");
+        if (beltArray == null) return ringBelts;
+        for (int i = 0; i < beltArray.length(); i++) {
+            JSONObject beltJson = beltArray.getJSONObject(i);
+            ringBelts.add(new RingBelt(
+                    beltJson.getString("id"),
+                    (float) beltJson.getDouble("x"),
+                    (float) beltJson.getDouble("y"),
+                    (float) beltJson.getDouble("innerRadius"),
+                    (float) beltJson.getDouble("outerRadius"),
+                    beltJson.getString("ringArtPath")));
+        }
+        return ringBelts;
+    }
+
     public static List<StaticImage> parseStaticImages(JSONObject root) throws JSONException {
         List<StaticImage> images = new ArrayList<>();
         JSONArray imageArray = root.optJSONArray("staticImages");

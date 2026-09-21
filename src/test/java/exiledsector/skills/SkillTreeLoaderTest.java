@@ -207,4 +207,48 @@ class SkillTreeLoaderTest {
 
         assertEquals(List.of("a", "b"), List.of(images.get(0).getId(), images.get(1).getId()));
     }
+
+    @Test
+    void missingRingBeltsFieldMeansNoRingBelts() throws Exception {
+        JSONObject root = new JSONObject("{ \"nodes\": [] }");
+
+        List<RingBelt> ringBelts = SkillTreeLoader.parseRingBelts(root);
+
+        assertTrue(ringBelts.isEmpty());
+    }
+
+    @Test
+    void parsesAllFieldsOfARingBelt() throws Exception {
+        JSONObject root = new JSONObject("{ \"nodes\": [], \"ringBelts\": [ {"
+                + "\"id\": \"outer_ringbelt\","
+                + "\"x\": 100,"
+                + "\"y\": -50,"
+                + "\"innerRadius\": 2850,"
+                + "\"outerRadius\": 3150,"
+                + "\"ringArtPath\": \"graphics/planets/ring_band_dust.png\""
+                + "} ] }");
+
+        List<RingBelt> ringBelts = SkillTreeLoader.parseRingBelts(root);
+
+        assertEquals(1, ringBelts.size());
+        RingBelt belt = ringBelts.get(0);
+        assertEquals("outer_ringbelt", belt.getId());
+        assertEquals(100f, belt.getX());
+        assertEquals(-50f, belt.getY());
+        assertEquals(2850f, belt.getInnerRadius());
+        assertEquals(3150f, belt.getOuterRadius());
+        assertEquals("graphics/planets/ring_band_dust.png", belt.getRingArtPath());
+    }
+
+    @Test
+    void parsesMultipleRingBeltsInOrder() throws Exception {
+        JSONObject root = new JSONObject("{ \"nodes\": [], \"ringBelts\": ["
+                + "{\"id\": \"a\", \"x\": 0, \"y\": 0, \"innerRadius\": 100, \"outerRadius\": 200, \"ringArtPath\": \"a.png\"},"
+                + "{\"id\": \"b\", \"x\": 0, \"y\": 0, \"innerRadius\": 100, \"outerRadius\": 200, \"ringArtPath\": \"b.png\"}"
+                + "] }");
+
+        List<RingBelt> ringBelts = SkillTreeLoader.parseRingBelts(root);
+
+        assertEquals(List.of("a", "b"), List.of(ringBelts.get(0).getId(), ringBelts.get(1).getId()));
+    }
 }

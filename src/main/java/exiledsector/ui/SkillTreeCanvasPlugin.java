@@ -19,6 +19,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final SkillTreePanelStyle style;
     private final SkillTreeStarfieldRenderer starfieldRenderer;
     private final SkillTreeStaticImageRenderer staticImageRenderer;
+    private final SkillTreeRingBeltRenderer ringBeltRenderer;
     private final SkillTreeNodeRenderer nodeRenderer;
     private final SkillTreeStatPanel statPanel;
     private final float shipCardHeight;
@@ -38,6 +39,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.style = new SkillTreePanelStyle(RootCrestResolver.resolve(member));
         this.starfieldRenderer = new SkillTreeStarfieldRenderer(style);
         this.staticImageRenderer = new SkillTreeStaticImageRenderer();
+        this.ringBeltRenderer = new SkillTreeRingBeltRenderer();
         this.nodeRenderer = new SkillTreeNodeRenderer(member, style, refitButton);
         this.statPanel = new SkillTreeStatPanel(member, style);
         this.shipCardHeight = shipCardHeight;
@@ -118,6 +120,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         float centerY = centerY();
 
         starfieldRenderer.render(position, panX, panY, alphaMult);
+        ringBeltRenderer.render(centerX, centerY, zoom, alphaMult, position);
         staticImageRenderer.render(centerX, centerY, zoom, alphaMult, position);
         nodeRenderer.render(centerX, centerY, zoom, alphaMult, mouseX, mouseY, mouseKnown);
         statPanel.render(position, alphaMult);

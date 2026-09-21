@@ -11,6 +11,7 @@ public class SkillTree {
     private static final Map<String, SkillType> TYPES = new LinkedHashMap<>();
     private static final Map<String, ConnectorCurve> CURVES = new LinkedHashMap<>();
     private static final List<StaticImage> STATIC_IMAGES = new ArrayList<>();
+    private static final List<RingBelt> RING_BELTS = new ArrayList<>();
 
     private SkillTree() {
     }
@@ -20,12 +21,14 @@ public class SkillTree {
         TYPES.clear();
         CURVES.clear();
         STATIC_IMAGES.clear();
+        RING_BELTS.clear();
         TYPES.putAll(SkillTypeLoader.loadSkillTypes());
         for (SkillNode node : SkillTreeLoader.loadNodes()) {
             register(node);
         }
         CURVES.putAll(SkillTreeLoader.loadConnectorCurves());
         STATIC_IMAGES.addAll(SkillTreeLoader.loadStaticImages());
+        RING_BELTS.addAll(SkillTreeLoader.loadRingBelts());
     }
 
     public static void register(SkillNode node) {
@@ -62,5 +65,9 @@ public class SkillTree {
 
     public static List<StaticImage> getStaticImages() {
         return STATIC_IMAGES;
+    }
+
+    public static List<RingBelt> getRingBelts() {
+        return RING_BELTS;
     }
 }

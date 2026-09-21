@@ -9,12 +9,6 @@ $typesPath = Join-Path $projectRoot "data\skilltrees\skill_types.json"
 $treePath = Join-Path $projectRoot "data\skilltrees\ship_skill_tree.json"
 $staticImagesDir = Join-Path $projectRoot "graphics\backgrounds\static_images"
 $graphicsDir = Join-Path $projectRoot "graphics"
-$ringTexturePaths = @{
-    asteroids = Join-Path $projectRoot "graphics\planets\rings_asteroids0.png"
-    ice       = Join-Path $projectRoot "graphics\planets\rings_ice0.png"
-    dust      = Join-Path $projectRoot "graphics\planets\rings_dust0.png"
-    special   = Join-Path $projectRoot "graphics\planets\rings_special0.png"
-}
 
 function HueToRgbChannel($p, $q, $t) {
     if ($t -lt 0) { $t += 1 }
@@ -87,89 +81,6 @@ function MakeCircularImage($srcPath, $destPath) {
     }
 }
 
-
-# Vanilla planet-ring textures (rings_asteroids0/ice0/dust0/special0.png) are laid out as one or
-# more 256px-wide vertical bands, each band fading from transparent to solid across its width
-# (the radial cross-section of the ring) and tiling seamlessly along its height (the direction
-# that wraps around the ring's circumference). This bakes one band into a flat annulus image by
-# polar-remapping it: for every output pixel, its distance from center picks the radial sample
-# (u, across the 256px band width) and its angle picks the tiled sample (v, wrapped around the
-# band's height, repeated $tileCount times per revolution).
-function GenerateRingBelt($srcPath, $destPath, $innerRadiusWorld, $outerRadiusWorld, $bandIndex, $tileCount, $canvasPixels) {
-    $srcFull = New-Object System.Drawing.Bitmap($srcPath)
-    try {
-        $bandW = 256
-        $bandCount = [Math]::Max(1, [int]($srcFull.Width / $bandW))
-        $bi = (($bandIndex % $bandCount) + $bandCount) % $bandCount
-        $bandH = $srcFull.Height
-
-        $band = New-Object System.Drawing.Bitmap($bandW, $bandH, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
-        $bg = [System.Drawing.Graphics]::FromImage($band)
-        try {
-            $srcRect = New-Object System.Drawing.Rectangle ($bi * $bandW), 0, $bandW, $bandH
-            $dstRect = New-Object System.Drawing.Rectangle 0, 0, $bandW, $bandH
-            $bg.DrawImage($srcFull, $dstRect, $srcRect, [System.Drawing.GraphicsUnit]::Pixel)
-        } finally { $bg.Dispose() }
-
-        $bandRect = New-Object System.Drawing.Rectangle 0, 0, $bandW, $bandH
-        $bandData = $band.LockBits($bandRect, [System.Drawing.Imaging.ImageLockMode]::ReadOnly, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
-        $bandStride = $bandData.Stride
-        $bandBytes = New-Object byte[] ($bandStride * $bandH)
-        [System.Runtime.InteropServices.Marshal]::Copy($bandData.Scan0, $bandBytes, 0, $bandBytes.Length)
-        $band.UnlockBits($bandData)
-        $band.Dispose()
-
-        # Everything from here on works in a fixed-size pixel canvas independent of the anchor's
-        # world-unit radius (the staticImage's width/height stretches it back up) - keeps
-        # generation time bounded even for large rings.
-        $scale = $canvasPixels / (2.0 * $outerRadiusWorld)
-        $innerR = $innerRadiusWorld * $scale
-        $outerR = $outerRadiusWorld * $scale
-        $thickness = $outerR - $innerR
-        $cx = $canvasPixels / 2.0
-        $cy = $canvasPixels / 2.0
-
-        $out = New-Object System.Drawing.Bitmap($canvasPixels, $canvasPixels, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
-        $outRect = New-Object System.Drawing.Rectangle 0, 0, $canvasPixels, $canvasPixels
-        $outData = $out.LockBits($outRect, [System.Drawing.Imaging.ImageLockMode]::WriteOnly, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
-        $outStride = $outData.Stride
-        $outBytes = New-Object byte[] ($outStride * $canvasPixels)
-        $twoPi = 2.0 * [Math]::PI
-
-        for ($y = 0; $y -lt $canvasPixels; $y++) {
-            $dy = $y - $cy
-            $rowOffset = $y * $outStride
-            for ($x = 0; $x -lt $canvasPixels; $x++) {
-                $dx = $x - $cx
-                $r = [Math]::Sqrt($dx * $dx + $dy * $dy)
-                if ($r -lt $innerR -or $r -gt $outerR) { continue }
-                $theta = [Math]::Atan2($dy, $dx)
-                if ($theta -lt 0) { $theta += $twoPi }
-                $u = ($r - $innerR) / $thickness
-                $v = ($theta / $twoPi) * $tileCount
-                $v = $v - [Math]::Floor($v)
-
-                $srcX = [int]($u * $bandW)
-                if ($srcX -ge $bandW) { $srcX = $bandW - 1 }
-                $srcY = [int]($v * $bandH)
-                if ($srcY -ge $bandH) { $srcY = $bandH - 1 }
-
-                $srcOffset = $srcY * $bandStride + $srcX * 4
-                $dstOffset = $rowOffset + $x * 4
-                $outBytes[$dstOffset]     = $bandBytes[$srcOffset]
-                $outBytes[$dstOffset + 1] = $bandBytes[$srcOffset + 1]
-                $outBytes[$dstOffset + 2] = $bandBytes[$srcOffset + 2]
-                $outBytes[$dstOffset + 3] = $bandBytes[$srcOffset + 3]
-            }
-        }
-        [System.Runtime.InteropServices.Marshal]::Copy($outBytes, 0, $outData.Scan0, $outBytes.Length)
-        $out.UnlockBits($outData)
-        $out.Save($destPath, [System.Drawing.Imaging.ImageFormat]::Png)
-        $out.Dispose()
-    } finally {
-        $srcFull.Dispose()
-    }
-}
 
 function Write-JsonResponse($response, $statusCode, $payload) {
     $response.StatusCode = $statusCode
@@ -311,56 +222,6 @@ try {
                         Write-JsonResponse $response 200 @{ ok = $true; path = $destRel }
                     } catch {
                         Write-JsonResponse $response 500 @{ ok = $false; message = $_.Exception.Message }
-                    }
-                }
-            }
-            elseif ($request.HttpMethod -eq "POST" -and $request.Url.LocalPath -eq "/generate-ring-belt") {
-                $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
-                $bodyText = $reader.ReadToEnd()
-                $body = $bodyText | ConvertFrom-Json
-
-                $anchorId = [string]$body.anchorId
-                $style = [string]$body.style
-                $innerRadius = 0.0
-                $outerRadius = 0.0
-                try { $innerRadius = [double]$body.innerRadius } catch { $innerRadius = 0.0 }
-                try { $outerRadius = [double]$body.outerRadius } catch { $outerRadius = 0.0 }
-
-                if (-not $anchorId -or $anchorId -notmatch '^[A-Za-z0-9_-]+$') {
-                    Write-JsonResponse $response 400 @{ ok = $false; message = "Invalid anchor id." }
-                } elseif (-not $ringTexturePaths.ContainsKey($style)) {
-                    Write-JsonResponse $response 400 @{ ok = $false; message = "Unknown ring style: $style" }
-                } elseif ($outerRadius -le $innerRadius -or $innerRadius -lt 0) {
-                    Write-JsonResponse $response 400 @{ ok = $false; message = "Outer radius must be greater than inner radius." }
-                } else {
-                    $srcFull = $ringTexturePaths[$style]
-                    if (-not (Test-Path $srcFull -PathType Leaf)) {
-                        Write-JsonResponse $response 500 @{ ok = $false; message = "Ring texture not found: $srcFull" }
-                    } else {
-                        try {
-                            $destFull = Join-Path $staticImagesDir ($anchorId + "_ringbelt.png")
-                            $canvasPixels = 1200
-                            $circumference = [Math]::PI * ($innerRadius + $outerRadius)
-                            # Tile count derived from the source band's own aspect ratio (height/width,
-                            # 512/256 = 2 for all our band textures) rather than an arbitrary
-                            # world-units-per-tile constant, so each repeat stays roughly as long
-                            # (along the ring) as the band is thick regardless of the anchor's actual
-                            # size - matches the same reasoning used in RingBeltRenderer.java for the
-                            # live in-game belts (see that file for why a fixed pixels-per-tile number
-                            # doesn't work: it's calibrated for vanilla's campaign-scale planet rings,
-                            # not an editor-placed anchor whose radius could be anything).
-                            $thickness = $outerRadius - $innerRadius
-                            $bandAspectRatio = 2.0
-                            $tileDensity = 3.0
-                            $tileCount = [Math]::Max(1, [int][Math]::Round($tileDensity * $circumference / ($thickness * $bandAspectRatio)))
-                            $bandIndex = Get-Random -Minimum 0 -Maximum 4
-                            GenerateRingBelt $srcFull $destFull $innerRadius $outerRadius $bandIndex $tileCount $canvasPixels
-                            $fullProjectRoot = [System.IO.Path]::GetFullPath($projectRoot)
-                            $destRel = $destFull.Substring($fullProjectRoot.Length + 1) -replace '\\', '/'
-                            Write-JsonResponse $response 200 @{ ok = $true; path = $destRel; size = [int]([Math]::Ceiling($outerRadius * 2)) }
-                        } catch {
-                            Write-JsonResponse $response 500 @{ ok = $false; message = $_.Exception.Message }
-                        }
                     }
                 }
             }

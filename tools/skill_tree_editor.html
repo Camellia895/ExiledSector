@@ -1191,60 +1191,6 @@ function syncRingArcCurves(anchor){
 function deleteAnchor(id){
   state.anchors = state.anchors.filter(function(a){ return a.id !== id; });
   state.nodes.forEach(function(n){ if (n.orbitAnchorId === id) detachNodeFromAnchor(n); });
-  removeAsteroidBelt(id, false);
-}
-// Ring belt images are namespaced off the anchor id (e.g. "outer_ring_ringbelt") so regenerating
-// can find and clear only this anchor's own belt, not anyone else's images. The prefix also
-// matches the old per-asteroid scatter ids ("<id>_asteroid_3") from before this became a single
-// baked ring image, so switching an older anchor over cleans up its leftover scatter images too.
-function ringBeltIds(anchorId){
-  return { ringId: anchorId + '_ringbelt', scatterPrefix: anchorId + '_asteroid_' };
-}
-function removeAsteroidBelt(anchorId, notify){
-  var ids = ringBeltIds(anchorId);
-  var before = state.images.length;
-  state.images = state.images.filter(function(img){
-    return img.id !== ids.ringId && img.id.indexOf(ids.scatterPrefix) !== 0;
-  });
-  var removed = before - state.images.length;
-  if (notify !== false) {
-    saveLocal();
-    render();
-    refreshInspector();
-    if (removed) showToast('Removed belt image(s)');
-  }
-  return removed;
-}
-function generateAsteroidBelt(anchor, style, bandWidth){
-  var half = bandWidth / 2;
-  var innerRadius = Math.max(0, anchor.radius - half);
-  var outerRadius = anchor.radius + half;
-  postImageOp('/generate-ring-belt', {
-    anchorId: anchor.id,
-    style: style,
-    innerRadius: innerRadius,
-    outerRadius: outerRadius
-  }, function(result){
-    removeAsteroidBelt(anchor.id, false);
-    var size = Math.round(outerRadius * 2);
-    // Slow, ambient spin like vanilla planet rings - degrees/sec, random direction and a
-    // full turn taking roughly 15-40 minutes so it's noticeable without being distracting.
-    var spinMagnitude = 0.15 + Math.random() * 0.25;
-    var rotationSpeed = Math.random() < 0.5 ? spinMagnitude : -spinMagnitude;
-    state.images.push({
-      id: ringBeltIds(anchor.id).ringId,
-      x: anchor.x,
-      y: anchor.y,
-      width: size,
-      height: size,
-      imagePath: result.path,
-      rotationSpeed: Math.round(rotationSpeed * 1000) / 1000
-    });
-    saveLocal();
-    render();
-    refreshInspector();
-    showToast('Generated ' + style + ' ring belt around ' + anchor.id);
-  });
 }
 
 function loadShipped(){
@@ -2193,7 +2139,7 @@ function refreshInspector(){
       (isAuroraBelt(n) ?
         '<div class="field"><label>Aurora colour</label><input type="color" value="' + (n.ringBeltColor || '#8c78ff') + '" data-field="ringBeltColor"></div>'
       : '') +
-      '<div class="field"><label>Ring belt width (× node size, default ' + KEYSTONE_BELT_DEFAULT_WIDTH + ')</label><input type="number" step="0.1" min="0.1" value="' + (n.ringBeltWidth || '') + '" placeholder="' + KEYSTONE_BELT_DEFAULT_WIDTH + '" data-field="ringBeltWidth"></div>'
+      '<div class="field"><label>Ring belt width (? node size, default ' + KEYSTONE_BELT_DEFAULT_WIDTH + ')</label><input type="number" step="0.1" min="0.1" value="' + (n.ringBeltWidth || '') + '" placeholder="' + KEYSTONE_BELT_DEFAULT_WIDTH + '" data-field="ringBeltWidth"></div>'
     : '') +
     '<hr class="sep">' +
     statsHtml +
@@ -2435,11 +2381,7 @@ function refreshAnchorInspector(body){
         '<div class="field"><label>Band width</label><input type="number" min="10" value="' + beltBandWidthVal + '" data-anchor-field="beltBandWidth"></div>' +
         '<div class="field"><label>Ring style</label><select data-anchor-field="beltStyle">' + beltStyleOptions + '</select></div>' +
       '</div>' +
-      '<div class="btnRow">' +
-        '<button class="smallBtn primary" id="generateBeltBtn">Generate Ring Belt</button>' +
-        '<button class="smallBtn danger" id="removeBeltBtn">Remove Ring Belt</button>' +
-      '</div>' +
-      '<div class="hint" id="ringBeltHint">Bakes a single ring-band image (from the vanilla planet-ring textures) into the band width given, centered on this anchor\u0027s radius. Generating again replaces this anchor\u0027s previous belt image, so it\u0027s safe to re-roll.</div>'
+      '<div class="hint" id="ringBeltHint">Rendered live in-game (the same vanilla planet-ring technique used for Keystone ring belts), centered on this anchor\u0027s radius - no generate step needed, it just ships with whatever band width/style are set here.</div>'
     : '') +
     '<hr class="sep">' +
     '<div class="hint">Nodes attached to this anchor (orbitAnchorId) re-snap to its boundary as you edit these fields.</div>' +
@@ -2486,14 +2428,6 @@ function refreshAnchorInspector(body){
     document.getElementById('inspector').classList.remove('open');
     saveLocal(); render(); refreshInspector();
   });
-  if (isAsteroidBelt) {
-    document.getElementById('generateBeltBtn').addEventListener('click', function(){
-      generateAsteroidBelt(a, beltStyleVal, beltBandWidthVal);
-    });
-    document.getElementById('removeBeltBtn').addEventListener('click', function(){
-      removeAsteroidBelt(a.id, true);
-    });
-  }
 }
 
 function refreshImageInspector(body){
@@ -3231,6 +3165,21 @@ function buildTreeExportObject(){
         }
       }
       return ao;
+    });
+  }
+  var beltAnchors = state.anchors.filter(function(a){ return a.shape === 'asteroidBelt'; });
+  if (beltAnchors.length) {
+    out.ringBelts = beltAnchors.map(function(a){
+      var bandWidth = a.beltBandWidth || Math.max(60, Math.round(a.radius * 0.2));
+      var half = bandWidth / 2;
+      return {
+        id: a.id,
+        x: a.x,
+        y: a.y,
+        innerRadius: Math.max(0, a.radius - half),
+        outerRadius: a.radius + half,
+        ringArtPath: 'graphics/planets/ring_band_' + (a.beltStyle || 'asteroids') + '.png'
+      };
     });
   }
   if (state.images.length) {

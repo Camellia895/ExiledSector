@@ -3438,24 +3438,24 @@
 			"width": 548,
 			"height": 485,
 			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_10_orange.png"
-		},
+		}
+	],
+	"ringBelts": [
 		{
-			"id": "middle_ringbelt_ringbelt",
+			"id": "middle_ringbelt",
 			"x": 0,
 			"y": 0,
-			"width": 4550,
-			"height": 4550,
-			"imagePath": "graphics/backgrounds/static_images/middle_ringbelt_ringbelt.png",
-			"rotationSpeed": 0.6
+			"innerRadius": 2125,
+			"outerRadius": 2275,
+			"ringArtPath": "graphics/planets/ring_band_dust.png"
 		},
 		{
-			"id": "outer_ringbelt_ringbelt",
+			"id": "outer_ringbelt",
 			"x": 0,
 			"y": 0,
-			"width": 6300,
-			"height": 6300,
-			"imagePath": "graphics/backgrounds/static_images/outer_ringbelt_ringbelt.png",
-			"rotationSpeed": -0.8
+			"innerRadius": 2850,
+			"outerRadius": 3150,
+			"ringArtPath": "graphics/planets/ring_band_dust.png"
 		}
 	]
 }
