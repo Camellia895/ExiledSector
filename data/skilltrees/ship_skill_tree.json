@@ -3397,18 +3397,18 @@
 			"id": "middle_ringbelt",
 			"x": 0,
 			"y": 0,
-			"radius": 2200,
+			"radius": 2275,
 			"shape": "asteroidBelt",
-			"beltBandWidth": 150,
+			"beltBandWidth": 350,
 			"beltStyle": "dust"
 		},
 		{
 			"id": "outer_ringbelt",
 			"x": 0,
 			"y": 0,
-			"radius": 3000,
+			"radius": 3075,
 			"shape": "asteroidBelt",
-			"beltBandWidth": 300,
+			"beltBandWidth": 450,
 			"beltStyle": "dust"
 		}
 	],
@@ -3445,8 +3445,8 @@
 			"id": "middle_ringbelt",
 			"x": 0,
 			"y": 0,
-			"innerRadius": 2125,
-			"outerRadius": 2275,
+			"innerRadius": 2100,
+			"outerRadius": 2450,
 			"ringArtPath": "graphics/planets/ring_band_dust.png"
 		},
 		{
@@ -3454,7 +3454,7 @@
 			"x": 0,
 			"y": 0,
 			"innerRadius": 2850,
-			"outerRadius": 3150,
+			"outerRadius": 3300,
 			"ringArtPath": "graphics/planets/ring_band_dust.png"
 		}
 	]

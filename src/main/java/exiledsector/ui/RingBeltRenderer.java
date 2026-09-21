@@ -8,7 +8,6 @@ import java.awt.Color;
 
 final class RingBeltRenderer {
     private static final float PIXELS_PER_SEGMENT = 5f;
-    private static final float TILE_DENSITY = 3f;
     private static final float MAX_TILE_COUNT = 60f;
 
     private RingBeltRenderer() {
@@ -24,7 +23,7 @@ final class RingBeltRenderer {
         float imageWidth = texture.getWidth();
         float imageHeight = texture.getHeight();
         float aspectRatio = imageHeight / imageWidth;
-        float tileCount = Math.min(MAX_TILE_COUNT, Math.max(1f, TILE_DENSITY * circumference / (thickness * aspectRatio)));
+        float tileCount = Math.min(MAX_TILE_COUNT, Math.max(1f, circumference / (thickness * aspectRatio)));
         float texPerSegment = tileCount / segments;
 
         GL11.glPushMatrix();
