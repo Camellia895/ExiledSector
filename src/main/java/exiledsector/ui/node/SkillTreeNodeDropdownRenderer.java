@@ -1,12 +1,11 @@
 package exiledsector.ui.node;
 
-import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.ui.SkillTreePanelStyle;
+import exiledsector.ui.util.GLDraw;
 import org.lazywizard.lazylib.ui.LazyFont;
-import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -119,29 +118,13 @@ final class SkillTreeNodeDropdownRenderer {
         return rows;
     }
 
-    // TODO: this filled-quad GL setup/teardown is duplicated in SkillTreePanelStyle and SkillTreeStatPanel - extract a shared GLDraw.fillQuad(x,y,w,h,color,alpha) helper.
     private void drawDropdownRowHighlight(DropdownRow row, float alphaMult) {
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        Misc.setColor(GLOW_COLOR, DROPDOWN_HOVER_ALPHA * alphaMult);
-        GL11.glBegin(GL11.GL_QUADS);
-        GL11.glVertex2f(row.x, row.y);
-        GL11.glVertex2f(row.x + row.width, row.y);
-        GL11.glVertex2f(row.x + row.width, row.y + row.height);
-        GL11.glVertex2f(row.x, row.y + row.height);
-        GL11.glEnd();
-        GL11.glDisable(GL11.GL_BLEND);
+        GLDraw.fillQuad(row.x, row.y, row.width, row.height, GLOW_COLOR, DROPDOWN_HOVER_ALPHA * alphaMult);
     }
 
-    // TODO: this hand-rolled Map<String, DrawableString> computeIfAbsent cache duplicates the pattern in SkillTreeStatPanel's header/toggle text caches - extract a shared DrawableTextCache utility.
     private LazyFont.DrawableString getDropdownRowText(LazyFont font, SkillType option) {
-        return dropdownRowText.computeIfAbsent(option.getId(), id -> {
-            LazyFont.DrawableString text = font.createText(option.getDisplayName(), TOOLTIP_BODY_COLOR, DROPDOWN_FONT_SIZE);
-            text.setAnchor(LazyFont.TextAnchor.TOP_LEFT);
-            text.setAlignment(LazyFont.TextAlignment.LEFT);
-            return text;
-        });
+        return dropdownRowText.computeIfAbsent(option.getId(),
+                id -> SkillTreePanelStyle.buildSimpleText(font, option.getDisplayName(), DROPDOWN_FONT_SIZE, TOOLTIP_BODY_COLOR));
     }
 
     private static final class DropdownRow {

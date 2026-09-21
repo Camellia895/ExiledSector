@@ -12,7 +12,6 @@ import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
-import static exiledsector.ui.SkillTreePanelStyle.FONT_LINE_HEIGHT_FACTOR;
 import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_BODY_COLOR;
 import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE;
 import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE;
@@ -93,20 +92,7 @@ final class SkillTreeNodeTooltipRenderer {
         body.drawable.draw(boxX + TOOLTIP_PADDING, bodyY);
     }
 
-    // TODO: this wrap/measure/cache logic duplicates SkillTreeStatPanel.buildMultiLineText - extract a shared DrawableTextCache/TooltipTextBuilder utility.
     private SkillTreePanelStyle.TooltipText buildTooltipText(LazyFont font, String rawText, float fontSize, Color color) {
-        String wrapped = font.wrapString(rawText, fontSize, TOOLTIP_MAX_TEXT_WIDTH, TOOLTIP_MAX_TEXT_HEIGHT);
-        String[] lines = wrapped.split("\n", -1);
-
-        float width = 0f;
-        for (String line : lines) {
-            width = Math.max(width, font.calcWidth(line, fontSize));
-        }
-        float height = lines.length * fontSize * FONT_LINE_HEIGHT_FACTOR;
-
-        LazyFont.DrawableString drawable = font.createText(wrapped, color, fontSize);
-        drawable.setAlignment(LazyFont.TextAlignment.LEFT);
-        drawable.setAnchor(LazyFont.TextAnchor.TOP_LEFT);
-        return new SkillTreePanelStyle.TooltipText(drawable, width, height);
+        return SkillTreePanelStyle.buildWrappedText(font, rawText, fontSize, TOOLTIP_MAX_TEXT_WIDTH, TOOLTIP_MAX_TEXT_HEIGHT, color);
     }
 }

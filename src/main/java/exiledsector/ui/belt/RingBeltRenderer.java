@@ -1,7 +1,6 @@
 package exiledsector.ui.belt;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
-import com.fs.starfarer.api.util.Misc;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
@@ -13,11 +12,10 @@ public final class RingBeltRenderer {
     private RingBeltRenderer() {
     }
 
-    // TODO: setup/teardown and segment-count math here duplicates AuroraBeltRenderer - extract shared beginRadialBand/endRadialBand + computeSegments helpers.
     public static void render(SpriteAPI texture, float cx, float cy, float innerRadius, float outerRadius, Color color, float alphaMult) {
         float middleRadius = (innerRadius + outerRadius) / 2f;
         float circumference = (float) (2 * Math.PI * middleRadius);
-        float segments = Math.round(circumference / PIXELS_PER_SEGMENT);
+        int segments = RadialBandGL.computeSegments(circumference, PIXELS_PER_SEGMENT, 0);
         float anglePerSegment = (float) (2 * Math.PI) / segments;
         float thickness = outerRadius - innerRadius;
 
@@ -27,13 +25,7 @@ public final class RingBeltRenderer {
         float tileCount = Math.min(MAX_TILE_COUNT, Math.max(1f, circumference / (thickness * aspectRatio)));
         float texPerSegment = tileCount / segments;
 
-        GL11.glPushMatrix();
-        GL11.glTranslatef(cx, cy, 0f);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        texture.bindTexture();
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        Misc.setColor(color, alphaMult);
+        RadialBandGL.begin(texture, cx, cy, GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, color, alphaMult);
 
         float texProgress = 0f;
         GL11.glBegin(GL11.GL_QUAD_STRIP);
@@ -49,6 +41,6 @@ public final class RingBeltRenderer {
             texProgress += texPerSegment;
         }
         GL11.glEnd();
-        GL11.glPopMatrix();
+        RadialBandGL.end();
     }
 }

@@ -4,16 +4,13 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.ui.SkillTreePanelStyle;
-import org.apache.log4j.Logger;
+import exiledsector.ui.util.SpriteCache;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 public class SkillTreeStarfieldRenderer {
 
@@ -61,8 +58,7 @@ public class SkillTreeStarfieldRenderer {
     }
 
     private final SkillTreePanelStyle style;
-    private final Set<String> loadedSprites = new HashSet<>();
-    private final Set<String> failedSprites = new HashSet<>();
+    private final SpriteCache spriteCache = new SpriteCache(SkillTreeStarfieldRenderer.class);
 
     private boolean initialized = false;
     private float fieldWidth;
@@ -100,7 +96,7 @@ public class SkillTreeStarfieldRenderer {
 
             for (Star star : layers[i]) {
                 String path = STAR_SPRITE_PATHS[star.spriteIndex];
-                if (!ensureTextureLoaded(path)) continue;
+                if (!spriteCache.ensureLoaded(path)) continue;
 
                 float wrappedX = wrap(star.baseX + offsetX, fieldWidth);
                 float wrappedY = wrap(star.baseY + offsetY, fieldHeight);
@@ -153,20 +149,5 @@ public class SkillTreeStarfieldRenderer {
         float wrapped = value % size;
         if (wrapped < 0) wrapped += size;
         return wrapped;
-    }
-
-    // TODO: this loadedSprites/failedSprites/ensureTextureLoaded pattern is copy-pasted across 5 renderer classes - extract a shared SpriteCache utility.
-    private boolean ensureTextureLoaded(String path) {
-        if (loadedSprites.contains(path)) return true;
-        if (failedSprites.contains(path)) return false;
-        try {
-            Global.getSettings().loadTexture(path);
-            loadedSprites.add(path);
-            return true;
-        } catch (IOException e) {
-            Logger.getLogger(SkillTreeStarfieldRenderer.class).error("Failed to load star sprite texture " + path, e);
-            failedSprites.add(path);
-            return false;
-        }
     }
 }

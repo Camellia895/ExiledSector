@@ -27,51 +27,44 @@ public final class SkillTreeLoader {
     private SkillTreeLoader() {
     }
 
-    // TODO: these 4 load methods repeat the same try/catch/log/fallback wrapper - extract a shared loadJsonOrDefault(context, parser, fallback) helper.
     public static List<SkillNode> loadNodes() {
-        try {
+        return loadJsonOrDefault(DATA_PATH, () -> {
             Map<String, SkillType> skillTypes = SkillTypeLoader.loadSkillTypes();
             return parseNodes(Global.getSettings().loadJSON(DATA_PATH), skillTypes);
-        } catch (IOException | JSONException e) {
-            Logger.getLogger(SkillTreeLoader.class).error("Failed to load " + DATA_PATH, e);
-            return new ArrayList<>();
-        }
+        }, new ArrayList<>());
     }
 
     public static Map<String, ConnectorCurve> loadConnectorCurves() {
-        try {
-            return parseConnectorCurves(Global.getSettings().loadJSON(DATA_PATH));
-        } catch (IOException | JSONException e) {
-            Logger.getLogger(SkillTreeLoader.class).error("Failed to load connector curves from " + DATA_PATH, e);
-            return new LinkedHashMap<>();
-        }
+        return loadJsonOrDefault("connector curves from " + DATA_PATH,
+                () -> parseConnectorCurves(Global.getSettings().loadJSON(DATA_PATH)), new LinkedHashMap<>());
     }
 
     public static Set<String> loadHiddenConnectors() {
-        try {
-            return parseHiddenConnectors(Global.getSettings().loadJSON(DATA_PATH));
-        } catch (IOException | JSONException e) {
-            Logger.getLogger(SkillTreeLoader.class).error("Failed to load hidden connectors from " + DATA_PATH, e);
-            return new HashSet<>();
-        }
+        return loadJsonOrDefault("hidden connectors from " + DATA_PATH,
+                () -> parseHiddenConnectors(Global.getSettings().loadJSON(DATA_PATH)), new HashSet<>());
     }
 
     public static List<StaticImage> loadStaticImages() {
-        try {
-            return parseStaticImages(Global.getSettings().loadJSON(DATA_PATH));
-        } catch (IOException | JSONException e) {
-            Logger.getLogger(SkillTreeLoader.class).error("Failed to load static images from " + DATA_PATH, e);
-            return new ArrayList<>();
-        }
+        return loadJsonOrDefault("static images from " + DATA_PATH,
+                () -> parseStaticImages(Global.getSettings().loadJSON(DATA_PATH)), new ArrayList<>());
     }
 
     public static List<RingBelt> loadRingBelts() {
+        return loadJsonOrDefault("ring belts from " + DATA_PATH,
+                () -> parseRingBelts(Global.getSettings().loadJSON(DATA_PATH)), new ArrayList<>());
+    }
+
+    private static <T> T loadJsonOrDefault(String context, JsonParser<T> parser, T fallback) {
         try {
-            return parseRingBelts(Global.getSettings().loadJSON(DATA_PATH));
+            return parser.parse();
         } catch (IOException | JSONException e) {
-            Logger.getLogger(SkillTreeLoader.class).error("Failed to load ring belts from " + DATA_PATH, e);
-            return new ArrayList<>();
+            Logger.getLogger(SkillTreeLoader.class).error("Failed to load " + context, e);
+            return fallback;
         }
+    }
+
+    private interface JsonParser<T> {
+        T parse() throws IOException, JSONException;
     }
 
     public static List<RingBelt> parseRingBelts(JSONObject root) throws JSONException {

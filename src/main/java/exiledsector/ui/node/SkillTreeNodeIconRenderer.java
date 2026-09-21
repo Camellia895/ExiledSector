@@ -4,25 +4,22 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import org.apache.log4j.Logger;
+import exiledsector.ui.util.SpriteCache;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 final class SkillTreeNodeIconRenderer {
 
     private static final float PIE_START_ANGLE_DEGREES = -90f;
     private static final float PIE_WEDGE_SEGMENT_DEGREES = 6f;
 
-    private final Set<String> loadedSprites = new HashSet<>();
+    private final SpriteCache spriteCache = new SpriteCache(SkillTreeNodeIconRenderer.class);
 
     void drawIcon(String spritePath, float cx, float cy, float size, float alphaMult, Color tint) {
-        if (!ensureTextureLoaded(spritePath)) return;
+        if (!spriteCache.ensureLoaded(spritePath)) return;
 
         SpriteAPI sprite = Global.getSettings().getSprite(spritePath);
         sprite.setSize(size, size);
@@ -81,18 +78,5 @@ final class SkillTreeNodeIconRenderer {
         GL11.glEnd();
 
         GL11.glColorMask(true, true, true, true);
-    }
-
-    // TODO: this loadedSprites/ensureTextureLoaded pattern is copy-pasted across 5 renderer classes - extract a shared SpriteCache utility.
-    private boolean ensureTextureLoaded(String spritePath) {
-        if (loadedSprites.add(spritePath)) {
-            try {
-                Global.getSettings().loadTexture(spritePath);
-            } catch (IOException e) {
-                Logger.getLogger(SkillTreeNodeIconRenderer.class).error("Failed to load texture " + spritePath, e);
-                return false;
-            }
-        }
-        return true;
     }
 }

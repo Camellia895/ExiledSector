@@ -9,19 +9,17 @@ import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.belt.AuroraBeltRenderer;
 import exiledsector.ui.belt.RingBeltRenderer;
 import exiledsector.ui.belt.WormholeBandRenderer;
+import exiledsector.ui.util.SpriteCache;
 import org.apache.log4j.Logger;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 import static exiledsector.ui.node.SkillTreeNodeGeometry.ICON_INSET_RATIO;
 import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_HALO_ALPHA;
@@ -113,7 +111,7 @@ final class SkillTreeNodeRingRenderer {
     private static final float WORMHOLE_GLOW_ALPHA = 0.67f;
 
     private final SkillTreePanelStyle style;
-    private final Set<String> loadedSprites = new HashSet<>();
+    private final SpriteCache spriteCache = new SpriteCache(SkillTreeNodeRingRenderer.class);
     private final Map<String, Float> pulseElapsed = new HashMap<>();
     private final Map<String, List<RingInstance>> ringStacks = new HashMap<>();
     private final Map<String, List<RingInstance>> pinkRingStacks = new HashMap<>();
@@ -271,7 +269,7 @@ final class SkillTreeNodeRingRenderer {
 
         for (RingInstance instance : instances) {
             String path = RING_STACK_TEXTURES[instance.textureIndex];
-            if (!ensureTextureLoaded(path)) continue;
+            if (!spriteCache.ensureLoaded(path)) continue;
 
             float radius = outerRadius * scaleRatio * instance.radiusFraction;
             float jitterMag = radius * RING_INSTANCE_JITTER_RATIO;
@@ -292,7 +290,7 @@ final class SkillTreeNodeRingRenderer {
     }
 
     private void drawAmbientGlow(float cx, float cy, float footprintSize, float stateAlpha, float alphaMult) {
-        if (!ensureTextureLoaded(GLOW_TEXTURE_PATH)) return;
+        if (!spriteCache.ensureLoaded(GLOW_TEXTURE_PATH)) return;
 
         float size = footprintSize * AMBIENT_GLOW_SIZE_RATIO;
 
@@ -307,14 +305,14 @@ final class SkillTreeNodeRingRenderer {
     }
 
     private void drawKeystoneRingBelt(float cx, float cy, float footprintSize, float widthRatio, String ringArtPath, float stateAlpha, float alphaMult) {
-        if (!ensureTextureLoaded(ringArtPath)) return;
+        if (!spriteCache.ensureLoaded(ringArtPath)) return;
         SpriteAPI sprite = Global.getSettings().getSprite(ringArtPath);
         RingBeltRenderer.render(sprite, cx, cy, beltInnerRadius(footprintSize), beltOuterRadius(footprintSize, widthRatio),
                 Color.WHITE, stateAlpha * alphaMult);
     }
 
     private void drawKeystoneAuroraBelt(float cx, float cy, float footprintSize, float widthRatio, Color tint, float stateAlpha, float alphaMult) {
-        if (!ensureTextureLoaded(AURORA_TEXTURE_PATH)) return;
+        if (!spriteCache.ensureLoaded(AURORA_TEXTURE_PATH)) return;
         SpriteAPI sprite = Global.getSettings().getSprite(AURORA_TEXTURE_PATH);
         AuroraBeltRenderer.render(sprite, cx, cy, beltInnerRadius(footprintSize), beltOuterRadius(footprintSize, widthRatio),
                 tint, stateAlpha * alphaMult, elapsedSeconds);
@@ -345,7 +343,7 @@ final class SkillTreeNodeRingRenderer {
     }
 
     private void drawWormholeCorona(float cx, float cy, float baseRadius, Color color, float alphaMult) {
-        if (!ensureTextureLoaded(WORMHOLE_CORONA_TEXTURE_PATH)) return;
+        if (!spriteCache.ensureLoaded(WORMHOLE_CORONA_TEXTURE_PATH)) return;
         float size = baseRadius * 2f * WORMHOLE_CORONA_SIZE_RATIO;
         float orbit = baseRadius * WORMHOLE_CORONA_ORBIT_RATIO;
 
@@ -368,7 +366,7 @@ final class SkillTreeNodeRingRenderer {
     }
 
     private void drawWormholeBands(float cx, float cy, float baseRadius, Color color, float alphaMult) {
-        if (!ensureTextureLoaded(WORMHOLE_BAND_TEXTURE_PATH)) return;
+        if (!spriteCache.ensureLoaded(WORMHOLE_BAND_TEXTURE_PATH)) return;
         SpriteAPI texture = Global.getSettings().getSprite(WORMHOLE_BAND_TEXTURE_PATH);
         float innerRadius = baseRadius * WORMHOLE_BAND_INNER_RADIUS_RATIO;
         float outerRadius = innerRadius + baseRadius * WORMHOLE_BAND_THICKNESS_RATIO;
@@ -380,7 +378,7 @@ final class SkillTreeNodeRingRenderer {
     }
 
     private void drawWormholeGlow(float cx, float cy, float baseRadius, Color color, float alphaMult, float openness) {
-        if (!ensureTextureLoaded(WORMHOLE_GLOW_TEXTURE_PATH)) return;
+        if (!spriteCache.ensureLoaded(WORMHOLE_GLOW_TEXTURE_PATH)) return;
         float size = baseRadius * 2f * WORMHOLE_GLOW_SIZE_RATIO;
         float closedness = 1f - openness;
         float alpha = WORMHOLE_GLOW_ALPHA * closedness * closedness * closedness * alphaMult;
@@ -468,18 +466,5 @@ final class SkillTreeNodeRingRenderer {
             GL11.glVertex2f(cx + (float) Math.cos(angle) * radius, cy + (float) Math.sin(angle) * radius);
         }
         GL11.glEnd();
-    }
-
-    // TODO: this loadedSprites/ensureTextureLoaded pattern is copy-pasted across 5 renderer classes - extract a shared SpriteCache utility.
-    private boolean ensureTextureLoaded(String spritePath) {
-        if (loadedSprites.add(spritePath)) {
-            try {
-                Global.getSettings().loadTexture(spritePath);
-            } catch (IOException e) {
-                Logger.getLogger(SkillTreeNodeRingRenderer.class).error("Failed to load texture " + spritePath, e);
-                return false;
-            }
-        }
-        return true;
     }
 }

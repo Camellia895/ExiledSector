@@ -1,5 +1,7 @@
 package exiledsector.skills.loader;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.SettingsAPI;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -9,7 +11,10 @@ import exiledsector.ui.decoration.StaticImage;
 import exiledsector.ui.node.ConnectorCurve;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,6 +22,9 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class SkillTreeLoaderTest {
 
@@ -284,5 +292,19 @@ class SkillTreeLoaderTest {
         List<RingBelt> ringBelts = SkillTreeLoader.parseRingBelts(root);
 
         assertEquals(List.of("a", "b"), List.of(ringBelts.get(0).getId(), ringBelts.get(1).getId()));
+    }
+
+    @Test
+    void loadRingBeltsReturnsAnEmptyListWhenTheJsonFailsToLoad() throws Exception {
+        SettingsAPI settings = mock(SettingsAPI.class);
+        when(settings.loadJSON(anyString())).thenThrow(new IOException("boom"));
+
+        try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
+            globalMock.when(Global::getSettings).thenReturn(settings);
+
+            List<RingBelt> ringBelts = SkillTreeLoader.loadRingBelts();
+
+            assertEquals(List.of(), ringBelts);
+        }
     }
 }

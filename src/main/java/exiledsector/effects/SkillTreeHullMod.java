@@ -15,6 +15,7 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
 
 public class SkillTreeHullMod extends BaseHullMod {
 
@@ -22,74 +23,40 @@ public class SkillTreeHullMod extends BaseHullMod {
 
     private static final String MOD_ID_PREFIX = "exiledSector_skill_";
 
-    // TODO: these 4 methods repeat the same fetch-data/loop-allocated-nodes/resolve-type/dispatch skeleton - extract a shared forEachAllocatedEffect(member, hullSize, callback) helper.
     @Override
     public void applyEffectsBeforeShipCreation(HullSize hullSize, MutableShipStatsAPI stats, String id) {
-        FleetMemberAPI member = stats.getFleetMember();
-        if (member == null) return;
-
-        ShipSkillData data = ShipSkillDataManager.get(member.getId());
-        for (String nodeId : data.getAllocatedNodeIds()) {
-            SkillNode node = SkillTree.get(nodeId);
-            if (node == null) continue;
-
-            SkillType type = node.resolveEffectiveType(data);
-
-            String vanillaHullModId = type.getVanillaHullModId();
-            if (vanillaHullModId != null) {
-                HullModSpecAPI spec = Global.getSettings().getHullModSpec(vanillaHullModId);
-                if (spec == null) continue;
-                HullModEffect vanillaEffect = spec.getEffect();
-                if (vanillaEffect != null) {
-                    vanillaEffect.applyEffectsBeforeShipCreation(hullSize, stats, vanillaHullModId);
-                }
-                continue;
-            }
-
-            for (SkillTypeEffect effect : type.getEffects()) {
-                effect.effect().apply(stats, MOD_ID_PREFIX + node.getId(), effect.magnitude());
-            }
-            for (HullSizeSkillEffect effect : type.getHullSizeEffects()) {
-                effect.effect().apply(stats, MOD_ID_PREFIX + node.getId(), effect.valueFor(hullSize));
-            }
-        }
+        forEachAllocatedEffect(stats.getFleetMember(), hullSize,
+                (vanillaEffect, vanillaHullModId) -> vanillaEffect.applyEffectsBeforeShipCreation(hullSize, stats, vanillaHullModId),
+                (effect, modId, magnitude) -> effect.apply(stats, modId, magnitude));
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship, String id) {
-        FleetMemberAPI member = ship.getMutableStats().getFleetMember();
-        if (member == null) return;
-
-        ShipSkillData data = ShipSkillDataManager.get(member.getId());
-        for (String nodeId : data.getAllocatedNodeIds()) {
-            SkillNode node = SkillTree.get(nodeId);
-            if (node == null) continue;
-
-            SkillType type = node.resolveEffectiveType(data);
-
-            String vanillaHullModId = type.getVanillaHullModId();
-            if (vanillaHullModId != null) {
-                HullModSpecAPI spec = Global.getSettings().getHullModSpec(vanillaHullModId);
-                if (spec == null) continue;
-                HullModEffect vanillaEffect = spec.getEffect();
-                if (vanillaEffect != null) {
-                    vanillaEffect.applyEffectsAfterShipCreation(ship, vanillaHullModId);
-                }
-                continue;
-            }
-
-            for (SkillTypeEffect effect : type.getEffects()) {
-                effect.effect().applyAfterShipCreation(ship, MOD_ID_PREFIX + node.getId(), effect.magnitude());
-            }
-            for (HullSizeSkillEffect effect : type.getHullSizeEffects()) {
-                effect.effect().applyAfterShipCreation(ship, MOD_ID_PREFIX + node.getId(), effect.valueFor(ship.getHullSize()));
-            }
-        }
+        forEachAllocatedEffect(ship.getMutableStats().getFleetMember(), ship.getHullSize(),
+                (vanillaEffect, vanillaHullModId) -> vanillaEffect.applyEffectsAfterShipCreation(ship, vanillaHullModId),
+                (effect, modId, magnitude) -> effect.applyAfterShipCreation(ship, modId, magnitude));
     }
 
     @Override
     public void applyEffectsToFighterSpawnedByShip(ShipAPI fighter, ShipAPI ship, String id) {
-        FleetMemberAPI member = ship.getMutableStats().getFleetMember();
+        forEachAllocatedEffect(ship.getMutableStats().getFleetMember(), ship.getHullSize(),
+                (vanillaEffect, vanillaHullModId) -> vanillaEffect.applyEffectsToFighterSpawnedByShip(fighter, ship, vanillaHullModId),
+                (effect, modId, magnitude) -> effect.applyToFighterSpawnedByShip(fighter, ship, modId, magnitude));
+    }
+
+    @Override
+    public void advanceInCombat(ShipAPI ship, float amount) {
+        forEachAllocatedEffect(ship.getMutableStats().getFleetMember(), ship.getHullSize(),
+                null,
+                (effect, modId, magnitude) -> {
+                    if (effect.isConditional()) {
+                        effect.advanceInCombat(ship, modId, magnitude);
+                    }
+                });
+    }
+
+    private void forEachAllocatedEffect(FleetMemberAPI member, HullSize hullSize,
+                                         VanillaDelegate vanillaDelegate, EffectAction action) {
         if (member == null) return;
 
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
@@ -101,48 +68,30 @@ public class SkillTreeHullMod extends BaseHullMod {
 
             String vanillaHullModId = type.getVanillaHullModId();
             if (vanillaHullModId != null) {
-                HullModSpecAPI spec = Global.getSettings().getHullModSpec(vanillaHullModId);
-                if (spec == null) continue;
-                HullModEffect vanillaEffect = spec.getEffect();
-                if (vanillaEffect != null) {
-                    vanillaEffect.applyEffectsToFighterSpawnedByShip(fighter, ship, vanillaHullModId);
+                if (vanillaDelegate != null) {
+                    HullModSpecAPI spec = Global.getSettings().getHullModSpec(vanillaHullModId);
+                    if (spec != null && spec.getEffect() != null) {
+                        vanillaDelegate.apply(spec.getEffect(), vanillaHullModId);
+                    }
                 }
                 continue;
             }
 
+            String modId = MOD_ID_PREFIX + node.getId();
             for (SkillTypeEffect effect : type.getEffects()) {
-                effect.effect().applyToFighterSpawnedByShip(fighter, ship, MOD_ID_PREFIX + node.getId(), effect.magnitude());
+                action.apply(effect.effect(), modId, effect.magnitude());
             }
             for (HullSizeSkillEffect effect : type.getHullSizeEffects()) {
-                effect.effect().applyToFighterSpawnedByShip(fighter, ship, MOD_ID_PREFIX + node.getId(), effect.valueFor(ship.getHullSize()));
+                action.apply(effect.effect(), modId, effect.valueFor(hullSize));
             }
         }
     }
 
-    @Override
-    public void advanceInCombat(ShipAPI ship, float amount) {
-        FleetMemberAPI member = ship.getMutableStats().getFleetMember();
-        if (member == null) return;
+    private interface VanillaDelegate {
+        void apply(HullModEffect vanillaEffect, String vanillaHullModId);
+    }
 
-        ShipSkillData data = ShipSkillDataManager.get(member.getId());
-        HullSize hullSize = ship.getHullSize();
-        for (String nodeId : data.getAllocatedNodeIds()) {
-            SkillNode node = SkillTree.get(nodeId);
-            if (node == null) continue;
-
-            SkillType type = node.resolveEffectiveType(data);
-            if (type.getVanillaHullModId() != null) continue;
-
-            for (SkillTypeEffect effect : type.getEffects()) {
-                if (effect.effect().isConditional()) {
-                    effect.effect().advanceInCombat(ship, MOD_ID_PREFIX + node.getId(), effect.magnitude());
-                }
-            }
-            for (HullSizeSkillEffect effect : type.getHullSizeEffects()) {
-                if (effect.effect().isConditional()) {
-                    effect.effect().advanceInCombat(ship, MOD_ID_PREFIX + node.getId(), effect.valueFor(hullSize));
-                }
-            }
-        }
+    private interface EffectAction {
+        void apply(SkillEffect effect, String modId, float magnitude);
     }
 }

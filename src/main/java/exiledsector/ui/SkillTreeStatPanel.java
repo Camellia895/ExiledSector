@@ -6,10 +6,9 @@ import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
-import com.fs.starfarer.api.util.Misc;
+import exiledsector.ui.util.GLDraw;
 import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.ui.LazyFont;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -110,21 +109,8 @@ final class SkillTreeStatPanel {
         return layouts;
     }
 
-    // TODO: this filled-quad GL setup/teardown is duplicated in SkillTreePanelStyle and SkillTreeNodeDropdownRenderer - extract a shared GLDraw.fillQuad(x,y,w,h,color,alpha) helper.
     private void drawHeaderBarBackground(float x, float y, float width, float height, float alphaMult) {
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-        Misc.setColor(style.getHeaderBackgroundColor(), alphaMult);
-        GL11.glBegin(GL11.GL_QUADS);
-        GL11.glVertex2f(x, y);
-        GL11.glVertex2f(x + width, y);
-        GL11.glVertex2f(x + width, y + height);
-        GL11.glVertex2f(x, y + height);
-        GL11.glEnd();
-
-        GL11.glDisable(GL11.GL_BLEND);
+        GLDraw.fillQuad(x, y, width, height, style.getHeaderBackgroundColor(), alphaMult);
     }
 
     private void drawStatGroupHeaderBar(LazyFont font, StatGroupLayout layout, float alphaMult) {
@@ -143,25 +129,19 @@ final class SkillTreeStatPanel {
     }
 
     private LazyFont.DrawableString getStatGroupHeaderText(LazyFont font, String name) {
-        return statGroupHeaderText.computeIfAbsent(name, n -> {
-            LazyFont.DrawableString text = font.createText(n, STAT_PANEL_HEADER_TEXT_COLOR, STAT_PANEL_HEADER_FONT_SIZE);
-            text.setAnchor(LazyFont.TextAnchor.TOP_LEFT);
-            text.setAlignment(LazyFont.TextAlignment.LEFT);
-            return text;
-        });
+        return statGroupHeaderText.computeIfAbsent(name,
+                n -> SkillTreePanelStyle.buildSimpleText(font, n, STAT_PANEL_HEADER_FONT_SIZE, STAT_PANEL_HEADER_TEXT_COLOR));
     }
 
     private LazyFont.DrawableString getToggleIcon(LazyFont font, boolean collapsed) {
         if (collapsed) {
             if (collapsedIcon == null) {
-                collapsedIcon = font.createText("+", STAT_PANEL_HEADER_TEXT_COLOR, STAT_PANEL_HEADER_FONT_SIZE);
-                collapsedIcon.setAnchor(LazyFont.TextAnchor.TOP_LEFT);
+                collapsedIcon = SkillTreePanelStyle.buildSimpleText(font, "+", STAT_PANEL_HEADER_FONT_SIZE, STAT_PANEL_HEADER_TEXT_COLOR);
             }
             return collapsedIcon;
         }
         if (expandedIcon == null) {
-            expandedIcon = font.createText("-", STAT_PANEL_HEADER_TEXT_COLOR, STAT_PANEL_HEADER_FONT_SIZE);
-            expandedIcon.setAnchor(LazyFont.TextAnchor.TOP_LEFT);
+            expandedIcon = SkillTreePanelStyle.buildSimpleText(font, "-", STAT_PANEL_HEADER_FONT_SIZE, STAT_PANEL_HEADER_TEXT_COLOR);
         }
         return expandedIcon;
     }
@@ -283,19 +263,7 @@ final class SkillTreeStatPanel {
         return String.format("%.1f", value);
     }
 
-    // TODO: this wrap/measure/cache logic duplicates SkillTreeNodeTooltipRenderer.buildTooltipText - extract a shared DrawableTextCache/TooltipTextBuilder utility.
     private SkillTreePanelStyle.TooltipText buildMultiLineText(LazyFont font, List<String> lines, float fontSize, Color color) {
-        String joined = String.join("\n", lines);
-
-        float width = 0f;
-        for (String line : lines) {
-            width = Math.max(width, font.calcWidth(line, fontSize));
-        }
-        float height = lines.size() * fontSize * FONT_LINE_HEIGHT_FACTOR;
-
-        LazyFont.DrawableString drawable = font.createText(joined, color, fontSize);
-        drawable.setAlignment(LazyFont.TextAlignment.LEFT);
-        drawable.setAnchor(LazyFont.TextAnchor.TOP_LEFT);
-        return new SkillTreePanelStyle.TooltipText(drawable, width, height);
+        return SkillTreePanelStyle.buildJoinedText(font, lines, fontSize, color);
     }
 }

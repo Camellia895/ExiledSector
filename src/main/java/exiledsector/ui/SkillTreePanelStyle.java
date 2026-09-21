@@ -2,6 +2,7 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.ui.util.GLDraw;
 import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.ui.FontException;
 import org.lazywizard.lazylib.ui.LazyFont;
@@ -13,6 +14,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public final class SkillTreePanelStyle {
@@ -53,20 +55,11 @@ public final class SkillTreePanelStyle {
         return tooltipFont;
     }
 
-    // TODO: this filled-quad GL setup/teardown is duplicated in SkillTreeStatPanel and SkillTreeNodeDropdownRenderer - extract a shared GLDraw.fillQuad(x,y,w,h,color,alpha) helper.
     public void drawTooltipBackground(float x, float y, float width, float height, float alphaMult, Color borderColor) {
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GLDraw.fillQuad(x, y, width, height, TOOLTIP_BACKGROUND_COLOR, alphaMult);
+
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-        Misc.setColor(TOOLTIP_BACKGROUND_COLOR, alphaMult);
-        GL11.glBegin(GL11.GL_QUADS);
-        GL11.glVertex2f(x, y);
-        GL11.glVertex2f(x + width, y);
-        GL11.glVertex2f(x + width, y + height);
-        GL11.glVertex2f(x, y + height);
-        GL11.glEnd();
-
         Misc.setColor(borderColor, alphaMult);
         GL11.glLineWidth(TOOLTIP_BORDER_THICKNESS);
         GL11.glBegin(GL11.GL_LINE_LOOP);
@@ -144,6 +137,35 @@ public final class SkillTreePanelStyle {
 
     private static int quantize(int channel) {
         return (channel / COLOR_QUANTIZE_STEP) * COLOR_QUANTIZE_STEP;
+    }
+
+    public static TooltipText buildWrappedText(LazyFont font, String rawText, float fontSize, float maxWidth, float maxHeight, Color color) {
+        return buildMeasuredText(font, font.wrapString(rawText, fontSize, maxWidth, maxHeight), fontSize, color);
+    }
+
+    public static TooltipText buildJoinedText(LazyFont font, List<String> lines, float fontSize, Color color) {
+        return buildMeasuredText(font, String.join("\n", lines), fontSize, color);
+    }
+
+    private static TooltipText buildMeasuredText(LazyFont font, String text, float fontSize, Color color) {
+        String[] lines = text.split("\n", -1);
+        float width = 0f;
+        for (String line : lines) {
+            width = Math.max(width, font.calcWidth(line, fontSize));
+        }
+        float height = lines.length * fontSize * FONT_LINE_HEIGHT_FACTOR;
+
+        LazyFont.DrawableString drawable = font.createText(text, color, fontSize);
+        drawable.setAlignment(LazyFont.TextAlignment.LEFT);
+        drawable.setAnchor(LazyFont.TextAnchor.TOP_LEFT);
+        return new TooltipText(drawable, width, height);
+    }
+
+    public static LazyFont.DrawableString buildSimpleText(LazyFont font, String text, float fontSize, Color color) {
+        LazyFont.DrawableString drawable = font.createText(text, color, fontSize);
+        drawable.setAlignment(LazyFont.TextAlignment.LEFT);
+        drawable.setAnchor(LazyFont.TextAnchor.TOP_LEFT);
+        return drawable;
     }
 
     public static final class TooltipText {

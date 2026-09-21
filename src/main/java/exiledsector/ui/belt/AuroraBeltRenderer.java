@@ -1,7 +1,6 @@
 package exiledsector.ui.belt;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
-import com.fs.starfarer.api.util.Misc;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
@@ -20,13 +19,12 @@ public final class AuroraBeltRenderer {
     private AuroraBeltRenderer() {
     }
 
-    // TODO: setup/teardown and segment-count math here duplicates RingBeltRenderer - extract shared beginRadialBand/endRadialBand + computeSegments helpers.
     public static void render(SpriteAPI texture, float cx, float cy, float innerRadius, float outerRadius,
                                Color color, float alphaMult, float elapsedSeconds) {
         float phaseAngleDeg = (elapsedSeconds * PHASE_DEG_PER_SEC) % 360f;
 
         float circumference = (float) (2 * Math.PI * (innerRadius + outerRadius) / 2f);
-        float segments = Math.max(MIN_SEGMENTS_FOR_WOBBLE, Math.round(circumference / PIXELS_PER_SEGMENT));
+        int segments = RadialBandGL.computeSegments(circumference, PIXELS_PER_SEGMENT, MIN_SEGMENTS_FOR_WOBBLE);
         float anglePerSegment = (float) (2 * Math.PI) / segments;
         float thickness = outerRadius - innerRadius;
 
@@ -38,13 +36,7 @@ public final class AuroraBeltRenderer {
         float texPerSegment = tileCount / segments;
         float wobble = Math.min(thickness * WOBBLE_RATIO, outerRadius * MAX_SAFE_WOBBLE_FRACTION / MAX_WOBBLE_FREQUENCY);
 
-        GL11.glPushMatrix();
-        GL11.glTranslatef(cx, cy, 0f);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        texture.bindTexture();
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-        Misc.setColor(color, alphaMult);
+        RadialBandGL.begin(texture, cx, cy, GL11.GL_SRC_ALPHA, GL11.GL_ONE, color, alphaMult);
 
         for (int iter = 0; iter < 2; iter++) {
             float bandIndex = iter == 0 ? 1f : 0f;
@@ -77,6 +69,6 @@ public final class AuroraBeltRenderer {
             GL11.glRotatef(180f, 0f, 0f, 1f);
         }
 
-        GL11.glPopMatrix();
+        RadialBandGL.end();
     }
 }

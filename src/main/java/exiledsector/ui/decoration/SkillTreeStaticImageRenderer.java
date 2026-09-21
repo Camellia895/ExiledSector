@@ -4,18 +4,14 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.skills.SkillTree;
-import org.apache.log4j.Logger;
+import exiledsector.ui.util.SpriteCache;
 import org.lwjgl.opengl.GL11;
 
-import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class SkillTreeStaticImageRenderer {
 
-    private final Set<String> loadedSprites = new HashSet<>();
-    private final Set<String> failedSprites = new HashSet<>();
+    private final SpriteCache spriteCache = new SpriteCache(SkillTreeStaticImageRenderer.class);
     private float elapsedSeconds = 0f;
 
     public void advance(float amount) {
@@ -34,7 +30,7 @@ public class SkillTreeStaticImageRenderer {
 
         for (StaticImage image : images) {
             String path = image.getImagePath();
-            if (path == null || path.isEmpty() || !ensureTextureLoaded(path)) continue;
+            if (path == null || path.isEmpty() || !spriteCache.ensureLoaded(path)) continue;
 
             SpriteAPI sprite = Global.getSettings().getSprite(path);
             float screenX = centerX + image.getX() * zoom;
@@ -46,20 +42,5 @@ public class SkillTreeStaticImageRenderer {
         }
 
         GL11.glDisable(GL11.GL_BLEND);
-    }
-
-    // TODO: this loadedSprites/failedSprites/ensureTextureLoaded pattern is copy-pasted across 5 renderer classes - extract a shared SpriteCache utility.
-    private boolean ensureTextureLoaded(String path) {
-        if (loadedSprites.contains(path)) return true;
-        if (failedSprites.contains(path)) return false;
-        try {
-            Global.getSettings().loadTexture(path);
-            loadedSprites.add(path);
-            return true;
-        } catch (IOException e) {
-            Logger.getLogger(SkillTreeStaticImageRenderer.class).error("Failed to load static image texture " + path, e);
-            failedSprites.add(path);
-            return false;
-        }
     }
 }

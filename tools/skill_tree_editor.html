@@ -2107,15 +2107,8 @@ function refreshInspector(){
 
   var statsHtml = '';
   if (t) {
-    // TODO: this plain effect-row builder duplicates the type-editor modal's copy below - both should share a renderEffectRows/syncEffectRowsFromInputs pair, mirroring the existing renderHullSizeEffectRows/syncHullSizeEffectsFromInputs pattern.
-    var statRows = (t.effects || []).map(function(e, i){
-      var options = sortedEffectOptionsHtml(e.effect);
-      return '<div class="fieldRow" style="align-items:flex-end">' +
-        '<div class="field" style="flex:2"><label>Effect ' + (i+1) + '</label>' + effectFilterHtml('inspEffect' + i) + '<select id="inspEffect' + i + '" data-stat-effect="' + i + '">' + options + '</select></div>' +
-        '<div class="field" style="flex:1"><label>Magnitude</label><input type="number" step="0.1" value="' + (e.magnitude || 0) + '" data-stat-magnitude="' + i + '"></div>' +
-        '<button class="smallBtn danger" data-remove-stat-row="' + i + '">X</button>' +
-      '</div>';
-    }).join('') || '<div class="hint">No effects yet.' + (t.vanillaHullMod ? ' Still on vanillaHullMod passthrough ("' + t.vanillaHullMod + '") - adding effects here does not switch that off, use "Edit type" for that.' : '') + '</div>';
+    var statRows = renderEffectRows('insp', t.effects || [], '<div class="hint">No effects yet.' + (t.vanillaHullMod ? ' Still on vanillaHullMod passthrough ("' + t.vanillaHullMod + '") - adding effects here does not switch that off, use "Edit type" for that.' : '') + '</div>');
+    if (!t.effects) t.effects = [];
     if (!t.hullSizeEffects) t.hullSizeEffects = [];
     statsHtml =
       '<div class="field"><label>Description override (optional, shared by type "' + t.id + '")</label>' +
@@ -2258,29 +2251,24 @@ function refreshInspector(){
         saveLocal(); refreshInspector();
       });
     });
-    body.querySelectorAll('[data-stat-effect]').forEach(function(sel){
-      sel.addEventListener('change', function(){
-        t.effects[parseInt(sel.dataset.statEffect, 10)].effect = sel.value;
-        saveLocal(); refreshInspector();
+    body.querySelectorAll('[id^="inspEffect"], [id^="inspMag"]').forEach(function(el){
+      el.addEventListener('change', function(){
+        syncEffectRowsFromInputs('insp', t.effects);
+        saveLocal();
       });
     });
     wireEffectFilters(body);
-    body.querySelectorAll('[data-stat-magnitude]').forEach(function(inp){
-      inp.addEventListener('change', function(){
-        t.effects[parseInt(inp.dataset.statMagnitude, 10)].magnitude = parseFloat(inp.value) || 0;
-        saveLocal(); refreshInspector();
-      });
-    });
-    body.querySelectorAll('[data-remove-stat-row]').forEach(function(btn){
+    body.querySelectorAll('[data-insp-remove-effect-row]').forEach(function(btn){
       btn.addEventListener('click', function(){
-        t.effects.splice(parseInt(btn.dataset.removeStatRow, 10), 1);
+        syncEffectRowsFromInputs('insp', t.effects);
+        t.effects.splice(parseInt(btn.dataset.inspRemoveEffectRow, 10), 1);
         saveLocal(); refreshInspector();
       });
     });
     var addStatBtn = document.getElementById('addStatRowBtn');
     if (addStatBtn) {
       addStatBtn.addEventListener('click', function(){
-        if (!t.effects) t.effects = [];
+        syncEffectRowsFromInputs('insp', t.effects);
         t.effects.push({ effect: EFFECT_NAMES[0], magnitude: 10 });
         saveLocal(); refreshInspector();
       });
@@ -2716,6 +2704,29 @@ function renderOptionEditRows(optionIds){
   }).join('');
 }
 
+function renderEffectRows(idPrefix, effectsDraft, emptyHintHtml){
+  var rows = effectsDraft.map(function(e, i){
+    var options = sortedEffectOptionsHtml(e.effect);
+    var selectId = idPrefix + 'Effect' + i;
+    return '<div class="fieldRow" style="align-items:flex-end">' +
+      '<div class="field" style="flex:2"><label>Effect ' + (i+1) + '</label>' + effectFilterHtml(selectId) + '<select id="' + selectId + '">' + options + '</select></div>' +
+      '<div class="field" style="flex:1"><label>Magnitude</label><input id="' + idPrefix + 'Mag' + i + '" type="number" step="0.1" value="' + (e.magnitude || 0) + '"></div>' +
+      '<button class="smallBtn danger" type="button" data-' + idPrefix + '-remove-effect-row="' + i + '">X</button>' +
+    '</div>';
+  }).join('');
+  return rows || (emptyHintHtml || '<div class="hint">No effects yet.</div>');
+}
+
+function syncEffectRowsFromInputs(idPrefix, effectsDraft){
+  effectsDraft.forEach(function(e, i){
+    var effSel = document.getElementById(idPrefix + 'Effect' + i);
+    if (!effSel) return;
+    e.effect = effSel.value;
+    var magInp = document.getElementById(idPrefix + 'Mag' + i);
+    if (magInp) e.magnitude = parseFloat(magInp.value) || 0;
+  });
+}
+
 function renderHullSizeEffectRows(idPrefix, hullSizeEffectsDraft){
   var rows = hullSizeEffectsDraft.map(function(e, i){
     var options = sortedEffectOptionsHtml(e.effect);
@@ -2983,26 +2994,13 @@ function openTypeModal(existingType, onSave, onClose){
     }
     t.description = document.getElementById('tDescription').value;
     t.todo = document.getElementById('tTodo').value;
-    effectsDraft.forEach(function(e, i){
-      var effSel = document.getElementById('tEffect' + i);
-      var magInp = document.getElementById('tMag' + i);
-      if (effSel) e.effect = effSel.value;
-      if (magInp) e.magnitude = parseFloat(magInp.value) || 0;
-    });
+    syncEffectRowsFromInputs('t', effectsDraft);
     syncHullSizeEffectsFromInputs('t', hullSizeEffectsDraft);
   }
 
   function renderModal(){
     var tierOptions = ['SMALL','NOTABLE','KEYSTONE','WORMHOLE','ROOT'].map(function(tr){ return '<option value="'+tr+'"'+(tr===tierOf(t)?' selected':'')+'>'+tr+'</option>'; }).join('');
-    // TODO: duplicates the node inspector's plain effect-row builder above - see the TODO there.
-    var effectRows = effectsDraft.map(function(e, i){
-      var options = sortedEffectOptionsHtml(e.effect);
-      return '<div class="fieldRow" style="align-items:flex-end">' +
-        '<div class="field" style="flex:2"><label>Effect ' + (i+1) + '</label>' + effectFilterHtml('tEffect' + i) + '<select id="tEffect' + i + '">' + options + '</select></div>' +
-        '<div class="field" style="flex:1"><label>Magnitude</label><input id="tMag' + i + '" type="number" step="0.1" value="' + (e.magnitude || 0) + '"></div>' +
-        '<button class="smallBtn danger" type="button" data-remove-effect-row="' + i + '">X</button>' +
-      '</div>';
-    }).join('') || '<div class="hint">No effects yet - click "+ Add effect" below, or set a vanillaHullMod id instead.</div>';
+    var effectRows = renderEffectRows('t', effectsDraft, '<div class="hint">No effects yet - click "+ Add effect" below, or set a vanillaHullMod id instead.</div>');
 
     var html =
       '<div class="modalOverlay"><div class="modal">' +
@@ -3047,10 +3045,10 @@ function openTypeModal(existingType, onSave, onClose){
       effectsDraft.push({ effect: EFFECT_NAMES[0], magnitude: 10 });
       renderModal();
     });
-    root.querySelectorAll('[data-remove-effect-row]').forEach(function(btn){
+    root.querySelectorAll('[data-t-remove-effect-row]').forEach(function(btn){
       btn.addEventListener('click', function(){
         syncDraftFromInputs();
-        effectsDraft.splice(parseInt(btn.dataset.removeEffectRow, 10), 1);
+        effectsDraft.splice(parseInt(btn.dataset.tRemoveEffectRow, 10), 1);
         renderModal();
       });
     });
