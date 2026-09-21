@@ -347,8 +347,8 @@
 			"connectedTo": [
 				"armor_5"
 			],
-			"x": -379,
-			"y": 2657,
+			"x": -480,
+			"y": 2646,
 			"orbitAnchorId": "anchor_10",
 			"orbitAngle": 90
 		},
@@ -2080,8 +2080,8 @@
 				"armor_5",
 				"small_flux_optional_35"
 			],
-			"x": -249,
-			"y": 2432,
+			"x": -350,
+			"y": 2421,
 			"orbitAnchorId": "anchor_10",
 			"orbitAngle": -29.999999999999996
 		},
@@ -2092,8 +2092,8 @@
 				"armor_4",
 				"shield_shunt_1"
 			],
-			"x": -509,
-			"y": 2432,
+			"x": -610,
+			"y": 2421,
 			"orbitAnchorId": "anchor_10",
 			"orbitAngle": -150.00000000000003
 		},
@@ -3022,14 +3022,14 @@
 		{
 			"a": "armor_4",
 			"b": "armor_5",
-			"controlX": -379,
-			"controlY": 2432
+			"controlX": -480,
+			"controlY": 2421
 		},
 		{
 			"a": "armor_5",
 			"b": "shield_shunt_1",
-			"controlX": -444,
-			"controlY": 2545
+			"controlX": -545,
+			"controlY": 2534
 		},
 		{
 			"a": "shield_arc_3",
@@ -3278,8 +3278,8 @@
 		},
 		{
 			"id": "anchor_10",
-			"x": -379,
-			"y": 2507,
+			"x": -480,
+			"y": 2496,
 			"radius": 150,
 			"shape": "triangle",
 			"rotation": 180
@@ -3339,44 +3339,33 @@
 			"radius": 150,
 			"shape": "triangle",
 			"rotation": 180
+		},
+		{
+			"id": "midline_zone",
+			"x": -2415,
+			"y": 1398,
+			"radius": 2764,
+			"shape": "triangle",
+			"rotation": 180
+		},
+		{
+			"id": "lowtech_zone",
+			"x": 2408,
+			"y": 1406,
+			"radius": 2764,
+			"shape": "triangle",
+			"rotation": 180
+		},
+		{
+			"id": "hightech_zone",
+			"x": 0,
+			"y": -2760,
+			"radius": 2764,
+			"shape": "triangle",
+			"rotation": 180
 		}
 	],
 	"staticImages": [
-		{
-			"id": "image_1",
-			"x": -608,
-			"y": -344,
-			"width": 588,
-			"height": 485,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_10.png",
-			"rotation": 178
-		},
-		{
-			"id": "image_2",
-			"x": -571,
-			"y": 758,
-			"width": 582,
-			"height": 691,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_09.png"
-		},
-		{
-			"id": "image_3",
-			"x": 601,
-			"y": -1,
-			"width": 477,
-			"height": 644,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_08.png",
-			"rotation": 60
-		},
-		{
-			"id": "image_4",
-			"x": 344,
-			"y": -542,
-			"width": 382,
-			"height": 469,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_06.png",
-			"rotation": 80
-		},
 		{
 			"id": "image_5",
 			"x": -2,
