@@ -1,4 +1,4 @@
-package exiledsector.ui;
+package exiledsector.ui.belt;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -6,14 +6,14 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 
-final class RingBeltRenderer {
+public final class RingBeltRenderer {
     private static final float PIXELS_PER_SEGMENT = 5f;
     private static final float MAX_TILE_COUNT = 60f;
 
     private RingBeltRenderer() {
     }
 
-    static void render(SpriteAPI texture, float cx, float cy, float innerRadius, float outerRadius, Color color, float alphaMult) {
+    public static void render(SpriteAPI texture, float cx, float cy, float innerRadius, float outerRadius, Color color, float alphaMult) {
         float middleRadius = (innerRadius + outerRadius) / 2f;
         float circumference = (float) (2 * Math.PI * middleRadius);
         float segments = Math.round(circumference / PIXELS_PER_SEGMENT);

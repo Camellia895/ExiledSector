@@ -1,23 +1,24 @@
-package exiledsector.ui;
+package exiledsector.ui.node;
 
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
+import exiledsector.ui.SkillTreePanelStyle;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 
-import static exiledsector.ui.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_HALO_ALPHA;
-import static exiledsector.ui.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_HALO_THICKNESS;
-import static exiledsector.ui.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_LINE_THICKNESS;
-import static exiledsector.ui.SkillTreeNodeGeometry.NODE_CONNECTOR_LINE_THICKNESS;
-import static exiledsector.ui.SkillTreeNodeGeometry.NODE_CONNECTOR_PARALLEL_GAP;
-import static exiledsector.ui.SkillTreeNodeGeometry.NODE_SIZE;
-import static exiledsector.ui.SkillTreeNodeGeometry.RING_DULL_ALPHA;
-import static exiledsector.ui.SkillTreeNodeGeometry.RING_DULL_COLOR;
-import static exiledsector.ui.SkillTreeNodeGeometry.connectorEndpointRadius;
+import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_HALO_ALPHA;
+import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_HALO_THICKNESS;
+import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_LINE_THICKNESS;
+import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_CONNECTOR_LINE_THICKNESS;
+import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_CONNECTOR_PARALLEL_GAP;
+import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_SIZE;
+import static exiledsector.ui.node.SkillTreeNodeGeometry.RING_DULL_ALPHA;
+import static exiledsector.ui.node.SkillTreeNodeGeometry.RING_DULL_COLOR;
+import static exiledsector.ui.node.SkillTreeNodeGeometry.connectorEndpointRadius;
 
 final class SkillTreeNodeConnectorRenderer {
 

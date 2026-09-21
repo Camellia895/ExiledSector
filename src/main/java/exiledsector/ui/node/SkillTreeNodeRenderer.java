@@ -1,4 +1,4 @@
-package exiledsector.ui;
+package exiledsector.ui.node;
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.effects.SkillTreeHullMod;
@@ -11,14 +11,15 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
+import exiledsector.ui.SkillTreePanelStyle;
 import lunalib.lunaRefit.BaseRefitButton;
 
 import java.awt.Color;
 
-import static exiledsector.ui.SkillTreeNodeGeometry.ICON_INSET_RATIO;
-import static exiledsector.ui.SkillTreeNodeGeometry.NODE_SIZE;
+import static exiledsector.ui.node.SkillTreeNodeGeometry.ICON_INSET_RATIO;
+import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_SIZE;
 
-final class SkillTreeNodeRenderer {
+public final class SkillTreeNodeRenderer {
 
     private static final Color ALLOCATED_TINT = Color.WHITE;
     private static final Color UNALLOCATED_TINT = new Color(90, 90, 90);
@@ -33,7 +34,7 @@ final class SkillTreeNodeRenderer {
     private final SkillTreeNodeTooltipRenderer tooltipRenderer;
     private final SkillTreeNodeDropdownRenderer dropdownRenderer;
 
-    SkillTreeNodeRenderer(FleetMemberAPI member, SkillTreePanelStyle style, BaseRefitButton refitButton) {
+    public SkillTreeNodeRenderer(FleetMemberAPI member, SkillTreePanelStyle style, BaseRefitButton refitButton) {
         this.member = member;
         this.refitButton = refitButton;
         this.activeRoot = findRootNode(ShipTechLevel.of(member).rootTypeId());
@@ -60,11 +61,11 @@ final class SkillTreeNodeRenderer {
         return activeRoot != null && node.getType().getTier() == SkillTier.ROOT && node.getId().equals(activeRoot.getId());
     }
 
-    void advance(float amount) {
+    public void advance(float amount) {
         ringRenderer.advance(amount);
     }
 
-    void render(float centerX, float centerY, float zoom, float alphaMult, float mouseX, float mouseY, boolean mouseKnown) {
+    public void render(float centerX, float centerY, float zoom, float alphaMult, float mouseX, float mouseY, boolean mouseKnown) {
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
         String satisfiedRootId = satisfiedRootId();
 
@@ -120,7 +121,7 @@ final class SkillTreeNodeRenderer {
         return null;
     }
 
-    void renderHoverTooltip(float centerX, float centerY, float zoom, float mouseX, float mouseY, float alphaMult) {
+    public void renderHoverTooltip(float centerX, float centerY, float zoom, float mouseX, float mouseY, float alphaMult) {
         if (dropdownRenderer.isOpen()) {
             SkillType hovered = dropdownRenderer.findOptionAt(centerX, centerY, zoom, mouseX, mouseY);
             if (hovered != null) {
@@ -135,7 +136,7 @@ final class SkillTreeNodeRenderer {
         }
     }
 
-    SkillNode findNodeAt(float centerX, float centerY, float zoom, float x, float y) {
+    public SkillNode findNodeAt(float centerX, float centerY, float zoom, float x, float y) {
         for (SkillNode node : SkillTree.getAllNodes().values()) {
             float nodeX = centerX + node.getOffsetX() * zoom;
             float nodeY = centerY - node.getOffsetY() * zoom;
@@ -147,7 +148,7 @@ final class SkillTreeNodeRenderer {
         return null;
     }
 
-    void toggleAllocation(SkillNode node) {
+    public void toggleAllocation(SkillNode node) {
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
         boolean wasAllocated = data.isAllocated(node.getId());
 
@@ -171,19 +172,19 @@ final class SkillTreeNodeRenderer {
         }
     }
 
-    boolean isDropdownOpen() {
+    public boolean isDropdownOpen() {
         return dropdownRenderer.isOpen();
     }
 
-    void closeDropdown() {
+    public void closeDropdown() {
         dropdownRenderer.close();
     }
 
-    SkillType findDropdownOptionAt(float centerX, float centerY, float zoom, float x, float y) {
+    public SkillType findDropdownOptionAt(float centerX, float centerY, float zoom, float x, float y) {
         return dropdownRenderer.findOptionAt(centerX, centerY, zoom, x, y);
     }
 
-    void commitDropdownSelection(SkillType chosenOption) {
+    public void commitDropdownSelection(SkillType chosenOption) {
         SkillNode node = dropdownRenderer.getOpenNode();
         dropdownRenderer.close();
         if (node == null) return;

@@ -1,4 +1,4 @@
-package exiledsector.ui;
+package exiledsector.ui.decoration;
 
 import exiledsector.skills.SkillTreeObject;
 

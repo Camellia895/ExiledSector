@@ -1,6 +1,10 @@
-package exiledsector.skills;
+package exiledsector.skills.loader;
 
 import com.fs.starfarer.api.Global;
+import exiledsector.skills.HullSizeSkillEffect;
+import exiledsector.skills.SkillTier;
+import exiledsector.skills.SkillType;
+import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;

@@ -1,10 +1,13 @@
-package exiledsector.ui;
+package exiledsector.ui.node;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
+import exiledsector.ui.SkillTreePanelStyle;
+import exiledsector.ui.belt.AuroraBeltRenderer;
+import exiledsector.ui.belt.RingBeltRenderer;
 import org.apache.log4j.Logger;
 import org.lwjgl.opengl.GL11;
 
@@ -19,17 +22,17 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import static exiledsector.ui.SkillTreeNodeGeometry.ICON_INSET_RATIO;
-import static exiledsector.ui.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_HALO_ALPHA;
-import static exiledsector.ui.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_HALO_THICKNESS;
-import static exiledsector.ui.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_LINE_THICKNESS;
-import static exiledsector.ui.SkillTreeNodeGeometry.NODE_CONNECTOR_LINE_THICKNESS;
-import static exiledsector.ui.SkillTreeNodeGeometry.RING_DULL_ALPHA;
-import static exiledsector.ui.SkillTreeNodeGeometry.RING_DULL_COLOR;
-import static exiledsector.ui.SkillTreeNodeGeometry.beltInnerRadius;
-import static exiledsector.ui.SkillTreeNodeGeometry.beltOuterRadius;
-import static exiledsector.ui.SkillTreeNodeGeometry.donutGapRadius;
-import static exiledsector.ui.SkillTreeNodeGeometry.donutRadius;
+import static exiledsector.ui.node.SkillTreeNodeGeometry.ICON_INSET_RATIO;
+import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_HALO_ALPHA;
+import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_HALO_THICKNESS;
+import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_LINE_THICKNESS;
+import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_CONNECTOR_LINE_THICKNESS;
+import static exiledsector.ui.node.SkillTreeNodeGeometry.RING_DULL_ALPHA;
+import static exiledsector.ui.node.SkillTreeNodeGeometry.RING_DULL_COLOR;
+import static exiledsector.ui.node.SkillTreeNodeGeometry.beltInnerRadius;
+import static exiledsector.ui.node.SkillTreeNodeGeometry.beltOuterRadius;
+import static exiledsector.ui.node.SkillTreeNodeGeometry.donutGapRadius;
+import static exiledsector.ui.node.SkillTreeNodeGeometry.donutRadius;
 
 final class SkillTreeNodeRingRenderer {
 

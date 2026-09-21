@@ -1,10 +1,11 @@
-package exiledsector.ui;
+package exiledsector.ui.node;
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;
+import exiledsector.ui.SkillTreePanelStyle;
 import org.lazywizard.lazylib.ui.LazyFont;
 
 import java.awt.Color;

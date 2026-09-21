@@ -1,4 +1,4 @@
-package exiledsector.ui;
+package exiledsector.ui.belt;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -6,7 +6,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 
-final class AuroraBeltRenderer {
+public final class AuroraBeltRenderer {
     private static final float PIXELS_PER_SEGMENT = 5f;
     private static final float BAND_WIDTH_IN_TEXTURE = 256f;
     private static final float TILE_DENSITY = 3f;
@@ -20,8 +20,8 @@ final class AuroraBeltRenderer {
     private AuroraBeltRenderer() {
     }
 
-    static void render(SpriteAPI texture, float cx, float cy, float innerRadius, float outerRadius,
-                        Color color, float alphaMult, float elapsedSeconds) {
+    public static void render(SpriteAPI texture, float cx, float cy, float innerRadius, float outerRadius,
+                               Color color, float alphaMult, float elapsedSeconds) {
         float phaseAngleDeg = (elapsedSeconds * PHASE_DEG_PER_SEC) % 360f;
 
         float circumference = (float) (2 * Math.PI * (innerRadius + outerRadius) / 2f);

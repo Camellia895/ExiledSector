@@ -1,8 +1,10 @@
 package exiledsector.skills;
 
-import exiledsector.ui.ConnectorCurve;
-import exiledsector.ui.RingBelt;
-import exiledsector.ui.StaticImage;
+import exiledsector.skills.loader.SkillTreeLoader;
+import exiledsector.skills.loader.SkillTypeLoader;
+import exiledsector.ui.decoration.RingBelt;
+import exiledsector.ui.decoration.StaticImage;
+import exiledsector.ui.node.ConnectorCurve;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

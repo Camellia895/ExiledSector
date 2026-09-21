@@ -1,4 +1,4 @@
-package exiledsector.ui;
+package exiledsector.ui.node;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.graphics.SpriteAPI;

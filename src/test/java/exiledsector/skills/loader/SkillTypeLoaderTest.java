@@ -1,5 +1,7 @@
-package exiledsector.skills;
+package exiledsector.skills.loader;
 
+import exiledsector.skills.SkillTier;
+import exiledsector.skills.SkillType;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;

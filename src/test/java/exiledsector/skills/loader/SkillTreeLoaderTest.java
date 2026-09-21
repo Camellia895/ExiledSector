@@ -1,8 +1,12 @@
-package exiledsector.skills;
+package exiledsector.skills.loader;
 
-import exiledsector.ui.ConnectorCurve;
-import exiledsector.ui.RingBelt;
-import exiledsector.ui.StaticImage;
+import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillTier;
+import exiledsector.skills.SkillTree;
+import exiledsector.skills.SkillType;
+import exiledsector.ui.decoration.RingBelt;
+import exiledsector.ui.decoration.StaticImage;
+import exiledsector.ui.node.ConnectorCurve;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 

@@ -1,8 +1,9 @@
-package exiledsector.ui;
+package exiledsector.ui.decoration;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
+import exiledsector.ui.SkillTreePanelStyle;
 import org.apache.log4j.Logger;
 import org.lwjgl.opengl.GL11;
 

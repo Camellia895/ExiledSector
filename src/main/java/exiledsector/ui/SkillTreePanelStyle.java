@@ -15,16 +15,16 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-final class SkillTreePanelStyle {
+public final class SkillTreePanelStyle {
 
-    static final String TOOLTIP_FONT_PATH = "graphics/fonts/insignia15LTaa.fnt";
-    static final float TOOLTIP_TITLE_FONT_SIZE = 24f;
-    static final float TOOLTIP_BODY_FONT_SIZE = 20f;
-    static final Color TOOLTIP_BODY_COLOR = new Color(230, 230, 230);
-    static final float FONT_LINE_HEIGHT_FACTOR = 1f;
-    static final Color TOOLTIP_BACKGROUND_COLOR = Color.BLACK;
-    static final float TOOLTIP_BORDER_THICKNESS = 2f;
-    static final Color GLOW_COLOR = new Color(120, 200, 255);
+    public static final String TOOLTIP_FONT_PATH = "graphics/fonts/insignia15LTaa.fnt";
+    public static final float TOOLTIP_TITLE_FONT_SIZE = 24f;
+    public static final float TOOLTIP_BODY_FONT_SIZE = 20f;
+    public static final Color TOOLTIP_BODY_COLOR = new Color(230, 230, 230);
+    public static final float FONT_LINE_HEIGHT_FACTOR = 1f;
+    public static final Color TOOLTIP_BACKGROUND_COLOR = Color.BLACK;
+    public static final float TOOLTIP_BORDER_THICKNESS = 2f;
+    public static final Color GLOW_COLOR = new Color(120, 200, 255);
 
     private static final Color DEFAULT_ACCENT_COLOR = GLOW_COLOR;
     private static final int COLOR_QUANTIZE_STEP = 24;
@@ -37,11 +37,11 @@ final class SkillTreePanelStyle {
     private Color accentColor;
     private Color headerBackgroundColor;
 
-    SkillTreePanelStyle(String accentIconPath) {
+    public SkillTreePanelStyle(String accentIconPath) {
         this.accentIconPath = accentIconPath;
     }
 
-    LazyFont getFont() {
+    public LazyFont getFont() {
         if (tooltipFont == null && !tooltipFontLoadFailed) {
             try {
                 tooltipFont = LazyFont.loadFont(TOOLTIP_FONT_PATH);
@@ -53,7 +53,7 @@ final class SkillTreePanelStyle {
         return tooltipFont;
     }
 
-    void drawTooltipBackground(float x, float y, float width, float height, float alphaMult, Color borderColor) {
+    public void drawTooltipBackground(float x, float y, float width, float height, float alphaMult, Color borderColor) {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -78,14 +78,14 @@ final class SkillTreePanelStyle {
         GL11.glDisable(GL11.GL_BLEND);
     }
 
-    Color getAccentColor() {
+    public Color getAccentColor() {
         if (accentColor == null) {
             accentColor = computeDominantColor(accentIconPath);
         }
         return accentColor;
     }
 
-    Color getHeaderBackgroundColor() {
+    public Color getHeaderBackgroundColor() {
         if (headerBackgroundColor == null) {
             Color accent = getAccentColor();
             headerBackgroundColor = new Color(
@@ -145,12 +145,12 @@ final class SkillTreePanelStyle {
         return (channel / COLOR_QUANTIZE_STEP) * COLOR_QUANTIZE_STEP;
     }
 
-    static final class TooltipText {
-        final LazyFont.DrawableString drawable;
-        final float width;
-        final float height;
+    public static final class TooltipText {
+        public final LazyFont.DrawableString drawable;
+        public final float width;
+        public final float height;
 
-        TooltipText(LazyFont.DrawableString drawable, float width, float height) {
+        public TooltipText(LazyFont.DrawableString drawable, float width, float height) {
             this.drawable = drawable;
             this.width = width;
             this.height = height;
