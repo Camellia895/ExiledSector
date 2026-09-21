@@ -183,8 +183,8 @@
 			"id": "hardened_subsystems_1",
 			"type": "hardened_subsystems",
 			"connectedTo": [],
-			"x": 2260,
-			"y": 1305
+			"x": 2318,
+			"y": 1179
 		},
 		{
 			"id": "turretgyros_1",
@@ -470,8 +470,8 @@
 			"connectedTo": [
 				"crew_capacity_flat_2"
 			],
-			"x": -632,
-			"y": -547,
+			"x": -860,
+			"y": -498,
 			"orbitAnchorId": "additional_berthing_anchor",
 			"orbitAngle": 270
 		},
@@ -493,8 +493,8 @@
 			"connectedTo": [
 				"fuel_flat_1"
 			],
-			"x": 394,
-			"y": 901,
+			"x": 505,
+			"y": 928,
 			"orbitAnchorId": "flat_fuel_anchor",
 			"orbitAngle": 90
 		},
@@ -996,7 +996,8 @@
 			"type": "small_logistics_optional",
 			"connectedTo": [
 				"small_logistics_optional_7",
-				"small_logistics_optional_25"
+				"small_logistics_optional_25",
+				"reduced_monthly_supplies_1"
 			],
 			"x": 0,
 			"y": -289
@@ -1176,8 +1177,8 @@
 				"small_logistics_optional_2",
 				"small_logistics_optional_20"
 			],
-			"x": -632,
-			"y": -207,
+			"x": -860,
+			"y": -158,
 			"orbitAnchorId": "additional_berthing_anchor",
 			"orbitAngle": 90
 		},
@@ -1188,8 +1189,8 @@
 				"crew_capacity_flat_1",
 				"additional_berthing_1"
 			],
-			"x": -462,
-			"y": -377,
+			"x": -690,
+			"y": -328,
 			"orbitAnchorId": "additional_berthing_anchor",
 			"orbitAngle": 0
 		},
@@ -1308,8 +1309,8 @@
 				"fuel_flat_2",
 				"auxiliary_fuel_tanks_1"
 			],
-			"x": 194,
-			"y": 701,
+			"x": 305,
+			"y": 728,
 			"orbitAnchorId": "flat_fuel_anchor",
 			"orbitAngle": 180
 		},
@@ -1320,8 +1321,8 @@
 				"fuel_flat_1",
 				"small_logistics_optional_13"
 			],
-			"x": 394,
-			"y": 501,
+			"x": 505,
+			"y": 528,
 			"orbitAnchorId": "flat_fuel_anchor",
 			"orbitAngle": 270
 		},
@@ -2648,6 +2649,41 @@
 			"y": -1367,
 			"orbitAnchorId": "anchor_23",
 			"orbitAngle": 180
+		},
+		{
+			"id": "reduced_monthly_supplies_1",
+			"type": "reduced_monthly_supplies",
+			"connectedTo": [
+				"reduced_monthly_supplies_2",
+				"small_logistics_optional_5"
+			],
+			"x": -195,
+			"y": -429,
+			"orbitAnchorId": "anchor_24",
+			"orbitAngle": 0
+		},
+		{
+			"id": "rationing_1",
+			"type": "rationing",
+			"connectedTo": [
+				"reduced_monthly_supplies_2"
+			],
+			"x": -495,
+			"y": -429,
+			"orbitAnchorId": "anchor_24",
+			"orbitAngle": 180
+		},
+		{
+			"id": "reduced_monthly_supplies_2",
+			"type": "reduced_monthly_supplies",
+			"connectedTo": [
+				"reduced_monthly_supplies_1",
+				"rationing_1"
+			],
+			"x": -345,
+			"y": -579,
+			"orbitAnchorId": "anchor_24",
+			"orbitAngle": 270
 		}
 	],
 	"connectorCurves": [
@@ -2810,14 +2846,14 @@
 		{
 			"a": "crew_capacity_flat_1",
 			"b": "crew_capacity_flat_2",
-			"controlX": -512,
-			"controlY": -257
+			"controlX": -740,
+			"controlY": -208
 		},
 		{
 			"a": "additional_berthing_1",
 			"b": "crew_capacity_flat_2",
-			"controlX": -512,
-			"controlY": -497
+			"controlX": -740,
+			"controlY": -448
 		},
 		{
 			"a": "militarized_subsystems_1",
@@ -2858,14 +2894,14 @@
 		{
 			"a": "fuel_flat_1",
 			"b": "fuel_flat_2",
-			"controlX": 253,
-			"controlY": 560
+			"controlX": 364,
+			"controlY": 587
 		},
 		{
 			"a": "auxiliary_fuel_tanks_1",
 			"b": "fuel_flat_1",
-			"controlX": 253,
-			"controlY": 842
+			"controlX": 364,
+			"controlY": 869
 		},
 		{
 			"a": "engine_durability_1",
@@ -3508,6 +3544,18 @@
 			"b": "fighter_replacement_1",
 			"controlX": 2350,
 			"controlY": -1473
+		},
+		{
+			"a": "reduced_monthly_supplies_1",
+			"b": "reduced_monthly_supplies_2",
+			"controlX": -239,
+			"controlY": -535
+		},
+		{
+			"a": "rationing_1",
+			"b": "reduced_monthly_supplies_2",
+			"controlX": -451,
+			"controlY": -535
 		}
 	],
 	"hiddenConnectors": [
@@ -3553,8 +3601,8 @@
 		},
 		{
 			"id": "additional_berthing_anchor",
-			"x": -632,
-			"y": -377,
+			"x": -860,
+			"y": -328,
 			"radius": 170
 		},
 		{
@@ -3583,8 +3631,8 @@
 		},
 		{
 			"id": "flat_fuel_anchor",
-			"x": 394,
-			"y": 701,
+			"x": 505,
+			"y": 728,
 			"radius": 200
 		},
 		{
@@ -3798,6 +3846,12 @@
 			"id": "anchor_23",
 			"x": 2244,
 			"y": -1367,
+			"radius": 150
+		},
+		{
+			"id": "anchor_24",
+			"x": -345,
+			"y": -429,
 			"radius": 150
 		}
 	],

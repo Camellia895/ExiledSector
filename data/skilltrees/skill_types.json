@@ -1909,6 +1909,41 @@
 			"tags": [
 				"fighter"
 			]
+		},
+		{
+			"id": "reduced_monthly_supplies",
+			"name": "Reduced Monthly Supplies",
+			"icon": "graphics/icons/industrial_planning_blue_blue.png",
+			"opCost": 4,
+			"effects": [
+				{
+					"effect": "SUPPLIES_PER_MONTH_MULT",
+					"magnitude": -5
+				}
+			],
+			"tags": [
+				"logistics"
+			]
+		},
+		{
+			"id": "rationing",
+			"name": "Rationing",
+			"icon": "graphics/icons/salvaging_blue_blue.png",
+			"opCost": 4,
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "SUPPLIES_PER_MONTH_MULT",
+					"magnitude": -10
+				},
+				{
+					"effect": "FUEL_USE_MULT",
+					"magnitude": -10
+				}
+			],
+			"tags": [
+				"logistics"
+			]
 		}
 	]
 }
