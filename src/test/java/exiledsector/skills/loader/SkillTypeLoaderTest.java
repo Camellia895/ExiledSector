@@ -22,7 +22,6 @@ class SkillTypeLoaderTest {
                 + "\"name\": \"Reinforced Hull\","
                 + "\"icon\": \"graphics/hullmods/reinforced_bulkheads.png\","
                 + "\"opCost\": 2,"
-                + "\"xpCost\": 500,"
                 + "\"effects\": [ { \"effect\": \"HULL_PERCENT\", \"magnitude\": 10 } ]"
                 + "} ] }");
 
@@ -32,7 +31,6 @@ class SkillTypeLoaderTest {
         assertEquals("Reinforced Hull", hull.getDisplayName());
         assertEquals("graphics/hullmods/reinforced_bulkheads.png", hull.getIconPath());
         assertEquals(2, hull.getOpCost());
-        assertEquals(500f, hull.getXpCost());
         assertEquals(1, hull.getEffects().size());
         assertEquals(DefenseSkillEffect.HULL_PERCENT, hull.getEffects().get(0).effect());
         assertEquals(10f, hull.getEffects().get(0).magnitude());
@@ -66,7 +64,6 @@ class SkillTypeLoaderTest {
 
         assertTrue(capacitors.getEffects().isEmpty());
         assertEquals(0, capacitors.getOpCost());
-        assertEquals(0f, capacitors.getXpCost());
     }
 
     @Test

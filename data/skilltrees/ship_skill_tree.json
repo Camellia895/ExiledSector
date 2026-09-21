@@ -243,9 +243,11 @@
 		{
 			"id": "missile_autoloader_1",
 			"type": "missile_autoloader",
-			"connectedTo": [],
-			"x": 2591,
-			"y": -394,
+			"connectedTo": [
+				"small_flux_optional_10"
+			],
+			"x": 2742,
+			"y": 0,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#33ff36"
 		},
@@ -571,9 +573,11 @@
 		{
 			"id": "converted_hangar_1",
 			"type": "converted_hangar",
-			"connectedTo": [],
-			"x": 1985,
-			"y": -1661,
+			"connectedTo": [
+				"small_logistics_optional_28"
+			],
+			"x": -615,
+			"y": 1330,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#80ffd4"
 		},
@@ -591,9 +595,11 @@
 		{
 			"id": "expanded_deck_crew_1",
 			"type": "expanded_deck_crew",
-			"connectedTo": [],
-			"x": 2288,
-			"y": -1310,
+			"connectedTo": [
+				"fighter_replacement_1"
+			],
+			"x": 2394,
+			"y": -1367,
 			"orbitAnchorId": "anchor_23",
 			"orbitAngle": 0
 		},
@@ -601,8 +607,8 @@
 			"id": "recovery_shuttles_1",
 			"type": "recovery_shuttles",
 			"connectedTo": [],
-			"x": 2394,
-			"y": -1188
+			"x": 1385,
+			"y": 3104
 		},
 		{
 			"id": "operations_center_1",
@@ -618,9 +624,11 @@
 		{
 			"id": "escort_package_1",
 			"type": "escort_package",
-			"connectedTo": [],
-			"x": 133,
-			"y": 1892,
+			"connectedTo": [
+				"small_flux_optional_3"
+			],
+			"x": 249,
+			"y": 1707,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#5274ff"
 		},
@@ -690,15 +698,15 @@
 			"id": "fighter_weapon_damage_1",
 			"type": "fighter_weapon_damage",
 			"connectedTo": [],
-			"x": 2785,
-			"y": -1641
+			"x": 3308,
+			"y": -1245
 		},
 		{
 			"id": "fighter_speed_1",
 			"type": "fighter_speed",
 			"connectedTo": [],
-			"x": 2727,
-			"y": -1773
+			"x": 3512,
+			"y": -1091
 		},
 		{
 			"id": "small_logistics_optional_3",
@@ -842,7 +850,8 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_logistics_optional_27",
-				"small_logistics_optional_29"
+				"small_logistics_optional_29",
+				"converted_hangar_1"
 			],
 			"x": -422,
 			"y": 1171,
@@ -1400,7 +1409,8 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_9",
-				"small_flux_optional_11"
+				"small_flux_optional_11",
+				"missile_autoloader_1"
 			],
 			"x": 3000,
 			"y": 0,
@@ -1694,7 +1704,8 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_26",
-				"small_flux_optional_28"
+				"small_flux_optional_28",
+				"fighter_replacement_2"
 			],
 			"x": 1761,
 			"y": -1318,
@@ -2428,7 +2439,8 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_logistics_optional_29",
-				"small_flux_optional_35"
+				"small_flux_optional_35",
+				"escort_package_1"
 			],
 			"x": 0,
 			"y": 1714
@@ -2610,15 +2622,32 @@
 			"id": "top_speed_3",
 			"type": "top_speed",
 			"connectedTo": [],
-			"x": 302,
-			"y": 1995
+			"x": 735,
+			"y": 3455
 		},
 		{
 			"id": "fighter_replacement_1",
 			"type": "fighter_replacement",
-			"connectedTo": [],
-			"x": 2089,
-			"y": -1101
+			"connectedTo": [
+				"fighter_replacement_2",
+				"expanded_deck_crew_1"
+			],
+			"x": 2244,
+			"y": -1517,
+			"orbitAnchorId": "anchor_23",
+			"orbitAngle": 270
+		},
+		{
+			"id": "fighter_replacement_2",
+			"type": "fighter_replacement",
+			"connectedTo": [
+				"fighter_replacement_1",
+				"small_flux_optional_27"
+			],
+			"x": 2094,
+			"y": -1367,
+			"orbitAnchorId": "anchor_23",
+			"orbitAngle": 180
 		}
 	],
 	"connectorCurves": [
@@ -3467,6 +3496,18 @@
 			"b": "auxiliarythrusters_1",
 			"controlX": 1755,
 			"controlY": -98
+		},
+		{
+			"a": "fighter_replacement_1",
+			"b": "fighter_replacement_2",
+			"controlX": 2138,
+			"controlY": -1473
+		},
+		{
+			"a": "expanded_deck_crew_1",
+			"b": "fighter_replacement_1",
+			"controlX": 2350,
+			"controlY": -1473
 		}
 	],
 	"hiddenConnectors": [
@@ -3755,8 +3796,8 @@
 		},
 		{
 			"id": "anchor_23",
-			"x": 2138,
-			"y": -1310,
+			"x": 2244,
+			"y": -1367,
 			"radius": 150
 		}
 	],

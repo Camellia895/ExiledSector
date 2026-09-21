@@ -3,7 +3,6 @@ package exiledsector;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledsector.combat.CombatXpListener;
 import exiledsector.effects.SkillTreeInstaller;
 import exiledsector.ui.SkillTreeRefitButton;
 import lunalib.lunaRefit.BaseRefitButton;
@@ -63,10 +62,9 @@ class ExiledSectorModPluginTest {
     }
 
     @Test
-    void onGameLoadRegistersTheCombatListenerAndInstallerScript() {
+    void onGameLoadRegistersTheInstallerScript() {
         new ExiledSectorModPlugin().onGameLoad(true);
 
-        verify(sector).addListener(any(CombatXpListener.class));
         verify(sector).addScript(any(SkillTreeInstaller.class));
     }
 }

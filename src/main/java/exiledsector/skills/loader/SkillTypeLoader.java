@@ -54,7 +54,6 @@ public final class SkillTypeLoader {
                 json.getString("name"),
                 json.getString("icon"),
                 json.optInt("opCost", 0),
-                (float) json.optDouble("xpCost", 0),
                 effects,
                 hullSizeEffects,
                 tier,

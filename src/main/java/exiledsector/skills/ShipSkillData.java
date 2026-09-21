@@ -18,7 +18,6 @@ public class ShipSkillData {
     private final Set<String> allocatedNodeIds = new LinkedHashSet<>();
     private Map<String, String> optionalSelections = new LinkedHashMap<>();
     private int spentOp = 0;
-    private float xp = 0f;
 
     public boolean isAllocated(String nodeId) {
         return allocatedNodeIds.contains(nodeId);
@@ -35,17 +34,14 @@ public class ShipSkillData {
             SkillType previousOption = previousOptionId == null ? null : SkillTree.getType(previousOptionId);
             if (previousOption != null) {
                 spentOp -= previousOption.getOpCost();
-                xp += previousOption.getXpCost();
             } else {
                 spentOp -= node.getOpCost();
-                xp += node.getXpCost();
             }
         }
         allocatedNodeIds.add(node.getId());
         if (optionalSelections == null) optionalSelections = new LinkedHashMap<>();
         optionalSelections.put(node.getId(), chosenOption.getId());
         spentOp += chosenOption.getOpCost();
-        xp -= chosenOption.getXpCost();
     }
 
     public boolean isSatisfied(String nodeId, String satisfiedRootId) {
@@ -60,18 +56,9 @@ public class ShipSkillData {
         return spentOp;
     }
 
-    public float getXp() {
-        return xp;
-    }
-
-    public void addXp(float amount) {
-        xp += amount;
-    }
-
     public void allocate(SkillNode node) {
         allocatedNodeIds.add(node.getId());
         spentOp += node.getOpCost();
-        xp -= node.getXpCost();
     }
 
     public void deallocate(SkillNode node) {
@@ -81,12 +68,10 @@ public class ShipSkillData {
             SkillType chosenOption = SkillTree.getType(selectedOptionId);
             if (chosenOption != null) {
                 spentOp -= chosenOption.getOpCost();
-                xp += chosenOption.getXpCost();
                 return;
             }
         }
         spentOp -= node.getOpCost();
-        xp += node.getXpCost();
     }
 
     public boolean canAllocate(SkillNode node, String satisfiedRootId) {

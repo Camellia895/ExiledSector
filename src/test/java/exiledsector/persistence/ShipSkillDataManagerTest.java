@@ -3,6 +3,9 @@ package exiledsector.persistence;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillTier;
+import exiledsector.skills.SkillType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +13,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -60,19 +64,24 @@ class ShipSkillDataManagerTest {
         ShipSkillData shipA = ShipSkillDataManager.get("ship-a");
         ShipSkillData shipB = ShipSkillDataManager.get("ship-b");
 
-        shipA.addXp(500f);
+        shipA.allocate(node("armor_1"));
 
         assertNotNull(shipB);
-        assertNotEquals(shipA.getXp(), shipB.getXp());
+        assertNotEquals(shipA.getSpentOp(), shipB.getSpentOp());
     }
 
     @Test
     void survivesAcrossLookupsViaThePersistentDataMap() {
         ShipSkillData data = ShipSkillDataManager.get("ship-a");
-        data.addXp(1000f);
+        data.allocate(node("armor_1"));
 
         ShipSkillData reread = ShipSkillDataManager.get("ship-a");
 
-        assertEquals(1000f, reread.getXp());
+        assertEquals(2, reread.getSpentOp());
+    }
+
+    private static SkillNode node(String id) {
+        SkillType type = new SkillType(id, id, "graphics/hullmods/heavy_armor.png", 2, List.of(), SkillTier.SMALL, null, null, null);
+        return new SkillNode(id, type, List.of(), 0f, 0f);
     }
 }

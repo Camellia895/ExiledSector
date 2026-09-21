@@ -25,7 +25,7 @@ class ShipSkillDataTest {
     }
 
     private static SkillNode node(String id, List<String> prerequisiteIds) {
-        SkillType type = new SkillType(id, id, "graphics/hullmods/heavy_armor.png", 2, 300f, List.of(), SkillTier.SMALL, null, null, null);
+        SkillType type = new SkillType(id, id, "graphics/hullmods/heavy_armor.png", 2, List.of(), SkillTier.SMALL, null, null, null);
         return new SkillNode(id, type, prerequisiteIds, 0f, 0f);
     }
 
@@ -33,38 +33,24 @@ class ShipSkillDataTest {
     void startsWithNoProgress() {
         ShipSkillData data = new ShipSkillData();
 
-        assertEquals(0f, data.getXp());
         assertEquals(0, data.getSpentOp());
         assertTrue(data.getAllocatedNodeIds().isEmpty());
     }
 
     @Test
-    void addXpAccumulatesAcrossCalls() {
+    void allocateMarksNodeAndSpendsItsOpCost() {
         ShipSkillData data = new ShipSkillData();
-
-        data.addXp(10f);
-        data.addXp(5f);
-
-        assertEquals(15f, data.getXp());
-    }
-
-    @Test
-    void allocateMarksNodeAndSpendsItsOpAndXpCost() {
-        ShipSkillData data = new ShipSkillData();
-        data.addXp(500f);
         SkillNode node = node("armor_1", List.of());
 
         data.allocate(node);
 
         assertTrue(data.isAllocated("armor_1"));
         assertEquals(2, data.getSpentOp());
-        assertEquals(200f, data.getXp());
     }
 
     @Test
-    void deallocateRefundsTheNodesOpAndXpCost() {
+    void deallocateRefundsTheNodesOpCost() {
         ShipSkillData data = new ShipSkillData();
-        data.addXp(500f);
         SkillNode node = node("armor_1", List.of());
         data.allocate(node);
 
@@ -72,7 +58,6 @@ class ShipSkillDataTest {
 
         assertFalse(data.isAllocated("armor_1"));
         assertEquals(0, data.getSpentOp());
-        assertEquals(500f, data.getXp());
     }
 
     @Test
@@ -364,7 +349,7 @@ class ShipSkillDataTest {
 
     @Test
     void canDeallocateIsFalseWhenASecondAllocatedRootOnlyReachesTheTrueRootThroughTheRemovedNode() {
-        SkillType rootType = new SkillType("secondRootType", "Second Root", "a.png", 0, 0f, List.of(), SkillTier.ROOT, null, null, null);
+        SkillType rootType = new SkillType("secondRootType", "Second Root", "a.png", 0, List.of(), SkillTier.ROOT, null, null, null);
         SkillNode secondRoot = new SkillNode("secondRoot", rootType, List.of("bridge", "descendant"), 0f, 0f);
         SkillNode bridge = node("bridge", List.of("root_low_tech_1", "secondRoot"));
         SkillNode descendant = node("descendant", List.of("secondRoot"));
@@ -379,7 +364,7 @@ class ShipSkillDataTest {
 
     @Test
     void canDeallocateIsTrueWhenASecondAllocatedRootStillTracesBackToTheTrueRootAfterRemoval() {
-        SkillType rootType = new SkillType("secondRootType", "Second Root", "a.png", 0, 0f, List.of(), SkillTier.ROOT, null, null, null);
+        SkillType rootType = new SkillType("secondRootType", "Second Root", "a.png", 0, List.of(), SkillTier.ROOT, null, null, null);
         SkillNode secondRoot = new SkillNode("secondRoot", rootType, List.of("bridgeA", "bridgeB"), 0f, 0f);
         SkillNode bridgeA = node("bridgeA", List.of("root_low_tech_1", "secondRoot"));
         SkillNode bridgeB = node("bridgeB", List.of("root_low_tech_1", "secondRoot"));
@@ -395,7 +380,7 @@ class ShipSkillDataTest {
     @Test
     void reproduceReportedLoopLockup() {
         SkillNode rootLowTech = new SkillNode("root_low_tech_1",
-                new SkillType("root_low_tech", "Root Low Tech", "a.png", 0, 0f, List.of(), SkillTier.ROOT, null, null, null),
+                new SkillType("root_low_tech", "Root Low Tech", "a.png", 0, List.of(), SkillTier.ROOT, null, null, null),
                 List.of("small_logistics_optional_11", "small_logistics_optional_31", "small_logistics_optional_14", "small_flux_optional_34"),
                 0f, 0f);
         SkillNode n3 = node("small_logistics_optional_3", List.of("root_high_tech_1", "small_logistics_optional_6", "small_logistics_optional_24"));
@@ -461,24 +446,21 @@ class ShipSkillDataTest {
     @Test
     void selectOptionAllocatesTheSlotNodeAndSpendsTheChosenOptionsCost() {
         ShipSkillData data = new ShipSkillData();
-        data.addXp(1000f);
         SkillNode slot = node("slot_1", List.of());
-        SkillType chosenOption = new SkillType("hull", "Hull", "a.png", 3, 400f, List.of(), SkillTier.SMALL, null, null, null);
+        SkillType chosenOption = new SkillType("hull", "Hull", "a.png", 3, List.of(), SkillTier.SMALL, null, null, null);
 
         data.selectOption(slot, chosenOption);
 
         assertTrue(data.isAllocated("slot_1"));
         assertEquals("hull", data.getOptionalSelection("slot_1"));
         assertEquals(3, data.getSpentOp());
-        assertEquals(600f, data.getXp());
     }
 
     @Test
     void deallocateRefundsTheSelectedOptionsCostNotThePlaceholdersCost() {
         ShipSkillData data = new ShipSkillData();
-        data.addXp(1000f);
         SkillNode slot = node("slot_1", List.of());
-        SkillType chosenOption = new SkillType("hull", "Hull", "a.png", 3, 400f, List.of(), SkillTier.SMALL, null, null, null);
+        SkillType chosenOption = new SkillType("hull", "Hull", "a.png", 3, List.of(), SkillTier.SMALL, null, null, null);
         SkillTree.registerType(chosenOption);
         data.selectOption(slot, chosenOption);
 
@@ -487,15 +469,13 @@ class ShipSkillDataTest {
         assertFalse(data.isAllocated("slot_1"));
         assertNull(data.getOptionalSelection("slot_1"));
         assertEquals(0, data.getSpentOp());
-        assertEquals(1000f, data.getXp());
     }
 
     @Test
     void togglingASelectedOptionalNodeOffClearsTheSelection() {
         ShipSkillData data = new ShipSkillData();
-        data.addXp(1000f);
         SkillNode slot = node("slot_1", List.of());
-        SkillType chosenOption = new SkillType("hull", "Hull", "a.png", 3, 400f, List.of(), SkillTier.SMALL, null, null, null);
+        SkillType chosenOption = new SkillType("hull", "Hull", "a.png", 3, List.of(), SkillTier.SMALL, null, null, null);
         SkillTree.registerType(chosenOption);
         data.selectOption(slot, chosenOption);
 
@@ -508,10 +488,9 @@ class ShipSkillDataTest {
     @Test
     void selectingAnotherOptionOnAnAlreadyAllocatedNodeRefundsThePreviousOptionsCostFirst() {
         ShipSkillData data = new ShipSkillData();
-        data.addXp(1000f);
         SkillNode slot = node("slot_1", List.of());
-        SkillType hullOption = new SkillType("hull", "Hull", "a.png", 3, 400f, List.of(), SkillTier.SMALL, null, null, null);
-        SkillType armorOption = new SkillType("armor", "Armor", "a.png", 5, 250f, List.of(), SkillTier.SMALL, null, null, null);
+        SkillType hullOption = new SkillType("hull", "Hull", "a.png", 3, List.of(), SkillTier.SMALL, null, null, null);
+        SkillType armorOption = new SkillType("armor", "Armor", "a.png", 5, List.of(), SkillTier.SMALL, null, null, null);
         SkillTree.registerType(hullOption);
         SkillTree.registerType(armorOption);
         data.selectOption(slot, hullOption);
@@ -521,21 +500,18 @@ class ShipSkillDataTest {
         assertTrue(data.isAllocated("slot_1"));
         assertEquals("armor", data.getOptionalSelection("slot_1"));
         assertEquals(5, data.getSpentOp());
-        assertEquals(750f, data.getXp());
     }
 
     @Test
     void reselectingTheSameOptionOnAnAlreadyAllocatedNodeDoesNotDoubleChargeIt() {
         ShipSkillData data = new ShipSkillData();
-        data.addXp(1000f);
         SkillNode slot = node("slot_1", List.of());
-        SkillType hullOption = new SkillType("hull", "Hull", "a.png", 3, 400f, List.of(), SkillTier.SMALL, null, null, null);
+        SkillType hullOption = new SkillType("hull", "Hull", "a.png", 3, List.of(), SkillTier.SMALL, null, null, null);
         SkillTree.registerType(hullOption);
         data.selectOption(slot, hullOption);
 
         data.selectOption(slot, hullOption);
 
         assertEquals(3, data.getSpentOp());
-        assertEquals(600f, data.getXp());
     }
 }

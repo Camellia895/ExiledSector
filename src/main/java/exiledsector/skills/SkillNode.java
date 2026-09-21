@@ -57,10 +57,6 @@ public class SkillNode extends SkillTreeObject {
         return type.getOpCost();
     }
 
-    public float getXpCost() {
-        return type.getXpCost();
-    }
-
     public String getDescription() {
         return getDescription(null);
     }

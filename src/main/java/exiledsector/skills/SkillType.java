@@ -9,7 +9,6 @@ public class SkillType {
     private final String displayName;
     private final String iconPath;
     private final int opCost;
-    private final float xpCost;
     private final List<SkillTypeEffect> effects;
     private final List<HullSizeSkillEffect> hullSizeEffects;
     private final SkillTier tier;
@@ -18,28 +17,27 @@ public class SkillType {
     private final String todo;
     private final List<String> optionalOptionIds;
 
-    public SkillType(String id, String displayName, String iconPath, int opCost, float xpCost,
+    public SkillType(String id, String displayName, String iconPath, int opCost,
                       List<SkillTypeEffect> effects, SkillTier tier, String vanillaHullModId,
                       String descriptionOverride, String todo) {
-        this(id, displayName, iconPath, opCost, xpCost, effects, Collections.emptyList(), tier,
+        this(id, displayName, iconPath, opCost, effects, Collections.emptyList(), tier,
                 vanillaHullModId, descriptionOverride, todo, Collections.emptyList());
     }
 
-    public SkillType(String id, String displayName, String iconPath, int opCost, float xpCost,
+    public SkillType(String id, String displayName, String iconPath, int opCost,
                       List<SkillTypeEffect> effects, List<HullSizeSkillEffect> hullSizeEffects, SkillTier tier,
                       String vanillaHullModId, String descriptionOverride, String todo) {
-        this(id, displayName, iconPath, opCost, xpCost, effects, hullSizeEffects, tier,
+        this(id, displayName, iconPath, opCost, effects, hullSizeEffects, tier,
                 vanillaHullModId, descriptionOverride, todo, Collections.emptyList());
     }
 
-    public SkillType(String id, String displayName, String iconPath, int opCost, float xpCost,
+    public SkillType(String id, String displayName, String iconPath, int opCost,
                       List<SkillTypeEffect> effects, List<HullSizeSkillEffect> hullSizeEffects, SkillTier tier,
                       String vanillaHullModId, String descriptionOverride, String todo, List<String> optionalOptionIds) {
         this.id = id;
         this.displayName = displayName;
         this.iconPath = iconPath;
         this.opCost = opCost;
-        this.xpCost = xpCost;
         this.effects = effects == null ? Collections.emptyList() : effects;
         this.hullSizeEffects = hullSizeEffects == null ? Collections.emptyList() : hullSizeEffects;
         this.tier = tier;
@@ -63,10 +61,6 @@ public class SkillType {
 
     public int getOpCost() {
         return opCost;
-    }
-
-    public float getXpCost() {
-        return xpCost;
     }
 
     public List<SkillTypeEffect> getEffects() {

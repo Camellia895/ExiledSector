@@ -5,7 +5,6 @@
 			"name": "Flux Capacity",
 			"icon": "graphics/icons/circular/notable_passives/flux_coil_adjunct.png",
 			"opCost": 2,
-			"xpCost": 500,
 			"effects": [
 				{
 					"effect": "FLUX_CAPACITY_PERCENT",
@@ -21,7 +20,6 @@
 			"name": "Flux Dissipation",
 			"icon": "graphics/icons/circular/notable_passives/flux_distributor_purple.png",
 			"opCost": 2,
-			"xpCost": 500,
 			"effects": [
 				{
 					"effect": "FLUX_DISSIPATION_PERCENT",
@@ -37,7 +35,6 @@
 			"name": "Flux Capacity and Dissipation",
 			"icon": "graphics/icons/circular/small_passives/flux_dynamics.png",
 			"opCost": 2,
-			"xpCost": 500,
 			"tags": [
 				"flux"
 			]
@@ -47,7 +44,6 @@
 			"name": "Hull",
 			"icon": "graphics/icons/circular/small_passives/damage_control2.png",
 			"opCost": 2,
-			"xpCost": 500,
 			"effects": [
 				{
 					"effect": "HULL_PERCENT",
@@ -63,7 +59,6 @@
 			"name": "Armor",
 			"icon": "graphics/icons/circular/small_passives/polarized_armor.png",
 			"opCost": 2,
-			"xpCost": 500,
 			"hullSizeEffects": [
 				{
 					"effect": "ARMOR_FLAT",
@@ -82,7 +77,6 @@
 			"name": "Ballistic Weapon Damage",
 			"icon": "graphics/icons/circular/small_passives/ranged_specialization.png",
 			"opCost": 2,
-			"xpCost": 500,
 			"effects": [
 				{
 					"effect": "BALLISTIC_DAMAGE_PERCENT",
@@ -98,7 +92,6 @@
 			"name": "Missile Weapon Damage",
 			"icon": "graphics/icons/circular/small_passives/missile_specialization2.png",
 			"opCost": 2,
-			"xpCost": 500,
 			"effects": [
 				{
 					"effect": "MISSILE_DAMAGE_PERCENT",
@@ -113,15 +106,13 @@
 			"id": "non_beam_energy_damage",
 			"name": "Non-Beam Energy Weapon Damage",
 			"icon": "graphics/icons/circular/small_passives/non_beam_energy_weapon_blue.png",
-			"opCost": 2,
-			"xpCost": 500
+			"opCost": 2
 		},
 		{
 			"id": "beam_damage",
 			"name": "Beam Weapon Damage",
 			"icon": "graphics/icons/beam_damage_circular.png",
 			"opCost": 2,
-			"xpCost": 500,
 			"effects": [
 				{
 					"effect": "BEAM_DAMAGE_PERCENT",
@@ -133,22 +124,19 @@
 			"id": "energy_damage",
 			"name": "Energy Weapon Damage",
 			"icon": "graphics/icons/circular/small_passives/energy_weapon_mastery.png",
-			"opCost": 2,
-			"xpCost": 500
+			"opCost": 2
 		},
 		{
 			"id": "weapon_damage",
 			"name": "All Weapon Damage",
 			"icon": "graphics/icons/circular/small_passives/weapon_drills.png",
-			"opCost": 2,
-			"xpCost": 500
+			"opCost": 2
 		},
 		{
 			"id": "packed_capacitors",
 			"name": "Packed Capacitors",
 			"icon": "graphics/icons/circular/notable_passives/power_grid_manipulation.png",
 			"opCost": 3,
-			"xpCost": 1200,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -174,7 +162,6 @@
 			"name": "Safety Overrides",
 			"icon": "graphics/icons/circular/keystones/safety_overrides.png",
 			"opCost": 5,
-			"xpCost": 3000,
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -230,7 +217,6 @@
 			"name": "Accelerated Shields",
 			"icon": "graphics/icons/circular/notable_passives/accelerated_shields.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -251,7 +237,6 @@
 			"name": "Adaptive Phase Coils",
 			"icon": "graphics/icons/circular/notable_passives/phase_field.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -270,7 +255,6 @@
 			"name": "Advanced Optics",
 			"icon": "graphics/icons/circular/notable_passives/advanced_optics.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -292,7 +276,6 @@
 			"name": "Advanced Turret Gyros",
 			"icon": "graphics/icons/circular/notable_passives/advanced_turret_gyros.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -310,7 +293,6 @@
 			"name": "Armored Weapon Mounts",
 			"icon": "graphics/icons/circular/notable_passives/armored_weapon_emplacements.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -339,7 +321,6 @@
 			"name": "Automated Repair Unit",
 			"icon": "graphics/icons/circular/notable_passives/automated_repair_unit.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -353,7 +334,6 @@
 			"name": "Auxiliary Thrusters",
 			"icon": "graphics/icons/circular/notable_passives/auxilliary_thrusters.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -379,7 +359,6 @@
 			"name": "Ballistic Rangefinder",
 			"icon": "graphics/icons/circular/notable_passives/ballistic_rangefinder.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "KEYSTONE",
 			"vanillaHullMod": "ballistic_rangefinder",
 			"description": "Extends the base range of small and medium ballistic weapons, based on the size of this ship's largest ballistic weapon slot. Also extends hybrid weapon range, with a larger bonus.",
@@ -394,7 +373,6 @@
 			"name": "Blast Doors",
 			"icon": "graphics/icons/circular/notable_passives/blast_doors.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -415,7 +393,6 @@
 			"name": "Converted Hangar",
 			"icon": "graphics/icons/circular/keystones/converted_hangar.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -449,7 +426,6 @@
 			"name": "Converted Fighter Bay",
 			"icon": "graphics/icons/circular/keystones/converted_fighter_bay.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -474,7 +450,6 @@
 			"name": "Dedicated Targeting Core",
 			"icon": "graphics/icons/circular/notable_passives/targeting_core.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -501,7 +476,6 @@
 			"name": "Defensive Targeting Array",
 			"icon": "graphics/icons/circular/notable_passives/defensive_targeting_array.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "KEYSTONE",
 			"vanillaHullMod": "defensive_targeting_array",
 			"description": "Increases the damage fighters launched from this ship deal to other fighters and missiles. Also locks launched fighters to stay near the ship instead of patrolling freely.",
@@ -515,7 +489,6 @@
 			"name": "ECCM Package",
 			"icon": "graphics/icons/circular/notable_passives/eccm_package.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -560,7 +533,6 @@
 			"name": "ECM Package",
 			"icon": "graphics/icons/circular/notable_passives/ecm_package.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -581,7 +553,6 @@
 			"name": "Escort Package",
 			"icon": "graphics/icons/circular/notable_passives/escort_package.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "KEYSTONE",
 			"vanillaHullMod": "escort_package",
 			"description": "When this ship is within approximately 1000 su of a larger friendly vessel, increases this ship's maneuverability by 25%, and top speed by 10%. Also increases ballistic and energy weapon range by 20%.\n\nThese bonuses are doubled for destroyers when the nearby friendly is a capital ship.",
@@ -592,7 +563,6 @@
 			"name": "Expanded Deck Crew",
 			"icon": "graphics/icons/circular/notable_passives/expanded_deck_crew.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -617,7 +587,6 @@
 			"name": "Expanded Ballistic Magazines",
 			"icon": "graphics/icons/circular/notable_passives/expanded_magazines2_red.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -631,7 +600,6 @@
 			"name": "Expanded Missile Racks",
 			"icon": "graphics/icons/circular/notable_passives/expanded_missile_racks.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -648,7 +616,6 @@
 			"name": "Extended Shields",
 			"icon": "graphics/icons/circular/notable_passives/extended_shields.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -665,7 +632,6 @@
 			"name": "Shield Shunt",
 			"icon": "graphics/icons/circular/notable_passives/shield_shunt.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -686,7 +652,6 @@
 			"name": "Makeshift Shield Generator",
 			"icon": "graphics/icons/circular/keystones/front_shield_generator.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -707,7 +672,6 @@
 			"name": "Missile Autoloader",
 			"icon": "graphics/icons/circular/notable_passives/missile_autoloader.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "KEYSTONE",
 			"vanillaHullMod": "missile_autoloader",
 			"description": "Grants a limited number of automatic reloads to missile weapons in small missile mounts, drawn from a shared capacity pool that depends on hull size and mount count.",
@@ -721,7 +685,6 @@
 			"name": "Hardened Shields",
 			"icon": "graphics/icons/circular/notable_passives/hardened_shields.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -742,7 +705,6 @@
 			"name": "Hardened Subsystems",
 			"icon": "graphics/icons/circular/notable_passives/hardened_subsystems.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -760,7 +722,6 @@
 			"name": "Heavy Armor",
 			"icon": "graphics/icons/circular/notable_passives/heavy_armor.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -793,7 +754,6 @@
 			"name": "High Scatter Amplifier",
 			"icon": "graphics/icons/circular/notable_passives/high_scatter_amp.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -816,7 +776,6 @@
 			"name": "Integrated Point Defense AI",
 			"icon": "graphics/icons/circular/notable_passives/integrated_point_defense_ai.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -835,7 +794,6 @@
 			"name": "Integrated Targeting Unit",
 			"icon": "graphics/icons/circular/notable_passives/integrated_targeting_unit.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -862,7 +820,6 @@
 			"name": "Nav Relay",
 			"icon": "graphics/icons/circular/notable_passives/nav_relay.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -882,7 +839,6 @@
 			"name": "Shield Conversion - Front",
 			"icon": "graphics/icons/circular/notable_passives/front_shield_emitter.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -903,7 +859,6 @@
 			"name": "Shield Conversion - Omni",
 			"icon": "graphics/icons/circular/notable_passives/omni_shield_emitter_mod.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -925,7 +880,6 @@
 			"name": "Operations Center",
 			"icon": "graphics/icons/circular/notable_passives/operations_center.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -942,7 +896,6 @@
 			"name": "Phase Anchor",
 			"icon": "graphics/icons/circular/notable_passives/phase_anchor.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -968,7 +921,6 @@
 			"name": "Recovery Shuttles",
 			"icon": "graphics/icons/circular/notable_passives/recovery_shuttles.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -985,7 +937,6 @@
 			"name": "Reinforced Bulkheads",
 			"icon": "graphics/icons/circular/notable_passives/reinforced_bulkheads.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1010,7 +961,6 @@
 			"name": "Resistant Flux Conduits",
 			"icon": "graphics/icons/circular/notable_passives/resistant_flux_conduits.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1032,7 +982,6 @@
 			"name": "Stabilized Shields",
 			"icon": "graphics/icons/circular/notable_passives/stabilized_shields.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1049,7 +998,6 @@
 			"name": "Unstable Injector",
 			"icon": "graphics/icons/circular/keystones/unstable_injector.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -1083,7 +1031,6 @@
 			"name": "Additional Berthing",
 			"icon": "graphics/icons/circular/notable_passives/berthing.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -1103,7 +1050,6 @@
 			"name": "Augmented Drive Field",
 			"icon": "graphics/icons/circular/notable_passives/augmented_drive_field2.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1120,7 +1066,6 @@
 			"name": "Auxiliary Fuel Tanks",
 			"icon": "graphics/icons/circular/notable_passives/fuel_tanks.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -1140,7 +1085,6 @@
 			"name": "Efficiency Overhaul",
 			"icon": "graphics/icons/circular/keystones/efficiency.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -1173,7 +1117,6 @@
 			"name": "Expanded Cargo Holds",
 			"icon": "graphics/icons/circular/notable_passives/expanded_cargo.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -1193,7 +1136,6 @@
 			"name": "High Resolution Sensors",
 			"icon": "graphics/icons/circular/notable_passives/high_res_sensors.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -1213,7 +1155,6 @@
 			"name": "Insulated Engine Assembly",
 			"icon": "graphics/icons/circular/notable_passives/insulated_engine_assembly.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1238,7 +1179,6 @@
 			"name": "Militarized Subsystems",
 			"icon": "graphics/icons/circular/notable_passives/militarized_subsystems.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1262,7 +1202,6 @@
 			"name": "Solar Shielding",
 			"icon": "graphics/icons/circular/notable_passives/solar_shielding2.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"vanillaHullMod": "solar_shielding",
 			"description": "Originally developed by Diktat engineers after spending cycles dealing with the unique conditions of the inner Askonia system. Decreases the effect operating in a solar corona has on combat readiness by 75%; also has the same effect against storms in deep hyperspace.\n\nIn combat, reduces energy damage taken by 10%.",
@@ -1276,7 +1215,6 @@
 			"name": "Surveying Equipment",
 			"icon": "graphics/icons/circular/notable_passives/surveying_equipment.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -1303,7 +1241,6 @@
 			"name": "Low Tech",
 			"icon": "graphics/icons/circular/roots/crest_lowtech.png",
 			"opCost": 0,
-			"xpCost": 0,
 			"tier": "ROOT",
 			"effects": [
 				{
@@ -1326,7 +1263,6 @@
 			"name": "Midline",
 			"icon": "graphics/icons/circular/roots/crest_midline.png",
 			"opCost": 0,
-			"xpCost": 0,
 			"tier": "ROOT",
 			"effects": [
 				{
@@ -1349,7 +1285,6 @@
 			"name": "High Tech",
 			"icon": "graphics/icons/circular/roots/crest_hightech.png",
 			"opCost": 0,
-			"xpCost": 0,
 			"tier": "ROOT",
 			"effects": [
 				{
@@ -1372,7 +1307,6 @@
 			"name": "Increased Fuel Capacity",
 			"icon": "graphics/icons/circular/small_passives/navigation.png",
 			"opCost": 2,
-			"xpCost": 500,
 			"effects": [
 				{
 					"effect": "FUEL_CAPACITY_PERCENT",
@@ -1388,7 +1322,6 @@
 			"name": "Increased Cargo Capacity",
 			"icon": "graphics/icons/circular/small_passives/bulk_transport.png",
 			"opCost": 2,
-			"xpCost": 500,
 			"effects": [
 				{
 					"effect": "CARGO_CAPACITY_PERCENT",
@@ -1404,7 +1337,6 @@
 			"name": "Increased Crew Capacity",
 			"icon": "graphics/icons/circular/small_passives/crew_training.png",
 			"opCost": 2,
-			"xpCost": 500,
 			"effects": [
 				{
 					"effect": "CREW_CAPACITY_PERCENT",
@@ -1420,7 +1352,6 @@
 			"name": "Fighter Weapon Damage",
 			"icon": "graphics/icons/circular/small_passives/fighter_uplink2.png",
 			"opCost": 2,
-			"xpCost": 500,
 			"effects": [
 				{
 					"effect": "FIGHTER_WEAPON_DAMAGE_PERCENT",
@@ -1437,7 +1368,6 @@
 			"name": "Fighter Speed",
 			"icon": "graphics/icons/circular/small_passives/wing_commander.png",
 			"opCost": 2,
-			"xpCost": 500,
 			"effects": [
 				{
 					"effect": "FIGHTER_TOP_SPEED_PERCENT",
@@ -1454,7 +1384,6 @@
 			"name": "Fuel, Crew or Cargo",
 			"icon": "graphics/icons/circular/small_passives/compact_storage.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"optionalOptions": [
 				"increased_fuel",
 				"increased_cargo",
@@ -1469,7 +1398,6 @@
 			"name": "Caps, Vents or Hull",
 			"icon": "graphics/icons/circular/notable_passives/flux_distributor.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"optionalOptions": [
 				"flux_capacity",
 				"flux_dissipation",
@@ -1485,7 +1413,6 @@
 			"name": "Efficient Vents",
 			"icon": "graphics/icons/circular/notable_passives/flux_distributor_red.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1511,7 +1438,6 @@
 			"name": "Survey Heavy Machinery Cost Reduction",
 			"icon": "graphics/icons/circular/notable_passives/surveying_equipment_red.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"hullSizeEffects": [
 				{
 					"effect": "SURVEY_COST_REDUCTION_HEAVY_MACHINERY",
@@ -1530,7 +1456,6 @@
 			"name": "Survey supplies cost reduction",
 			"icon": "graphics/icons/circular/notable_passives/surveying_equipment_orange.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"hullSizeEffects": [
 				{
 					"effect": "SURVEY_COST_REDUCTION_SUPPLIES",
@@ -1549,7 +1474,6 @@
 			"name": "Survey cost reduction",
 			"icon": "graphics/icons/circular/notable_passives/surveying_equipment_green.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"hullSizeEffects": [
 				{
 					"effect": "SURVEY_COST_REDUCTION_HEAVY_MACHINERY",
@@ -1575,7 +1499,6 @@
 			"name": "Increased Sensor Range",
 			"icon": "graphics/icons/circular/notable_passives/high_res_sensors_green.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"hullSizeEffects": [
 				{
 					"effect": "SENSOR_RANGE",
@@ -1594,7 +1517,6 @@
 			"name": "Crew capacity",
 			"icon": "graphics/icons/circular/small_passives/crew_training_blue.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"hullSizeEffects": [
 				{
 					"effect": "CREW_CAPACITY_FLAT",
@@ -1613,7 +1535,6 @@
 			"name": "Engine Durability and Sensor Profile",
 			"icon": "graphics/icons/circular/notable_passives/insulated_engine_assembly_red.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"effects": [
 				{
 					"effect": "ENGINE_DURABILITY_PERCENT",
@@ -1633,7 +1554,6 @@
 			"name": "Cargo Capacity",
 			"icon": "graphics/icons/cargo_circular.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"hullSizeEffects": [
 				{
 					"effect": "CARGO_CAPACITY_FLAT",
@@ -1652,7 +1572,6 @@
 			"name": "Fuel",
 			"icon": "graphics/icons/circular/small_passives/fuel_tanks_flat.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"hullSizeEffects": [
 				{
 					"effect": "FUEL_CAPACITY_FLAT",
@@ -1671,7 +1590,6 @@
 			"name": "Shield Arc",
 			"icon": "graphics/icons/Shield_icon_2_circle.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"effects": [
 				{
 					"effect": "SHIELD_ARC_FLAT",
@@ -1687,7 +1605,6 @@
 			"name": "Shield Raise Rate",
 			"icon": "graphics/icons/circular/notable_passives/accelerated_shields_purple.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"effects": [
 				{
 					"effect": "SHIELD_RAISE_RATE_PERCENT",
@@ -1703,7 +1620,6 @@
 			"name": "Shield Turn Rate",
 			"icon": "graphics/icons/circular/notable_passives/accelerated_shields_red.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"effects": [
 				{
 					"effect": "SHIELD_TURN_RATE_PERCENT",
@@ -1719,7 +1635,6 @@
 			"name": "Shield Raise rate or Shield Turn rate",
 			"icon": "graphics/icons/circular/notable_passives/accelerated_shields.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"optionalOptions": [
 				"shield_raise_rate",
 				"shield_turn_rate"
@@ -1733,7 +1648,6 @@
 			"name": "Ballistic and Energy Weapon Range",
 			"icon": "graphics/icons/circular/notable_passives/integrated_targeting_unit_purple_green.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"hullSizeEffects": [
 				{
 					"effect": "BALLISTIC_WEAPON_RANGE_PERCENT",
@@ -1759,7 +1673,6 @@
 			"name": "Shield Arc Multiplier",
 			"icon": "graphics/icons/circular/notable_passives/omni_shield_emitter_mod_purple.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1776,7 +1689,6 @@
 			"name": "Shield flux/damage reduction",
 			"icon": "graphics/icons/circular/notable_passives/hardened_shields_red.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"effects": [
 				{
 					"effect": "SHIELD_DAMAGE_TAKEN_MULT",
@@ -1792,7 +1704,6 @@
 			"name": "Shield Upkeep Reduction",
 			"icon": "graphics/icons/circular/notable_passives/stabilized_shields_green.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"effects": [
 				{
 					"effect": "SHIELD_UPKEEP_MULT",
@@ -1808,7 +1719,6 @@
 			"name": "Top Speed",
 			"icon": "graphics/icons/top_speed_circular.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"hullSizeEffects": [
 				{
 					"effect": "TOP_SPEED_FLAT",
@@ -1827,7 +1737,6 @@
 			"name": "Phase Cloak Flux Threshold",
 			"icon": "graphics/icons/circular/notable_passives/phase_field_red.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"effects": [
 				{
 					"effect": "PHASE_CLOAK_FLUX_THRESHOLD_PERCENT",
@@ -1843,7 +1752,6 @@
 			"name": "Less EMP damage taken",
 			"icon": "graphics/icons/circular/notable_passives/resistant_flux_conduits_green.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"effects": [
 				{
 					"effect": "EMP_DAMAGE_TAKEN_MULT",
@@ -1859,7 +1767,6 @@
 			"name": "Increased vent rate",
 			"icon": "graphics/icons/circular/notable_passives/resistant_flux_conduits_red.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"effects": [
 				{
 					"effect": "VENT_RATE_PERCENT",
@@ -1875,7 +1782,6 @@
 			"name": "Vent rate and EMP damage",
 			"icon": "graphics/icons/circular/notable_passives/resistant_flux_conduits.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"effects": [
 				{
 					"effect": "VENT_RATE_PERCENT",
@@ -1896,7 +1802,6 @@
 			"name": "Expanded Energy Magazines",
 			"icon": "graphics/icons/circular/notable_passives/expanded_magazines2.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1914,7 +1819,6 @@
 			"name": "Weapon Durability",
 			"icon": "graphics/icons/weapon_durability_circular_blue.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"effects": [
 				{
 					"effect": "WEAPON_DURABILITY_PERCENT",
@@ -1927,7 +1831,6 @@
 			"name": "Wormhole",
 			"icon": "",
 			"opCost": 3,
-			"xpCost": 1000,
 			"tier": "WORMHOLE",
 			"description": "Allocating this wormhole and the corresponding wormhole allows you to allocate connected nodes as if the wormholes are connected."
 		},
@@ -1936,7 +1839,6 @@
 			"name": "Point Defence Damage to Missiles",
 			"icon": "graphics/icons/circular/notable_passives/integrated_point_defense_ai_blue.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"effects": [
 				{
 					"effect": "PD_DAMAGE_TO_MISSILES_PERCENT",
@@ -1949,7 +1851,6 @@
 			"name": "Maneuverability",
 			"icon": "graphics/icons/acceleration_blue.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"effects": [
 				{
 					"effect": "MANEUVERABILITY_PERCENT",
@@ -1965,7 +1866,6 @@
 			"name": "Acceleration",
 			"icon": "graphics/icons/blastoff_blue.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"effects": [
 				{
 					"effect": "ACCELERATION_PERCENT",
@@ -1981,7 +1881,6 @@
 			"name": "Turn speed",
 			"icon": "graphics/icons/maneuverability_blue.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"effects": [
 				{
 					"effect": "TURN_ACCELERATION_PERCENT",
@@ -1995,9 +1894,8 @@
 		{
 			"id": "fighter_replacement",
 			"name": "Fighter Replacement",
-			"icon": "",
+			"icon": "graphics/icons/fighters2_blue.png",
 			"opCost": 4,
-			"xpCost": 2000,
 			"effects": [
 				{
 					"effect": "FIGHTER_REPLACEMENT_RECOVERY_PERCENT",

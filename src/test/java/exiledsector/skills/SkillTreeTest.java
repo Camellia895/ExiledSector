@@ -14,8 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SkillTreeTest {
 
-    private static final SkillType TYPE = new SkillType("hull", "Hull", "a.png", 2, 500,
-            List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 1f)), SkillTier.SMALL, null, null, null);
+    private static final SkillType TYPE = new SkillType("hull", "Hull", "a.png", 2, List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 1f)), SkillTier.SMALL, null, null, null);
 
     @BeforeEach
     void setUp() {
