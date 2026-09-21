@@ -1,5 +1,8 @@
 package exiledsector.skills;
 
+import exiledsector.ui.ConnectorCurve;
+import exiledsector.ui.RingBelt;
+import exiledsector.ui.StaticImage;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 

@@ -1,0 +1,110 @@
+package exiledsector.ui;
+
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillType;
+import org.lazywizard.lazylib.ui.LazyFont;
+
+import java.awt.Color;
+import java.util.HashMap;
+import java.util.Map;
+
+import static exiledsector.ui.SkillTreePanelStyle.FONT_LINE_HEIGHT_FACTOR;
+import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_BODY_COLOR;
+import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE;
+import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE;
+
+final class SkillTreeNodeTooltipRenderer {
+
+    private static final float TOOLTIP_MAX_TEXT_WIDTH = 480f;
+    private static final float TOOLTIP_MAX_TEXT_HEIGHT = 800f;
+    private static final float TOOLTIP_WIDTH_SAFETY_MARGIN = 8f;
+    private static final float TOOLTIP_PADDING = 10f;
+    private static final float TOOLTIP_TITLE_BODY_GAP = 6f;
+    private static final float TOOLTIP_CURSOR_OFFSET = 18f;
+    private static final float TOOLTIP_TITLE_BOLD_OFFSET = 1f;
+    private static final Color TOOLTIP_TITLE_COLOR = Color.WHITE;
+
+    private static final String OPTIONAL_NODE_HINT = "Click to choose an option.";
+
+    private final FleetMemberAPI member;
+    private final SkillTreePanelStyle style;
+    private final Map<String, SkillTreePanelStyle.TooltipText> tooltipTitles = new HashMap<>();
+    private final Map<String, SkillTreePanelStyle.TooltipText> tooltipBodies = new HashMap<>();
+    private final Map<String, SkillTreePanelStyle.TooltipText> typeTooltipTitles = new HashMap<>();
+    private final Map<String, SkillTreePanelStyle.TooltipText> typeTooltipBodies = new HashMap<>();
+
+    SkillTreeNodeTooltipRenderer(FleetMemberAPI member, SkillTreePanelStyle style) {
+        this.member = member;
+        this.style = style;
+    }
+
+    void invalidate(String nodeId) {
+        tooltipTitles.remove(nodeId);
+        tooltipBodies.remove(nodeId);
+    }
+
+    void renderTooltip(SkillNode node, float mouseX, float mouseY, float alphaMult) {
+        LazyFont font = style.getFont();
+        if (font == null) return;
+
+        ShipSkillData data = ShipSkillDataManager.get(member.getId());
+        SkillType effectiveType = node.resolveEffectiveType(data);
+        boolean showOptionalHint = effectiveType == node.getType() && effectiveType.isOptional()
+                && effectiveType.getDescriptionOverride() == null;
+
+        SkillTreePanelStyle.TooltipText title = tooltipTitles.computeIfAbsent(node.getId(),
+                id -> buildTooltipText(font, effectiveType.getDisplayName(), TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR));
+        SkillTreePanelStyle.TooltipText body = tooltipBodies.computeIfAbsent(node.getId(),
+                id -> buildTooltipText(font,
+                        showOptionalHint ? OPTIONAL_NODE_HINT : SkillNode.describeType(effectiveType, member.getHullSpec().getHullSize()),
+                        TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR));
+
+        drawTooltipBox(title, body, mouseX, mouseY, alphaMult);
+    }
+
+    void renderTooltipForType(SkillType type, float mouseX, float mouseY, float alphaMult) {
+        LazyFont font = style.getFont();
+        if (font == null) return;
+
+        SkillTreePanelStyle.TooltipText title = typeTooltipTitles.computeIfAbsent(type.getId(),
+                id -> buildTooltipText(font, type.getDisplayName(), TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR));
+        SkillTreePanelStyle.TooltipText body = typeTooltipBodies.computeIfAbsent(type.getId(),
+                id -> buildTooltipText(font, SkillNode.describeType(type, member.getHullSpec().getHullSize()), TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR));
+
+        drawTooltipBox(title, body, mouseX, mouseY, alphaMult);
+    }
+
+    private void drawTooltipBox(SkillTreePanelStyle.TooltipText title, SkillTreePanelStyle.TooltipText body, float mouseX, float mouseY, float alphaMult) {
+        float boxWidth = Math.max(title.width, body.width) + TOOLTIP_PADDING * 2f + TOOLTIP_WIDTH_SAFETY_MARGIN;
+        float boxHeight = title.height + TOOLTIP_TITLE_BODY_GAP + body.height + TOOLTIP_PADDING * 2f;
+        float boxX = mouseX + TOOLTIP_CURSOR_OFFSET;
+        float boxY = mouseY - boxHeight - TOOLTIP_CURSOR_OFFSET;
+
+        style.drawTooltipBackground(boxX, boxY, boxWidth, boxHeight, alphaMult, style.getAccentColor());
+
+        float titleY = boxY + boxHeight - TOOLTIP_PADDING;
+        float bodyY = titleY - title.height - TOOLTIP_TITLE_BODY_GAP;
+        title.drawable.draw(boxX + TOOLTIP_PADDING, titleY);
+        title.drawable.draw(boxX + TOOLTIP_PADDING + TOOLTIP_TITLE_BOLD_OFFSET, titleY);
+        body.drawable.draw(boxX + TOOLTIP_PADDING, bodyY);
+    }
+
+    private SkillTreePanelStyle.TooltipText buildTooltipText(LazyFont font, String rawText, float fontSize, Color color) {
+        String wrapped = font.wrapString(rawText, fontSize, TOOLTIP_MAX_TEXT_WIDTH, TOOLTIP_MAX_TEXT_HEIGHT);
+        String[] lines = wrapped.split("\n", -1);
+
+        float width = 0f;
+        for (String line : lines) {
+            width = Math.max(width, font.calcWidth(line, fontSize));
+        }
+        float height = lines.length * fontSize * FONT_LINE_HEIGHT_FACTOR;
+
+        LazyFont.DrawableString drawable = font.createText(wrapped, color, fontSize);
+        drawable.setAlignment(LazyFont.TextAlignment.LEFT);
+        drawable.setAnchor(LazyFont.TextAnchor.TOP_LEFT);
+        return new SkillTreePanelStyle.TooltipText(drawable, width, height);
+    }
+}

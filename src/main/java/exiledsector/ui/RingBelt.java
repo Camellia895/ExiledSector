@@ -1,33 +1,18 @@
-package exiledsector.skills;
+package exiledsector.ui;
 
-public class RingBelt {
+import exiledsector.skills.SkillTreeObject;
 
-    private final String id;
-    private final float x;
-    private final float y;
+public class RingBelt extends SkillTreeObject {
+
     private final float innerRadius;
     private final float outerRadius;
     private final String ringArtPath;
 
     public RingBelt(String id, float x, float y, float innerRadius, float outerRadius, String ringArtPath) {
-        this.id = id;
-        this.x = x;
-        this.y = y;
+        super(id, x, y);
         this.innerRadius = innerRadius;
         this.outerRadius = outerRadius;
         this.ringArtPath = ringArtPath;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public float getX() {
-        return x;
-    }
-
-    public float getY() {
-        return y;
     }
 
     public float getInnerRadius() {

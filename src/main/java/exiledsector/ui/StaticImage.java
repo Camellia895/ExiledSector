@@ -1,10 +1,9 @@
-package exiledsector.skills;
+package exiledsector.ui;
 
-public class StaticImage {
+import exiledsector.skills.SkillTreeObject;
 
-    private final String id;
-    private final float x;
-    private final float y;
+public class StaticImage extends SkillTreeObject {
+
     private final float width;
     private final float height;
     private final String imagePath;
@@ -12,26 +11,12 @@ public class StaticImage {
     private final float rotationSpeed;
 
     public StaticImage(String id, float x, float y, float width, float height, String imagePath, float rotation, float rotationSpeed) {
-        this.id = id;
-        this.x = x;
-        this.y = y;
+        super(id, x, y);
         this.width = width;
         this.height = height;
         this.imagePath = imagePath;
         this.rotation = rotation;
         this.rotationSpeed = rotationSpeed;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public float getX() {
-        return x;
-    }
-
-    public float getY() {
-        return y;
     }
 
     public float getWidth() {

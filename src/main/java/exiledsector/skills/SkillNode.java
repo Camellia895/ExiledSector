@@ -6,13 +6,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class SkillNode {
+public class SkillNode extends SkillTreeObject {
 
-    private final String id;
     private final SkillType type;
     private final List<String> connectedNodeIds;
-    private final float offsetX;
-    private final float offsetY;
     private final String ringBeltPath;
     private final String ringBeltColor;
     private final Float ringBeltWidth;
@@ -30,18 +27,12 @@ public class SkillNode {
     }
 
     public SkillNode(String id, SkillType type, List<String> connectedNodeIds, float offsetX, float offsetY, String ringBeltPath, String ringBeltColor, Float ringBeltWidth) {
-        this.id = id;
+        super(id, offsetX, offsetY);
         this.type = type;
         this.connectedNodeIds = connectedNodeIds == null ? Collections.emptyList() : connectedNodeIds;
-        this.offsetX = offsetX;
-        this.offsetY = offsetY;
         this.ringBeltPath = ringBeltPath;
         this.ringBeltColor = ringBeltColor;
         this.ringBeltWidth = ringBeltWidth;
-    }
-
-    public String getId() {
-        return id;
     }
 
     public SkillType getType() {
@@ -99,7 +90,7 @@ public class SkillNode {
 
     public SkillType resolveEffectiveType(ShipSkillData data) {
         if (!type.isOptional()) return type;
-        String selectedId = data.getOptionalSelection(id);
+        String selectedId = data.getOptionalSelection(getId());
         if (selectedId == null) return type;
         SkillType chosen = SkillTree.getType(selectedId);
         return chosen != null ? chosen : type;
@@ -110,11 +101,11 @@ public class SkillNode {
     }
 
     public float getOffsetX() {
-        return offsetX;
+        return getX();
     }
 
     public float getOffsetY() {
-        return offsetY;
+        return getY();
     }
 
     public String getRingBeltPath() {

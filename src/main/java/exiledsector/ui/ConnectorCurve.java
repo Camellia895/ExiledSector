@@ -1,4 +1,4 @@
-package exiledsector.skills;
+package exiledsector.ui;
 
 public class ConnectorCurve {
 

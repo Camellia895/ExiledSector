@@ -3,7 +3,6 @@ package exiledsector.ui;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledsector.skills.RingBelt;
 import exiledsector.skills.SkillTree;
 import org.apache.log4j.Logger;
 
