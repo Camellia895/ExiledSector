@@ -12,7 +12,7 @@ public final class ExiledSectorSettings {
     public static void register() {
         LunaSettings.SettingsCreator.addHeader(MOD_ID, "exiledSector_header", "Exiled Sector", "");
         LunaSettings.SettingsCreator.addText(MOD_ID, "exiledSector_about",
-                "Gives each ship its own skill tree, unlocked with OP and combat experience. Open a ship's refit screen and use the Skill Tree button to allocate nodes.",
+                "Gives each ship its own skill tree. Open a ship's refit screen and use the Skill Tree button to allocate nodes.",
                 "");
     }
 }

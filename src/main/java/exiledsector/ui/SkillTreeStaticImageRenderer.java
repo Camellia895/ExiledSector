@@ -20,8 +20,6 @@ public class SkillTreeStaticImageRenderer {
     private float elapsedSeconds = 0f;
 
     public void advance(float amount) {
-        // A single running clock, rather than per-image state - each image with a non-zero
-        // rotationSpeed just reads its current angle off this clock at render time.
         elapsedSeconds += amount;
     }
 

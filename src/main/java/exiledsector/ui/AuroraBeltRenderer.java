@@ -6,58 +6,6 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 
-/**
- * A trimmed port of vanilla's own aurora renderer
- * (com.fs.starfarer.api.impl.campaign.terrain.AuroraRenderer + MagneticFieldTerrainPlugin,
- * decompiled straight out of starfarer.api.jar - fully unobfuscated), stripped of the
- * flare/RangeBlockerUtil system (always absent for a decorative node ring - every delegate
- * callback it feeds into is a flat constant in steady state: thicknessMult 1, thicknessFlat 0,
- * innerOffsetMult/shortenMult 0, alphaMult 1) and driven by real elapsed seconds instead of the
- * campaign clock's in-game days.
- * <p>
- * What isn't obvious just from looking at aurorae.png, only from reading the actual source: the
- * texture (512x512) is split into two 256px-wide HALVES along its WIDTH, not sampled as arbitrary
- * vertical slices of the whole image. Each of the two overlapping render passes uses one whole
- * half as its own radial (inner-to-outer) cross-section - the two halves were never meant to be
- * mixed within a single pass, which is exactly what the previous implementation did and why it
- * looked broken. The two passes are also drawn 180 degrees apart (one full glRotatef between
- * them, not a texture-coordinate trick), with independent phase multipliers (x10 / x5) driving a
- * small outer-edge wobble - that high-frequency wobble, not any radius pulsing (which is
- * flare-only in vanilla and reduces to zero here), is what actually makes a steady-state aurora
- * look alive.
- * <p>
- * One deliberate departure from the source: vanilla's PIXELS_PER_SEGMENT (50), tile-count
- * formula, and outer-edge wobble distance are all sized for campaign-map planet rings spanning
- * thousands of world units, where texture pixels and world units are roughly 1:1. Scaled down to
- * a node-sized decoration without adjustment, that same math produces well over a thousand
- * texture repeats around a small ring (each sub-pixel) and a wobble many times the ring's own
- * size - that sub-pixel repeat noise, worse here than on the plain ring belt because additive
- * blending doesn't average it away the way alpha blending does, is what "glitchy" actually was.
- * Tile count is instead derived from the texture band's own aspect ratio (height/width) so each
- * repeat is roughly as long (along the ring) as the band is thick - scale-independent.
- * <p>
- * The outer-edge wobble is what actually animates in steady state (texture content itself never
- * scrolls - texProgress restarts at 0 every frame - and vanilla's radius-pulse is flare-only,
- * zero for us). Vanilla ties its wobble distance to the same pixelsPerSegment=50 constant, which
- * happens to still read as "small but visible" against a campaign-scale ring; naively shrinking
- * that same constant 10x for tessellation (above) shrinks the wobble 10x too, to a fraction of a
- * screen pixel - present in the math, invisible on screen, which is why nothing appeared to move.
- * The wobble is instead sized as a fraction of the belt's own thickness, decoupled from
- * tessellation granularity, so it stays visible regardless of the ring's absolute size.
- * <p>
- * That wobble oscillates with angle at up to x10 cycles per revolution (the iter=0 pass's phase
- * multiplier). PIXELS_PER_SEGMENT=5 alone gives a small ring only ~80 segments total, i.e. ~8
- * samples per wobble cycle - well under the ~16+ a wave needs to read as smooth. MIN_SEGMENTS_FOR_WOBBLE
- * fixes that, but sampling density was never the whole story: between two adjacent segments, the
- * wobble vector's direction rotates by (anglePerSegment * frequency), so the outer vertex moves by
- * roughly (wobble * anglePerSegment * frequency) - purely from the wobble - versus a "base" gap of
- * (outerRadius * anglePerSegment) from the ring's own geometry. Their ratio, wobble * frequency /
- * outerRadius, is independent of segment count entirely: once it approaches 1, the wobble outruns
- * the ring's own circumference between consecutive vertices and the outer boundary folds back on
- * itself every cycle - a real self-intersecting star shape, not a sampling artifact, which is why
- * adding segments alone didn't fix the "edges intersecting" look. MAX_SAFE_WOBBLE_FRACTION caps the
- * wobble so that ratio stays comfortably under 1 for any ring size.
- */
 final class AuroraBeltRenderer {
     private static final float PIXELS_PER_SEGMENT = 5f;
     private static final float BAND_WIDTH_IN_TEXTURE = 256f;

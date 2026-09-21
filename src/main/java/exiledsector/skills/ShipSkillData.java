@@ -90,28 +90,6 @@ public class ShipSkillData {
         return false;
     }
 
-    /**
-     * A node can be deallocated only if it doesn't cause any currently-reachable allocated node to
-     * become unreachable - i.e. deallocating it must not sever the link between the root and any
-     * other allocated node that's presently connected. This is done by computing the full set of
-     * root-reachable allocated nodes twice (BFS seeded from the satisfied root plus any allocated
-     * node with no prerequisites at all, walking the "child lists its prerequisites" edges reversed
-     * so we can walk root-outward) - once with everything as-is, once with the candidate node
-     * excluded - and comparing the two sets, rather than just checking the node's immediate
-     * neighbors (a local-only check can't detect a break further down the chain).
-     *
-     * Comparing against the "before" set (rather than requiring every allocated node to be
-     * reachable "after", full stop) matters: it means a node that's already stranded for some
-     * unrelated reason - e.g. a leftover node from an earlier version of this logic, or manual
-     * editor surgery - doesn't block deallocation everywhere else in the tree. Only removing this
-     * specific node is checked; pre-existing disconnection elsewhere is not this action's problem.
-     *
-     * Only the ship's own starting root (satisfiedRootId) is an unconditional anchor. Any other
-     * allocated ROOT-tier node (from the multi-root-per-ship feature) is NOT automatically treated
-     * as reachable just because it's a root - it has to trace its own path back to the starting
-     * root like any other node, otherwise a loop built entirely off a second root could pass this
-     * check without ever actually connecting back to the ship's real root.
-     */
     public boolean canDeallocate(SkillNode node, Collection<SkillNode> allNodes, String satisfiedRootId) {
         Map<String, SkillNode> byId = new HashMap<>();
         Map<String, List<String>> childrenOf = new HashMap<>();

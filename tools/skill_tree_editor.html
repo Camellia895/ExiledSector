@@ -882,9 +882,6 @@ var SHIPPED_ANCHORS = [
 ];
 var SHIPPED_IMAGES = [];
 
-// Matches the in-game ring/icon radius at zoom 1.0: NODE_SIZE(64) * iconSizeMultiplier(tier) / 2
-// from SkillTreeNodeRenderer.java (Small=1, Notable=1.2, Keystone=1.4; Root has no ring, so its
-// icon radius - NODE_SIZE * ROOT sizeMultiplier(2.5) / 2 - is used instead).
 var SMALL_R = 32, NOTABLE_R = 38.4, KEYSTONE_R = 44.8, ROOT_R = 80;
 function tierOf(type){ return (type && type.tier) ? type.tier : 'SMALL'; }
 function radiusFor(tier){
@@ -959,9 +956,6 @@ function fetchAllProjectImages(callback){
 }
 
 // ---------- connector curves ----------
-// A connector between two nodes is a straight line by default. state.curves only holds
-// entries for connectors the user has bent - the control point is stored, everything else
-// stays an implicit straight line (control point = midpoint) with no data footprint.
 function curveKey(a, b){ return a < b ? a + '|' + b : b + '|' + a; }
 function findCurve(a, b){
   var key = curveKey(a, b);
@@ -1001,11 +995,6 @@ function snapCurveToStraightIfClose(a, b){
 }
 
 // ---------- orbit anchors ----------
-// An anchor is a draggable, resizable shape (circle, square, triangle, or rectangle); non-circle
-// shapes can also be spun via anchor.rotation. A node dragged close to its boundary snaps onto it
-// (orbitAnchorId/orbitAngle record the relationship, with angle mapped to a boundary point via
-// positionOnAnchor) and can then be dragged along that boundary; pulling it far enough away
-// detaches it and it moves freely again.
 var ORBIT_SNAP_RADIUS = 18;
 var ORBIT_DETACH_RADIUS = 45;
 var ORBIT_CARDINAL_SNAP_DEGREES = 6;
@@ -1031,8 +1020,6 @@ function isAuroraBelt(n){
   return n.ringBeltPath === AURORA_RING_BELT_PATH;
 }
 var ANCHOR_RECTANGLE_ASPECT = 1.6;
-// Builds vertices centered on the origin (unrotated), then rotates by anchor.rotation and
-// translates to the anchor's position - so every polygon shape can be spun in place.
 function anchorShapeVertices(anchor){
   var shape = anchor.shape || 'circle';
   var r = anchor.radius;
@@ -1059,8 +1046,6 @@ function anchorShapeVertices(anchor){
     return { x: anchor.x + v.x * cos - v.y * sin, y: anchor.y + v.x * sin + v.y * cos };
   });
 }
-// Casts a ray from the anchor's center at angleDeg and returns where it exits the polygon -
-// used so a stored orbitAngle maps back to a boundary point the same way for every shape.
 function rayPolygonIntersection(cx, cy, angleDeg, vertices){
   var rad = angleDeg * Math.PI / 180;
   var dx = Math.cos(rad), dy = Math.sin(rad);
@@ -1093,8 +1078,6 @@ function snapAngleToTargets(angleDeg, targets){
   }
   return angleDeg;
 }
-// The snap targets for an anchor: the 4 cardinal directions plus, for polygon shapes, each
-// actual corner's angle from center - so a dragged node can lock onto a shape's corners.
 function anchorSnapAngles(anchor){
   var verts = anchorShapeVertices(anchor);
   if (!verts) return ORBIT_CARDINAL_ANGLES;
@@ -1117,12 +1100,6 @@ function detachNodeFromAnchor(n){
 }
 
 // ---------- connection alignment snap ----------
-// While free-dragging a single node (not orbit-snapped), pull it into perfect alignment with
-// its own connections. For every pair of neighbors, two candidate points compete on distance to
-// the drag: the closest point on the line through both (straightening the whole A-N-B chain),
-// and the closest point on their perpendicular bisector (keeping the node exactly as far from
-// each neighbor - the "exact middle" of an A-N-B chain, whether or not it's also on that line).
-// Falls back to snapping onto a single neighbor's exact X or Y when no pair candidate is close.
 var ALIGN_SNAP_THRESHOLD = 10;
 function computeAlignmentSnap(node, tentativeX, tentativeY){
   var neighbors = node.connectedTo.map(nodeById).filter(function(n){ return n; });
@@ -1443,7 +1420,6 @@ function render(){
     (n.connectedTo||[]).forEach(function(pid){
       var p = nodeById(pid);
       if (!p) return;
-      // connectedTo is symmetric, so each edge appears in both nodes' lists - only draw it once.
       if (n.id >= pid) return;
       var ppos = worldToScreenXY(p.x, p.y);
       var control = controlPointFor(n.id, pid);

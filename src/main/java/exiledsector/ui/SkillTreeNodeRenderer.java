@@ -58,11 +58,6 @@ final class SkillTreeNodeRenderer {
     private static final Color RING_DULL_COLOR = new Color(150, 150, 150);
     private static final float RING_DULL_ALPHA = 0.5f;
 
-    // Notable/keystone rings mirror vanilla's wormhole/jump-point "nested ring stack" effect
-    // (com.fs.starfarer.campaign.JumpPoint) rather than the plainer star-corona ring: a pile of
-    // independently rotating, jittering, alternating-texture ring sprites at decaying radii,
-    // additively blended, is what actually produces the swirling look - not a single sprite.
-    // Left at their native (blue) texture color, exactly as JumpPoint itself never tints them.
     private static final String[] RING_STACK_TEXTURES = {
             "graphics/fx/wormhole_ring_bright2.png",
             "graphics/fx/wormhole_ring_bright3.png"
@@ -72,33 +67,12 @@ final class SkillTreeNodeRenderer {
     private static final float RING_INSTANCE_MAX_ROTATION_SPEED_DEG = 60f;
     private static final float RING_INSTANCE_JITTER_RATIO = 0.05f;
     private static final float RING_INSTANCE_BASE_ALPHA = 0.5f;
-    // Every instance's radius fraction is linearly remapped into this range (instead of clamped),
-    // so the spread never decays down inside the small allocation donut's radius - clamping
-    // instead of remapping caused many instances to pile up at the exact same floored radius,
-    // which additively bled into a solid bright ring rather than a soft nested spread.
     private static final float RING_MIN_RADIUS_FRACTION = 0.62f;
-    // Constant, not animated: the ring stack (and the pink layer, and the ambient glow, and the
-    // corona spikes) are always fully present at their full size - unallocated nodes are simply
-    // dimmer, no expand/contract transition.
     private static final float UNALLOCATED_ALPHA_MULT = 0.45f;
 
-    // A second, independently-positioned pass of the same ring stack tinted a vivid pink/magenta -
-    // in actual play a jump point/wormhole shows both a native-blue ring layer AND a separate pink
-    // layer simultaneously (the pink comes from the one-shot jump-travel VFX, a different class
-    // entirely from JumpPoint's own always-blue render() - not something worth chasing exactly for
-    // a persistent UI decoration), so this reproduces that "multiple layers of blue and pink rings"
-    // look directly rather than trying to replicate the transient animation.
     private static final Color RING_PINK_COLOR = new Color(255, 60, 220);
     private static final float RING_PINK_SCALE_RATIO = 0.85f;
 
-    // An always-on ambient backdrop glow behind notable/keystone nodes. This is vanilla's actual
-    // star/black-hole corona mechanic (PlanetSpecAPI.starCoronaSprite/starCoronaColor in
-    // planets.json - not JumpPoint, and not AuroraRenderer/aurorae.png, both dead ends chased
-    // earlier): every star and black hole renders a single soft halo sprite, graphics/fx/star_halo.png,
-    // tinted per body and scaled by starCoronaSizeMult. The black_hole entry uses
-    // starCoronaColor [255,170,255,255] (full opacity, unlike ordinary stars which use a subtle
-    // ~60 alpha) at starCoronaSizeMult 5.12 - copied here directly, since that's an exact match for
-    // the vivid pink halo in the reference image.
     private static final String GLOW_TEXTURE_PATH = "graphics/fx/star_halo.png";
     private static final Color AMBIENT_GLOW_COLOR = new Color(255, 170, 255);
     private static final float AMBIENT_GLOW_ALPHA = 1f;
@@ -108,16 +82,9 @@ final class SkillTreeNodeRenderer {
     private static final float NOTABLE_RING_RADIUS_DECAY = 0.88f;
     private static final int NOTABLE_RING_COUNT = 10;
 
-    // Keystones no longer get the notable-style wormhole ring stack/corona/glow cluster - their
-    // decoration is the belt band below instead, starting right at the icon's own ring (touching
-    // it, no gap) rather than sitting further out beyond a now-removed stack. Both belt styles are
-    // rendered by direct ports of vanilla's own renderers - see RingBeltRenderer/AuroraBeltRenderer.
     private static final String DEFAULT_KEYSTONE_RING_BELT_PATH = "graphics/planets/ring_band_asteroids.png";
     private static final float KEYSTONE_BELT_WIDTH_RATIO = 1.1f;
 
-    // Picking this exact art (rather than a "belt type" property) switches drawRings() over to
-    // AuroraBeltRenderer instead of RingBeltRenderer - aurorae.png isn't a radial-fade band like
-    // the other ring art, it needs vanilla's own two-pass split-texture technique to look right.
     private static final String AURORA_TEXTURE_PATH = "graphics/planets/aurorae.png";
     private static final Color DEFAULT_AURORA_COLOR = new Color(140, 120, 255);
 
@@ -261,8 +228,6 @@ final class SkillTreeNodeRenderer {
         return path != null && !path.isEmpty() ? path : DEFAULT_KEYSTONE_RING_BELT_PATH;
     }
 
-    /** Only meaningful when the resolved ring belt art is the aurora texture - ignored otherwise,
-     * since the other ring art is already colored in the source image. */
     private static Color resolveRingBeltColor(SkillNode node) {
         String hex = node.getRingBeltColor();
         if (hex == null || hex.isEmpty()) return DEFAULT_AURORA_COLOR;
@@ -642,13 +607,6 @@ final class SkillTreeNodeRenderer {
         drawRingOutline(cx, cy, radius + gapRadius, RING_DULL_COLOR, alphaMult * RING_DULL_ALPHA);
     }
 
-    /**
-     * Notable/keystone already get plenty of visual weight from the ring stack and corona glow
-     * behind them, so their own allocation indicator is simplified to one single ring (rather than
-     * the double-line donut band small/root nodes use) - dull gray to match small nodes' unallocated
-     * ring color, or the ship's accent color once allocated. "Breathing" (available to allocate)
-     * pulses that same single ring in the accent color instead of drawing a second ring on top.
-     */
     private void drawSingleDonut(float cx, float cy, float radius, boolean allocated, boolean breathing, float zoom, float alphaMult) {
         Color color;
         float alpha;
@@ -668,12 +626,6 @@ final class SkillTreeNodeRenderer {
         drawRingOutline(cx, cy, radius, color, alpha);
     }
 
-    /**
-     * A pile of independently rotating, drifting, alternating-texture ring sprites at decaying
-     * nested radii, additively blended - mirrors vanilla's wormhole/jump-point ring stack
-     * (com.fs.starfarer.campaign.JumpPoint), which is what actually produces a swirling ring look
-     * (a single sprite or a clean sine wobble reads as static/flat by comparison).
-     */
     private void drawRingStack(float cx, float cy, float outerRadius, float donutRadiusValue, String nodeId,
                                 int count, float radiusDecay, float stateAlpha, float alphaMult) {
         drawRingStackPass(cx, cy, outerRadius, ringStacks.computeIfAbsent(nodeId, id -> generateRingInstances(id, count, radiusDecay)),
@@ -711,12 +663,6 @@ final class SkillTreeNodeRenderer {
         }
     }
 
-    /**
-     * An always-present ambient backdrop glow behind notable/keystone nodes - vanilla's actual
-     * star/black-hole corona (star_halo.png, tinted/sized per planets.json's starCoronaColor /
-     * starCoronaSizeMult), additively blended so its soft black center contributes nothing and
-     * only the halo band shows. Constant size, dimmed (not animated) when unallocated.
-     */
     private void drawAmbientGlow(float cx, float cy, float footprintSize, float stateAlpha, float alphaMult) {
         if (!ensureTextureLoaded(GLOW_TEXTURE_PATH)) return;
 
@@ -732,11 +678,6 @@ final class SkillTreeNodeRenderer {
         sprite.renderAtCenter(cx, cy);
     }
 
-    /**
-     * The plain ring-band art (asteroids/ice/dust/special) rendered via a direct port of
-     * vanilla's own RingRenderer - see RingBeltRenderer for why that matters over a hand-rolled
-     * approximation.
-     */
     private void drawKeystoneRingBelt(float cx, float cy, float footprintSize, float widthRatio, String ringArtPath, float stateAlpha, float alphaMult) {
         if (!ensureTextureLoaded(ringArtPath)) return;
         SpriteAPI sprite = Global.getSettings().getSprite(ringArtPath);
@@ -744,10 +685,6 @@ final class SkillTreeNodeRenderer {
                 Color.WHITE, stateAlpha * alphaMult);
     }
 
-    /**
-     * The aurora art rendered via a direct port of vanilla's own AuroraRenderer - see
-     * AuroraBeltRenderer for why that matters over a hand-rolled approximation.
-     */
     private void drawKeystoneAuroraBelt(float cx, float cy, float footprintSize, float widthRatio, Color tint, float stateAlpha, float alphaMult) {
         if (!ensureTextureLoaded(AURORA_TEXTURE_PATH)) return;
         SpriteAPI sprite = Global.getSettings().getSprite(AURORA_TEXTURE_PATH);
@@ -756,8 +693,6 @@ final class SkillTreeNodeRenderer {
     }
 
     private static float beltInnerRadius(float footprintSize) {
-        // Touches the icon's own ring (drawSingleDonut, at footprintSize * ICON_INSET_RATIO / 2)
-        // directly - no gap, now that the wormhole stack that used to sit in between is gone.
         return footprintSize * ICON_INSET_RATIO / 2f;
     }
 
@@ -768,10 +703,6 @@ final class SkillTreeNodeRenderer {
     private static List<RingInstance> generateRingInstances(String seedKey, int count, float radiusDecay) {
         Random random = new Random(seedKey.hashCode());
         List<RingInstance> instances = new ArrayList<>(count);
-        // Geometric decay gives the raw per-instance shape (nested, denser toward the center), then
-        // that whole [decay^(count-1), 1] range is linearly remapped into [RING_MIN_RADIUS_FRACTION, 1]
-        // - a remap rather than a per-instance clamp, so instances that would have decayed past the
-        // floor spread out across it instead of all piling up at the exact same radius.
         float rawMin = (float) Math.pow(radiusDecay, count - 1);
         float rawRange = 1f - rawMin;
         for (int i = 0; i < count; i++) {

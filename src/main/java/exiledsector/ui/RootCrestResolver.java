@@ -44,7 +44,7 @@ public final class RootCrestResolver {
         return manufacturer != null && manufacturer.trim().equalsIgnoreCase(expected);
     }
 
-    private static boolean containsIgnoreCase(String haystack, String needle) {
-        return haystack != null && haystack.toLowerCase().contains(needle);
+    private static boolean containsIgnoreCase(String value, String substring) {
+        return value != null && value.toLowerCase().contains(substring);
     }
 }

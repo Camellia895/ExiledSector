@@ -13,14 +13,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Renders editor-placed ring belts (the "Asteroid Belt" anchor shape) live, every frame, with
- * RingBeltRenderer - the same direct port of vanilla's own RingRenderer used for keystone nodes -
- * instead of the one-time baked PNG this used to be. Vanilla's own ring band is static (RingRenderer
- * hardcodes its rotation angle to 0), so this doesn't need any animation of its own to match
- * vanilla's actual behavior; what baking lost was fidelity - GPU bilinear filtering and the exact
- * tiling formula instead of a fixed-resolution CPU raster approximation - not motion.
- */
 public class SkillTreeRingBeltRenderer {
 
     private final Set<String> loadedSprites = new HashSet<>();
