@@ -190,8 +190,8 @@
 			"id": "turretgyros_1",
 			"type": "turretgyros",
 			"connectedTo": [],
-			"x": -2299,
-			"y": 1185
+			"x": -2340,
+			"y": 1220
 		},
 		{
 			"id": "ballistic_rangefinder_1",
@@ -221,9 +221,13 @@
 		{
 			"id": "pointdefenseai_1",
 			"type": "pointdefenseai",
-			"connectedTo": [],
-			"x": -1847,
-			"y": 1796
+			"connectedTo": [
+				"pd_damage_to_missiles_1"
+			],
+			"x": -1725,
+			"y": 1848,
+			"orbitAnchorId": "anchor_21",
+			"orbitAngle": 29.99999999999998
 		},
 		{
 			"id": "missleracks_1",
@@ -240,8 +244,8 @@
 			"id": "missile_autoloader_1",
 			"type": "missile_autoloader",
 			"connectedTo": [],
-			"x": 3523,
-			"y": -588
+			"x": 2591,
+			"y": -394
 		},
 		{
 			"id": "eccm_1",
@@ -317,8 +321,8 @@
 				"shield_raise_rate_1",
 				"shield_turn_rate_1"
 			],
-			"x": 498,
-			"y": -2698,
+			"x": 518,
+			"y": -2683,
 			"orbitAnchorId": "anchor_2",
 			"orbitAngle": 270
 		},
@@ -561,8 +565,8 @@
 			"id": "converted_hangar_1",
 			"type": "converted_hangar",
 			"connectedTo": [],
-			"x": 3487,
-			"y": -1556
+			"x": 1985,
+			"y": -1661
 		},
 		{
 			"id": "converted_fighterbay_1",
@@ -1602,8 +1606,8 @@
 				"shield_raise_rate_2",
 				"advancedshieldemitter_1"
 			],
-			"x": 632,
-			"y": -2616,
+			"x": 652,
+			"y": -2601,
 			"orbitAnchorId": "anchor_2",
 			"orbitAngle": -26.847754748827075
 		},
@@ -1614,8 +1618,8 @@
 				"shield_raise_rate_1",
 				"shield_turn_raise_rate_optional_1"
 			],
-			"x": 627,
-			"y": -2471,
+			"x": 647,
+			"y": -2456,
 			"orbitAnchorId": "anchor_2",
 			"orbitAngle": 31.00891551494835
 		},
@@ -1626,8 +1630,8 @@
 				"shield_turn_rate_2",
 				"advancedshieldemitter_1"
 			],
-			"x": 365,
-			"y": -2617,
+			"x": 385,
+			"y": -2602,
 			"orbitAnchorId": "anchor_2",
 			"orbitAngle": -152.49474818746805
 		},
@@ -1638,8 +1642,8 @@
 				"shield_turn_rate_1",
 				"shield_turn_raise_rate_optional_1"
 			],
-			"x": 369,
-			"y": -2472,
+			"x": 389,
+			"y": -2457,
 			"orbitAnchorId": "anchor_2",
 			"orbitAngle": 149.4392314359338
 		},
@@ -1787,8 +1791,8 @@
 				"shield_raise_rate_2",
 				"shield_turn_rate_2"
 			],
-			"x": 498,
-			"y": -2398,
+			"x": 518,
+			"y": -2383,
 			"orbitAnchorId": "anchor_2",
 			"orbitAngle": 90
 		},
@@ -1864,7 +1868,8 @@
 				"small_flux_optional_37",
 				"small_flux_optional_39",
 				"small_flux_optional_45",
-				"small_flux_optional_18"
+				"small_flux_optional_18",
+				"pd_damage_to_missiles_2"
 			],
 			"x": -1785,
 			"y": 1286,
@@ -2525,6 +2530,51 @@
 			"y": 2046,
 			"orbitAnchorId": "anchor_20",
 			"orbitAngle": 270
+		},
+		{
+			"id": "pd_damage_to_missiles_1",
+			"type": "pd_damage_to_missiles",
+			"connectedTo": [
+				"pd_damage_to_missiles_2",
+				"pointdefenseai_1"
+			],
+			"x": -1985,
+			"y": 1848,
+			"orbitAnchorId": "anchor_21",
+			"orbitAngle": 150.00000000000003
+		},
+		{
+			"id": "pd_damage_to_missiles_2",
+			"type": "pd_damage_to_missiles",
+			"connectedTo": [
+				"pd_damage_to_missiles_1",
+				"small_flux_optional_38"
+			],
+			"x": -1855,
+			"y": 1623,
+			"orbitAnchorId": "anchor_21",
+			"orbitAngle": 270
+		},
+		{
+			"id": "maneuverability_percent_1",
+			"type": "maneuverability_percent",
+			"connectedTo": [],
+			"x": 1939,
+			"y": -89
+		},
+		{
+			"id": "acceleration_percent_1",
+			"type": "acceleration_percent",
+			"connectedTo": [],
+			"x": 1927,
+			"y": -326
+		},
+		{
+			"id": "turn_acceleration_percent_1",
+			"type": "turn_acceleration_percent",
+			"connectedTo": [],
+			"x": 1566,
+			"y": -297
 		}
 	],
 	"connectorCurves": [
@@ -2897,14 +2947,14 @@
 		{
 			"a": "shield_raise_rate_1",
 			"b": "shield_raise_rate_2",
-			"controlX": 648,
-			"controlY": -2543
+			"controlX": 668,
+			"controlY": -2528
 		},
 		{
 			"a": "shield_turn_rate_1",
 			"b": "shield_turn_rate_2",
-			"controlX": 348,
-			"controlY": -2544
+			"controlX": 368,
+			"controlY": -2529
 		},
 		{
 			"a": "small_flux_optional_25",
@@ -3161,20 +3211,20 @@
 		{
 			"a": "shield_raise_rate_2",
 			"b": "shield_turn_raise_rate_optional_1",
-			"controlX": 572,
-			"controlY": -2417
+			"controlX": 592,
+			"controlY": -2402
 		},
 		{
 			"a": "advancedshieldemitter_1",
 			"b": "shield_raise_rate_1",
-			"controlX": 577,
-			"controlY": -2676
+			"controlX": 597,
+			"controlY": -2661
 		},
 		{
 			"a": "advancedshieldemitter_1",
 			"b": "shield_turn_rate_1",
-			"controlX": 420,
-			"controlY": -2676
+			"controlX": 440,
+			"controlY": -2661
 		},
 		{
 			"a": "armor_4",
@@ -3281,8 +3331,8 @@
 		{
 			"a": "shield_turn_raise_rate_optional_1",
 			"b": "shield_turn_rate_2",
-			"controlX": 424,
-			"controlY": -2418
+			"controlX": 444,
+			"controlY": -2403
 		},
 		{
 			"a": "weapon_durability_1",
@@ -3337,6 +3387,18 @@
 			"b": "missile_damage_4",
 			"controlX": -1327,
 			"controlY": 2090
+		},
+		{
+			"a": "pd_damage_to_missiles_1",
+			"b": "pd_damage_to_missiles_2",
+			"controlX": -1920,
+			"controlY": 1736
+		},
+		{
+			"a": "pd_damage_to_missiles_1",
+			"b": "pointdefenseai_1",
+			"controlX": -1855,
+			"controlY": 1848
 		}
 	],
 	"hiddenConnectors": [
@@ -3430,8 +3492,8 @@
 		},
 		{
 			"id": "anchor_2",
-			"x": 498,
-			"y": -2548,
+			"x": 518,
+			"y": -2533,
 			"radius": 150
 		},
 		{
@@ -3607,6 +3669,13 @@
 			"x": -1433,
 			"y": 2196,
 			"radius": 150
+		},
+		{
+			"id": "anchor_21",
+			"x": -1855,
+			"y": 1773,
+			"radius": 150,
+			"shape": "triangle"
 		}
 	],
 	"ringBelts": [
@@ -3683,21 +3752,91 @@
 		},
 		{
 			"id": "image_4",
-			"x": -227,
-			"y": 735,
-			"width": 648,
-			"height": 643,
+			"x": -585,
+			"y": 583,
+			"width": 372,
+			"height": 521,
 			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_08_orange.png",
 			"rotation": 313
 		},
 		{
 			"id": "image_8",
-			"x": 39,
-			"y": 844,
+			"x": 339,
+			"y": 566,
 			"width": 698,
 			"height": 866,
 			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_09_lowtech.png",
 			"rotation": 23
+		},
+		{
+			"id": "image_9",
+			"x": -208,
+			"y": -597,
+			"width": 401,
+			"height": 503,
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_01.png",
+			"rotation": 356
+		},
+		{
+			"id": "image_10",
+			"x": -1752,
+			"y": 430,
+			"width": 565,
+			"height": 660,
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_04_orange.png"
+		},
+		{
+			"id": "image_11",
+			"x": -2429,
+			"y": 309,
+			"width": 615,
+			"height": 560,
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_09_orange.png",
+			"rotation": 294
+		},
+		{
+			"id": "image_12",
+			"x": -1469,
+			"y": 1257,
+			"width": 469,
+			"height": 519,
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_06_orange.png"
+		},
+		{
+			"id": "image_13",
+			"x": -1938,
+			"y": 1822,
+			"width": 626,
+			"height": 491,
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_07_blend_b75.png",
+			"rotation": 94
+		},
+		{
+			"id": "image_14",
+			"x": -411,
+			"y": -1689,
+			"width": 561,
+			"height": 549,
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_04.png",
+			"rotation": 133
+		},
+		{
+			"id": "image_15",
+			"x": 523,
+			"y": -2418,
+			"width": 587,
+			"height": 680,
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_01.png",
+			"rotation": 261
+		},
+		{
+			"id": "image_16",
+			"x": -317,
+			"y": -2707,
+			"width": 886,
+			"height": 508,
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_05.png",
+			"rotation": 230
 		}
 	]
 }

@@ -826,10 +826,6 @@
 					"effect": "PD_BEST_TARGET_LEADING"
 				},
 				{
-					"effect": "PD_DAMAGE_TO_MISSILES_PERCENT",
-					"magnitude": 50
-				},
-				{
 					"effect": "PD_RECLASSIFY_SMALL_WEAPONS"
 				}
 			]
@@ -1933,6 +1929,67 @@
 			"opCost": 3,
 			"xpCost": 1000,
 			"tier": "WORMHOLE"
+		},
+		{
+			"id": "pd_damage_to_missiles",
+			"name": "Point Defence Damage to Missiles",
+			"icon": "graphics/icons/circular/notable_passives/integrated_point_defense_ai_blue.png",
+			"opCost": 4,
+			"xpCost": 2000,
+			"effects": [
+				{
+					"effect": "PD_DAMAGE_TO_MISSILES_PERCENT",
+					"magnitude": 25
+				}
+			]
+		},
+		{
+			"id": "maneuverability_percent",
+			"name": "Maneuverability",
+			"icon": "",
+			"opCost": 4,
+			"xpCost": 2000,
+			"effects": [
+				{
+					"effect": "MANEUVERABILITY_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"speed"
+			]
+		},
+		{
+			"id": "acceleration_percent",
+			"name": "Acceleration",
+			"icon": "",
+			"opCost": 4,
+			"xpCost": 2000,
+			"effects": [
+				{
+					"effect": "ACCELERATION_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"speed"
+			]
+		},
+		{
+			"id": "turn_acceleration_percent",
+			"name": "Turn speed",
+			"icon": "",
+			"opCost": 4,
+			"xpCost": 2000,
+			"effects": [
+				{
+					"effect": "TURN_ACCELERATION_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"speed"
+			]
 		}
 	]
 }
