@@ -176,8 +176,8 @@
 			"id": "autorepair_1",
 			"type": "autorepair",
 			"connectedTo": [],
-			"x": 3402,
-			"y": 217
+			"x": -1195,
+			"y": 1178
 		},
 		{
 			"id": "hardened_subsystems_1",
@@ -213,8 +213,8 @@
 			"connectedTo": [
 				"ballistic_damage_4"
 			],
-			"x": -206,
-			"y": 1872,
+			"x": -315,
+			"y": 1759,
 			"orbitAnchorId": "anchor_19",
 			"orbitAngle": 29.99999999999998
 		},
@@ -222,8 +222,8 @@
 			"id": "pointdefenseai_1",
 			"type": "pointdefenseai",
 			"connectedTo": [],
-			"x": -1900,
-			"y": 1735
+			"x": -1847,
+			"y": 1796
 		},
 		{
 			"id": "missleracks_1",
@@ -249,8 +249,8 @@
 			"connectedTo": [
 				"missile_damage_4"
 			],
-			"x": -1298,
-			"y": 2195,
+			"x": -1283,
+			"y": 2196,
 			"orbitAnchorId": "anchor_20",
 			"orbitAngle": 0
 		},
@@ -480,8 +480,8 @@
 			"connectedTo": [
 				"fuel_flat_1"
 			],
-			"x": 392,
-			"y": 917,
+			"x": 394,
+			"y": 901,
 			"orbitAnchorId": "flat_fuel_anchor",
 			"orbitAngle": 90
 		},
@@ -604,8 +604,8 @@
 			"id": "escort_package_1",
 			"type": "escort_package",
 			"connectedTo": [],
-			"x": -1108,
-			"y": 1286
+			"x": -973,
+			"y": 2414
 		},
 		{
 			"id": "beam_damage_5",
@@ -1282,8 +1282,8 @@
 				"fuel_flat_2",
 				"auxiliary_fuel_tanks_1"
 			],
-			"x": 192,
-			"y": 717,
+			"x": 194,
+			"y": 701,
 			"orbitAnchorId": "flat_fuel_anchor",
 			"orbitAngle": 180
 		},
@@ -1294,8 +1294,8 @@
 				"fuel_flat_1",
 				"small_logistics_optional_13"
 			],
-			"x": 392,
-			"y": 517,
+			"x": 394,
+			"y": 501,
 			"orbitAnchorId": "flat_fuel_anchor",
 			"orbitAngle": 270
 		},
@@ -2431,8 +2431,8 @@
 				"wormhole_1",
 				"small_flux_optional_19"
 			],
-			"x": -3267,
-			"y": 1073
+			"x": -3285,
+			"y": 1050
 		},
 		{
 			"id": "wormhole_3",
@@ -2452,8 +2452,8 @@
 				"wormhole_3",
 				"small_flux_optional_11"
 			],
-			"x": 3353,
-			"y": 1054,
+			"x": 3358,
+			"y": 1022,
 			"wormholeColor": "#5f64ec"
 		},
 		{
@@ -2463,8 +2463,8 @@
 				"small_flux_optional_12",
 				"wormhole_6"
 			],
-			"x": 2855,
-			"y": 2045,
+			"x": 2850,
+			"y": 2063,
 			"wormholeColor": "#cd7f4c"
 		},
 		{
@@ -2474,8 +2474,8 @@
 				"wormhole_5",
 				"small_flux_optional_18"
 			],
-			"x": -2865,
-			"y": 2005,
+			"x": -2829,
+			"y": 2046,
 			"wormholeColor": "#cd7f4c"
 		},
 		{
@@ -2485,8 +2485,8 @@
 				"ballistic_damage_5",
 				"magazines_1"
 			],
-			"x": -336,
-			"y": 1647,
+			"x": -445,
+			"y": 1534,
 			"orbitAnchorId": "anchor_19",
 			"orbitAngle": 270
 		},
@@ -2497,8 +2497,8 @@
 				"ballistic_damage_4",
 				"small_flux_optional_36"
 			],
-			"x": -466,
-			"y": 1872,
+			"x": -575,
+			"y": 1759,
 			"orbitAnchorId": "anchor_19",
 			"orbitAngle": 150.00000000000003
 		},
@@ -2509,8 +2509,8 @@
 				"missile_damage_4",
 				"small_flux_optional_17"
 			],
-			"x": -1598,
-			"y": 2195,
+			"x": -1583,
+			"y": 2196,
 			"orbitAnchorId": "anchor_20",
 			"orbitAngle": 180
 		},
@@ -2521,8 +2521,8 @@
 				"missile_damage_3",
 				"eccm_1"
 			],
-			"x": -1448,
-			"y": 2045,
+			"x": -1433,
+			"y": 2046,
 			"orbitAnchorId": "anchor_20",
 			"orbitAngle": 270
 		}
@@ -2735,14 +2735,14 @@
 		{
 			"a": "fuel_flat_1",
 			"b": "fuel_flat_2",
-			"controlX": 251,
-			"controlY": 576
+			"controlX": 253,
+			"controlY": 560
 		},
 		{
 			"a": "auxiliary_fuel_tanks_1",
 			"b": "fuel_flat_1",
-			"controlX": 251,
-			"controlY": 858
+			"controlX": 253,
+			"controlY": 842
 		},
 		{
 			"a": "engine_durability_1",
@@ -3317,26 +3317,26 @@
 		{
 			"a": "ballistic_damage_4",
 			"b": "ballistic_damage_5",
-			"controlX": -401,
-			"controlY": 1760
+			"controlX": -510,
+			"controlY": 1647
 		},
 		{
 			"a": "ballistic_damage_4",
 			"b": "magazines_1",
-			"controlX": -271,
-			"controlY": 1760
+			"controlX": -380,
+			"controlY": 1647
 		},
 		{
 			"a": "missile_damage_3",
 			"b": "missile_damage_4",
-			"controlX": -1554,
-			"controlY": 2089
+			"controlX": -1539,
+			"controlY": 2090
 		},
 		{
 			"a": "eccm_1",
 			"b": "missile_damage_4",
-			"controlX": -1342,
-			"controlY": 2089
+			"controlX": -1327,
+			"controlY": 2090
 		}
 	],
 	"hiddenConnectors": [
@@ -3412,8 +3412,8 @@
 		},
 		{
 			"id": "flat_fuel_anchor",
-			"x": 392,
-			"y": 717,
+			"x": 394,
+			"y": 701,
 			"radius": 200
 		},
 		{
@@ -3597,15 +3597,15 @@
 		},
 		{
 			"id": "anchor_19",
-			"x": -336,
-			"y": 1797,
+			"x": -445,
+			"y": 1684,
 			"radius": 150,
 			"shape": "triangle"
 		},
 		{
 			"id": "anchor_20",
-			"x": -1448,
-			"y": 2195,
+			"x": -1433,
+			"y": 2196,
 			"radius": 150
 		}
 	],
@@ -3662,6 +3662,42 @@
 			"height": 533,
 			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_06_lowtech.png",
 			"rotation": 203
+		},
+		{
+			"id": "image_2",
+			"x": 1700,
+			"y": 456,
+			"width": 526,
+			"height": 602,
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_04_lowtech.png",
+			"rotation": 253
+		},
+		{
+			"id": "image_3",
+			"x": 1904,
+			"y": 1777,
+			"width": 519,
+			"height": 656,
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_09_lowtech.png",
+			"rotation": 164
+		},
+		{
+			"id": "image_4",
+			"x": -227,
+			"y": 735,
+			"width": 648,
+			"height": 643,
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_08_orange.png",
+			"rotation": 313
+		},
+		{
+			"id": "image_8",
+			"x": 39,
+			"y": 844,
+			"width": 698,
+			"height": 866,
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_09_lowtech.png",
+			"rotation": 23
 		}
 	]
 }
