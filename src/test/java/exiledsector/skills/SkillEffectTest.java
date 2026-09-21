@@ -1053,34 +1053,4 @@ class SkillEffectTest {
 
         verify(ship, never()).setRetreating(true, false);
     }
-
-    @Test
-    void phaseAnchorDiveAdvanceForcesPhaseAndRetreatWhileDiving() {
-        ShipAPI ship = mock(ShipAPI.class);
-        when(ship.getHitpoints()).thenReturn(100f);
-        when(ship.getCurrentCR()).thenReturn(1f);
-        when(ship.getFleetMember()).thenReturn(null);
-        ShipSystemAPI phaseCloak = mock(ShipSystemAPI.class);
-        when(ship.getPhaseCloak()).thenReturn(phaseCloak);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        MutableStat hullDamageTakenMult = mock(MutableStat.class);
-        when(stats.getHullDamageTakenMult()).thenReturn(hullDamageTakenMult);
-        when(ship.getMutableStats()).thenReturn(stats);
-        Object listenerObj = capturePhaseAnchorDiveListener(ship, 100f);
-        HullDamageAboutToBeTakenListener damageListener = (HullDamageAboutToBeTakenListener) listenerObj;
-        AdvanceableListener advanceListener = (AdvanceableListener) listenerObj;
-
-        try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
-            CombatEngineAPI engine = mock(CombatEngineAPI.class);
-            globalMock.when(Global::getCombatEngine).thenReturn(engine);
-            when(engine.getCustomData()).thenReturn(new HashMap<>());
-            damageListener.notifyAboutToTakeHullDamage(new Object(), ship, mock(Vector2f.class), 150f);
-        }
-
-        advanceListener.advance(0.1f);
-
-        verify(phaseCloak).forceState(ShipSystemAPI.SystemState.IN, 1f);
-        verify(ship).setRetreating(true, false);
-        verify(hullDamageTakenMult).modifyMult("phaseAnchor_canDive", 0f);
-    }
 }

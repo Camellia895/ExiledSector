@@ -801,7 +801,7 @@
 					"magnitude": 50
 				},
 				{
-					"effect": "BEAM_WEAPON_RANGE_PERCENT",
+					"effect": "BEAM_WEAPON_RANGE_MULT",
 					"magnitude": -25
 				}
 			],
