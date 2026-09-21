@@ -72,4 +72,9 @@ class SkillTreeTest {
     void getCurveReturnsNullWhenConnectorIsNotCurved() {
         assertNull(SkillTree.getCurve("hull_1", "hull_2"));
     }
+
+    @Test
+    void connectorsAreVisibleByDefault() {
+        assertTrue(SkillTree.isConnectorVisible("hull_1", "hull_2"));
+    }
 }

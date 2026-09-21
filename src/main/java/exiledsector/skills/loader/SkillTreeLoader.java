@@ -14,9 +14,11 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public final class SkillTreeLoader {
 
@@ -41,6 +43,15 @@ public final class SkillTreeLoader {
         } catch (IOException | JSONException e) {
             Logger.getLogger(SkillTreeLoader.class).error("Failed to load connector curves from " + DATA_PATH, e);
             return new LinkedHashMap<>();
+        }
+    }
+
+    public static Set<String> loadHiddenConnectors() {
+        try {
+            return parseHiddenConnectors(Global.getSettings().loadJSON(DATA_PATH));
+        } catch (IOException | JSONException e) {
+            Logger.getLogger(SkillTreeLoader.class).error("Failed to load hidden connectors from " + DATA_PATH, e);
+            return new HashSet<>();
         }
     }
 
@@ -113,6 +124,17 @@ public final class SkillTreeLoader {
         return curves;
     }
 
+    public static Set<String> parseHiddenConnectors(JSONObject root) throws JSONException {
+        Set<String> hiddenKeys = new HashSet<>();
+        JSONArray hiddenArray = root.optJSONArray("hiddenConnectors");
+        if (hiddenArray == null) return hiddenKeys;
+        for (int i = 0; i < hiddenArray.length(); i++) {
+            JSONObject hiddenJson = hiddenArray.getJSONObject(i);
+            hiddenKeys.add(SkillTree.curveKey(hiddenJson.getString("a"), hiddenJson.getString("b")));
+        }
+        return hiddenKeys;
+    }
+
     public static List<SkillNode> parseNodes(JSONObject root, Map<String, SkillType> skillTypes) throws JSONException {
         List<SkillNode> nodes = new ArrayList<>();
         JSONArray nodeArray = root.getJSONArray("nodes");
@@ -145,6 +167,7 @@ public final class SkillTreeLoader {
                 (float) json.optDouble("y", 0),
                 json.optString("ringBeltPath", null),
                 json.optString("ringBeltColor", null),
-                json.has("ringBeltWidth") ? (float) json.getDouble("ringBeltWidth") : null);
+                json.has("ringBeltWidth") ? (float) json.getDouble("ringBeltWidth") : null,
+                json.optString("wormholeColor", null));
     }
 }

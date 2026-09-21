@@ -13,6 +13,7 @@ public class SkillNode extends SkillTreeObject {
     private final String ringBeltPath;
     private final String ringBeltColor;
     private final Float ringBeltWidth;
+    private final String wormholeColor;
 
     public SkillNode(String id, SkillType type, List<String> connectedNodeIds, float offsetX, float offsetY) {
         this(id, type, connectedNodeIds, offsetX, offsetY, null, null);
@@ -27,12 +28,17 @@ public class SkillNode extends SkillTreeObject {
     }
 
     public SkillNode(String id, SkillType type, List<String> connectedNodeIds, float offsetX, float offsetY, String ringBeltPath, String ringBeltColor, Float ringBeltWidth) {
+        this(id, type, connectedNodeIds, offsetX, offsetY, ringBeltPath, ringBeltColor, ringBeltWidth, null);
+    }
+
+    public SkillNode(String id, SkillType type, List<String> connectedNodeIds, float offsetX, float offsetY, String ringBeltPath, String ringBeltColor, Float ringBeltWidth, String wormholeColor) {
         super(id, offsetX, offsetY);
         this.type = type;
         this.connectedNodeIds = connectedNodeIds == null ? Collections.emptyList() : connectedNodeIds;
         this.ringBeltPath = ringBeltPath;
         this.ringBeltColor = ringBeltColor;
         this.ringBeltWidth = ringBeltWidth;
+        this.wormholeColor = wormholeColor;
     }
 
     public SkillType getType() {
@@ -118,5 +124,9 @@ public class SkillNode extends SkillTreeObject {
 
     public Float getRingBeltWidth() {
         return ringBeltWidth;
+    }
+
+    public String getWormholeColor() {
+        return wormholeColor;
     }
 }

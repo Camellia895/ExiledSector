@@ -17,6 +17,7 @@
     --small: #7c8ba0;
     --notable: #5fd0ff;
     --keystone: #ffb454;
+    --wormhole: #ff5ad1;
     --root: #b98aff;
     --danger: #ff6b6b;
     --danger-dim: #4a2626;
@@ -41,6 +42,7 @@
       --small: #6b7686;
       --notable: #0d84ad;
       --keystone: #b9720a;
+      --wormhole: #a3168a;
       --root: #7c4dff;
       --danger: #c8393a;
       --danger-dim: #fbdede;
@@ -63,6 +65,7 @@
     --small: #6b7686;
     --notable: #0d84ad;
     --keystone: #b9720a;
+    --wormhole: #a3168a;
     --root: #7c4dff;
     --danger: #c8393a;
     --danger-dim: #fbdede;
@@ -292,6 +295,7 @@
   }
   .edge-line { fill: none; stroke: var(--text-faint); stroke-width: 1.4; opacity: .55; }
   .edge-line.bad { stroke: var(--danger); opacity: .9; stroke-dasharray: 4 3; }
+  .edge-line.hidden-connector { stroke-dasharray: 2 5; opacity: .3; }
   .curve-anchor { fill: var(--text-faint); opacity: .45; cursor: grab; }
   .curve-anchor:hover { fill: var(--accent); opacity: 1; }
   .curve-anchor.dragging { fill: var(--accent); opacity: 1; cursor: grabbing; }
@@ -577,6 +581,7 @@
       <div class="legendRow"><span class="legendDot" style="background:var(--small)"></span>Small</div>
       <div class="legendRow"><span class="legendDot" style="background:var(--notable)"></span>Notable</div>
       <div class="legendRow"><span class="legendDot" style="background:var(--keystone)"></span>Keystone</div>
+      <div class="legendRow"><span class="legendDot" style="background:var(--wormhole)"></span>Wormhole</div>
       <div class="legendRow"><span class="legendDot" style="background:var(--root)"></span>Root (ship start)</div>
       <label class="legendRow" style="cursor:pointer"><input type="checkbox" id="labelsToggle" checked> Show labels</label>
     </div>
@@ -882,17 +887,19 @@ var SHIPPED_ANCHORS = [
 ];
 var SHIPPED_IMAGES = [];
 
-var SMALL_R = 32, NOTABLE_R = 38.4, KEYSTONE_R = 44.8, ROOT_R = 80;
+var SMALL_R = 32, NOTABLE_R = 38.4, KEYSTONE_R = 44.8, WORMHOLE_R = 41.6, ROOT_R = 80;
 function tierOf(type){ return (type && type.tier) ? type.tier : 'SMALL'; }
 function radiusFor(tier){
   if (tier === 'KEYSTONE') return KEYSTONE_R;
   if (tier === 'NOTABLE') return NOTABLE_R;
+  if (tier === 'WORMHOLE') return WORMHOLE_R;
   if (tier === 'ROOT') return ROOT_R;
   return SMALL_R;
 }
 function colorVarFor(tier){
   if (tier === 'KEYSTONE') return '--keystone';
   if (tier === 'NOTABLE') return '--notable';
+  if (tier === 'WORMHOLE') return '--wormhole';
   if (tier === 'ROOT') return '--root';
   return '--small';
 }
@@ -901,6 +908,7 @@ var state = {
   types: [],
   nodes: [],
   curves: [],
+  hiddenConnectors: [],
   anchors: [],
   images: [],
   availableImages: [],
@@ -985,6 +993,21 @@ function removeCurve(a, b){
 }
 function removeCurvesForNode(id){
   state.curves = state.curves.filter(function(c){ return c.a !== id && c.b !== id; });
+}
+function isConnectorHidden(a, b){
+  var key = curveKey(a, b);
+  return state.hiddenConnectors.some(function(h){ return curveKey(h.a, h.b) === key; });
+}
+function toggleConnectorHidden(a, b){
+  if (isConnectorHidden(a, b)) {
+    var key = curveKey(a, b);
+    state.hiddenConnectors = state.hiddenConnectors.filter(function(h){ return curveKey(h.a, h.b) !== key; });
+  } else {
+    state.hiddenConnectors.push({ a: a, b: b });
+  }
+}
+function removeHiddenConnectorsForNode(id){
+  state.hiddenConnectors = state.hiddenConnectors.filter(function(h){ return h.a !== id && h.b !== id; });
 }
 function snapCurveToStraightIfClose(a, b){
   var c = findCurve(a, b);
@@ -1174,13 +1197,14 @@ function loadShipped(){
   state.types = deepCopy(SHIPPED_TYPES);
   state.nodes = deepCopy(SHIPPED_NODES);
   state.curves = deepCopy(SHIPPED_CURVES);
+  state.hiddenConnectors = [];
   state.anchors = deepCopy(SHIPPED_ANCHORS);
   state.images = deepCopy(SHIPPED_IMAGES);
 }
 
 function saveLocal(){
   try {
-    localStorage.setItem('skillTreeEditor.v1', JSON.stringify({ types: state.types, nodes: state.nodes, curves: state.curves, anchors: state.anchors, images: state.images }));
+    localStorage.setItem('skillTreeEditor.v1', JSON.stringify({ types: state.types, nodes: state.nodes, curves: state.curves, hiddenConnectors: state.hiddenConnectors, anchors: state.anchors, images: state.images }));
   } catch(e){}
 }
 function loadLocal(){
@@ -1192,6 +1216,7 @@ function loadLocal(){
     state.types = parsed.types;
     state.nodes = parsed.nodes;
     state.curves = parsed.curves || [];
+    state.hiddenConnectors = parsed.hiddenConnectors || [];
     state.anchors = parsed.anchors || [];
     state.images = parsed.images || [];
     return true;
@@ -1206,10 +1231,10 @@ var canvasWrap = document.getElementById('canvasWrap');
 var NS = 'http://www.w3.org/2000/svg';
 var layerRoot, layerImages, layerAnchors, layerEdges, layerNodes, layerLabels, layerAnchorHandles, layerImageHandles;
 
-var NODE_ICON_CLIP_IDS = { SMALL: 'nodeClipSmall', NOTABLE: 'nodeClipNotable', KEYSTONE: 'nodeClipKeystone', ROOT: 'nodeClipRoot' };
+var NODE_ICON_CLIP_IDS = { SMALL: 'nodeClipSmall', NOTABLE: 'nodeClipNotable', KEYSTONE: 'nodeClipKeystone', WORMHOLE: 'nodeClipWormhole', ROOT: 'nodeClipRoot' };
 function buildIconClipDefs(){
   var defs = document.createElementNS(NS, 'defs');
-  var radiusByTier = { SMALL: SMALL_R, NOTABLE: NOTABLE_R, KEYSTONE: KEYSTONE_R, ROOT: ROOT_R };
+  var radiusByTier = { SMALL: SMALL_R, NOTABLE: NOTABLE_R, KEYSTONE: KEYSTONE_R, WORMHOLE: WORMHOLE_R, ROOT: ROOT_R };
   Object.keys(NODE_ICON_CLIP_IDS).forEach(function(tier){
     var clip = document.createElementNS(NS, 'clipPath');
     clip.setAttribute('id', NODE_ICON_CLIP_IDS[tier]);
@@ -1426,7 +1451,7 @@ function render(){
       var handle = bezierHandleFor(control, p.x, p.y, n.x, n.y);
       var path = document.createElementNS(NS, 'path');
       path.setAttribute('d', 'M ' + ppos.sx + ' ' + ppos.sy + ' Q ' + handle.x + ' ' + handle.y + ' ' + pos.sx + ' ' + pos.sy);
-      path.setAttribute('class', 'edge-line');
+      path.setAttribute('class', 'edge-line' + (isConnectorHidden(n.id, pid) ? ' hidden-connector' : ''));
       layerEdges.appendChild(path);
 
       if (state.mode === 'select') {
@@ -2066,7 +2091,11 @@ function refreshInspector(){
   }).join('');
   var prereqHtml = (n.connectedTo||[]).map(function(pid){
     var pn = nodeById(pid);
-    return '<div class="prereqItem"><span>' + pid + (pn ? '' : ' (missing!)') + '</span><button data-remove-prereq="' + pid + '">X</button></div>';
+    return '<div class="prereqItem">' +
+      '<input type="checkbox" data-toggle-hidden-connector="' + pid + '"' + (isConnectorHidden(n.id, pid) ? ' checked' : '') + ' title="Hide this connector\u0027s line in-game (the connection still counts for unlocking)">' +
+      '<span>' + pid + (pn ? '' : ' (missing!)') + '</span>' +
+      '<button data-remove-prereq="' + pid + '">X</button>' +
+    '</div>';
   }).join('') || '<div class="hint">None - renders with no connector line until you add one (e.g. a root node).</div>';
   var otherNodeOptions = state.nodes.filter(function(o){ return o.id !== n.id; }).map(function(o){
     return '<option value="' + o.id + '">' + o.id + '</option>';
@@ -2117,9 +2146,14 @@ function refreshInspector(){
       : '') +
       '<div class="field"><label>Ring belt width (? node size, default ' + KEYSTONE_BELT_DEFAULT_WIDTH + ')</label><input type="number" step="0.1" min="0.1" value="' + (n.ringBeltWidth || '') + '" placeholder="' + KEYSTONE_BELT_DEFAULT_WIDTH + '" data-field="ringBeltWidth"></div>'
     : '') +
+    (tier === 'WORMHOLE' ?
+      '<div class="field"><label>Wormhole colour</label><input type="color" value="' + (n.wormholeColor || '#ffffff') + '" data-field="wormholeColor"></div>' +
+      '<div class="hint">To pair this wormhole with another, add it as a normal connection below, then double-click that connector line on the canvas to hide it. It stays a real prerequisite edge (allocating/deallocating behaves exactly like any other connection) - only the line is hidden.</div>'
+    : '') +
     '<hr class="sep">' +
     statsHtml +
     '<div class="field"><label>Connected to</label><div class="prereqList">' + prereqHtml + '</div></div>' +
+    '<div class="hint">Check a connection\u0027s box to hide its line in-game (dashed/faint on the canvas here) - it still counts for unlocking either way.</div>' +
     '<div class="fieldRow">' +
       '<select id="addPrereqSelect" style="flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12px;padding:6px;"><option value="">Connect to...</option>' + otherNodeOptions + '</select>' +
     '</div>' +
@@ -2158,6 +2192,8 @@ function refreshInspector(){
       } else if (field === 'ringBeltWidth') {
         var width = parseFloat(inp.value);
         if (!isNaN(width) && width > 0) n.ringBeltWidth = width; else delete n.ringBeltWidth;
+      } else if (field === 'wormholeColor') {
+        n.wormholeColor = inp.value;
       }
       saveLocal(); render(); refreshInspector();
     });
@@ -2180,6 +2216,12 @@ function refreshInspector(){
       if (other && other.connectedTo.indexOf(n.id) === -1) other.connectedTo.push(n.id);
       saveLocal(); render(); refreshInspector();
     }
+  });
+  body.querySelectorAll('[data-toggle-hidden-connector]').forEach(function(cb){
+    cb.addEventListener('change', function(){
+      toggleConnectorHidden(n.id, cb.dataset.toggleHiddenConnector);
+      saveLocal(); render(); refreshInspector();
+    });
   });
   body.querySelectorAll('[data-remove-prereq]').forEach(function(btn){
     btn.addEventListener('click', function(){
@@ -2314,6 +2356,7 @@ function deleteSelectedNodes(){
     o.connectedTo = o.connectedTo.filter(function(pid){ return ids.indexOf(pid) === -1; });
   });
   ids.forEach(removeCurvesForNode);
+  ids.forEach(removeHiddenConnectorsForNode);
   state.selectedIds = [];
   document.getElementById('inspector').classList.remove('open');
   saveLocal();
@@ -2544,6 +2587,7 @@ function openAddNodeModal(x, y){
       '<option value="SMALL">Small</option>' +
       '<option value="NOTABLE">Notable</option>' +
       '<option value="KEYSTONE">Keystone</option>' +
+      '<option value="WORMHOLE">Wormhole</option>' +
       '<option value="ROOT">Root</option>' +
     '</select></div>' +
     '<div class="field"><label>Type</label><select id="mAddType">' + addNodeTypeOptionsHtml('ALL') + '</select></div>' +
@@ -2944,7 +2988,7 @@ function openTypeModal(existingType, onSave, onClose){
   }
 
   function renderModal(){
-    var tierOptions = ['SMALL','NOTABLE','KEYSTONE','ROOT'].map(function(tr){ return '<option value="'+tr+'"'+(tr===tierOf(t)?' selected':'')+'>'+tr+'</option>'; }).join('');
+    var tierOptions = ['SMALL','NOTABLE','KEYSTONE','WORMHOLE','ROOT'].map(function(tr){ return '<option value="'+tr+'"'+(tr===tierOf(t)?' selected':'')+'>'+tr+'</option>'; }).join('');
     var effectRows = effectsDraft.map(function(e, i){
       var options = sortedEffectOptionsHtml(e.effect);
       return '<div class="fieldRow" style="align-items:flex-end">' +
@@ -3122,11 +3166,15 @@ function buildTreeExportObject(){
     if (n.ringBeltPath) out.ringBeltPath = n.ringBeltPath;
     if (n.ringBeltColor) out.ringBeltColor = n.ringBeltColor;
     if (n.ringBeltWidth) out.ringBeltWidth = n.ringBeltWidth;
+    if (n.wormholeColor) out.wormholeColor = n.wormholeColor;
     return out;
   });
   var out = { nodes: nodesOut };
   if (state.curves.length) {
     out.connectorCurves = state.curves.map(function(c){ return { a: c.a, b: c.b, controlX: c.controlX, controlY: c.controlY }; });
+  }
+  if (state.hiddenConnectors.length) {
+    out.hiddenConnectors = state.hiddenConnectors.map(function(h){ return { a: h.a, b: h.b }; });
   }
   if (state.anchors.length) {
     out.orbitAnchors = state.anchors.map(function(a){
@@ -3240,7 +3288,7 @@ document.getElementById('importBtn').addEventListener('click', function(){
     var nodesRaw = document.getElementById('impNodes').value.trim();
     try {
       if (typesRaw) { var pt = JSON.parse(typesRaw); state.types = pt.skillTypes || pt; }
-      if (nodesRaw) { var pn = JSON.parse(nodesRaw); state.nodes = pn.nodes || pn; state.curves = pn.connectorCurves || []; state.anchors = pn.orbitAnchors || []; state.images = normalizeImages(pn.staticImages); }
+      if (nodesRaw) { var pn = JSON.parse(nodesRaw); state.nodes = pn.nodes || pn; state.curves = pn.connectorCurves || []; state.hiddenConnectors = pn.hiddenConnectors || []; state.anchors = pn.orbitAnchors || []; state.images = normalizeImages(pn.staticImages); }
       root.innerHTML = '';
       state.selectedIds = [];
       saveLocal();
@@ -3264,6 +3312,7 @@ document.getElementById('resetBtn').addEventListener('click', function(){
     state.types = typesJson.skillTypes || typesJson;
     state.nodes = treeJson.nodes || treeJson;
     state.curves = treeJson.connectorCurves || [];
+    state.hiddenConnectors = treeJson.hiddenConnectors || [];
     state.anchors = treeJson.orbitAnchors || [];
     state.images = normalizeImages(treeJson.staticImages);
     try { localStorage.removeItem('skillTreeEditor.v1'); } catch(e){}

@@ -7,15 +7,18 @@ import exiledsector.ui.decoration.StaticImage;
 import exiledsector.ui.node.ConnectorCurve;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class SkillTree {
 
     private static final Map<String, SkillNode> NODES = new LinkedHashMap<>();
     private static final Map<String, SkillType> TYPES = new LinkedHashMap<>();
     private static final Map<String, ConnectorCurve> CURVES = new LinkedHashMap<>();
+    private static final Set<String> HIDDEN_CONNECTOR_KEYS = new HashSet<>();
     private static final List<StaticImage> STATIC_IMAGES = new ArrayList<>();
     private static final List<RingBelt> RING_BELTS = new ArrayList<>();
 
@@ -26,6 +29,7 @@ public class SkillTree {
         NODES.clear();
         TYPES.clear();
         CURVES.clear();
+        HIDDEN_CONNECTOR_KEYS.clear();
         STATIC_IMAGES.clear();
         RING_BELTS.clear();
         TYPES.putAll(SkillTypeLoader.loadSkillTypes());
@@ -33,6 +37,7 @@ public class SkillTree {
             register(node);
         }
         CURVES.putAll(SkillTreeLoader.loadConnectorCurves());
+        HIDDEN_CONNECTOR_KEYS.addAll(SkillTreeLoader.loadHiddenConnectors());
         STATIC_IMAGES.addAll(SkillTreeLoader.loadStaticImages());
         RING_BELTS.addAll(SkillTreeLoader.loadRingBelts());
     }
@@ -67,6 +72,10 @@ public class SkillTree {
 
     public static String curveKey(String aId, String bId) {
         return aId.compareTo(bId) <= 0 ? aId + "|" + bId : bId + "|" + aId;
+    }
+
+    public static boolean isConnectorVisible(String aId, String bId) {
+        return !HIDDEN_CONNECTOR_KEYS.contains(curveKey(aId, bId));
     }
 
     public static List<StaticImage> getStaticImages() {

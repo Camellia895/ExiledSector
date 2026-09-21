@@ -8,6 +8,7 @@ import exiledsector.skills.SkillTier;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.belt.AuroraBeltRenderer;
 import exiledsector.ui.belt.RingBeltRenderer;
+import exiledsector.ui.belt.WormholeBandRenderer;
 import org.apache.log4j.Logger;
 import org.lwjgl.opengl.GL11;
 
@@ -77,11 +78,47 @@ final class SkillTreeNodeRingRenderer {
     private static final float BREATHING_MIN_ALPHA = 0.35f;
     private static final float BREATHING_MAX_ALPHA = 1f;
 
+    // Trimmed port of vanilla's JumpPoint/DynamicRingBand wormhole visual (decompiled from
+    // com.fs.starfarer.campaign.JumpPoint). Vanilla drives open/close via a Fader with a
+    // 1-second linear ramp, squared into an eased "openness" 0..1 that fades the energy
+    // bands and central flash out while fading the ring stack in, and grows the whole
+    // visual from a small minimum scale up to full size as it opens - we reproduce that
+    // exact choreography. Absolute campaign-scale sizes/ring-counts (radius 50, 100 rings)
+    // don't transfer to a UI-node-sized icon, so those are re-derived as ratios of the
+    // node's own footprint instead, the same adaptation already applied to the belt/aurora
+    // renderers elsewhere in this package.
+    private static final float WORMHOLE_MIN_SCALE = 0.25f;
+    private static final float WORMHOLE_FADE_DURATION_SECONDS = 1f;
+
+    private static final String WORMHOLE_CORONA_TEXTURE_PATH = "graphics/fx/wormhole_corona.png";
+    private static final float WORMHOLE_CORONA_SIZE_RATIO = 2.2f;
+    private static final int WORMHOLE_CORONA_COUNT = 6;
+    private static final float WORMHOLE_CORONA_ORBIT_RATIO = 0.12f;
+    private static final float WORMHOLE_CORONA_ROTATION_SPEED_DEG = 12f;
+    private static final float WORMHOLE_CORONA_PULSE_SPEED_DEG = 90f;
+    private static final float WORMHOLE_CORONA_PULSE_SIZE_RATIO = 0.1f;
+
+    private static final float WORMHOLE_RING_OUTER_RADIUS_RATIO = 1.55f;
+    private static final int WORMHOLE_RING_COUNT = 16;
+    private static final float WORMHOLE_RING_RADIUS_DECAY = 0.94f;
+
+    private static final String WORMHOLE_BAND_TEXTURE_PATH = "graphics/fx/portal_textures_small.png";
+    private static final float WORMHOLE_BAND_INNER_RADIUS_RATIO = 0.45f;
+    private static final float WORMHOLE_BAND_THICKNESS_RATIO = 0.35f;
+    private static final float WORMHOLE_BAND_ROTATION_SPEED_DEG = 5f;
+    private static final float WORMHOLE_BAND_ALPHA = 0.75f;
+
+    private static final String WORMHOLE_GLOW_TEXTURE_PATH = "graphics/fx/hit_glow.png";
+    private static final float WORMHOLE_GLOW_SIZE_RATIO = 1.3f;
+    private static final float WORMHOLE_GLOW_ALPHA = 0.67f;
+
     private final SkillTreePanelStyle style;
     private final Set<String> loadedSprites = new HashSet<>();
     private final Map<String, Float> pulseElapsed = new HashMap<>();
     private final Map<String, List<RingInstance>> ringStacks = new HashMap<>();
     private final Map<String, List<RingInstance>> pinkRingStacks = new HashMap<>();
+    private final Map<String, Boolean> wormholeAllocated = new HashMap<>();
+    private final Map<String, Float> wormholeOpenness = new HashMap<>();
     private float breathingPhase = 0f;
     private float elapsedSeconds = 0f;
 
@@ -92,17 +129,31 @@ final class SkillTreeNodeRingRenderer {
     void advance(float amount) {
         breathingPhase = (breathingPhase + amount) % BREATHING_PERIOD_SECONDS;
         elapsedSeconds += amount;
-        if (pulseElapsed.isEmpty()) return;
 
-        Iterator<Map.Entry<String, Float>> it = pulseElapsed.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<String, Float> entry = it.next();
-            float elapsed = entry.getValue() + amount;
-            if (elapsed >= PULSE_DURATION) {
-                it.remove();
-            } else {
-                entry.setValue(elapsed);
+        if (!pulseElapsed.isEmpty()) {
+            Iterator<Map.Entry<String, Float>> it = pulseElapsed.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String, Float> entry = it.next();
+                float elapsed = entry.getValue() + amount;
+                if (elapsed >= PULSE_DURATION) {
+                    it.remove();
+                } else {
+                    entry.setValue(elapsed);
+                }
             }
+        }
+
+        advanceWormholeOpenness(amount);
+    }
+
+    private void advanceWormholeOpenness(float amount) {
+        if (wormholeAllocated.isEmpty()) return;
+        float rate = amount / WORMHOLE_FADE_DURATION_SECONDS;
+        for (Map.Entry<String, Boolean> entry : wormholeAllocated.entrySet()) {
+            float target = Boolean.TRUE.equals(entry.getValue()) ? 1f : 0f;
+            float current = wormholeOpenness.computeIfAbsent(entry.getKey(), id -> target);
+            float next = target > current ? Math.min(target, current + rate) : Math.max(target, current - rate);
+            wormholeOpenness.put(entry.getKey(), next);
         }
     }
 
@@ -134,6 +185,9 @@ final class SkillTreeNodeRingRenderer {
             } else {
                 drawKeystoneRingBelt(cx, cy, footprintSize, ringBeltWidth, ringBeltPath, stateAlpha, alphaMult);
             }
+        } else if (tier == SkillTier.WORMHOLE) {
+            wormholeAllocated.put(nodeId, allocated);
+            drawWormhole(cx, cy, footprintSize, alphaMult, nodeId, resolveWormholeColor(node));
         }
 
         GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -142,7 +196,7 @@ final class SkillTreeNodeRingRenderer {
         if (tier == SkillTier.NOTABLE || tier == SkillTier.KEYSTONE) {
             float iconRadius = footprintSize * ICON_INSET_RATIO / 2f;
             drawSingleDonut(cx, cy, iconRadius, allocated, breathing, zoom, alphaMult);
-        } else {
+        } else if (tier != SkillTier.WORMHOLE) {
             drawNodeDonut(cx, cy, ringRadius, scale, zoom, allocated, alphaMult);
 
             if (breathing) {
@@ -153,12 +207,14 @@ final class SkillTreeNodeRingRenderer {
             }
         }
 
-        Float pulseSeconds = pulseElapsed.get(nodeId);
-        if (pulseSeconds != null) {
-            GL11.glLineWidth(RING_LINE_THICKNESS * zoom);
-            float progress = pulseSeconds / PULSE_DURATION;
-            float radiusFraction = PULSE_START_RADIUS_FRACTION + (PULSE_END_RADIUS_FRACTION - PULSE_START_RADIUS_FRACTION) * progress;
-            drawRingOutline(cx, cy, half * radiusFraction, style.getAccentColor(), (1f - progress) * alphaMult);
+        if (tier != SkillTier.WORMHOLE) {
+            Float pulseSeconds = pulseElapsed.get(nodeId);
+            if (pulseSeconds != null) {
+                GL11.glLineWidth(RING_LINE_THICKNESS * zoom);
+                float progress = pulseSeconds / PULSE_DURATION;
+                float radiusFraction = PULSE_START_RADIUS_FRACTION + (PULSE_END_RADIUS_FRACTION - PULSE_START_RADIUS_FRACTION) * progress;
+                drawRingOutline(cx, cy, half * radiusFraction, style.getAccentColor(), (1f - progress) * alphaMult);
+            }
         }
 
         GL11.glDisable(GL11.GL_BLEND);
@@ -264,23 +320,106 @@ final class SkillTreeNodeRingRenderer {
                 tint, stateAlpha * alphaMult, elapsedSeconds);
     }
 
-    private static String resolveRingBeltPath(SkillNode node) {
-        String path = node.getRingBeltPath();
-        return path != null && !path.isEmpty() ? path : DEFAULT_KEYSTONE_RING_BELT_PATH;
+    private void drawWormhole(float cx, float cy, float footprintSize, float alphaMult, String nodeId, Color color) {
+        float rawOpenness = wormholeOpenness.computeIfAbsent(nodeId,
+                id -> Boolean.TRUE.equals(wormholeAllocated.get(id)) ? 1f : 0f);
+        float openness = rawOpenness * rawOpenness;
+        float visualScale = WORMHOLE_MIN_SCALE + (1f - WORMHOLE_MIN_SCALE) * openness;
+        float baseRadius = footprintSize / 2f * visualScale;
+
+        drawWormholeCorona(cx, cy, baseRadius, color, alphaMult);
+
+        if (openness < 1f) {
+            drawWormholeBands(cx, cy, baseRadius, color, (1f - openness) * WORMHOLE_BAND_ALPHA * alphaMult);
+        }
+
+        if (openness > 0f) {
+            drawRingStackPass(cx, cy, baseRadius * 2f * WORMHOLE_RING_OUTER_RADIUS_RATIO,
+                    ringStacks.computeIfAbsent(nodeId, id -> generateRingInstances(id, WORMHOLE_RING_COUNT, WORMHOLE_RING_RADIUS_DECAY)),
+                    color, 1f, openness, alphaMult);
+        }
+
+        if (openness < 1f) {
+            drawWormholeGlow(cx, cy, baseRadius, color, alphaMult, openness);
+        }
     }
 
-    private static Color resolveRingBeltColor(SkillNode node) {
-        String hex = node.getRingBeltColor();
-        if (hex == null || hex.isEmpty()) return DEFAULT_AURORA_COLOR;
+    private void drawWormholeCorona(float cx, float cy, float baseRadius, Color color, float alphaMult) {
+        if (!ensureTextureLoaded(WORMHOLE_CORONA_TEXTURE_PATH)) return;
+        float size = baseRadius * 2f * WORMHOLE_CORONA_SIZE_RATIO;
+        float orbit = baseRadius * WORMHOLE_CORONA_ORBIT_RATIO;
+
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+
+        SpriteAPI sprite = Global.getSettings().getSprite(WORMHOLE_CORONA_TEXTURE_PATH);
+        sprite.setColor(color);
+        sprite.setAlphaMult(alphaMult);
+        for (int i = 0; i < WORMHOLE_CORONA_COUNT; i++) {
+            float baseAngle = 360f * i / WORMHOLE_CORONA_COUNT;
+            float angle = baseAngle + elapsedSeconds * WORMHOLE_CORONA_ROTATION_SPEED_DEG;
+            float rad = (float) Math.toRadians(angle);
+            float pulse = 1f + (float) Math.sin(Math.toRadians(elapsedSeconds * WORMHOLE_CORONA_PULSE_SPEED_DEG + baseAngle)) * WORMHOLE_CORONA_PULSE_SIZE_RATIO;
+
+            sprite.setSize(size * pulse, size * pulse);
+            sprite.setAngle(angle);
+            sprite.renderAtCenter(cx + (float) Math.cos(rad) * orbit, cy + (float) Math.sin(rad) * orbit);
+        }
+    }
+
+    private void drawWormholeBands(float cx, float cy, float baseRadius, Color color, float alphaMult) {
+        if (!ensureTextureLoaded(WORMHOLE_BAND_TEXTURE_PATH)) return;
+        SpriteAPI texture = Global.getSettings().getSprite(WORMHOLE_BAND_TEXTURE_PATH);
+        float innerRadius = baseRadius * WORMHOLE_BAND_INNER_RADIUS_RATIO;
+        float outerRadius = innerRadius + baseRadius * WORMHOLE_BAND_THICKNESS_RATIO;
+        float rotationA = (elapsedSeconds * WORMHOLE_BAND_ROTATION_SPEED_DEG) % 360f;
+        float rotationB = (-elapsedSeconds * WORMHOLE_BAND_ROTATION_SPEED_DEG) % 360f;
+
+        WormholeBandRenderer.render(texture, cx, cy, innerRadius, outerRadius, 0, rotationA, color, alphaMult, elapsedSeconds);
+        WormholeBandRenderer.render(texture, cx, cy, innerRadius, outerRadius, 1, rotationB, color, alphaMult, elapsedSeconds);
+    }
+
+    private void drawWormholeGlow(float cx, float cy, float baseRadius, Color color, float alphaMult, float openness) {
+        if (!ensureTextureLoaded(WORMHOLE_GLOW_TEXTURE_PATH)) return;
+        float size = baseRadius * 2f * WORMHOLE_GLOW_SIZE_RATIO;
+        float closedness = 1f - openness;
+        float alpha = WORMHOLE_GLOW_ALPHA * closedness * closedness * closedness * alphaMult;
+
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+
+        SpriteAPI sprite = Global.getSettings().getSprite(WORMHOLE_GLOW_TEXTURE_PATH);
+        sprite.setColor(color);
+        sprite.setSize(size, size);
+        sprite.setAlphaMult(alpha);
+        sprite.renderAtCenter(cx, cy);
+        sprite.renderAtCenter(cx, cy);
+    }
+
+    private static Color resolveWormholeColor(SkillNode node) {
+        return parseHexColor(node.getWormholeColor(), Color.WHITE, node.getId(), "wormholeColor");
+    }
+
+    private static Color parseHexColor(String hex, Color fallback, String nodeId, String fieldName) {
+        if (hex == null || hex.isEmpty()) return fallback;
         try {
             String cleaned = hex.startsWith("#") ? hex.substring(1) : hex;
             if (cleaned.length() == 6) cleaned = "FF" + cleaned;
             long argb = Long.parseLong(cleaned, 16);
             return new Color((int) argb, true);
         } catch (NumberFormatException e) {
-            Logger.getLogger(SkillTreeNodeRingRenderer.class).warn("Invalid ringBeltColor \"" + hex + "\" on node \"" + node.getId() + "\", using default");
-            return DEFAULT_AURORA_COLOR;
+            Logger.getLogger(SkillTreeNodeRingRenderer.class).warn("Invalid " + fieldName + " \"" + hex + "\" on node \"" + nodeId + "\", using default");
+            return fallback;
         }
+    }
+
+    private static String resolveRingBeltPath(SkillNode node) {
+        String path = node.getRingBeltPath();
+        return path != null && !path.isEmpty() ? path : DEFAULT_KEYSTONE_RING_BELT_PATH;
+    }
+
+    private static Color resolveRingBeltColor(SkillNode node) {
+        return parseHexColor(node.getRingBeltColor(), DEFAULT_AURORA_COLOR, node.getId(), "ringBeltColor");
     }
 
     private static float resolveRingBeltWidth(SkillNode node) {

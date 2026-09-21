@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -34,7 +35,8 @@ class SkillTreeLoaderTest {
                 + "\"y\": 180,"
                 + "\"ringBeltPath\": \"graphics/planets/ring_band_ice.png\","
                 + "\"ringBeltColor\": \"#8c78ff\","
-                + "\"ringBeltWidth\": 1.4"
+                + "\"ringBeltWidth\": 1.4,"
+                + "\"wormholeColor\": \"#ff5ad1\""
                 + "} ] }");
 
         List<SkillNode> nodes = SkillTreeLoader.parseNodes(root, SKILL_TYPES);
@@ -52,6 +54,7 @@ class SkillTreeLoaderTest {
         assertEquals("graphics/planets/ring_band_ice.png", node.getRingBeltPath());
         assertEquals("#8c78ff", node.getRingBeltColor());
         assertEquals(1.4f, node.getRingBeltWidth());
+        assertEquals("#ff5ad1", node.getWormholeColor());
     }
 
     @Test
@@ -69,6 +72,7 @@ class SkillTreeLoaderTest {
         assertEquals(null, node.getRingBeltPath());
         assertEquals(null, node.getRingBeltColor());
         assertEquals(null, node.getRingBeltWidth());
+        assertEquals(null, node.getWormholeColor());
     }
 
     @Test
@@ -118,6 +122,29 @@ class SkillTreeLoaderTest {
         assertEquals(12.5f, curve.getControlOffsetX());
         assertEquals(-8f, curve.getControlOffsetY());
         assertEquals(curves.get(SkillTree.curveKey("bare_node", "capacitors_1")), curve);
+    }
+
+    @Test
+    void missingHiddenConnectorsFieldMeansNoneHidden() throws Exception {
+        JSONObject root = new JSONObject("{ \"nodes\": [] }");
+
+        Set<String> hidden = SkillTreeLoader.parseHiddenConnectors(root);
+
+        assertTrue(hidden.isEmpty());
+    }
+
+    @Test
+    void parsesHiddenConnectorsKeyedByCanonicalPair() throws Exception {
+        JSONObject root = new JSONObject("{ \"nodes\": [], \"hiddenConnectors\": [ {"
+                + "\"a\": \"capacitors_1\","
+                + "\"b\": \"bare_node\""
+                + "} ] }");
+
+        Set<String> hidden = SkillTreeLoader.parseHiddenConnectors(root);
+
+        assertEquals(1, hidden.size());
+        assertTrue(hidden.contains(SkillTree.curveKey("capacitors_1", "bare_node")));
+        assertTrue(hidden.contains(SkillTree.curveKey("bare_node", "capacitors_1")));
     }
 
     @Test

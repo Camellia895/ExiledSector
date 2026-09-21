@@ -31,8 +31,8 @@
 				"missleracks_1",
 				"missile_damage_2"
 			],
-			"x": 2592,
-			"y": 147,
+			"x": -1419,
+			"y": 2357,
 			"orbitAnchorId": "anchor_3",
 			"orbitAngle": 90
 		},
@@ -56,8 +56,8 @@
 				"hull_3",
 				"small_flux_optional_31"
 			],
-			"x": 1440,
-			"y": 1294,
+			"x": 1433,
+			"y": 1298,
 			"orbitAnchorId": "anchor_7",
 			"orbitAngle": 0
 		},
@@ -157,8 +157,8 @@
 				"hull_3",
 				"hull_2"
 			],
-			"x": 1144,
-			"y": 1294,
+			"x": 1137,
+			"y": 1298,
 			"orbitAnchorId": "anchor_7",
 			"orbitAngle": 180
 		},
@@ -227,8 +227,8 @@
 			"connectedTo": [
 				"missile_damage_1"
 			],
-			"x": 2742,
-			"y": -3,
+			"x": -1269,
+			"y": 2207,
 			"orbitAnchorId": "anchor_3",
 			"orbitAngle": 0
 		},
@@ -243,8 +243,8 @@
 			"id": "eccm_1",
 			"type": "eccm",
 			"connectedTo": [],
-			"x": 1925,
-			"y": -302
+			"x": -563,
+			"y": 1638
 		},
 		{
 			"id": "high_scatter_amp_1",
@@ -297,8 +297,8 @@
 			"id": "defensive_targeting_array_1",
 			"type": "defensive_targeting_array",
 			"connectedTo": [],
-			"x": -1045,
-			"y": 2306,
+			"x": 1004,
+			"y": 2415,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#99ffb3"
 		},
@@ -1460,7 +1460,8 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_16",
-				"small_flux_optional_18"
+				"small_flux_optional_18",
+				"missile_damage_2"
 			],
 			"x": -1763,
 			"y": 2427,
@@ -1687,8 +1688,7 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_28",
-				"small_flux_optional_30",
-				"missile_damage_2"
+				"small_flux_optional_30"
 			],
 			"x": 2200,
 			"y": 0,
@@ -1782,10 +1782,10 @@
 			"type": "missile_damage",
 			"connectedTo": [
 				"missile_damage_1",
-				"small_flux_optional_29"
+				"small_flux_optional_17"
 			],
-			"x": 2442,
-			"y": -3,
+			"x": -1569,
+			"y": 2207,
 			"orbitAnchorId": "anchor_3",
 			"orbitAngle": 180
 		},
@@ -1796,8 +1796,8 @@
 				"hull_1",
 				"blast_doors_1"
 			],
-			"x": 1292,
-			"y": 1146,
+			"x": 1285,
+			"y": 1150,
 			"orbitAnchorId": "anchor_7",
 			"orbitAngle": 270
 		},
@@ -1984,8 +1984,8 @@
 				"hull_1",
 				"blast_doors_1"
 			],
-			"x": 1292,
-			"y": 1442,
+			"x": 1285,
+			"y": 1446,
 			"orbitAnchorId": "anchor_7",
 			"orbitAngle": 90
 		},
@@ -2835,20 +2835,20 @@
 		{
 			"a": "missile_damage_1",
 			"b": "missleracks_1",
-			"controlX": 2698,
-			"controlY": 103
+			"controlX": -1313,
+			"controlY": 2313
 		},
 		{
 			"a": "missile_damage_1",
 			"b": "missile_damage_2",
-			"controlX": 2486,
-			"controlY": 103
+			"controlX": -1525,
+			"controlY": 2313
 		},
 		{
 			"a": "hull_1",
 			"b": "hull_2",
-			"controlX": 1367,
-			"controlY": 1219
+			"controlX": 1360,
+			"controlY": 1223
 		},
 		{
 			"a": "small_flux_optional_33",
@@ -2943,20 +2943,20 @@
 		{
 			"a": "hull_1",
 			"b": "hull_3",
-			"controlX": 1367,
-			"controlY": 1369
+			"controlX": 1360,
+			"controlY": 1373
 		},
 		{
 			"a": "blast_doors_1",
 			"b": "hull_3",
-			"controlX": 1217,
-			"controlY": 1369
+			"controlX": 1210,
+			"controlY": 1373
 		},
 		{
 			"a": "blast_doors_1",
 			"b": "hull_2",
-			"controlX": 1217,
-			"controlY": 1219
+			"controlX": 1210,
+			"controlY": 1223
 		},
 		{
 			"a": "ballistic_damage_1",
@@ -3258,8 +3258,8 @@
 		},
 		{
 			"id": "anchor_3",
-			"x": 2592,
-			"y": -3,
+			"x": -1419,
+			"y": 2207,
 			"radius": 150
 		},
 		{
@@ -3271,8 +3271,8 @@
 		},
 		{
 			"id": "anchor_7",
-			"x": 1292,
-			"y": 1294,
+			"x": 1285,
+			"y": 1298,
 			"radius": 150,
 			"shape": "square",
 			"rotation": 314.3
@@ -3412,6 +3412,24 @@
 			"beltStyle": "dust"
 		}
 	],
+	"ringBelts": [
+		{
+			"id": "middle_ringbelt",
+			"x": 0,
+			"y": 0,
+			"innerRadius": 2100,
+			"outerRadius": 2450,
+			"ringArtPath": "graphics/planets/ring_band_dust.png"
+		},
+		{
+			"id": "outer_ringbelt",
+			"x": 0,
+			"y": 0,
+			"innerRadius": 2850,
+			"outerRadius": 3300,
+			"ringArtPath": "graphics/planets/ring_band_dust.png"
+		}
+	],
 	"staticImages": [
 		{
 			"id": "image_5",
@@ -3438,24 +3456,15 @@
 			"width": 548,
 			"height": 485,
 			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_10_orange.png"
-		}
-	],
-	"ringBelts": [
-		{
-			"id": "middle_ringbelt",
-			"x": 0,
-			"y": 0,
-			"innerRadius": 2100,
-			"outerRadius": 2450,
-			"ringArtPath": "graphics/planets/ring_band_dust.png"
 		},
 		{
-			"id": "outer_ringbelt",
-			"x": 0,
-			"y": 0,
-			"innerRadius": 2850,
-			"outerRadius": 3300,
-			"ringArtPath": "graphics/planets/ring_band_dust.png"
+			"id": "image_1",
+			"x": 1324,
+			"y": 1327,
+			"width": 501,
+			"height": 533,
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_06_lowtech.png",
+			"rotation": 203
 		}
 	]
 }

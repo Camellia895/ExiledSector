@@ -1925,6 +1925,14 @@
 					"magnitude": 15
 				}
 			]
+		},
+		{
+			"id": "wormhole",
+			"name": "Wormhole",
+			"icon": "",
+			"opCost": 3,
+			"xpCost": 1000,
+			"tier": "WORMHOLE"
 		}
 	]
 }

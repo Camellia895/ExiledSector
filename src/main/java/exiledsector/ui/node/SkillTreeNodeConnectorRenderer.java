@@ -47,6 +47,7 @@ final class SkillTreeNodeConnectorRenderer {
                 SkillNode other = SkillTree.get(connectedId);
                 if (other == null) continue;
                 if (other.getType().getTier() != SkillTier.ROOT && node.getId().compareTo(other.getId()) >= 0) continue;
+                if (!SkillTree.isConnectorVisible(node.getId(), other.getId())) continue;
 
                 float otherX = centerX + other.getOffsetX() * zoom;
                 float otherY = centerY - other.getOffsetY() * zoom;

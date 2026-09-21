@@ -83,11 +83,13 @@ public final class SkillTreeNodeRenderer {
 
             ringRenderer.draw(nodeX, nodeY, footprintSize, alphaMult, allocated, breathing, zoom, node);
 
-            Color tint = allocated ? ALLOCATED_TINT : UNALLOCATED_TINT;
-            if (effectiveType.isOptional()) {
-                iconRenderer.drawSplitIcon(effectiveType, nodeX, nodeY, iconSize, alphaMult, tint);
-            } else {
-                iconRenderer.drawIcon(effectiveType.getIconPath(), nodeX, nodeY, iconSize, alphaMult, tint);
+            if (tier != SkillTier.WORMHOLE) {
+                Color tint = allocated ? ALLOCATED_TINT : UNALLOCATED_TINT;
+                if (effectiveType.isOptional()) {
+                    iconRenderer.drawSplitIcon(effectiveType, nodeX, nodeY, iconSize, alphaMult, tint);
+                } else {
+                    iconRenderer.drawIcon(effectiveType.getIconPath(), nodeX, nodeY, iconSize, alphaMult, tint);
+                }
             }
         }
 
