@@ -79,7 +79,9 @@ public final class SkillTreeLoader {
                     (float) beltJson.getDouble("y"),
                     (float) beltJson.getDouble("innerRadius"),
                     (float) beltJson.getDouble("outerRadius"),
-                    beltJson.getString("ringArtPath")));
+                    beltJson.getString("ringArtPath"),
+                    (float) beltJson.optDouble("rotation", 0.0),
+                    (float) beltJson.optDouble("rotationSpeed", 0.0)));
         }
         return ringBelts;
     }

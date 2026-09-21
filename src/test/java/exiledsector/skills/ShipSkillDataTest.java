@@ -504,4 +504,38 @@ class ShipSkillDataTest {
         assertFalse(data.isAllocated("slot_1"));
         assertNull(data.getOptionalSelection("slot_1"));
     }
+
+    @Test
+    void selectingAnotherOptionOnAnAlreadyAllocatedNodeRefundsThePreviousOptionsCostFirst() {
+        ShipSkillData data = new ShipSkillData();
+        data.addXp(1000f);
+        SkillNode slot = node("slot_1", List.of());
+        SkillType hullOption = new SkillType("hull", "Hull", "a.png", 3, 400f, List.of(), SkillTier.SMALL, null, null, null);
+        SkillType armorOption = new SkillType("armor", "Armor", "a.png", 5, 250f, List.of(), SkillTier.SMALL, null, null, null);
+        SkillTree.registerType(hullOption);
+        SkillTree.registerType(armorOption);
+        data.selectOption(slot, hullOption);
+
+        data.selectOption(slot, armorOption);
+
+        assertTrue(data.isAllocated("slot_1"));
+        assertEquals("armor", data.getOptionalSelection("slot_1"));
+        assertEquals(5, data.getSpentOp());
+        assertEquals(750f, data.getXp());
+    }
+
+    @Test
+    void reselectingTheSameOptionOnAnAlreadyAllocatedNodeDoesNotDoubleChargeIt() {
+        ShipSkillData data = new ShipSkillData();
+        data.addXp(1000f);
+        SkillNode slot = node("slot_1", List.of());
+        SkillType hullOption = new SkillType("hull", "Hull", "a.png", 3, 400f, List.of(), SkillTier.SMALL, null, null, null);
+        SkillTree.registerType(hullOption);
+        data.selectOption(slot, hullOption);
+
+        data.selectOption(slot, hullOption);
+
+        assertEquals(3, data.getSpentOp());
+        assertEquals(600f, data.getXp());
+    }
 }

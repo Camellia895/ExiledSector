@@ -13,6 +13,11 @@ import java.util.List;
 public class SkillTreeRingBeltRenderer {
 
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeRingBeltRenderer.class);
+    private float elapsedSeconds = 0f;
+
+    public void advance(float amount) {
+        elapsedSeconds += amount;
+    }
 
     public void render(float centerX, float centerY, float zoom, float alphaMult, PositionAPI position) {
         if (position == null) return;
@@ -27,8 +32,9 @@ public class SkillTreeRingBeltRenderer {
             SpriteAPI sprite = Global.getSettings().getSprite(path);
             float screenX = centerX + belt.getX() * zoom;
             float screenY = centerY - belt.getY() * zoom;
+            float rotationDeg = belt.getRotation() + belt.getRotationSpeed() * elapsedSeconds;
             RingBeltRenderer.render(sprite, screenX, screenY, belt.getInnerRadius() * zoom, belt.getOuterRadius() * zoom,
-                    Color.WHITE, alphaMult);
+                    Color.WHITE, alphaMult, rotationDeg);
         }
     }
 }

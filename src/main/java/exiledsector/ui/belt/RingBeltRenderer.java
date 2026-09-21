@@ -13,6 +13,10 @@ public final class RingBeltRenderer {
     }
 
     public static void render(SpriteAPI texture, float cx, float cy, float innerRadius, float outerRadius, Color color, float alphaMult) {
+        render(texture, cx, cy, innerRadius, outerRadius, color, alphaMult, 0f);
+    }
+
+    public static void render(SpriteAPI texture, float cx, float cy, float innerRadius, float outerRadius, Color color, float alphaMult, float rotationDeg) {
         float middleRadius = (innerRadius + outerRadius) / 2f;
         float circumference = (float) (2 * Math.PI * middleRadius);
         int segments = RadialBandGL.computeSegments(circumference, PIXELS_PER_SEGMENT, 0);
@@ -26,6 +30,7 @@ public final class RingBeltRenderer {
         float texPerSegment = tileCount / segments;
 
         RadialBandGL.begin(texture, cx, cy, GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, color, alphaMult);
+        GL11.glRotatef(rotationDeg, 0f, 0f, 1f);
 
         float texProgress = 0f;
         GL11.glBegin(GL11.GL_QUAD_STRIP);

@@ -267,7 +267,9 @@ class SkillTreeLoaderTest {
                 + "\"y\": -50,"
                 + "\"innerRadius\": 2850,"
                 + "\"outerRadius\": 3150,"
-                + "\"ringArtPath\": \"graphics/planets/ring_band_dust.png\""
+                + "\"ringArtPath\": \"graphics/planets/ring_band_dust.png\","
+                + "\"rotation\": 45,"
+                + "\"rotationSpeed\": -0.8"
                 + "} ] }");
 
         List<RingBelt> ringBelts = SkillTreeLoader.parseRingBelts(root);
@@ -280,6 +282,8 @@ class SkillTreeLoaderTest {
         assertEquals(2850f, belt.getInnerRadius());
         assertEquals(3150f, belt.getOuterRadius());
         assertEquals("graphics/planets/ring_band_dust.png", belt.getRingArtPath());
+        assertEquals(45f, belt.getRotation());
+        assertEquals(-0.8f, belt.getRotationSpeed());
     }
 
     @Test

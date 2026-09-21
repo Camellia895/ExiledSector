@@ -2393,6 +2393,7 @@ function refreshAnchorInspector(body){
         '<div class="field"><label>Band width</label><input type="number" min="10" value="' + beltBandWidthVal + '" data-anchor-field="beltBandWidth"></div>' +
         '<div class="field"><label>Ring style</label><select data-anchor-field="beltStyle">' + beltStyleOptions + '</select></div>' +
       '</div>' +
+      '<div class="field"><label>Rotation speed (degrees/sec)</label><input type="number" step="0.1" value="' + (a.beltRotationSpeed || 0) + '" data-anchor-field="beltRotationSpeed"></div>' +
       '<div class="hint" id="ringBeltHint">Rendered live in-game (the same vanilla planet-ring technique used for Keystone ring belts), centered on this anchor\u0027s radius - no generate step needed, it just ships with whatever band width/style are set here.</div>'
     : '') +
     '<hr class="sep">' +
@@ -2429,6 +2430,8 @@ function refreshAnchorInspector(body){
         a.beltBandWidth = Math.max(10, parseInt(inp.value, 10) || 10);
       } else if (field === 'beltStyle') {
         a.beltStyle = inp.value;
+      } else if (field === 'beltRotationSpeed') {
+        a.beltRotationSpeed = parseFloat(inp.value) || 0;
       }
       resyncNodesOnAnchor(a);
       saveLocal(); render(); refreshInspector();
@@ -3190,6 +3193,7 @@ function buildTreeExportObject(){
         if (a.shape === 'asteroidBelt') {
           if (a.beltBandWidth) ao.beltBandWidth = a.beltBandWidth;
           if (a.beltStyle) ao.beltStyle = a.beltStyle;
+          if (a.beltRotationSpeed) ao.beltRotationSpeed = a.beltRotationSpeed;
         }
       }
       return ao;
@@ -3200,7 +3204,7 @@ function buildTreeExportObject(){
     out.ringBelts = beltAnchors.map(function(a){
       var bandWidth = a.beltBandWidth || Math.max(60, Math.round(a.radius * 0.2));
       var half = bandWidth / 2;
-      return {
+      var belt = {
         id: a.id,
         x: a.x,
         y: a.y,
@@ -3208,6 +3212,8 @@ function buildTreeExportObject(){
         outerRadius: a.radius + half,
         ringArtPath: 'graphics/planets/ring_band_' + (a.beltStyle || 'asteroids') + '.png'
       };
+      if (a.beltRotationSpeed) belt.rotationSpeed = a.beltRotationSpeed;
+      return belt;
     });
   }
   if (state.images.length) {

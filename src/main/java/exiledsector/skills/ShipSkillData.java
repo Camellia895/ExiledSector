@@ -30,6 +30,17 @@ public class ShipSkillData {
     }
 
     public void selectOption(SkillNode node, SkillType chosenOption) {
+        if (isAllocated(node.getId())) {
+            String previousOptionId = optionalSelections == null ? null : optionalSelections.get(node.getId());
+            SkillType previousOption = previousOptionId == null ? null : SkillTree.getType(previousOptionId);
+            if (previousOption != null) {
+                spentOp -= previousOption.getOpCost();
+                xp += previousOption.getXpCost();
+            } else {
+                spentOp -= node.getOpCost();
+                xp += node.getXpCost();
+            }
+        }
         allocatedNodeIds.add(node.getId());
         if (optionalSelections == null) optionalSelections = new LinkedHashMap<>();
         optionalSelections.put(node.getId(), chosenOption.getId());

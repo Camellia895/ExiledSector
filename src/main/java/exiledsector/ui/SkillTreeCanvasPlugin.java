@@ -59,6 +59,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     public void advance(float amount) {
         starfieldRenderer.advance(amount);
         staticImageRenderer.advance(amount);
+        ringBeltRenderer.advance(amount);
         nodeRenderer.advance(amount);
     }
 
@@ -107,11 +108,15 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                     event.consume();
                 }
             } else if (event.isMouseScrollEvent() && position.containsEvent(event)) {
+                float oldZoom = zoom;
                 if (event.getEventValue() > 0) {
                     zoom = Math.min(MAX_ZOOM, zoom * ZOOM_STEP);
                 } else {
                     zoom = Math.max(MIN_ZOOM, zoom / ZOOM_STEP);
                 }
+                float zoomRatio = zoom / oldZoom;
+                panX *= zoomRatio;
+                panY *= zoomRatio;
                 event.consume();
             }
         }

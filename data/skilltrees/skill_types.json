@@ -358,7 +358,7 @@
 			"effects": [
 				{
 					"effect": "ACCELERATION_PERCENT",
-					"magnitude": 100
+					"magnitude": 60
 				},
 				{
 					"effect": "DECELERATION_PERCENT",
@@ -366,11 +366,11 @@
 				},
 				{
 					"effect": "TURN_ACCELERATION_PERCENT",
-					"magnitude": 100
+					"magnitude": 60
 				},
 				{
 					"effect": "MANEUVERABILITY_PERCENT",
-					"magnitude": 50
+					"magnitude": 35
 				}
 			]
 		},
@@ -582,7 +582,7 @@
 			"icon": "graphics/icons/circular/notable_passives/escort_package.png",
 			"opCost": 4,
 			"xpCost": 2000,
-			"tier": "NOTABLE",
+			"tier": "KEYSTONE",
 			"vanillaHullMod": "escort_package",
 			"description": "When this ship is within approximately 1000 su of a larger friendly vessel, increases this ship's maneuverability by 25%, and top speed by 10%. Also increases ballistic and energy weapon range by 20%.\n\nThese bonuses are doubled for destroyers when the nearby friendly is a capital ship.",
 			"todo": "Real vanilla effect is a continuous proximity check against nearby larger friendly ships each combat frame - magnitude fades in/out with distance (full within ~700su, fading to 0 by ~1200su) and doubles for a destroyer escorting a capital ship. This is a dynamic, position-dependent combat mechanic, not a fixed per-ship magnitude - deliberately left on vanillaHullMod passthrough rather than approximate it as an always-on bonus."
@@ -1928,7 +1928,8 @@
 			"icon": "",
 			"opCost": 3,
 			"xpCost": 1000,
-			"tier": "WORMHOLE"
+			"tier": "WORMHOLE",
+			"description": "Allocating this wormhole and the corresponding wormhole allows you to allocate connected nodes as if the wormholes are connected."
 		},
 		{
 			"id": "pd_damage_to_missiles",
@@ -1946,13 +1947,13 @@
 		{
 			"id": "maneuverability_percent",
 			"name": "Maneuverability",
-			"icon": "",
+			"icon": "graphics/icons/acceleration_blue.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"effects": [
 				{
 					"effect": "MANEUVERABILITY_PERCENT",
-					"magnitude": 10
+					"magnitude": 25
 				}
 			],
 			"tags": [
@@ -1962,13 +1963,13 @@
 		{
 			"id": "acceleration_percent",
 			"name": "Acceleration",
-			"icon": "",
+			"icon": "graphics/icons/blastoff_blue.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"effects": [
 				{
 					"effect": "ACCELERATION_PERCENT",
-					"magnitude": 10
+					"magnitude": 50
 				}
 			],
 			"tags": [
@@ -1978,17 +1979,37 @@
 		{
 			"id": "turn_acceleration_percent",
 			"name": "Turn speed",
-			"icon": "",
+			"icon": "graphics/icons/maneuverability_blue.png",
 			"opCost": 4,
 			"xpCost": 2000,
 			"effects": [
 				{
 					"effect": "TURN_ACCELERATION_PERCENT",
-					"magnitude": 10
+					"magnitude": 50
 				}
 			],
 			"tags": [
 				"speed"
+			]
+		},
+		{
+			"id": "fighter_replacement",
+			"name": "Fighter Replacement",
+			"icon": "",
+			"opCost": 4,
+			"xpCost": 2000,
+			"effects": [
+				{
+					"effect": "FIGHTER_REPLACEMENT_RECOVERY_PERCENT",
+					"magnitude": 5
+				},
+				{
+					"effect": "FIGHTER_REPLACEMENT_DECAY_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"tags": [
+				"fighter"
 			]
 		}
 	]

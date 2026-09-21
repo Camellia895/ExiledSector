@@ -153,8 +153,9 @@ public final class SkillTreeNodeRenderer {
     public void toggleAllocation(SkillNode node) {
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
         boolean wasAllocated = data.isAllocated(node.getId());
+        boolean isOptional = node.getType().isOptional();
 
-        if (!wasAllocated && node.getType().isOptional()) {
+        if (!wasAllocated && isOptional) {
             if (data.canAllocate(node, satisfiedRootId())) {
                 dropdownRenderer.open(node);
             }
@@ -164,9 +165,18 @@ public final class SkillTreeNodeRenderer {
         if (wasAllocated && isStartingRoot(node)) {
             return;
         }
-        if (wasAllocated && blockDeallocationReason(node) != null) {
-            return;
+
+        if (wasAllocated) {
+            boolean canDeallocate = blockDeallocationReason(node) == null
+                    && data.canDeallocate(node, SkillTree.getAllNodes().values(), satisfiedRootId());
+            if (!canDeallocate) {
+                if (isOptional) {
+                    dropdownRenderer.open(node);
+                }
+                return;
+            }
         }
+
         data.toggle(node, SkillTree.getAllNodes().values(), satisfiedRootId());
         boolean isAllocatedNow = data.isAllocated(node.getId());
         if (isAllocatedNow != wasAllocated) {
