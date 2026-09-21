@@ -1,6 +1,8 @@
 package exiledsector.ui.node;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.HullSizeSkillEffect;
@@ -175,6 +177,8 @@ public final class SkillTreeNodeRenderer {
                 }
                 return;
             }
+        } else if (blockAllocationReason(node.getType()) != null) {
+            return;
         }
 
         data.toggle(node, SkillTree.getAllNodes().values(), satisfiedRootId());
@@ -200,6 +204,7 @@ public final class SkillTreeNodeRenderer {
         SkillNode node = dropdownRenderer.getOpenNode();
         dropdownRenderer.close();
         if (node == null) return;
+        if (blockAllocationReason(chosenOption) != null) return;
 
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
         data.selectOption(node, chosenOption);
@@ -217,6 +222,17 @@ public final class SkillTreeNodeRenderer {
         if (isAllocatedNow) {
             ringRenderer.startPulse(node.getId());
         }
+    }
+
+    private String blockAllocationReason(SkillType type) {
+        for (String hullModId : type.getExclusiveHullModIds()) {
+            if (member.getVariant().hasHullMod(hullModId)) {
+                HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
+                String name = spec != null ? spec.getDisplayName() : hullModId;
+                return "Ship already has " + name + " installed.";
+            }
+        }
+        return null;
     }
 
     private String blockDeallocationReason(SkillNode node) {

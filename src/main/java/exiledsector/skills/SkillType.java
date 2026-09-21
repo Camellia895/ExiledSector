@@ -1,5 +1,6 @@
 package exiledsector.skills;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -16,6 +17,7 @@ public class SkillType {
     private final String descriptionOverride;
     private final String todo;
     private final List<String> optionalOptionIds;
+    private final List<String> exclusiveHullModIds;
 
     public SkillType(String id, String displayName, String iconPath, int opCost,
                       List<SkillTypeEffect> effects, SkillTier tier, String vanillaHullModId,
@@ -34,6 +36,14 @@ public class SkillType {
     public SkillType(String id, String displayName, String iconPath, int opCost,
                       List<SkillTypeEffect> effects, List<HullSizeSkillEffect> hullSizeEffects, SkillTier tier,
                       String vanillaHullModId, String descriptionOverride, String todo, List<String> optionalOptionIds) {
+        this(id, displayName, iconPath, opCost, effects, hullSizeEffects, tier,
+                vanillaHullModId, descriptionOverride, todo, optionalOptionIds, Collections.emptyList());
+    }
+
+    public SkillType(String id, String displayName, String iconPath, int opCost,
+                      List<SkillTypeEffect> effects, List<HullSizeSkillEffect> hullSizeEffects, SkillTier tier,
+                      String vanillaHullModId, String descriptionOverride, String todo, List<String> optionalOptionIds,
+                      List<String> exclusiveHullModIds) {
         this.id = id;
         this.displayName = displayName;
         this.iconPath = iconPath;
@@ -45,6 +55,7 @@ public class SkillType {
         this.descriptionOverride = descriptionOverride;
         this.todo = todo;
         this.optionalOptionIds = optionalOptionIds == null ? Collections.emptyList() : optionalOptionIds;
+        this.exclusiveHullModIds = exclusiveHullModIds == null ? Collections.emptyList() : exclusiveHullModIds;
     }
 
     public String getId() {
@@ -93,5 +104,14 @@ public class SkillType {
 
     public boolean isOptional() {
         return !optionalOptionIds.isEmpty();
+    }
+
+    public List<String> getExclusiveHullModIds() {
+        if (vanillaHullModId == null || exclusiveHullModIds.contains(vanillaHullModId)) {
+            return exclusiveHullModIds;
+        }
+        List<String> combined = new ArrayList<>(exclusiveHullModIds);
+        combined.add(vanillaHullModId);
+        return combined;
     }
 }

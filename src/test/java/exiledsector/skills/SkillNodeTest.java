@@ -1,25 +1,36 @@
 package exiledsector.skills;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.SettingsAPI;
+import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.FighterSkillEffect;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class SkillNodeTest {
+
+    private MockedStatic<Global> globalMock;
 
     @BeforeEach
     void setUp() {
         SkillTree.getAllTypes().clear();
+        globalMock = Mockito.mockStatic(Global.class);
     }
 
     @AfterEach
     void tearDown() {
+        globalMock.close();
         SkillTree.getAllTypes().clear();
     }
 
@@ -68,11 +79,46 @@ class SkillNodeTest {
     }
 
     @Test
-    void descriptionIsEmptyForAVanillaPassthroughTypeWithNoEffectsYet() {
+    void descriptionForAVanillaPassthroughTypeWithNoEffectsYetIsJustTheExclusivityLine() {
+        SettingsAPI settings = mock(SettingsAPI.class);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+        HullModSpecAPI spec = mock(HullModSpecAPI.class);
+        when(spec.getDisplayName()).thenReturn("Escort Package");
+        when(settings.getHullModSpec("escort_package")).thenReturn(spec);
+
         SkillType type = new SkillType("escort_package", "Escort Package", "graphics/icons/notable_hullmods/escort_package.png", 4, List.of(), SkillTier.NOTABLE, "escort_package", null, "Needs a real mechanic");
         SkillNode node = new SkillNode("escort_package_1", type, List.of(), 0f, 0f);
 
-        assertEquals("", node.getDescription());
+        assertEquals("Mutually exclusive with: Escort Package.", node.getDescription());
+    }
+
+    @Test
+    void descriptionAppendsExclusivityLineAfterEffectsAndWarnings() {
+        SettingsAPI settings = mock(SettingsAPI.class);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+        HullModSpecAPI armoredCladding = mock(HullModSpecAPI.class);
+        when(armoredCladding.getDisplayName()).thenReturn("Armored Cladding");
+        when(settings.getHullModSpec("armoredcladding")).thenReturn(armoredCladding);
+
+        SkillType type = new SkillType("heavyarmor", "Heavy Armor", "graphics/icons/notable_hullmods/heavy_armor.png", 4,
+                List.of(new SkillTypeEffect(DefenseSkillEffect.ARMOR_PERCENT, 15f)), List.of(), SkillTier.NOTABLE, null, null, null,
+                List.of(), List.of("armoredcladding"));
+        SkillNode node = new SkillNode("heavyarmor_1", type, List.of(), 0f, 0f);
+
+        assertEquals("Increases armor rating by 15%.\n\nMutually exclusive with: Armored Cladding.", node.getDescription());
+    }
+
+    @Test
+    void descriptionFallsBackToRawIdWhenHullModSpecIsUnknown() {
+        SettingsAPI settings = mock(SettingsAPI.class);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+        when(settings.getHullModSpec("unknown_hullmod")).thenReturn(null);
+
+        SkillType type = new SkillType("hull", "Hull", "a.png", 2, List.of(), List.of(), SkillTier.SMALL, null, null, null,
+                List.of(), List.of("unknown_hullmod"));
+        SkillNode node = new SkillNode("hull_1", type, List.of(), 0f, 0f);
+
+        assertEquals("Mutually exclusive with: unknown_hullmod.", node.getDescription());
     }
 
     @Test

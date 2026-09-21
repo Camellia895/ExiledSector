@@ -1,6 +1,8 @@
 package exiledsector.skills;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.loading.HullModSpecAPI;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -87,7 +89,24 @@ public class SkillNode extends SkillTreeObject {
         }
         lines.addAll(effectLines);
         lines.addAll(warnings);
+        String exclusivityLine = describeExclusivity(type);
+        if (exclusivityLine != null) {
+            lines.add(exclusivityLine);
+        }
         return String.join("\n\n", lines);
+    }
+
+    private static String describeExclusivity(SkillType type) {
+        List<String> hullModIds = type.getExclusiveHullModIds();
+        if (hullModIds.isEmpty()) {
+            return null;
+        }
+        List<String> names = new ArrayList<>();
+        for (String hullModId : hullModIds) {
+            HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
+            names.add(spec != null ? spec.getDisplayName() : hullModId);
+        }
+        return "Mutually exclusive with: " + String.join(", ", names) + ".";
     }
 
     public SkillType resolveEffectiveType(ShipSkillData data) {

@@ -2156,7 +2156,7 @@ function refreshInspector(){
       '<select id="addPrereqSelect" style="flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12px;padding:6px;"><option value="">Connect to...</option>' + otherNodeOptions + '</select>' +
     '</div>' +
     '<hr class="sep">' +
-    '<div class="hint">Type "' + n.type + '" - opCost ' + (t?t.opCost:'?') + (t && t.vanillaHullMod ? ', vanillaHullMod: ' + t.vanillaHullMod : '') + (t && t.todo ? ' [TODO: ' + t.todo + ']' : '') + '</div>' +
+    '<div class="hint">Type "' + n.type + '" - opCost ' + (t?t.opCost:'?') + (t && t.vanillaHullMod ? ', vanillaHullMod: ' + t.vanillaHullMod : '') + (t && t.exclusiveHullMods && t.exclusiveHullMods.length ? ', exclusive: ' + t.exclusiveHullMods.join(', ') : '') + (t && t.todo ? ' [TODO: ' + t.todo + ']' : '') + '</div>' +
     '<div class="btnRow">' +
       '<button class="smallBtn" id="changeTypeBtn">Change Type</button>' +
       '<button class="smallBtn" id="editTypeBtn">Edit type "' + n.type + '"</button>' +
@@ -2976,7 +2976,7 @@ function openImageEditorModal(){
 
 function openTypeModal(existingType, onSave, onClose){
   var isNew = !existingType;
-  var t = existingType ? deepCopy(existingType) : { id: '', name: '', icon: '', opCost: 4, tier: 'NOTABLE', vanillaHullMod: '', description: '', todo: '', tags: [], optionalOptions: [] };
+  var t = existingType ? deepCopy(existingType) : { id: '', name: '', icon: '', opCost: 4, tier: 'NOTABLE', vanillaHullMod: '', description: '', todo: '', tags: [], optionalOptions: [], exclusiveHullMods: [] };
   var effectsDraft = deepCopy(t.effects || []);
   var hullSizeEffectsDraft = deepCopy(t.hullSizeEffects || []);
   var tagsDraft = deepCopy(t.tags || []);
@@ -2990,6 +2990,7 @@ function openTypeModal(existingType, onSave, onClose){
     t.opCost = document.getElementById('tOp').value;
     t.tier = document.getElementById('tTier').value;
     t.vanillaHullMod = document.getElementById('tVanilla').value;
+    t.exclusiveHullMods = document.getElementById('tExclusiveHullMods').value.split(',').map(function(s){ return s.trim(); }).filter(function(s){ return s; });
     var optSelect = document.getElementById('tOptionalOptions');
     if (optSelect) {
       t.optionalOptions = Array.from(optSelect.selectedOptions).map(function(o){ return o.value; }).filter(function(v){ return v; });
@@ -3023,6 +3024,8 @@ function openTypeModal(existingType, onSave, onClose){
       '<div class="btnRow"><button class="smallBtn" type="button" id="addHsEffectRowBtn">+ Add hull-size effect</button></div>' +
       '<hr class="sep">' +
       '<div class="field"><label>vanillaHullMod id</label><input id="tVanilla" value="' + (t.vanillaHullMod||'') + '"></div>' +
+      '<div class="field"><label>Exclusive with hullmod ids (comma-separated)</label><input id="tExclusiveHullMods" value="' + ((t.exclusiveHullMods||[]).join(', ')) + '"></div>' +
+      '<div class="hint">If the ship already has any of these vanilla hullmods installed, this node cannot be allocated. vanillaHullMod above is always implicitly included here too, no need to repeat it.</div>' +
       '<hr class="sep">' +
       '<div class="hint">Optional slot options - pick other types this node can resolve to (ctrl/cmd-click to select several; any tier is allowed, so a notable or keystone can offer small effects). Non-empty means this node renders as a dropdown picker instead of a fixed effect: clicking it while unallocated opens the dropdown, picking an option allocates and applies that option\\u0027s cost/effects, and deallocating it reverts it to this unselected placeholder.</div>' +
       '<div class="field"><label>Optional slot options</label>' + renderOptionalOptionsSelect(t.optionalOptions||[], t.id) + '</div>' +
@@ -3104,6 +3107,7 @@ function openTypeModal(existingType, onSave, onClose){
         effects: effectsDraft,
         hullSizeEffects: hullSizeEffectsDraft,
         vanillaHullMod: (t.vanillaHullMod||'').trim(),
+        exclusiveHullMods: t.exclusiveHullMods || [],
         optionalOptions: t.optionalOptions || [],
         description: (t.description||'').trim(),
         todo: (t.todo||'').trim(),
@@ -3150,6 +3154,7 @@ function serializeType(t){
   if (t.effects && t.effects.length) out.effects = t.effects.map(function(e){ return { effect: e.effect, magnitude: e.magnitude }; });
   if (t.hullSizeEffects && t.hullSizeEffects.length) out.hullSizeEffects = t.hullSizeEffects.map(function(e){ return { effect: e.effect, frigate: e.frigate, destroyer: e.destroyer, cruiser: e.cruiser, capitalShip: e.capitalShip }; });
   if (t.vanillaHullMod) out.vanillaHullMod = t.vanillaHullMod;
+  if (t.exclusiveHullMods && t.exclusiveHullMods.length) out.exclusiveHullMods = t.exclusiveHullMods;
   if (t.optionalOptions && t.optionalOptions.length) out.optionalOptions = t.optionalOptions;
   if (t.description) out.description = t.description;
   if (t.todo) out.todo = t.todo;

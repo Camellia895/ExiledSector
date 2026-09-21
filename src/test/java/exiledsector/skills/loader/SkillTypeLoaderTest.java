@@ -145,6 +145,50 @@ class SkillTypeLoaderTest {
     }
 
     @Test
+    void missingExclusiveHullModsFieldMeansNoExclusions() throws Exception {
+        JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
+                + "\"id\": \"hull\","
+                + "\"name\": \"Hull\","
+                + "\"icon\": \"a.png\""
+                + "} ] }");
+
+        SkillType hull = SkillTypeLoader.parseSkillTypes(root).get("hull");
+
+        assertTrue(hull.getExclusiveHullModIds().isEmpty());
+    }
+
+    @Test
+    void parsesExclusiveHullModsIntoAnOrderedList() throws Exception {
+        JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
+                + "\"id\": \"heavyarmor\","
+                + "\"name\": \"Heavy Armor\","
+                + "\"icon\": \"a.png\","
+                + "\"exclusiveHullMods\": [\"armoredcladding\", \"heavyarmor\"]"
+                + "} ] }");
+
+        SkillType heavyArmor = SkillTypeLoader.parseSkillTypes(root).get("heavyarmor");
+
+        assertEquals(2, heavyArmor.getExclusiveHullModIds().size());
+        assertEquals("armoredcladding", heavyArmor.getExclusiveHullModIds().get(0));
+        assertEquals("heavyarmor", heavyArmor.getExclusiveHullModIds().get(1));
+    }
+
+    @Test
+    void vanillaHullModIsImplicitlyExclusiveWithItself() throws Exception {
+        JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
+                + "\"id\": \"escort_package\","
+                + "\"name\": \"Escort Package\","
+                + "\"icon\": \"a.png\","
+                + "\"vanillaHullMod\": \"escort_package\""
+                + "} ] }");
+
+        SkillType escortPackage = SkillTypeLoader.parseSkillTypes(root).get("escort_package");
+
+        assertEquals(1, escortPackage.getExclusiveHullModIds().size());
+        assertEquals("escort_package", escortPackage.getExclusiveHullModIds().get(0));
+    }
+
+    @Test
     void parsesMultipleTypesKeyedById() throws Exception {
         JSONObject root = new JSONObject("{ \"skillTypes\": ["
                 + "{\"id\": \"a\", \"name\": \"A\", \"icon\": \"a.png\"},"
