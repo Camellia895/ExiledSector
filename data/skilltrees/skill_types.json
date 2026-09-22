@@ -214,6 +214,7 @@
 		},
 		{
 			"id": "advancedshieldemitter",
+			"exclusiveHullMods": ["advancedshieldemitter"],
 			"name": "Accelerated Shields",
 			"icon": "graphics/icons/circular/notable_passives/accelerated_shields.png",
 			"opCost": 4,
@@ -234,6 +235,7 @@
 		},
 		{
 			"id": "adaptive_coils",
+			"exclusiveHullMods": ["adaptive_coils"],
 			"name": "Adaptive Phase Coils",
 			"icon": "graphics/icons/circular/notable_passives/phase_field.png",
 			"opCost": 4,
@@ -252,6 +254,7 @@
 		},
 		{
 			"id": "advancedoptics",
+			"exclusiveHullMods": ["advancedoptics"],
 			"name": "Advanced Optics",
 			"icon": "graphics/icons/circular/notable_passives/advanced_optics.png",
 			"opCost": 4,
@@ -273,6 +276,7 @@
 		},
 		{
 			"id": "turretgyros",
+			"exclusiveHullMods": ["turretgyros"],
 			"name": "Advanced Turret Gyros",
 			"icon": "graphics/icons/circular/notable_passives/advanced_turret_gyros.png",
 			"opCost": 4,
@@ -290,6 +294,7 @@
 		},
 		{
 			"id": "armoredweapons",
+			"exclusiveHullMods": ["armoredweapons"],
 			"name": "Armored Weapon Mounts",
 			"icon": "graphics/icons/circular/notable_passives/armored_weapon_emplacements.png",
 			"opCost": 4,
@@ -318,6 +323,7 @@
 		},
 		{
 			"id": "autorepair",
+			"exclusiveHullMods": ["autorepair"],
 			"name": "Automated Repair Unit",
 			"icon": "graphics/icons/circular/notable_passives/automated_repair_unit.png",
 			"opCost": 4,
@@ -331,6 +337,7 @@
 		},
 		{
 			"id": "auxiliarythrusters",
+			"exclusiveHullMods": ["auxiliarythrusters"],
 			"name": "Auxiliary Thrusters",
 			"icon": "graphics/icons/circular/notable_passives/auxilliary_thrusters.png",
 			"opCost": 4,
@@ -370,6 +377,7 @@
 		},
 		{
 			"id": "blast_doors",
+			"exclusiveHullMods": ["blast_doors"],
 			"name": "Blast Doors",
 			"icon": "graphics/icons/circular/notable_passives/blast_doors.png",
 			"opCost": 4,
@@ -390,6 +398,7 @@
 		},
 		{
 			"id": "converted_hangar",
+			"exclusiveHullMods": ["converted_hangar"],
 			"name": "Converted Hangar",
 			"icon": "graphics/icons/circular/keystones/converted_hangar.png",
 			"opCost": 4,
@@ -423,6 +432,7 @@
 		},
 		{
 			"id": "converted_fighterbay",
+			"exclusiveHullMods": ["converted_fighterbay"],
 			"name": "Converted Fighter Bay",
 			"icon": "graphics/icons/circular/keystones/converted_fighter_bay.png",
 			"opCost": 4,
@@ -447,6 +457,7 @@
 		},
 		{
 			"id": "dedicated_targeting_core",
+			"exclusiveHullMods": ["dedicated_targeting_core"],
 			"name": "Dedicated Targeting Core",
 			"icon": "graphics/icons/circular/notable_passives/targeting_core.png",
 			"opCost": 4,
@@ -486,6 +497,7 @@
 		},
 		{
 			"id": "eccm",
+			"exclusiveHullMods": ["eccm"],
 			"name": "ECCM Package",
 			"icon": "graphics/icons/circular/notable_passives/eccm_package.png",
 			"opCost": 4,
@@ -530,6 +542,7 @@
 		},
 		{
 			"id": "ecm",
+			"exclusiveHullMods": ["ecm"],
 			"name": "ECM Package",
 			"icon": "graphics/icons/circular/notable_passives/ecm_package.png",
 			"opCost": 4,
@@ -560,6 +573,7 @@
 		},
 		{
 			"id": "expanded_deck_crew",
+			"exclusiveHullMods": ["expanded_deck_crew"],
 			"name": "Expanded Deck Crew",
 			"icon": "graphics/icons/circular/notable_passives/expanded_deck_crew.png",
 			"opCost": 4,
@@ -584,6 +598,7 @@
 		},
 		{
 			"id": "magazines",
+			"exclusiveHullMods": ["magazines"],
 			"name": "Expanded Ballistic Magazines",
 			"icon": "graphics/icons/circular/notable_passives/expanded_magazines2_red.png",
 			"opCost": 4,
@@ -597,6 +612,7 @@
 		},
 		{
 			"id": "missleracks",
+			"exclusiveHullMods": ["missleracks"],
 			"name": "Expanded Missile Racks",
 			"icon": "graphics/icons/circular/notable_passives/expanded_missile_racks.png",
 			"opCost": 4,
@@ -613,6 +629,7 @@
 		},
 		{
 			"id": "extendedshieldemitter",
+			"exclusiveHullMods": ["extendedshieldemitter"],
 			"name": "Extended Shields",
 			"icon": "graphics/icons/circular/notable_passives/extended_shields.png",
 			"opCost": 4,
@@ -629,6 +646,7 @@
 		},
 		{
 			"id": "shield_shunt",
+			"exclusiveHullMods": ["shield_shunt"],
 			"name": "Shield Shunt",
 			"icon": "graphics/icons/circular/notable_passives/shield_shunt.png",
 			"opCost": 4,
@@ -682,6 +700,7 @@
 		},
 		{
 			"id": "hardenedshieldemitter",
+			"exclusiveHullMods": ["hardenedshieldemitter"],
 			"name": "Hardened Shields",
 			"icon": "graphics/icons/circular/notable_passives/hardened_shields.png",
 			"opCost": 4,
@@ -702,6 +721,7 @@
 		},
 		{
 			"id": "hardened_subsystems",
+			"exclusiveHullMods": ["hardened_subsystems"],
 			"name": "Hardened Subsystems",
 			"icon": "graphics/icons/circular/notable_passives/hardened_subsystems.png",
 			"opCost": 4,
@@ -719,6 +739,7 @@
 		},
 		{
 			"id": "heavyarmor",
+			"exclusiveHullMods": ["heavyarmor"],
 			"name": "Heavy Armor",
 			"icon": "graphics/icons/circular/notable_passives/heavy_armor.png",
 			"opCost": 4,
@@ -751,6 +772,7 @@
 		},
 		{
 			"id": "high_scatter_amp",
+			"exclusiveHullMods": ["high_scatter_amp"],
 			"name": "High Scatter Amplifier",
 			"icon": "graphics/icons/circular/notable_passives/high_scatter_amp.png",
 			"opCost": 4,
@@ -773,6 +795,7 @@
 		},
 		{
 			"id": "pointdefenseai",
+			"exclusiveHullMods": ["pointdefenseai"],
 			"name": "Integrated Point Defense AI",
 			"icon": "graphics/icons/circular/notable_passives/integrated_point_defense_ai.png",
 			"opCost": 4,
@@ -791,6 +814,7 @@
 		},
 		{
 			"id": "targetingunit",
+			"exclusiveHullMods": ["targetingunit"],
 			"name": "Integrated Targeting Unit",
 			"icon": "graphics/icons/circular/notable_passives/integrated_targeting_unit.png",
 			"opCost": 4,
@@ -817,6 +841,7 @@
 		},
 		{
 			"id": "nav_relay",
+			"exclusiveHullMods": ["nav_relay"],
 			"name": "Nav Relay",
 			"icon": "graphics/icons/circular/notable_passives/nav_relay.png",
 			"opCost": 4,
@@ -836,6 +861,7 @@
 		},
 		{
 			"id": "frontemitter",
+			"exclusiveHullMods": ["frontemitter"],
 			"name": "Shield Conversion - Front",
 			"icon": "graphics/icons/circular/notable_passives/front_shield_emitter.png",
 			"opCost": 4,
@@ -856,6 +882,7 @@
 		},
 		{
 			"id": "adaptiveshields",
+			"exclusiveHullMods": ["adaptiveshields"],
 			"name": "Shield Conversion - Omni",
 			"icon": "graphics/icons/circular/notable_passives/omni_shield_emitter_mod.png",
 			"opCost": 4,
@@ -877,6 +904,7 @@
 		},
 		{
 			"id": "operations_center",
+			"exclusiveHullMods": ["operations_center"],
 			"name": "Operations Center",
 			"icon": "graphics/icons/circular/notable_passives/operations_center.png",
 			"opCost": 4,
@@ -893,6 +921,7 @@
 		},
 		{
 			"id": "phase_anchor",
+			"exclusiveHullMods": ["phase_anchor"],
 			"name": "Phase Anchor",
 			"icon": "graphics/icons/circular/notable_passives/phase_anchor.png",
 			"opCost": 4,
@@ -918,6 +947,7 @@
 		},
 		{
 			"id": "recovery_shuttles",
+			"exclusiveHullMods": ["recovery_shuttles"],
 			"name": "Recovery Shuttles",
 			"icon": "graphics/icons/circular/notable_passives/recovery_shuttles.png",
 			"opCost": 4,
@@ -934,6 +964,7 @@
 		},
 		{
 			"id": "reinforcedhull",
+			"exclusiveHullMods": ["reinforcedhull"],
 			"name": "Reinforced Bulkheads",
 			"icon": "graphics/icons/circular/notable_passives/reinforced_bulkheads.png",
 			"opCost": 4,
@@ -958,6 +989,7 @@
 		},
 		{
 			"id": "fluxbreakers",
+			"exclusiveHullMods": ["fluxbreakers"],
 			"name": "Resistant Flux Conduits",
 			"icon": "graphics/icons/circular/notable_passives/resistant_flux_conduits.png",
 			"opCost": 4,
@@ -979,6 +1011,7 @@
 		},
 		{
 			"id": "stabilizedshieldemitter",
+			"exclusiveHullMods": ["stabilizedshieldemitter"],
 			"name": "Stabilized Shields",
 			"icon": "graphics/icons/circular/notable_passives/stabilized_shields.png",
 			"opCost": 4,
@@ -995,6 +1028,7 @@
 		},
 		{
 			"id": "unstable_injector",
+			"exclusiveHullMods": ["unstable_injector"],
 			"name": "Unstable Injector",
 			"icon": "graphics/icons/circular/keystones/unstable_injector.png",
 			"opCost": 4,
@@ -1028,6 +1062,7 @@
 		},
 		{
 			"id": "additional_berthing",
+			"exclusiveHullMods": ["additional_berthing"],
 			"name": "Additional Berthing",
 			"icon": "graphics/icons/circular/notable_passives/berthing.png",
 			"opCost": 4,
@@ -1047,6 +1082,7 @@
 		},
 		{
 			"id": "augmentedengines",
+			"exclusiveHullMods": ["augmentedengines"],
 			"name": "Augmented Drive Field",
 			"icon": "graphics/icons/circular/notable_passives/augmented_drive_field2.png",
 			"opCost": 4,
@@ -1063,6 +1099,7 @@
 		},
 		{
 			"id": "auxiliary_fuel_tanks",
+			"exclusiveHullMods": ["auxiliary_fuel_tanks"],
 			"name": "Auxiliary Fuel Tanks",
 			"icon": "graphics/icons/circular/notable_passives/fuel_tanks.png",
 			"opCost": 4,
@@ -1082,6 +1119,7 @@
 		},
 		{
 			"id": "efficiency_overhaul",
+			"exclusiveHullMods": ["efficiency_overhaul"],
 			"name": "Efficiency Overhaul",
 			"icon": "graphics/icons/circular/keystones/efficiency.png",
 			"opCost": 4,
@@ -1114,6 +1152,7 @@
 		},
 		{
 			"id": "expanded_cargo_holds",
+			"exclusiveHullMods": ["expanded_cargo_holds"],
 			"name": "Expanded Cargo Holds",
 			"icon": "graphics/icons/circular/notable_passives/expanded_cargo.png",
 			"opCost": 4,
@@ -1133,6 +1172,7 @@
 		},
 		{
 			"id": "hiressensors",
+			"exclusiveHullMods": ["hiressensors"],
 			"name": "High Resolution Sensors",
 			"icon": "graphics/icons/circular/notable_passives/high_res_sensors.png",
 			"opCost": 4,
@@ -1152,6 +1192,7 @@
 		},
 		{
 			"id": "insulatedengine",
+			"exclusiveHullMods": ["insulatedengine"],
 			"name": "Insulated Engine Assembly",
 			"icon": "graphics/icons/circular/notable_passives/insulated_engine_assembly.png",
 			"opCost": 4,
@@ -1176,6 +1217,7 @@
 		},
 		{
 			"id": "militarized_subsystems",
+			"exclusiveHullMods": ["militarized_subsystems"],
 			"name": "Militarized Subsystems",
 			"icon": "graphics/icons/circular/notable_passives/militarized_subsystems.png",
 			"opCost": 4,
@@ -1212,6 +1254,7 @@
 		},
 		{
 			"id": "surveying_equipment",
+			"exclusiveHullMods": ["surveying_equipment"],
 			"name": "Surveying Equipment",
 			"icon": "graphics/icons/circular/notable_passives/surveying_equipment.png",
 			"opCost": 4,

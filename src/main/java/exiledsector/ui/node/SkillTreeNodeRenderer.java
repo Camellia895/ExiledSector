@@ -17,6 +17,7 @@ import exiledsector.ui.SkillTreePanelStyle;
 import lunalib.lunaRefit.BaseRefitButton;
 
 import java.awt.Color;
+import java.util.List;
 
 import static exiledsector.ui.node.SkillTreeNodeGeometry.ICON_INSET_RATIO;
 import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_SIZE;
@@ -225,7 +226,13 @@ public final class SkillTreeNodeRenderer {
     }
 
     private String blockAllocationReason(SkillType type) {
-        for (String hullModId : type.getExclusiveHullModIds()) {
+        List<String> exclusiveHullModIds = type.getExclusiveHullModIds();
+        if (exclusiveHullModIds.isEmpty()) {
+            return null;
+        }
+        member.setStatUpdateNeeded(true);
+        member.updateStats();
+        for (String hullModId : exclusiveHullModIds) {
             if (member.getVariant().hasHullMod(hullModId)) {
                 HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
                 String name = spec != null ? spec.getDisplayName() : hullModId;
