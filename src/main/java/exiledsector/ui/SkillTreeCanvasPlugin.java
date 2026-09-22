@@ -27,6 +27,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final SkillTreeRingBeltRenderer ringBeltRenderer;
     private final SkillTreeNodeRenderer nodeRenderer;
     private final SkillTreeStatPanel statPanel;
+    private final SkillTreePassivePointsBar passivePointsBar;
     private final float shipCardHeight;
 
     private PositionAPI position;
@@ -47,6 +48,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.ringBeltRenderer = new SkillTreeRingBeltRenderer();
         this.nodeRenderer = new SkillTreeNodeRenderer(member, style, refitButton);
         this.statPanel = new SkillTreeStatPanel(member, style);
+        this.passivePointsBar = new SkillTreePassivePointsBar(member);
         this.shipCardHeight = shipCardHeight;
     }
 
@@ -134,6 +136,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         staticImageRenderer.render(centerX, centerY, zoom, alphaMult, position);
         nodeRenderer.render(centerX, centerY, zoom, alphaMult, mouseX, mouseY, mouseKnown);
         statPanel.render(position, alphaMult);
+        passivePointsBar.render(position, alphaMult);
         drawShipCardFrame(alphaMult);
 
         if (!dragging && mouseKnown) {
@@ -143,7 +146,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     private void drawShipCardFrame(float alphaMult) {
         float boxX = position.getX() + SkillTreeRefitButton.SHIP_CARD_MARGIN;
-        float boxY = position.getY() + position.getHeight() - SkillTreeRefitButton.SHIP_CARD_MARGIN - shipCardHeight;
+        float boxY = position.getY() + position.getHeight() - SkillTreeRefitButton.SHIP_CARD_MARGIN
+                - SkillTreePassivePointsBar.getFootprintHeight() - shipCardHeight;
         style.drawTooltipBackground(boxX, boxY, SkillTreeRefitButton.SHIP_CARD_ICON_SIZE, shipCardHeight, alphaMult, style.getAccentColor());
     }
 
