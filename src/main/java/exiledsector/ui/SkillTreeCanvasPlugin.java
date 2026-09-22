@@ -46,6 +46,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private float mouseY = 0f;
     private boolean mouseKnown = false;
     private SkillNode pendingClickNode;
+    private boolean pendingClickCtrlDown;
     private SkillType pendingDropdownOption;
 
     public SkillTreeCanvasPlugin(FleetMemberAPI member, ShipVariantAPI variant, float shipCardHeight, BaseRefitButton refitButton) {
@@ -94,6 +95,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                     SkillNode clicked = nodeRenderer.findNodeAt(centerX(), centerY(), zoom, event.getX(), event.getY());
                     if (clicked != null) {
                         pendingClickNode = clicked;
+                        pendingClickCtrlDown = event.isCtrlDown();
                     } else {
                         dragging = true;
                     }
@@ -105,7 +107,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                     nodeRenderer.commitDropdownSelection(pendingDropdownOption);
                     pendingDropdownOption = null;
                 } else if (pendingClickNode != null) {
-                    nodeRenderer.toggleAllocation(pendingClickNode);
+                    nodeRenderer.toggleAllocation(pendingClickNode, pendingClickCtrlDown);
                     pendingClickNode = null;
                 }
             } else if (event.isMouseMoveEvent()) {

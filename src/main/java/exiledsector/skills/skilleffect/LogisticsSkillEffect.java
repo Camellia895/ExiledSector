@@ -138,6 +138,17 @@ public enum LogisticsSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
+            return flatChange(magnitude, "sensor range (fleet-wide)");
+        }
+    },
+    COMBAT_VISION {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getSightRadiusMod().modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
             return flatChange(magnitude, "in-combat sensor/vision range");
         }
     },

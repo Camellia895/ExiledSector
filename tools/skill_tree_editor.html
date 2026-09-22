@@ -397,7 +397,7 @@
   .empty-inspector { color: var(--text-faint); font-size: 12.5px; line-height: 1.6; }
   .field { display: flex; flex-direction: column; gap: 4px; }
   .field label { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-faint); }
-  .field input, .field select {
+  .field input:not([type="checkbox"]), .field select {
     background: var(--panel-2);
     border: 1px solid var(--line);
     border-radius: 6px;
@@ -2624,7 +2624,7 @@ function addNodeOfType(typeId, x, y){
 // ---------- type editor modal ----------
 var EFFECT_NAMES = ['HULL_PERCENT','ARMOR_PERCENT','ARMOR_FLAT','FLUX_CAPACITY_PERCENT','FLUX_CAPACITY_FLAT','FLUX_DISSIPATION_PERCENT','FLUX_DISSIPATION_FLAT','BALLISTIC_DAMAGE_PERCENT','MISSILE_DAMAGE_PERCENT',
   'NON_BEAM_ENERGY_DAMAGE_PERCENT','BEAM_DAMAGE_PERCENT','ENERGY_DAMAGE_PERCENT','ALL_WEAPON_DAMAGE_PERCENT','MANEUVERABILITY_PERCENT','FUEL_CAPACITY_PERCENT','FUEL_CAPACITY_FLAT',
-  'CARGO_CAPACITY_PERCENT','CARGO_CAPACITY_FLAT','CREW_CAPACITY_PERCENT','CREW_CAPACITY_FLAT','BURN_LEVEL_FLAT','SENSOR_PROFILE_PERCENT','SENSOR_STRENGTH_PERCENT','SENSOR_RANGE','ELECTRONIC_WARFARE','NAV_RATING','BALLISTIC_WEAPON_RANGE_PERCENT',
+  'CARGO_CAPACITY_PERCENT','CARGO_CAPACITY_FLAT','CREW_CAPACITY_PERCENT','CREW_CAPACITY_FLAT','BURN_LEVEL_FLAT','SENSOR_PROFILE_PERCENT','SENSOR_STRENGTH_PERCENT','SENSOR_RANGE','COMBAT_VISION','ELECTRONIC_WARFARE','NAV_RATING','BALLISTIC_WEAPON_RANGE_PERCENT',
   'ENERGY_WEAPON_RANGE_PERCENT','ENERGY_WEAPON_RANGE_FLAT','BEAM_WEAPON_RANGE_PERCENT','BALLISTIC_AMMO_PERCENT','ENERGY_AMMO_PERCENT','MISSILE_AMMO_PERCENT','WEAPON_TURN_RATE_PERCENT',
   'SHIELD_ARC_PERCENT','SHIELD_UPKEEP_PERCENT','SHIELD_ABSORPTION_PERCENT','SHIELD_TURN_RATE_PERCENT','SHIELD_RAISE_RATE_PERCENT','WEAPON_DURABILITY_PERCENT',
   'ENGINE_DURABILITY_PERCENT','TOP_SPEED_PERCENT','PEAK_CR_DURATION_PERCENT','WEAPON_RANGE_FALLOFF_PERCENT','REPAIR_TIME_PERCENT','MISSILE_GUIDANCE_PERCENT',
@@ -2866,19 +2866,28 @@ function openImagePickerModal(onPick, onCancel){
     root.innerHTML =
       '<div class="modalOverlay"><div class="modal wide">' +
       '<h3>Select an image</h3>' +
-      '<div class="field"><input id="imgPickerFilter" placeholder="Filter by path..."></div>' +
+      '<div class="fieldRow">' +
+        '<div class="field"><label>Folder</label><select id="imgPickerFolder"></select></div>' +
+        '<div class="field"><label>Filter by path</label><input id="imgPickerFilter" placeholder="Filter by path..."></div>' +
+      '</div>' +
       '<div class="imageBrowserGrid" id="imgPickerGrid"></div>' +
       '<div class="hint" id="imgPickerCount"></div>' +
       '<div class="modalBtns"><button class="smallBtn" id="imgPickerCancel">Cancel</button></div>' +
       '</div></div>';
     document.getElementById('imgPickerCancel').addEventListener('click', function(){ root.innerHTML = ''; if (onCancel) onCancel(); });
     document.getElementById('imgPickerFilter').addEventListener('input', updateGrid);
+    document.getElementById('imgPickerFolder').addEventListener('change', updateGrid);
+    document.getElementById('imgPickerFolder').innerHTML = buildFolderOptionsHtml(state.allProjectImages, '');
     updateGrid();
   }
 
   function updateGrid(){
     var q = (document.getElementById('imgPickerFilter').value || '').toLowerCase();
-    var filtered = state.allProjectImages.filter(function(p){ return !q || p.toLowerCase().indexOf(q) !== -1; });
+    var folder = document.getElementById('imgPickerFolder').value;
+    var filtered = state.allProjectImages.filter(function(p){
+      if (folder && imageFolder(p) !== folder) return false;
+      return !q || p.toLowerCase().indexOf(q) !== -1;
+    });
     var grid = document.getElementById('imgPickerGrid');
     grid.innerHTML = filtered.map(function(p){ return imageTileHtml(p, false); }).join('') || '<div class="hint">No images match.</div>';
     document.getElementById('imgPickerCount').textContent = filtered.length + ' of ' + state.allProjectImages.length + ' images';

@@ -43,6 +43,8 @@ public final class SkillTreeNodeRenderer {
     private final SkillTreeNodeTooltipRenderer tooltipRenderer;
     private final SkillTreeNodeDropdownRenderer dropdownRenderer;
 
+    private SkillType lastChosenOptionalOption;
+
     public SkillTreeNodeRenderer(FleetMemberAPI member, ShipVariantAPI variant, SkillTreePanelStyle style, BaseRefitButton refitButton) {
         this.member = member;
         this.variant = variant;
@@ -172,14 +174,20 @@ public final class SkillTreeNodeRenderer {
         return null;
     }
 
-    public void toggleAllocation(SkillNode node) {
+    public void toggleAllocation(SkillNode node, boolean ctrlDown) {
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
         boolean wasAllocated = data.isAllocated(node.getId());
         boolean isOptional = node.getType().isOptional();
         int opCost = opCostFor(node);
 
         if (!wasAllocated && isOptional) {
-            if (data.canAllocate(node, satisfiedRootId(), totalOpBudgetForNodes(), opCost)) {
+            if (!data.canAllocate(node, satisfiedRootId(), totalOpBudgetForNodes(), opCost)) {
+                return;
+            }
+            SkillType repeated = ctrlDown ? repeatableOptionFor(node) : null;
+            if (repeated != null) {
+                allocateOptionalNode(node, repeated);
+            } else {
                 dropdownRenderer.open(node);
             }
             return;
@@ -227,8 +235,20 @@ public final class SkillTreeNodeRenderer {
         if (node == null) return;
         if (blockAllocationReason(chosenOption) != null) return;
 
+        allocateOptionalNode(node, chosenOption);
+    }
+
+    private SkillType repeatableOptionFor(SkillNode node) {
+        if (lastChosenOptionalOption == null) return null;
+        if (!node.getType().getOptionalOptionIds().contains(lastChosenOptionalOption.getId())) return null;
+        if (blockAllocationReason(lastChosenOptionalOption) != null) return null;
+        return lastChosenOptionalOption;
+    }
+
+    private void allocateOptionalNode(SkillNode node, SkillType chosenOption) {
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
         data.selectOption(node, chosenOption, opCostFor(node));
+        lastChosenOptionalOption = chosenOption;
         refreshAfterAllocationChange(node, true);
     }
 

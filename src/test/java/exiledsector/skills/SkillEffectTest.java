@@ -256,6 +256,17 @@ class SkillEffectTest {
     }
 
     @Test
+    void combatVisionModifiesTheSightRadiusStat() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        StatBonus sightRadius = mock(StatBonus.class);
+        when(stats.getSightRadiusMod()).thenReturn(sightRadius);
+
+        LogisticsSkillEffect.COMBAT_VISION.apply(stats, "mod_id", 1000f);
+
+        verify(sightRadius).modifyFlat("mod_id", 1000f);
+    }
+
+    @Test
     void ballisticWeaponRangeModifiesTheBallisticRangeBonusStat() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         StatBonus rangeBonus = mock(StatBonus.class);

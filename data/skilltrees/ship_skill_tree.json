@@ -2684,6 +2684,13 @@
 			"y": -579,
 			"orbitAnchorId": "anchor_24",
 			"orbitAngle": 270
+		},
+		{
+			"id": "combat_vision_1",
+			"type": "combat_vision",
+			"connectedTo": [],
+			"x": -2729,
+			"y": 132
 		}
 	],
 	"connectorCurves": [

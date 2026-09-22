@@ -235,9 +235,6 @@
 			"exclusiveHullMods": [
 				"adaptive_coils"
 			],
-			"exclusiveSkillTypes": [
-				"phase_anchor"
-			],
 			"description": "Phase coils are less able to maintain a connection with normal space as the ship's hard flux levels rise, resulting in a greatly reduced top speed as the coils struggle to gain traction.\n\nThis modification allows the coils to handle higher levels of hard flux, increasing the threshold at which speed bottoms out.",
 			"tags": [
 				"flux",
@@ -261,9 +258,6 @@
 			],
 			"exclusiveHullMods": [
 				"advancedoptics"
-			],
-			"exclusiveSkillTypes": [
-				"high_scatter_amp"
 			],
 			"tags": [
 				"energy",
@@ -481,9 +475,6 @@
 			"exclusiveHullMods": [
 				"dedicated_targeting_core"
 			],
-			"exclusiveSkillTypes": [
-				"targetingunit"
-			],
 			"tags": [
 				"range"
 			]
@@ -674,11 +665,6 @@
 				"adaptiveshields",
 				"frontshield"
 			],
-			"exclusiveSkillTypes": [
-				"frontemitter",
-				"adaptiveshields",
-				"frontshield"
-			],
 			"description": "Removes this ship's shields entirely, increasing its armor rating in exchange.",
 			"tags": [
 				"armour"
@@ -700,9 +686,6 @@
 			],
 			"exclusiveHullMods": [
 				"frontshield",
-				"shield_shunt"
-			],
-			"exclusiveSkillTypes": [
 				"shield_shunt"
 			],
 			"description": "Installs a makeshift, inefficient shield generator on the ship. The shield emitter is locked in a forward-facing position and has a 90 degree arc.\n\nThe shield generator draws much of its power from engines and reduces the ship's top speed by 20%.",
@@ -815,9 +798,6 @@
 			"exclusiveHullMods": [
 				"high_scatter_amp"
 			],
-			"exclusiveSkillTypes": [
-				"advancedoptics"
-			],
 			"todo": "Placeholder magnitudes (50% hard flux, -25% range) pending real balance numbers. Reimplemented as a scalable percentage instead of vanilla's all-or-nothing forced-hard-flux-on-every-beam-hit, and the range reduction is a flat percentage instead of vanilla's reduce-only-the-portion-past-200-units logic - deliberate simplifications, not oversights. The +10% beam damage part (vanilla BEAM_DAMAGE_PERCENT) is not yet added; can reuse the existing BEAM_DAMAGE_PERCENT effect for that later.",
 			"tags": [
 				"energy",
@@ -868,9 +848,6 @@
 			"exclusiveHullMods": [
 				"targetingunit"
 			],
-			"exclusiveSkillTypes": [
-				"dedicated_targeting_core"
-			],
 			"tags": [
 				"range"
 			]
@@ -915,10 +892,6 @@
 				"adaptiveshields",
 				"shield_shunt"
 			],
-			"exclusiveSkillTypes": [
-				"adaptiveshields",
-				"shield_shunt"
-			],
 			"description": "Locks the ship's omni-directional shield emitter to a front-facing position and extends its arc. As with all frontal emitters, the shield will also deploy twice as quickly.",
 			"tags": [
 				"shield"
@@ -941,10 +914,6 @@
 			],
 			"exclusiveHullMods": [
 				"adaptiveshields",
-				"frontemitter",
-				"shield_shunt"
-			],
-			"exclusiveSkillTypes": [
 				"frontemitter",
 				"shield_shunt"
 			],
@@ -992,9 +961,6 @@
 			],
 			"exclusiveHullMods": [
 				"phase_anchor"
-			],
-			"exclusiveSkillTypes": [
-				"adaptive_coils"
 			],
 			"tags": [
 				"flux",
@@ -2013,6 +1979,20 @@
 			],
 			"tags": [
 				"logistics"
+			]
+		},
+		{
+			"id": "combat_vision",
+			"name": "Combat Vision",
+			"icon": "graphics/icons/circular/surveying_blue.png",
+			"hullSizeEffects": [
+				{
+					"effect": "COMBAT_VISION",
+					"frigate": 300,
+					"destroyer": 500,
+					"cruiser": 700,
+					"capitalShip": 900
+				}
 			]
 		}
 	]
