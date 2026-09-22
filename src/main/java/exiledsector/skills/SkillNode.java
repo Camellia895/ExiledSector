@@ -55,8 +55,8 @@ public class SkillNode extends SkillTreeObject {
         return type.getIconPath();
     }
 
-    public int getOpCost() {
-        return type.getOpCost();
+    public int getCost() {
+        return type.getCost();
     }
 
     public String getDescription() {

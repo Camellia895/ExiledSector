@@ -54,7 +54,7 @@ class SkillTreeLoaderTest {
         assertEquals("capacitors_1", node.getId());
         assertEquals("Capacitors", node.getDisplayName());
         assertEquals("graphics/hullmods/flux_coil_adjunct.png", node.getIconPath());
-        assertEquals(2, node.getOpCost());
+        assertEquals(2, node.getCost());
         assertEquals(List.of("vents_1"), node.getConnectedNodeIds());
         assertEquals(-180f, node.getOffsetX());
         assertEquals(180f, node.getOffsetY());
