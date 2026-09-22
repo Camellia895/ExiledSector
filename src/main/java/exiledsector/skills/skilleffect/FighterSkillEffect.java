@@ -209,6 +209,23 @@ public enum FighterSkillEffect implements SkillEffect {
             return pctChange(magnitude, "engagement range of fighters launched from this ship");
         }
     },
+    FIGHTER_WEAPON_RANGE_FLAT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            MutableShipStatsAPI fighterStats = fighter.getMutableStats();
+            fighterStats.getBallisticWeaponRangeBonus().modifyFlat(modId, magnitude);
+            fighterStats.getEnergyWeaponRangeBonus().modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return flatChange(magnitude, "weapon range of fighters launched from this ship");
+        }
+    },
     FIGHTER_ROLE_DAMAGE_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {

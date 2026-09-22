@@ -110,8 +110,8 @@
 			"connectedTo": [
 				"small_flux_optional_15"
 			],
-			"x": -225,
-			"y": 2774,
+			"x": -176,
+			"y": 2826,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#f73b3b"
 		},
@@ -252,6 +252,17 @@
 			"ringBeltColor": "#33ff36"
 		},
 		{
+			"id": "neural_interface_1",
+			"type": "neural_interface",
+			"connectedTo": [
+				"small_logistics_optional_5"
+			],
+			"x": 195,
+			"y": -429,
+			"ringBeltPath": "graphics/planets/aurorae.png",
+			"ringBeltColor": "#8c5cff"
+		},
+		{
 			"id": "eccm_1",
 			"type": "eccm",
 			"connectedTo": [
@@ -369,8 +380,8 @@
 			"connectedTo": [
 				"armor_5"
 			],
-			"x": -480,
-			"y": 2646,
+			"x": -411,
+			"y": 2582,
 			"orbitAnchorId": "anchor_10",
 			"orbitAngle": 90
 		},
@@ -462,7 +473,9 @@
 				"small_flux_optional_24"
 			],
 			"x": -858,
-			"y": -2632
+			"y": -2632,
+			"ringBeltPath": "graphics/planets/aurorae.png",
+			"ringBeltColor": "#ab10fe"
 		},
 		{
 			"id": "additional_berthing_1",
@@ -606,9 +619,13 @@
 		{
 			"id": "recovery_shuttles_1",
 			"type": "recovery_shuttles",
-			"connectedTo": [],
-			"x": 1385,
-			"y": 3104
+			"connectedTo": [
+				"fighter_weapon_damage_2"
+			],
+			"x": 2431,
+			"y": -598,
+			"orbitAnchorId": "anchor_26",
+			"orbitAngle": 180
 		},
 		{
 			"id": "operations_center_1",
@@ -697,16 +714,21 @@
 		{
 			"id": "fighter_weapon_damage_1",
 			"type": "fighter_weapon_damage",
-			"connectedTo": [],
-			"x": 3308,
-			"y": -1245
+			"connectedTo": [
+				"fighter_weapon_damage_2",
+				"small_flux_optional_9"
+			],
+			"x": 2731,
+			"y": -598,
+			"orbitAnchorId": "anchor_26",
+			"orbitAngle": 0
 		},
 		{
 			"id": "fighter_speed_1",
 			"type": "fighter_speed",
 			"connectedTo": [],
-			"x": 3512,
-			"y": -1091
+			"x": -936,
+			"y": 2375
 		},
 		{
 			"id": "small_logistics_optional_3",
@@ -997,7 +1019,8 @@
 			"connectedTo": [
 				"small_logistics_optional_7",
 				"small_logistics_optional_25",
-				"reduced_monthly_supplies_1"
+				"reduced_monthly_supplies_1",
+				"neural_interface_1"
 			],
 			"x": 0,
 			"y": -289
@@ -1398,7 +1421,8 @@
 			"connectedTo": [
 				"small_flux_optional_8",
 				"small_flux_optional_10",
-				"small_flux_optional_28"
+				"small_flux_optional_28",
+				"fighter_weapon_damage_1"
 			],
 			"x": 2853,
 			"y": -927,
@@ -1542,7 +1566,8 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_21",
-				"small_flux_optional_19"
+				"small_flux_optional_19",
+				"combat_vision_2"
 			],
 			"x": -3000,
 			"y": 0,
@@ -2146,8 +2171,8 @@
 				"armor_5",
 				"small_flux_optional_35"
 			],
-			"x": -350,
-			"y": 2421,
+			"x": -281,
+			"y": 2357,
 			"orbitAnchorId": "anchor_10",
 			"orbitAngle": -29.999999999999996
 		},
@@ -2158,8 +2183,8 @@
 				"armor_4",
 				"shield_shunt_1"
 			],
-			"x": -610,
-			"y": 2421,
+			"x": -541,
+			"y": 2357,
 			"orbitAnchorId": "anchor_10",
 			"orbitAngle": -150.00000000000003
 		},
@@ -2688,9 +2713,49 @@
 		{
 			"id": "combat_vision_1",
 			"type": "combat_vision",
-			"connectedTo": [],
-			"x": -2729,
-			"y": 132
+			"connectedTo": [
+				"combat_vision_2",
+				"optimised_lenses_1"
+			],
+			"x": -2650,
+			"y": 150,
+			"orbitAnchorId": "anchor_25",
+			"orbitAngle": 90
+		},
+		{
+			"id": "optimised_lenses_1",
+			"type": "optimised_lenses",
+			"connectedTo": [
+				"combat_vision_1"
+			],
+			"x": -2500,
+			"y": 0,
+			"orbitAnchorId": "anchor_25",
+			"orbitAngle": 0
+		},
+		{
+			"id": "combat_vision_2",
+			"type": "combat_vision",
+			"connectedTo": [
+				"combat_vision_1",
+				"small_flux_optional_20"
+			],
+			"x": -2800,
+			"y": 0,
+			"orbitAnchorId": "anchor_25",
+			"orbitAngle": 180
+		},
+		{
+			"id": "fighter_weapon_damage_2",
+			"type": "fighter_weapon_damage",
+			"connectedTo": [
+				"fighter_weapon_damage_1",
+				"recovery_shuttles_1"
+			],
+			"x": 2581,
+			"y": -448,
+			"orbitAnchorId": "anchor_26",
+			"orbitAngle": 90
 		}
 	],
 	"connectorCurves": [
@@ -3345,14 +3410,14 @@
 		{
 			"a": "armor_4",
 			"b": "armor_5",
-			"controlX": -480,
-			"controlY": 2421
+			"controlX": -411,
+			"controlY": 2357
 		},
 		{
 			"a": "armor_5",
 			"b": "shield_shunt_1",
-			"controlX": -545,
-			"controlY": 2534
+			"controlX": -476,
+			"controlY": 2470
 		},
 		{
 			"a": "shield_arc_3",
@@ -3563,6 +3628,30 @@
 			"b": "reduced_monthly_supplies_2",
 			"controlX": -451,
 			"controlY": -535
+		},
+		{
+			"a": "combat_vision_1",
+			"b": "combat_vision_2",
+			"controlX": -2756,
+			"controlY": 106
+		},
+		{
+			"a": "combat_vision_1",
+			"b": "optimised_lenses_1",
+			"controlX": -2544,
+			"controlY": 106
+		},
+		{
+			"a": "fighter_weapon_damage_1",
+			"b": "fighter_weapon_damage_2",
+			"controlX": 2687,
+			"controlY": -492
+		},
+		{
+			"a": "fighter_weapon_damage_2",
+			"b": "recovery_shuttles_1",
+			"controlX": 2475,
+			"controlY": -492
 		}
 	],
 	"hiddenConnectors": [
@@ -3717,8 +3806,8 @@
 		},
 		{
 			"id": "anchor_10",
-			"x": -480,
-			"y": 2496,
+			"x": -411,
+			"y": 2432,
 			"radius": 150,
 			"shape": "triangle",
 			"rotation": 180
@@ -3859,6 +3948,18 @@
 			"id": "anchor_24",
 			"x": -345,
 			"y": -429,
+			"radius": 150
+		},
+		{
+			"id": "anchor_25",
+			"x": -2650,
+			"y": 0,
+			"radius": 150
+		},
+		{
+			"id": "anchor_26",
+			"x": 2581,
+			"y": -598,
 			"radius": 150
 		}
 	],

@@ -37,7 +37,11 @@ public class SkillTreeStaticImageRenderer {
             float screenY = centerY - image.getY() * zoom;
             sprite.setSize(image.getWidth() * zoom, image.getHeight() * zoom);
             sprite.setAlphaMult(alphaMult);
-            sprite.setAngle(image.getRotation() + image.getRotationSpeed() * elapsedSeconds);
+            // The editor authors rotation as an SVG rotate() transform, which is clockwise-positive
+            // because SVG's Y-axis points down. This renderer's world space is Y-up (see the Y flip
+            // above), where increasing angle is counter-clockwise - so the authored value must be
+            // negated here to land in the same visual orientation shown in the editor.
+            sprite.setAngle(-(image.getRotation() + image.getRotationSpeed() * elapsedSeconds));
             sprite.renderAtCenter(screenX, screenY);
         }
 

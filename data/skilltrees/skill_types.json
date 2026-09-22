@@ -706,6 +706,15 @@
 			]
 		},
 		{
+			"id": "neural_interface",
+			"name": "Neural Interface",
+			"icon": "graphics/icons/circular/notable_passives/neural_interface.png",
+			"tier": "KEYSTONE",
+			"vanillaHullMod": "neural_interface",
+			"description": "Links this ship with the flagship, allowing the player to instantly switch which ship they are piloting without using a shuttle pod. Transferring resets the destination ship's system cooldown and adds a charge. The transfer is instant if the combined deployment points of both ships are low enough; otherwise a short transfer time applies. The destination ship must not be under the command of an officer or an AI core.",
+			"todo": "Real vanilla effect links two ships and lets the player instantly swap which one they're piloting, resetting the destination ship's system cooldown and granting a charge, with transfer time gated by the combined deployment point total of both ships - a campaign/combat control-transfer mechanic, not a MutableShipStatsAPI stat modifier. Deliberately left on vanillaHullMod passthrough."
+		},
+		{
 			"id": "hardenedshieldemitter",
 			"name": "Hardened Shields",
 			"icon": "graphics/icons/circular/notable_passives/hardened_shields.png",
@@ -1441,7 +1450,7 @@
 			"effects": [
 				{
 					"effect": "FIGHTER_TOP_SPEED_PERCENT",
-					"magnitude": 15
+					"magnitude": 5
 				}
 			],
 			"todo": "Placeholder magnitude (15%) pending real balance numbers.",
@@ -1993,6 +2002,30 @@
 					"cruiser": 700,
 					"capitalShip": 900
 				}
+			]
+		},
+		{
+			"id": "optimised_lenses",
+			"name": "Optimised Lenses",
+			"icon": "graphics/icons/circular/surveying_blue_purple.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "NON_BEAM_ENERGY_WEAPON_RANGE_FLAT",
+					"magnitude": 100
+				}
+			],
+			"hullSizeEffects": [
+				{
+					"effect": "COMBAT_VISION",
+					"frigate": 400,
+					"destroyer": 600,
+					"cruiser": 800,
+					"capitalShip": 1000
+				}
+			],
+			"tags": [
+				"range"
 			]
 		}
 	]

@@ -120,7 +120,7 @@ public enum WeaponSkillEffect implements SkillEffect {
             return pctMore(magnitude, "energy weapon range");
         }
     },
-    ENERGY_WEAPON_RANGE_FLAT {
+    NON_BEAM_ENERGY_WEAPON_RANGE_FLAT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getEnergyWeaponRangeBonus().modifyFlat(modId, magnitude);

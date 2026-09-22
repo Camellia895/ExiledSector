@@ -87,8 +87,9 @@ final class SkillTreeNodeTooltipRenderer {
 
         float titleY = boxY + boxHeight - TOOLTIP_PADDING;
         float bodyY = titleY - title.height - TOOLTIP_TITLE_BODY_GAP;
-        title.drawable.draw(boxX + TOOLTIP_PADDING, titleY);
-        title.drawable.draw(boxX + TOOLTIP_PADDING + TOOLTIP_TITLE_BOLD_OFFSET, titleY);
+        float titleX = boxX + (boxWidth - title.width) / 2f;
+        title.drawable.draw(titleX, titleY);
+        title.drawable.draw(titleX + TOOLTIP_TITLE_BOLD_OFFSET, titleY);
         body.drawable.draw(boxX + TOOLTIP_PADDING, bodyY);
     }
 
