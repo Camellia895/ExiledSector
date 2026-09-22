@@ -191,7 +191,7 @@ final class SkillTreeNodeRingRenderer {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        if (tier == SkillTier.NOTABLE || tier == SkillTier.KEYSTONE) {
+        if (tier == SkillTier.KEYSTONE) {
             float iconRadius = footprintSize * ICON_INSET_RATIO / 2f;
             drawSingleDonut(cx, cy, iconRadius, allocated, breathing, zoom, alphaMult);
         } else if (tier != SkillTier.WORMHOLE) {
