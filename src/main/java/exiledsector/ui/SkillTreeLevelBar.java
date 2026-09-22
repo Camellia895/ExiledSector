@@ -71,6 +71,7 @@ final class SkillTreeLevelBar {
 
         int maxLevel = ShipLevelConfig.maxLevel();
         xpToNextLevel = level >= maxLevel ? Math.max(xp, 1)
-                : Math.round(ShipLevelSystem.xpToReachNextLevel(level, ShipLevelConfig.xpBase(), ShipLevelConfig.xpGrowth()));
+                : Math.round(ShipLevelSystem.xpToReachNextLevel(level, ShipLevelConfig.xpBase(), ShipLevelConfig.xpGrowth(),
+                        ShipLevelConfig.xpGrowthCutoffLevel()));
     }
 }

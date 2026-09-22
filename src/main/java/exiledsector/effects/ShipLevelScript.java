@@ -60,7 +60,7 @@ public class ShipLevelScript implements EveryFrameScript {
             ShipSkillData data = ShipSkillDataManager.get(member.getId());
             int opCostPerNode = SkillNodeOpCost.perNode(member.getHullSpec());
             ShipLevelSystem.awardXp(data, xp, ShipLevelConfig.xpBase(), ShipLevelConfig.xpGrowth(),
-                    ShipLevelConfig.maxLevel(), allNodes, opCostPerNode);
+                    ShipLevelConfig.xpGrowthCutoffLevel(), ShipLevelConfig.maxLevel(), allNodes, opCostPerNode);
         }
     }
 

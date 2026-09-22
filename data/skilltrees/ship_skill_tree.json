@@ -295,7 +295,7 @@
 			"id": "dedicated_targeting_core_1",
 			"type": "dedicated_targeting_core",
 			"connectedTo": [
-				"Ballistic and Energy Weapon Range_3"
+				"ballistic_and_energy_weapon_range_3"
 			],
 			"x": 2717,
 			"y": 409
@@ -304,7 +304,7 @@
 			"id": "targetingunit_1",
 			"type": "targetingunit",
 			"connectedTo": [
-				"Ballistic and Energy Weapon Range_1"
+				"ballistic_and_energy_weapon_range_1"
 			],
 			"x": -1186,
 			"y": -976
@@ -313,7 +313,7 @@
 			"id": "ecm_1",
 			"type": "ecm",
 			"connectedTo": [
-				"Ballistic and Energy Weapon Range_6"
+				"ballistic_and_energy_weapon_range_6"
 			],
 			"x": -1785,
 			"y": 305,
@@ -1773,7 +1773,7 @@
 				"small_flux_optional_31",
 				"small_flux_optional_11",
 				"small_flux_optional_34",
-				"Ballistic and Energy Weapon Range_4"
+				"ballistic_and_energy_weapon_range_4"
 			],
 			"x": 2061,
 			"y": 770,
@@ -1936,7 +1936,7 @@
 				"small_flux_optional_40",
 				"small_flux_optional_19",
 				"small_flux_optional_45",
-				"Ballistic and Energy Weapon Range_5"
+				"ballistic_and_energy_weapon_range_5"
 			],
 			"x": -2076,
 			"y": 727,
@@ -1978,7 +1978,7 @@
 			"connectedTo": [
 				"small_flux_optional_41",
 				"small_flux_optional_43",
-				"Ballistic and Energy Weapon Range_2",
+				"ballistic_and_energy_weapon_range_2",
 				"non_beam_energy_damage_2"
 			],
 			"x": -1744,
@@ -2125,40 +2125,40 @@
 			"orbitAngle": 38.699999999999996
 		},
 		{
-			"id": "Ballistic and Energy Weapon Range_1",
+			"id": "ballistic_and_energy_weapon_range_1",
 			"type": "Ballistic and Energy Weapon Range",
 			"connectedTo": [
-				"Ballistic and Energy Weapon Range_2",
+				"ballistic_and_energy_weapon_range_2",
 				"targetingunit_1"
 			],
 			"x": -1381,
 			"y": -1106
 		},
 		{
-			"id": "Ballistic and Energy Weapon Range_2",
+			"id": "ballistic_and_energy_weapon_range_2",
 			"type": "Ballistic and Energy Weapon Range",
 			"connectedTo": [
-				"Ballistic and Energy Weapon Range_1",
+				"ballistic_and_energy_weapon_range_1",
 				"small_flux_optional_42"
 			],
 			"x": -1560,
 			"y": -1221
 		},
 		{
-			"id": "Ballistic and Energy Weapon Range_3",
+			"id": "ballistic_and_energy_weapon_range_3",
 			"type": "Ballistic and Energy Weapon Range",
 			"connectedTo": [
-				"Ballistic and Energy Weapon Range_4",
+				"ballistic_and_energy_weapon_range_4",
 				"dedicated_targeting_core_1"
 			],
 			"x": 2500,
 			"y": 529
 		},
 		{
-			"id": "Ballistic and Energy Weapon Range_4",
+			"id": "ballistic_and_energy_weapon_range_4",
 			"type": "Ballistic and Energy Weapon Range",
 			"connectedTo": [
-				"Ballistic and Energy Weapon Range_3",
+				"ballistic_and_energy_weapon_range_3",
 				"small_flux_optional_30"
 			],
 			"x": 2292,
@@ -2285,11 +2285,11 @@
 			"orbitAngle": 24.10552103151405
 		},
 		{
-			"id": "Ballistic and Energy Weapon Range_5",
+			"id": "ballistic_and_energy_weapon_range_5",
 			"type": "Ballistic and Energy Weapon Range",
 			"connectedTo": [
 				"small_flux_optional_39",
-				"Ballistic and Energy Weapon Range_6"
+				"ballistic_and_energy_weapon_range_6"
 			],
 			"x": -1714,
 			"y": 555,
@@ -2297,11 +2297,11 @@
 			"orbitAngle": 104.19999999999996
 		},
 		{
-			"id": "Ballistic and Energy Weapon Range_6",
+			"id": "ballistic_and_energy_weapon_range_6",
 			"type": "Ballistic and Energy Weapon Range",
 			"connectedTo": [
 				"ecm_1",
-				"Ballistic and Energy Weapon Range_5"
+				"ballistic_and_energy_weapon_range_5"
 			],
 			"x": -1533,
 			"y": 369,
@@ -3474,14 +3474,14 @@
 			"controlY": -1190
 		},
 		{
-			"a": "Ballistic and Energy Weapon Range_6",
+			"a": "ballistic_and_energy_weapon_range_6",
 			"b": "ecm_1",
 			"controlX": -1659,
 			"controlY": 337
 		},
 		{
-			"a": "Ballistic and Energy Weapon Range_5",
-			"b": "Ballistic and Energy Weapon Range_6",
+			"a": "ballistic_and_energy_weapon_range_5",
+			"b": "ballistic_and_energy_weapon_range_6",
 			"controlX": -1623,
 			"controlY": 462
 		},

@@ -44,6 +44,11 @@ public final class ExiledSectorSettings {
         LunaSettings.SettingsCreator.addDouble(MOD_ID, ShipLevelConfig.XP_GROWTH_FIELD_ID,
                 "XP Growth per Level", "How much harder each level is to reach than the last.",
                 ShipLevelConfig.DEFAULT_XP_GROWTH, 1.0, 3.0, "");
+        LunaSettings.SettingsCreator.addInt(MOD_ID, ShipLevelConfig.XP_GROWTH_CUTOFF_LEVEL_FIELD_ID,
+                "XP Growth Cutoff Level", "The level at which the exponential XP curve stops compounding. " +
+                        "From this level onward, every level costs the same XP as the level just before the " +
+                        "cutoff did (e.g. a cutoff of 30 makes every level from 30 on cost the same as level 29 to 30).",
+                ShipLevelConfig.DEFAULT_XP_GROWTH_CUTOFF_LEVEL, 1, 200, "");
         LunaSettings.SettingsCreator.addDouble(MOD_ID, ShipLevelConfig.XP_PER_DEPLOYMENT_POINT_FIELD_ID,
                 "XP per Enemy Deployment Point Destroyed", "", ShipLevelConfig.DEFAULT_XP_PER_DEPLOYMENT_POINT, 0.0, 100.0, "");
         LunaSettings.SettingsCreator.addDouble(MOD_ID, ShipLevelConfig.XP_LOSS_MULTIPLIER_FIELD_ID,
