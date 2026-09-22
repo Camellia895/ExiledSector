@@ -3,6 +3,7 @@ package exiledsector.ui;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
+import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.skills.ShipOpBudget;
 import org.apache.log4j.Logger;
 
@@ -53,6 +54,12 @@ final class SkillTreeOrdnancePointsBar {
 
     private boolean refreshBudget() {
         try {
+            // The OP-spent hullmod's cost lives on a shared, process-wide HullModSpecAPI instance
+            // (see SkillTreeHullMod.syncOpSpentHullMod) that every ship in the fleet reuses. The
+            // background SkillTreeInstaller script re-syncs it for each fleet member roughly once a
+            // second, so between our own frames it can transiently hold a different ship's value.
+            // Re-sync right before reading so the bar's animation never chases a stale reading.
+            SkillTreeHullMod.syncOpSpentHullMod(member, variant);
             ShipOpBudget budget = ShipOpBudget.of(member, variant);
             totalPoints = budget.total;
             spentPoints = budget.used;

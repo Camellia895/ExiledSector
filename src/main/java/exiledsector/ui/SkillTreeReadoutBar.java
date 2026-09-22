@@ -77,6 +77,10 @@ final class SkillTreeReadoutBar {
     }
 
     void render(float left, float bottom, int spent, int total, float alphaMult) {
+        render(left, bottom, spent, total, alphaMult, null);
+    }
+
+    void render(float left, float bottom, int spent, int total, float alphaMult, String labelOverride) {
         LazyFont font = getFont();
         if (font == null) return;
         if (!initialized) {
@@ -103,7 +107,7 @@ final class SkillTreeReadoutBar {
         drawEdgeBevel(left, bottom, barColor, alphaMult, glowBoost);
         drawCornerAccents(left, bottom, barColor, alphaMult);
 
-        String label = Math.round(displayedSpent) + " / " + Math.round(displayedTotal);
+        String label = labelOverride != null ? labelOverride : (Math.round(displayedSpent) + " / " + Math.round(displayedTotal));
         drawLabel(font, label, left, bottom, alphaMult);
     }
 

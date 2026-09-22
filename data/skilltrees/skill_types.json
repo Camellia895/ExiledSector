@@ -708,7 +708,7 @@
 		{
 			"id": "neural_interface",
 			"name": "Neural Interface",
-			"icon": "graphics/icons/circular/notable_passives/neural_interface.png",
+			"icon": "graphics/icons/circular/notable_passives/neural_interface_circular.png",
 			"tier": "KEYSTONE",
 			"vanillaHullMod": "neural_interface",
 			"description": "Links this ship with the flagship, allowing the player to instantly switch which ship they are piloting without using a shuttle pod. Transferring resets the destination ship's system cooldown and adds a charge. The transfer is instant if the combined deployment points of both ships are low enough; otherwise a short transfer time applies. The destination ship must not be under the command of an officer or an AI core.",

@@ -32,6 +32,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final SkillTreeNodeRenderer nodeRenderer;
     private final SkillTreeStatPanel statPanel;
     private final SkillTreeOrdnancePointsBar ordnancePointsBar;
+    private final SkillTreeLevelBar levelBar;
     private final BorderedPanel shipCardPanel = new BorderedPanel(SkillTreeCanvasPlugin.class);
     private final float shipCardHeight;
     private final FleetMemberAPI member;
@@ -59,6 +60,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.nodeRenderer = new SkillTreeNodeRenderer(member, variant, style, refitButton);
         this.statPanel = new SkillTreeStatPanel(member, variant);
         this.ordnancePointsBar = new SkillTreeOrdnancePointsBar(member, variant);
+        this.levelBar = new SkillTreeLevelBar(member);
         this.shipCardHeight = shipCardHeight;
     }
 
@@ -74,6 +76,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         ringBeltRenderer.advance(amount);
         nodeRenderer.advance(amount);
         ordnancePointsBar.advance(amount, position, mouseX, mouseY, mouseKnown);
+        levelBar.advance(amount, position, mouseX, mouseY, mouseKnown);
     }
 
     @Override
@@ -149,6 +152,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         nodeRenderer.render(centerX, centerY, zoom, alphaMult, mouseX, mouseY, mouseKnown);
         statPanel.render(position, alphaMult);
         ordnancePointsBar.render(position, alphaMult);
+        levelBar.render(position, alphaMult);
         drawShipCardFrame(alphaMult);
 
         if (!dragging && mouseKnown) {

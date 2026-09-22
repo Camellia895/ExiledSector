@@ -5,7 +5,9 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BattleAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
+import com.fs.starfarer.api.combat.CombatFleetManagerAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.mission.FleetSide;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipLevelConfig;
 import exiledsector.skills.ShipLevelSystem;
@@ -40,14 +42,14 @@ public class ShipLevelScript implements EveryFrameScript {
 
         if (xpAwarded || !engine.isCombatOver()) return;
         xpAwarded = true;
-        awardCombatXp();
+        awardCombatXp(engine);
     }
 
-    private void awardCombatXp() {
+    private void awardCombatXp(CombatEngineAPI engine) {
         CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
         if (playerFleet == null) return;
 
-        float xp = ShipLevelConfig.xpPerCombat();
+        float xp = enemyDeploymentPointsDestroyed(engine) * ShipLevelConfig.xpPerDeploymentPoint();
         BattleAPI battle = playerFleet.getBattle();
         if (battle != null && battle.wasFleetDefeated(playerFleet, battle.getNonPlayerCombined())) {
             xp *= ShipLevelConfig.xpLossMultiplier();
@@ -60,5 +62,16 @@ public class ShipLevelScript implements EveryFrameScript {
             ShipLevelSystem.awardXp(data, xp, ShipLevelConfig.xpBase(), ShipLevelConfig.xpGrowth(),
                     ShipLevelConfig.maxLevel(), allNodes, opCostPerNode);
         }
+    }
+
+    private float enemyDeploymentPointsDestroyed(CombatEngineAPI engine) {
+        CombatFleetManagerAPI enemyManager = engine.getFleetManager(FleetSide.ENEMY);
+        if (enemyManager == null) return 0f;
+
+        float total = 0f;
+        for (FleetMemberAPI destroyed : enemyManager.getDestroyedCopy()) {
+            total += destroyed.getDeploymentPointsCost();
+        }
+        return total;
     }
 }

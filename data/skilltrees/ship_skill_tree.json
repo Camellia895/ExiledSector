@@ -255,12 +255,12 @@
 			"id": "neural_interface_1",
 			"type": "neural_interface",
 			"connectedTo": [
-				"small_logistics_optional_5"
+				"small_flux_optional_2"
 			],
-			"x": 195,
-			"y": -429,
+			"x": 215,
+			"y": -2815,
 			"ringBeltPath": "graphics/planets/aurorae.png",
-			"ringBeltColor": "#8c5cff"
+			"ringBeltColor": "#ec6fe8"
 		},
 		{
 			"id": "eccm_1",
@@ -1019,8 +1019,7 @@
 			"connectedTo": [
 				"small_logistics_optional_7",
 				"small_logistics_optional_25",
-				"reduced_monthly_supplies_1",
-				"neural_interface_1"
+				"reduced_monthly_supplies_1"
 			],
 			"x": 0,
 			"y": -289
@@ -1371,7 +1370,8 @@
 				"small_flux_optional_6",
 				"small_flux_optional_4",
 				"wormhole_1",
-				"wormhole_3"
+				"wormhole_3",
+				"neural_interface_1"
 			],
 			"x": 0,
 			"y": -3000,

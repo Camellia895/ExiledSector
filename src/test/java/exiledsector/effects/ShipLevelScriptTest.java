@@ -6,9 +6,11 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
+import com.fs.starfarer.api.combat.CombatFleetManagerAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.mission.FleetSide;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipLevelConfig;
 import exiledsector.skills.ShipSkillData;
@@ -64,7 +66,7 @@ class ShipLevelScriptTest {
         lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", ShipLevelConfig.MAX_LEVEL_FIELD_ID)).thenReturn(null);
         lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", ShipLevelConfig.XP_BASE_FIELD_ID)).thenReturn(null);
         lunaSettingsMock.when(() -> LunaSettings.getFloat("exiledSector", ShipLevelConfig.XP_GROWTH_FIELD_ID)).thenReturn(null);
-        lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", ShipLevelConfig.XP_PER_COMBAT_FIELD_ID)).thenReturn(null);
+        lunaSettingsMock.when(() -> LunaSettings.getFloat("exiledSector", ShipLevelConfig.XP_PER_DEPLOYMENT_POINT_FIELD_ID)).thenReturn(null);
         lunaSettingsMock.when(() -> LunaSettings.getFloat("exiledSector", ShipLevelConfig.XP_LOSS_MULTIPLIER_FIELD_ID)).thenReturn(null);
         lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", ShipLevelConfig.MAX_ALLOCATED_NODES_FIELD_ID)).thenReturn(null);
 
@@ -89,6 +91,14 @@ class ShipLevelScriptTest {
         when(member.getHullSpec()).thenReturn(hullSpec);
         when(hullSpec.getHullSize()).thenReturn(HullSize.FRIGATE);
         return member;
+    }
+
+    private static void mockEnemyDeploymentPointsDestroyed(CombatEngineAPI engine, float totalDp) {
+        CombatFleetManagerAPI enemyManager = mock(CombatFleetManagerAPI.class);
+        FleetMemberAPI destroyed = mock(FleetMemberAPI.class);
+        when(destroyed.getDeploymentPointsCost()).thenReturn(totalDp);
+        when(enemyManager.getDestroyedCopy()).thenReturn(List.of(destroyed));
+        when(engine.getFleetManager(FleetSide.ENEMY)).thenReturn(enemyManager);
     }
 
     @Test
@@ -134,6 +144,7 @@ class ShipLevelScriptTest {
         globalMock.when(Global::getCombatEngine).thenReturn(engine);
         when(engine.isSimulation()).thenReturn(false);
         when(engine.isCombatOver()).thenReturn(true);
+        mockEnemyDeploymentPointsDestroyed(engine, 40f);
         FleetMemberAPI member = mockMember("ship-a");
         when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
 
@@ -144,10 +155,45 @@ class ShipLevelScriptTest {
     }
 
     @Test
+    void scalesXpByEnemyDeploymentPointsDestroyedAndTheConfiguredMultiplier() {
+        lunaSettingsMock.when(() -> LunaSettings.getFloat("exiledSector", ShipLevelConfig.XP_PER_DEPLOYMENT_POINT_FIELD_ID)).thenReturn(3f);
+        globalMock.when(Global::getCombatEngine).thenReturn(engine);
+        when(engine.isSimulation()).thenReturn(false);
+        when(engine.isCombatOver()).thenReturn(true);
+        mockEnemyDeploymentPointsDestroyed(engine, 25f);
+        FleetMemberAPI member = mockMember("ship-a");
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
+
+        new ShipLevelScript().advance(0.01f);
+
+        ShipSkillData data = ShipSkillDataManager.get("ship-a");
+        assertEquals(15f, data.getXp());
+        assertEquals(1, data.getLevel());
+    }
+
+    @Test
+    void awardsNoXpWhenNoEnemyShipsWereDestroyed() {
+        globalMock.when(Global::getCombatEngine).thenReturn(engine);
+        when(engine.isSimulation()).thenReturn(false);
+        when(engine.isCombatOver()).thenReturn(true);
+        CombatFleetManagerAPI enemyManager = mock(CombatFleetManagerAPI.class);
+        when(enemyManager.getDestroyedCopy()).thenReturn(List.of());
+        when(engine.getFleetManager(FleetSide.ENEMY)).thenReturn(enemyManager);
+        FleetMemberAPI member = mockMember("ship-a");
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
+
+        new ShipLevelScript().advance(0.01f);
+
+        ShipSkillData data = ShipSkillDataManager.get("ship-a");
+        assertEquals(0f, data.getXp());
+    }
+
+    @Test
     void appliesTheLossMultiplierWhenTheFleetWasDefeated() {
         globalMock.when(Global::getCombatEngine).thenReturn(engine);
         when(engine.isSimulation()).thenReturn(false);
         when(engine.isCombatOver()).thenReturn(true);
+        mockEnemyDeploymentPointsDestroyed(engine, 40f);
         FleetMemberAPI member = mockMember("ship-a");
         when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
 
@@ -168,6 +214,7 @@ class ShipLevelScriptTest {
         globalMock.when(Global::getCombatEngine).thenReturn(engine);
         when(engine.isSimulation()).thenReturn(false);
         when(engine.isCombatOver()).thenReturn(true);
+        mockEnemyDeploymentPointsDestroyed(engine, 40f);
         FleetMemberAPI member = mockMember("ship-a");
         when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
 
@@ -184,6 +231,7 @@ class ShipLevelScriptTest {
         globalMock.when(Global::getCombatEngine).thenReturn(engine);
         when(engine.isSimulation()).thenReturn(false);
         when(engine.isCombatOver()).thenReturn(true);
+        mockEnemyDeploymentPointsDestroyed(engine, 40f);
         FleetMemberAPI member = mockMember("ship-a");
         when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
 
@@ -196,6 +244,7 @@ class ShipLevelScriptTest {
         CombatEngineAPI secondEngine = mock(CombatEngineAPI.class);
         when(secondEngine.isSimulation()).thenReturn(false);
         when(secondEngine.isCombatOver()).thenReturn(true);
+        mockEnemyDeploymentPointsDestroyed(secondEngine, 40f);
         globalMock.when(Global::getCombatEngine).thenReturn(secondEngine);
         script.advance(0.01f);
 
