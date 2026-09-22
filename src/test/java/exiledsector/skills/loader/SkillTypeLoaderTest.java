@@ -215,6 +215,34 @@ class SkillTypeLoaderTest {
     }
 
     @Test
+    void missingLockedFieldDefaultsToFalse() throws Exception {
+        JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
+                + "\"id\": \"hull\","
+                + "\"name\": \"Hull\","
+                + "\"icon\": \"a.png\""
+                + "} ] }");
+
+        SkillType hull = SkillTypeLoader.parseSkillTypes(root).get("hull");
+
+        assertFalse(hull.isLocked());
+    }
+
+    @Test
+    void parsesLockedTrue() throws Exception {
+        JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
+                + "\"id\": \"escort_package\","
+                + "\"name\": \"Escort Package\","
+                + "\"icon\": \"a.png\","
+                + "\"vanillaHullMod\": \"escort_package\","
+                + "\"locked\": true"
+                + "} ] }");
+
+        SkillType escortPackage = SkillTypeLoader.parseSkillTypes(root).get("escort_package");
+
+        assertTrue(escortPackage.isLocked());
+    }
+
+    @Test
     void parsesMultipleTypesKeyedById() throws Exception {
         JSONObject root = new JSONObject("{ \"skillTypes\": ["
                 + "{\"id\": \"a\", \"name\": \"A\", \"icon\": \"a.png\"},"

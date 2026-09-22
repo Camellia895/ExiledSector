@@ -18,6 +18,7 @@ public class SkillType {
     private final List<String> optionalOptionIds;
     private final List<String> exclusiveHullModIds;
     private final List<String> exclusiveSkillTypeIds;
+    private final boolean locked;
 
     public SkillType(String id, String displayName, String iconPath,
                       List<SkillTypeEffect> effects, SkillTier tier, String vanillaHullModId,
@@ -52,6 +53,14 @@ public class SkillType {
                       List<SkillTypeEffect> effects, List<HullSizeSkillEffect> hullSizeEffects, SkillTier tier,
                       String vanillaHullModId, String descriptionOverride, String todo, List<String> optionalOptionIds,
                       List<String> exclusiveHullModIds, List<String> exclusiveSkillTypeIds) {
+        this(id, displayName, iconPath, effects, hullSizeEffects, tier,
+                vanillaHullModId, descriptionOverride, todo, optionalOptionIds, exclusiveHullModIds, exclusiveSkillTypeIds, false);
+    }
+
+    public SkillType(String id, String displayName, String iconPath,
+                      List<SkillTypeEffect> effects, List<HullSizeSkillEffect> hullSizeEffects, SkillTier tier,
+                      String vanillaHullModId, String descriptionOverride, String todo, List<String> optionalOptionIds,
+                      List<String> exclusiveHullModIds, List<String> exclusiveSkillTypeIds, boolean locked) {
         this.id = id;
         this.displayName = displayName;
         this.iconPath = iconPath;
@@ -64,6 +73,7 @@ public class SkillType {
         this.optionalOptionIds = optionalOptionIds == null ? Collections.emptyList() : optionalOptionIds;
         this.exclusiveHullModIds = exclusiveHullModIds == null ? Collections.emptyList() : exclusiveHullModIds;
         this.exclusiveSkillTypeIds = exclusiveSkillTypeIds == null ? Collections.emptyList() : exclusiveSkillTypeIds;
+        this.locked = locked;
     }
 
     public String getId() {
@@ -121,5 +131,9 @@ public class SkillType {
 
     public List<String> getExclusiveSkillTypeIds() {
         return exclusiveSkillTypeIds;
+    }
+
+    public boolean isLocked() {
+        return locked;
     }
 }

@@ -3021,7 +3021,7 @@ function openImageEditorModal(){
 
 function openTypeModal(existingType, onSave, onClose){
   var isNew = !existingType;
-  var t = existingType ? deepCopy(existingType) : { id: '', name: '', icon: '', tier: 'NOTABLE', vanillaHullMod: '', description: '', todo: '', tags: [], optionalOptions: [], exclusiveHullMods: [] };
+  var t = existingType ? deepCopy(existingType) : { id: '', name: '', icon: '', tier: 'NOTABLE', vanillaHullMod: '', description: '', todo: '', tags: [], optionalOptions: [], exclusiveHullMods: [], locked: false };
   var effectsDraft = deepCopy(t.effects || []);
   var hullSizeEffectsDraft = deepCopy(t.hullSizeEffects || []);
   var tagsDraft = deepCopy(t.tags || []);
@@ -3034,6 +3034,7 @@ function openTypeModal(existingType, onSave, onClose){
     t.icon = document.getElementById('tIcon').value;
     t.tier = document.getElementById('tTier').value;
     t.vanillaHullMod = document.getElementById('tVanilla').value;
+    t.locked = document.getElementById('tLocked').checked;
     t.exclusiveHullMods = document.getElementById('tExclusiveHullMods').value.split(',').map(function(s){ return s.trim(); }).filter(function(s){ return s; });
     var optSelect = document.getElementById('tOptionalOptions');
     if (optSelect) {
@@ -3067,6 +3068,7 @@ function openTypeModal(existingType, onSave, onClose){
       '<div class="btnRow"><button class="smallBtn" type="button" id="addHsEffectRowBtn">+ Add hull-size effect</button></div>' +
       '<hr class="sep">' +
       '<div class="field"><label>vanillaHullMod id</label><input id="tVanilla" value="' + (t.vanillaHullMod||'') + '"></div>' +
+      '<div class="field"><label><input type="checkbox" id="tLocked"' + (t.locked?' checked':'') + '> Locked (renders as blinking sensor ghosts on the tree, hides its tooltip, and blocks allocation)</label></div>' +
       '<div class="field"><label>Exclusive with hullmod ids (comma-separated)</label><input id="tExclusiveHullMods" value="' + ((t.exclusiveHullMods||[]).join(', ')) + '"></div>' +
       '<div class="hint">If the ship already has any of these vanilla hullmods installed, this node cannot be allocated. vanillaHullMod above is always implicitly included here too, no need to repeat it.</div>' +
       '<hr class="sep">' +
@@ -3149,6 +3151,7 @@ function openTypeModal(existingType, onSave, onClose){
         effects: effectsDraft,
         hullSizeEffects: hullSizeEffectsDraft,
         vanillaHullMod: (t.vanillaHullMod||'').trim(),
+        locked: !!t.locked,
         exclusiveHullMods: t.exclusiveHullMods || [],
         optionalOptions: t.optionalOptions || [],
         description: (t.description||'').trim(),
@@ -3196,6 +3199,7 @@ function serializeType(t){
   if (t.effects && t.effects.length) out.effects = t.effects.map(function(e){ return { effect: e.effect, magnitude: e.magnitude }; });
   if (t.hullSizeEffects && t.hullSizeEffects.length) out.hullSizeEffects = t.hullSizeEffects.map(function(e){ return { effect: e.effect, frigate: e.frigate, destroyer: e.destroyer, cruiser: e.cruiser, capitalShip: e.capitalShip }; });
   if (t.vanillaHullMod) out.vanillaHullMod = t.vanillaHullMod;
+  if (t.locked) out.locked = true;
   if (t.exclusiveHullMods && t.exclusiveHullMods.length) out.exclusiveHullMods = t.exclusiveHullMods;
   if (t.optionalOptions && t.optionalOptions.length) out.optionalOptions = t.optionalOptions;
   if (t.description) out.description = t.description;

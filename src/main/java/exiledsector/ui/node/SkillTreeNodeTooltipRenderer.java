@@ -29,6 +29,8 @@ final class SkillTreeNodeTooltipRenderer {
 
     private static final String OPTIONAL_NODE_HINT = "Click to choose an option.";
     private static final String FREE_NODE_NOTE = "Granted free by a level-up.";
+    private static final String LOCKED_NODE_TITLE = "Unidentified";
+    private static final String LOCKED_NODE_BODY = "Unidentified - explore the sector to discover this node";
 
     private final FleetMemberAPI member;
     private final SkillTreePanelStyle style;
@@ -57,7 +59,7 @@ final class SkillTreeNodeTooltipRenderer {
                 && effectiveType.getDescriptionOverride() == null;
 
         SkillTreePanelStyle.TooltipText title = tooltipTitles.computeIfAbsent(node.getId(),
-                id -> buildTooltipText(font, effectiveType.getDisplayName(), TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR));
+                id -> buildTooltipText(font, titleText(node, effectiveType), TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR));
         SkillTreePanelStyle.TooltipText body = tooltipBodies.computeIfAbsent(node.getId(),
                 id -> buildTooltipText(font, bodyText(node, effectiveType, showOptionalHint, data), TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR));
 
@@ -92,7 +94,13 @@ final class SkillTreeNodeTooltipRenderer {
         body.drawable.draw(boxX + TOOLTIP_PADDING, bodyY);
     }
 
+    private String titleText(SkillNode node, SkillType effectiveType) {
+        return node.getType().isLocked() ? LOCKED_NODE_TITLE : effectiveType.getDisplayName();
+    }
+
     private String bodyText(SkillNode node, SkillType effectiveType, boolean showOptionalHint, ShipSkillData data) {
+        if (node.getType().isLocked()) return LOCKED_NODE_BODY;
+
         String text = showOptionalHint ? OPTIONAL_NODE_HINT : SkillNode.describeType(effectiveType, member.getHullSpec().getHullSize());
         if (data.isFreeNode(node.getId())) {
             text = text.isEmpty() ? FREE_NODE_NOTE : text + "\n\n" + FREE_NODE_NOTE;

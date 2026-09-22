@@ -40,6 +40,7 @@ public final class SkillTreeNodeRenderer {
 
     private final SkillTreeNodeRingRenderer ringRenderer;
     private final SkillTreeNodeIconRenderer iconRenderer;
+    private final SkillTreeNodeGhostRenderer ghostRenderer;
     private final SkillTreeNodeConnectorRenderer connectorRenderer;
     private final SkillTreeNodeTooltipRenderer tooltipRenderer;
     private final SkillTreeNodeDropdownRenderer dropdownRenderer;
@@ -54,6 +55,7 @@ public final class SkillTreeNodeRenderer {
 
         this.ringRenderer = new SkillTreeNodeRingRenderer(style);
         this.iconRenderer = new SkillTreeNodeIconRenderer();
+        this.ghostRenderer = new SkillTreeNodeGhostRenderer();
         this.connectorRenderer = new SkillTreeNodeConnectorRenderer(style);
         this.tooltipRenderer = new SkillTreeNodeTooltipRenderer(member, style);
         this.dropdownRenderer = new SkillTreeNodeDropdownRenderer(style);
@@ -87,6 +89,7 @@ public final class SkillTreeNodeRenderer {
 
     public void advance(float amount) {
         ringRenderer.advance(amount);
+        ghostRenderer.advance(amount);
     }
 
     public void render(float centerX, float centerY, float zoom, float alphaMult, float mouseX, float mouseY, boolean mouseKnown) {
@@ -105,6 +108,11 @@ public final class SkillTreeNodeRenderer {
             SkillType effectiveType = node.resolveEffectiveType(data);
             float footprintSize = NODE_SIZE * zoom * tier.getSizeMultiplier();
             float iconSize = footprintSize * ICON_INSET_RATIO;
+
+            if (node.getType().isLocked()) {
+                ghostRenderer.draw(nodeX, nodeY, footprintSize, alphaMult, node.getId());
+                continue;
+            }
 
             ringRenderer.draw(nodeX, nodeY, footprintSize, alphaMult, allocated, breathing, zoom, node);
 
@@ -269,6 +277,10 @@ public final class SkillTreeNodeRenderer {
     }
 
     private String blockAllocationReason(SkillType type) {
+        if (type.isLocked()) {
+            return "Unidentified - explore the sector to discover this node.";
+        }
+
         List<String> exclusiveHullModIds = type.getExclusiveHullModIds();
         if (!exclusiveHullModIds.isEmpty()) {
             member.setStatUpdateNeeded(true);
