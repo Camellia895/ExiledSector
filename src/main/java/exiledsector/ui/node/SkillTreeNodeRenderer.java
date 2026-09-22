@@ -8,6 +8,7 @@ import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedSkillEffects;
 import exiledsector.skills.HullSizeSkillEffect;
+import exiledsector.skills.ShipLevelConfig;
 import exiledsector.skills.ShipOpBudget;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTechLevel;
@@ -100,7 +101,7 @@ public final class SkillTreeNodeRenderer {
             float nodeX = centerX + node.getOffsetX() * zoom;
             float nodeY = centerY - node.getOffsetY() * zoom;
             boolean allocated = data.isAllocated(node.getId());
-            boolean breathing = !allocated && data.canAllocate(node, satisfiedRootId, totalOpBudget, opCostFor(node));
+            boolean breathing = !allocated && data.canAllocate(node, satisfiedRootId, totalOpBudget, opCostFor(node), ShipLevelConfig.maxAllocatedNodes());
             SkillType effectiveType = node.resolveEffectiveType(data);
             float footprintSize = NODE_SIZE * zoom * tier.getSizeMultiplier();
             float iconSize = footprintSize * ICON_INSET_RATIO;
@@ -126,7 +127,7 @@ public final class SkillTreeNodeRenderer {
             float nodeY = centerY - node.getOffsetY() * zoom;
             boolean isActiveRoot = activeRoot != null && node.getId().equals(activeRoot.getId());
             boolean allocated = data.isAllocated(node.getId());
-            boolean breathing = !allocated && data.canAllocate(node, satisfiedRootId, totalOpBudget, opCostFor(node));
+            boolean breathing = !allocated && data.canAllocate(node, satisfiedRootId, totalOpBudget, opCostFor(node), ShipLevelConfig.maxAllocatedNodes());
             float footprintSize = NODE_SIZE * zoom * SkillTier.ROOT.getSizeMultiplier();
             ringRenderer.draw(nodeX, nodeY, footprintSize, alphaMult, allocated, breathing, zoom, node);
 
@@ -181,7 +182,7 @@ public final class SkillTreeNodeRenderer {
         int opCost = opCostFor(node);
 
         if (!wasAllocated && isOptional) {
-            if (!data.canAllocate(node, satisfiedRootId(), totalOpBudgetForNodes(), opCost)) {
+            if (!data.canAllocate(node, satisfiedRootId(), totalOpBudgetForNodes(), opCost, ShipLevelConfig.maxAllocatedNodes())) {
                 return;
             }
             SkillType repeated = ctrlDown ? repeatableOptionFor(node) : null;
@@ -210,7 +211,7 @@ public final class SkillTreeNodeRenderer {
             return;
         }
 
-        data.toggle(node, SkillTree.getAllNodes().values(), satisfiedRootId(), totalOpBudgetForNodes(), opCost);
+        data.toggle(node, SkillTree.getAllNodes().values(), satisfiedRootId(), totalOpBudgetForNodes(), opCost, ShipLevelConfig.maxAllocatedNodes());
         boolean isAllocatedNow = data.isAllocated(node.getId());
         if (isAllocatedNow != wasAllocated) {
             refreshAfterAllocationChange(node, isAllocatedNow);

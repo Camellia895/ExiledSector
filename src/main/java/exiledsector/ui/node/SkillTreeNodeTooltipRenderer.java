@@ -28,6 +28,7 @@ final class SkillTreeNodeTooltipRenderer {
     private static final Color TOOLTIP_TITLE_COLOR = Color.WHITE;
 
     private static final String OPTIONAL_NODE_HINT = "Click to choose an option.";
+    private static final String FREE_NODE_NOTE = "Granted free by a level-up.";
 
     private final FleetMemberAPI member;
     private final SkillTreePanelStyle style;
@@ -58,9 +59,7 @@ final class SkillTreeNodeTooltipRenderer {
         SkillTreePanelStyle.TooltipText title = tooltipTitles.computeIfAbsent(node.getId(),
                 id -> buildTooltipText(font, effectiveType.getDisplayName(), TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR));
         SkillTreePanelStyle.TooltipText body = tooltipBodies.computeIfAbsent(node.getId(),
-                id -> buildTooltipText(font,
-                        showOptionalHint ? OPTIONAL_NODE_HINT : SkillNode.describeType(effectiveType, member.getHullSpec().getHullSize()),
-                        TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR));
+                id -> buildTooltipText(font, bodyText(node, effectiveType, showOptionalHint, data), TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR));
 
         drawTooltipBox(title, body, mouseX, mouseY, alphaMult);
     }
@@ -91,6 +90,14 @@ final class SkillTreeNodeTooltipRenderer {
         title.drawable.draw(titleX, titleY);
         title.drawable.draw(titleX + TOOLTIP_TITLE_BOLD_OFFSET, titleY);
         body.drawable.draw(boxX + TOOLTIP_PADDING, bodyY);
+    }
+
+    private String bodyText(SkillNode node, SkillType effectiveType, boolean showOptionalHint, ShipSkillData data) {
+        String text = showOptionalHint ? OPTIONAL_NODE_HINT : SkillNode.describeType(effectiveType, member.getHullSpec().getHullSize());
+        if (data.isFreeNode(node.getId())) {
+            text = text.isEmpty() ? FREE_NODE_NOTE : text + "\n\n" + FREE_NODE_NOTE;
+        }
+        return text;
     }
 
     private SkillTreePanelStyle.TooltipText buildTooltipText(LazyFont font, String rawText, float fontSize, Color color) {

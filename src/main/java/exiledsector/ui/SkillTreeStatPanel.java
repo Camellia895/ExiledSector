@@ -6,8 +6,10 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
+import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedSkillEffects;
 import exiledsector.skills.ShipOpBudget;
+import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.skilleffect.ShieldSkillEffect;
 import exiledsector.ui.util.BorderedPanel;
 import org.apache.log4j.Logger;
@@ -219,6 +221,11 @@ final class SkillTreeStatPanel {
             logistics.add(new StatLine("Ordnance Points", budget.used + "/" + budget.total));
         } catch (RuntimeException e) {
             Logger.getLogger(SkillTreeStatPanel.class).error("Failed to compute ordnance point stats", e);
+        }
+        ShipSkillData skillData = ShipSkillDataManager.get(member.getId());
+        logistics.add(new StatLine("Level", skillData.getLevel() + " (" + Math.round(skillData.getXp()) + " XP)"));
+        if (skillData.getBankedFreeAllocations() > 0) {
+            logistics.add(new StatLine("Free Allocations Banked", String.valueOf(skillData.getBankedFreeAllocations())));
         }
         addStat(logistics, "Max Combat Readiness", stats.getMaxCombatReadiness().getModifiedValue() * 100f, "%");
         addComparedStatLowerIsBetter(logistics, "Supplies/mo", stats.getSuppliesPerMonth().getModifiedValue(), stats.getSuppliesPerMonth().getBaseValue());

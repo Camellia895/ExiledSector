@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ShipSkillDataTest {
 
     private static final int AMPLE_BUDGET = 100;
+    private static final int AMPLE_NODE_CAP = 1000;
 
     @BeforeEach
     void setUp() {
@@ -89,14 +90,14 @@ class ShipSkillDataTest {
     void canAllocateIsTrueWhenThereAreNoPrerequisites() {
         ShipSkillData data = new ShipSkillData();
 
-        assertTrue(data.canAllocate(node("root", List.of()), null, AMPLE_BUDGET, 1));
+        assertTrue(data.canAllocate(node("root", List.of()), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP));
     }
 
     @Test
     void canAllocateIsFalseWhenAPrerequisiteIsNotAllocated() {
         ShipSkillData data = new ShipSkillData();
 
-        assertFalse(data.canAllocate(node("child", List.of("parent")), null, AMPLE_BUDGET, 1));
+        assertFalse(data.canAllocate(node("child", List.of("parent")), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP));
     }
 
     @Test
@@ -105,14 +106,14 @@ class ShipSkillDataTest {
         SkillNode parent = node("parent", List.of());
         data.allocate(parent, 1);
 
-        assertTrue(data.canAllocate(node("child", List.of("parent")), null, AMPLE_BUDGET, 1));
+        assertTrue(data.canAllocate(node("child", List.of("parent")), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP));
     }
 
     @Test
     void canAllocateIsFalseWithMultiplePrerequisitesWhenNoneAreAllocated() {
         ShipSkillData data = new ShipSkillData();
 
-        assertFalse(data.canAllocate(node("child", List.of("b", "c")), null, AMPLE_BUDGET, 1));
+        assertFalse(data.canAllocate(node("child", List.of("b", "c")), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP));
     }
 
     @Test
@@ -121,7 +122,7 @@ class ShipSkillDataTest {
         SkillNode b = node("b", List.of());
         data.allocate(b, 1);
 
-        assertTrue(data.canAllocate(node("a", List.of("b", "c")), null, AMPLE_BUDGET, 1));
+        assertTrue(data.canAllocate(node("a", List.of("b", "c")), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP));
     }
 
     @Test
@@ -132,7 +133,7 @@ class ShipSkillDataTest {
         data.allocate(b, 1);
         data.allocate(c, 1);
 
-        assertTrue(data.canAllocate(node("a", List.of("b", "c")), null, AMPLE_BUDGET, 1));
+        assertTrue(data.canAllocate(node("a", List.of("b", "c")), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP));
     }
 
     @Test
@@ -141,7 +142,7 @@ class ShipSkillDataTest {
         SkillNode a = node("a", List.of());
         data.allocate(a, 1);
 
-        assertTrue(data.canAllocate(node("b", List.of()), null, 2, 1));
+        assertTrue(data.canAllocate(node("b", List.of()), null, 2, 1, AMPLE_NODE_CAP));
     }
 
     @Test
@@ -150,7 +151,7 @@ class ShipSkillDataTest {
         SkillNode a = node("a", List.of());
         data.allocate(a, 1);
 
-        assertFalse(data.canAllocate(node("b", List.of()), null, 1, 1));
+        assertFalse(data.canAllocate(node("b", List.of()), null, 1, 1, AMPLE_NODE_CAP));
     }
 
     @Test
@@ -159,7 +160,7 @@ class ShipSkillDataTest {
         SkillNode a = node("a", List.of());
         data.allocate(a, 1);
 
-        assertTrue(data.canAllocate(rootNode("root_low_tech_1", List.of()), null, 1, 0));
+        assertTrue(data.canAllocate(rootNode("root_low_tech_1", List.of()), null, 1, 0, AMPLE_NODE_CAP));
     }
 
     @Test
@@ -212,7 +213,7 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode root = node("root", List.of());
 
-        data.toggle(root, List.of(root), null, AMPLE_BUDGET, 1);
+        data.toggle(root, List.of(root), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP);
 
         assertTrue(data.isAllocated("root"));
     }
@@ -223,7 +224,7 @@ class ShipSkillDataTest {
         SkillNode parent = node("parent", List.of());
         SkillNode child = node("child", List.of("parent"));
 
-        data.toggle(child, List.of(parent, child), null, AMPLE_BUDGET, 1);
+        data.toggle(child, List.of(parent, child), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP);
 
         assertFalse(data.isAllocated("child"));
     }
@@ -235,7 +236,7 @@ class ShipSkillDataTest {
         SkillNode b = node("b", List.of());
         data.allocate(a, 1);
 
-        data.toggle(b, List.of(a, b), null, 1, 1);
+        data.toggle(b, List.of(a, b), null, 1, 1, AMPLE_NODE_CAP);
 
         assertFalse(data.isAllocated("b"));
     }
@@ -246,7 +247,7 @@ class ShipSkillDataTest {
         SkillNode root = node("root", List.of());
         data.allocate(root, 1);
 
-        data.toggle(root, List.of(root), null, AMPLE_BUDGET, 1);
+        data.toggle(root, List.of(root), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP);
 
         assertFalse(data.isAllocated("root"));
     }
@@ -259,7 +260,7 @@ class ShipSkillDataTest {
         data.allocate(parent, 1);
         data.allocate(child, 1);
 
-        data.toggle(parent, List.of(parent, child), null, AMPLE_BUDGET, 1);
+        data.toggle(parent, List.of(parent, child), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP);
 
         assertTrue(data.isAllocated("parent"));
     }
@@ -291,7 +292,7 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode child = node("hull_1", List.of("root_low_tech_1"));
 
-        assertTrue(data.canAllocate(child, "root_low_tech_1", AMPLE_BUDGET, 1));
+        assertTrue(data.canAllocate(child, "root_low_tech_1", AMPLE_BUDGET, 1, AMPLE_NODE_CAP));
     }
 
     @Test
@@ -299,7 +300,7 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode child = node("hull_1", List.of("root_midline_1"));
 
-        assertFalse(data.canAllocate(child, "root_low_tech_1", AMPLE_BUDGET, 1));
+        assertFalse(data.canAllocate(child, "root_low_tech_1", AMPLE_BUDGET, 1, AMPLE_NODE_CAP));
     }
 
     @Test
@@ -458,7 +459,7 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         String satisfiedRootId = "root_high_tech_1";
         for (SkillNode n : List.of(n10, n7, n5, n25, n9, n13, n14, rootLowTech, n11, n12, n8, n6, n3)) {
-            assertTrue(data.canAllocate(n, satisfiedRootId, AMPLE_BUDGET, 1), "expected to be able to allocate " + n.getId());
+            assertTrue(data.canAllocate(n, satisfiedRootId, AMPLE_BUDGET, 1, AMPLE_NODE_CAP), "expected to be able to allocate " + n.getId());
             data.allocate(n, 1);
         }
 
@@ -536,7 +537,7 @@ class ShipSkillDataTest {
         SkillTree.registerType(chosenOption);
         data.selectOption(slot, chosenOption, 1);
 
-        data.toggle(slot, List.of(slot), null, AMPLE_BUDGET, 1);
+        data.toggle(slot, List.of(slot), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP);
 
         assertFalse(data.isAllocated("slot_1"));
         assertNull(data.getOptionalSelection("slot_1"));
@@ -570,5 +571,128 @@ class ShipSkillDataTest {
         data.selectOption(slot, hullOption, 1);
 
         assertEquals(1, data.getSpentOp());
+    }
+
+    @Test
+    void startsAtLevelZeroWithNoXpOrBankedAllocations() {
+        ShipSkillData data = new ShipSkillData();
+
+        assertEquals(0, data.getLevel());
+        assertEquals(0f, data.getXp());
+        assertEquals(0, data.getBankedFreeAllocations());
+    }
+
+    @Test
+    void convertMostRecentAllocationToFreeMarksTheLastAllocatedNodeFreeAndRefundsItsOp() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode a = node("a", List.of());
+        SkillNode b = node("b", List.of());
+        data.allocate(a, 3);
+        data.allocate(b, 3);
+
+        boolean converted = data.convertMostRecentAllocationToFree(List.of(a, b), 3);
+
+        assertTrue(converted);
+        assertTrue(data.isFreeNode("b"));
+        assertFalse(data.isFreeNode("a"));
+        assertEquals(3, data.getSpentOp());
+    }
+
+    @Test
+    void convertMostRecentAllocationToFreeSkipsRootNodes() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode a = node("a", List.of());
+        SkillNode root = rootNode("root_low_tech_1", List.of());
+        data.allocate(a, 3);
+        data.allocate(root, 0);
+
+        boolean converted = data.convertMostRecentAllocationToFree(List.of(a, root), 3);
+
+        assertTrue(converted);
+        assertTrue(data.isFreeNode("a"));
+        assertFalse(data.isFreeNode("root_low_tech_1"));
+        assertEquals(0, data.getSpentOp());
+    }
+
+    @Test
+    void convertMostRecentAllocationToFreeSkipsNodesAlreadyFree() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode a = node("a", List.of());
+        SkillNode b = node("b", List.of());
+        data.allocate(a, 3);
+        data.allocate(b, 3);
+        data.convertMostRecentAllocationToFree(List.of(a, b), 3);
+
+        boolean convertedAgain = data.convertMostRecentAllocationToFree(List.of(a, b), 3);
+
+        assertTrue(convertedAgain);
+        assertTrue(data.isFreeNode("a"));
+        assertEquals(0, data.getSpentOp());
+    }
+
+    @Test
+    void convertMostRecentAllocationToFreeReturnsFalseWhenNothingIsEligible() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode root = rootNode("root_low_tech_1", List.of());
+        data.allocate(root, 0);
+
+        assertFalse(data.convertMostRecentAllocationToFree(List.of(root), 3));
+    }
+
+    @Test
+    void allocateConsumesABankedFreeAllocationInsteadOfSpendingOp() {
+        ShipSkillData data = new ShipSkillData();
+        data.addFreeAllocationCredit();
+        SkillNode a = node("a", List.of());
+
+        data.allocate(a, 3);
+
+        assertTrue(data.isFreeNode("a"));
+        assertEquals(0, data.getBankedFreeAllocations());
+        assertEquals(0, data.getSpentOp());
+    }
+
+    @Test
+    void allocateDoesNotConsumeABankedCreditForAZeroCostNode() {
+        ShipSkillData data = new ShipSkillData();
+        data.addFreeAllocationCredit();
+        SkillNode root = rootNode("root_low_tech_1", List.of());
+
+        data.allocate(root, 0);
+
+        assertFalse(data.isFreeNode("root_low_tech_1"));
+        assertEquals(1, data.getBankedFreeAllocations());
+    }
+
+    @Test
+    void deallocatingAFreeNodeRefundsTheBankedCreditInsteadOfOp() {
+        ShipSkillData data = new ShipSkillData();
+        data.addFreeAllocationCredit();
+        SkillNode a = node("a", List.of());
+        data.allocate(a, 3);
+
+        data.deallocate(a, 3);
+
+        assertFalse(data.isAllocated("a"));
+        assertEquals(1, data.getBankedFreeAllocations());
+        assertEquals(0, data.getSpentOp());
+    }
+
+    @Test
+    void canAllocateIsFalseOnceTheNodeCapIsReached() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode a = node("a", List.of());
+        data.allocate(a, 1);
+
+        assertFalse(data.canAllocate(node("b", List.of()), null, AMPLE_BUDGET, 1, 1));
+    }
+
+    @Test
+    void canAllocateIsTrueBelowTheNodeCap() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode a = node("a", List.of());
+        data.allocate(a, 1);
+
+        assertTrue(data.canAllocate(node("b", List.of()), null, AMPLE_BUDGET, 1, 2));
     }
 }
