@@ -111,7 +111,7 @@
 		{
 			"id": "beam_damage",
 			"name": "Beam Weapon Damage",
-			"icon": "graphics/icons/beam_damage_circular.png",
+			"icon": "graphics/icons/circular/beam_damage_circular.png",
 			"cost": 1,
 			"effects": [
 				{
@@ -1595,7 +1595,7 @@
 		{
 			"id": "cargo_capacity_flat",
 			"name": "Cargo Capacity",
-			"icon": "graphics/icons/cargo_circular.png",
+			"icon": "graphics/icons/circular/cargo_circular.png",
 			"cost": 1,
 			"hullSizeEffects": [
 				{
@@ -1631,7 +1631,7 @@
 		{
 			"id": "shield_arc",
 			"name": "Shield Arc",
-			"icon": "graphics/icons/Shield_icon_2_circle.png",
+			"icon": "graphics/icons/circular/Shield_icon_2_circle.png",
 			"cost": 1,
 			"effects": [
 				{
@@ -1760,7 +1760,7 @@
 		{
 			"id": "top_speed",
 			"name": "Top Speed",
-			"icon": "graphics/icons/top_speed_circular.png",
+			"icon": "graphics/icons/circular/top_speed_circular.png",
 			"cost": 1,
 			"hullSizeEffects": [
 				{
@@ -1860,7 +1860,7 @@
 		{
 			"id": "weapon_durability",
 			"name": "Weapon Durability",
-			"icon": "graphics/icons/weapon_durability_circular_blue.png",
+			"icon": "graphics/icons/circular/weapon_durability_circular_blue.png",
 			"cost": 1,
 			"effects": [
 				{
@@ -1892,7 +1892,7 @@
 		{
 			"id": "maneuverability_percent",
 			"name": "Maneuverability",
-			"icon": "graphics/icons/acceleration_blue.png",
+			"icon": "graphics/icons/circular/acceleration_blue.png",
 			"cost": 1,
 			"effects": [
 				{
@@ -1907,7 +1907,7 @@
 		{
 			"id": "acceleration_percent",
 			"name": "Acceleration",
-			"icon": "graphics/icons/blastoff_blue.png",
+			"icon": "graphics/icons/circular/blastoff_blue.png",
 			"cost": 1,
 			"effects": [
 				{
@@ -1922,7 +1922,7 @@
 		{
 			"id": "turn_acceleration_percent",
 			"name": "Turn speed",
-			"icon": "graphics/icons/maneuverability_blue.png",
+			"icon": "graphics/icons/circular/maneuverability_blue.png",
 			"cost": 1,
 			"effects": [
 				{
@@ -1937,7 +1937,7 @@
 		{
 			"id": "fighter_replacement",
 			"name": "Fighter Replacement",
-			"icon": "graphics/icons/fighters2_blue.png",
+			"icon": "graphics/icons/circular/fighters2_blue.png",
 			"cost": 1,
 			"effects": [
 				{
@@ -1956,7 +1956,7 @@
 		{
 			"id": "reduced_monthly_supplies",
 			"name": "Reduced Monthly Supplies",
-			"icon": "graphics/icons/industrial_planning_blue_blue.png",
+			"icon": "graphics/icons/circular/industrial_planning_blue_blue.png",
 			"cost": 1,
 			"effects": [
 				{
@@ -1971,7 +1971,7 @@
 		{
 			"id": "rationing",
 			"name": "Rationing",
-			"icon": "graphics/icons/salvaging_blue_blue.png",
+			"icon": "graphics/icons/circular/salvaging_blue_blue.png",
 			"cost": 1,
 			"tier": "NOTABLE",
 			"effects": [
