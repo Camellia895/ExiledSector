@@ -154,11 +154,6 @@ public final class SkillTreePanelStyle {
                 LazyFont.TextAlignment.LEFT, LazyFont.TextAnchor.TOP_LEFT);
     }
 
-    public static TooltipText buildJoinedTextRightAligned(LazyFont font, List<String> lines, float fontSize, Color color) {
-        return buildMeasuredText(font, String.join("\n", lines), fontSize, color,
-                LazyFont.TextAlignment.RIGHT, LazyFont.TextAnchor.TOP_RIGHT);
-    }
-
     private static TooltipText buildMeasuredText(LazyFont font, String text, float fontSize, Color color,
                                                    LazyFont.TextAlignment alignment, LazyFont.TextAnchor anchor) {
         String[] lines = text.split("\n", -1);

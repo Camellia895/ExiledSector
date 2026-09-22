@@ -37,12 +37,16 @@ final class SkillTreeStatPanel {
     private static final Color STAT_PANEL_LABEL_COLOR = new Color(0xCB, 0xF5, 0xFF);
     private static final Color STAT_PANEL_VALUE_COLOR = new Color(0xFF, 0xD2, 0x00);
     private static final Color STAT_PANEL_HEADER_TEXT_COLOR = new Color(0xCB, 0xF5, 0xFF);
+    private static final Color STAT_DECREASED_COLOR = new Color(0xFC, 0x63, 0x00);
+    private static final Color STAT_INCREASED_COLOR = new Color(0x98, 0xFB, 0x00);
+    private static final float STAT_COMPARISON_EPSILON = 0.001f;
 
     private final FleetMemberAPI member;
     private final BorderedPanel borderedPanel = new BorderedPanel(SkillTreeStatPanel.class);
     private final Map<String, List<StatLine>> lastStatGroupLines = new HashMap<>();
     private final Map<String, SkillTreePanelStyle.TooltipText> statGroupLabelText = new HashMap<>();
-    private final Map<String, SkillTreePanelStyle.TooltipText> statGroupValueText = new HashMap<>();
+    private final Map<String, List<LazyFont.DrawableString>> statGroupValueLines = new HashMap<>();
+    private final Map<String, Float> statGroupValueWidth = new HashMap<>();
     private final Map<String, LazyFont.DrawableString> statGroupHeaderText = new HashMap<>();
     private LazyFont statFont;
     private boolean fontLoadFailed = false;
@@ -55,6 +59,8 @@ final class SkillTreeStatPanel {
         LazyFont font = getFont();
         if (font == null) return;
 
+        float rowStep = STAT_PANEL_FONT_SIZE * FONT_LINE_HEIGHT_FACTOR;
+
         for (StatGroupLayout layout : layoutStatGroups(position, font)) {
             borderedPanel.draw(layout.x, layout.y, layout.width, layout.height, alphaMult);
 
@@ -62,7 +68,12 @@ final class SkillTreeStatPanel {
             headerText.draw(layout.x + layout.width / 2f, layout.headerTextY);
 
             layout.labelText.drawable.draw(layout.x + STAT_PANEL_PADDING, layout.bodyTextY);
-            layout.valueText.drawable.draw(layout.x + layout.width - STAT_PANEL_PADDING, layout.bodyTextY);
+
+            float rowY = layout.bodyTextY;
+            for (LazyFont.DrawableString valueLine : layout.valueLines) {
+                valueLine.draw(layout.x + layout.width - STAT_PANEL_PADDING, rowY);
+                rowY -= rowStep;
+            }
         }
     }
 
@@ -77,17 +88,18 @@ final class SkillTreeStatPanel {
     private List<StatGroupLayout> layoutStatGroups(PositionAPI position, LazyFont font) {
         List<StatGroup> groups = buildStatGroups(member);
         List<SkillTreePanelStyle.TooltipText> labelTexts = new ArrayList<>();
-        List<SkillTreePanelStyle.TooltipText> valueTexts = new ArrayList<>();
+        List<List<LazyFont.DrawableString>> valueLinesList = new ArrayList<>();
         float headerHeight = STAT_PANEL_HEADER_FONT_SIZE * FONT_LINE_HEIGHT_FACTOR;
         float boxWidth = 0f;
 
         for (StatGroup group : groups) {
             SkillTreePanelStyle.TooltipText labelText = getOrBuildLabelText(font, group);
-            SkillTreePanelStyle.TooltipText valueText = getOrBuildValueText(font, group);
+            List<LazyFont.DrawableString> valueLines = getOrBuildValueLines(font, group);
+            float valueWidth = getValueWidth(font, group);
             labelTexts.add(labelText);
-            valueTexts.add(valueText);
+            valueLinesList.add(valueLines);
             float headerMinWidth = font.calcWidth(group.name, STAT_PANEL_HEADER_FONT_SIZE) + STAT_PANEL_PADDING * 2f;
-            float bodyWidth = labelText.width + STAT_PANEL_COLUMN_GAP + valueText.width + STAT_PANEL_PADDING * 2f;
+            float bodyWidth = labelText.width + STAT_PANEL_COLUMN_GAP + valueWidth + STAT_PANEL_PADDING * 2f;
             boxWidth = Math.max(boxWidth, Math.max(headerMinWidth, bodyWidth));
         }
 
@@ -97,8 +109,8 @@ final class SkillTreeStatPanel {
         for (int i = 0; i < groups.size(); i++) {
             StatGroup group = groups.get(i);
             SkillTreePanelStyle.TooltipText labelText = labelTexts.get(i);
-            SkillTreePanelStyle.TooltipText valueText = valueTexts.get(i);
-            float contentHeight = Math.max(labelText.height, valueText.height);
+            List<LazyFont.DrawableString> valueLines = valueLinesList.get(i);
+            float contentHeight = labelText.height;
             float boxHeight = STAT_PANEL_PADDING * 2f + headerHeight + STAT_PANEL_HEADER_GAP + contentHeight;
             float boxX = position.getX() + position.getWidth() - boxWidth - STAT_PANEL_MARGIN;
             float boxY = currentTop - boxHeight;
@@ -107,7 +119,7 @@ final class SkillTreeStatPanel {
             float bodyTextY = headerTextY - headerHeight - STAT_PANEL_HEADER_GAP;
 
             layouts.add(new StatGroupLayout(group.name, boxX, boxY, boxWidth, boxHeight,
-                    labelText, valueText, headerTextY, bodyTextY));
+                    labelText, valueLines, headerTextY, bodyTextY));
 
             currentTop = boxY - STAT_PANEL_GROUP_GAP;
         }
@@ -125,9 +137,14 @@ final class SkillTreeStatPanel {
         return statGroupLabelText.get(group.name);
     }
 
-    private SkillTreePanelStyle.TooltipText getOrBuildValueText(LazyFont font, StatGroup group) {
+    private List<LazyFont.DrawableString> getOrBuildValueLines(LazyFont font, StatGroup group) {
         refreshStatGroupTextIfChanged(font, group);
-        return statGroupValueText.get(group.name);
+        return statGroupValueLines.get(group.name);
+    }
+
+    private float getValueWidth(LazyFont font, StatGroup group) {
+        refreshStatGroupTextIfChanged(font, group);
+        return statGroupValueWidth.get(group.name);
     }
 
     private void refreshStatGroupTextIfChanged(LazyFont font, StatGroup group) {
@@ -136,13 +153,16 @@ final class SkillTreeStatPanel {
 
         lastStatGroupLines.put(group.name, group.statLines);
         List<String> labels = new ArrayList<>();
-        List<String> values = new ArrayList<>();
+        List<LazyFont.DrawableString> valueLines = new ArrayList<>();
+        float valueWidth = 0f;
         for (StatLine line : group.statLines) {
             labels.add(line.label);
-            values.add(line.value);
+            valueLines.add(SkillTreePanelStyle.buildSimpleText(font, line.value, STAT_PANEL_FONT_SIZE, line.valueColor, LazyFont.TextAnchor.TOP_RIGHT));
+            valueWidth = Math.max(valueWidth, font.calcWidth(line.value, STAT_PANEL_FONT_SIZE));
         }
         statGroupLabelText.put(group.name, SkillTreePanelStyle.buildJoinedText(font, labels, STAT_PANEL_FONT_SIZE, STAT_PANEL_LABEL_COLOR));
-        statGroupValueText.put(group.name, SkillTreePanelStyle.buildJoinedTextRightAligned(font, values, STAT_PANEL_FONT_SIZE, STAT_PANEL_VALUE_COLOR));
+        statGroupValueLines.put(group.name, valueLines);
+        statGroupValueWidth.put(group.name, valueWidth);
     }
 
     private List<StatGroup> buildStatGroups(FleetMemberAPI member) {
@@ -151,16 +171,16 @@ final class SkillTreeStatPanel {
         ShipHullSpecAPI hullSpec = member.getHullSpec();
 
         List<StatLine> general = new ArrayList<>();
-        addStat(general, "Hull Points", stats.getHullBonus().computeEffective(hullSpec.getHitpoints()));
-        addStat(general, "Armor Rating", stats.getArmorBonus().computeEffective(hullSpec.getArmorRating()));
-        addStat(general, "Max Flux", stats.getFluxCapacity().getModifiedValue());
-        addStat(general, "Flux Dissipation", stats.getFluxDissipation().getModifiedValue());
+        addComparedStat(general, "Hull Points", stats.getHullBonus().computeEffective(hullSpec.getHitpoints()), hullSpec.getHitpoints());
+        addComparedStat(general, "Armor Rating", stats.getArmorBonus().computeEffective(hullSpec.getArmorRating()), hullSpec.getArmorRating());
+        addComparedStat(general, "Max Flux", stats.getFluxCapacity().getModifiedValue(), stats.getFluxCapacity().getBaseValue());
+        addComparedStat(general, "Flux Dissipation", stats.getFluxDissipation().getModifiedValue(), stats.getFluxDissipation().getBaseValue());
         groups.add(new StatGroup("General", general));
 
         List<StatLine> mobility = new ArrayList<>();
-        addStat(mobility, "Top Speed", stats.getMaxSpeed().getModifiedValue());
-        addStat(mobility, "Max Turn Rate", stats.getMaxTurnRate().getModifiedValue());
-        addStat(mobility, "Acceleration", stats.getAcceleration().getModifiedValue());
+        addComparedStat(mobility, "Top Speed", stats.getMaxSpeed().getModifiedValue(), stats.getMaxSpeed().getBaseValue());
+        addComparedStat(mobility, "Max Turn Rate", stats.getMaxTurnRate().getModifiedValue(), stats.getMaxTurnRate().getBaseValue());
+        addComparedStat(mobility, "Acceleration", stats.getAcceleration().getModifiedValue(), stats.getAcceleration().getBaseValue());
         groups.add(new StatGroup("Mobility", mobility));
 
         ShieldAPI.ShieldType shieldType = hullSpec.getShieldType();
@@ -168,13 +188,17 @@ final class SkillTreeStatPanel {
             List<StatLine> defense = new ArrayList<>();
             defense.add(new StatLine("Shield Type", shieldType.name()));
             try {
-                addStat(defense, "Shield Arc", stats.getShieldArcBonus().computeEffective(hullSpec.getShieldSpec().getArc()));
+                addComparedStat(defense, "Shield Arc", stats.getShieldArcBonus().computeEffective(hullSpec.getShieldSpec().getArc()), hullSpec.getShieldSpec().getArc());
             } catch (RuntimeException e) {
                 Logger.getLogger(SkillTreeStatPanel.class).error("Failed to compute shield arc stat", e);
             }
-            addStat(defense, "Shield Efficiency", hullSpec.getBaseShieldFluxPerDamageAbsorbed() * stats.getShieldAbsorptionMult().getModifiedValue());
+            addComparedStat(defense, "Shield Efficiency",
+                    hullSpec.getBaseShieldFluxPerDamageAbsorbed() * stats.getShieldAbsorptionMult().getModifiedValue(),
+                    hullSpec.getBaseShieldFluxPerDamageAbsorbed() * stats.getShieldAbsorptionMult().getBaseValue());
             try {
-                addStat(defense, "Shield Upkeep", hullSpec.getShieldSpec().getUpkeepCost() * stats.getShieldUpkeepMult().getModifiedValue());
+                addComparedStat(defense, "Shield Upkeep",
+                        hullSpec.getShieldSpec().getUpkeepCost() * stats.getShieldUpkeepMult().getModifiedValue(),
+                        hullSpec.getShieldSpec().getUpkeepCost() * stats.getShieldUpkeepMult().getBaseValue());
             } catch (RuntimeException e) {
                 Logger.getLogger(SkillTreeStatPanel.class).error("Failed to compute shield upkeep stat", e);
             }
@@ -183,11 +207,11 @@ final class SkillTreeStatPanel {
 
         List<StatLine> logistics = new ArrayList<>();
         logistics.add(new StatLine("Crew", Math.round(member.getMinCrew()) + "-" + Math.round(member.getMaxCrew())));
-        addStat(logistics, "Cargo Capacity", member.getCargoCapacity());
-        addStat(logistics, "Fuel Capacity", member.getFuelCapacity());
+        addComparedStat(logistics, "Cargo Capacity", member.getCargoCapacity(), hullSpec.getCargo());
+        addComparedStat(logistics, "Fuel Capacity", member.getFuelCapacity(), hullSpec.getFuel());
         addStat(logistics, "Fuel Use", member.getFuelUse());
-        addStat(logistics, "Burn Level", stats.getMaxBurnLevel().getModifiedValue());
-        addStat(logistics, "Sensor Profile", stats.getSensorProfile().getModifiedValue());
+        addComparedStat(logistics, "Burn Level", stats.getMaxBurnLevel().getModifiedValue(), stats.getMaxBurnLevel().getBaseValue());
+        addComparedStat(logistics, "Sensor Profile", stats.getSensorProfile().getModifiedValue(), stats.getSensorProfile().getBaseValue());
         try {
             MutableCharacterStatsAPI captainStats = member.getCaptain() != null ? member.getCaptain().getStats() : null;
             int totalOp = hullSpec.getOrdnancePoints(captainStats);
@@ -196,8 +220,9 @@ final class SkillTreeStatPanel {
         } catch (RuntimeException e) {
             Logger.getLogger(SkillTreeStatPanel.class).error("Failed to compute ordnance point stats", e);
         }
-        addStat(logistics, "Max Combat Readiness", stats.getMaxCombatReadiness().getModifiedValue() * 100f, "%");
-        addStat(logistics, "Supplies/mo", stats.getSuppliesPerMonth().getModifiedValue());
+        addComparedStat(logistics, "Max Combat Readiness",
+                stats.getMaxCombatReadiness().getModifiedValue() * 100f, stats.getMaxCombatReadiness().getBaseValue() * 100f, "%");
+        addComparedStat(logistics, "Supplies/mo", stats.getSuppliesPerMonth().getModifiedValue(), stats.getSuppliesPerMonth().getBaseValue());
         groups.add(new StatGroup("Logistics", logistics));
 
         return groups;
@@ -216,10 +241,16 @@ final class SkillTreeStatPanel {
     private static final class StatLine {
         final String label;
         final String value;
+        final Color valueColor;
 
         StatLine(String label, String value) {
+            this(label, value, STAT_PANEL_VALUE_COLOR);
+        }
+
+        StatLine(String label, String value, Color valueColor) {
             this.label = label;
             this.value = value;
+            this.valueColor = valueColor;
         }
 
         @Override
@@ -227,12 +258,12 @@ final class SkillTreeStatPanel {
             if (this == o) return true;
             if (!(o instanceof StatLine)) return false;
             StatLine other = (StatLine) o;
-            return label.equals(other.label) && value.equals(other.value);
+            return label.equals(other.label) && value.equals(other.value) && valueColor.equals(other.valueColor);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(label, value);
+            return Objects.hash(label, value, valueColor);
         }
     }
 
@@ -243,12 +274,12 @@ final class SkillTreeStatPanel {
         final float width;
         final float height;
         final SkillTreePanelStyle.TooltipText labelText;
-        final SkillTreePanelStyle.TooltipText valueText;
+        final List<LazyFont.DrawableString> valueLines;
         final float headerTextY;
         final float bodyTextY;
 
         StatGroupLayout(String name, float x, float y, float width, float height,
-                        SkillTreePanelStyle.TooltipText labelText, SkillTreePanelStyle.TooltipText valueText,
+                        SkillTreePanelStyle.TooltipText labelText, List<LazyFont.DrawableString> valueLines,
                         float headerTextY, float bodyTextY) {
             this.name = name;
             this.x = x;
@@ -256,7 +287,7 @@ final class SkillTreeStatPanel {
             this.width = width;
             this.height = height;
             this.labelText = labelText;
-            this.valueText = valueText;
+            this.valueLines = valueLines;
             this.headerTextY = headerTextY;
             this.bodyTextY = bodyTextY;
         }
@@ -268,6 +299,20 @@ final class SkillTreeStatPanel {
 
     private static void addStat(List<StatLine> lines, String label, float value, String suffix) {
         lines.add(new StatLine(label, formatStat(value) + suffix));
+    }
+
+    private static void addComparedStat(List<StatLine> lines, String label, float current, float base) {
+        addComparedStat(lines, label, current, base, "");
+    }
+
+    private static void addComparedStat(List<StatLine> lines, String label, float current, float base, String suffix) {
+        lines.add(new StatLine(label, formatStat(current) + suffix, colorForComparison(current, base)));
+    }
+
+    private static Color colorForComparison(float current, float base) {
+        if (current > base + STAT_COMPARISON_EPSILON) return STAT_INCREASED_COLOR;
+        if (current < base - STAT_COMPARISON_EPSILON) return STAT_DECREASED_COLOR;
+        return STAT_PANEL_VALUE_COLOR;
     }
 
     private static String formatStat(float value) {
