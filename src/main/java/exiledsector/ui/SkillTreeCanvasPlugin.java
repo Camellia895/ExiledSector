@@ -72,6 +72,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         staticImageRenderer.advance(amount);
         ringBeltRenderer.advance(amount);
         nodeRenderer.advance(amount);
+        ordnancePointsBar.advance(amount, position, mouseX, mouseY, mouseKnown);
     }
 
     @Override

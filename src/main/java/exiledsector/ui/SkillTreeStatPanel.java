@@ -197,7 +197,7 @@ final class SkillTreeStatPanel {
                 addComparedStat(defense, "Shield Efficiency",
                         hullSpec.getBaseShieldFluxPerDamageAbsorbed() * stats.getShieldAbsorptionMult().getModifiedValue(),
                         hullSpec.getBaseShieldFluxPerDamageAbsorbed() * stats.getShieldAbsorptionMult().getBaseValue());
-                addComparedStat(defense, "Shield Upkeep",
+                addComparedStatLowerIsBetter(defense, "Shield Upkeep",
                         shieldSpec.getUpkeepCost() * stats.getShieldUpkeepMult().getModifiedValue(),
                         shieldSpec.getUpkeepCost() * stats.getShieldUpkeepMult().getBaseValue());
             } else {
@@ -213,16 +213,15 @@ final class SkillTreeStatPanel {
         addComparedStat(logistics, "Fuel Capacity", member.getFuelCapacity(), hullSpec.getFuel());
         addStat(logistics, "Fuel Use", member.getFuelUse());
         addComparedStat(logistics, "Burn Level", stats.getMaxBurnLevel().getModifiedValue(), stats.getMaxBurnLevel().getBaseValue());
-        addComparedStat(logistics, "Sensor Profile", stats.getSensorProfile().getModifiedValue(), stats.getSensorProfile().getBaseValue());
+        addComparedStatLowerIsBetter(logistics, "Sensor Profile", stats.getSensorProfile().getModifiedValue(), stats.getSensorProfile().getBaseValue());
         try {
             ShipOpBudget budget = ShipOpBudget.of(member, variant);
             logistics.add(new StatLine("Ordnance Points", budget.used + "/" + budget.total));
         } catch (RuntimeException e) {
             Logger.getLogger(SkillTreeStatPanel.class).error("Failed to compute ordnance point stats", e);
         }
-        addComparedStat(logistics, "Max Combat Readiness",
-                stats.getMaxCombatReadiness().getModifiedValue() * 100f, stats.getMaxCombatReadiness().getBaseValue() * 100f, "%");
-        addComparedStat(logistics, "Supplies/mo", stats.getSuppliesPerMonth().getModifiedValue(), stats.getSuppliesPerMonth().getBaseValue());
+        addStat(logistics, "Max Combat Readiness", stats.getMaxCombatReadiness().getModifiedValue() * 100f, "%");
+        addComparedStatLowerIsBetter(logistics, "Supplies/mo", stats.getSuppliesPerMonth().getModifiedValue(), stats.getSuppliesPerMonth().getBaseValue());
         groups.add(new StatGroup("Logistics", logistics));
 
         return groups;
@@ -315,12 +314,20 @@ final class SkillTreeStatPanel {
     }
 
     private static void addComparedStat(List<StatLine> lines, String label, float current, float base, String suffix) {
-        lines.add(new StatLine(label, formatStat(current) + suffix, colorForComparison(current, base)));
+        lines.add(new StatLine(label, formatStat(current) + suffix, colorForComparison(current, base, false)));
     }
 
-    private static Color colorForComparison(float current, float base) {
-        if (current > base + STAT_COMPARISON_EPSILON) return STAT_INCREASED_COLOR;
-        if (current < base - STAT_COMPARISON_EPSILON) return STAT_DECREASED_COLOR;
+    private static void addComparedStatLowerIsBetter(List<StatLine> lines, String label, float current, float base) {
+        addComparedStatLowerIsBetter(lines, label, current, base, "");
+    }
+
+    private static void addComparedStatLowerIsBetter(List<StatLine> lines, String label, float current, float base, String suffix) {
+        lines.add(new StatLine(label, formatStat(current) + suffix, colorForComparison(current, base, true)));
+    }
+
+    private static Color colorForComparison(float current, float base, boolean lowerIsBetter) {
+        if (current > base + STAT_COMPARISON_EPSILON) return lowerIsBetter ? STAT_DECREASED_COLOR : STAT_INCREASED_COLOR;
+        if (current < base - STAT_COMPARISON_EPSILON) return lowerIsBetter ? STAT_INCREASED_COLOR : STAT_DECREASED_COLOR;
         return STAT_PANEL_VALUE_COLOR;
     }
 
