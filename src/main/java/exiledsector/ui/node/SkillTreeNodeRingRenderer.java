@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import static exiledsector.ui.node.SkillTreeNodeGeometry.ICON_INSET_RATIO;
 import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_HALO_ALPHA;
 import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_HALO_THICKNESS;
 import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_LINE_THICKNESS;
@@ -191,10 +190,7 @@ final class SkillTreeNodeRingRenderer {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        if (tier == SkillTier.KEYSTONE) {
-            float iconRadius = footprintSize * ICON_INSET_RATIO / 2f;
-            drawSingleDonut(cx, cy, iconRadius, allocated, breathing, zoom, alphaMult);
-        } else if (tier != SkillTier.WORMHOLE) {
+        if (tier != SkillTier.WORMHOLE) {
             drawNodeDonut(cx, cy, ringRadius, scale, zoom, allocated, alphaMult);
 
             if (breathing) {
@@ -231,25 +227,6 @@ final class SkillTreeNodeRingRenderer {
         GL11.glLineWidth(NODE_CONNECTOR_LINE_THICKNESS * scale * zoom);
         drawRingOutline(cx, cy, radius - gapRadius, RING_DULL_COLOR, alphaMult * RING_DULL_ALPHA);
         drawRingOutline(cx, cy, radius + gapRadius, RING_DULL_COLOR, alphaMult * RING_DULL_ALPHA);
-    }
-
-    private void drawSingleDonut(float cx, float cy, float radius, boolean allocated, boolean breathing, float zoom, float alphaMult) {
-        Color color;
-        float alpha;
-        if (allocated) {
-            color = style.getAccentColor();
-            alpha = alphaMult;
-        } else if (breathing) {
-            float breathingT = (float) (0.5 + 0.5 * Math.sin(2 * Math.PI * breathingPhase / BREATHING_PERIOD_SECONDS));
-            color = style.getAccentColor();
-            alpha = (BREATHING_MIN_ALPHA + (BREATHING_MAX_ALPHA - BREATHING_MIN_ALPHA) * breathingT) * alphaMult;
-        } else {
-            color = RING_DULL_COLOR;
-            alpha = alphaMult * RING_DULL_ALPHA;
-        }
-
-        GL11.glLineWidth(NODE_CONNECTOR_GLOW_LINE_THICKNESS * zoom);
-        drawRingOutline(cx, cy, radius, color, alpha);
     }
 
     private void drawRingStack(float cx, float cy, float outerRadius, String nodeId,
