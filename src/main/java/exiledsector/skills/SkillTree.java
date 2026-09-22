@@ -3,6 +3,7 @@ package exiledsector.skills;
 import exiledsector.skills.loader.SkillTreeLoader;
 import exiledsector.skills.loader.SkillTypeLoader;
 import exiledsector.ui.decoration.RingBelt;
+import exiledsector.ui.decoration.Star;
 import exiledsector.ui.decoration.StaticImage;
 import exiledsector.ui.node.ConnectorCurve;
 
@@ -21,6 +22,7 @@ public class SkillTree {
     private static final Set<String> HIDDEN_CONNECTOR_KEYS = new HashSet<>();
     private static final List<StaticImage> STATIC_IMAGES = new ArrayList<>();
     private static final List<RingBelt> RING_BELTS = new ArrayList<>();
+    private static final List<Star> STARS = new ArrayList<>();
 
     private SkillTree() {
     }
@@ -32,6 +34,7 @@ public class SkillTree {
         HIDDEN_CONNECTOR_KEYS.clear();
         STATIC_IMAGES.clear();
         RING_BELTS.clear();
+        STARS.clear();
         TYPES.putAll(SkillTypeLoader.loadSkillTypes());
         for (SkillNode node : SkillTreeLoader.loadNodes()) {
             register(node);
@@ -40,6 +43,7 @@ public class SkillTree {
         HIDDEN_CONNECTOR_KEYS.addAll(SkillTreeLoader.loadHiddenConnectors());
         STATIC_IMAGES.addAll(SkillTreeLoader.loadStaticImages());
         RING_BELTS.addAll(SkillTreeLoader.loadRingBelts());
+        STARS.addAll(SkillTreeLoader.loadStars());
     }
 
     public static void register(SkillNode node) {
@@ -84,5 +88,9 @@ public class SkillTree {
 
     public static List<RingBelt> getRingBelts() {
         return RING_BELTS;
+    }
+
+    public static List<Star> getStars() {
+        return STARS;
     }
 }

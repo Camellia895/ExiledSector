@@ -5,6 +5,7 @@ import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;
+import exiledsector.skills.SkillTypeUnlockStatus;
 import exiledsector.ui.SkillTreePanelStyle;
 import org.lazywizard.lazylib.ui.LazyFont;
 
@@ -95,11 +96,11 @@ final class SkillTreeNodeTooltipRenderer {
     }
 
     private String titleText(SkillNode node, SkillType effectiveType) {
-        return node.getType().isLocked() ? LOCKED_NODE_TITLE : effectiveType.getDisplayName();
+        return SkillTypeUnlockStatus.isLocked(node.getType()) ? LOCKED_NODE_TITLE : effectiveType.getDisplayName();
     }
 
     private String bodyText(SkillNode node, SkillType effectiveType, boolean showOptionalHint, ShipSkillData data) {
-        if (node.getType().isLocked()) return LOCKED_NODE_BODY;
+        if (SkillTypeUnlockStatus.isLocked(node.getType())) return LOCKED_NODE_BODY;
 
         String text = showOptionalHint ? OPTIONAL_NODE_HINT : SkillNode.describeType(effectiveType, member.getHullSpec().getHullSize());
         if (data.isFreeNode(node.getId())) {

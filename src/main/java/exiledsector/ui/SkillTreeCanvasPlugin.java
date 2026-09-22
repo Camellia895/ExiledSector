@@ -9,6 +9,7 @@ import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;
 import exiledsector.ui.decoration.SkillTreeRingBeltRenderer;
+import exiledsector.ui.decoration.SkillTreeStarRenderer;
 import exiledsector.ui.decoration.SkillTreeStarfieldRenderer;
 import exiledsector.ui.decoration.SkillTreeStaticImageRenderer;
 import exiledsector.ui.node.RootCrestResolver;
@@ -29,6 +30,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final SkillTreeStarfieldRenderer starfieldRenderer;
     private final SkillTreeStaticImageRenderer staticImageRenderer;
     private final SkillTreeRingBeltRenderer ringBeltRenderer;
+    private final SkillTreeStarRenderer starRenderer;
     private final SkillTreeNodeRenderer nodeRenderer;
     private final SkillTreeStatPanel statPanel;
     private final SkillTreeOrdnancePointsBar ordnancePointsBar;
@@ -57,6 +59,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.starfieldRenderer = new SkillTreeStarfieldRenderer(style);
         this.staticImageRenderer = new SkillTreeStaticImageRenderer();
         this.ringBeltRenderer = new SkillTreeRingBeltRenderer();
+        this.starRenderer = new SkillTreeStarRenderer();
         this.nodeRenderer = new SkillTreeNodeRenderer(member, variant, style, refitButton);
         this.statPanel = new SkillTreeStatPanel(member, variant);
         this.ordnancePointsBar = new SkillTreeOrdnancePointsBar(member, variant);
@@ -74,6 +77,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         starfieldRenderer.advance(amount);
         staticImageRenderer.advance(amount);
         ringBeltRenderer.advance(amount);
+        starRenderer.advance(amount);
         nodeRenderer.advance(amount);
         ordnancePointsBar.advance(amount, position, mouseX, mouseY, mouseKnown);
         levelBar.advance(amount, position, mouseX, mouseY, mouseKnown);
@@ -147,9 +151,11 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         float centerY = centerY();
 
         starfieldRenderer.render(position, panX, panY, alphaMult);
+        starRenderer.renderDisc(centerX, centerY, zoom, alphaMult, position);
         ringBeltRenderer.render(centerX, centerY, zoom, alphaMult, position);
         staticImageRenderer.render(centerX, centerY, zoom, alphaMult, position);
         nodeRenderer.render(centerX, centerY, zoom, alphaMult, mouseX, mouseY, mouseKnown);
+        starRenderer.renderGlow(centerX, centerY, zoom, alphaMult, position);
         statPanel.render(position, alphaMult);
         ordnancePointsBar.render(position, alphaMult);
         levelBar.render(position, alphaMult);

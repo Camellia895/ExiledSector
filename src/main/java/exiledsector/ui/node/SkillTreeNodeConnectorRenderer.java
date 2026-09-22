@@ -5,6 +5,7 @@ import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
+import exiledsector.skills.SkillTypeUnlockStatus;
 import exiledsector.ui.SkillTreePanelStyle;
 import org.lwjgl.opengl.GL11;
 
@@ -93,7 +94,7 @@ final class SkillTreeNodeConnectorRenderer {
     }
 
     private static boolean isLocked(SkillNode node) {
-        return node.getType().isLocked();
+        return SkillTypeUnlockStatus.isLocked(node.getType());
     }
 
     private void drawStraightNodeConnectorLine(float x1, float y1, float r1, float x2, float y2, float r2,

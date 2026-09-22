@@ -7,6 +7,7 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.ui.decoration.RingBelt;
+import exiledsector.ui.decoration.Star;
 import exiledsector.ui.decoration.StaticImage;
 import exiledsector.ui.node.ConnectorCurve;
 import org.json.JSONObject;
@@ -307,6 +308,80 @@ class SkillTreeLoaderTest {
             List<RingBelt> ringBelts = SkillTreeLoader.loadRingBelts();
 
             assertEquals(List.of(), ringBelts);
+        }
+    }
+
+    @Test
+    void missingStarsFieldMeansNoStars() throws Exception {
+        JSONObject root = new JSONObject("{ \"nodes\": [] }");
+
+        List<Star> stars = SkillTreeLoader.parseStars(root);
+
+        assertTrue(stars.isEmpty());
+    }
+
+    @Test
+    void parsesAllFieldsOfAStar() throws Exception {
+        JSONObject root = new JSONObject("{ \"nodes\": [], \"stars\": [ {"
+                + "\"id\": \"central_star\","
+                + "\"x\": 10,"
+                + "\"y\": -20,"
+                + "\"radius\": 850,"
+                + "\"starType\": \"star_blue_giant\","
+                + "\"color\": \"#ffaa33\""
+                + "} ] }");
+
+        List<Star> stars = SkillTreeLoader.parseStars(root);
+
+        assertEquals(1, stars.size());
+        Star star = stars.get(0);
+        assertEquals("central_star", star.getId());
+        assertEquals(10f, star.getX());
+        assertEquals(-20f, star.getY());
+        assertEquals(850f, star.getRadius());
+        assertEquals("star_blue_giant", star.getStarType());
+        assertEquals("#ffaa33", star.getColor());
+    }
+
+    @Test
+    void starDefaultsToYellowTypeAndNoColorOverride() throws Exception {
+        JSONObject root = new JSONObject("{ \"nodes\": [], \"stars\": [ {"
+                + "\"id\": \"central_star\","
+                + "\"x\": 0,"
+                + "\"y\": 0,"
+                + "\"radius\": 850"
+                + "} ] }");
+
+        List<Star> stars = SkillTreeLoader.parseStars(root);
+
+        Star star = stars.get(0);
+        assertEquals("star_yellow", star.getStarType());
+        assertEquals(null, star.getColor());
+    }
+
+    @Test
+    void parsesMultipleStarsInOrder() throws Exception {
+        JSONObject root = new JSONObject("{ \"nodes\": [], \"stars\": ["
+                + "{\"id\": \"a\", \"x\": 0, \"y\": 0, \"radius\": 800},"
+                + "{\"id\": \"b\", \"x\": 0, \"y\": 0, \"radius\": 800}"
+                + "] }");
+
+        List<Star> stars = SkillTreeLoader.parseStars(root);
+
+        assertEquals(List.of("a", "b"), List.of(stars.get(0).getId(), stars.get(1).getId()));
+    }
+
+    @Test
+    void loadStarsReturnsAnEmptyListWhenTheJsonFailsToLoad() throws Exception {
+        SettingsAPI settings = mock(SettingsAPI.class);
+        when(settings.loadJSON(anyString())).thenThrow(new IOException("boom"));
+
+        try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
+            globalMock.when(Global::getSettings).thenReturn(settings);
+
+            List<Star> stars = SkillTreeLoader.loadStars();
+
+            assertEquals(List.of(), stars);
         }
     }
 }

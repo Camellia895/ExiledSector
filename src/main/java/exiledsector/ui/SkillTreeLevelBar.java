@@ -39,9 +39,9 @@ final class SkillTreeLevelBar {
     }
 
     private String label() {
-        String label = "Level " + level + "  (" + xp + " / " + xpToNextLevel + " XP)";
+        String label = "Level " + level;
         if (bankedFreeAllocations > 0) {
-            label += "   +" + bankedFreeAllocations + " Free";
+            label += " - +" + bankedFreeAllocations + " Free";
         }
         return label;
     }

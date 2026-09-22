@@ -24,9 +24,10 @@ foreach ($jar in $coreJars) {
 }
 
 $libJars = @{
-    "LazyLib"  = @("LazyLib.jar", "LazyLib-Kotlin.jar", "internal\Kotlin-Runtime.jar")
-    "MagicLib" = @("MagicLib.jar", "MagicLib-Kotlin.jar")
-    "LunaLib"  = @("LunaLib.jar", "libs\fuzzywuzzy-1.3.0.jar")
+    "LazyLib"          = @("LazyLib.jar", "LazyLib-Kotlin.jar", "internal\Kotlin-Runtime.jar")
+    "MagicLib"         = @("MagicLib.jar", "MagicLib-Kotlin.jar")
+    "LunaLib"          = @("LunaLib.jar", "libs\fuzzywuzzy-1.3.0.jar")
+    "Console Commands" = @("lw_Console.jar")
 }
 
 foreach ($modName in $libJars.Keys) {

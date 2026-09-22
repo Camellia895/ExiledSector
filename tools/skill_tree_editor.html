@@ -332,6 +332,15 @@
   .image-picker-item:hover { border-color: var(--accent-dim); }
   .image-picker-item.selected { border-color: var(--accent); }
   .image-picker-item img { width: 100%; height: 100%; object-fit: cover; }
+  .star-glow { pointer-events: none; }
+  .star-body { pointer-events: none; }
+  .star-center { fill: var(--panel-2); stroke: var(--text-faint); stroke-width: 1.5; cursor: move; }
+  .star-center:hover { stroke: var(--accent); }
+  .star-center.selected { stroke: var(--accent); fill: var(--accent-dim); }
+  .star-center.moving { stroke: var(--accent); fill: var(--accent-dim); }
+  .star-resize { fill: var(--text-faint); opacity: .55; cursor: nesw-resize; }
+  .star-resize:hover { fill: var(--accent); opacity: 1; }
+  .star-resize.dragging { fill: var(--accent); opacity: 1; }
   .marquee-rect { fill: var(--accent); fill-opacity: .12; stroke: var(--accent); stroke-width: 1; stroke-dasharray: 4 3; pointer-events: none; }
 
   .zoomControls {
@@ -576,6 +585,7 @@
         <button class="smallBtn shapeBtn" data-anchor-shape="asteroidBelt">Asteroid Belt</button>
       </div>
       <button class="modeBtn" data-mode="addImage">Add Image <span class="key">F</span></button>
+      <button class="modeBtn" data-mode="addStar">Add Star <span class="key">G</span></button>
     </div>
 
     <div class="toolSection">
@@ -889,6 +899,7 @@ var SHIPPED_ANCHORS = [
 {"id":"anchor_1","x":-488,"y":-321,"radius":95}
 ];
 var SHIPPED_IMAGES = [];
+var SHIPPED_STARS = [];
 
 var SMALL_R = 32, NOTABLE_R = 38.4, KEYSTONE_R = 44.8, WORMHOLE_R = 41.6, ROOT_R = 80;
 function tierOf(type){ return (type && type.tier) ? type.tier : 'SMALL'; }
@@ -914,6 +925,7 @@ var state = {
   hiddenConnectors: [],
   anchors: [],
   images: [],
+  stars: [],
   availableImages: [],
   allProjectImages: [],
   view: { panX: 0, panY: 0, zoom: 0.55 },
@@ -921,6 +933,7 @@ var state = {
   selectedIds: [],
   selectedAnchorIds: [],
   selectedImageIds: [],
+  selectedStarIds: [],
   showLabels: true,
   search: '',
   pendingAnchorShape: 'circle'
@@ -938,6 +951,22 @@ function uniqueImageId(){
 function normalizeImages(images){
   return (images || []).map(function(img){
     return { id: img.id, x: img.x, y: img.y, width: img.width, height: img.height, imagePath: img.imagePath || null, rotation: img.rotation || 0, rotationSpeed: img.rotationSpeed || 0 };
+  });
+}
+var VANILLA_STAR_TYPES = [
+  'star_yellow', 'star_white', 'star_blue_giant', 'star_blue_supergiant',
+  'star_orange', 'star_orange_giant', 'star_red_dwarf', 'star_red_giant',
+  'star_red_supergiant', 'star_browndwarf', 'star_neutron', 'black_hole'
+];
+function starById(id){ for (var i=0;i<state.stars.length;i++) if (state.stars[i].id === id) return state.stars[i]; return null; }
+function uniqueStarId(){
+  var i = 1, id;
+  do { id = 'star_' + i; i++; } while (starById(id));
+  return id;
+}
+function normalizeStars(stars){
+  return (stars || []).map(function(s){
+    return { id: s.id, x: s.x, y: s.y, radius: s.radius, starType: s.starType || 'star_yellow', color: s.color || null };
   });
 }
 function rotateAroundOrigin(localX, localY, deg){
@@ -1203,11 +1232,12 @@ function loadShipped(){
   state.hiddenConnectors = [];
   state.anchors = deepCopy(SHIPPED_ANCHORS);
   state.images = deepCopy(SHIPPED_IMAGES);
+  state.stars = deepCopy(SHIPPED_STARS);
 }
 
 function saveLocal(){
   try {
-    localStorage.setItem('skillTreeEditor.v1', JSON.stringify({ types: state.types, nodes: state.nodes, curves: state.curves, hiddenConnectors: state.hiddenConnectors, anchors: state.anchors, images: state.images }));
+    localStorage.setItem('skillTreeEditor.v1', JSON.stringify({ types: state.types, nodes: state.nodes, curves: state.curves, hiddenConnectors: state.hiddenConnectors, anchors: state.anchors, images: state.images, stars: state.stars }));
   } catch(e){}
 }
 function loadLocal(){
@@ -1222,6 +1252,7 @@ function loadLocal(){
     state.hiddenConnectors = parsed.hiddenConnectors || [];
     state.anchors = parsed.anchors || [];
     state.images = parsed.images || [];
+    state.stars = parsed.stars || [];
     return true;
   } catch(e){ return false; }
 }
@@ -1232,7 +1263,7 @@ if (!loadLocal()) loadShipped();
 var svg = document.getElementById('stage');
 var canvasWrap = document.getElementById('canvasWrap');
 var NS = 'http://www.w3.org/2000/svg';
-var layerRoot, layerImages, layerAnchors, layerEdges, layerNodes, layerLabels, layerAnchorHandles, layerImageHandles;
+var layerRoot, layerStars, layerImages, layerAnchors, layerEdges, layerNodes, layerLabels, layerAnchorHandles, layerImageHandles, layerStarHandles;
 
 var NODE_ICON_CLIP_IDS = { SMALL: 'nodeClipSmall', NOTABLE: 'nodeClipNotable', KEYSTONE: 'nodeClipKeystone', WORMHOLE: 'nodeClipWormhole', ROOT: 'nodeClipRoot' };
 function buildIconClipDefs(){
@@ -1252,6 +1283,7 @@ function buildLayers(){
   svg.innerHTML = '';
   svg.appendChild(buildIconClipDefs());
   layerRoot = document.createElementNS(NS, 'g');
+  layerStars = document.createElementNS(NS, 'g');
   layerImages = document.createElementNS(NS, 'g');
   layerAnchors = document.createElementNS(NS, 'g');
   layerEdges = document.createElementNS(NS, 'g');
@@ -1259,6 +1291,8 @@ function buildLayers(){
   layerLabels = document.createElementNS(NS, 'g');
   layerAnchorHandles = document.createElementNS(NS, 'g');
   layerImageHandles = document.createElementNS(NS, 'g');
+  layerStarHandles = document.createElementNS(NS, 'g');
+  layerRoot.appendChild(layerStars);
   layerRoot.appendChild(layerImages);
   layerRoot.appendChild(layerAnchors);
   layerRoot.appendChild(layerEdges);
@@ -1266,6 +1300,7 @@ function buildLayers(){
   layerRoot.appendChild(layerLabels);
   layerRoot.appendChild(layerAnchorHandles);
   layerRoot.appendChild(layerImageHandles);
+  layerRoot.appendChild(layerStarHandles);
   svg.appendChild(layerRoot);
 }
 buildLayers();
@@ -1304,6 +1339,44 @@ function validate(){
 function render(){
   buildLayers();
   layerRoot.setAttribute('transform', worldToScreenTransform());
+
+  state.stars.forEach(function(s){
+    var selected = state.selectedStarIds.indexOf(s.id) !== -1;
+    var color = s.color || '#fff2c0';
+
+    var glow = document.createElementNS(NS, 'circle');
+    glow.setAttribute('cx', s.x); glow.setAttribute('cy', s.y); glow.setAttribute('r', s.radius * 3);
+    glow.setAttribute('class', 'star-glow');
+    glow.setAttribute('fill', color);
+    glow.setAttribute('fill-opacity', '0.12');
+    layerStars.appendChild(glow);
+
+    var body = document.createElementNS(NS, 'circle');
+    body.setAttribute('cx', s.x); body.setAttribute('cy', s.y); body.setAttribute('r', s.radius);
+    body.setAttribute('class', 'star-body');
+    body.setAttribute('fill', color);
+    body.setAttribute('fill-opacity', '0.85');
+    layerStars.appendChild(body);
+
+    if (state.mode === 'select' || state.mode === 'addStar') {
+      var isMoving = drag && drag.starMove === s.id;
+      var center = document.createElementNS(NS, 'circle');
+      center.setAttribute('cx', s.x); center.setAttribute('cy', s.y); center.setAttribute('r', isMoving ? 8 : 6);
+      center.setAttribute('class', 'star-center' + (selected ? ' selected' : '') + (isMoving ? ' moving' : ''));
+      center.dataset.starId = s.id;
+      layerStarHandles.appendChild(center);
+
+      if (selected) {
+        var isResizing = drag && drag.starResize === s.id;
+        var resizeHandle = document.createElementNS(NS, 'circle');
+        resizeHandle.setAttribute('cx', s.x + s.radius); resizeHandle.setAttribute('cy', s.y);
+        resizeHandle.setAttribute('r', isResizing ? 7 : 5);
+        resizeHandle.setAttribute('class', 'star-resize' + (isResizing ? ' dragging' : ''));
+        resizeHandle.dataset.starResizeId = s.id;
+        layerStarHandles.appendChild(resizeHandle);
+      }
+    }
+  });
 
   state.images.forEach(function(img){
     var selected = state.selectedImageIds.indexOf(img.id) !== -1;
@@ -1535,6 +1608,7 @@ function render(){
   attachCurveAnchorHandlers();
   attachOrbitAnchorHandlers();
   attachImageHandlers();
+  attachStarHandlers();
   updateStats();
   updateWarnBadge();
 }
@@ -1677,6 +1751,31 @@ function attachImageHandlers(){
   });
 }
 
+function attachStarHandlers(){
+  layerStarHandles.querySelectorAll('.star-center').forEach(function(c){
+    c.addEventListener('pointerdown', function(ev){
+      ev.stopPropagation();
+      var id = c.dataset.starId;
+      if (ev.shiftKey) {
+        toggleStarSelection(id);
+        return;
+      }
+      if (state.selectedStarIds.indexOf(id) === -1) {
+        selectStar(id);
+      }
+      drag = { starMove: id };
+      ev.target.setPointerCapture(ev.pointerId);
+    });
+  });
+  layerStarHandles.querySelectorAll('.star-resize').forEach(function(c){
+    c.addEventListener('pointerdown', function(ev){
+      ev.stopPropagation();
+      drag = { starResize: c.dataset.starResizeId };
+      ev.target.setPointerCapture(ev.pointerId);
+    });
+  });
+}
+
 function startGroupDrag(ev){
   drag = {
     startWorld: screenPointToWorld(ev.clientX, ev.clientY),
@@ -1721,6 +1820,21 @@ canvasWrap.addEventListener('pointerdown', function(ev){
     state.images.push(newImage);
     clearAllSelection();
     state.selectedImageIds = [newImage.id];
+    document.getElementById('inspector').classList.add('open');
+    saveLocal();
+    setMode('select');
+    refreshInspector();
+    return;
+  }
+  if (state.mode === 'addStar') {
+    var ws0 = screenPointToWorld(ev.clientX, ev.clientY);
+    var newStar = {
+      id: uniqueStarId(), x: Math.round(ws0.x), y: Math.round(ws0.y),
+      radius: 850, starType: 'star_yellow', color: null
+    };
+    state.stars.push(newStar);
+    clearAllSelection();
+    state.selectedStarIds = [newStar.id];
     document.getElementById('inspector').classList.add('open');
     saveLocal();
     setMode('select');
@@ -1834,6 +1948,28 @@ window.addEventListener('pointermove', function(ev){
     if (state.selectedImageIds.length === 1) refreshInspector();
     return;
   }
+  if (drag.starMove) {
+    var st = starById(drag.starMove);
+    if (st) {
+      var wsm = screenPointToWorld(ev.clientX, ev.clientY);
+      st.x = Math.round(wsm.x);
+      st.y = Math.round(wsm.y);
+    }
+    render();
+    if (state.selectedStarIds.length === 1) refreshInspector();
+    return;
+  }
+  if (drag.starResize) {
+    var rStar = starById(drag.starResize);
+    if (rStar) {
+      var wsr = screenPointToWorld(ev.clientX, ev.clientY);
+      var sdx = wsr.x - rStar.x, sdy = wsr.y - rStar.y;
+      rStar.radius = Math.max(20, Math.round(Math.sqrt(sdx*sdx + sdy*sdy)));
+    }
+    render();
+    if (state.selectedStarIds.length === 1) refreshInspector();
+    return;
+  }
   var w = screenPointToWorld(ev.clientX, ev.clientY);
   var dx = w.x - drag.startWorld.x, dy = w.y - drag.startWorld.y;
   if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) drag.moved = true;
@@ -1883,6 +2019,8 @@ window.addEventListener('pointerup', function(ev){
     saveLocal();
   } else if (drag && (drag.imageMove || drag.imageResize || drag.imageRotate)) {
     saveLocal();
+  } else if (drag && (drag.starMove || drag.starResize)) {
+    saveLocal();
   } else if (drag && !drag.pan && drag.moved) {
     saveLocal();
   }
@@ -1905,12 +2043,15 @@ function finishMarqueeSelect(ev){
   state.selectedImageIds = state.images.filter(function(img){
     return inRect(img.x, img.y);
   }).map(function(img){ return img.id; });
+  state.selectedStarIds = state.stars.filter(function(s){
+    return inRect(s.x, s.y);
+  }).map(function(s){ return s.id; });
   document.getElementById('inspector').classList.toggle('open', anySelected());
   refreshInspector();
 }
 
 function selectionCount(){
-  return state.selectedIds.length + state.selectedAnchorIds.length + state.selectedImageIds.length;
+  return state.selectedIds.length + state.selectedAnchorIds.length + state.selectedImageIds.length + state.selectedStarIds.length;
 }
 function anySelected(){
   return selectionCount() > 0;
@@ -1919,6 +2060,7 @@ function clearAllSelection(){
   state.selectedIds = [];
   state.selectedAnchorIds = [];
   state.selectedImageIds = [];
+  state.selectedStarIds = [];
 }
 function afterSelectionToggle(){
   document.getElementById('inspector').classList.toggle('open', anySelected());
@@ -1941,6 +2083,12 @@ function toggleImageSelection(id){
   var idx = state.selectedImageIds.indexOf(id);
   if (idx === -1) state.selectedImageIds.push(id);
   else state.selectedImageIds.splice(idx, 1);
+  afterSelectionToggle();
+}
+function toggleStarSelection(id){
+  var idx = state.selectedStarIds.indexOf(id);
+  if (idx === -1) state.selectedStarIds.push(id);
+  else state.selectedStarIds.splice(idx, 1);
   afterSelectionToggle();
 }
 
@@ -2002,6 +2150,13 @@ function selectImage(id){
   render();
   refreshInspector();
 }
+function selectStar(id){
+  clearAllSelection();
+  state.selectedStarIds = [id];
+  document.getElementById('inspector').classList.add('open');
+  render();
+  refreshInspector();
+}
 
 // ---------- mode buttons ----------
 function setMode(m){
@@ -2027,7 +2182,7 @@ document.querySelectorAll('.shapeBtn').forEach(function(btn){
 document.addEventListener('keydown', function(ev){
   if (ev.target.tagName === 'INPUT' || ev.target.tagName === 'TEXTAREA' || ev.target.tagName === 'SELECT') return;
   if (!ev.ctrlKey && !ev.metaKey) {
-    var map = { 'a': 'select', 's': 'add', 'd': 'addAnchor', 'f': 'addImage' };
+    var map = { 'a': 'select', 's': 'add', 'd': 'addAnchor', 'f': 'addImage', 'g': 'addStar' };
     var m = map[ev.key.toLowerCase()];
     if (m) { document.querySelector('.modeBtn[data-mode="'+m+'"]').click(); }
     if (ev.key === 'q' || ev.key === 'Q') { deleteSelectionOrAnchor(); }
@@ -2048,12 +2203,15 @@ document.addEventListener('keydown', function(ev){
 function deleteSelectionOrAnchor(){
   if (!anySelected()) return;
   if (state.selectedIds.length > 0) deleteSelectedNodes();
-  if (state.selectedAnchorIds.length > 0 || state.selectedImageIds.length > 0) {
+  if (state.selectedAnchorIds.length > 0 || state.selectedImageIds.length > 0 || state.selectedStarIds.length > 0) {
     state.selectedAnchorIds.forEach(deleteAnchor);
     var imgIds = state.selectedImageIds;
     if (imgIds.length) state.images = state.images.filter(function(img){ return imgIds.indexOf(img.id) === -1; });
+    var starIds = state.selectedStarIds;
+    if (starIds.length) state.stars = state.stars.filter(function(s){ return starIds.indexOf(s.id) === -1; });
     state.selectedAnchorIds = [];
     state.selectedImageIds = [];
+    state.selectedStarIds = [];
     document.getElementById('inspector').classList.remove('open');
     saveLocal();
     render();
@@ -2066,7 +2224,7 @@ function refreshInspector(){
   var body = document.getElementById('inspectorBody');
   var total = selectionCount();
   if (total === 0) {
-    body.innerHTML = '<div class="empty-inspector">Select a node, an anchor\'s center dot, or an image\'s center dot to see and edit its details, or switch to Add mode and click the canvas to place a new one.<br><br>Shift-click or shift-drag to select multiple nodes, anchors, and images together. Drag any selected node to move the whole group of nodes.</div>';
+    body.innerHTML = '<div class="empty-inspector">Select a node, an anchor\'s center dot, an image\'s center dot, or a star\'s center dot to see and edit its details, or switch to Add mode and click the canvas to place a new one.<br><br>Shift-click or shift-drag to select multiple nodes, anchors, images, and stars together. Drag any selected node to move the whole group of nodes.</div>';
     return;
   }
   if (total > 1) {
@@ -2079,6 +2237,10 @@ function refreshInspector(){
   }
   if (state.selectedImageIds.length === 1) {
     refreshImageInspector(body);
+    return;
+  }
+  if (state.selectedStarIds.length === 1) {
+    refreshStarInspector(body);
     return;
   }
   var n = nodeById(state.selectedIds[0]);
@@ -2525,6 +2687,66 @@ function refreshImageInspector(body){
     saveLocal(); render(); refreshInspector();
   });
 }
+function refreshStarInspector(body){
+  var s = starById(state.selectedStarIds[0]);
+  if (!s) {
+    state.selectedStarIds = [];
+    body.innerHTML = '<div class="empty-inspector">Select a node to see and edit its details, or switch to Add mode and click the canvas to place a new one.</div>';
+    return;
+  }
+
+  var typeOptionsHtml = VANILLA_STAR_TYPES.map(function(t){
+    return '<option value="' + t + '"' + (t === s.starType ? ' selected' : '') + '>' + t + '</option>';
+  }).join('');
+
+  body.innerHTML =
+    '<h2>Star</h2>' +
+    '<div class="field"><label>Star id</label><input value="' + s.id + '" data-star-field="id"></div>' +
+    '<div class="fieldRow">' +
+      '<div class="field"><label>X</label><input type="number" value="' + s.x + '" data-star-field="x"></div>' +
+      '<div class="field"><label>Y</label><input type="number" value="' + s.y + '" data-star-field="y"></div>' +
+    '</div>' +
+    '<div class="field"><label>Radius (vanilla stars run roughly 400-1800)</label><input type="number" value="' + s.radius + '" data-star-field="radius"></div>' +
+    '<div class="field"><label>Star type</label><select data-star-field="starType">' + typeOptionsHtml + '</select></div>' +
+    '<div class="field"><label>Colour override</label><div class="fieldRow">' +
+      '<input type="color" value="' + (s.color || '#fff2c0') + '" data-star-field="color" style="flex:1">' +
+      '<button class="smallBtn" type="button" id="clearStarColorBtn">Use vanilla colour</button>' +
+    '</div></div>' +
+    '<hr class="sep">' +
+    '<div class="hint">Rendered live in-game as an actual vanilla star (real texture, corona glow, slow spin) at this position and radius - no generate step needed. The colour override tints both the disc and the corona; leave it unset to use the star type\'s own vanilla colours.</div>' +
+    '<button class="smallBtn danger" id="deleteStarBtn">Delete this star <span class="key">Q</span></button>';
+
+  body.querySelectorAll('[data-star-field]').forEach(function(inp){
+    inp.addEventListener('change', function(){
+      var field = inp.dataset.starField;
+      if (field === 'id') {
+        var newId = inp.value.trim();
+        if (!newId || starById(newId)) { showToast('Id must be unique and non-empty'); inp.value = s.id; return; }
+        s.id = newId;
+        state.selectedStarIds = [newId];
+      } else if (field === 'x' || field === 'y') {
+        s[field] = parseInt(inp.value, 10) || 0;
+      } else if (field === 'radius') {
+        s.radius = Math.max(20, parseInt(inp.value, 10) || 20);
+      } else if (field === 'starType') {
+        s.starType = inp.value;
+      } else if (field === 'color') {
+        s.color = inp.value;
+      }
+      saveLocal(); render(); refreshInspector();
+    });
+  });
+  document.getElementById('clearStarColorBtn').addEventListener('click', function(){
+    s.color = null;
+    saveLocal(); render(); refreshInspector();
+  });
+  document.getElementById('deleteStarBtn').addEventListener('click', function(){
+    state.stars = state.stars.filter(function(o){ return o.id !== s.id; });
+    state.selectedStarIds = [];
+    document.getElementById('inspector').classList.remove('open');
+    saveLocal(); render(); refreshInspector();
+  });
+}
 function refreshMultiInspector(body){
   var rows = [];
   state.selectedIds.forEach(function(id){
@@ -2537,6 +2759,9 @@ function refreshMultiInspector(body){
   });
   state.selectedImageIds.forEach(function(id){
     rows.push('<div class="prereqItem selectableRow" data-select-only-image="' + id + '"><span>' + id + ' (image)</span></div>');
+  });
+  state.selectedStarIds.forEach(function(id){
+    rows.push('<div class="prereqItem selectableRow" data-select-only-star="' + id + '"><span>' + id + ' (star)</span></div>');
   });
   var total = selectionCount();
   body.innerHTML =
@@ -2553,6 +2778,9 @@ function refreshMultiInspector(body){
   });
   body.querySelectorAll('[data-select-only-image]').forEach(function(el){
     el.addEventListener('click', function(){ selectImage(el.dataset.selectOnlyImage); });
+  });
+  body.querySelectorAll('[data-select-only-star]').forEach(function(el){
+    el.addEventListener('click', function(){ selectStar(el.dataset.selectOnlyStar); });
   });
   document.getElementById('clearSelectionBtn').addEventListener('click', function(){
     clearAllSelection();
@@ -3021,7 +3249,7 @@ function openImageEditorModal(){
 
 function openTypeModal(existingType, onSave, onClose){
   var isNew = !existingType;
-  var t = existingType ? deepCopy(existingType) : { id: '', name: '', icon: '', tier: 'NOTABLE', vanillaHullMod: '', description: '', todo: '', tags: [], optionalOptions: [], exclusiveHullMods: [], locked: false };
+  var t = existingType ? deepCopy(existingType) : { id: '', name: '', icon: '', tier: 'NOTABLE', vanillaHullMod: '', description: '', todo: '', tags: [], optionalOptions: [], exclusiveHullMods: [], lockedUntilHullMod: '' };
   var effectsDraft = deepCopy(t.effects || []);
   var hullSizeEffectsDraft = deepCopy(t.hullSizeEffects || []);
   var tagsDraft = deepCopy(t.tags || []);
@@ -3034,7 +3262,7 @@ function openTypeModal(existingType, onSave, onClose){
     t.icon = document.getElementById('tIcon').value;
     t.tier = document.getElementById('tTier').value;
     t.vanillaHullMod = document.getElementById('tVanilla').value;
-    t.locked = document.getElementById('tLocked').checked;
+    t.lockedUntilHullMod = document.getElementById('tLockedUntilHullMod').value.trim();
     t.exclusiveHullMods = document.getElementById('tExclusiveHullMods').value.split(',').map(function(s){ return s.trim(); }).filter(function(s){ return s; });
     var optSelect = document.getElementById('tOptionalOptions');
     if (optSelect) {
@@ -3068,7 +3296,8 @@ function openTypeModal(existingType, onSave, onClose){
       '<div class="btnRow"><button class="smallBtn" type="button" id="addHsEffectRowBtn">+ Add hull-size effect</button></div>' +
       '<hr class="sep">' +
       '<div class="field"><label>vanillaHullMod id</label><input id="tVanilla" value="' + (t.vanillaHullMod||'') + '"></div>' +
-      '<div class="field"><label><input type="checkbox" id="tLocked"' + (t.locked?' checked':'') + '> Locked (renders as blinking sensor ghosts on the tree, hides its tooltip, and blocks allocation)</label></div>' +
+      '<div class="field"><label>Locked until hullmod id (optional)</label><input id="tLockedUntilHullMod" value="' + (t.lockedUntilHullMod||'') + '"></div>' +
+      '<div class="hint">If set, this node renders as blinking sensor ghosts and blocks allocation until the player has unlocked the given vanilla hullmod id (via blueprint or a character skill) - checked live with FactionAPI.knowsHullMod. Leave blank for a normal, always-visible node.</div>' +
       '<div class="field"><label>Exclusive with hullmod ids (comma-separated)</label><input id="tExclusiveHullMods" value="' + ((t.exclusiveHullMods||[]).join(', ')) + '"></div>' +
       '<div class="hint">If the ship already has any of these vanilla hullmods installed, this node cannot be allocated. vanillaHullMod above is always implicitly included here too, no need to repeat it.</div>' +
       '<hr class="sep">' +
@@ -3151,7 +3380,7 @@ function openTypeModal(existingType, onSave, onClose){
         effects: effectsDraft,
         hullSizeEffects: hullSizeEffectsDraft,
         vanillaHullMod: (t.vanillaHullMod||'').trim(),
-        locked: !!t.locked,
+        lockedUntilHullMod: (t.lockedUntilHullMod||'').trim(),
         exclusiveHullMods: t.exclusiveHullMods || [],
         optionalOptions: t.optionalOptions || [],
         description: (t.description||'').trim(),
@@ -3199,7 +3428,7 @@ function serializeType(t){
   if (t.effects && t.effects.length) out.effects = t.effects.map(function(e){ return { effect: e.effect, magnitude: e.magnitude }; });
   if (t.hullSizeEffects && t.hullSizeEffects.length) out.hullSizeEffects = t.hullSizeEffects.map(function(e){ return { effect: e.effect, frigate: e.frigate, destroyer: e.destroyer, cruiser: e.cruiser, capitalShip: e.capitalShip }; });
   if (t.vanillaHullMod) out.vanillaHullMod = t.vanillaHullMod;
-  if (t.locked) out.locked = true;
+  if (t.lockedUntilHullMod) out.lockedUntilHullMod = t.lockedUntilHullMod;
   if (t.exclusiveHullMods && t.exclusiveHullMods.length) out.exclusiveHullMods = t.exclusiveHullMods;
   if (t.optionalOptions && t.optionalOptions.length) out.optionalOptions = t.optionalOptions;
   if (t.description) out.description = t.description;
@@ -3268,6 +3497,13 @@ function buildTreeExportObject(){
       if (img.rotation) io.rotation = img.rotation;
       if (img.rotationSpeed) io.rotationSpeed = img.rotationSpeed;
       return io;
+    });
+  }
+  if (state.stars.length) {
+    out.stars = state.stars.map(function(s){
+      var so = { id: s.id, x: s.x, y: s.y, radius: s.radius, starType: s.starType || 'star_yellow' };
+      if (s.color) so.color = s.color;
+      return so;
     });
   }
   return out;
@@ -3344,7 +3580,7 @@ document.getElementById('importBtn').addEventListener('click', function(){
     var nodesRaw = document.getElementById('impNodes').value.trim();
     try {
       if (typesRaw) { var pt = JSON.parse(typesRaw); state.types = pt.skillTypes || pt; }
-      if (nodesRaw) { var pn = JSON.parse(nodesRaw); state.nodes = pn.nodes || pn; state.curves = pn.connectorCurves || []; state.hiddenConnectors = pn.hiddenConnectors || []; state.anchors = pn.orbitAnchors || []; state.images = normalizeImages(pn.staticImages); }
+      if (nodesRaw) { var pn = JSON.parse(nodesRaw); state.nodes = pn.nodes || pn; state.curves = pn.connectorCurves || []; state.hiddenConnectors = pn.hiddenConnectors || []; state.anchors = pn.orbitAnchors || []; state.images = normalizeImages(pn.staticImages); state.stars = normalizeStars(pn.stars); }
       root.innerHTML = '';
       state.selectedIds = [];
       saveLocal();
@@ -3371,6 +3607,7 @@ document.getElementById('resetBtn').addEventListener('click', function(){
     state.hiddenConnectors = treeJson.hiddenConnectors || [];
     state.anchors = treeJson.orbitAnchors || [];
     state.images = normalizeImages(treeJson.staticImages);
+    state.stars = normalizeStars(treeJson.stars);
     try { localStorage.removeItem('skillTreeEditor.v1'); } catch(e){}
     clearAllSelection();
     render();

@@ -515,6 +515,37 @@ class ShipSkillDataTest {
     }
 
     @Test
+    void selectOptionConsumesABankedFreeAllocationInsteadOfSpendingOp() {
+        ShipSkillData data = new ShipSkillData();
+        data.addFreeAllocationCredit();
+        SkillNode slot = node("slot_1", List.of());
+        SkillType chosenOption = new SkillType("hull", "Hull", "a.png", List.of(), SkillTier.SMALL, null, null, null);
+
+        data.selectOption(slot, chosenOption, 1);
+
+        assertTrue(data.isAllocated("slot_1"));
+        assertTrue(data.isFreeNode("slot_1"));
+        assertEquals(0, data.getBankedFreeAllocations());
+        assertEquals(0, data.getSpentOp());
+    }
+
+    @Test
+    void deallocatingAFreelySelectedOptionalNodeRefundsTheBankedCreditInsteadOfOp() {
+        ShipSkillData data = new ShipSkillData();
+        data.addFreeAllocationCredit();
+        SkillNode slot = node("slot_1", List.of());
+        SkillType chosenOption = new SkillType("hull", "Hull", "a.png", List.of(), SkillTier.SMALL, null, null, null);
+        SkillTree.registerType(chosenOption);
+        data.selectOption(slot, chosenOption, 1);
+
+        data.deallocate(slot, 1);
+
+        assertFalse(data.isAllocated("slot_1"));
+        assertEquals(1, data.getBankedFreeAllocations());
+        assertEquals(0, data.getSpentOp());
+    }
+
+    @Test
     void deallocateRefundsTheSlotsOpCostRegardlessOfSelectedOption() {
         ShipSkillData data = new ShipSkillData();
         SkillNode slot = node("slot_1", List.of());

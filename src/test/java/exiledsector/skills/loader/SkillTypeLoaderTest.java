@@ -215,7 +215,7 @@ class SkillTypeLoaderTest {
     }
 
     @Test
-    void missingLockedFieldDefaultsToFalse() throws Exception {
+    void missingLockedUntilHullModFieldDefaultsToNull() throws Exception {
         JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
                 + "\"id\": \"hull\","
                 + "\"name\": \"Hull\","
@@ -224,22 +224,22 @@ class SkillTypeLoaderTest {
 
         SkillType hull = SkillTypeLoader.parseSkillTypes(root).get("hull");
 
-        assertFalse(hull.isLocked());
+        assertNull(hull.getLockedUntilHullMod());
     }
 
     @Test
-    void parsesLockedTrue() throws Exception {
+    void parsesLockedUntilHullMod() throws Exception {
         JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
                 + "\"id\": \"escort_package\","
                 + "\"name\": \"Escort Package\","
                 + "\"icon\": \"a.png\","
                 + "\"vanillaHullMod\": \"escort_package\","
-                + "\"locked\": true"
+                + "\"lockedUntilHullMod\": \"escort_package\""
                 + "} ] }");
 
         SkillType escortPackage = SkillTypeLoader.parseSkillTypes(root).get("escort_package");
 
-        assertTrue(escortPackage.isLocked());
+        assertEquals("escort_package", escortPackage.getLockedUntilHullMod());
     }
 
     @Test

@@ -5,6 +5,7 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.ui.decoration.RingBelt;
+import exiledsector.ui.decoration.Star;
 import exiledsector.ui.decoration.StaticImage;
 import exiledsector.ui.node.ConnectorCurve;
 import org.apache.log4j.Logger;
@@ -52,6 +53,11 @@ public final class SkillTreeLoader {
     public static List<RingBelt> loadRingBelts() {
         return loadJsonOrDefault("ring belts from " + DATA_PATH,
                 () -> parseRingBelts(Global.getSettings().loadJSON(DATA_PATH)), new ArrayList<>());
+    }
+
+    public static List<Star> loadStars() {
+        return loadJsonOrDefault("stars from " + DATA_PATH,
+                () -> parseStars(Global.getSettings().loadJSON(DATA_PATH)), new ArrayList<>());
     }
 
     private static <T> T loadJsonOrDefault(String context, JsonParser<T> parser, T fallback) {
@@ -103,6 +109,23 @@ public final class SkillTreeLoader {
                     (float) imageJson.optDouble("rotationSpeed", 0.0)));
         }
         return images;
+    }
+
+    public static List<Star> parseStars(JSONObject root) throws JSONException {
+        List<Star> stars = new ArrayList<>();
+        JSONArray starArray = root.optJSONArray("stars");
+        if (starArray == null) return stars;
+        for (int i = 0; i < starArray.length(); i++) {
+            JSONObject starJson = starArray.getJSONObject(i);
+            stars.add(new Star(
+                    starJson.getString("id"),
+                    (float) starJson.getDouble("x"),
+                    (float) starJson.getDouble("y"),
+                    (float) starJson.getDouble("radius"),
+                    starJson.optString("starType", "star_yellow"),
+                    starJson.optString("color", null)));
+        }
+        return stars;
     }
 
     public static Map<String, ConnectorCurve> parseConnectorCurves(JSONObject root) throws JSONException {

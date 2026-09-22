@@ -64,7 +64,7 @@ public final class SkillTypeLoader {
                 optionalOptionIds,
                 exclusiveHullModIds,
                 exclusiveSkillTypeIds,
-                json.optBoolean("locked", false));
+                json.optString("lockedUntilHullMod", null));
     }
 
     private static List<String> parseStringArray(JSONArray array) throws JSONException {

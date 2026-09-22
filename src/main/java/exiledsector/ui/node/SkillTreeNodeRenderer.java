@@ -18,6 +18,7 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.SkillTypeUnlockStatus;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.ui.SkillTreePanelStyle;
 import lunalib.lunaRefit.BaseRefitButton;
@@ -109,7 +110,7 @@ public final class SkillTreeNodeRenderer {
             float footprintSize = NODE_SIZE * zoom * tier.getSizeMultiplier();
             float iconSize = footprintSize * ICON_INSET_RATIO;
 
-            if (node.getType().isLocked()) {
+            if (SkillTypeUnlockStatus.isLocked(node.getType())) {
                 ghostRenderer.draw(nodeX, nodeY, footprintSize, alphaMult, node.getId());
                 continue;
             }
@@ -277,7 +278,7 @@ public final class SkillTreeNodeRenderer {
     }
 
     private String blockAllocationReason(SkillType type) {
-        if (type.isLocked()) {
+        if (SkillTypeUnlockStatus.isLocked(type)) {
             return "Unidentified - explore the sector to discover this node.";
         }
 

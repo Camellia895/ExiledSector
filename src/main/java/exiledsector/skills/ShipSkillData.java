@@ -41,7 +41,12 @@ public class ShipSkillData {
 
     public void selectOption(SkillNode node, SkillType chosenOption, int opCost) {
         if (!isAllocated(node.getId())) {
-            spentOp += opCost;
+            if (opCost > 0 && bankedFreeAllocations > 0) {
+                bankedFreeAllocations--;
+                freeNodeIds().add(node.getId());
+            } else {
+                spentOp += opCost;
+            }
         }
         allocatedNodeIds.add(node.getId());
         if (optionalSelections == null) optionalSelections = new LinkedHashMap<>();
