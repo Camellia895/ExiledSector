@@ -1,2 +1,3 @@
 name,id,tier,rarity,tech/manufacturer,tags,uiTags,base value,unlocked,hidden,hiddenEverywhere,cost_frigate,cost_dest,cost_cruiser,cost_capital,script,desc,short,sModDesc,sprite
 Exiled Sector Skill Tree,exiledSector_core,,,,,,,,1,1,0,0,0,0,exiledsector.effects.SkillTreeHullMod,"Internal marker hullmod used by Exiled Sector to apply per-ship skill tree effects. Always installed automatically; not player-visible.",,,
+Exiled Sector Conflict Warning,exiledSector_conflictWarning,,,,hide_in_codex,,,,1,1,0,0,0,0,exiledsector.effects.SkillConflictWarningHullMod,"Internal marker hullmod used by Exiled Sector to explain a hullmod removed due to a conflicting allocated passive. Always installed automatically; not player-visible.",,,

@@ -24,6 +24,8 @@ public class SkillTreeHullMod extends BaseHullMod {
     public static final String ID = "exiledSector_core";
 
     private static final String MOD_ID_PREFIX = "exiledSector_skill_";
+    private static final String MAGICLIB_WARNING_HULLMOD_ID = "ML_incompatibleHullmodWarning";
+    private static final String CONFLICT_WARNING_HULLMOD_ID = "exiledSector_conflictWarning";
 
     @Override
     public void applyEffectsBeforeShipCreation(HullSize hullSize, MutableShipStatsAPI stats, String id) {
@@ -101,14 +103,13 @@ public class SkillTreeHullMod extends BaseHullMod {
             SkillType type = node.resolveEffectiveType(data);
             for (String hullModId : type.getExclusiveHullModIds()) {
                 if (variant.hasHullMod(hullModId)) {
-                    MagicIncompatibleHullmods.removeHullmodWithWarning(variant, hullModId, causeHullModId(type));
+                    MagicIncompatibleHullmods.removeHullmodWithWarning(variant, hullModId, CONFLICT_WARNING_HULLMOD_ID);
+                    variant.removeMod(MAGICLIB_WARNING_HULLMOD_ID);
+                    variant.addMod(CONFLICT_WARNING_HULLMOD_ID);
+                    SkillConflictWarnings.record(variant, hullModId, type.getDisplayName());
                 }
             }
         }
-    }
-
-    private static String causeHullModId(SkillType type) {
-        return Global.getSettings().getHullModSpec(type.getId()) != null ? type.getId() : ID;
     }
 
     private interface VanillaDelegate {

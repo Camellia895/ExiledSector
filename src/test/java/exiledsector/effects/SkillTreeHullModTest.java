@@ -38,6 +38,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -207,17 +208,20 @@ class SkillTreeHullModTest {
         when(variant.getHullMods()).thenReturn(new LinkedHashSet<>(List.of("adaptiveshields")));
         when(variant.getSMods()).thenReturn(new LinkedHashSet<>());
 
-        SettingsAPI settings = mock(SettingsAPI.class);
-        globalMock.when(Global::getSettings).thenReturn(settings);
-        when(settings.getHullModSpec("frontemitter")).thenReturn(mock(HullModSpecAPI.class));
-
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
 
         verify(variant).removeMod("adaptiveshields");
+        verify(variant).removeMod("ML_incompatibleHullmodWarning");
+        verify(variant).addMod("exiledSector_conflictWarning");
+        verify(variant, never()).removeMod(SkillTreeHullMod.ID);
+
+        SkillConflictWarnings.Removal removal = SkillConflictWarnings.get(variant);
+        assertEquals("adaptiveshields", removal.removedHullModId);
+        assertEquals("Shield Conversion - Front", removal.causeSkillDisplayName);
     }
 
     @Test
-    void beforeShipCreationFallsBackToTheUmbrellaHullModAsCauseWhenTheSkillTypeIdIsntARealHullMod() {
+    void beforeShipCreationNeverRemovesTheUmbrellaHullModEvenWhenTheConflictingHullModIsSModded() {
         SkillType hullType = new SkillType("hull", "Reinforced Hull", "graphics/hullmods/reinforced_bulkheads.png", 2, List.of(), List.of(), SkillTier.SMALL, null, null, null,
                 List.of(), List.of("armoredcladding"));
         SkillNode hullNode = new SkillNode("hull_1", hullType, List.of(), 0f, 0f);
@@ -235,13 +239,11 @@ class SkillTreeHullModTest {
         when(variant.getHullMods()).thenReturn(new LinkedHashSet<>(List.of("armoredcladding")));
         when(variant.getSMods()).thenReturn(new LinkedHashSet<>(List.of("armoredcladding")));
 
-        SettingsAPI settings = mock(SettingsAPI.class);
-        globalMock.when(Global::getSettings).thenReturn(settings);
-        when(settings.getHullModSpec("hull")).thenReturn(null);
-
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
 
-        verify(variant).removeMod(SkillTreeHullMod.ID);
+        verify(variant, never()).removeMod(SkillTreeHullMod.ID);
+        verify(variant, never()).removeMod("armoredcladding");
+        verify(variant).removeMod("exiledSector_conflictWarning");
     }
 
     @Test
