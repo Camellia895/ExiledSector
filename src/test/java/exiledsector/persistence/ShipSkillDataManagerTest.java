@@ -67,7 +67,7 @@ class ShipSkillDataManagerTest {
         shipA.allocate(node("armor_1"));
 
         assertNotNull(shipB);
-        assertNotEquals(shipA.getSpentOp(), shipB.getSpentOp());
+        assertNotEquals(shipA.getSpentPassivePoints(), shipB.getSpentPassivePoints());
     }
 
     @Test
@@ -77,7 +77,7 @@ class ShipSkillDataManagerTest {
 
         ShipSkillData reread = ShipSkillDataManager.get("ship-a");
 
-        assertEquals(2, reread.getSpentOp());
+        assertEquals(1, reread.getSpentPassivePoints());
     }
 
     private static SkillNode node(String id) {

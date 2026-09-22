@@ -6,6 +6,8 @@ import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
+import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.VanillaHullBaselines;
 import exiledsector.ui.util.GLDraw;
 import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.ui.LazyFont;
@@ -208,6 +210,13 @@ final class SkillTreeStatPanel {
         }
         addStat(logistics, "Max Combat Readiness", stats.getMaxCombatReadiness().getModifiedValue() * 100f, "%");
         addStat(logistics, "Supplies/mo", stats.getSuppliesPerMonth().getModifiedValue());
+        try {
+            int totalPassivePoints = VanillaHullBaselines.passivePointsFor(hullSpec);
+            int spentPassivePoints = ShipSkillDataManager.get(member.getId()).getSpentPassivePoints();
+            logistics.add("Passive Points " + spentPassivePoints + "/" + totalPassivePoints);
+        } catch (RuntimeException e) {
+            Logger.getLogger(SkillTreeStatPanel.class).error("Failed to compute passive point stats", e);
+        }
         groups.add(new StatGroup("Logistics", logistics));
 
         return groups;

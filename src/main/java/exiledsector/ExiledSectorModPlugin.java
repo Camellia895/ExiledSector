@@ -4,6 +4,7 @@ import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.Global;
 import exiledsector.effects.SkillTreeInstaller;
 import exiledsector.skills.SkillTree;
+import exiledsector.skills.VanillaHullBaselines;
 import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.SkillTreeRefitButton;
 
@@ -17,6 +18,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         SkillTreeRefitButton.addButton();
         ExiledSectorSettings.register();
         SkillTree.load();
+        VanillaHullBaselines.compute();
     }
 
     @Override
