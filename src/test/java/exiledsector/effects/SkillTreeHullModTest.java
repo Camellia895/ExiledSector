@@ -11,6 +11,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
@@ -33,6 +34,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -184,6 +186,84 @@ class SkillTreeHullModTest {
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
 
         verify(stats, never()).getHullBonus();
+    }
+
+    @Test
+    void beforeShipCreationRemovesARealHullModThatConflictsWithAnAllocatedSkill() {
+        SkillType frontType = new SkillType("frontemitter", "Shield Conversion - Front", "a.png", 1, List.of(), List.of(), SkillTier.NOTABLE, null, null, null,
+                List.of(), List.of("adaptiveshields"));
+        SkillNode frontNode = new SkillNode("frontemitter_1", frontType, List.of(), 0f, 0f);
+        SkillTree.register(frontNode);
+
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        ShipSkillDataManager.get("ship-a").allocate(frontNode);
+
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        when(stats.getFleetMember()).thenReturn(member);
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(stats.getVariant()).thenReturn(variant);
+        when(variant.hasHullMod("adaptiveshields")).thenReturn(true);
+        when(variant.getHullMods()).thenReturn(new LinkedHashSet<>(List.of("adaptiveshields")));
+        when(variant.getSMods()).thenReturn(new LinkedHashSet<>());
+
+        SettingsAPI settings = mock(SettingsAPI.class);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+        when(settings.getHullModSpec("frontemitter")).thenReturn(mock(HullModSpecAPI.class));
+
+        new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
+
+        verify(variant).removeMod("adaptiveshields");
+    }
+
+    @Test
+    void beforeShipCreationFallsBackToTheUmbrellaHullModAsCauseWhenTheSkillTypeIdIsntARealHullMod() {
+        SkillType hullType = new SkillType("hull", "Reinforced Hull", "graphics/hullmods/reinforced_bulkheads.png", 2, List.of(), List.of(), SkillTier.SMALL, null, null, null,
+                List.of(), List.of("armoredcladding"));
+        SkillNode hullNode = new SkillNode("hull_1", hullType, List.of(), 0f, 0f);
+        SkillTree.register(hullNode);
+
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        ShipSkillDataManager.get("ship-a").allocate(hullNode);
+
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        when(stats.getFleetMember()).thenReturn(member);
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(stats.getVariant()).thenReturn(variant);
+        when(variant.hasHullMod("armoredcladding")).thenReturn(true);
+        when(variant.getHullMods()).thenReturn(new LinkedHashSet<>(List.of("armoredcladding")));
+        when(variant.getSMods()).thenReturn(new LinkedHashSet<>(List.of("armoredcladding")));
+
+        SettingsAPI settings = mock(SettingsAPI.class);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+        when(settings.getHullModSpec("hull")).thenReturn(null);
+
+        new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
+
+        verify(variant).removeMod(SkillTreeHullMod.ID);
+    }
+
+    @Test
+    void beforeShipCreationDoesNotRemoveAnythingWhenNoConflictingHullModIsInstalled() {
+        SkillType frontType = new SkillType("frontemitter", "Shield Conversion - Front", "a.png", 1, List.of(), List.of(), SkillTier.NOTABLE, null, null, null,
+                List.of(), List.of("adaptiveshields"));
+        SkillNode frontNode = new SkillNode("frontemitter_1", frontType, List.of(), 0f, 0f);
+        SkillTree.register(frontNode);
+
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        ShipSkillDataManager.get("ship-a").allocate(frontNode);
+
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        when(stats.getFleetMember()).thenReturn(member);
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(stats.getVariant()).thenReturn(variant);
+        when(variant.hasHullMod("adaptiveshields")).thenReturn(false);
+
+        new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
+
+        verify(variant, never()).removeMod(anyString());
     }
 
     @Test

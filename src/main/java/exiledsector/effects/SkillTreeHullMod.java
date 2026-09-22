@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.HullModEffect;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.persistence.ShipSkillDataManager;
@@ -16,6 +17,7 @@ import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
+import org.magiclib.util.MagicIncompatibleHullmods;
 
 public class SkillTreeHullMod extends BaseHullMod {
 
@@ -28,6 +30,7 @@ public class SkillTreeHullMod extends BaseHullMod {
         forEachAllocatedEffect(stats.getFleetMember(), hullSize,
                 (vanillaEffect, vanillaHullModId) -> vanillaEffect.applyEffectsBeforeShipCreation(hullSize, stats, vanillaHullModId),
                 (effect, modId, magnitude) -> effect.apply(stats, modId, magnitude));
+        removeHullModsConflictingWithAllocatedSkills(stats.getFleetMember(), stats.getVariant());
     }
 
     @Override
@@ -85,6 +88,27 @@ public class SkillTreeHullMod extends BaseHullMod {
                 action.apply(effect.effect(), modId, effect.valueFor(hullSize));
             }
         }
+    }
+
+    private void removeHullModsConflictingWithAllocatedSkills(FleetMemberAPI member, ShipVariantAPI variant) {
+        if (member == null || variant == null) return;
+
+        ShipSkillData data = ShipSkillDataManager.get(member.getId());
+        for (String nodeId : data.getAllocatedNodeIds()) {
+            SkillNode node = SkillTree.get(nodeId);
+            if (node == null) continue;
+
+            SkillType type = node.resolveEffectiveType(data);
+            for (String hullModId : type.getExclusiveHullModIds()) {
+                if (variant.hasHullMod(hullModId)) {
+                    MagicIncompatibleHullmods.removeHullmodWithWarning(variant, hullModId, causeHullModId(type));
+                }
+            }
+        }
+    }
+
+    private static String causeHullModId(SkillType type) {
+        return Global.getSettings().getHullModSpec(type.getId()) != null ? type.getId() : ID;
     }
 
     private interface VanillaDelegate {
