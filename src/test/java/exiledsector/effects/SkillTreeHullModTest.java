@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -208,6 +209,9 @@ class SkillTreeHullModTest {
         when(variant.getHullMods()).thenReturn(new LinkedHashSet<>(List.of("adaptiveshields")));
         when(variant.getSMods()).thenReturn(new LinkedHashSet<>());
 
+        SettingsAPI settings = mock(SettingsAPI.class);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
 
         verify(variant).removeMod("adaptiveshields");
@@ -239,6 +243,9 @@ class SkillTreeHullModTest {
         when(variant.getHullMods()).thenReturn(new LinkedHashSet<>(List.of("armoredcladding")));
         when(variant.getSMods()).thenReturn(new LinkedHashSet<>(List.of("armoredcladding")));
 
+        SettingsAPI settings = mock(SettingsAPI.class);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
 
         verify(variant, never()).removeMod(SkillTreeHullMod.ID);
@@ -263,9 +270,60 @@ class SkillTreeHullModTest {
         when(stats.getVariant()).thenReturn(variant);
         when(variant.hasHullMod("adaptiveshields")).thenReturn(false);
 
+        SettingsAPI settings = mock(SettingsAPI.class);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
 
         verify(variant, never()).removeMod(anyString());
+    }
+
+    @Test
+    void beforeShipCreationInstallsAndCostsTheOpSinkWhenOpHasBeenSpentOnPassivePoints() {
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        ShipSkillDataManager.get("ship-a").buyPassivePoint(4, 100);
+
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        when(stats.getFleetMember()).thenReturn(member);
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(stats.getVariant()).thenReturn(variant);
+        when(variant.hasHullMod("exiledSector_opSink")).thenReturn(false);
+
+        SettingsAPI settings = mock(SettingsAPI.class);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+        HullModSpecAPI opSinkSpec = mock(HullModSpecAPI.class);
+        when(settings.getHullModSpec("exiledSector_opSink")).thenReturn(opSinkSpec);
+
+        new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
+
+        verify(opSinkSpec).setFrigateCost(4);
+        verify(opSinkSpec).setDestroyerCost(4);
+        verify(opSinkSpec).setCruiserCost(4);
+        verify(opSinkSpec).setCapitalCost(4);
+        verify(variant).addPermaMod("exiledSector_opSink", false);
+    }
+
+    @Test
+    void beforeShipCreationRemovesTheOpSinkWhenNoOpHasBeenSpentOnPassivePoints() {
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        when(stats.getFleetMember()).thenReturn(member);
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(stats.getVariant()).thenReturn(variant);
+        when(variant.hasHullMod("exiledSector_opSink")).thenReturn(true);
+
+        SettingsAPI settings = mock(SettingsAPI.class);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+        HullModSpecAPI opSinkSpec = mock(HullModSpecAPI.class);
+        when(settings.getHullModSpec("exiledSector_opSink")).thenReturn(opSinkSpec);
+
+        new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
+
+        verify(variant).removePermaMod("exiledSector_opSink");
+        verify(variant, never()).addPermaMod(anyString(), anyBoolean());
     }
 
     @Test

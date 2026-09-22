@@ -41,7 +41,69 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
 
         assertEquals(0, data.getSpentPassivePoints());
+        assertEquals(0, data.getPurchasedPassivePoints());
+        assertEquals(0, data.getOpSpentOnPassivePoints());
         assertTrue(data.getAllocatedNodeIds().isEmpty());
+    }
+
+    @Test
+    void buyPassivePointIncreasesPurchasedPointsAndTracksOpSpent() {
+        ShipSkillData data = new ShipSkillData();
+
+        boolean bought = data.buyPassivePoint(4, 10);
+
+        assertTrue(bought);
+        assertEquals(1, data.getPurchasedPassivePoints());
+        assertEquals(4, data.getOpSpentOnPassivePoints());
+    }
+
+    @Test
+    void buyPassivePointFailsWhenNotEnoughOpIsAvailable() {
+        ShipSkillData data = new ShipSkillData();
+
+        boolean bought = data.buyPassivePoint(4, 3);
+
+        assertFalse(bought);
+        assertEquals(0, data.getPurchasedPassivePoints());
+        assertEquals(0, data.getOpSpentOnPassivePoints());
+    }
+
+    @Test
+    void sellPassivePointDecreasesPurchasedPointsAndRefundsOp() {
+        ShipSkillData data = new ShipSkillData();
+        data.buyPassivePoint(4, 10);
+
+        boolean sold = data.sellPassivePoint(4);
+
+        assertTrue(sold);
+        assertEquals(0, data.getPurchasedPassivePoints());
+        assertEquals(0, data.getOpSpentOnPassivePoints());
+    }
+
+    @Test
+    void sellPassivePointFailsWhenAllPurchasedPointsAreAllocated() {
+        ShipSkillData data = new ShipSkillData();
+        data.buyPassivePoint(4, 10);
+        data.allocate(node("armor_1", List.of()));
+
+        boolean sold = data.sellPassivePoint(4);
+
+        assertFalse(sold);
+        assertEquals(1, data.getPurchasedPassivePoints());
+        assertEquals(4, data.getOpSpentOnPassivePoints());
+    }
+
+    @Test
+    void buyingThenSellingAPassivePointIsANoOpRoundTrip() {
+        ShipSkillData data = new ShipSkillData();
+
+        data.buyPassivePoint(7, 100);
+        data.sellPassivePoint(7);
+        data.buyPassivePoint(7, 100);
+        data.sellPassivePoint(7);
+
+        assertEquals(0, data.getPurchasedPassivePoints());
+        assertEquals(0, data.getOpSpentOnPassivePoints());
     }
 
     @Test

@@ -18,6 +18,8 @@ public class ShipSkillData {
     private final Set<String> allocatedNodeIds = new LinkedHashSet<>();
     private Map<String, String> optionalSelections = new LinkedHashMap<>();
     private int spentPassivePoints = 0;
+    private int purchasedPassivePoints = 0;
+    private int opSpentOnPassivePoints = 0;
 
     public boolean isAllocated(String nodeId) {
         return allocatedNodeIds.contains(nodeId);
@@ -47,6 +49,28 @@ public class ShipSkillData {
 
     public int getSpentPassivePoints() {
         return spentPassivePoints;
+    }
+
+    public int getPurchasedPassivePoints() {
+        return purchasedPassivePoints;
+    }
+
+    public int getOpSpentOnPassivePoints() {
+        return opSpentOnPassivePoints;
+    }
+
+    public boolean buyPassivePoint(int opCostPerPoint, int availableOp) {
+        if (opCostPerPoint > availableOp) return false;
+        purchasedPassivePoints++;
+        opSpentOnPassivePoints += opCostPerPoint;
+        return true;
+    }
+
+    public boolean sellPassivePoint(int opCostPerPoint) {
+        if (purchasedPassivePoints <= spentPassivePoints) return false;
+        purchasedPassivePoints--;
+        opSpentOnPassivePoints -= opCostPerPoint;
+        return true;
     }
 
     public void allocate(SkillNode node) {

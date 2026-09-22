@@ -26,12 +26,14 @@ public class SkillTreeHullMod extends BaseHullMod {
     private static final String MOD_ID_PREFIX = "exiledSector_skill_";
     private static final String MAGICLIB_WARNING_HULLMOD_ID = "ML_incompatibleHullmodWarning";
     private static final String CONFLICT_WARNING_HULLMOD_ID = "exiledSector_conflictWarning";
+    private static final String OP_SINK_HULLMOD_ID = "exiledSector_opSink";
 
     @Override
     public void applyEffectsBeforeShipCreation(HullSize hullSize, MutableShipStatsAPI stats, String id) {
         forEachAllocatedEffect(stats.getFleetMember(), hullSize,
                 (vanillaEffect, vanillaHullModId) -> vanillaEffect.applyEffectsBeforeShipCreation(hullSize, stats, vanillaHullModId),
                 (effect, modId, magnitude) -> effect.apply(stats, modId, magnitude));
+        syncOpSinkHullMod(stats.getFleetMember(), stats.getVariant());
         removeHullModsConflictingWithAllocatedSkills(stats.getFleetMember(), stats.getVariant());
     }
 
@@ -89,6 +91,27 @@ public class SkillTreeHullMod extends BaseHullMod {
             for (HullSizeSkillEffect effect : type.getHullSizeEffects()) {
                 action.apply(effect.effect(), modId, effect.valueFor(hullSize));
             }
+        }
+    }
+
+    private void syncOpSinkHullMod(FleetMemberAPI member, ShipVariantAPI variant) {
+        if (member == null || variant == null) return;
+
+        HullModSpecAPI spec = Global.getSettings().getHullModSpec(OP_SINK_HULLMOD_ID);
+        if (spec == null) return;
+
+        int opSpent = ShipSkillDataManager.get(member.getId()).getOpSpentOnPassivePoints();
+        spec.setFrigateCost(opSpent);
+        spec.setDestroyerCost(opSpent);
+        spec.setCruiserCost(opSpent);
+        spec.setCapitalCost(opSpent);
+
+        if (opSpent > 0) {
+            if (!variant.hasHullMod(OP_SINK_HULLMOD_ID)) {
+                variant.addPermaMod(OP_SINK_HULLMOD_ID, false);
+            }
+        } else if (variant.hasHullMod(OP_SINK_HULLMOD_ID)) {
+            variant.removePermaMod(OP_SINK_HULLMOD_ID);
         }
     }
 

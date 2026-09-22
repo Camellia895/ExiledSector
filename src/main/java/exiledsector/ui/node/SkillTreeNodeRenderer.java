@@ -14,7 +14,6 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
-import exiledsector.skills.VanillaHullBaselines;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.ui.SkillTreePanelStyle;
 import lunalib.lunaRefit.BaseRefitButton;
@@ -33,7 +32,6 @@ public final class SkillTreeNodeRenderer {
     private final FleetMemberAPI member;
     private final BaseRefitButton refitButton;
     private final SkillNode activeRoot;
-    private final int totalPassivePoints;
 
     private final SkillTreeNodeRingRenderer ringRenderer;
     private final SkillTreeNodeIconRenderer iconRenderer;
@@ -45,7 +43,6 @@ public final class SkillTreeNodeRenderer {
         this.member = member;
         this.refitButton = refitButton;
         this.activeRoot = findRootNode(ShipTechLevel.of(member).rootTypeId());
-        this.totalPassivePoints = VanillaHullBaselines.passivePointsFor(member.getHullSpec());
 
         this.ringRenderer = new SkillTreeNodeRingRenderer(style);
         this.iconRenderer = new SkillTreeNodeIconRenderer();
@@ -84,7 +81,7 @@ public final class SkillTreeNodeRenderer {
             float nodeX = centerX + node.getOffsetX() * zoom;
             float nodeY = centerY - node.getOffsetY() * zoom;
             boolean allocated = data.isAllocated(node.getId());
-            boolean breathing = !allocated && data.canAllocate(node, satisfiedRootId, totalPassivePoints);
+            boolean breathing = !allocated && data.canAllocate(node, satisfiedRootId, data.getPurchasedPassivePoints());
             SkillType effectiveType = node.resolveEffectiveType(data);
             float footprintSize = NODE_SIZE * zoom * tier.getSizeMultiplier();
             float iconSize = footprintSize * ICON_INSET_RATIO;
@@ -110,7 +107,7 @@ public final class SkillTreeNodeRenderer {
             float nodeY = centerY - node.getOffsetY() * zoom;
             boolean isActiveRoot = activeRoot != null && node.getId().equals(activeRoot.getId());
             boolean allocated = data.isAllocated(node.getId());
-            boolean breathing = !allocated && data.canAllocate(node, satisfiedRootId, totalPassivePoints);
+            boolean breathing = !allocated && data.canAllocate(node, satisfiedRootId, data.getPurchasedPassivePoints());
             float footprintSize = NODE_SIZE * zoom * SkillTier.ROOT.getSizeMultiplier();
             ringRenderer.draw(nodeX, nodeY, footprintSize, alphaMult, allocated, breathing, zoom, node);
 
@@ -164,7 +161,7 @@ public final class SkillTreeNodeRenderer {
         boolean isOptional = node.getType().isOptional();
 
         if (!wasAllocated && isOptional) {
-            if (data.canAllocate(node, satisfiedRootId(), totalPassivePoints)) {
+            if (data.canAllocate(node, satisfiedRootId(), data.getPurchasedPassivePoints())) {
                 dropdownRenderer.open(node);
             }
             return;
@@ -187,7 +184,7 @@ public final class SkillTreeNodeRenderer {
             return;
         }
 
-        data.toggle(node, SkillTree.getAllNodes().values(), satisfiedRootId(), totalPassivePoints);
+        data.toggle(node, SkillTree.getAllNodes().values(), satisfiedRootId(), data.getPurchasedPassivePoints());
         boolean isAllocatedNow = data.isAllocated(node.getId());
         if (isAllocatedNow != wasAllocated) {
             refreshAfterAllocationChange(node, isAllocatedNow);
@@ -219,9 +216,9 @@ public final class SkillTreeNodeRenderer {
 
     private void refreshAfterAllocationChange(SkillNode node, boolean isAllocatedNow) {
         tooltipRenderer.invalidate(node.getId());
+        new SkillTreeHullMod().applyEffectsBeforeShipCreation(member.getHullSpec().getHullSize(), member.getStats(), SkillTreeHullMod.ID);
         member.setStatUpdateNeeded(true);
         member.updateStats();
-        new SkillTreeHullMod().applyEffectsBeforeShipCreation(member.getHullSpec().getHullSize(), member.getStats(), SkillTreeHullMod.ID);
         if (refitButton != null) {
             refitButton.refreshVariant();
         }
