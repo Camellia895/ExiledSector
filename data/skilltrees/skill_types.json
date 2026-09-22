@@ -214,7 +214,6 @@
 		},
 		{
 			"id": "advancedshieldemitter",
-			"exclusiveHullMods": ["advancedshieldemitter"],
 			"name": "Accelerated Shields",
 			"icon": "graphics/icons/circular/notable_passives/accelerated_shields.png",
 			"cost": 1,
@@ -229,13 +228,15 @@
 					"magnitude": 50
 				}
 			],
+			"exclusiveHullMods": [
+				"advancedshieldemitter"
+			],
 			"tags": [
 				"shield"
 			]
 		},
 		{
 			"id": "adaptive_coils",
-			"exclusiveHullMods": ["adaptive_coils"],
 			"name": "Adaptive Phase Coils",
 			"icon": "graphics/icons/circular/notable_passives/phase_field.png",
 			"cost": 1,
@@ -246,6 +247,9 @@
 					"magnitude": 40
 				}
 			],
+			"exclusiveHullMods": [
+				"adaptive_coils"
+			],
 			"description": "Phase coils are less able to maintain a connection with normal space as the ship's hard flux levels rise, resulting in a greatly reduced top speed as the coils struggle to gain traction.\n\nThis modification allows the coils to handle higher levels of hard flux, increasing the threshold at which speed bottoms out.",
 			"tags": [
 				"flux",
@@ -254,7 +258,6 @@
 		},
 		{
 			"id": "advancedoptics",
-			"exclusiveHullMods": ["advancedoptics"],
 			"name": "Advanced Optics",
 			"icon": "graphics/icons/circular/notable_passives/advanced_optics.png",
 			"cost": 1,
@@ -269,6 +272,9 @@
 					"magnitude": -30
 				}
 			],
+			"exclusiveHullMods": [
+				"advancedoptics"
+			],
 			"tags": [
 				"energy",
 				"beam"
@@ -276,7 +282,6 @@
 		},
 		{
 			"id": "turretgyros",
-			"exclusiveHullMods": ["turretgyros"],
 			"name": "Advanced Turret Gyros",
 			"icon": "graphics/icons/circular/notable_passives/advanced_turret_gyros.png",
 			"cost": 1,
@@ -290,11 +295,13 @@
 					"effect": "BEAM_WEAPON_TURN_RATE_PERCENT",
 					"magnitude": 75
 				}
+			],
+			"exclusiveHullMods": [
+				"turretgyros"
 			]
 		},
 		{
 			"id": "armoredweapons",
-			"exclusiveHullMods": ["armoredweapons"],
 			"name": "Armored Weapon Mounts",
 			"icon": "graphics/icons/circular/notable_passives/armored_weapon_emplacements.png",
 			"cost": 1,
@@ -317,13 +324,15 @@
 					"magnitude": -25
 				}
 			],
+			"exclusiveHullMods": [
+				"armoredweapons"
+			],
 			"tags": [
 				"armour"
 			]
 		},
 		{
 			"id": "autorepair",
-			"exclusiveHullMods": ["autorepair"],
 			"name": "Automated Repair Unit",
 			"icon": "graphics/icons/circular/notable_passives/automated_repair_unit.png",
 			"cost": 1,
@@ -333,11 +342,13 @@
 					"effect": "REPAIR_TIME_MULT",
 					"magnitude": -50
 				}
+			],
+			"exclusiveHullMods": [
+				"autorepair"
 			]
 		},
 		{
 			"id": "auxiliarythrusters",
-			"exclusiveHullMods": ["auxiliarythrusters"],
 			"name": "Auxiliary Thrusters",
 			"icon": "graphics/icons/circular/notable_passives/auxilliary_thrusters.png",
 			"cost": 1,
@@ -359,6 +370,9 @@
 					"effect": "MANEUVERABILITY_PERCENT",
 					"magnitude": 35
 				}
+			],
+			"exclusiveHullMods": [
+				"auxiliarythrusters"
 			]
 		},
 		{
@@ -377,7 +391,6 @@
 		},
 		{
 			"id": "blast_doors",
-			"exclusiveHullMods": ["blast_doors"],
 			"name": "Blast Doors",
 			"icon": "graphics/icons/circular/notable_passives/blast_doors.png",
 			"cost": 1,
@@ -392,13 +405,15 @@
 					"magnitude": -60
 				}
 			],
+			"exclusiveHullMods": [
+				"blast_doors"
+			],
 			"tags": [
 				"logistics"
 			]
 		},
 		{
 			"id": "converted_hangar",
-			"exclusiveHullMods": ["converted_hangar"],
 			"name": "Converted Hangar",
 			"icon": "graphics/icons/circular/keystones/converted_hangar.png",
 			"cost": 1,
@@ -425,6 +440,9 @@
 					"magnitude": 20
 				}
 			],
+			"exclusiveHullMods": [
+				"converted_hangar"
+			],
 			"todo": "Real vanilla effect also increases deployment points and supply cost to recover by 1 per 5 OP spent on fighters (min 1), with a proportional increase in CR lost per deployment - deliberately not implemented yet, so right now this node is a buff with no real downside beyond the 4 modifiers above. This node may need other balance considerations once that's added.",
 			"tags": [
 				"fighter"
@@ -432,7 +450,6 @@
 		},
 		{
 			"id": "converted_fighterbay",
-			"exclusiveHullMods": ["converted_fighterbay"],
 			"name": "Converted Fighter Bay",
 			"icon": "graphics/icons/circular/keystones/converted_fighter_bay.png",
 			"cost": 1,
@@ -450,6 +467,9 @@
 					"magnitude": 50
 				}
 			],
+			"exclusiveHullMods": [
+				"converted_fighterbay"
+			],
 			"description": "Converts this ship's built-in fighter bays into cargo capacity, reducing crew requirements per bay converted.",
 			"tags": [
 				"logistics"
@@ -457,7 +477,6 @@
 		},
 		{
 			"id": "dedicated_targeting_core",
-			"exclusiveHullMods": ["dedicated_targeting_core"],
 			"name": "Dedicated Targeting Core",
 			"icon": "graphics/icons/circular/notable_passives/targeting_core.png",
 			"cost": 1,
@@ -478,6 +497,9 @@
 					"capitalShip": 50
 				}
 			],
+			"exclusiveHullMods": [
+				"dedicated_targeting_core"
+			],
 			"tags": [
 				"range"
 			]
@@ -497,7 +519,6 @@
 		},
 		{
 			"id": "eccm",
-			"exclusiveHullMods": ["eccm"],
 			"name": "ECCM Package",
 			"icon": "graphics/icons/circular/notable_passives/eccm_package.png",
 			"cost": 1,
@@ -536,13 +557,15 @@
 					"magnitude": -50
 				}
 			],
+			"exclusiveHullMods": [
+				"eccm"
+			],
 			"tags": [
 				"missile"
 			]
 		},
 		{
 			"id": "ecm",
-			"exclusiveHullMods": ["ecm"],
 			"name": "ECM Package",
 			"icon": "graphics/icons/circular/notable_passives/ecm_package.png",
 			"cost": 1,
@@ -555,6 +578,9 @@
 					"cruiser": 3,
 					"capitalShip": 4
 				}
+			],
+			"exclusiveHullMods": [
+				"ecm"
 			],
 			"description": "Electronic countermeasures (ECM) represents the effects of electronic warfare as fleets with superior capability imposing range penalties upon their opponents.",
 			"tags": [
@@ -573,7 +599,6 @@
 		},
 		{
 			"id": "expanded_deck_crew",
-			"exclusiveHullMods": ["expanded_deck_crew"],
 			"name": "Expanded Deck Crew",
 			"icon": "graphics/icons/circular/notable_passives/expanded_deck_crew.png",
 			"cost": 1,
@@ -592,13 +617,15 @@
 					"magnitude": 20
 				}
 			],
+			"exclusiveHullMods": [
+				"expanded_deck_crew"
+			],
 			"tags": [
 				"fighter"
 			]
 		},
 		{
 			"id": "magazines",
-			"exclusiveHullMods": ["magazines"],
 			"name": "Expanded Ballistic Magazines",
 			"icon": "graphics/icons/circular/notable_passives/expanded_magazines2_red.png",
 			"cost": 1,
@@ -608,11 +635,13 @@
 					"effect": "BALLISTIC_AMMO_PERCENT",
 					"magnitude": 50
 				}
+			],
+			"exclusiveHullMods": [
+				"magazines"
 			]
 		},
 		{
 			"id": "missleracks",
-			"exclusiveHullMods": ["missleracks"],
 			"name": "Expanded Missile Racks",
 			"icon": "graphics/icons/circular/notable_passives/expanded_missile_racks.png",
 			"cost": 1,
@@ -623,13 +652,15 @@
 					"magnitude": 100
 				}
 			],
+			"exclusiveHullMods": [
+				"missleracks"
+			],
 			"tags": [
 				"missile"
 			]
 		},
 		{
 			"id": "extendedshieldemitter",
-			"exclusiveHullMods": ["extendedshieldemitter"],
 			"name": "Extended Shields",
 			"icon": "graphics/icons/circular/notable_passives/extended_shields.png",
 			"cost": 1,
@@ -640,13 +671,15 @@
 					"magnitude": 40
 				}
 			],
+			"exclusiveHullMods": [
+				"extendedshieldemitter"
+			],
 			"tags": [
 				"shield"
 			]
 		},
 		{
 			"id": "shield_shunt",
-			"exclusiveHullMods": ["shield_shunt"],
 			"name": "Shield Shunt",
 			"icon": "graphics/icons/circular/notable_passives/shield_shunt.png",
 			"cost": 1,
@@ -659,6 +692,9 @@
 				{
 					"effect": "REMOVE_SHIELD"
 				}
+			],
+			"exclusiveHullMods": [
+				"shield_shunt"
 			],
 			"description": "Removes this ship's shields entirely, increasing its armor rating in exchange.",
 			"tags": [
@@ -700,7 +736,6 @@
 		},
 		{
 			"id": "hardenedshieldemitter",
-			"exclusiveHullMods": ["hardenedshieldemitter"],
 			"name": "Hardened Shields",
 			"icon": "graphics/icons/circular/notable_passives/hardened_shields.png",
 			"cost": 1,
@@ -715,13 +750,15 @@
 					"magnitude": -50
 				}
 			],
+			"exclusiveHullMods": [
+				"hardenedshieldemitter"
+			],
 			"tags": [
 				"shield"
 			]
 		},
 		{
 			"id": "hardened_subsystems",
-			"exclusiveHullMods": ["hardened_subsystems"],
 			"name": "Hardened Subsystems",
 			"icon": "graphics/icons/circular/notable_passives/hardened_subsystems.png",
 			"cost": 1,
@@ -735,11 +772,13 @@
 					"effect": "CR_LOSS_PER_SECOND_MULT",
 					"magnitude": -25
 				}
+			],
+			"exclusiveHullMods": [
+				"hardened_subsystems"
 			]
 		},
 		{
 			"id": "heavyarmor",
-			"exclusiveHullMods": ["heavyarmor"],
 			"name": "Heavy Armor",
 			"icon": "graphics/icons/circular/notable_passives/heavy_armor.png",
 			"cost": 1,
@@ -766,13 +805,15 @@
 					"capitalShip": 175
 				}
 			],
+			"exclusiveHullMods": [
+				"heavyarmor"
+			],
 			"tags": [
 				"armour"
 			]
 		},
 		{
 			"id": "high_scatter_amp",
-			"exclusiveHullMods": ["high_scatter_amp"],
 			"name": "High Scatter Amplifier",
 			"icon": "graphics/icons/circular/notable_passives/high_scatter_amp.png",
 			"cost": 1,
@@ -787,6 +828,9 @@
 					"magnitude": -25
 				}
 			],
+			"exclusiveHullMods": [
+				"high_scatter_amp"
+			],
 			"todo": "Placeholder magnitudes (50% hard flux, -25% range) pending real balance numbers. Reimplemented as a scalable percentage instead of vanilla's all-or-nothing forced-hard-flux-on-every-beam-hit, and the range reduction is a flat percentage instead of vanilla's reduce-only-the-portion-past-200-units logic - deliberate simplifications, not oversights. The +10% beam damage part (vanilla BEAM_DAMAGE_PERCENT) is not yet added; can reuse the existing BEAM_DAMAGE_PERCENT effect for that later.",
 			"tags": [
 				"energy",
@@ -795,7 +839,6 @@
 		},
 		{
 			"id": "pointdefenseai",
-			"exclusiveHullMods": ["pointdefenseai"],
 			"name": "Integrated Point Defense AI",
 			"icon": "graphics/icons/circular/notable_passives/integrated_point_defense_ai.png",
 			"cost": 1,
@@ -810,11 +853,13 @@
 				{
 					"effect": "PD_RECLASSIFY_SMALL_WEAPONS"
 				}
+			],
+			"exclusiveHullMods": [
+				"pointdefenseai"
 			]
 		},
 		{
 			"id": "targetingunit",
-			"exclusiveHullMods": ["targetingunit"],
 			"name": "Integrated Targeting Unit",
 			"icon": "graphics/icons/circular/notable_passives/integrated_targeting_unit.png",
 			"cost": 1,
@@ -835,13 +880,15 @@
 					"capitalShip": 40
 				}
 			],
+			"exclusiveHullMods": [
+				"targetingunit"
+			],
 			"tags": [
 				"range"
 			]
 		},
 		{
 			"id": "nav_relay",
-			"exclusiveHullMods": ["nav_relay"],
 			"name": "Nav Relay",
 			"icon": "graphics/icons/circular/notable_passives/nav_relay.png",
 			"cost": 1,
@@ -855,13 +902,15 @@
 					"capitalShip": 5
 				}
 			],
+			"exclusiveHullMods": [
+				"nav_relay"
+			],
 			"tags": [
 				"speed"
 			]
 		},
 		{
 			"id": "frontemitter",
-			"exclusiveHullMods": ["frontemitter"],
 			"name": "Shield Conversion - Front",
 			"icon": "graphics/icons/circular/notable_passives/front_shield_emitter.png",
 			"cost": 1,
@@ -875,6 +924,9 @@
 					"effect": "CONVERT_SHIELD_TO_FRONT"
 				}
 			],
+			"exclusiveHullMods": [
+				"frontemitter"
+			],
 			"description": "Locks the ship's omni-directional shield emitter to a front-facing position and extends its arc. As with all frontal emitters, the shield will also deploy twice as quickly.",
 			"tags": [
 				"shield"
@@ -882,7 +934,6 @@
 		},
 		{
 			"id": "adaptiveshields",
-			"exclusiveHullMods": ["adaptiveshields"],
 			"name": "Shield Conversion - Omni",
 			"icon": "graphics/icons/circular/notable_passives/omni_shield_emitter_mod.png",
 			"cost": 1,
@@ -897,6 +948,9 @@
 					"magnitude": 0
 				}
 			],
+			"exclusiveHullMods": [
+				"adaptiveshields"
+			],
 			"description": "Converts this ship's shield to omni-directional coverage, reducing its arc in exchange.",
 			"tags": [
 				"shield"
@@ -904,7 +958,6 @@
 		},
 		{
 			"id": "operations_center",
-			"exclusiveHullMods": ["operations_center"],
 			"name": "Operations Center",
 			"icon": "graphics/icons/circular/notable_passives/operations_center.png",
 			"cost": 1,
@@ -915,13 +968,15 @@
 					"magnitude": 2.5
 				}
 			],
+			"exclusiveHullMods": [
+				"operations_center"
+			],
 			"tags": [
 				"logistics"
 			]
 		},
 		{
 			"id": "phase_anchor",
-			"exclusiveHullMods": ["phase_anchor"],
 			"name": "Phase Anchor",
 			"icon": "graphics/icons/circular/notable_passives/phase_anchor.png",
 			"cost": 1,
@@ -940,6 +995,9 @@
 					"magnitude": 100
 				}
 			],
+			"exclusiveHullMods": [
+				"phase_anchor"
+			],
 			"tags": [
 				"flux",
 				"phase"
@@ -947,7 +1005,6 @@
 		},
 		{
 			"id": "recovery_shuttles",
-			"exclusiveHullMods": ["recovery_shuttles"],
 			"name": "Recovery Shuttles",
 			"icon": "graphics/icons/circular/notable_passives/recovery_shuttles.png",
 			"cost": 1,
@@ -958,13 +1015,15 @@
 					"magnitude": -75
 				}
 			],
+			"exclusiveHullMods": [
+				"recovery_shuttles"
+			],
 			"tags": [
 				"fighter"
 			]
 		},
 		{
 			"id": "reinforcedhull",
-			"exclusiveHullMods": ["reinforcedhull"],
 			"name": "Reinforced Bulkheads",
 			"icon": "graphics/icons/circular/notable_passives/reinforced_bulkheads.png",
 			"cost": 1,
@@ -983,13 +1042,15 @@
 					"magnitude": -100
 				}
 			],
+			"exclusiveHullMods": [
+				"reinforcedhull"
+			],
 			"tags": [
 				"hull"
 			]
 		},
 		{
 			"id": "fluxbreakers",
-			"exclusiveHullMods": ["fluxbreakers"],
 			"name": "Resistant Flux Conduits",
 			"icon": "graphics/icons/circular/notable_passives/resistant_flux_conduits.png",
 			"cost": 1,
@@ -1004,6 +1065,9 @@
 					"magnitude": 10
 				}
 			],
+			"exclusiveHullMods": [
+				"fluxbreakers"
+			],
 			"tags": [
 				"flux",
 				"shield"
@@ -1011,7 +1075,6 @@
 		},
 		{
 			"id": "stabilizedshieldemitter",
-			"exclusiveHullMods": ["stabilizedshieldemitter"],
 			"name": "Stabilized Shields",
 			"icon": "graphics/icons/circular/notable_passives/stabilized_shields.png",
 			"cost": 1,
@@ -1022,13 +1085,15 @@
 					"magnitude": -40
 				}
 			],
+			"exclusiveHullMods": [
+				"stabilizedshieldemitter"
+			],
 			"tags": [
 				"shield"
 			]
 		},
 		{
 			"id": "unstable_injector",
-			"exclusiveHullMods": ["unstable_injector"],
 			"name": "Unstable Injector",
 			"icon": "graphics/icons/circular/keystones/unstable_injector.png",
 			"cost": 1,
@@ -1056,13 +1121,15 @@
 					"capitalShip": 15
 				}
 			],
+			"exclusiveHullMods": [
+				"unstable_injector"
+			],
 			"tags": [
 				"range"
 			]
 		},
 		{
 			"id": "additional_berthing",
-			"exclusiveHullMods": ["additional_berthing"],
 			"name": "Additional Berthing",
 			"icon": "graphics/icons/circular/notable_passives/berthing.png",
 			"cost": 1,
@@ -1076,13 +1143,15 @@
 					"capitalShip": 125
 				}
 			],
+			"exclusiveHullMods": [
+				"additional_berthing"
+			],
 			"tags": [
 				"logistics"
 			]
 		},
 		{
 			"id": "augmentedengines",
-			"exclusiveHullMods": ["augmentedengines"],
 			"name": "Augmented Drive Field",
 			"icon": "graphics/icons/circular/notable_passives/augmented_drive_field2.png",
 			"cost": 1,
@@ -1093,13 +1162,15 @@
 					"magnitude": 1
 				}
 			],
+			"exclusiveHullMods": [
+				"augmentedengines"
+			],
 			"tags": [
 				"logistics"
 			]
 		},
 		{
 			"id": "auxiliary_fuel_tanks",
-			"exclusiveHullMods": ["auxiliary_fuel_tanks"],
 			"name": "Auxiliary Fuel Tanks",
 			"icon": "graphics/icons/circular/notable_passives/fuel_tanks.png",
 			"cost": 1,
@@ -1113,13 +1184,15 @@
 					"capitalShip": 125
 				}
 			],
+			"exclusiveHullMods": [
+				"auxiliary_fuel_tanks"
+			],
 			"tags": [
 				"logistics"
 			]
 		},
 		{
 			"id": "efficiency_overhaul",
-			"exclusiveHullMods": ["efficiency_overhaul"],
 			"name": "Efficiency Overhaul",
 			"icon": "graphics/icons/circular/keystones/efficiency.png",
 			"cost": 1,
@@ -1146,13 +1219,15 @@
 					"magnitude": 50
 				}
 			],
+			"exclusiveHullMods": [
+				"efficiency_overhaul"
+			],
 			"tags": [
 				"logistics"
 			]
 		},
 		{
 			"id": "expanded_cargo_holds",
-			"exclusiveHullMods": ["expanded_cargo_holds"],
 			"name": "Expanded Cargo Holds",
 			"icon": "graphics/icons/circular/notable_passives/expanded_cargo.png",
 			"cost": 1,
@@ -1166,13 +1241,15 @@
 					"capitalShip": 125
 				}
 			],
+			"exclusiveHullMods": [
+				"expanded_cargo_holds"
+			],
 			"tags": [
 				"logistics"
 			]
 		},
 		{
 			"id": "hiressensors",
-			"exclusiveHullMods": ["hiressensors"],
 			"name": "High Resolution Sensors",
 			"icon": "graphics/icons/circular/notable_passives/high_res_sensors.png",
 			"cost": 1,
@@ -1186,13 +1263,15 @@
 					"capitalShip": 70
 				}
 			],
+			"exclusiveHullMods": [
+				"hiressensors"
+			],
 			"tags": [
 				"logistics"
 			]
 		},
 		{
 			"id": "insulatedengine",
-			"exclusiveHullMods": ["insulatedengine"],
 			"name": "Insulated Engine Assembly",
 			"icon": "graphics/icons/circular/notable_passives/insulated_engine_assembly.png",
 			"cost": 1,
@@ -1211,13 +1290,15 @@
 					"magnitude": -50
 				}
 			],
+			"exclusiveHullMods": [
+				"insulatedengine"
+			],
 			"tags": [
 				"logistics"
 			]
 		},
 		{
 			"id": "militarized_subsystems",
-			"exclusiveHullMods": ["militarized_subsystems"],
 			"name": "Militarized Subsystems",
 			"icon": "graphics/icons/circular/notable_passives/militarized_subsystems.png",
 			"cost": 1,
@@ -1234,6 +1315,9 @@
 				{
 					"effect": "REMOVE_CIVILIAN_HULL_PENALTY"
 				}
+			],
+			"exclusiveHullMods": [
+				"militarized_subsystems"
 			],
 			"tags": [
 				"logistics"
@@ -1254,7 +1338,6 @@
 		},
 		{
 			"id": "surveying_equipment",
-			"exclusiveHullMods": ["surveying_equipment"],
 			"name": "Surveying Equipment",
 			"icon": "graphics/icons/circular/notable_passives/surveying_equipment.png",
 			"cost": 1,
@@ -1274,6 +1357,9 @@
 					"cruiser": 10,
 					"capitalShip": 20
 				}
+			],
+			"exclusiveHullMods": [
+				"surveying_equipment"
 			],
 			"tags": [
 				"logistics"

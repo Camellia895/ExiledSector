@@ -2772,6 +2772,26 @@ function imageBaseName(path){
   return dot === -1 ? name : name.substring(0, dot);
 }
 
+function imageFolder(path){
+  var idx = path.lastIndexOf('/');
+  return idx === -1 ? '' : path.substring(0, idx);
+}
+
+function buildFolderOptionsHtml(paths, selectedFolder){
+  var counts = {};
+  paths.forEach(function(p){
+    var folder = imageFolder(p);
+    counts[folder] = (counts[folder] || 0) + 1;
+  });
+  var folders = Object.keys(counts).sort();
+  var html = '<option value=""' + (selectedFolder ? '' : ' selected') + '>All folders (' + paths.length + ')</option>';
+  html += folders.map(function(f){
+    var label = (f || '(root)') + ' (' + counts[f] + ')';
+    return '<option value="' + f + '"' + (f === selectedFolder ? ' selected' : '') + '>' + label + '</option>';
+  }).join('');
+  return html;
+}
+
 function postImageOp(url, payload, onSuccess){
   fetch(url, {
     method: 'POST',
@@ -2882,7 +2902,10 @@ function openImageEditorModal(){
     root.innerHTML =
       '<div class="modalOverlay"><div class="modal wide">' +
       '<h3>Image Editor</h3>' +
-      '<div class="field"><input id="imgEditFilter" placeholder="Filter by path..."></div>' +
+      '<div class="fieldRow">' +
+        '<div class="field"><label>Folder</label><select id="imgEditFolder"></select></div>' +
+        '<div class="field"><label>Filter by path</label><input id="imgEditFilter" placeholder="Filter by path..."></div>' +
+      '</div>' +
       '<div class="imageBrowserLayout">' +
         '<div class="imageBrowserGrid" id="imgEditGrid"></div>' +
         '<div class="imageBrowserDetail" id="imgEditDetail"></div>' +
@@ -2892,13 +2915,25 @@ function openImageEditorModal(){
       '</div></div>';
     document.getElementById('imgEditClose').addEventListener('click', function(){ root.innerHTML = ''; });
     document.getElementById('imgEditFilter').addEventListener('input', updateGrid);
+    document.getElementById('imgEditFolder').addEventListener('change', updateGrid);
+    refreshFolderOptions();
     updateGrid();
     updateDetail();
   }
 
+  function refreshFolderOptions(){
+    var sel = document.getElementById('imgEditFolder');
+    var current = sel.value;
+    sel.innerHTML = buildFolderOptionsHtml(state.allProjectImages, current);
+  }
+
   function updateGrid(){
     var q = (document.getElementById('imgEditFilter').value || '').toLowerCase();
-    var filtered = state.allProjectImages.filter(function(p){ return !q || p.toLowerCase().indexOf(q) !== -1; });
+    var folder = document.getElementById('imgEditFolder').value;
+    var filtered = state.allProjectImages.filter(function(p){
+      if (folder && imageFolder(p) !== folder) return false;
+      return !q || p.toLowerCase().indexOf(q) !== -1;
+    });
     var grid = document.getElementById('imgEditGrid');
     grid.innerHTML = filtered.map(function(p){ return imageTileHtml(p, p === selectedPath); }).join('') || '<div class="hint">No images match.</div>';
     document.getElementById('imgEditCount').textContent = filtered.length + ' of ' + state.allProjectImages.length + ' images';
@@ -2946,7 +2981,7 @@ function openImageEditorModal(){
       postImageOp('/colorshift', { path: selectedPath, hueShift: hueShift, suffix: suffix }, function(data){
         showToast('Saved ' + data.path);
         selectedPath = data.path;
-        fetchAllProjectImages(function(){ updateGrid(); updateDetail(); });
+        fetchAllProjectImages(function(){ refreshFolderOptions(); updateGrid(); updateDetail(); });
       });
     });
 
@@ -2956,7 +2991,7 @@ function openImageEditorModal(){
       postImageOp('/make-circular', { path: selectedPath, suffix: suffix }, function(data){
         showToast('Saved ' + data.path);
         selectedPath = data.path;
-        fetchAllProjectImages(function(){ updateGrid(); updateDetail(); });
+        fetchAllProjectImages(function(){ refreshFolderOptions(); updateGrid(); updateDetail(); });
       });
     });
 
@@ -2965,7 +3000,7 @@ function openImageEditorModal(){
       postImageOp('/delete-image', { path: selectedPath }, function(){
         showToast('Deleted ' + selectedPath);
         selectedPath = null;
-        fetchAllProjectImages(function(){ updateGrid(); updateDetail(); });
+        fetchAllProjectImages(function(){ refreshFolderOptions(); updateGrid(); updateDetail(); });
       });
     });
   }

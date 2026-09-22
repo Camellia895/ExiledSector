@@ -213,8 +213,8 @@
 			"connectedTo": [
 				"ballistic_damage_4"
 			],
-			"x": -315,
-			"y": 1759,
+			"x": -239,
+			"y": 1924,
 			"orbitAnchorId": "anchor_19",
 			"orbitAngle": 29.99999999999998
 		},
@@ -576,8 +576,8 @@
 			"connectedTo": [
 				"small_logistics_optional_28"
 			],
-			"x": -615,
-			"y": 1330,
+			"x": -513,
+			"y": 1389,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#80ffd4"
 		},
@@ -2517,8 +2517,8 @@
 				"ballistic_damage_5",
 				"magazines_1"
 			],
-			"x": -445,
-			"y": 1534,
+			"x": -369,
+			"y": 1699,
 			"orbitAnchorId": "anchor_19",
 			"orbitAngle": 270
 		},
@@ -2529,8 +2529,8 @@
 				"ballistic_damage_4",
 				"small_flux_optional_36"
 			],
-			"x": -575,
-			"y": 1759,
+			"x": -499,
+			"y": 1924,
 			"orbitAnchorId": "anchor_19",
 			"orbitAngle": 150.00000000000003
 		},
@@ -3476,14 +3476,14 @@
 		{
 			"a": "ballistic_damage_4",
 			"b": "ballistic_damage_5",
-			"controlX": -510,
-			"controlY": 1647
+			"controlX": -434,
+			"controlY": 1812
 		},
 		{
 			"a": "ballistic_damage_4",
 			"b": "magazines_1",
-			"controlX": -380,
-			"controlY": 1647
+			"controlX": -304,
+			"controlY": 1812
 		},
 		{
 			"a": "missile_damage_3",
@@ -3818,8 +3818,8 @@
 		},
 		{
 			"id": "anchor_19",
-			"x": -445,
-			"y": 1684,
+			"x": -369,
+			"y": 1849,
 			"radius": 150,
 			"shape": "triangle"
 		},
