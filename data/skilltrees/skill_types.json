@@ -703,7 +703,10 @@
 				}
 			],
 			"exclusiveHullMods": [
-				"shield_shunt"
+				"shield_shunt",
+				"frontemitter",
+				"adaptiveshields",
+				"frontshield"
 			],
 			"exclusiveSkillTypes": [
 				"frontemitter",
@@ -729,6 +732,10 @@
 				{
 					"effect": "CREATE_FRONT_SHIELD_IF_NONE"
 				}
+			],
+			"exclusiveHullMods": [
+				"frontshield",
+				"shield_shunt"
 			],
 			"exclusiveSkillTypes": [
 				"shield_shunt"
@@ -948,7 +955,9 @@
 				}
 			],
 			"exclusiveHullMods": [
-				"frontemitter"
+				"frontemitter",
+				"adaptiveshields",
+				"shield_shunt"
 			],
 			"exclusiveSkillTypes": [
 				"adaptiveshields",
@@ -976,7 +985,9 @@
 				}
 			],
 			"exclusiveHullMods": [
-				"adaptiveshields"
+				"adaptiveshields",
+				"frontemitter",
+				"shield_shunt"
 			],
 			"exclusiveSkillTypes": [
 				"frontemitter",

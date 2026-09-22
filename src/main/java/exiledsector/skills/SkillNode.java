@@ -6,7 +6,9 @@ import com.fs.starfarer.api.loading.HullModSpecAPI;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SkillNode extends SkillTreeObject {
 
@@ -98,25 +100,30 @@ public class SkillNode extends SkillTreeObject {
 
     private static String describeExclusivity(SkillType type) {
         List<String> lines = new ArrayList<>();
+        Set<String> namesAlreadyShown = new LinkedHashSet<>();
 
-        List<String> hullModIds = type.getExclusiveHullModIds();
-        if (!hullModIds.isEmpty()) {
-            List<String> names = new ArrayList<>();
-            for (String hullModId : hullModIds) {
-                HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
-                names.add(spec != null ? spec.getDisplayName() : hullModId);
+        List<String> hullModNames = new ArrayList<>();
+        for (String hullModId : type.getExclusiveHullModIds()) {
+            HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
+            String name = spec != null ? spec.getDisplayName() : hullModId;
+            if (namesAlreadyShown.add(name)) {
+                hullModNames.add(name);
             }
-            lines.add("Mutually exclusive with hullmod(s): " + String.join(", ", names) + ".");
+        }
+        if (!hullModNames.isEmpty()) {
+            lines.add("Mutually exclusive with: " + String.join(", ", hullModNames) + ".");
         }
 
-        List<String> skillTypeIds = type.getExclusiveSkillTypeIds();
-        if (!skillTypeIds.isEmpty()) {
-            List<String> names = new ArrayList<>();
-            for (String skillTypeId : skillTypeIds) {
-                SkillType other = SkillTree.getType(skillTypeId);
-                names.add(other != null ? other.getDisplayName() : skillTypeId);
+        List<String> skillTypeNames = new ArrayList<>();
+        for (String skillTypeId : type.getExclusiveSkillTypeIds()) {
+            SkillType other = SkillTree.getType(skillTypeId);
+            String name = other != null ? other.getDisplayName() : skillTypeId;
+            if (namesAlreadyShown.add(name)) {
+                skillTypeNames.add(name);
             }
-            lines.add("Mutually exclusive with " + String.join(", ", names) + ".");
+        }
+        if (!skillTypeNames.isEmpty()) {
+            lines.add("Mutually exclusive with " + String.join(", ", skillTypeNames) + ".");
         }
 
         return lines.isEmpty() ? null : String.join("\n\n", lines);
