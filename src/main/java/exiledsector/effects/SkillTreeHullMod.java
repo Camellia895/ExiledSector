@@ -100,7 +100,7 @@ public class SkillTreeHullMod extends BaseHullMod {
         HullModSpecAPI spec = Global.getSettings().getHullModSpec(OP_SINK_HULLMOD_ID);
         if (spec == null) return;
 
-        int opSpent = ShipSkillDataManager.get(member.getId()).getOpSpentOnPassivePoints();
+        int opSpent = ShipSkillDataManager.get(member.getId()).getSpentOp();
         spec.setFrigateCost(opSpent);
         spec.setDestroyerCost(opSpent);
         spec.setCruiserCost(opSpent);

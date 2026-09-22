@@ -4,15 +4,15 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import lunalib.lunaSettings.LunaSettings;
 
-public final class PassivePointExchangeRates {
+public final class SkillNodeOpCost {
 
     private static final String MOD_ID = "exiledSector";
 
-    public static final String FRIGATE_FIELD_ID = "exiledSector_opRatioFrigate";
-    public static final String DESTROYER_FIELD_ID = "exiledSector_opRatioDestroyer";
-    public static final String CRUISER_FIELD_ID = "exiledSector_opRatioCruiser";
-    public static final String CAPITAL_FIELD_ID = "exiledSector_opRatioCapital";
-    public static final String UNDEFINED_FIELD_ID = "exiledSector_opRatioUndefined";
+    public static final String FRIGATE_FIELD_ID = "exiledSector_opCostFrigate";
+    public static final String DESTROYER_FIELD_ID = "exiledSector_opCostDestroyer";
+    public static final String CRUISER_FIELD_ID = "exiledSector_opCostCruiser";
+    public static final String CAPITAL_FIELD_ID = "exiledSector_opCostCapital";
+    public static final String UNDEFINED_FIELD_ID = "exiledSector_opCostUndefined";
 
     public static final int DEFAULT_FRIGATE = 1;
     public static final int DEFAULT_DESTROYER = 2;
@@ -20,14 +20,14 @@ public final class PassivePointExchangeRates {
     public static final int DEFAULT_CAPITAL = 4;
     public static final int DEFAULT_UNDEFINED = 4;
 
-    private PassivePointExchangeRates() {
+    private SkillNodeOpCost() {
     }
 
-    public static int opCostPerPassivePoint(ShipHullSpecAPI hull) {
-        return opCostPerPassivePoint(hull != null ? hull.getHullSize() : null);
+    public static int perNode(ShipHullSpecAPI hull) {
+        return perNode(hull != null ? hull.getHullSize() : null);
     }
 
-    public static int opCostPerPassivePoint(HullSize hullSize) {
+    public static int perNode(HullSize hullSize) {
         if (hullSize == HullSize.FRIGATE) return settingOrDefault(FRIGATE_FIELD_ID, DEFAULT_FRIGATE);
         if (hullSize == HullSize.DESTROYER) return settingOrDefault(DESTROYER_FIELD_ID, DEFAULT_DESTROYER);
         if (hullSize == HullSize.CRUISER) return settingOrDefault(CRUISER_FIELD_ID, DEFAULT_CRUISER);

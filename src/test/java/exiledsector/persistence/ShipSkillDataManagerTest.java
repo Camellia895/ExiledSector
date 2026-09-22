@@ -64,20 +64,20 @@ class ShipSkillDataManagerTest {
         ShipSkillData shipA = ShipSkillDataManager.get("ship-a");
         ShipSkillData shipB = ShipSkillDataManager.get("ship-b");
 
-        shipA.allocate(node("armor_1"));
+        shipA.allocate(node("armor_1"), 1);
 
         assertNotNull(shipB);
-        assertNotEquals(shipA.getSpentPassivePoints(), shipB.getSpentPassivePoints());
+        assertNotEquals(shipA.getSpentOp(), shipB.getSpentOp());
     }
 
     @Test
     void survivesAcrossLookupsViaThePersistentDataMap() {
         ShipSkillData data = ShipSkillDataManager.get("ship-a");
-        data.allocate(node("armor_1"));
+        data.allocate(node("armor_1"), 1);
 
         ShipSkillData reread = ShipSkillDataManager.get("ship-a");
 
-        assertEquals(1, reread.getSpentPassivePoints());
+        assertEquals(1, reread.getSpentOp());
     }
 
     private static SkillNode node(String id) {

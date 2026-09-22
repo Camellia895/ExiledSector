@@ -201,7 +201,7 @@ class SkillNodeTest {
         SkillTree.registerType(hullOption);
         SkillNode node = new SkillNode("slot_1", placeholder, List.of(), 0f, 0f);
         ShipSkillData data = new ShipSkillData();
-        data.selectOption(node, hullOption);
+        data.selectOption(node, hullOption, 1);
 
         assertSame(hullOption, node.resolveEffectiveType(data));
     }

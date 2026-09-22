@@ -40,104 +40,42 @@ class ShipSkillDataTest {
     void startsWithNoProgress() {
         ShipSkillData data = new ShipSkillData();
 
-        assertEquals(0, data.getSpentPassivePoints());
-        assertEquals(0, data.getPurchasedPassivePoints());
-        assertEquals(0, data.getOpSpentOnPassivePoints());
+        assertEquals(0, data.getSpentOp());
         assertTrue(data.getAllocatedNodeIds().isEmpty());
     }
 
     @Test
-    void buyPassivePointIncreasesPurchasedPointsAndTracksOpSpent() {
-        ShipSkillData data = new ShipSkillData();
-
-        boolean bought = data.buyPassivePoint(4, 10);
-
-        assertTrue(bought);
-        assertEquals(1, data.getPurchasedPassivePoints());
-        assertEquals(4, data.getOpSpentOnPassivePoints());
-    }
-
-    @Test
-    void buyPassivePointFailsWhenNotEnoughOpIsAvailable() {
-        ShipSkillData data = new ShipSkillData();
-
-        boolean bought = data.buyPassivePoint(4, 3);
-
-        assertFalse(bought);
-        assertEquals(0, data.getPurchasedPassivePoints());
-        assertEquals(0, data.getOpSpentOnPassivePoints());
-    }
-
-    @Test
-    void sellPassivePointDecreasesPurchasedPointsAndRefundsOp() {
-        ShipSkillData data = new ShipSkillData();
-        data.buyPassivePoint(4, 10);
-
-        boolean sold = data.sellPassivePoint(4);
-
-        assertTrue(sold);
-        assertEquals(0, data.getPurchasedPassivePoints());
-        assertEquals(0, data.getOpSpentOnPassivePoints());
-    }
-
-    @Test
-    void sellPassivePointFailsWhenAllPurchasedPointsAreAllocated() {
-        ShipSkillData data = new ShipSkillData();
-        data.buyPassivePoint(4, 10);
-        data.allocate(node("armor_1", List.of()));
-
-        boolean sold = data.sellPassivePoint(4);
-
-        assertFalse(sold);
-        assertEquals(1, data.getPurchasedPassivePoints());
-        assertEquals(4, data.getOpSpentOnPassivePoints());
-    }
-
-    @Test
-    void buyingThenSellingAPassivePointIsANoOpRoundTrip() {
-        ShipSkillData data = new ShipSkillData();
-
-        data.buyPassivePoint(7, 100);
-        data.sellPassivePoint(7);
-        data.buyPassivePoint(7, 100);
-        data.sellPassivePoint(7);
-
-        assertEquals(0, data.getPurchasedPassivePoints());
-        assertEquals(0, data.getOpSpentOnPassivePoints());
-    }
-
-    @Test
-    void allocateMarksNodeAndSpendsOnePassivePoint() {
+    void allocateMarksNodeAndSpendsTheGivenOpCost() {
         ShipSkillData data = new ShipSkillData();
         SkillNode node = node("armor_1", List.of());
 
-        data.allocate(node);
+        data.allocate(node, 3);
 
         assertTrue(data.isAllocated("armor_1"));
-        assertEquals(1, data.getSpentPassivePoints());
+        assertEquals(3, data.getSpentOp());
     }
 
     @Test
-    void deallocateRefundsThePassivePoint() {
-        ShipSkillData data = new ShipSkillData();
-        SkillNode node = node("armor_1", List.of());
-        data.allocate(node);
-
-        data.deallocate(node);
-
-        assertFalse(data.isAllocated("armor_1"));
-        assertEquals(0, data.getSpentPassivePoints());
-    }
-
-    @Test
-    void rootTierNodesAreFreeToAllocate() {
+    void allocateWithZeroOpCostAddsNothingToSpentOp() {
         ShipSkillData data = new ShipSkillData();
         SkillNode root = rootNode("root_low_tech_1", List.of());
 
-        data.allocate(root);
+        data.allocate(root, 0);
 
         assertTrue(data.isAllocated("root_low_tech_1"));
-        assertEquals(0, data.getSpentPassivePoints());
+        assertEquals(0, data.getSpentOp());
+    }
+
+    @Test
+    void deallocateRefundsTheOpCost() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode node = node("armor_1", List.of());
+        data.allocate(node, 3);
+
+        data.deallocate(node, 3);
+
+        assertFalse(data.isAllocated("armor_1"));
+        assertEquals(0, data.getSpentOp());
     }
 
     @Test
@@ -151,39 +89,39 @@ class ShipSkillDataTest {
     void canAllocateIsTrueWhenThereAreNoPrerequisites() {
         ShipSkillData data = new ShipSkillData();
 
-        assertTrue(data.canAllocate(node("root", List.of()), null, AMPLE_BUDGET));
+        assertTrue(data.canAllocate(node("root", List.of()), null, AMPLE_BUDGET, 1));
     }
 
     @Test
     void canAllocateIsFalseWhenAPrerequisiteIsNotAllocated() {
         ShipSkillData data = new ShipSkillData();
 
-        assertFalse(data.canAllocate(node("child", List.of("parent")), null, AMPLE_BUDGET));
+        assertFalse(data.canAllocate(node("child", List.of("parent")), null, AMPLE_BUDGET, 1));
     }
 
     @Test
     void canAllocateIsTrueOnceEveryPrerequisiteIsAllocated() {
         ShipSkillData data = new ShipSkillData();
         SkillNode parent = node("parent", List.of());
-        data.allocate(parent);
+        data.allocate(parent, 1);
 
-        assertTrue(data.canAllocate(node("child", List.of("parent")), null, AMPLE_BUDGET));
+        assertTrue(data.canAllocate(node("child", List.of("parent")), null, AMPLE_BUDGET, 1));
     }
 
     @Test
     void canAllocateIsFalseWithMultiplePrerequisitesWhenNoneAreAllocated() {
         ShipSkillData data = new ShipSkillData();
 
-        assertFalse(data.canAllocate(node("child", List.of("b", "c")), null, AMPLE_BUDGET));
+        assertFalse(data.canAllocate(node("child", List.of("b", "c")), null, AMPLE_BUDGET, 1));
     }
 
     @Test
     void canAllocateIsTrueWithMultiplePrerequisitesWhenOnlyOneIsAllocated() {
         ShipSkillData data = new ShipSkillData();
         SkillNode b = node("b", List.of());
-        data.allocate(b);
+        data.allocate(b, 1);
 
-        assertTrue(data.canAllocate(node("a", List.of("b", "c")), null, AMPLE_BUDGET));
+        assertTrue(data.canAllocate(node("a", List.of("b", "c")), null, AMPLE_BUDGET, 1));
     }
 
     @Test
@@ -191,44 +129,44 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode b = node("b", List.of());
         SkillNode c = node("c", List.of());
-        data.allocate(b);
-        data.allocate(c);
+        data.allocate(b, 1);
+        data.allocate(c, 1);
 
-        assertTrue(data.canAllocate(node("a", List.of("b", "c")), null, AMPLE_BUDGET));
+        assertTrue(data.canAllocate(node("a", List.of("b", "c")), null, AMPLE_BUDGET, 1));
     }
 
     @Test
-    void canAllocateIsTrueWhenSpendingTheLastRemainingPassivePoint() {
+    void canAllocateIsTrueWhenSpendingTheLastRemainingOpBudget() {
         ShipSkillData data = new ShipSkillData();
         SkillNode a = node("a", List.of());
-        data.allocate(a);
+        data.allocate(a, 1);
 
-        assertTrue(data.canAllocate(node("b", List.of()), null, 2));
+        assertTrue(data.canAllocate(node("b", List.of()), null, 2, 1));
     }
 
     @Test
     void canAllocateIsFalseWhenTheBudgetIsExhausted() {
         ShipSkillData data = new ShipSkillData();
         SkillNode a = node("a", List.of());
-        data.allocate(a);
+        data.allocate(a, 1);
 
-        assertFalse(data.canAllocate(node("b", List.of()), null, 1));
+        assertFalse(data.canAllocate(node("b", List.of()), null, 1, 1));
     }
 
     @Test
-    void canAllocateIgnoresTheBudgetForARootTierNode() {
+    void canAllocateAllowsAZeroCostNodeEvenWhenTheBudgetIsFullySpent() {
         ShipSkillData data = new ShipSkillData();
         SkillNode a = node("a", List.of());
-        data.allocate(a);
+        data.allocate(a, 1);
 
-        assertTrue(data.canAllocate(rootNode("root_low_tech_1", List.of()), null, 1));
+        assertTrue(data.canAllocate(rootNode("root_low_tech_1", List.of()), null, 1, 0));
     }
 
     @Test
     void canDeallocateIsTrueWhenNoAllocatedNodeDependsOnIt() {
         ShipSkillData data = new ShipSkillData();
         SkillNode parent = node("parent", List.of());
-        data.allocate(parent);
+        data.allocate(parent, 1);
 
         assertTrue(data.canDeallocate(parent, List.of(parent), null));
     }
@@ -238,8 +176,8 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode parent = node("parent", List.of());
         SkillNode child = node("child", List.of("parent"));
-        data.allocate(parent);
-        data.allocate(child);
+        data.allocate(parent, 1);
+        data.allocate(child, 1);
 
         assertFalse(data.canDeallocate(parent, List.of(parent, child), null));
     }
@@ -250,9 +188,9 @@ class ShipSkillDataTest {
         SkillNode b = node("b", List.of());
         SkillNode c = node("c", List.of());
         SkillNode a = node("a", List.of("b", "c"));
-        data.allocate(b);
-        data.allocate(c);
-        data.allocate(a);
+        data.allocate(b, 1);
+        data.allocate(c, 1);
+        data.allocate(a, 1);
 
         assertTrue(data.canDeallocate(b, List.of(a, b, c), null));
     }
@@ -263,8 +201,8 @@ class ShipSkillDataTest {
         SkillNode b = node("b", List.of());
         SkillNode c = node("c", List.of());
         SkillNode a = node("a", List.of("b", "c"));
-        data.allocate(b);
-        data.allocate(a);
+        data.allocate(b, 1);
+        data.allocate(a, 1);
 
         assertFalse(data.canDeallocate(b, List.of(a, b, c), null));
     }
@@ -274,7 +212,7 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode root = node("root", List.of());
 
-        data.toggle(root, List.of(root), null, AMPLE_BUDGET);
+        data.toggle(root, List.of(root), null, AMPLE_BUDGET, 1);
 
         assertTrue(data.isAllocated("root"));
     }
@@ -285,7 +223,7 @@ class ShipSkillDataTest {
         SkillNode parent = node("parent", List.of());
         SkillNode child = node("child", List.of("parent"));
 
-        data.toggle(child, List.of(parent, child), null, AMPLE_BUDGET);
+        data.toggle(child, List.of(parent, child), null, AMPLE_BUDGET, 1);
 
         assertFalse(data.isAllocated("child"));
     }
@@ -295,9 +233,9 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode a = node("a", List.of());
         SkillNode b = node("b", List.of());
-        data.allocate(a);
+        data.allocate(a, 1);
 
-        data.toggle(b, List.of(a, b), null, 1);
+        data.toggle(b, List.of(a, b), null, 1, 1);
 
         assertFalse(data.isAllocated("b"));
     }
@@ -306,9 +244,9 @@ class ShipSkillDataTest {
     void toggleDeallocatesAnAllocatedNodeWithNoAllocatedChildren() {
         ShipSkillData data = new ShipSkillData();
         SkillNode root = node("root", List.of());
-        data.allocate(root);
+        data.allocate(root, 1);
 
-        data.toggle(root, List.of(root), null, AMPLE_BUDGET);
+        data.toggle(root, List.of(root), null, AMPLE_BUDGET, 1);
 
         assertFalse(data.isAllocated("root"));
     }
@@ -318,10 +256,10 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode parent = node("parent", List.of());
         SkillNode child = node("child", List.of("parent"));
-        data.allocate(parent);
-        data.allocate(child);
+        data.allocate(parent, 1);
+        data.allocate(child, 1);
 
-        data.toggle(parent, List.of(parent, child), null, AMPLE_BUDGET);
+        data.toggle(parent, List.of(parent, child), null, AMPLE_BUDGET, 1);
 
         assertTrue(data.isAllocated("parent"));
     }
@@ -329,7 +267,7 @@ class ShipSkillDataTest {
     @Test
     void isSatisfiedIsTrueForAnAllocatedNode() {
         ShipSkillData data = new ShipSkillData();
-        data.allocate(node("hull_1", List.of()));
+        data.allocate(node("hull_1", List.of()), 1);
 
         assertTrue(data.isSatisfied("hull_1", null));
     }
@@ -353,7 +291,7 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode child = node("hull_1", List.of("root_low_tech_1"));
 
-        assertTrue(data.canAllocate(child, "root_low_tech_1", AMPLE_BUDGET));
+        assertTrue(data.canAllocate(child, "root_low_tech_1", AMPLE_BUDGET, 1));
     }
 
     @Test
@@ -361,7 +299,7 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode child = node("hull_1", List.of("root_midline_1"));
 
-        assertFalse(data.canAllocate(child, "root_low_tech_1", AMPLE_BUDGET));
+        assertFalse(data.canAllocate(child, "root_low_tech_1", AMPLE_BUDGET, 1));
     }
 
     @Test
@@ -369,8 +307,8 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode b = node("b", List.of());
         SkillNode a = node("a", List.of("b", "root_low_tech_1"));
-        data.allocate(b);
-        data.allocate(a);
+        data.allocate(b, 1);
+        data.allocate(a, 1);
 
         assertTrue(data.canDeallocate(b, List.of(a, b), "root_low_tech_1"));
     }
@@ -381,9 +319,9 @@ class ShipSkillDataTest {
         SkillNode a = node("a", List.of());
         SkillNode b = node("b", List.of("a", "x"));
         SkillNode x = node("x", List.of("b"));
-        data.allocate(a);
-        data.allocate(b);
-        data.allocate(x);
+        data.allocate(a, 1);
+        data.allocate(b, 1);
+        data.allocate(x, 1);
 
         assertFalse(data.canDeallocate(a, List.of(a, b, x), null));
     }
@@ -395,10 +333,10 @@ class ShipSkillDataTest {
         SkillNode a2 = node("a2", List.of());
         SkillNode b = node("b", List.of("a1", "x"));
         SkillNode x = node("x", List.of("b", "a2"));
-        data.allocate(a1);
-        data.allocate(a2);
-        data.allocate(b);
-        data.allocate(x);
+        data.allocate(a1, 1);
+        data.allocate(a2, 1);
+        data.allocate(b, 1);
+        data.allocate(x, 1);
 
         assertTrue(data.canDeallocate(a1, List.of(a1, a2, b, x), null));
     }
@@ -409,9 +347,9 @@ class ShipSkillDataTest {
         SkillNode a = node("a", List.of("root_low_tech_1", "b", "c"));
         SkillNode b = node("b", List.of("a", "c"));
         SkillNode c = node("c", List.of("a", "b"));
-        data.allocate(a);
-        data.allocate(b);
-        data.allocate(c);
+        data.allocate(a, 1);
+        data.allocate(b, 1);
+        data.allocate(c, 1);
 
         assertTrue(data.canDeallocate(b, List.of(a, b, c), "root_low_tech_1"));
     }
@@ -422,9 +360,9 @@ class ShipSkillDataTest {
         SkillNode a = node("a", List.of("root_low_tech_1", "b", "c"));
         SkillNode b = node("b", List.of("a", "c"));
         SkillNode c = node("c", List.of("a", "b"));
-        data.allocate(a);
-        data.allocate(b);
-        data.allocate(c);
+        data.allocate(a, 1);
+        data.allocate(b, 1);
+        data.allocate(c, 1);
 
         assertFalse(data.canDeallocate(a, List.of(a, b, c), "root_low_tech_1"));
     }
@@ -434,8 +372,8 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode leaf = node("leaf", List.of("root_low_tech_1"));
         SkillNode orphan = node("orphan", List.of("nothingThatExists"));
-        data.allocate(leaf);
-        data.allocate(orphan);
+        data.allocate(leaf, 1);
+        data.allocate(orphan, 1);
 
         assertTrue(data.canDeallocate(leaf, List.of(leaf, orphan), "root_low_tech_1"));
     }
@@ -455,7 +393,7 @@ class ShipSkillDataTest {
 
         ShipSkillData data = new ShipSkillData();
         for (SkillNode n : ring) {
-            data.allocate(n);
+            data.allocate(n, 1);
         }
 
         for (int i = 1; i < ringSize; i++) {
@@ -474,9 +412,9 @@ class ShipSkillDataTest {
         SkillNode descendant = node("descendant", List.of("secondRoot"));
 
         ShipSkillData data = new ShipSkillData();
-        data.allocate(bridge);
-        data.allocate(secondRoot);
-        data.allocate(descendant);
+        data.allocate(bridge, 1);
+        data.allocate(secondRoot, 1);
+        data.allocate(descendant, 1);
 
         assertFalse(data.canDeallocate(bridge, List.of(bridge, secondRoot, descendant), "root_low_tech_1"));
     }
@@ -489,9 +427,9 @@ class ShipSkillDataTest {
         SkillNode bridgeB = node("bridgeB", List.of("root_low_tech_1", "secondRoot"));
 
         ShipSkillData data = new ShipSkillData();
-        data.allocate(bridgeA);
-        data.allocate(bridgeB);
-        data.allocate(secondRoot);
+        data.allocate(bridgeA, 1);
+        data.allocate(bridgeB, 1);
+        data.allocate(secondRoot, 1);
 
         assertTrue(data.canDeallocate(bridgeA, List.of(bridgeA, bridgeB, secondRoot), "root_low_tech_1"));
     }
@@ -520,8 +458,8 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         String satisfiedRootId = "root_high_tech_1";
         for (SkillNode n : List.of(n10, n7, n5, n25, n9, n13, n14, rootLowTech, n11, n12, n8, n6, n3)) {
-            assertTrue(data.canAllocate(n, satisfiedRootId, AMPLE_BUDGET), "expected to be able to allocate " + n.getId());
-            data.allocate(n);
+            assertTrue(data.canAllocate(n, satisfiedRootId, AMPLE_BUDGET, 1), "expected to be able to allocate " + n.getId());
+            data.allocate(n, 1);
         }
 
         for (SkillNode n : allNodes) {
@@ -543,7 +481,7 @@ class ShipSkillDataTest {
 
         ShipSkillData data = new ShipSkillData();
         for (SkillNode n : ring) {
-            data.allocate(n);
+            data.allocate(n, 1);
         }
 
         for (SkillNode n : ring) {
@@ -563,31 +501,31 @@ class ShipSkillDataTest {
     }
 
     @Test
-    void selectOptionAllocatesTheSlotNodeAndSpendsOnePassivePoint() {
+    void selectOptionAllocatesTheSlotNodeAndSpendsTheGivenOpCost() {
         ShipSkillData data = new ShipSkillData();
         SkillNode slot = node("slot_1", List.of());
         SkillType chosenOption = new SkillType("hull", "Hull", "a.png", 3, List.of(), SkillTier.SMALL, null, null, null);
 
-        data.selectOption(slot, chosenOption);
+        data.selectOption(slot, chosenOption, 1);
 
         assertTrue(data.isAllocated("slot_1"));
         assertEquals("hull", data.getOptionalSelection("slot_1"));
-        assertEquals(1, data.getSpentPassivePoints());
+        assertEquals(1, data.getSpentOp());
     }
 
     @Test
-    void deallocateRefundsTheSlotsPassivePointRegardlessOfSelectedOption() {
+    void deallocateRefundsTheSlotsOpCostRegardlessOfSelectedOption() {
         ShipSkillData data = new ShipSkillData();
         SkillNode slot = node("slot_1", List.of());
         SkillType chosenOption = new SkillType("hull", "Hull", "a.png", 3, List.of(), SkillTier.SMALL, null, null, null);
         SkillTree.registerType(chosenOption);
-        data.selectOption(slot, chosenOption);
+        data.selectOption(slot, chosenOption, 1);
 
-        data.deallocate(slot);
+        data.deallocate(slot, 1);
 
         assertFalse(data.isAllocated("slot_1"));
         assertNull(data.getOptionalSelection("slot_1"));
-        assertEquals(0, data.getSpentPassivePoints());
+        assertEquals(0, data.getSpentOp());
     }
 
     @Test
@@ -596,29 +534,29 @@ class ShipSkillDataTest {
         SkillNode slot = node("slot_1", List.of());
         SkillType chosenOption = new SkillType("hull", "Hull", "a.png", 3, List.of(), SkillTier.SMALL, null, null, null);
         SkillTree.registerType(chosenOption);
-        data.selectOption(slot, chosenOption);
+        data.selectOption(slot, chosenOption, 1);
 
-        data.toggle(slot, List.of(slot), null, AMPLE_BUDGET);
+        data.toggle(slot, List.of(slot), null, AMPLE_BUDGET, 1);
 
         assertFalse(data.isAllocated("slot_1"));
         assertNull(data.getOptionalSelection("slot_1"));
     }
 
     @Test
-    void selectingAnotherOptionOnAnAlreadyAllocatedNodeDoesNotChargeAnotherPassivePoint() {
+    void selectingAnotherOptionOnAnAlreadyAllocatedNodeDoesNotChargeAnotherOpCost() {
         ShipSkillData data = new ShipSkillData();
         SkillNode slot = node("slot_1", List.of());
         SkillType hullOption = new SkillType("hull", "Hull", "a.png", 3, List.of(), SkillTier.SMALL, null, null, null);
         SkillType armorOption = new SkillType("armor", "Armor", "a.png", 5, List.of(), SkillTier.SMALL, null, null, null);
         SkillTree.registerType(hullOption);
         SkillTree.registerType(armorOption);
-        data.selectOption(slot, hullOption);
+        data.selectOption(slot, hullOption, 1);
 
-        data.selectOption(slot, armorOption);
+        data.selectOption(slot, armorOption, 1);
 
         assertTrue(data.isAllocated("slot_1"));
         assertEquals("armor", data.getOptionalSelection("slot_1"));
-        assertEquals(1, data.getSpentPassivePoints());
+        assertEquals(1, data.getSpentOp());
     }
 
     @Test
@@ -627,10 +565,10 @@ class ShipSkillDataTest {
         SkillNode slot = node("slot_1", List.of());
         SkillType hullOption = new SkillType("hull", "Hull", "a.png", 3, List.of(), SkillTier.SMALL, null, null, null);
         SkillTree.registerType(hullOption);
-        data.selectOption(slot, hullOption);
+        data.selectOption(slot, hullOption, 1);
 
-        data.selectOption(slot, hullOption);
+        data.selectOption(slot, hullOption, 1);
 
-        assertEquals(1, data.getSpentPassivePoints());
+        assertEquals(1, data.getSpentOp());
     }
 }

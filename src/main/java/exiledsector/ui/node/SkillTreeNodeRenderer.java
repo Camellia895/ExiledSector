@@ -1,6 +1,7 @@
 package exiledsector.ui.node;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.effects.SkillTreeHullMod;
@@ -10,6 +11,7 @@ import exiledsector.skills.HullSizeSkillEffect;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTechLevel;
 import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillNodeOpCost;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
@@ -53,9 +55,22 @@ public final class SkillTreeNodeRenderer {
         if (activeRoot != null) {
             ShipSkillData data = ShipSkillDataManager.get(member.getId());
             if (!data.isAllocated(activeRoot.getId())) {
-                data.allocate(activeRoot);
+                data.allocate(activeRoot, 0);
             }
         }
+    }
+
+    private int opCostFor(SkillNode node) {
+        if (node.getType().getTier() == SkillTier.ROOT) return 0;
+        return SkillNodeOpCost.perNode(member.getHullSpec());
+    }
+
+    private int totalOpBudgetForNodes() {
+        ShipSkillData data = ShipSkillDataManager.get(member.getId());
+        MutableCharacterStatsAPI captainStats = member.getCaptain() != null ? member.getCaptain().getStats() : null;
+        int totalOp = member.getHullSpec().getOrdnancePoints(captainStats);
+        int usedOp = member.getVariant().computeOPCost(captainStats);
+        return totalOp - usedOp + data.getSpentOp();
     }
 
     private String satisfiedRootId() {
@@ -73,6 +88,7 @@ public final class SkillTreeNodeRenderer {
     public void render(float centerX, float centerY, float zoom, float alphaMult, float mouseX, float mouseY, boolean mouseKnown) {
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
         String satisfiedRootId = satisfiedRootId();
+        int totalOpBudget = totalOpBudgetForNodes();
 
         for (SkillNode node : SkillTree.getAllNodes().values()) {
             SkillTier tier = node.getType().getTier();
@@ -81,7 +97,7 @@ public final class SkillTreeNodeRenderer {
             float nodeX = centerX + node.getOffsetX() * zoom;
             float nodeY = centerY - node.getOffsetY() * zoom;
             boolean allocated = data.isAllocated(node.getId());
-            boolean breathing = !allocated && data.canAllocate(node, satisfiedRootId, data.getPurchasedPassivePoints());
+            boolean breathing = !allocated && data.canAllocate(node, satisfiedRootId, totalOpBudget, opCostFor(node));
             SkillType effectiveType = node.resolveEffectiveType(data);
             float footprintSize = NODE_SIZE * zoom * tier.getSizeMultiplier();
             float iconSize = footprintSize * ICON_INSET_RATIO;
@@ -107,7 +123,7 @@ public final class SkillTreeNodeRenderer {
             float nodeY = centerY - node.getOffsetY() * zoom;
             boolean isActiveRoot = activeRoot != null && node.getId().equals(activeRoot.getId());
             boolean allocated = data.isAllocated(node.getId());
-            boolean breathing = !allocated && data.canAllocate(node, satisfiedRootId, data.getPurchasedPassivePoints());
+            boolean breathing = !allocated && data.canAllocate(node, satisfiedRootId, totalOpBudget, opCostFor(node));
             float footprintSize = NODE_SIZE * zoom * SkillTier.ROOT.getSizeMultiplier();
             ringRenderer.draw(nodeX, nodeY, footprintSize, alphaMult, allocated, breathing, zoom, node);
 
@@ -159,9 +175,10 @@ public final class SkillTreeNodeRenderer {
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
         boolean wasAllocated = data.isAllocated(node.getId());
         boolean isOptional = node.getType().isOptional();
+        int opCost = opCostFor(node);
 
         if (!wasAllocated && isOptional) {
-            if (data.canAllocate(node, satisfiedRootId(), data.getPurchasedPassivePoints())) {
+            if (data.canAllocate(node, satisfiedRootId(), totalOpBudgetForNodes(), opCost)) {
                 dropdownRenderer.open(node);
             }
             return;
@@ -184,7 +201,7 @@ public final class SkillTreeNodeRenderer {
             return;
         }
 
-        data.toggle(node, SkillTree.getAllNodes().values(), satisfiedRootId(), data.getPurchasedPassivePoints());
+        data.toggle(node, SkillTree.getAllNodes().values(), satisfiedRootId(), totalOpBudgetForNodes(), opCost);
         boolean isAllocatedNow = data.isAllocated(node.getId());
         if (isAllocatedNow != wasAllocated) {
             refreshAfterAllocationChange(node, isAllocatedNow);
@@ -210,7 +227,7 @@ public final class SkillTreeNodeRenderer {
         if (blockAllocationReason(chosenOption) != null) return;
 
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
-        data.selectOption(node, chosenOption);
+        data.selectOption(node, chosenOption, opCostFor(node));
         refreshAfterAllocationChange(node, true);
     }
 

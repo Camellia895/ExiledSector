@@ -29,7 +29,6 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final SkillTreeRingBeltRenderer ringBeltRenderer;
     private final SkillTreeNodeRenderer nodeRenderer;
     private final SkillTreeStatPanel statPanel;
-    private final SkillTreePassivePointsBar passivePointsBar;
     private final SkillTreeOrdnancePointsBar ordnancePointsBar;
     private final BorderedPanel shipCardPanel = new BorderedPanel(SkillTreeCanvasPlugin.class);
     private final float shipCardHeight;
@@ -52,8 +51,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.ringBeltRenderer = new SkillTreeRingBeltRenderer();
         this.nodeRenderer = new SkillTreeNodeRenderer(member, style, refitButton);
         this.statPanel = new SkillTreeStatPanel(member);
-        this.passivePointsBar = new SkillTreePassivePointsBar(member, refitButton);
-        this.ordnancePointsBar = new SkillTreeOrdnancePointsBar(member, refitButton);
+        this.ordnancePointsBar = new SkillTreeOrdnancePointsBar(member);
         this.shipCardHeight = shipCardHeight;
     }
 
@@ -68,8 +66,6 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         staticImageRenderer.advance(amount);
         ringBeltRenderer.advance(amount);
         nodeRenderer.advance(amount);
-        passivePointsBar.advance(amount);
-        ordnancePointsBar.advance(amount);
     }
 
     @Override
@@ -80,21 +76,19 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             if (event.isConsumed()) continue;
 
             if (event.isLMBDownEvent() && position.containsEvent(event)) {
-                if (!handlePointButtonClick(event.getX(), event.getY())) {
-                    if (nodeRenderer.isDropdownOpen()) {
-                        SkillType option = nodeRenderer.findDropdownOptionAt(centerX(), centerY(), zoom, event.getX(), event.getY());
-                        if (option != null) {
-                            pendingDropdownOption = option;
-                        } else {
-                            nodeRenderer.closeDropdown();
-                        }
+                if (nodeRenderer.isDropdownOpen()) {
+                    SkillType option = nodeRenderer.findDropdownOptionAt(centerX(), centerY(), zoom, event.getX(), event.getY());
+                    if (option != null) {
+                        pendingDropdownOption = option;
                     } else {
-                        SkillNode clicked = nodeRenderer.findNodeAt(centerX(), centerY(), zoom, event.getX(), event.getY());
-                        if (clicked != null) {
-                            pendingClickNode = clicked;
-                        } else {
-                            dragging = true;
-                        }
+                        nodeRenderer.closeDropdown();
+                    }
+                } else {
+                    SkillNode clicked = nodeRenderer.findNodeAt(centerX(), centerY(), zoom, event.getX(), event.getY());
+                    if (clicked != null) {
+                        pendingClickNode = clicked;
+                    } else {
+                        dragging = true;
                     }
                 }
                 event.consume();
@@ -143,17 +137,12 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         staticImageRenderer.render(centerX, centerY, zoom, alphaMult, position);
         nodeRenderer.render(centerX, centerY, zoom, alphaMult, mouseX, mouseY, mouseKnown);
         statPanel.render(position, alphaMult);
-        passivePointsBar.render(position, mouseX, mouseY, mouseKnown, alphaMult);
-        ordnancePointsBar.render(position, mouseX, mouseY, mouseKnown, alphaMult);
+        ordnancePointsBar.render(position, alphaMult);
         drawShipCardFrame(alphaMult);
 
         if (!dragging && mouseKnown) {
             nodeRenderer.renderHoverTooltip(centerX, centerY, zoom, mouseX, mouseY, alphaMult);
         }
-    }
-
-    private boolean handlePointButtonClick(float x, float y) {
-        return passivePointsBar.handleClick(position, x, y) || ordnancePointsBar.handleClick(position, x, y);
     }
 
     private void drawShipCardFrame(float alphaMult) {

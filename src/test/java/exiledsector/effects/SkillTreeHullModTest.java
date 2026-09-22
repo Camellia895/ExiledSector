@@ -79,7 +79,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(hullNode);
+        ShipSkillDataManager.get("ship-a").allocate(hullNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         when(stats.getFleetMember()).thenReturn(member);
@@ -101,7 +101,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").selectOption(slotNode, hullOption);
+        ShipSkillDataManager.get("ship-a").selectOption(slotNode, hullOption, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         when(stats.getFleetMember()).thenReturn(member);
@@ -122,7 +122,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(multiNode);
+        ShipSkillDataManager.get("ship-a").allocate(multiNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         when(stats.getFleetMember()).thenReturn(member);
@@ -145,7 +145,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(cosmeticNode);
+        ShipSkillDataManager.get("ship-a").allocate(cosmeticNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         when(stats.getFleetMember()).thenReturn(member);
@@ -163,7 +163,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(keystoneNode);
+        ShipSkillDataManager.get("ship-a").allocate(keystoneNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         when(stats.getFleetMember()).thenReturn(member);
@@ -199,7 +199,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(frontNode);
+        ShipSkillDataManager.get("ship-a").allocate(frontNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         when(stats.getFleetMember()).thenReturn(member);
@@ -233,7 +233,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(hullNode);
+        ShipSkillDataManager.get("ship-a").allocate(hullNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         when(stats.getFleetMember()).thenReturn(member);
@@ -262,7 +262,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(frontNode);
+        ShipSkillDataManager.get("ship-a").allocate(frontNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         when(stats.getFleetMember()).thenReturn(member);
@@ -279,10 +279,12 @@ class SkillTreeHullModTest {
     }
 
     @Test
-    void beforeShipCreationInstallsAndCostsTheOpSinkWhenOpHasBeenSpentOnPassivePoints() {
+    void beforeShipCreationInstallsAndCostsTheOpSinkWhenOpHasBeenSpentOnAllocatedNodes() {
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").buyPassivePoint(4, 100);
+        SkillType type = new SkillType("t", "t", "a.png", 2, List.of(), SkillTier.SMALL, null, null, null);
+        SkillNode node = new SkillNode("armor_1", type, List.of(), 0f, 0f);
+        ShipSkillDataManager.get("ship-a").allocate(node, 4);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         when(stats.getFleetMember()).thenReturn(member);
@@ -305,7 +307,7 @@ class SkillTreeHullModTest {
     }
 
     @Test
-    void beforeShipCreationRemovesTheOpSinkWhenNoOpHasBeenSpentOnPassivePoints() {
+    void beforeShipCreationRemovesTheOpSinkWhenNoOpHasBeenSpentOnAllocatedNodes() {
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
 
@@ -334,7 +336,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(keystoneNode);
+        ShipSkillDataManager.get("ship-a").allocate(keystoneNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         ShipAPI ship = mockShip(member, stats);
@@ -359,7 +361,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(hullNode);
+        ShipSkillDataManager.get("ship-a").allocate(hullNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         ShipAPI ship = mockShip(member, stats);
@@ -380,7 +382,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(passthroughNode);
+        ShipSkillDataManager.get("ship-a").allocate(passthroughNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         ShipAPI ship = mockShip(member, stats);
@@ -407,7 +409,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(fighterNode);
+        ShipSkillDataManager.get("ship-a").allocate(fighterNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         ShipAPI ship = mockShip(member, stats);
@@ -440,7 +442,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(listenerNode);
+        ShipSkillDataManager.get("ship-a").allocate(listenerNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         ShipAPI ship = mockShip(member, stats);
@@ -478,7 +480,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(ventNode);
+        ShipSkillDataManager.get("ship-a").allocate(ventNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         ShipAPI ship = mockShip(member, stats);
@@ -502,7 +504,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(ventNode);
+        ShipSkillDataManager.get("ship-a").allocate(ventNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         ShipAPI ship = mockShip(member, stats);
@@ -526,7 +528,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(hullNode);
+        ShipSkillDataManager.get("ship-a").allocate(hullNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         ShipAPI ship = mockShip(member, stats);
@@ -557,7 +559,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(phaseNode);
+        ShipSkillDataManager.get("ship-a").allocate(phaseNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         ShipAPI ship = mockShip(member, stats);
@@ -586,7 +588,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(phaseNode);
+        ShipSkillDataManager.get("ship-a").allocate(phaseNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         ShipAPI ship = mockShip(member, stats);
@@ -614,7 +616,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(opsNode);
+        ShipSkillDataManager.get("ship-a").allocate(opsNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         ShipAPI ship = mockShip(member, stats);
@@ -640,7 +642,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(opsNode);
+        ShipSkillDataManager.get("ship-a").allocate(opsNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         ShipAPI ship = mockShip(member, stats);

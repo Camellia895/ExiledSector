@@ -141,7 +141,7 @@ class SkillTreeInstallerTest {
         SkillTree.register(hullNode);
 
         FleetMemberAPI member = mockMember("ship-a", true);
-        ShipSkillDataManager.get("ship-a").allocate(hullNode);
+        ShipSkillDataManager.get("ship-a").allocate(hullNode, 1);
         StatBonus hullBonus = mock(StatBonus.class);
         when(member.getStats().getHullBonus()).thenReturn(hullBonus);
         when(fleetData.getMembersListCopy()).thenReturn(List.of(member));

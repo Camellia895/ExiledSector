@@ -17,9 +17,7 @@ public class ShipSkillData {
 
     private final Set<String> allocatedNodeIds = new LinkedHashSet<>();
     private Map<String, String> optionalSelections = new LinkedHashMap<>();
-    private int spentPassivePoints = 0;
-    private int purchasedPassivePoints = 0;
-    private int opSpentOnPassivePoints = 0;
+    private int spentOp = 0;
 
     public boolean isAllocated(String nodeId) {
         return allocatedNodeIds.contains(nodeId);
@@ -30,9 +28,9 @@ public class ShipSkillData {
         return optionalSelections.get(nodeId);
     }
 
-    public void selectOption(SkillNode node, SkillType chosenOption) {
+    public void selectOption(SkillNode node, SkillType chosenOption, int opCost) {
         if (!isAllocated(node.getId())) {
-            spentPassivePoints += passiveCost(node);
+            spentOp += opCost;
         }
         allocatedNodeIds.add(node.getId());
         if (optionalSelections == null) optionalSelections = new LinkedHashMap<>();
@@ -47,47 +45,25 @@ public class ShipSkillData {
         return allocatedNodeIds;
     }
 
-    public int getSpentPassivePoints() {
-        return spentPassivePoints;
+    public int getSpentOp() {
+        return spentOp;
     }
 
-    public int getPurchasedPassivePoints() {
-        return purchasedPassivePoints;
-    }
-
-    public int getOpSpentOnPassivePoints() {
-        return opSpentOnPassivePoints;
-    }
-
-    public boolean buyPassivePoint(int opCostPerPoint, int availableOp) {
-        if (opCostPerPoint > availableOp) return false;
-        purchasedPassivePoints++;
-        opSpentOnPassivePoints += opCostPerPoint;
-        return true;
-    }
-
-    public boolean sellPassivePoint(int opCostPerPoint) {
-        if (purchasedPassivePoints <= spentPassivePoints) return false;
-        purchasedPassivePoints--;
-        opSpentOnPassivePoints -= opCostPerPoint;
-        return true;
-    }
-
-    public void allocate(SkillNode node) {
+    public void allocate(SkillNode node, int opCost) {
         allocatedNodeIds.add(node.getId());
-        spentPassivePoints += passiveCost(node);
+        spentOp += opCost;
     }
 
-    public void deallocate(SkillNode node) {
+    public void deallocate(SkillNode node, int opCost) {
         allocatedNodeIds.remove(node.getId());
         if (optionalSelections != null) {
             optionalSelections.remove(node.getId());
         }
-        spentPassivePoints -= passiveCost(node);
+        spentOp -= opCost;
     }
 
-    public boolean canAllocate(SkillNode node, String satisfiedRootId, int totalPassivePoints) {
-        if (spentPassivePoints + passiveCost(node) > totalPassivePoints) {
+    public boolean canAllocate(SkillNode node, String satisfiedRootId, int totalOp, int opCost) {
+        if (spentOp + opCost > totalOp) {
             return false;
         }
         if (node.getConnectedNodeIds().isEmpty()) {
@@ -99,10 +75,6 @@ public class ShipSkillData {
             }
         }
         return false;
-    }
-
-    private static int passiveCost(SkillNode node) {
-        return node.getType().getTier() == SkillTier.ROOT ? 0 : 1;
     }
 
     public boolean canDeallocate(SkillNode node, Collection<SkillNode> allNodes, String satisfiedRootId) {
@@ -156,13 +128,13 @@ public class ShipSkillData {
         return reachable;
     }
 
-    public void toggle(SkillNode node, Collection<SkillNode> allNodes, String satisfiedRootId, int totalPassivePoints) {
+    public void toggle(SkillNode node, Collection<SkillNode> allNodes, String satisfiedRootId, int totalOp, int opCost) {
         if (isAllocated(node.getId())) {
             if (canDeallocate(node, allNodes, satisfiedRootId)) {
-                deallocate(node);
+                deallocate(node, opCost);
             }
-        } else if (canAllocate(node, satisfiedRootId, totalPassivePoints)) {
-            allocate(node);
+        } else if (canAllocate(node, satisfiedRootId, totalOp, opCost)) {
+            allocate(node, opCost);
         }
     }
 }
