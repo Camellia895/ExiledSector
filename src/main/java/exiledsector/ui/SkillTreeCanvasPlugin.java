@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
+import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;
 import exiledsector.ui.decoration.SkillTreeRingBeltRenderer;
@@ -33,6 +34,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final SkillTreeOrdnancePointsBar ordnancePointsBar;
     private final BorderedPanel shipCardPanel = new BorderedPanel(SkillTreeCanvasPlugin.class);
     private final float shipCardHeight;
+    private final FleetMemberAPI member;
+    private final ShipVariantAPI variant;
 
     private PositionAPI position;
     private boolean dragging = false;
@@ -46,6 +49,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private SkillType pendingDropdownOption;
 
     public SkillTreeCanvasPlugin(FleetMemberAPI member, ShipVariantAPI variant, float shipCardHeight, BaseRefitButton refitButton) {
+        this.member = member;
+        this.variant = variant;
         this.style = new SkillTreePanelStyle(RootCrestResolver.resolve(member));
         this.starfieldRenderer = new SkillTreeStarfieldRenderer(style);
         this.staticImageRenderer = new SkillTreeStaticImageRenderer();
@@ -129,6 +134,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     @Override
     public void render(float alphaMult) {
         if (position == null) return;
+
+        SkillTreeHullMod.syncOpSinkHullMod(member, variant);
 
         float centerX = centerX();
         float centerY = centerY();

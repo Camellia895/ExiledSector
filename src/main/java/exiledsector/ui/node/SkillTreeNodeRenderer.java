@@ -254,6 +254,7 @@ public final class SkillTreeNodeRenderer {
         if (!exclusiveHullModIds.isEmpty()) {
             member.setStatUpdateNeeded(true);
             member.updateStats();
+            SkillTreeHullMod.syncOpSinkHullMod(member, variant);
             for (String hullModId : exclusiveHullModIds) {
                 if (variant.hasHullMod(hullModId)) {
                     HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
