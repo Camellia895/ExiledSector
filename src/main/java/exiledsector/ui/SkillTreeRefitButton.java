@@ -64,6 +64,6 @@ public class SkillTreeRefitButton extends BaseRefitButton {
         element.addCustom(canvas, 0f).getPosition().inTL(0f, 0f);
 
         backgroundPanel.addUIElement(shipCard);
-        shipCard.getPosition().inTL(SHIP_CARD_MARGIN, SHIP_CARD_MARGIN + SkillTreePassivePointsBar.getFootprintHeight());
+        shipCard.getPosition().inBL(SHIP_CARD_MARGIN, SHIP_CARD_MARGIN);
     }
 }

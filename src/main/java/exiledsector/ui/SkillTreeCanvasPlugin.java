@@ -30,6 +30,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final SkillTreeNodeRenderer nodeRenderer;
     private final SkillTreeStatPanel statPanel;
     private final SkillTreePassivePointsBar passivePointsBar;
+    private final SkillTreeOrdnancePointsBar ordnancePointsBar;
     private final BorderedPanel shipCardPanel = new BorderedPanel(SkillTreeCanvasPlugin.class);
     private final float shipCardHeight;
 
@@ -52,6 +53,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.nodeRenderer = new SkillTreeNodeRenderer(member, style, refitButton);
         this.statPanel = new SkillTreeStatPanel(member);
         this.passivePointsBar = new SkillTreePassivePointsBar(member);
+        this.ordnancePointsBar = new SkillTreeOrdnancePointsBar(member);
         this.shipCardHeight = shipCardHeight;
     }
 
@@ -138,6 +140,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         nodeRenderer.render(centerX, centerY, zoom, alphaMult, mouseX, mouseY, mouseKnown);
         statPanel.render(position, alphaMult);
         passivePointsBar.render(position, alphaMult);
+        ordnancePointsBar.render(position, alphaMult);
         drawShipCardFrame(alphaMult);
 
         if (!dragging && mouseKnown) {
@@ -147,8 +150,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     private void drawShipCardFrame(float alphaMult) {
         float boxX = position.getX() + SkillTreeRefitButton.SHIP_CARD_MARGIN - SHIP_CARD_FRAME_OUTSET;
-        float boxY = position.getY() + position.getHeight() - SkillTreeRefitButton.SHIP_CARD_MARGIN
-                - SkillTreePassivePointsBar.getFootprintHeight() - shipCardHeight - SHIP_CARD_FRAME_OUTSET;
+        float boxY = position.getY() + SkillTreeRefitButton.SHIP_CARD_MARGIN - SHIP_CARD_FRAME_OUTSET;
         float boxWidth = SkillTreeRefitButton.SHIP_CARD_ICON_SIZE + SHIP_CARD_FRAME_OUTSET * 2f;
         float boxHeight = shipCardHeight + SHIP_CARD_FRAME_OUTSET * 2f;
         shipCardPanel.draw(boxX, boxY, boxWidth, boxHeight, alphaMult);
