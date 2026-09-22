@@ -1,7 +1,6 @@
 package exiledsector.ui.node;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
@@ -9,6 +8,7 @@ import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedSkillEffects;
 import exiledsector.skills.HullSizeSkillEffect;
+import exiledsector.skills.ShipOpBudget;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTechLevel;
 import exiledsector.skills.SkillNode;
@@ -70,10 +70,8 @@ public final class SkillTreeNodeRenderer {
 
     private int totalOpBudgetForNodes() {
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
-        MutableCharacterStatsAPI captainStats = member.getCaptain() != null ? member.getCaptain().getStats() : null;
-        int totalOp = member.getHullSpec().getOrdnancePoints(captainStats);
-        int usedOp = variant.computeOPCost(captainStats);
-        return totalOp - usedOp + data.getSpentOp();
+        ShipOpBudget budget = ShipOpBudget.of(member, variant);
+        return budget.total - budget.used + data.getSpentOp();
     }
 
     private String satisfiedRootId() {
@@ -237,7 +235,7 @@ public final class SkillTreeNodeRenderer {
     private void refreshAfterAllocationChange(SkillNode node, boolean isAllocatedNow) {
         tooltipRenderer.invalidate(node.getId());
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(member.getHullSpec().getHullSize(), member.getStats(), SkillTreeHullMod.ID);
-        SkillTreeHullMod.syncOpSinkHullMod(member, variant);
+        SkillTreeHullMod.syncOpSpentHullMod(member, variant);
         SkillTreeHullMod.removeHullModsConflictingWithAllocatedSkills(member, variant);
         member.setStatUpdateNeeded(true);
         member.updateStats();
@@ -254,7 +252,7 @@ public final class SkillTreeNodeRenderer {
         if (!exclusiveHullModIds.isEmpty()) {
             member.setStatUpdateNeeded(true);
             member.updateStats();
-            SkillTreeHullMod.syncOpSinkHullMod(member, variant);
+            SkillTreeHullMod.syncOpSpentHullMod(member, variant);
             for (String hullModId : exclusiveHullModIds) {
                 if (variant.hasHullMod(hullModId)) {
                     HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);

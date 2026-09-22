@@ -29,8 +29,8 @@ import static org.mockito.Mockito.when;
 class SkillTreeLoaderTest {
 
     private static final Map<String, SkillType> SKILL_TYPES = Map.of(
-            "capacitors", new SkillType("capacitors", "Capacitors", "graphics/hullmods/flux_coil_adjunct.png", 2, List.of(), SkillTier.SMALL, null, null, null),
-            "bare", new SkillType("bare", "Bare", "graphics/icons/skills/combat.png", 0, List.of(), SkillTier.SMALL, null, null, null)
+            "capacitors", new SkillType("capacitors", "Capacitors", "graphics/hullmods/flux_coil_adjunct.png", List.of(), SkillTier.SMALL, null, null, null),
+            "bare", new SkillType("bare", "Bare", "graphics/icons/skills/combat.png", List.of(), SkillTier.SMALL, null, null, null)
     );
 
     @Test
@@ -54,7 +54,6 @@ class SkillTreeLoaderTest {
         assertEquals("capacitors_1", node.getId());
         assertEquals("Capacitors", node.getDisplayName());
         assertEquals("graphics/hullmods/flux_coil_adjunct.png", node.getIconPath());
-        assertEquals(2, node.getCost());
         assertEquals(List.of("vents_1"), node.getConnectedNodeIds());
         assertEquals(-180f, node.getOffsetX());
         assertEquals(180f, node.getOffsetY());

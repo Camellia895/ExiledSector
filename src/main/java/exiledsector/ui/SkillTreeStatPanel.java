@@ -1,6 +1,5 @@
 package exiledsector.ui;
 
-import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
@@ -8,6 +7,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.skills.AllocatedSkillEffects;
+import exiledsector.skills.ShipOpBudget;
 import exiledsector.skills.skilleffect.ShieldSkillEffect;
 import exiledsector.ui.util.BorderedPanel;
 import org.apache.log4j.Logger;
@@ -29,7 +29,6 @@ final class SkillTreeStatPanel {
     private static final String FONT_PATH = "graphics/fonts/orbitron20aabold.fnt";
 
     private static final float STAT_PANEL_FONT_SIZE = TOOLTIP_BODY_FONT_SIZE;
-    // Kept clear of the side-edge accent's width/caps so text never renders under it.
     private static final float STAT_PANEL_PADDING = 26f;
     private static final float STAT_PANEL_MARGIN = 16f;
     private static final float STAT_PANEL_GROUP_GAP = 8f;
@@ -216,10 +215,8 @@ final class SkillTreeStatPanel {
         addComparedStat(logistics, "Burn Level", stats.getMaxBurnLevel().getModifiedValue(), stats.getMaxBurnLevel().getBaseValue());
         addComparedStat(logistics, "Sensor Profile", stats.getSensorProfile().getModifiedValue(), stats.getSensorProfile().getBaseValue());
         try {
-            MutableCharacterStatsAPI captainStats = member.getCaptain() != null ? member.getCaptain().getStats() : null;
-            int totalOp = hullSpec.getOrdnancePoints(captainStats);
-            int usedOp = variant.computeOPCost(captainStats);
-            logistics.add(new StatLine("Ordnance Points", usedOp + "/" + totalOp));
+            ShipOpBudget budget = ShipOpBudget.of(member, variant);
+            logistics.add(new StatLine("Ordnance Points", budget.used + "/" + budget.total));
         } catch (RuntimeException e) {
             Logger.getLogger(SkillTreeStatPanel.class).error("Failed to compute ordnance point stats", e);
         }

@@ -14,7 +14,7 @@ public class SkillConflictWarningHullMod extends BaseHullMod {
     private static final String TITLE = "Conflict detected";
     private static final String TEXT_BEFORE_REMOVED = "The ";
     private static final String TEXT_BETWEEN = " hullmod has been removed due to the presence of the ";
-    private static final String TEXT_AFTER_CAUSE = " passive.";
+    private static final String TEXT_AFTER_CAUSE = " skill.";
 
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI.HullSize hullSize, ShipAPI ship, float width, boolean isForModSpec) {

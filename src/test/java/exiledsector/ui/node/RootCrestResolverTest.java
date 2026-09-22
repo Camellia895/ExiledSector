@@ -89,7 +89,7 @@ class RootCrestResolverTest {
     @Test
     void resolveFallsBackToTheShipsTechLevelRootIconWhenNoFlagApplies() {
         SkillTree.registerType(new SkillType("root_high_tech", "High Tech Root", "graphics/icons/circular/roots/crest_hightech.png",
-                0, List.of(), SkillTier.ROOT, null, null, null));
+                List.of(), SkillTier.ROOT, null, null, null));
 
         FleetMemberAPI member = mockMember("paragon", "High Tech", null);
         assertEquals("graphics/icons/circular/roots/crest_hightech.png", RootCrestResolver.resolve(member));

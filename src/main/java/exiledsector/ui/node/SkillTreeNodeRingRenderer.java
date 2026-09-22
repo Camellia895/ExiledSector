@@ -75,15 +75,6 @@ final class SkillTreeNodeRingRenderer {
     private static final float BREATHING_MIN_ALPHA = 0.35f;
     private static final float BREATHING_MAX_ALPHA = 1f;
 
-    // Trimmed port of vanilla's JumpPoint/DynamicRingBand wormhole visual (decompiled from
-    // com.fs.starfarer.campaign.JumpPoint). Vanilla drives open/close via a Fader with a
-    // 1-second linear ramp, squared into an eased "openness" 0..1 that fades the energy
-    // bands and central flash out while fading the ring stack in, and grows the whole
-    // visual from a small minimum scale up to full size as it opens - we reproduce that
-    // exact choreography. Absolute campaign-scale sizes/ring-counts (radius 50, 100 rings)
-    // don't transfer to a UI-node-sized icon, so those are re-derived as ratios of the
-    // node's own footprint instead, the same adaptation already applied to the belt/aurora
-    // renderers elsewhere in this package.
     private static final float WORMHOLE_MIN_SCALE = 0.25f;
     private static final float WORMHOLE_FADE_DURATION_SECONDS = 1f;
 

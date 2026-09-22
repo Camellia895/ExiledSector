@@ -1,9 +1,9 @@
 package exiledsector.ui;
 
-import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
+import exiledsector.skills.ShipOpBudget;
 import org.apache.log4j.Logger;
 
 final class SkillTreeOrdnancePointsBar {
@@ -21,9 +21,9 @@ final class SkillTreeOrdnancePointsBar {
         int totalPoints;
         int spentPoints;
         try {
-            MutableCharacterStatsAPI captainStats = member.getCaptain() != null ? member.getCaptain().getStats() : null;
-            totalPoints = member.getHullSpec().getOrdnancePoints(captainStats);
-            spentPoints = variant.computeOPCost(captainStats);
+            ShipOpBudget budget = ShipOpBudget.of(member, variant);
+            totalPoints = budget.total;
+            spentPoints = budget.used;
         } catch (RuntimeException e) {
             Logger.getLogger(SkillTreeOrdnancePointsBar.class).error("Failed to compute ordnance point stats", e);
             return;

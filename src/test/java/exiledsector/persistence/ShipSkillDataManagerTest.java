@@ -81,7 +81,7 @@ class ShipSkillDataManagerTest {
     }
 
     private static SkillNode node(String id) {
-        SkillType type = new SkillType(id, id, "graphics/hullmods/heavy_armor.png", 2, List.of(), SkillTier.SMALL, null, null, null);
+        SkillType type = new SkillType(id, id, "graphics/hullmods/heavy_armor.png", List.of(), SkillTier.SMALL, null, null, null);
         return new SkillNode(id, type, List.of(), 0f, 0f);
     }
 }

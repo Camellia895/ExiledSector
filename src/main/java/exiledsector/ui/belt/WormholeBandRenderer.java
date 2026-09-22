@@ -6,17 +6,6 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 
-/**
- * Trimmed port of vanilla's {@code DynamicRingBand}, the class the campaign-layer
- * {@code JumpPoint} uses for its two counter-rotating "energy" rings (texture
- * {@code graphics/fx/portal_textures_small.png}, 256x128, split into narrow
- * vertical slices along the width - vanilla passes a 64px slice width and a
- * slice count of 2). Unlike {@link AuroraBeltRenderer}, vanilla jitters BOTH the
- * inner and outer edge per segment (not just the outer edge), and rotates the
- * whole band via a persistent per-instance angle rather than drawing two
- * opposing passes - so the caller owns one instance's worth of rotation state
- * per band and calls this once per band per frame.
- */
 public final class WormholeBandRenderer {
     private static final float PIXELS_PER_SEGMENT = 5f;
     private static final float BAND_WIDTH_IN_TEXTURE = 64f;

@@ -26,14 +26,14 @@ public class SkillTreeHullMod extends BaseHullMod {
     private static final String MOD_ID_PREFIX = "exiledSector_skill_";
     private static final String MAGICLIB_WARNING_HULLMOD_ID = "ML_incompatibleHullmodWarning";
     private static final String CONFLICT_WARNING_HULLMOD_ID = "exiledSector_conflictWarning";
-    private static final String OP_SINK_HULLMOD_ID = "exiledSector_opSink";
+    private static final String OP_SPENT_HULLMOD_ID = "exiledSector_opSpent";
 
     @Override
     public void applyEffectsBeforeShipCreation(HullSize hullSize, MutableShipStatsAPI stats, String id) {
         forEachAllocatedEffect(stats.getFleetMember(), hullSize,
                 (vanillaEffect, vanillaHullModId) -> vanillaEffect.applyEffectsBeforeShipCreation(hullSize, stats, vanillaHullModId),
                 (effect, modId, magnitude) -> effect.apply(stats, modId, magnitude));
-        syncOpSinkHullMod(stats.getFleetMember(), stats.getVariant());
+        syncOpSpentHullMod(stats.getFleetMember(), stats.getVariant());
         removeHullModsConflictingWithAllocatedSkills(stats.getFleetMember(), stats.getVariant());
     }
 
@@ -94,10 +94,10 @@ public class SkillTreeHullMod extends BaseHullMod {
         }
     }
 
-    public static void syncOpSinkHullMod(FleetMemberAPI member, ShipVariantAPI variant) {
+    public static void syncOpSpentHullMod(FleetMemberAPI member, ShipVariantAPI variant) {
         if (member == null || variant == null) return;
 
-        HullModSpecAPI spec = Global.getSettings().getHullModSpec(OP_SINK_HULLMOD_ID);
+        HullModSpecAPI spec = Global.getSettings().getHullModSpec(OP_SPENT_HULLMOD_ID);
         if (spec == null) return;
 
         int opSpent = ShipSkillDataManager.get(member.getId()).getSpentOp();
@@ -107,11 +107,11 @@ public class SkillTreeHullMod extends BaseHullMod {
         spec.setCapitalCost(opSpent);
 
         if (opSpent > 0) {
-            if (!variant.hasHullMod(OP_SINK_HULLMOD_ID)) {
-                variant.addMod(OP_SINK_HULLMOD_ID);
+            if (!variant.hasHullMod(OP_SPENT_HULLMOD_ID)) {
+                variant.addMod(OP_SPENT_HULLMOD_ID);
             }
-        } else if (variant.hasHullMod(OP_SINK_HULLMOD_ID)) {
-            variant.removeMod(OP_SINK_HULLMOD_ID);
+        } else if (variant.hasHullMod(OP_SPENT_HULLMOD_ID)) {
+            variant.removeMod(OP_SPENT_HULLMOD_ID);
         }
     }
 

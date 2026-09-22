@@ -27,12 +27,12 @@ class ShipSkillDataTest {
     }
 
     private static SkillNode node(String id, List<String> prerequisiteIds) {
-        SkillType type = new SkillType(id, id, "graphics/hullmods/heavy_armor.png", 2, List.of(), SkillTier.SMALL, null, null, null);
+        SkillType type = new SkillType(id, id, "graphics/hullmods/heavy_armor.png", List.of(), SkillTier.SMALL, null, null, null);
         return new SkillNode(id, type, prerequisiteIds, 0f, 0f);
     }
 
     private static SkillNode rootNode(String id, List<String> prerequisiteIds) {
-        SkillType type = new SkillType(id, id, "a.png", 0, List.of(), SkillTier.ROOT, null, null, null);
+        SkillType type = new SkillType(id, id, "a.png", List.of(), SkillTier.ROOT, null, null, null);
         return new SkillNode(id, type, prerequisiteIds, 0f, 0f);
     }
 
@@ -406,7 +406,7 @@ class ShipSkillDataTest {
 
     @Test
     void canDeallocateIsFalseWhenASecondAllocatedRootOnlyReachesTheTrueRootThroughTheRemovedNode() {
-        SkillType rootType = new SkillType("secondRootType", "Second Root", "a.png", 0, List.of(), SkillTier.ROOT, null, null, null);
+        SkillType rootType = new SkillType("secondRootType", "Second Root", "a.png", List.of(), SkillTier.ROOT, null, null, null);
         SkillNode secondRoot = new SkillNode("secondRoot", rootType, List.of("bridge", "descendant"), 0f, 0f);
         SkillNode bridge = node("bridge", List.of("root_low_tech_1", "secondRoot"));
         SkillNode descendant = node("descendant", List.of("secondRoot"));
@@ -421,7 +421,7 @@ class ShipSkillDataTest {
 
     @Test
     void canDeallocateIsTrueWhenASecondAllocatedRootStillTracesBackToTheTrueRootAfterRemoval() {
-        SkillType rootType = new SkillType("secondRootType", "Second Root", "a.png", 0, List.of(), SkillTier.ROOT, null, null, null);
+        SkillType rootType = new SkillType("secondRootType", "Second Root", "a.png", List.of(), SkillTier.ROOT, null, null, null);
         SkillNode secondRoot = new SkillNode("secondRoot", rootType, List.of("bridgeA", "bridgeB"), 0f, 0f);
         SkillNode bridgeA = node("bridgeA", List.of("root_low_tech_1", "secondRoot"));
         SkillNode bridgeB = node("bridgeB", List.of("root_low_tech_1", "secondRoot"));
@@ -437,7 +437,7 @@ class ShipSkillDataTest {
     @Test
     void reproduceReportedLoopLockup() {
         SkillNode rootLowTech = new SkillNode("root_low_tech_1",
-                new SkillType("root_low_tech", "Root Low Tech", "a.png", 0, List.of(), SkillTier.ROOT, null, null, null),
+                new SkillType("root_low_tech", "Root Low Tech", "a.png", List.of(), SkillTier.ROOT, null, null, null),
                 List.of("small_logistics_optional_11", "small_logistics_optional_31", "small_logistics_optional_14", "small_flux_optional_34"),
                 0f, 0f);
         SkillNode n3 = node("small_logistics_optional_3", List.of("root_high_tech_1", "small_logistics_optional_6", "small_logistics_optional_24"));
@@ -504,7 +504,7 @@ class ShipSkillDataTest {
     void selectOptionAllocatesTheSlotNodeAndSpendsTheGivenOpCost() {
         ShipSkillData data = new ShipSkillData();
         SkillNode slot = node("slot_1", List.of());
-        SkillType chosenOption = new SkillType("hull", "Hull", "a.png", 3, List.of(), SkillTier.SMALL, null, null, null);
+        SkillType chosenOption = new SkillType("hull", "Hull", "a.png", List.of(), SkillTier.SMALL, null, null, null);
 
         data.selectOption(slot, chosenOption, 1);
 
@@ -517,7 +517,7 @@ class ShipSkillDataTest {
     void deallocateRefundsTheSlotsOpCostRegardlessOfSelectedOption() {
         ShipSkillData data = new ShipSkillData();
         SkillNode slot = node("slot_1", List.of());
-        SkillType chosenOption = new SkillType("hull", "Hull", "a.png", 3, List.of(), SkillTier.SMALL, null, null, null);
+        SkillType chosenOption = new SkillType("hull", "Hull", "a.png", List.of(), SkillTier.SMALL, null, null, null);
         SkillTree.registerType(chosenOption);
         data.selectOption(slot, chosenOption, 1);
 
@@ -532,7 +532,7 @@ class ShipSkillDataTest {
     void togglingASelectedOptionalNodeOffClearsTheSelection() {
         ShipSkillData data = new ShipSkillData();
         SkillNode slot = node("slot_1", List.of());
-        SkillType chosenOption = new SkillType("hull", "Hull", "a.png", 3, List.of(), SkillTier.SMALL, null, null, null);
+        SkillType chosenOption = new SkillType("hull", "Hull", "a.png", List.of(), SkillTier.SMALL, null, null, null);
         SkillTree.registerType(chosenOption);
         data.selectOption(slot, chosenOption, 1);
 
@@ -546,8 +546,8 @@ class ShipSkillDataTest {
     void selectingAnotherOptionOnAnAlreadyAllocatedNodeDoesNotChargeAnotherOpCost() {
         ShipSkillData data = new ShipSkillData();
         SkillNode slot = node("slot_1", List.of());
-        SkillType hullOption = new SkillType("hull", "Hull", "a.png", 3, List.of(), SkillTier.SMALL, null, null, null);
-        SkillType armorOption = new SkillType("armor", "Armor", "a.png", 5, List.of(), SkillTier.SMALL, null, null, null);
+        SkillType hullOption = new SkillType("hull", "Hull", "a.png", List.of(), SkillTier.SMALL, null, null, null);
+        SkillType armorOption = new SkillType("armor", "Armor", "a.png", List.of(), SkillTier.SMALL, null, null, null);
         SkillTree.registerType(hullOption);
         SkillTree.registerType(armorOption);
         data.selectOption(slot, hullOption, 1);
@@ -563,7 +563,7 @@ class ShipSkillDataTest {
     void reselectingTheSameOptionOnAnAlreadyAllocatedNodeDoesNotDoubleChargeIt() {
         ShipSkillData data = new ShipSkillData();
         SkillNode slot = node("slot_1", List.of());
-        SkillType hullOption = new SkillType("hull", "Hull", "a.png", 3, List.of(), SkillTier.SMALL, null, null, null);
+        SkillType hullOption = new SkillType("hull", "Hull", "a.png", List.of(), SkillTier.SMALL, null, null, null);
         SkillTree.registerType(hullOption);
         data.selectOption(slot, hullOption, 1);
 

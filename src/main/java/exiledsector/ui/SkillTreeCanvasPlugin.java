@@ -135,7 +135,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     public void render(float alphaMult) {
         if (position == null) return;
 
-        SkillTreeHullMod.syncOpSinkHullMod(member, variant);
+        SkillTreeHullMod.syncOpSpentHullMod(member, variant);
 
         float centerX = centerX();
         float centerY = centerY();

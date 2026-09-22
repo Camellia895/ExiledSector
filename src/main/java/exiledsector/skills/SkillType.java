@@ -9,7 +9,6 @@ public class SkillType {
     private final String id;
     private final String displayName;
     private final String iconPath;
-    private final int cost;
     private final List<SkillTypeEffect> effects;
     private final List<HullSizeSkillEffect> hullSizeEffects;
     private final SkillTier tier;
@@ -20,43 +19,42 @@ public class SkillType {
     private final List<String> exclusiveHullModIds;
     private final List<String> exclusiveSkillTypeIds;
 
-    public SkillType(String id, String displayName, String iconPath, int cost,
+    public SkillType(String id, String displayName, String iconPath,
                       List<SkillTypeEffect> effects, SkillTier tier, String vanillaHullModId,
                       String descriptionOverride, String todo) {
-        this(id, displayName, iconPath, cost, effects, Collections.emptyList(), tier,
+        this(id, displayName, iconPath, effects, Collections.emptyList(), tier,
                 vanillaHullModId, descriptionOverride, todo, Collections.emptyList());
     }
 
-    public SkillType(String id, String displayName, String iconPath, int cost,
+    public SkillType(String id, String displayName, String iconPath,
                       List<SkillTypeEffect> effects, List<HullSizeSkillEffect> hullSizeEffects, SkillTier tier,
                       String vanillaHullModId, String descriptionOverride, String todo) {
-        this(id, displayName, iconPath, cost, effects, hullSizeEffects, tier,
+        this(id, displayName, iconPath, effects, hullSizeEffects, tier,
                 vanillaHullModId, descriptionOverride, todo, Collections.emptyList());
     }
 
-    public SkillType(String id, String displayName, String iconPath, int cost,
+    public SkillType(String id, String displayName, String iconPath,
                       List<SkillTypeEffect> effects, List<HullSizeSkillEffect> hullSizeEffects, SkillTier tier,
                       String vanillaHullModId, String descriptionOverride, String todo, List<String> optionalOptionIds) {
-        this(id, displayName, iconPath, cost, effects, hullSizeEffects, tier,
+        this(id, displayName, iconPath, effects, hullSizeEffects, tier,
                 vanillaHullModId, descriptionOverride, todo, optionalOptionIds, Collections.emptyList());
     }
 
-    public SkillType(String id, String displayName, String iconPath, int cost,
+    public SkillType(String id, String displayName, String iconPath,
                       List<SkillTypeEffect> effects, List<HullSizeSkillEffect> hullSizeEffects, SkillTier tier,
                       String vanillaHullModId, String descriptionOverride, String todo, List<String> optionalOptionIds,
                       List<String> exclusiveHullModIds) {
-        this(id, displayName, iconPath, cost, effects, hullSizeEffects, tier,
+        this(id, displayName, iconPath, effects, hullSizeEffects, tier,
                 vanillaHullModId, descriptionOverride, todo, optionalOptionIds, exclusiveHullModIds, Collections.emptyList());
     }
 
-    public SkillType(String id, String displayName, String iconPath, int cost,
+    public SkillType(String id, String displayName, String iconPath,
                       List<SkillTypeEffect> effects, List<HullSizeSkillEffect> hullSizeEffects, SkillTier tier,
                       String vanillaHullModId, String descriptionOverride, String todo, List<String> optionalOptionIds,
                       List<String> exclusiveHullModIds, List<String> exclusiveSkillTypeIds) {
         this.id = id;
         this.displayName = displayName;
         this.iconPath = iconPath;
-        this.cost = cost;
         this.effects = effects == null ? Collections.emptyList() : effects;
         this.hullSizeEffects = hullSizeEffects == null ? Collections.emptyList() : hullSizeEffects;
         this.tier = tier;
@@ -78,10 +76,6 @@ public class SkillType {
 
     public String getIconPath() {
         return iconPath;
-    }
-
-    public int getCost() {
-        return cost;
     }
 
     public List<SkillTypeEffect> getEffects() {
