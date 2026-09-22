@@ -2,6 +2,7 @@ package exiledsector.ui.node;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.effects.SkillTreeHullMod;
@@ -32,6 +33,7 @@ public final class SkillTreeNodeRenderer {
     private static final Color UNALLOCATED_TINT = new Color(90, 90, 90);
 
     private final FleetMemberAPI member;
+    private final ShipVariantAPI variant;
     private final BaseRefitButton refitButton;
     private final SkillNode activeRoot;
 
@@ -41,8 +43,9 @@ public final class SkillTreeNodeRenderer {
     private final SkillTreeNodeTooltipRenderer tooltipRenderer;
     private final SkillTreeNodeDropdownRenderer dropdownRenderer;
 
-    public SkillTreeNodeRenderer(FleetMemberAPI member, SkillTreePanelStyle style, BaseRefitButton refitButton) {
+    public SkillTreeNodeRenderer(FleetMemberAPI member, ShipVariantAPI variant, SkillTreePanelStyle style, BaseRefitButton refitButton) {
         this.member = member;
+        this.variant = variant;
         this.refitButton = refitButton;
         this.activeRoot = findRootNode(ShipTechLevel.of(member).rootTypeId());
 
@@ -69,7 +72,7 @@ public final class SkillTreeNodeRenderer {
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
         MutableCharacterStatsAPI captainStats = member.getCaptain() != null ? member.getCaptain().getStats() : null;
         int totalOp = member.getHullSpec().getOrdnancePoints(captainStats);
-        int usedOp = member.getVariant().computeOPCost(captainStats);
+        int usedOp = variant.computeOPCost(captainStats);
         return totalOp - usedOp + data.getSpentOp();
     }
 
@@ -234,6 +237,8 @@ public final class SkillTreeNodeRenderer {
     private void refreshAfterAllocationChange(SkillNode node, boolean isAllocatedNow) {
         tooltipRenderer.invalidate(node.getId());
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(member.getHullSpec().getHullSize(), member.getStats(), SkillTreeHullMod.ID);
+        SkillTreeHullMod.syncOpSinkHullMod(member, variant);
+        SkillTreeHullMod.removeHullModsConflictingWithAllocatedSkills(member, variant);
         member.setStatUpdateNeeded(true);
         member.updateStats();
         if (refitButton != null) {
@@ -250,7 +255,7 @@ public final class SkillTreeNodeRenderer {
             member.setStatUpdateNeeded(true);
             member.updateStats();
             for (String hullModId : exclusiveHullModIds) {
-                if (member.getVariant().hasHullMod(hullModId)) {
+                if (variant.hasHullMod(hullModId)) {
                     HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
                     String name = spec != null ? spec.getDisplayName() : hullModId;
                     return "Ship already has " + name + " installed.";

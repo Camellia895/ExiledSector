@@ -1,6 +1,7 @@
 package exiledsector.ui;
 
 import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
@@ -44,14 +45,14 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private SkillNode pendingClickNode;
     private SkillType pendingDropdownOption;
 
-    public SkillTreeCanvasPlugin(FleetMemberAPI member, float shipCardHeight, BaseRefitButton refitButton) {
+    public SkillTreeCanvasPlugin(FleetMemberAPI member, ShipVariantAPI variant, float shipCardHeight, BaseRefitButton refitButton) {
         this.style = new SkillTreePanelStyle(RootCrestResolver.resolve(member));
         this.starfieldRenderer = new SkillTreeStarfieldRenderer(style);
         this.staticImageRenderer = new SkillTreeStaticImageRenderer();
         this.ringBeltRenderer = new SkillTreeRingBeltRenderer();
-        this.nodeRenderer = new SkillTreeNodeRenderer(member, style, refitButton);
-        this.statPanel = new SkillTreeStatPanel(member);
-        this.ordnancePointsBar = new SkillTreeOrdnancePointsBar(member);
+        this.nodeRenderer = new SkillTreeNodeRenderer(member, variant, style, refitButton);
+        this.statPanel = new SkillTreeStatPanel(member, variant);
+        this.ordnancePointsBar = new SkillTreeOrdnancePointsBar(member, variant);
         this.shipCardHeight = shipCardHeight;
     }
 

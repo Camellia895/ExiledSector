@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -303,7 +302,7 @@ class SkillTreeHullModTest {
         verify(opSinkSpec).setDestroyerCost(4);
         verify(opSinkSpec).setCruiserCost(4);
         verify(opSinkSpec).setCapitalCost(4);
-        verify(variant).addPermaMod("exiledSector_opSink", false);
+        verify(variant).addMod("exiledSector_opSink");
     }
 
     @Test
@@ -324,8 +323,8 @@ class SkillTreeHullModTest {
 
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
 
-        verify(variant).removePermaMod("exiledSector_opSink");
-        verify(variant, never()).addPermaMod(anyString(), anyBoolean());
+        verify(variant).removeMod("exiledSector_opSink");
+        verify(variant, never()).addMod(anyString());
     }
 
     @Test

@@ -4,6 +4,7 @@ import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.skills.AllocatedSkillEffects;
@@ -44,6 +45,7 @@ final class SkillTreeStatPanel {
     private static final float STAT_COMPARISON_EPSILON = 0.001f;
 
     private final FleetMemberAPI member;
+    private final ShipVariantAPI variant;
     private final BorderedPanel borderedPanel = new BorderedPanel(SkillTreeStatPanel.class);
     private final Map<String, List<StatLine>> lastStatGroupLines = new HashMap<>();
     private final Map<String, SkillTreePanelStyle.TooltipText> statGroupLabelText = new HashMap<>();
@@ -53,8 +55,9 @@ final class SkillTreeStatPanel {
     private LazyFont statFont;
     private boolean fontLoadFailed = false;
 
-    SkillTreeStatPanel(FleetMemberAPI member) {
+    SkillTreeStatPanel(FleetMemberAPI member, ShipVariantAPI variant) {
         this.member = member;
+        this.variant = variant;
     }
 
     void render(PositionAPI position, float alphaMult) {
@@ -215,7 +218,7 @@ final class SkillTreeStatPanel {
         try {
             MutableCharacterStatsAPI captainStats = member.getCaptain() != null ? member.getCaptain().getStats() : null;
             int totalOp = hullSpec.getOrdnancePoints(captainStats);
-            int usedOp = member.getVariant().computeOPCost(captainStats);
+            int usedOp = variant.computeOPCost(captainStats);
             logistics.add(new StatLine("Ordnance Points", usedOp + "/" + totalOp));
         } catch (RuntimeException e) {
             Logger.getLogger(SkillTreeStatPanel.class).error("Failed to compute ordnance point stats", e);

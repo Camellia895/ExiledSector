@@ -94,7 +94,7 @@ public class SkillTreeHullMod extends BaseHullMod {
         }
     }
 
-    private void syncOpSinkHullMod(FleetMemberAPI member, ShipVariantAPI variant) {
+    public static void syncOpSinkHullMod(FleetMemberAPI member, ShipVariantAPI variant) {
         if (member == null || variant == null) return;
 
         HullModSpecAPI spec = Global.getSettings().getHullModSpec(OP_SINK_HULLMOD_ID);
@@ -108,14 +108,14 @@ public class SkillTreeHullMod extends BaseHullMod {
 
         if (opSpent > 0) {
             if (!variant.hasHullMod(OP_SINK_HULLMOD_ID)) {
-                variant.addPermaMod(OP_SINK_HULLMOD_ID, false);
+                variant.addMod(OP_SINK_HULLMOD_ID);
             }
         } else if (variant.hasHullMod(OP_SINK_HULLMOD_ID)) {
-            variant.removePermaMod(OP_SINK_HULLMOD_ID);
+            variant.removeMod(OP_SINK_HULLMOD_ID);
         }
     }
 
-    private void removeHullModsConflictingWithAllocatedSkills(FleetMemberAPI member, ShipVariantAPI variant) {
+    public static void removeHullModsConflictingWithAllocatedSkills(FleetMemberAPI member, ShipVariantAPI variant) {
         if (member == null || variant == null) return;
 
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
