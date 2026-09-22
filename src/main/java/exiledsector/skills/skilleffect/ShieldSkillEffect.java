@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import org.lwjgl.util.vector.Vector2f;
 
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
@@ -48,6 +49,12 @@ public enum ShieldSkillEffect implements SkillEffect {
         }
 
         @Override
+        public String blockAllocationReason(FleetMemberAPI member, float magnitude, List<SkillEffect> currentlyAllocatedEffects) {
+            ShieldAPI.ShieldType current = resolveDisplayShieldType(member.getHullSpec().getShieldType(), currentlyAllocatedEffects);
+            return current == ShieldAPI.ShieldType.NONE ? "Ship has no shields." : null;
+        }
+
+        @Override
         public String describe(float magnitude) {
             return "Removes this ship's shield entirely.";
         }
@@ -83,6 +90,12 @@ public enum ShieldSkillEffect implements SkillEffect {
         }
 
         @Override
+        public String blockAllocationReason(FleetMemberAPI member, float magnitude, List<SkillEffect> currentlyAllocatedEffects) {
+            ShieldAPI.ShieldType current = resolveDisplayShieldType(member.getHullSpec().getShieldType(), currentlyAllocatedEffects);
+            return current == ShieldAPI.ShieldType.FRONT ? "Ship already has front shields." : null;
+        }
+
+        @Override
         public String describe(float magnitude) {
             return "Converts this ship's shield to front-facing.";
         }
@@ -98,6 +111,12 @@ public enum ShieldSkillEffect implements SkillEffect {
             if (shield != null) {
                 shield.setType(ShieldAPI.ShieldType.OMNI);
             }
+        }
+
+        @Override
+        public String blockAllocationReason(FleetMemberAPI member, float magnitude, List<SkillEffect> currentlyAllocatedEffects) {
+            ShieldAPI.ShieldType current = resolveDisplayShieldType(member.getHullSpec().getShieldType(), currentlyAllocatedEffects);
+            return current == ShieldAPI.ShieldType.OMNI ? "Ship already has omni-directional shields." : null;
         }
 
         @Override
@@ -124,7 +143,7 @@ public enum ShieldSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return flatChange(magnitude, "shield arc, in degrees");
+            return flatChange(magnitude, "shield arc");
         }
     },
     SHIELD_ARC_MULT {

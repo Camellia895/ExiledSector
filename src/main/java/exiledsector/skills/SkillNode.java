@@ -116,7 +116,7 @@ public class SkillNode extends SkillTreeObject {
                 SkillType other = SkillTree.getType(skillTypeId);
                 names.add(other != null ? other.getDisplayName() : skillTypeId);
             }
-            lines.add("Mutually exclusive with: " + String.join(", ", names) + ".");
+            lines.add("Mutually exclusive with " + String.join(", ", names) + ".");
         }
 
         return lines.isEmpty() ? null : String.join("\n\n", lines);

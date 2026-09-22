@@ -130,7 +130,7 @@ class SkillNodeTest {
                 List.of(), List.of(), List.of("adaptiveshields"));
         SkillNode node = new SkillNode("frontemitter_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Mutually exclusive with: Shield Conversion - Omni.", node.getDescription());
+        assertEquals("Mutually exclusive with Shield Conversion - Omni.", node.getDescription());
     }
 
     @Test
@@ -139,7 +139,7 @@ class SkillNodeTest {
                 List.of(), List.of(), List.of("unknown_type"));
         SkillNode node = new SkillNode("frontemitter_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Mutually exclusive with: unknown_type.", node.getDescription());
+        assertEquals("Mutually exclusive with unknown_type.", node.getDescription());
     }
 
     @Test
@@ -157,7 +157,7 @@ class SkillNodeTest {
                 List.of(), List.of("escort_package"), List.of("adaptiveshields"));
         SkillNode node = new SkillNode("frontemitter_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Mutually exclusive with hullmod(s): Escort Package.\n\nMutually exclusive with: Shield Conversion - Omni.", node.getDescription());
+        assertEquals("Mutually exclusive with hullmod(s): Escort Package.\n\nMutually exclusive with Shield Conversion - Omni.", node.getDescription());
     }
 
     @Test

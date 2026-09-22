@@ -4,6 +4,8 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 
+import java.util.List;
+
 public interface SkillEffect {
 
     void apply(MutableShipStatsAPI stats, String modId, float magnitude);
@@ -24,6 +26,10 @@ public interface SkillEffect {
     }
 
     default String blockDeallocationReason(FleetMemberAPI member, float magnitude) {
+        return null;
+    }
+
+    default String blockAllocationReason(FleetMemberAPI member, float magnitude, List<SkillEffect> currentlyAllocatedEffects) {
         return null;
     }
 

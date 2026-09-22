@@ -6,14 +6,8 @@ import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledsector.persistence.ShipSkillDataManager;
-import exiledsector.skills.ShipSkillData;
-import exiledsector.skills.SkillNode;
-import exiledsector.skills.SkillTree;
-import exiledsector.skills.SkillType;
-import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.AllocatedSkillEffects;
 import exiledsector.skills.skilleffect.ShieldSkillEffect;
-import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.ui.util.BorderedPanel;
 import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.ui.LazyFont;
@@ -191,7 +185,7 @@ final class SkillTreeStatPanel {
         addComparedStat(mobility, "Acceleration", stats.getAcceleration().getModifiedValue(), stats.getAcceleration().getBaseValue());
         groups.add(new StatGroup("Mobility", mobility));
 
-        ShieldAPI.ShieldType shieldType = ShieldSkillEffect.resolveDisplayShieldType(hullSpec.getShieldType(), collectAllocatedEffects(member));
+        ShieldAPI.ShieldType shieldType = ShieldSkillEffect.resolveDisplayShieldType(hullSpec.getShieldType(), AllocatedSkillEffects.forMember(member));
         if (shieldType != ShieldAPI.ShieldType.NONE) {
             List<StatLine> defense = new ArrayList<>();
             defense.add(new StatLine("Shield Type", shieldType.name()));
@@ -232,23 +226,6 @@ final class SkillTreeStatPanel {
         groups.add(new StatGroup("Logistics", logistics));
 
         return groups;
-    }
-
-    private static List<SkillEffect> collectAllocatedEffects(FleetMemberAPI member) {
-        List<SkillEffect> effects = new ArrayList<>();
-        ShipSkillData data = ShipSkillDataManager.get(member.getId());
-        for (String nodeId : data.getAllocatedNodeIds()) {
-            SkillNode node = SkillTree.get(nodeId);
-            if (node == null) continue;
-
-            SkillType type = node.resolveEffectiveType(data);
-            if (type.getVanillaHullModId() != null) continue;
-
-            for (SkillTypeEffect effect : type.getEffects()) {
-                effects.add(effect.effect());
-            }
-        }
-        return effects;
     }
 
     private static ShipHullSpecAPI.ShieldSpecAPI getShieldSpecOrNull(ShipHullSpecAPI hullSpec) {

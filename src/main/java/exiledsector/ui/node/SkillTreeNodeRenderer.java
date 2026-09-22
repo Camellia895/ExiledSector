@@ -5,6 +5,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.AllocatedSkillEffects;
 import exiledsector.skills.HullSizeSkillEffect;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTechLevel;
@@ -14,6 +15,7 @@ import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.VanillaHullBaselines;
+import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.ui.SkillTreePanelStyle;
 import lunalib.lunaRefit.BaseRefitButton;
 
@@ -253,6 +255,17 @@ public final class SkillTreeNodeRenderer {
                     return "Already have " + allocatedType.getDisplayName() + " allocated.";
                 }
             }
+        }
+
+        List<SkillEffect> currentlyAllocatedEffects = AllocatedSkillEffects.forMember(member);
+        for (SkillTypeEffect effect : type.getEffects()) {
+            String reason = effect.effect().blockAllocationReason(member, effect.magnitude(), currentlyAllocatedEffects);
+            if (reason != null) return reason;
+        }
+        for (HullSizeSkillEffect effect : type.getHullSizeEffects()) {
+            float magnitude = effect.valueFor(member.getHullSpec().getHullSize());
+            String reason = effect.effect().blockAllocationReason(member, magnitude, currentlyAllocatedEffects);
+            if (reason != null) return reason;
         }
 
         return null;
