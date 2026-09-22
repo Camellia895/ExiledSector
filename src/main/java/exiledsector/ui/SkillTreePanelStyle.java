@@ -45,14 +45,19 @@ public final class SkillTreePanelStyle {
 
     public LazyFont getFont() {
         if (tooltipFont == null && !tooltipFontLoadFailed) {
-            try {
-                tooltipFont = LazyFont.loadFont(TOOLTIP_FONT_PATH);
-            } catch (FontException e) {
-                Logger.getLogger(SkillTreePanelStyle.class).error("Failed to load tooltip font " + TOOLTIP_FONT_PATH, e);
-                tooltipFontLoadFailed = true;
-            }
+            tooltipFont = loadFontOrNull(TOOLTIP_FONT_PATH);
+            tooltipFontLoadFailed = tooltipFont == null;
         }
         return tooltipFont;
+    }
+
+    public static LazyFont loadFontOrNull(String path) {
+        try {
+            return LazyFont.loadFont(path);
+        } catch (FontException e) {
+            Logger.getLogger(SkillTreePanelStyle.class).error("Failed to load font " + path, e);
+            return null;
+        }
     }
 
     public void drawTooltipBackground(float x, float y, float width, float height, float alphaMult, Color borderColor) {
@@ -140,14 +145,22 @@ public final class SkillTreePanelStyle {
     }
 
     public static TooltipText buildWrappedText(LazyFont font, String rawText, float fontSize, float maxWidth, float maxHeight, Color color) {
-        return buildMeasuredText(font, font.wrapString(rawText, fontSize, maxWidth, maxHeight), fontSize, color);
+        return buildMeasuredText(font, font.wrapString(rawText, fontSize, maxWidth, maxHeight), fontSize, color,
+                LazyFont.TextAlignment.LEFT, LazyFont.TextAnchor.TOP_LEFT);
     }
 
     public static TooltipText buildJoinedText(LazyFont font, List<String> lines, float fontSize, Color color) {
-        return buildMeasuredText(font, String.join("\n", lines), fontSize, color);
+        return buildMeasuredText(font, String.join("\n", lines), fontSize, color,
+                LazyFont.TextAlignment.LEFT, LazyFont.TextAnchor.TOP_LEFT);
     }
 
-    private static TooltipText buildMeasuredText(LazyFont font, String text, float fontSize, Color color) {
+    public static TooltipText buildJoinedTextRightAligned(LazyFont font, List<String> lines, float fontSize, Color color) {
+        return buildMeasuredText(font, String.join("\n", lines), fontSize, color,
+                LazyFont.TextAlignment.RIGHT, LazyFont.TextAnchor.TOP_RIGHT);
+    }
+
+    private static TooltipText buildMeasuredText(LazyFont font, String text, float fontSize, Color color,
+                                                   LazyFont.TextAlignment alignment, LazyFont.TextAnchor anchor) {
         String[] lines = text.split("\n", -1);
         float width = 0f;
         for (String line : lines) {
@@ -156,15 +169,19 @@ public final class SkillTreePanelStyle {
         float height = lines.length * fontSize * FONT_LINE_HEIGHT_FACTOR;
 
         LazyFont.DrawableString drawable = font.createText(text, color, fontSize);
-        drawable.setAlignment(LazyFont.TextAlignment.LEFT);
-        drawable.setAnchor(LazyFont.TextAnchor.TOP_LEFT);
+        drawable.setAlignment(alignment);
+        drawable.setAnchor(anchor);
         return new TooltipText(drawable, width, height);
     }
 
     public static LazyFont.DrawableString buildSimpleText(LazyFont font, String text, float fontSize, Color color) {
+        return buildSimpleText(font, text, fontSize, color, LazyFont.TextAnchor.TOP_LEFT);
+    }
+
+    public static LazyFont.DrawableString buildSimpleText(LazyFont font, String text, float fontSize, Color color, LazyFont.TextAnchor anchor) {
         LazyFont.DrawableString drawable = font.createText(text, color, fontSize);
         drawable.setAlignment(LazyFont.TextAlignment.LEFT);
-        drawable.setAnchor(LazyFont.TextAnchor.TOP_LEFT);
+        drawable.setAnchor(anchor);
         return drawable;
     }
 

@@ -106,7 +106,7 @@ public class SkillNode extends SkillTreeObject {
             HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
             names.add(spec != null ? spec.getDisplayName() : hullModId);
         }
-        return "Mutually exclusive with: " + String.join(", ", names) + ".";
+        return "Mutually exclusive with hullmod(s): " + String.join(", ", names) + ".";
     }
 
     public SkillType resolveEffectiveType(ShipSkillData data) {

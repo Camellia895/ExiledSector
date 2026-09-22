@@ -89,7 +89,7 @@ class SkillNodeTest {
         SkillType type = new SkillType("escort_package", "Escort Package", "graphics/icons/notable_hullmods/escort_package.png", 4, List.of(), SkillTier.NOTABLE, "escort_package", null, "Needs a real mechanic");
         SkillNode node = new SkillNode("escort_package_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Mutually exclusive with: Escort Package.", node.getDescription());
+        assertEquals("Mutually exclusive with hullmod(s): Escort Package.", node.getDescription());
     }
 
     @Test
@@ -105,7 +105,7 @@ class SkillNodeTest {
                 List.of(), List.of("armoredcladding"));
         SkillNode node = new SkillNode("heavyarmor_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Increases armor rating by 15%.\n\nMutually exclusive with: Armored Cladding.", node.getDescription());
+        assertEquals("Increases armor rating by 15%.\n\nMutually exclusive with hullmod(s): Armored Cladding.", node.getDescription());
     }
 
     @Test
@@ -118,7 +118,7 @@ class SkillNodeTest {
                 List.of(), List.of("unknown_hullmod"));
         SkillNode node = new SkillNode("hull_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Mutually exclusive with: unknown_hullmod.", node.getDescription());
+        assertEquals("Mutually exclusive with hullmod(s): unknown_hullmod.", node.getDescription());
     }
 
     @Test

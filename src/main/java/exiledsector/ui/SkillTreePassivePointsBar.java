@@ -9,7 +9,6 @@ import exiledsector.skills.VanillaHullBaselines;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.SpriteCache;
 import org.apache.log4j.Logger;
-import org.lazywizard.lazylib.ui.FontException;
 import org.lazywizard.lazylib.ui.LazyFont;
 
 import java.awt.Color;
@@ -42,7 +41,7 @@ final class SkillTreePassivePointsBar {
     private static final Color FILL_COLOR = new Color(50, 190, 250);
     private static final Color OVERFLOW_FILL_COLOR = new Color(220, 90, 70);
     private static final Color FRAME_TINT = Color.WHITE;
-    private static final Color TEXT_COLOR = new Color(255, 150, 30);
+    private static final Color TEXT_COLOR = new Color(0xFF, 0xD2, 0x00);
 
     private final FleetMemberAPI member;
     private final SpriteCache spriteCache = new SpriteCache(SkillTreePassivePointsBar.class);
@@ -128,12 +127,8 @@ final class SkillTreePassivePointsBar {
 
     private LazyFont getFont() {
         if (barFont == null && !fontLoadFailed) {
-            try {
-                barFont = LazyFont.loadFont(FONT_PATH);
-            } catch (FontException e) {
-                Logger.getLogger(SkillTreePassivePointsBar.class).error("Failed to load font " + FONT_PATH, e);
-                fontLoadFailed = true;
-            }
+            barFont = SkillTreePanelStyle.loadFontOrNull(FONT_PATH);
+            fontLoadFailed = barFont == null;
         }
         return barFont;
     }

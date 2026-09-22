@@ -47,7 +47,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.staticImageRenderer = new SkillTreeStaticImageRenderer();
         this.ringBeltRenderer = new SkillTreeRingBeltRenderer();
         this.nodeRenderer = new SkillTreeNodeRenderer(member, style, refitButton);
-        this.statPanel = new SkillTreeStatPanel(member, style);
+        this.statPanel = new SkillTreeStatPanel(member);
         this.passivePointsBar = new SkillTreePassivePointsBar(member);
         this.shipCardHeight = shipCardHeight;
     }
@@ -73,21 +73,19 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             if (event.isConsumed()) continue;
 
             if (event.isLMBDownEvent() && position.containsEvent(event)) {
-                if (!statPanel.handleClick(position, event.getX(), event.getY())) {
-                    if (nodeRenderer.isDropdownOpen()) {
-                        SkillType option = nodeRenderer.findDropdownOptionAt(centerX(), centerY(), zoom, event.getX(), event.getY());
-                        if (option != null) {
-                            pendingDropdownOption = option;
-                        } else {
-                            nodeRenderer.closeDropdown();
-                        }
+                if (nodeRenderer.isDropdownOpen()) {
+                    SkillType option = nodeRenderer.findDropdownOptionAt(centerX(), centerY(), zoom, event.getX(), event.getY());
+                    if (option != null) {
+                        pendingDropdownOption = option;
                     } else {
-                        SkillNode clicked = nodeRenderer.findNodeAt(centerX(), centerY(), zoom, event.getX(), event.getY());
-                        if (clicked != null) {
-                            pendingClickNode = clicked;
-                        } else {
-                            dragging = true;
-                        }
+                        nodeRenderer.closeDropdown();
+                    }
+                } else {
+                    SkillNode clicked = nodeRenderer.findNodeAt(centerX(), centerY(), zoom, event.getX(), event.getY());
+                    if (clicked != null) {
+                        pendingClickNode = clicked;
+                    } else {
+                        dragging = true;
                     }
                 }
                 event.consume();
