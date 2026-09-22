@@ -11,6 +11,7 @@ import exiledsector.ui.decoration.SkillTreeStarfieldRenderer;
 import exiledsector.ui.decoration.SkillTreeStaticImageRenderer;
 import exiledsector.ui.node.RootCrestResolver;
 import exiledsector.ui.node.SkillTreeNodeRenderer;
+import exiledsector.ui.util.BorderedPanel;
 import lunalib.lunaRefit.BaseRefitButton;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private static final float MIN_ZOOM = 0.4f;
     private static final float MAX_ZOOM = 2.5f;
     private static final float ZOOM_STEP = 1.1f;
+    private static final float SHIP_CARD_FRAME_OUTSET = 8f;
 
     private final SkillTreePanelStyle style;
     private final SkillTreeStarfieldRenderer starfieldRenderer;
@@ -28,6 +30,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final SkillTreeNodeRenderer nodeRenderer;
     private final SkillTreeStatPanel statPanel;
     private final SkillTreePassivePointsBar passivePointsBar;
+    private final BorderedPanel shipCardPanel = new BorderedPanel(SkillTreeCanvasPlugin.class);
     private final float shipCardHeight;
 
     private PositionAPI position;
@@ -143,10 +146,12 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void drawShipCardFrame(float alphaMult) {
-        float boxX = position.getX() + SkillTreeRefitButton.SHIP_CARD_MARGIN;
+        float boxX = position.getX() + SkillTreeRefitButton.SHIP_CARD_MARGIN - SHIP_CARD_FRAME_OUTSET;
         float boxY = position.getY() + position.getHeight() - SkillTreeRefitButton.SHIP_CARD_MARGIN
-                - SkillTreePassivePointsBar.getFootprintHeight() - shipCardHeight;
-        style.drawTooltipBackground(boxX, boxY, SkillTreeRefitButton.SHIP_CARD_ICON_SIZE, shipCardHeight, alphaMult, style.getAccentColor());
+                - SkillTreePassivePointsBar.getFootprintHeight() - shipCardHeight - SHIP_CARD_FRAME_OUTSET;
+        float boxWidth = SkillTreeRefitButton.SHIP_CARD_ICON_SIZE + SHIP_CARD_FRAME_OUTSET * 2f;
+        float boxHeight = shipCardHeight + SHIP_CARD_FRAME_OUTSET * 2f;
+        shipCardPanel.draw(boxX, boxY, boxWidth, boxHeight, alphaMult);
     }
 
     private float centerX() {

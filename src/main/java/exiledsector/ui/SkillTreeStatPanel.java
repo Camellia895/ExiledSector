@@ -1,15 +1,12 @@
 package exiledsector.ui;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledsector.ui.util.GLDraw;
-import exiledsector.ui.util.SpriteCache;
+import exiledsector.ui.util.BorderedPanel;
 import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.ui.LazyFont;
 
@@ -27,16 +24,6 @@ import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE;
 final class SkillTreeStatPanel {
 
     private static final String FONT_PATH = "graphics/fonts/orbitron20aabold.fnt";
-    private static final String EDGE_W_TOP = "graphics/ui/bgs/ui_border1b_w_top.png";
-    private static final String EDGE_W_MID = "graphics/ui/bgs/ui_border1b_w.png";
-    private static final String EDGE_W_BOT = "graphics/ui/bgs/ui_border1b_w_bot.png";
-    private static final String EDGE_E_TOP = "graphics/ui/bgs/ui_border1b_e_top.png";
-    private static final String EDGE_E_MID = "graphics/ui/bgs/ui_border1b_e.png";
-    private static final String EDGE_E_BOT = "graphics/ui/bgs/ui_border1b_e_bot.png";
-    private static final float BORDER_EDGE_WIDTH = 16f;
-    private static final float BORDER_CAP_HEIGHT = 8f;
-    private static final Color BORDER_TINT = Color.WHITE;
-    private static final Color BACKGROUND_COLOR = new Color(0, 0, 0, 230);
 
     private static final float STAT_PANEL_FONT_SIZE = TOOLTIP_BODY_FONT_SIZE;
     // Kept clear of the side-edge accent's width/caps so text never renders under it.
@@ -52,7 +39,7 @@ final class SkillTreeStatPanel {
     private static final Color STAT_PANEL_HEADER_TEXT_COLOR = new Color(0xCB, 0xF5, 0xFF);
 
     private final FleetMemberAPI member;
-    private final SpriteCache spriteCache = new SpriteCache(SkillTreeStatPanel.class);
+    private final BorderedPanel borderedPanel = new BorderedPanel(SkillTreeStatPanel.class);
     private final Map<String, List<StatLine>> lastStatGroupLines = new HashMap<>();
     private final Map<String, SkillTreePanelStyle.TooltipText> statGroupLabelText = new HashMap<>();
     private final Map<String, SkillTreePanelStyle.TooltipText> statGroupValueText = new HashMap<>();
@@ -69,7 +56,7 @@ final class SkillTreeStatPanel {
         if (font == null) return;
 
         for (StatGroupLayout layout : layoutStatGroups(position, font)) {
-            drawGroupBoxBackground(layout.x, layout.y, layout.width, layout.height, alphaMult);
+            borderedPanel.draw(layout.x, layout.y, layout.width, layout.height, alphaMult);
 
             LazyFont.DrawableString headerText = getStatGroupHeaderText(font, layout.name);
             headerText.draw(layout.x + layout.width / 2f, layout.headerTextY);
@@ -77,33 +64,6 @@ final class SkillTreeStatPanel {
             layout.labelText.drawable.draw(layout.x + STAT_PANEL_PADDING, layout.bodyTextY);
             layout.valueText.drawable.draw(layout.x + layout.width - STAT_PANEL_PADDING, layout.bodyTextY);
         }
-    }
-
-    private void drawGroupBoxBackground(float x, float y, float width, float height, float alphaMult) {
-        GLDraw.fillQuad(x, y, width, height, BACKGROUND_COLOR, alphaMult);
-
-        float edgeWidth = Math.min(BORDER_EDGE_WIDTH, width / 2f);
-        float capHeight = Math.min(BORDER_CAP_HEIGHT, height / 2f);
-        float midHeight = Math.max(0f, height - capHeight * 2f);
-
-        drawBorderPiece(EDGE_W_TOP, x, y + height - capHeight, edgeWidth, capHeight, alphaMult);
-        drawBorderPiece(EDGE_W_MID, x, y + capHeight, edgeWidth, midHeight, alphaMult);
-        drawBorderPiece(EDGE_W_BOT, x, y, edgeWidth, capHeight, alphaMult);
-
-        drawBorderPiece(EDGE_E_TOP, x + width - edgeWidth, y + height - capHeight, edgeWidth, capHeight, alphaMult);
-        drawBorderPiece(EDGE_E_MID, x + width - edgeWidth, y + capHeight, edgeWidth, midHeight, alphaMult);
-        drawBorderPiece(EDGE_E_BOT, x + width - edgeWidth, y, edgeWidth, capHeight, alphaMult);
-    }
-
-    private void drawBorderPiece(String path, float x, float y, float width, float height, float alphaMult) {
-        if (width <= 0f || height <= 0f) return;
-        if (!spriteCache.ensureLoaded(path)) return;
-
-        SpriteAPI sprite = Global.getSettings().getSprite(path);
-        sprite.setSize(width, height);
-        sprite.setAlphaMult(alphaMult);
-        sprite.setColor(BORDER_TINT);
-        sprite.renderAtCenter(x + width / 2f, y + height / 2f);
     }
 
     private LazyFont getFont() {
