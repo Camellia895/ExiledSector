@@ -122,6 +122,45 @@ class SkillNodeTest {
     }
 
     @Test
+    void descriptionIncludesSkillTypeExclusivityLine() {
+        SkillType other = new SkillType("adaptiveshields", "Shield Conversion - Omni", "b.png", 1, List.of(), SkillTier.KEYSTONE, null, null, null);
+        SkillTree.registerType(other);
+
+        SkillType type = new SkillType("frontemitter", "Shield Conversion - Front", "a.png", 1, List.of(), List.of(), SkillTier.NOTABLE, null, null, null,
+                List.of(), List.of(), List.of("adaptiveshields"));
+        SkillNode node = new SkillNode("frontemitter_1", type, List.of(), 0f, 0f);
+
+        assertEquals("Mutually exclusive with: Shield Conversion - Omni.", node.getDescription());
+    }
+
+    @Test
+    void descriptionFallsBackToRawIdWhenExclusiveSkillTypeIsUnknown() {
+        SkillType type = new SkillType("frontemitter", "Shield Conversion - Front", "a.png", 1, List.of(), List.of(), SkillTier.NOTABLE, null, null, null,
+                List.of(), List.of(), List.of("unknown_type"));
+        SkillNode node = new SkillNode("frontemitter_1", type, List.of(), 0f, 0f);
+
+        assertEquals("Mutually exclusive with: unknown_type.", node.getDescription());
+    }
+
+    @Test
+    void descriptionCombinesHullModAndSkillTypeExclusivityAsSeparateLines() {
+        SettingsAPI settings = mock(SettingsAPI.class);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+        HullModSpecAPI spec = mock(HullModSpecAPI.class);
+        when(spec.getDisplayName()).thenReturn("Escort Package");
+        when(settings.getHullModSpec("escort_package")).thenReturn(spec);
+
+        SkillType other = new SkillType("adaptiveshields", "Shield Conversion - Omni", "b.png", 1, List.of(), SkillTier.KEYSTONE, null, null, null);
+        SkillTree.registerType(other);
+
+        SkillType type = new SkillType("frontemitter", "Shield Conversion - Front", "a.png", 1, List.of(), List.of(), SkillTier.NOTABLE, null, null, null,
+                List.of(), List.of("escort_package"), List.of("adaptiveshields"));
+        SkillNode node = new SkillNode("frontemitter_1", type, List.of(), 0f, 0f);
+
+        assertEquals("Mutually exclusive with hullmod(s): Escort Package.\n\nMutually exclusive with: Shield Conversion - Omni.", node.getDescription());
+    }
+
+    @Test
     void resolveEffectiveTypeReturnsItsOwnTypeWhenNotOptional() {
         SkillType type = new SkillType("hull", "Hull", "graphics/hullmods/reinforced_bulkheads.png", 2, List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)), SkillTier.SMALL, null, null, null);
         SkillNode node = new SkillNode("hull_1", type, List.of(), 0f, 0f);

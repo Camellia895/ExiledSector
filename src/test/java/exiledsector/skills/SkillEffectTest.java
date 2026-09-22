@@ -745,6 +745,71 @@ class SkillEffectTest {
     }
 
     @Test
+    void resolveDisplayShieldTypeConvertsAnExistingShieldToFront() {
+        com.fs.starfarer.api.combat.ShieldAPI.ShieldType result = ShieldSkillEffect.resolveDisplayShieldType(
+                com.fs.starfarer.api.combat.ShieldAPI.ShieldType.OMNI, List.of(ShieldSkillEffect.CONVERT_SHIELD_TO_FRONT));
+
+        assertEquals(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.FRONT, result);
+    }
+
+    @Test
+    void resolveDisplayShieldTypeConvertsAnExistingShieldToOmni() {
+        com.fs.starfarer.api.combat.ShieldAPI.ShieldType result = ShieldSkillEffect.resolveDisplayShieldType(
+                com.fs.starfarer.api.combat.ShieldAPI.ShieldType.FRONT, List.of(ShieldSkillEffect.CONVERT_SHIELD_TO_OMNI));
+
+        assertEquals(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.OMNI, result);
+    }
+
+    @Test
+    void resolveDisplayShieldTypeDoesNothingWhenTheHullHasNoShieldToConvert() {
+        com.fs.starfarer.api.combat.ShieldAPI.ShieldType result = ShieldSkillEffect.resolveDisplayShieldType(
+                com.fs.starfarer.api.combat.ShieldAPI.ShieldType.NONE, List.of(ShieldSkillEffect.CONVERT_SHIELD_TO_FRONT));
+
+        assertEquals(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.NONE, result);
+    }
+
+    @Test
+    void resolveDisplayShieldTypeRemovesTheShield() {
+        com.fs.starfarer.api.combat.ShieldAPI.ShieldType result = ShieldSkillEffect.resolveDisplayShieldType(
+                com.fs.starfarer.api.combat.ShieldAPI.ShieldType.FRONT, List.of(ShieldSkillEffect.REMOVE_SHIELD));
+
+        assertEquals(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.NONE, result);
+    }
+
+    @Test
+    void resolveDisplayShieldTypeCreatesAFrontShieldWhenTheHullHasNone() {
+        com.fs.starfarer.api.combat.ShieldAPI.ShieldType result = ShieldSkillEffect.resolveDisplayShieldType(
+                com.fs.starfarer.api.combat.ShieldAPI.ShieldType.NONE, List.of(ShieldSkillEffect.CREATE_FRONT_SHIELD_IF_NONE));
+
+        assertEquals(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.FRONT, result);
+    }
+
+    @Test
+    void resolveDisplayShieldTypeDoesNotOverrideAnExistingShieldWithTheMakeshiftOne() {
+        com.fs.starfarer.api.combat.ShieldAPI.ShieldType result = ShieldSkillEffect.resolveDisplayShieldType(
+                com.fs.starfarer.api.combat.ShieldAPI.ShieldType.OMNI, List.of(ShieldSkillEffect.CREATE_FRONT_SHIELD_IF_NONE));
+
+        assertEquals(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.OMNI, result);
+    }
+
+    @Test
+    void resolveDisplayShieldTypeAppliesEffectsInAllocationOrder() {
+        com.fs.starfarer.api.combat.ShieldAPI.ShieldType result = ShieldSkillEffect.resolveDisplayShieldType(
+                com.fs.starfarer.api.combat.ShieldAPI.ShieldType.NONE,
+                List.of(ShieldSkillEffect.CREATE_FRONT_SHIELD_IF_NONE, ShieldSkillEffect.CONVERT_SHIELD_TO_OMNI));
+
+        assertEquals(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.OMNI, result);
+    }
+
+    @Test
+    void resolveDisplayShieldTypeIgnoresUnrelatedEffects() {
+        com.fs.starfarer.api.combat.ShieldAPI.ShieldType result = ShieldSkillEffect.resolveDisplayShieldType(
+                com.fs.starfarer.api.combat.ShieldAPI.ShieldType.FRONT, List.of(ShieldSkillEffect.SHIELD_ARC_PERCENT));
+
+        assertEquals(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.FRONT, result);
+    }
+
+    @Test
     void minCrewPerFighterBayScalesWithTheShipSOwnBayCount() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         MutableStat numFighterBays = mock(MutableStat.class);

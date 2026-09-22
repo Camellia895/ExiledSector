@@ -189,6 +189,35 @@ class SkillTypeLoaderTest {
     }
 
     @Test
+    void missingExclusiveSkillTypesFieldMeansNoExclusions() throws Exception {
+        JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
+                + "\"id\": \"hull\","
+                + "\"name\": \"Hull\","
+                + "\"icon\": \"a.png\""
+                + "} ] }");
+
+        SkillType hull = SkillTypeLoader.parseSkillTypes(root).get("hull");
+
+        assertTrue(hull.getExclusiveSkillTypeIds().isEmpty());
+    }
+
+    @Test
+    void parsesExclusiveSkillTypesIntoAnOrderedList() throws Exception {
+        JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
+                + "\"id\": \"frontemitter\","
+                + "\"name\": \"Shield Conversion - Front\","
+                + "\"icon\": \"a.png\","
+                + "\"exclusiveSkillTypes\": [\"adaptiveshields\", \"shield_shunt\"]"
+                + "} ] }");
+
+        SkillType frontEmitter = SkillTypeLoader.parseSkillTypes(root).get("frontemitter");
+
+        assertEquals(2, frontEmitter.getExclusiveSkillTypeIds().size());
+        assertEquals("adaptiveshields", frontEmitter.getExclusiveSkillTypeIds().get(0));
+        assertEquals("shield_shunt", frontEmitter.getExclusiveSkillTypeIds().get(1));
+    }
+
+    @Test
     void parsesMultipleTypesKeyedById() throws Exception {
         JSONObject root = new JSONObject("{ \"skillTypes\": ["
                 + "{\"id\": \"a\", \"name\": \"A\", \"icon\": \"a.png\"},"

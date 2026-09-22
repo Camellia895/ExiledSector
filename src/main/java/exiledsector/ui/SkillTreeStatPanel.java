@@ -6,6 +6,14 @@ import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
+import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillTree;
+import exiledsector.skills.SkillType;
+import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.skilleffect.ShieldSkillEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.ui.util.BorderedPanel;
 import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.ui.LazyFont;
@@ -183,24 +191,22 @@ final class SkillTreeStatPanel {
         addComparedStat(mobility, "Acceleration", stats.getAcceleration().getModifiedValue(), stats.getAcceleration().getBaseValue());
         groups.add(new StatGroup("Mobility", mobility));
 
-        ShieldAPI.ShieldType shieldType = hullSpec.getShieldType();
+        ShieldAPI.ShieldType shieldType = ShieldSkillEffect.resolveDisplayShieldType(hullSpec.getShieldType(), collectAllocatedEffects(member));
         if (shieldType != ShieldAPI.ShieldType.NONE) {
             List<StatLine> defense = new ArrayList<>();
             defense.add(new StatLine("Shield Type", shieldType.name()));
-            try {
-                addComparedStat(defense, "Shield Arc", stats.getShieldArcBonus().computeEffective(hullSpec.getShieldSpec().getArc()), hullSpec.getShieldSpec().getArc());
-            } catch (RuntimeException e) {
-                Logger.getLogger(SkillTreeStatPanel.class).error("Failed to compute shield arc stat", e);
-            }
-            addComparedStat(defense, "Shield Efficiency",
-                    hullSpec.getBaseShieldFluxPerDamageAbsorbed() * stats.getShieldAbsorptionMult().getModifiedValue(),
-                    hullSpec.getBaseShieldFluxPerDamageAbsorbed() * stats.getShieldAbsorptionMult().getBaseValue());
-            try {
+            ShipHullSpecAPI.ShieldSpecAPI shieldSpec = getShieldSpecOrNull(hullSpec);
+            if (shieldSpec != null) {
+                addComparedStat(defense, "Shield Arc", stats.getShieldArcBonus().computeEffective(shieldSpec.getArc()), shieldSpec.getArc());
+                addComparedStat(defense, "Shield Efficiency",
+                        hullSpec.getBaseShieldFluxPerDamageAbsorbed() * stats.getShieldAbsorptionMult().getModifiedValue(),
+                        hullSpec.getBaseShieldFluxPerDamageAbsorbed() * stats.getShieldAbsorptionMult().getBaseValue());
                 addComparedStat(defense, "Shield Upkeep",
-                        hullSpec.getShieldSpec().getUpkeepCost() * stats.getShieldUpkeepMult().getModifiedValue(),
-                        hullSpec.getShieldSpec().getUpkeepCost() * stats.getShieldUpkeepMult().getBaseValue());
-            } catch (RuntimeException e) {
-                Logger.getLogger(SkillTreeStatPanel.class).error("Failed to compute shield upkeep stat", e);
+                        shieldSpec.getUpkeepCost() * stats.getShieldUpkeepMult().getModifiedValue(),
+                        shieldSpec.getUpkeepCost() * stats.getShieldUpkeepMult().getBaseValue());
+            } else {
+                addStat(defense, "Shield Arc", stats.getShieldArcBonus().computeEffective(ShieldSkillEffect.MAKESHIFT_SHIELD_ARC));
+                addStat(defense, "Shield Efficiency", ShieldSkillEffect.MAKESHIFT_SHIELD_EFFICIENCY * stats.getShieldAbsorptionMult().getModifiedValue());
             }
             groups.add(new StatGroup("Defense", defense));
         }
@@ -226,6 +232,32 @@ final class SkillTreeStatPanel {
         groups.add(new StatGroup("Logistics", logistics));
 
         return groups;
+    }
+
+    private static List<SkillEffect> collectAllocatedEffects(FleetMemberAPI member) {
+        List<SkillEffect> effects = new ArrayList<>();
+        ShipSkillData data = ShipSkillDataManager.get(member.getId());
+        for (String nodeId : data.getAllocatedNodeIds()) {
+            SkillNode node = SkillTree.get(nodeId);
+            if (node == null) continue;
+
+            SkillType type = node.resolveEffectiveType(data);
+            if (type.getVanillaHullModId() != null) continue;
+
+            for (SkillTypeEffect effect : type.getEffects()) {
+                effects.add(effect.effect());
+            }
+        }
+        return effects;
+    }
+
+    private static ShipHullSpecAPI.ShieldSpecAPI getShieldSpecOrNull(ShipHullSpecAPI hullSpec) {
+        try {
+            return hullSpec.getShieldSpec();
+        } catch (RuntimeException e) {
+            Logger.getLogger(SkillTreeStatPanel.class).error("Failed to read shield spec", e);
+            return null;
+        }
     }
 
     private static final class StatGroup {

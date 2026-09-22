@@ -18,6 +18,7 @@ public class SkillType {
     private final String todo;
     private final List<String> optionalOptionIds;
     private final List<String> exclusiveHullModIds;
+    private final List<String> exclusiveSkillTypeIds;
 
     public SkillType(String id, String displayName, String iconPath, int cost,
                       List<SkillTypeEffect> effects, SkillTier tier, String vanillaHullModId,
@@ -44,6 +45,14 @@ public class SkillType {
                       List<SkillTypeEffect> effects, List<HullSizeSkillEffect> hullSizeEffects, SkillTier tier,
                       String vanillaHullModId, String descriptionOverride, String todo, List<String> optionalOptionIds,
                       List<String> exclusiveHullModIds) {
+        this(id, displayName, iconPath, cost, effects, hullSizeEffects, tier,
+                vanillaHullModId, descriptionOverride, todo, optionalOptionIds, exclusiveHullModIds, Collections.emptyList());
+    }
+
+    public SkillType(String id, String displayName, String iconPath, int cost,
+                      List<SkillTypeEffect> effects, List<HullSizeSkillEffect> hullSizeEffects, SkillTier tier,
+                      String vanillaHullModId, String descriptionOverride, String todo, List<String> optionalOptionIds,
+                      List<String> exclusiveHullModIds, List<String> exclusiveSkillTypeIds) {
         this.id = id;
         this.displayName = displayName;
         this.iconPath = iconPath;
@@ -56,6 +65,7 @@ public class SkillType {
         this.todo = todo;
         this.optionalOptionIds = optionalOptionIds == null ? Collections.emptyList() : optionalOptionIds;
         this.exclusiveHullModIds = exclusiveHullModIds == null ? Collections.emptyList() : exclusiveHullModIds;
+        this.exclusiveSkillTypeIds = exclusiveSkillTypeIds == null ? Collections.emptyList() : exclusiveSkillTypeIds;
     }
 
     public String getId() {
@@ -113,5 +123,9 @@ public class SkillType {
         List<String> combined = new ArrayList<>(exclusiveHullModIds);
         combined.add(vanillaHullModId);
         return combined;
+    }
+
+    public List<String> getExclusiveSkillTypeIds() {
+        return exclusiveSkillTypeIds;
     }
 }

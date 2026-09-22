@@ -230,18 +230,31 @@ public final class SkillTreeNodeRenderer {
 
     private String blockAllocationReason(SkillType type) {
         List<String> exclusiveHullModIds = type.getExclusiveHullModIds();
-        if (exclusiveHullModIds.isEmpty()) {
-            return null;
-        }
-        member.setStatUpdateNeeded(true);
-        member.updateStats();
-        for (String hullModId : exclusiveHullModIds) {
-            if (member.getVariant().hasHullMod(hullModId)) {
-                HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
-                String name = spec != null ? spec.getDisplayName() : hullModId;
-                return "Ship already has " + name + " installed.";
+        if (!exclusiveHullModIds.isEmpty()) {
+            member.setStatUpdateNeeded(true);
+            member.updateStats();
+            for (String hullModId : exclusiveHullModIds) {
+                if (member.getVariant().hasHullMod(hullModId)) {
+                    HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
+                    String name = spec != null ? spec.getDisplayName() : hullModId;
+                    return "Ship already has " + name + " installed.";
+                }
             }
         }
+
+        List<String> exclusiveSkillTypeIds = type.getExclusiveSkillTypeIds();
+        if (!exclusiveSkillTypeIds.isEmpty()) {
+            ShipSkillData data = ShipSkillDataManager.get(member.getId());
+            for (String nodeId : data.getAllocatedNodeIds()) {
+                SkillNode allocatedNode = SkillTree.get(nodeId);
+                if (allocatedNode == null) continue;
+                SkillType allocatedType = allocatedNode.resolveEffectiveType(data);
+                if (exclusiveSkillTypeIds.contains(allocatedType.getId())) {
+                    return "Already have " + allocatedType.getDisplayName() + " allocated.";
+                }
+            }
+        }
+
         return null;
     }
 

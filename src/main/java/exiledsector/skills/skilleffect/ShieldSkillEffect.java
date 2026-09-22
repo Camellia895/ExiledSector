@@ -11,6 +11,8 @@ import org.lwjgl.util.vector.Vector2f;
 
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 
+import java.util.List;
+
 import static exiledsector.skills.skilleffect.SkillEffectText.pct;
 import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
 import static exiledsector.skills.skilleffect.SkillEffectText.pctMore;
@@ -58,7 +60,7 @@ public enum ShieldSkillEffect implements SkillEffect {
         @Override
         public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
             if (ship.getShield() == null) {
-                ship.setShield(ShieldAPI.ShieldType.FRONT, 0.5f, 1.2f, 90f);
+                ship.setShield(ShieldAPI.ShieldType.FRONT, MAKESHIFT_SHIELD_EFFICIENCY, MAKESHIFT_SHIELD_TURN_RATE_MULT, MAKESHIFT_SHIELD_ARC);
             }
         }
 
@@ -203,11 +205,31 @@ public enum ShieldSkillEffect implements SkillEffect {
         }
     };
 
+    public static final float MAKESHIFT_SHIELD_EFFICIENCY = 0.5f;
+    public static final float MAKESHIFT_SHIELD_TURN_RATE_MULT = 1.2f;
+    public static final float MAKESHIFT_SHIELD_ARC = 90f;
+
     @Override
     public abstract void apply(MutableShipStatsAPI stats, String modId, float magnitude);
 
     @Override
     public abstract String describe(float magnitude);
+
+    public static ShieldAPI.ShieldType resolveDisplayShieldType(ShieldAPI.ShieldType baseType, List<SkillEffect> effectsInAllocationOrder) {
+        ShieldAPI.ShieldType type = baseType;
+        for (SkillEffect effect : effectsInAllocationOrder) {
+            if (effect == REMOVE_SHIELD) {
+                type = ShieldAPI.ShieldType.NONE;
+            } else if (effect == CREATE_FRONT_SHIELD_IF_NONE) {
+                if (type == ShieldAPI.ShieldType.NONE) type = ShieldAPI.ShieldType.FRONT;
+            } else if (effect == CONVERT_SHIELD_TO_FRONT) {
+                if (type != ShieldAPI.ShieldType.NONE) type = ShieldAPI.ShieldType.FRONT;
+            } else if (effect == CONVERT_SHIELD_TO_OMNI) {
+                if (type != ShieldAPI.ShieldType.NONE) type = ShieldAPI.ShieldType.OMNI;
+            }
+        }
+        return type;
+    }
 
     private static final class BeamHardFluxListener implements DamageDealtModifier {
 

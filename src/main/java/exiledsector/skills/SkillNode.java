@@ -97,16 +97,29 @@ public class SkillNode extends SkillTreeObject {
     }
 
     private static String describeExclusivity(SkillType type) {
+        List<String> lines = new ArrayList<>();
+
         List<String> hullModIds = type.getExclusiveHullModIds();
-        if (hullModIds.isEmpty()) {
-            return null;
+        if (!hullModIds.isEmpty()) {
+            List<String> names = new ArrayList<>();
+            for (String hullModId : hullModIds) {
+                HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
+                names.add(spec != null ? spec.getDisplayName() : hullModId);
+            }
+            lines.add("Mutually exclusive with hullmod(s): " + String.join(", ", names) + ".");
         }
-        List<String> names = new ArrayList<>();
-        for (String hullModId : hullModIds) {
-            HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
-            names.add(spec != null ? spec.getDisplayName() : hullModId);
+
+        List<String> skillTypeIds = type.getExclusiveSkillTypeIds();
+        if (!skillTypeIds.isEmpty()) {
+            List<String> names = new ArrayList<>();
+            for (String skillTypeId : skillTypeIds) {
+                SkillType other = SkillTree.getType(skillTypeId);
+                names.add(other != null ? other.getDisplayName() : skillTypeId);
+            }
+            lines.add("Mutually exclusive with: " + String.join(", ", names) + ".");
         }
-        return "Mutually exclusive with hullmod(s): " + String.join(", ", names) + ".";
+
+        return lines.isEmpty() ? null : String.join("\n\n", lines);
     }
 
     public SkillType resolveEffectiveType(ShipSkillData data) {

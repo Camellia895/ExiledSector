@@ -90,7 +90,7 @@ final class SkillTreePassivePointsBar {
                     overCapacity ? OVERFLOW_FILL_COLOR : FILL_COLOR, alphaMult);
         }
 
-        String label = "Passive Points " + spentPoints + " / " + totalPoints;
+        String label = spentPoints + " / " + totalPoints;
         LazyFont.DrawableString text = getLabelText(font, label);
         float textWidth = font.calcWidth(label, FONT_SIZE);
         float textHeight = FONT_SIZE * FONT_LINE_HEIGHT_FACTOR;
