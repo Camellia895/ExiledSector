@@ -6,6 +6,7 @@ import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.SkillTree;
+import exiledsector.ui.util.ColorUtil;
 import exiledsector.ui.util.SpriteCache;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.Sphere;
@@ -120,17 +121,8 @@ public class SkillTreeStarRenderer {
     }
 
     private static Color resolveColor(Star star, Color fallback) {
-        String hex = star.getColor();
-        if (hex == null || hex.isEmpty()) return fallback;
-        try {
-            String cleaned = hex.startsWith("#") ? hex.substring(1) : hex;
-            if (cleaned.length() == 6) cleaned = "FF" + cleaned;
-            long argb = Long.parseLong(cleaned, 16);
-            Color parsed = new Color((int) argb, true);
-            return new Color(parsed.getRed(), parsed.getGreen(), parsed.getBlue(), fallback.getAlpha());
-        } catch (NumberFormatException e) {
-            return fallback;
-        }
+        Color parsed = ColorUtil.parseHexColor(star.getColor(), fallback);
+        return new Color(parsed.getRed(), parsed.getGreen(), parsed.getBlue(), fallback.getAlpha());
     }
 
     private PlanetSpecAPI resolveSpec(String starType) {

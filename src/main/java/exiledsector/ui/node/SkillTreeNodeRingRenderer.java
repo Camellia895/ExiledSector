@@ -9,6 +9,7 @@ import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.belt.AuroraBeltRenderer;
 import exiledsector.ui.belt.RingBeltRenderer;
 import exiledsector.ui.belt.WormholeBandRenderer;
+import exiledsector.ui.util.ColorUtil;
 import exiledsector.ui.util.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
 import org.apache.log4j.Logger;
@@ -353,16 +354,8 @@ final class SkillTreeNodeRingRenderer {
     }
 
     private static Color parseHexColor(String hex, Color fallback, String nodeId, String fieldName) {
-        if (hex == null || hex.isEmpty()) return fallback;
-        try {
-            String cleaned = hex.startsWith("#") ? hex.substring(1) : hex;
-            if (cleaned.length() == 6) cleaned = "FF" + cleaned;
-            long argb = Long.parseLong(cleaned, 16);
-            return new Color((int) argb, true);
-        } catch (NumberFormatException e) {
-            Logger.getLogger(SkillTreeNodeRingRenderer.class).warn("Invalid " + fieldName + " \"" + hex + "\" on node \"" + nodeId + "\", using default");
-            return fallback;
-        }
+        return ColorUtil.parseHexColor(hex, fallback, Logger.getLogger(SkillTreeNodeRingRenderer.class),
+                fieldName + " on node \"" + nodeId + "\"");
     }
 
     private static String resolveRingBeltPath(SkillNode node) {
