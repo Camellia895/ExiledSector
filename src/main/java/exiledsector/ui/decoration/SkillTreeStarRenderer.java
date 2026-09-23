@@ -63,8 +63,6 @@ public class SkillTreeStarRenderer {
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             GL11.glEnable(GL11.GL_CULL_FACE);
-            // The panel's screen-space projection mirrors world Y (see the -y flip below), which
-            // reverses the sphere mesh's apparent winding relative to vanilla's unflipped 3D view.
             // TODO: if the star renders inside-out in-game, swap GL11.GL_CW <-> GL11.GL_CCW here.
             GL11.glFrontFace(GL11.GL_CW);
             GL11.glCullFace(GL11.GL_BACK);

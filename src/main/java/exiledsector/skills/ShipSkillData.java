@@ -24,8 +24,6 @@ public class ShipSkillData {
     private Set<String> freeNodeIds = new LinkedHashSet<>();
     private Set<String> pairedFreeNodeIds = new LinkedHashSet<>();
 
-    // Ships saved before this field existed deserialize with freeNodeIds left null (XStream does not
-    // run field initializers), so every access must go through this lazy accessor instead of the field.
     private Set<String> freeNodeIds() {
         if (freeNodeIds == null) freeNodeIds = new LinkedHashSet<>();
         return freeNodeIds;

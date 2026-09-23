@@ -995,7 +995,6 @@ function fetchAllProjectImages(callback){
   });
 }
 
-// ---------- connector curves ----------
 function curveKey(a, b){ return a < b ? a + '|' + b : b + '|' + a; }
 function findCurve(a, b){
   var key = curveKey(a, b);
@@ -1049,7 +1048,6 @@ function snapCurveToStraightIfClose(a, b){
   if (Math.sqrt(dx*dx + dy*dy) < 8) removeCurve(a, b);
 }
 
-// ---------- orbit anchors ----------
 var ORBIT_SNAP_RADIUS = 18;
 var ORBIT_DETACH_RADIUS = 45;
 var ORBIT_CARDINAL_SNAP_DEGREES = 6;
@@ -1154,7 +1152,6 @@ function detachNodeFromAnchor(n){
   delete n.orbitAngle;
 }
 
-// ---------- connection alignment snap ----------
 var ALIGN_SNAP_THRESHOLD = 10;
 function computeAlignmentSnap(node, tentativeX, tentativeY){
   var neighbors = node.connectedTo.map(nodeById).filter(function(n){ return n; });
@@ -1259,7 +1256,6 @@ function loadLocal(){
 
 if (!loadLocal()) loadShipped();
 
-// ---------- SVG canvas ----------
 var svg = document.getElementById('stage');
 var canvasWrap = document.getElementById('canvasWrap');
 var NS = 'http://www.w3.org/2000/svg';
@@ -1635,7 +1631,6 @@ function updateWarnBadge(){
   el.onclick = function(){ alert(issues.join('\n')); };
 }
 
-// ---------- dragging / panning / node click ----------
 var drag = null;
 
 function attachNodeHandlers(){
@@ -2167,7 +2162,6 @@ function selectStar(id){
   refreshInspector();
 }
 
-// ---------- mode buttons ----------
 function setMode(m){
   document.querySelectorAll('.modeBtn').forEach(function(b){ b.classList.remove('active'); });
   var btn = document.querySelector('.modeBtn[data-mode="' + m + '"]');
@@ -2228,7 +2222,6 @@ function deleteSelectionOrAnchor(){
   }
 }
 
-// ---------- inspector ----------
 function refreshInspector(){
   var body = document.getElementById('inspectorBody');
   var total = selectionCount();
@@ -2827,7 +2820,6 @@ document.getElementById('closeInspector').addEventListener('click', function(){
   document.getElementById('inspector').classList.remove('open');
 });
 
-// ---------- add node modal ----------
 function addNodeTypeOptionsHtml(sizeFilter){
   return state.types.filter(function(t){
     return sizeFilter === 'ALL' || tierOf(t) === sizeFilter;
@@ -2882,7 +2874,6 @@ function addNodeOfType(typeId, x, y){
   selectNode(node.id);
 }
 
-// ---------- type editor modal ----------
 var EFFECT_NAMES = ['HULL_PERCENT','HULL_FLAT','HULL_MULT','ARMOR_PERCENT','ARMOR_FLAT','FLUX_CAPACITY_PERCENT','FLUX_CAPACITY_FLAT','FLUX_DISSIPATION_PERCENT','FLUX_DISSIPATION_FLAT','BALLISTIC_DAMAGE_PERCENT','MISSILE_DAMAGE_PERCENT',
   'NON_BEAM_ENERGY_DAMAGE_PERCENT','BEAM_DAMAGE_PERCENT','ENERGY_DAMAGE_PERCENT','ALL_WEAPON_DAMAGE_PERCENT','MANEUVERABILITY_PERCENT','FUEL_CAPACITY_PERCENT','FUEL_CAPACITY_FLAT',
   'CARGO_CAPACITY_PERCENT','CARGO_CAPACITY_FLAT','CREW_CAPACITY_PERCENT','CREW_CAPACITY_FLAT','BURN_LEVEL_FLAT','SENSOR_PROFILE_PERCENT','SENSOR_STRENGTH_PERCENT','SENSOR_RANGE','COMBAT_VISION','ELECTRONIC_WARFARE','NAV_RATING','BALLISTIC_WEAPON_RANGE_PERCENT',
@@ -3543,7 +3534,6 @@ function openTypeModal(existingType, onSave, onClose){
   renderModal();
 }
 
-// ---------- toast ----------
 var toastTimer = null;
 function showToast(msg){
   var el = document.getElementById('toast');
@@ -3553,7 +3543,6 @@ function showToast(msg){
   toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 1800);
 }
 
-// ---------- export ----------
 function serializeType(t){
   var out = { id: t.id, name: t.name, icon: t.icon };
   if (tierOf(t) !== 'SMALL') out.tier = tierOf(t);
@@ -3696,7 +3685,6 @@ document.getElementById('copyBtn').addEventListener('click', function(){
   showToast(ok ? 'Copied to clipboard' : 'Select-all done - press Ctrl+C');
 });
 
-// ---------- import ----------
 document.getElementById('importBtn').addEventListener('click', function(){
   var html =
     '<div class="modalOverlay"><div class="modal" style="width:min(560px,92vw)">' +
@@ -3753,7 +3741,6 @@ document.getElementById('resetBtn').addEventListener('click', function(){
   });
 });
 
-// ---------- view controls ----------
 document.getElementById('zoomIn').addEventListener('click', function(){ state.view.zoom = Math.min(3, state.view.zoom * 1.2); render(); });
 document.getElementById('zoomOut').addEventListener('click', function(){ state.view.zoom = Math.max(0.08, state.view.zoom / 1.2); render(); });
 document.getElementById('centerBtn').addEventListener('click', function(){ state.view.panX = 0; state.view.panY = 0; render(); });

@@ -51,11 +51,6 @@ final class SkillTreeOrdnancePointsBar {
 
     private boolean refreshBudget() {
         try {
-            // The OP-spent hullmod's cost lives on a shared, process-wide HullModSpecAPI instance
-            // (see SkillTreeHullMod.syncOpSpentHullMod) that every ship in the fleet reuses. The
-            // background SkillTreeInstaller script re-syncs it for each fleet member roughly once a
-            // second, so between our own frames it can transiently hold a different ship's value.
-            // Re-sync right before reading so the bar's animation never chases a stale reading.
             SkillTreeHullMod.syncOpSpentHullMod(member, variant);
             ShipOpBudget budget = ShipOpBudget.of(member, variant);
             totalPoints = budget.total;

@@ -56,13 +56,7 @@ class ShipLevelScriptTest {
         when(playerFleet.getFleetData()).thenReturn(fleetData);
         when(fleetData.getMembersListCopy()).thenReturn(List.of());
 
-        // LunaSettings must be mocked before Global: its static initializer calls Global.getLogger(...),
-        // and forcing that initializer to run while Global is already intercepted (with getLogger
-        // unstubbed, returning null) makes it throw and permanently poisons the class for the rest
-        // of the JVM/test run.
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
-        // Mockito's default unstubbed answer for a boxed-Integer/Float return type is 0, not null,
-        // so every field must be explicitly stubbed to null here for ShipLevelConfig's defaults to apply.
         lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", ShipLevelConfig.MAX_LEVEL_FIELD_ID)).thenReturn(null);
         lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", ShipLevelConfig.XP_BASE_FIELD_ID)).thenReturn(null);
         lunaSettingsMock.when(() -> LunaSettings.getFloat("exiledSector", ShipLevelConfig.XP_GROWTH_FIELD_ID)).thenReturn(null);
@@ -250,8 +244,6 @@ class ShipLevelScriptTest {
         script.advance(0.01f);
 
         ShipSkillData data = ShipSkillDataManager.get("ship-a");
-        // Two 40-XP awards total 80, which crosses the default 60-XP level-1 threshold: the ship
-        // levels up once, consuming 60 XP, leaving 20 remaining.
         assertEquals(1, data.getLevel());
         assertEquals(20f, data.getXp());
         verify(fleetData, times(2)).getMembersListCopy();

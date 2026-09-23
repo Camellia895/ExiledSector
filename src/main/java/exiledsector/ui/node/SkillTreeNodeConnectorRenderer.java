@@ -32,13 +32,6 @@ final class SkillTreeNodeConnectorRenderer {
 
     private final SkillTreePanelStyle style;
 
-    // Every drawLine/drawGradientLine call within one connector's draw pass queues its vertices
-    // here instead of issuing its own glBegin/glEnd immediately - one connector can otherwise emit
-    // dozens of draw calls (a curved connector renders in CURVE_RENDER_SEGMENTS pieces, each of
-    // which draws 1-4 lines). Grouped by thickness (glLineWidth is a single GL state, not a
-    // per-vertex attribute, so segments can only share a batch if they share a thickness) and
-    // flushed once per connector, this collapses that down to at most 3 draw calls per connector
-    // while leaving the draw order between different connectors untouched.
     private final List<LineVertex> dullLineVertices = new ArrayList<>();
     private final List<LineVertex> glowLineVertices = new ArrayList<>();
     private final List<LineVertex> glowHaloVertices = new ArrayList<>();
@@ -91,8 +84,6 @@ final class SkillTreeNodeConnectorRenderer {
         GL11.glDisable(GL11.GL_BLEND);
     }
 
-    // An allocated wormhole node has no visible "edge" for connectors to stop at - they should
-    // continue to its center, as if passing through the portal.
     private static float endpointRadius(SkillNode node, ShipSkillData data, String satisfiedRootId, float zoom) {
         if (isOpenWormhole(node, data, satisfiedRootId)) return 0f;
         return connectorEndpointRadius(node.getType().getTier(), NODE_SIZE * zoom * node.getType().getTier().getSizeMultiplier(), zoom);
@@ -148,8 +139,6 @@ final class SkillTreeNodeConnectorRenderer {
         }
     }
 
-    // Fades a glowing connector to black over a short stretch right at the tip nearest an open
-    // wormhole, so it reads as vanishing into the portal rather than ending in a hard flat color.
     private void drawGlowingLineWithTipFade(float x1, float y1, float x2, float y2, float visibleLength,
                                              boolean tipFadeR1ToBlack, boolean tipFadeR2ToBlack, float zoom, float alphaMult) {
         if (visibleLength <= 0.0001f) {
@@ -279,8 +268,6 @@ final class SkillTreeNodeConnectorRenderer {
         drawLine(x1 - perpX, y1 - perpY, x2 - perpX, y2 - perpY, RING_DULL_COLOR, alphaMult * RING_DULL_ALPHA, NODE_CONNECTOR_LINE_THICKNESS);
     }
 
-    // Fades a straight dull connector to black over the half of its length nearest a closed
-    // wormhole end, so it reads as sinking into darkness rather than reaching an open portal.
     private void drawFadedDullLine(float x1, float y1, float x2, float y2, boolean fadeR1ToBlack, boolean fadeR2ToBlack, float alphaMult) {
         float dx = x2 - x1;
         float dy = y2 - y1;
@@ -304,8 +291,6 @@ final class SkillTreeNodeConnectorRenderer {
         drawGradientLine(midX - perpX, midY - perpY, midColor, x2 - perpX, y2 - perpY, endColor, alpha, NODE_CONNECTOR_LINE_THICKNESS);
     }
 
-    // Same fade as drawFadedDullLine, but for one small render segment of a curved connector;
-    // progress0/progress1 are that segment's position (0 = r1 end, 1 = r2 end) along the whole visible curve.
     private void drawFadedDullSegment(float x1, float y1, float x2, float y2, float progress0, float progress1,
                                        boolean fadeR1ToBlack, boolean fadeR2ToBlack, float alphaMult) {
         float dx = x2 - x1;
@@ -325,10 +310,6 @@ final class SkillTreeNodeConnectorRenderer {
         drawGradientLine(x1 - perpX, y1 - perpY, color0, x2 - perpX, y2 - perpY, color1, alpha, NODE_CONNECTOR_LINE_THICKNESS);
     }
 
-    // Same tip fade as drawGlowingLineWithTipFade, but for one small render segment of a curved
-    // connector; progress0/progress1 are that segment's position (0 = r1 end, 1 = r2 end), and
-    // tipFraction1/tipFraction2 are how much of the visible curve's length (as a 0..1 fraction)
-    // each tip's fade zone covers.
     private void drawGlowingSegmentWithTipFade(float x1, float y1, float x2, float y2, float progress0, float progress1,
                                                 float tipFraction1, float tipFraction2, float alphaMult) {
         Color color0 = colorForTipFade(progress0, tipFraction1, tipFraction2);
@@ -347,9 +328,6 @@ final class SkillTreeNodeConnectorRenderer {
         return lerpColor(style.getAccentColor(), Color.BLACK, t);
     }
 
-    // progress is 0 at the r1 end and 1 at the r2 end of the visible connector. The middle half
-    // (around progress 0.5) always stays the plain dull color; only the half nearest a closed
-    // wormhole end fades linearly to black.
     private static Color colorForFadeProgress(float progress, boolean fadeR1ToBlack, boolean fadeR2ToBlack) {
         float t;
         if (progress <= 0.5f) {

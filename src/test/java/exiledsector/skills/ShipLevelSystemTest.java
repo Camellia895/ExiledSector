@@ -56,7 +56,6 @@ class ShipLevelSystemTest {
 
     @Test
     void xpToReachNextLevelLocksToTheCutoffTransitionCostFromThatLevelOnward() {
-        // Cutoff 3 means the level 2->3 cost (100 * 2^2 = 400) is what every later transition should cost too.
         assertEquals(400f, ShipLevelSystem.xpToReachNextLevel(2, XP_BASE, XP_GROWTH, 3));
         assertEquals(400f, ShipLevelSystem.xpToReachNextLevel(3, XP_BASE, XP_GROWTH, 3));
         assertEquals(400f, ShipLevelSystem.xpToReachNextLevel(10, XP_BASE, XP_GROWTH, 3));
@@ -110,7 +109,6 @@ class ShipLevelSystemTest {
         data.allocate(a, OP_COST_PER_NODE);
         data.allocate(b, OP_COST_PER_NODE);
 
-        // 100 (level 0->1) + 200 (level 1->2) = 300 XP needed for two level-ups.
         ShipLevelSystem.awardXp(data, 300f, XP_BASE, XP_GROWTH, NO_GROWTH_CUTOFF, 50, List.of(a, b), OP_COST_PER_NODE);
 
         assertEquals(2, data.getLevel());
@@ -123,8 +121,6 @@ class ShipLevelSystemTest {
     void awardXpUsesTheFlatCutoffCostPastTheCutoffLevel() {
         ShipSkillData data = new ShipSkillData();
 
-        // Cutoff 3: level 2->3 costs 400 (100 * 2^2), and level 3->4 would normally cost 800
-        // (100 * 2^3) but is locked to the same flat 400 by the cutoff.
         ShipLevelSystem.awardXp(data, 100f + 200f + 400f, XP_BASE, XP_GROWTH, 3, 50, List.of(), OP_COST_PER_NODE);
         assertEquals(3, data.getLevel());
         assertEquals(0f, data.getXp());
