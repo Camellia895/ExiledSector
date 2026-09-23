@@ -7,9 +7,6 @@ import org.lazywizard.console.BaseCommand;
 import org.lazywizard.console.CommonStrings;
 import org.lazywizard.console.Console;
 
-// Optional Console Commands integration (see data/console/commands.csv). Never referenced from any
-// other Exiled Sector class, so this only ever loads if Console Commands' own plugin instantiates
-// it - the mod works fine with Console Commands absent.
 public class GrantFleetXpCommand implements BaseCommand {
 
     private static final float DEFAULT_XP = 1000f;

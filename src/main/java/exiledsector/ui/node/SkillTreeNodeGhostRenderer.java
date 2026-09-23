@@ -15,10 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-// Locked nodes render as a small cluster of vanilla's own sensor-ghost/unidentified-contact triangle
-// icon, tinted with the neutral faction's colour, each blinking independently - the same visual
-// language Starsector already uses for unidentified map contacts (see data/config/custom_entities.json's
-// "sensor_ghost" entity), reused here instead of inventing a new icon.
 final class SkillTreeNodeGhostRenderer {
 
     private static final String GHOST_TEXTURE_PATH = "graphics/icons/fleet_triangle.png";
