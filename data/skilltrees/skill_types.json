@@ -3,7 +3,7 @@
 		{
 			"id": "flux_capacity",
 			"name": "Flux Capacity",
-			"icon": "graphics/icons/circular/notable_passives/flux_coil_adjunct.png",
+			"icon": "graphics/icons/circular/applied_physics_blue.png",
 			"effects": [
 				{
 					"effect": "FLUX_CAPACITY_PERCENT",
@@ -17,7 +17,7 @@
 		{
 			"id": "flux_dissipation",
 			"name": "Flux Dissipation",
-			"icon": "graphics/icons/circular/notable_passives/flux_distributor_purple.png",
+			"icon": "graphics/icons/circular/notable_passives/flux_distributor.png",
 			"effects": [
 				{
 					"effect": "FLUX_DISSIPATION_PERCENT",
@@ -39,7 +39,7 @@
 		{
 			"id": "hull",
 			"name": "Hull",
-			"icon": "graphics/icons/circular/small_passives/damage_control2.png",
+			"icon": "graphics/icons/plates_blue.png",
 			"effects": [
 				{
 					"effect": "HULL_PERCENT",
@@ -138,7 +138,7 @@
 		{
 			"id": "weapon_turn_rate",
 			"name": "Weapon Turn Rate",
-			"icon": "graphics/icons/circular/notable_passives/advanced_turret_gyros.png",
+			"icon": "graphics/icons/turret_circular_red.png",
 			"effects": [
 				{
 					"effect": "WEAPON_TURN_RATE_PERCENT",
@@ -153,7 +153,7 @@
 		{
 			"id": "hull_multi",
 			"name": "Hull",
-			"icon": "graphics/icons/circular/notable_passives/blast_doors.png",
+			"icon": "graphics/icons/circular/notable_passives/blast_doors_red.png",
 			"effects": [
 				{
 					"effect": "HULL_MULT",
@@ -336,11 +336,11 @@
 			"effects": [
 				{
 					"effect": "WEAPON_TURN_RATE_PERCENT",
-					"magnitude": 75
+					"magnitude": 40
 				},
 				{
 					"effect": "BEAM_WEAPON_TURN_RATE_PERCENT",
-					"magnitude": 75
+					"magnitude": 40
 				}
 			],
 			"unlockConditions": [
@@ -1750,7 +1750,7 @@
 			"effects": [
 				{
 					"effect": "FIGHTER_WEAPON_DAMAGE_PERCENT",
-					"magnitude": 15
+					"magnitude": 5
 				}
 			],
 			"todo": "Placeholder magnitude (15%) pending real balance numbers.",
