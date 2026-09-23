@@ -573,8 +573,8 @@
 			"connectedTo": [
 				"small_logistics_optional_4"
 			],
-			"x": -380,
-			"y": -75,
+			"x": -470,
+			"y": -7,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#d2bcdc"
 		},
@@ -654,10 +654,10 @@
 			"id": "converted_fighterbay_1",
 			"type": "converted_fighterbay",
 			"connectedTo": [
-				"small_logistics_optional_5"
+				"small_logistics_optional_9"
 			],
-			"x": 399,
-			"y": -179,
+			"x": 466,
+			"y": -12,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#ffca80"
 		},
@@ -1044,8 +1044,7 @@
 				"small_logistics_optional_7",
 				"reduced_monthly_supplies_1",
 				"small_logistics_optional_4",
-				"small_logistics_optional_9",
-				"converted_fighterbay_1"
+				"small_logistics_optional_9"
 			],
 			"x": 0,
 			"y": -280,
@@ -1070,7 +1069,8 @@
 				"small_logistics_optional_13",
 				"small_logistics_optional_5",
 				"small_logistics_optional_4",
-				"operations_center_1"
+				"operations_center_1",
+				"converted_fighterbay_1"
 			],
 			"x": 242,
 			"y": 141,
@@ -1401,7 +1401,8 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_2",
-				"small_flux_optional_7"
+				"small_flux_optional_7",
+				"wormhole_7"
 			],
 			"x": 927,
 			"y": -2853,
@@ -2784,6 +2785,79 @@
 			"y": 314,
 			"orbitAnchorId": "anchor_6",
 			"orbitAngle": -141.3
+		},
+		{
+			"id": "wormhole_7",
+			"type": "wormhole",
+			"connectedTo": [
+				"wormhole_8",
+				"small_flux_optional_6"
+			],
+			"x": 1281,
+			"y": -3307,
+			"pairedWith": "wormhole_8"
+		},
+		{
+			"id": "wormhole_8",
+			"type": "wormhole",
+			"connectedTo": [
+				"wormhole_7",
+				"small_flux_optional_46",
+				"small_flux_optional_5"
+			],
+			"x": 2863,
+			"y": -5024,
+			"orbitAnchorId": "tritach_inner",
+			"orbitAngle": 135.5051437045878,
+			"pairedWith": "wormhole_7"
+		},
+		{
+			"id": "small_flux_optional_5",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_48",
+				"wormhole_8"
+			],
+			"x": 3797,
+			"y": -4632,
+			"orbitAnchorId": "tritach_inner",
+			"orbitAngle": 90
+		},
+		{
+			"id": "small_flux_optional_46",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_47",
+				"wormhole_8"
+			],
+			"x": 2487,
+			"y": -5942,
+			"orbitAnchorId": "tritach_inner",
+			"orbitAngle": 180
+		},
+		{
+			"id": "small_flux_optional_47",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_46",
+				"small_flux_optional_48"
+			],
+			"x": 3797,
+			"y": -7252,
+			"orbitAnchorId": "tritach_inner",
+			"orbitAngle": 270
+		},
+		{
+			"id": "small_flux_optional_48",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_47",
+				"small_flux_optional_5"
+			],
+			"x": 5107,
+			"y": -5942,
+			"orbitAnchorId": "tritach_inner",
+			"orbitAngle": 0
 		}
 	],
 	"connectorCurves": [
@@ -3598,12 +3672,6 @@
 			"controlY": 1373
 		},
 		{
-			"a": "converted_fighterbay_1",
-			"b": "small_logistics_optional_5",
-			"controlX": 185,
-			"controlY": -309
-		},
-		{
 			"a": "shield_arc_mult_1",
 			"b": "shield_arc_mult_2",
 			"controlX": -969,
@@ -3710,6 +3778,36 @@
 			"b": "reinforcedhull_1",
 			"controlX": 1816,
 			"controlY": 396
+		},
+		{
+			"a": "small_flux_optional_46",
+			"b": "small_flux_optional_47",
+			"controlX": 2871,
+			"controlY": -6868
+		},
+		{
+			"a": "small_flux_optional_47",
+			"b": "small_flux_optional_48",
+			"controlX": 4723,
+			"controlY": -6868
+		},
+		{
+			"a": "small_flux_optional_48",
+			"b": "small_flux_optional_5",
+			"controlX": 4723,
+			"controlY": -5016
+		},
+		{
+			"a": "small_flux_optional_46",
+			"b": "wormhole_8",
+			"controlX": 2585,
+			"controlY": -5446
+		},
+		{
+			"a": "small_flux_optional_5",
+			"b": "wormhole_8",
+			"controlX": 3290,
+			"controlY": -4734
 		}
 	],
 	"hiddenConnectors": [
@@ -3724,6 +3822,10 @@
 		{
 			"a": "wormhole_5",
 			"b": "wormhole_6"
+		},
+		{
+			"a": "wormhole_8",
+			"b": "wormhole_7"
 		}
 	],
 	"orbitAnchors": [
@@ -4037,6 +4139,20 @@
 			"x": -2241,
 			"y": 1266,
 			"radius": 150
+		},
+		{
+			"id": "tritach_inner",
+			"x": 3797,
+			"y": -5942,
+			"radius": 1310
+		},
+		{
+			"id": "anchor_29",
+			"x": 3797,
+			"y": -5943,
+			"radius": 1540,
+			"shape": "asteroidBelt",
+			"beltStyle": "ice"
 		}
 	],
 	"ringBelts": [
@@ -4057,6 +4173,14 @@
 			"outerRadius": 3300,
 			"ringArtPath": "graphics/planets/ring_band_dust.png",
 			"rotationSpeed": -0.8
+		},
+		{
+			"id": "anchor_29",
+			"x": 3797,
+			"y": -5943,
+			"innerRadius": 1386,
+			"outerRadius": 1694,
+			"ringArtPath": "graphics/planets/ring_band_ice.png"
 		}
 	],
 	"staticImages": [
@@ -4175,6 +4299,14 @@
 			"y": 0,
 			"radius": 150,
 			"starType": "star_yellow"
+		},
+		{
+			"id": "tritach_star",
+			"x": 3798,
+			"y": -5944,
+			"radius": 400,
+			"starType": "star_blue_giant",
+			"color": "#00479e"
 		}
 	]
 }

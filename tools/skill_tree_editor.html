@@ -1364,7 +1364,7 @@ function render(){
     layerStars.appendChild(body);
 
     if (state.mode === 'select' || state.mode === 'addStar') {
-      var isMoving = drag && drag.starMove === s.id;
+      var isMoving = isDragMovingId(drag && drag.origStarPositions, s.id);
       var center = document.createElementNS(NS, 'circle');
       center.setAttribute('cx', s.x); center.setAttribute('cy', s.y); center.setAttribute('r', isMoving ? 8 : 6);
       center.setAttribute('class', 'star-center' + (selected ? ' selected' : '') + (isMoving ? ' moving' : ''));
@@ -1408,7 +1408,7 @@ function render(){
     }
 
     if (state.mode === 'select' || state.mode === 'addImage') {
-      var isMoving = drag && drag.imageMove === img.id;
+      var isMoving = isDragMovingId(drag && drag.origImagePositions, img.id);
       var center = document.createElementNS(NS, 'circle');
       center.setAttribute('cx', img.x); center.setAttribute('cy', img.y); center.setAttribute('r', isMoving ? 8 : 6);
       center.setAttribute('class', 'image-center' + (selected ? ' selected' : '') + (isMoving ? ' moving' : ''));
@@ -1465,7 +1465,7 @@ function render(){
     layerAnchors.appendChild(ring);
 
     if (state.mode === 'select' || state.mode === 'addAnchor') {
-      var isMoving = drag && drag.anchorMove === a.id;
+      var isMoving = isDragMovingId(drag && drag.origAnchorPositions, a.id);
       var center = document.createElementNS(NS, 'circle');
       center.setAttribute('cx', a.x); center.setAttribute('cy', a.y); center.setAttribute('r', isMoving ? 8 : 6);
       center.setAttribute('class', 'orbit-center' + (selected ? ' selected' : '') + (isMoving ? ' moving' : ''));
@@ -1683,7 +1683,7 @@ function attachOrbitAnchorHandlers(){
       if (state.selectedAnchorIds.indexOf(id) === -1) {
         selectAnchor(id);
       }
-      drag = { anchorMove: id };
+      startGroupDrag(ev);
       ev.target.setPointerCapture(ev.pointerId);
     });
   });
@@ -1735,7 +1735,7 @@ function attachImageHandlers(){
       if (state.selectedImageIds.indexOf(id) === -1) {
         selectImage(id);
       }
-      drag = { imageMove: id };
+      startGroupDrag(ev);
       ev.target.setPointerCapture(ev.pointerId);
     });
   });
@@ -1767,7 +1767,7 @@ function attachStarHandlers(){
       if (state.selectedStarIds.indexOf(id) === -1) {
         selectStar(id);
       }
-      drag = { starMove: id };
+      startGroupDrag(ev);
       ev.target.setPointerCapture(ev.pointerId);
     });
   });
@@ -1787,8 +1787,39 @@ function startGroupDrag(ev){
       var n = nodeById(id);
       return { id: id, x: n.x, y: n.y };
     }),
+    origAnchorPositions: state.selectedAnchorIds.map(function(id){
+      var a = anchorById(id);
+      return { id: id, x: a.x, y: a.y };
+    }),
+    origImagePositions: state.selectedImageIds.map(function(id){
+      var img = imageById(id);
+      return { id: id, x: img.x, y: img.y };
+    }),
+    origStarPositions: state.selectedStarIds.map(function(id){
+      var s = starById(id);
+      return { id: id, x: s.x, y: s.y };
+    }),
+    origCurveControls: state.curves.filter(function(c){
+      return state.selectedIds.indexOf(c.a) !== -1 || state.selectedIds.indexOf(c.b) !== -1;
+    }).map(function(c){
+      return { a: c.a, b: c.b, controlX: c.controlX, controlY: c.controlY };
+    }),
     moved: false
   };
+}
+
+function shiftDraggedCurveControls(dx, dy){
+  drag.origCurveControls.forEach(function(op){
+    var c = findCurve(op.a, op.b);
+    if (c) {
+      c.controlX = Math.round(op.controlX + dx);
+      c.controlY = Math.round(op.controlY + dy);
+    }
+  });
+}
+
+function isDragMovingId(origPositions, id){
+  return !!(origPositions && origPositions.some(function(op){ return op.id === id; }));
 }
 
 canvasWrap.addEventListener('pointerdown', function(ev){
@@ -1878,18 +1909,6 @@ window.addEventListener('pointermove', function(ev){
     render();
     return;
   }
-  if (drag.anchorMove) {
-    var anchor = anchorById(drag.anchorMove);
-    if (anchor) {
-      var wm = screenPointToWorld(ev.clientX, ev.clientY);
-      anchor.x = Math.round(wm.x);
-      anchor.y = Math.round(wm.y);
-      resyncNodesOnAnchor(anchor);
-    }
-    render();
-    if (state.selectedAnchorIds.length === 1) refreshInspector();
-    return;
-  }
   if (drag.anchorResize) {
     var rAnchor = anchorById(drag.anchorResize);
     if (rAnchor) {
@@ -1914,17 +1933,6 @@ window.addEventListener('pointermove', function(ev){
     }
     render();
     if (state.selectedAnchorIds.length === 1) refreshInspector();
-    return;
-  }
-  if (drag.imageMove) {
-    var img = imageById(drag.imageMove);
-    if (img) {
-      var wim = screenPointToWorld(ev.clientX, ev.clientY);
-      img.x = Math.round(wim.x);
-      img.y = Math.round(wim.y);
-    }
-    render();
-    if (state.selectedImageIds.length === 1) refreshInspector();
     return;
   }
   if (drag.imageResize) {
@@ -1952,17 +1960,6 @@ window.addEventListener('pointermove', function(ev){
     if (state.selectedImageIds.length === 1) refreshInspector();
     return;
   }
-  if (drag.starMove) {
-    var st = starById(drag.starMove);
-    if (st) {
-      var wsm = screenPointToWorld(ev.clientX, ev.clientY);
-      st.x = Math.round(wsm.x);
-      st.y = Math.round(wsm.y);
-    }
-    render();
-    if (state.selectedStarIds.length === 1) refreshInspector();
-    return;
-  }
   if (drag.starResize) {
     var rStar = starById(drag.starResize);
     if (rStar) {
@@ -1977,7 +1974,11 @@ window.addEventListener('pointermove', function(ev){
   var w = screenPointToWorld(ev.clientX, ev.clientY);
   var dx = w.x - drag.startWorld.x, dy = w.y - drag.startWorld.y;
   if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) drag.moved = true;
-  var singleNode = drag.origPositions.length === 1 ? nodeById(drag.origPositions[0].id) : null;
+  var soleSelectionIsOneNode = drag.origPositions.length === 1
+    && drag.origAnchorPositions.length === 0
+    && drag.origImagePositions.length === 0
+    && drag.origStarPositions.length === 0;
+  var singleNode = soleSelectionIsOneNode ? nodeById(drag.origPositions[0].id) : null;
   if (singleNode) {
     var op0 = drag.origPositions[0];
     var tentativeX = op0.x + dx, tentativeY = op0.y + dy;
@@ -2008,9 +2009,35 @@ window.addEventListener('pointermove', function(ev){
         n.y = Math.round(op.y + dy);
       }
     });
+    drag.origAnchorPositions.forEach(function(op){
+      var a = anchorById(op.id);
+      if (a) {
+        a.x = Math.round(op.x + dx);
+        a.y = Math.round(op.y + dy);
+        resyncNodesOnAnchor(a);
+      }
+    });
+    drag.origImagePositions.forEach(function(op){
+      var img = imageById(op.id);
+      if (img) {
+        img.x = Math.round(op.x + dx);
+        img.y = Math.round(op.y + dy);
+      }
+    });
+    drag.origStarPositions.forEach(function(op){
+      var s = starById(op.id);
+      if (s) {
+        s.x = Math.round(op.x + dx);
+        s.y = Math.round(op.y + dy);
+      }
+    });
   }
+  shiftDraggedCurveControls(dx, dy);
   render();
   if (state.selectedIds.length === 1) refreshInspector();
+  if (state.selectedAnchorIds.length === 1) refreshInspector();
+  if (state.selectedImageIds.length === 1) refreshInspector();
+  if (state.selectedStarIds.length === 1) refreshInspector();
 });
 
 window.addEventListener('pointerup', function(ev){
@@ -2019,11 +2046,11 @@ window.addEventListener('pointerup', function(ev){
   } else if (drag && drag.curve) {
     snapCurveToStraightIfClose(drag.curve.a, drag.curve.b);
     saveLocal();
-  } else if (drag && (drag.anchorMove || drag.anchorResize || drag.anchorRotate)) {
+  } else if (drag && (drag.anchorResize || drag.anchorRotate)) {
     saveLocal();
-  } else if (drag && (drag.imageMove || drag.imageResize || drag.imageRotate)) {
+  } else if (drag && (drag.imageResize || drag.imageRotate)) {
     saveLocal();
-  } else if (drag && (drag.starMove || drag.starResize)) {
+  } else if (drag && drag.starResize) {
     saveLocal();
   } else if (drag && !drag.pan && drag.moved) {
     saveLocal();

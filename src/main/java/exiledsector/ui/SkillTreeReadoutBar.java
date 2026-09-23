@@ -36,6 +36,12 @@ final class SkillTreeReadoutBar {
     private static final float LEADING_EDGE_GLOW_WIDTH = 8f;
     private static final float PROGRESS_EASE_SPEED = 10f;
 
+    private static final float INNER_GLOW_WASH_ALPHA_MULT = 0.75f;
+    private static final float INNER_GLOW_WASH_WHITE_BLEND_BASE = 0.15f;
+    private static final float INNER_GLOW_WASH_WHITE_BLEND_HOVER_BOOST = 0.35f;
+    private static final float INNER_GLOW_PEAK_ALPHA_MULT = 0.75f;
+    private static final float INNER_GLOW_PEAK_HOVER_BOOST = 0.25f;
+
     private static final float HOVER_FADE_IN = 0.05f;
     private static final float HOVER_FADE_OUT = 0.25f;
 
@@ -107,6 +113,7 @@ final class SkillTreeReadoutBar {
 
         if (fillWidth > 0f) {
             GLDraw.fillQuad(left, bottom, fillWidth, BAR_HEIGHT, barColor, alphaMult * (0.85f + 0.15f * glowBoost));
+            drawInnerGlow(left, bottom, fillWidth, barColor, alphaMult, glowBoost);
             drawLeadingEdgeGlow(left + fillWidth, bottom, barColor, alphaMult, glowBoost);
         }
 
@@ -126,6 +133,43 @@ final class SkillTreeReadoutBar {
         sprite.setSize(LEADING_EDGE_GLOW_WIDTH, BAR_HEIGHT);
         sprite.setAlphaMult(alphaMult * (0.35f + 0.65f * glowBoost));
         sprite.renderAtCenter(edgeX, bottom + BAR_HEIGHT / 2f);
+    }
+
+    private void drawInnerGlow(float left, float bottom, float width, Color color, float alphaMult, float glowBoost) {
+        if (width <= 0f || BAR_HEIGHT <= 1f) return;
+
+        float top = bottom + BAR_HEIGHT;
+        float mid = bottom + BAR_HEIGHT / 2f;
+
+        float whiteBlend = INNER_GLOW_WASH_WHITE_BLEND_BASE + INNER_GLOW_WASH_WHITE_BLEND_HOVER_BOOST * glowBoost;
+        Color washColor = Misc.interpolateColor(color, Color.WHITE, whiteBlend);
+        GLDraw.fillQuad(left, bottom, width, BAR_HEIGHT, washColor, alphaMult * INNER_GLOW_WASH_ALPHA_MULT);
+
+        float peakAlpha = alphaMult * (INNER_GLOW_PEAK_ALPHA_MULT + INNER_GLOW_PEAK_HOVER_BOOST * glowBoost);
+
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+
+        GL11.glBegin(GL11.GL_QUADS);
+        glColorAlpha(color, 0f);
+        GL11.glVertex2f(left, bottom);
+        GL11.glVertex2f(left + width, bottom);
+        glColorAlpha(color, peakAlpha);
+        GL11.glVertex2f(left + width, mid);
+        GL11.glVertex2f(left, mid);
+        GL11.glEnd();
+
+        GL11.glBegin(GL11.GL_QUADS);
+        glColorAlpha(color, peakAlpha);
+        GL11.glVertex2f(left, mid);
+        GL11.glVertex2f(left + width, mid);
+        glColorAlpha(color, 0f);
+        GL11.glVertex2f(left + width, top);
+        GL11.glVertex2f(left, top);
+        GL11.glEnd();
+
+        GL11.glDisable(GL11.GL_BLEND);
     }
 
     private void drawEdgeBevel(float left, float bottom, Color color, float alphaMult, float glowBoost) {
