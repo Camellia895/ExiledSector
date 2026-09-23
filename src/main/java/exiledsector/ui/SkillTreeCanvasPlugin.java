@@ -6,7 +6,9 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.effects.SkillTreeHullMod;
+import exiledsector.skills.ShipLevelConfig;
 import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillNodeOpCost;
 import exiledsector.skills.SkillType;
 import exiledsector.ui.decoration.SkillTreeRingBeltRenderer;
 import exiledsector.ui.decoration.SkillTreeStarRenderer;
@@ -27,16 +29,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private static final float SHIP_CARD_FRAME_OUTSET = 8f;
 
     private static final String READOUT_TOOLTIP_TITLE = "Level, XP & Ordnance Points";
-    private static final String READOUT_TOOLTIP_BODY =
-            "Destroying enemy ships grants XP based on their deployment point cost. Leveling up either "
-                    + "converts your most recently allocated node to free, or banks a free allocation credit "
-                    + "if nothing is eligible.\n\n"
-                    + "Allocating a node costs Ordnance Points (OP) - more for larger hulls - unless you have "
-                    + "a banked free allocation, which is always spent first. Deallocating a node refunds "
-                    + "whatever it cost.\n\n"
-                    + "Click an unallocated node connected to an already-allocated node (or the root) to "
-                    + "allocate it. Hold Ctrl while allocating an optional node to allocate the same type "
-                    + "again without reopening the picker.";
+
+    private final String readoutTooltipBody;
 
     private final SkillTreePanelStyle style;
     private final SkillTreeStarfieldRenderer starfieldRenderer;
@@ -78,6 +72,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.ordnancePointsBar = new SkillTreeOrdnancePointsBar(member, variant);
         this.levelBar = new SkillTreeLevelBar(member);
         this.readoutTooltipRenderer = new SkillTreeInfoTooltipRenderer(style);
+        this.readoutTooltipBody = buildReadoutTooltipBody(member);
         this.shipCardHeight = shipCardHeight;
 
         SkillNode activeRoot = nodeRenderer.getActiveRoot();
@@ -188,9 +183,19 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         if (!dragging && mouseKnown) {
             nodeRenderer.renderHoverTooltip(centerX, centerY, zoom, mouseX, mouseY, alphaMult);
             if (ordnancePointsBar.isHovered(position, mouseX, mouseY) || levelBar.isHovered(position, mouseX, mouseY)) {
-                readoutTooltipRenderer.render(READOUT_TOOLTIP_TITLE, READOUT_TOOLTIP_BODY, mouseX, mouseY, alphaMult);
+                readoutTooltipRenderer.render(READOUT_TOOLTIP_TITLE, readoutTooltipBody, mouseX, mouseY, alphaMult);
             }
         }
+    }
+
+    private static String buildReadoutTooltipBody(FleetMemberAPI member) {
+        int opCost = SkillNodeOpCost.perNode(member.getHullSpec());
+        int maxNodes = ShipLevelConfig.maxAllocatedNodes();
+        return "Allocating nodes costs ordinance points (different based on hull size). For this hull, the cost is " + opCost + "\n\n"
+                + "Each level this ship gains allows one free allocation. When the ship levels up, it will refund ordinance points spent on the skill tree.\n\n"
+                + "You can allocate a maximum of " + maxNodes + " nodes.\n\n"
+                + "Earn XP by destroying enemy ships. The larger the hull, the more XP gained. Losing combat awards half XP.\n\n"
+                + "Hold Ctrl while allocating an optional node to allocate the same type again without reopening the picker.";
     }
 
     private void drawShipCardFrame(float alphaMult) {
