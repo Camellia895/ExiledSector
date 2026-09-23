@@ -49,19 +49,6 @@
 			"orbitAngle": 177.29999999999995
 		},
 		{
-			"id": "hull_1",
-			"type": "hull",
-			"connectedTo": [
-				"hull_2",
-				"small_flux_optional_31",
-				"armor_1"
-			],
-			"x": 1433,
-			"y": 1298,
-			"orbitAnchorId": "anchor_7",
-			"orbitAngle": 0
-		},
-		{
 			"id": "beam_damage_1",
 			"type": "beam_damage",
 			"connectedTo": [
@@ -85,8 +72,8 @@
 			"id": "armor_1",
 			"type": "armor",
 			"connectedTo": [
-				"hull_1",
-				"blast_doors_1"
+				"blast_doors_1",
+				"hull_multi_1"
 			],
 			"x": 1285,
 			"y": 1446,
@@ -120,7 +107,7 @@
 			"type": "heavyarmor",
 			"connectedTo": [
 				"armor_3",
-				"hull_3"
+				"hull_multi_3"
 			],
 			"x": 533,
 			"y": 2652,
@@ -154,13 +141,26 @@
 			"id": "blast_doors_1",
 			"type": "blast_doors",
 			"connectedTo": [
-				"hull_2",
-				"armor_1"
+				"armor_1",
+				"hull_multi_2"
 			],
 			"x": 1137,
 			"y": 1298,
 			"orbitAnchorId": "anchor_7",
 			"orbitAngle": 180
+		},
+		{
+			"id": "hull_multi_1",
+			"type": "hull_multi",
+			"connectedTo": [
+				"hull_multi_2",
+				"armor_1",
+				"small_flux_optional_31"
+			],
+			"x": 1433,
+			"y": 1298,
+			"orbitAnchorId": "anchor_7",
+			"orbitAngle": 0
 		},
 		{
 			"id": "fluxbreakers_1",
@@ -175,9 +175,37 @@
 		{
 			"id": "autorepair_1",
 			"type": "autorepair",
-			"connectedTo": [],
-			"x": -1195,
-			"y": 1178
+			"connectedTo": [
+				"repair_time_2"
+			],
+			"x": -1167,
+			"y": 1309,
+			"orbitAnchorId": "anchor_28",
+			"orbitAngle": 0
+		},
+		{
+			"id": "repair_time_1",
+			"type": "repair_time",
+			"connectedTo": [
+				"repair_time_2",
+				"small_flux_optional_38"
+			],
+			"x": -1467,
+			"y": 1309,
+			"orbitAnchorId": "anchor_28",
+			"orbitAngle": 180
+		},
+		{
+			"id": "repair_time_2",
+			"type": "repair_time",
+			"connectedTo": [
+				"repair_time_1",
+				"autorepair_1"
+			],
+			"x": -1317,
+			"y": 1159,
+			"orbitAnchorId": "anchor_28",
+			"orbitAngle": 270
 		},
 		{
 			"id": "hardened_subsystems_1",
@@ -192,6 +220,20 @@
 			"connectedTo": [],
 			"x": -2333,
 			"y": 1187
+		},
+		{
+			"id": "weapon_turn_rate_1",
+			"type": "weapon_turn_rate",
+			"connectedTo": [],
+			"x": -2197,
+			"y": 1293
+		},
+		{
+			"id": "weapon_turn_rate_2",
+			"type": "weapon_turn_rate",
+			"connectedTo": [],
+			"x": -2333,
+			"y": 1327
 		},
 		{
 			"id": "ballistic_rangefinder_1",
@@ -1786,8 +1828,8 @@
 				"small_flux_optional_32",
 				"small_flux_optional_34",
 				"small_flux_optional_12",
-				"hull_1",
-				"ballistic_damage_2"
+				"ballistic_damage_2",
+				"hull_multi_1"
 			],
 			"x": 1773,
 			"y": 1302,
@@ -1859,18 +1901,6 @@
 			"orbitAngle": 180
 		},
 		{
-			"id": "hull_2",
-			"type": "hull",
-			"connectedTo": [
-				"hull_1",
-				"blast_doors_1"
-			],
-			"x": 1285,
-			"y": 1150,
-			"orbitAnchorId": "anchor_7",
-			"orbitAngle": 270
-		},
-		{
 			"id": "small_flux_optional_35",
 			"type": "small_flux_optional",
 			"connectedTo": [
@@ -1919,7 +1949,8 @@
 				"small_flux_optional_39",
 				"small_flux_optional_45",
 				"small_flux_optional_18",
-				"pd_damage_to_missiles_2"
+				"pd_damage_to_missiles_2",
+				"repair_time_1"
 			],
 			"x": -1785,
 			"y": 1286,
@@ -2029,7 +2060,7 @@
 			"connectedTo": [
 				"armor_3",
 				"small_flux_optional_35",
-				"hull_3"
+				"hull_multi_3"
 			],
 			"x": 321,
 			"y": 2440,
@@ -2047,18 +2078,6 @@
 			"y": 2652,
 			"orbitAnchorId": "anchor_5",
 			"orbitAngle": 135.00000000000003
-		},
-		{
-			"id": "hull_3",
-			"type": "hull",
-			"connectedTo": [
-				"heavyarmor_1",
-				"armor_2"
-			],
-			"x": 533,
-			"y": 2440,
-			"orbitAnchorId": "anchor_5",
-			"orbitAngle": -45.000000000000064
 		},
 		{
 			"id": "ballistic_damage_2",
@@ -2760,6 +2779,30 @@
 			"y": -448,
 			"orbitAnchorId": "anchor_26",
 			"orbitAngle": 90
+		},
+		{
+			"id": "hull_multi_2",
+			"type": "hull_multi",
+			"connectedTo": [
+				"hull_multi_1",
+				"blast_doors_1"
+			],
+			"x": 1285,
+			"y": 1150,
+			"orbitAnchorId": "anchor_7",
+			"orbitAngle": 270
+		},
+		{
+			"id": "hull_multi_3",
+			"type": "hull_multi",
+			"connectedTo": [
+				"armor_2",
+				"heavyarmor_1"
+			],
+			"x": 533,
+			"y": 2440,
+			"orbitAnchorId": "anchor_5",
+			"orbitAngle": -45.000000000000064
 		}
 	],
 	"connectorCurves": [
@@ -3208,12 +3251,6 @@
 			"controlY": 2432
 		},
 		{
-			"a": "hull_1",
-			"b": "hull_2",
-			"controlX": 1360,
-			"controlY": 1223
-		},
-		{
 			"a": "small_flux_optional_33",
 			"b": "small_flux_optional_35",
 			"controlX": 353,
@@ -3290,12 +3327,6 @@
 			"b": "heavyarmor_1",
 			"controlX": 427,
 			"controlY": 2652
-		},
-		{
-			"a": "blast_doors_1",
-			"b": "hull_2",
-			"controlX": 1210,
-			"controlY": 1223
 		},
 		{
 			"a": "ballistic_damage_1",
@@ -3647,27 +3678,9 @@
 		},
 		{
 			"a": "armor_1",
-			"b": "hull_1",
-			"controlX": 1360,
-			"controlY": 1373
-		},
-		{
-			"a": "armor_1",
 			"b": "blast_doors_1",
 			"controlX": 1210,
 			"controlY": 1373
-		},
-		{
-			"a": "heavyarmor_1",
-			"b": "hull_3",
-			"controlX": 533,
-			"controlY": 2546
-		},
-		{
-			"a": "armor_2",
-			"b": "hull_3",
-			"controlX": 427,
-			"controlY": 2440
 		},
 		{
 			"a": "converted_fighterbay_1",
@@ -3680,6 +3693,48 @@
 			"b": "shield_arc_mult_2",
 			"controlX": -969,
 			"controlY": -1439
+		},
+		{
+			"a": "repair_time_1",
+			"b": "repair_time_2",
+			"controlX": -1423,
+			"controlY": 1203
+		},
+		{
+			"a": "autorepair_1",
+			"b": "repair_time_2",
+			"controlX": -1211,
+			"controlY": 1203
+		},
+		{
+			"a": "hull_multi_1",
+			"b": "hull_multi_2",
+			"controlX": 1360,
+			"controlY": 1223
+		},
+		{
+			"a": "armor_1",
+			"b": "hull_multi_1",
+			"controlX": 1360,
+			"controlY": 1373
+		},
+		{
+			"a": "blast_doors_1",
+			"b": "hull_multi_2",
+			"controlX": 1210,
+			"controlY": 1223
+		},
+		{
+			"a": "armor_2",
+			"b": "hull_multi_3",
+			"controlX": 427,
+			"controlY": 2440
+		},
+		{
+			"a": "heavyarmor_1",
+			"b": "hull_multi_3",
+			"controlX": 533,
+			"controlY": 2546
 		}
 	],
 	"hiddenConnectors": [
@@ -3995,6 +4050,12 @@
 			"x": 0,
 			"y": 0,
 			"radius": 280
+		},
+		{
+			"id": "anchor_28",
+			"x": -1317,
+			"y": 1309,
+			"radius": 150
 		}
 	],
 	"ringBelts": [
