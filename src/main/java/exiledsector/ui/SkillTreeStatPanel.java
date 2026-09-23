@@ -12,6 +12,7 @@ import exiledsector.skills.ShipOpBudget;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.skilleffect.ShieldSkillEffect;
 import exiledsector.ui.util.BorderedPanel;
+import exiledsector.ui.util.FallbackSupport;
 import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.ui.LazyFont;
 
@@ -235,12 +236,8 @@ final class SkillTreeStatPanel {
     }
 
     private static ShipHullSpecAPI.ShieldSpecAPI getShieldSpecOrNull(ShipHullSpecAPI hullSpec) {
-        try {
-            return hullSpec.getShieldSpec();
-        } catch (RuntimeException e) {
-            Logger.getLogger(SkillTreeStatPanel.class).error("Failed to read shield spec", e);
-            return null;
-        }
+        return FallbackSupport.getOrFallback(hullSpec::getShieldSpec, null,
+                Logger.getLogger(SkillTreeStatPanel.class), "Failed to read shield spec");
     }
 
     private static final class StatGroup {

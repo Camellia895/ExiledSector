@@ -3,6 +3,7 @@ package exiledsector.ui.node;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
+import exiledsector.ui.util.FallbackSupport;
 import exiledsector.ui.util.SpriteCache;
 import org.apache.log4j.Logger;
 import org.lwjgl.opengl.GL11;
@@ -68,13 +69,9 @@ final class SkillTreeNodeGhostRenderer {
 
     private Color resolveGhostColor() {
         if (cachedGhostColor != null) return cachedGhostColor;
-        try {
-            Color color = Global.getSector().getFaction(Factions.NEUTRAL).getBaseUIColor();
-            cachedGhostColor = color != null ? color : FALLBACK_GHOST_COLOR;
-        } catch (RuntimeException e) {
-            Logger.getLogger(SkillTreeNodeGhostRenderer.class).error("Failed to read neutral faction colour", e);
-            cachedGhostColor = FALLBACK_GHOST_COLOR;
-        }
+        cachedGhostColor = FallbackSupport.getOrFallback(
+                () -> Global.getSector().getFaction(Factions.NEUTRAL).getBaseUIColor(), FALLBACK_GHOST_COLOR,
+                Logger.getLogger(SkillTreeNodeGhostRenderer.class), "Failed to read neutral faction colour");
         return cachedGhostColor;
     }
 

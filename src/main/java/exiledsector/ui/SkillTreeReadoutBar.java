@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.FaderUtil;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.ui.util.FallbackSupport;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.SpriteCache;
 import org.apache.log4j.Logger;
@@ -204,13 +205,8 @@ final class SkillTreeReadoutBar {
     }
 
     private Color colorOrFallback(String settingsKey, Color fallback) {
-        try {
-            Color color = Global.getSettings().getColor(settingsKey);
-            return color != null ? color : fallback;
-        } catch (RuntimeException e) {
-            Logger.getLogger(SkillTreeReadoutBar.class).error("Failed to read settings colour " + settingsKey, e);
-            return fallback;
-        }
+        return FallbackSupport.getOrFallback(() -> Global.getSettings().getColor(settingsKey), fallback,
+                Logger.getLogger(SkillTreeReadoutBar.class), "Failed to read settings colour " + settingsKey);
     }
 
     private LazyFont getFont() {

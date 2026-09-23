@@ -2,6 +2,7 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.ui.util.FallbackSupport;
 import exiledsector.ui.util.GLDraw;
 import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.ui.FontException;
@@ -97,6 +98,11 @@ public final class SkillTreePanelStyle {
 
     private static Color computeDominantColor(String path) {
         if (path == null || path.isEmpty()) return DEFAULT_ACCENT_COLOR;
+        return FallbackSupport.getOrFallback(() -> computeDominantColorOrThrow(path), DEFAULT_ACCENT_COLOR,
+                Logger.getLogger(SkillTreePanelStyle.class), "Failed to read " + path + " for accent colour");
+    }
+
+    private static Color computeDominantColorOrThrow(String path) throws IOException {
         try (InputStream in = Global.getSettings().openStream(path)) {
             BufferedImage image = ImageIO.read(in);
             if (image == null) return DEFAULT_ACCENT_COLOR;
@@ -134,9 +140,6 @@ public final class SkillTreePanelStyle {
             int[] sum = bucketSums.get(mostCommon.getKey());
             int pixelCount = mostCommon.getValue();
             return new Color(sum[0] / pixelCount, sum[1] / pixelCount, sum[2] / pixelCount);
-        } catch (IOException e) {
-            Logger.getLogger(SkillTreePanelStyle.class).error("Failed to read " + path + " for accent colour", e);
-            return DEFAULT_ACCENT_COLOR;
         }
     }
 
