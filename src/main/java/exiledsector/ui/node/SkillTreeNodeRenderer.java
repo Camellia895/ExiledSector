@@ -108,7 +108,7 @@ public final class SkillTreeNodeRenderer {
             float footprintSize = NODE_SIZE * zoom * tier.getSizeMultiplier();
             float iconSize = footprintSize * ICON_INSET_RATIO;
 
-            if (SkillTypeUnlockStatus.isLocked(node.getType(), data)) {
+            if (SkillTypeUnlockStatus.isHidden(node.getType(), data)) {
                 ghostRenderer.draw(nodeX, nodeY, footprintSize, alphaMult, node.getId());
                 continue;
             }

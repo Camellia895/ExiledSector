@@ -22,7 +22,13 @@ public final class SkillTypeUnlockStatus {
         return true;
     }
 
+    public static boolean isHidden(SkillType type, ShipSkillData data) {
+        return isLocked(type, data) && !HiddenNodeDisplayConfig.showHiddenNodesByDefault();
+    }
+
     private static boolean isSatisfied(UnlockCondition condition, ShipSkillData data) {
+        if (UnlockConditionOverrides.isDisabled(condition.getType())) return true;
+
         try {
             switch (condition.getType()) {
                 case BLUEPRINT:

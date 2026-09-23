@@ -96,11 +96,11 @@ final class SkillTreeNodeTooltipRenderer {
     }
 
     private String titleText(SkillNode node, SkillType effectiveType, ShipSkillData data) {
-        return SkillTypeUnlockStatus.isLocked(node.getType(), data) ? LOCKED_NODE_TITLE : effectiveType.getDisplayName();
+        return SkillTypeUnlockStatus.isHidden(node.getType(), data) ? LOCKED_NODE_TITLE : effectiveType.getDisplayName();
     }
 
     private String bodyText(SkillNode node, SkillType effectiveType, boolean showOptionalHint, ShipSkillData data) {
-        if (SkillTypeUnlockStatus.isLocked(node.getType(), data)) return LOCKED_NODE_BODY;
+        if (SkillTypeUnlockStatus.isHidden(node.getType(), data)) return LOCKED_NODE_BODY;
 
         String text = showOptionalHint ? OPTIONAL_NODE_HINT : SkillNode.describeType(effectiveType, member.getHullSpec().getHullSize());
         if (data.isFreeNode(node.getId())) {

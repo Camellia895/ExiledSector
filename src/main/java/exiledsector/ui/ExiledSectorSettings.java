@@ -1,7 +1,9 @@
 package exiledsector.ui;
 
+import exiledsector.skills.HiddenNodeDisplayConfig;
 import exiledsector.skills.ShipLevelConfig;
 import exiledsector.skills.SkillNodeOpCost;
+import exiledsector.skills.UnlockConditionOverrides;
 import lunalib.lunaSettings.LunaSettings;
 
 public final class ExiledSectorSettings {
@@ -56,5 +58,29 @@ public final class ExiledSectorSettings {
         LunaSettings.SettingsCreator.addInt(MOD_ID, ShipLevelConfig.MAX_ALLOCATED_NODES_FIELD_ID,
                 "Max Allocated Nodes", "Maximum number of nodes a ship can have allocated at once, free or not.",
                 ShipLevelConfig.DEFAULT_MAX_ALLOCATED_NODES, 1, 500, "");
+
+        LunaSettings.SettingsCreator.addHeader(MOD_ID, "exiledSector_hiddenNodesHeader", "Hidden Nodes", "");
+        LunaSettings.SettingsCreator.addText(MOD_ID, "exiledSector_hiddenNodesAbout",
+                "Nodes with an unmet unlock condition normally render as unidentified, blinking sensor ghosts.",
+                "");
+        LunaSettings.SettingsCreator.addBoolean(MOD_ID, HiddenNodeDisplayConfig.SHOW_HIDDEN_NODES_FIELD_ID,
+                "Show Hidden Nodes by Default", "Reveals the true appearance and tooltip of locked nodes instead " +
+                        "of hiding them as sensor ghosts. Purely visual - locked nodes still cannot be allocated.",
+                HiddenNodeDisplayConfig.DEFAULT_SHOW_HIDDEN_NODES, "");
+
+        LunaSettings.SettingsCreator.addHeader(MOD_ID, "exiledSector_unlockConditionsHeader", "Unlock Conditions", "");
+        LunaSettings.SettingsCreator.addText(MOD_ID, "exiledSector_unlockConditionsAbout",
+                "Each toggle treats every unlock condition of that type as already met, letting nodes gated only " +
+                        "by it be allocated. This does not grant hullmods, change game state, or affect anything " +
+                        "else - allocation still requires the node's connected-node prerequisites to be satisfied.",
+                "");
+        LunaSettings.SettingsCreator.addBoolean(MOD_ID, UnlockConditionOverrides.DISABLE_BLUEPRINT_FIELD_ID,
+                "Disable Blueprint Unlock Conditions", "", UnlockConditionOverrides.DEFAULT_DISABLED, "");
+        LunaSettings.SettingsCreator.addBoolean(MOD_ID, UnlockConditionOverrides.DISABLE_CHARACTER_STAT_FIELD_ID,
+                "Disable Character Stat Unlock Conditions", "", UnlockConditionOverrides.DEFAULT_DISABLED, "");
+        LunaSettings.SettingsCreator.addBoolean(MOD_ID, UnlockConditionOverrides.DISABLE_MIN_SHIP_LEVEL_FIELD_ID,
+                "Disable Minimum Ship Level Unlock Conditions", "", UnlockConditionOverrides.DEFAULT_DISABLED, "");
+        LunaSettings.SettingsCreator.addBoolean(MOD_ID, UnlockConditionOverrides.DISABLE_MEMORY_FLAG_FIELD_ID,
+                "Disable Game State Unlock Conditions", "", UnlockConditionOverrides.DEFAULT_DISABLED, "");
     }
 }

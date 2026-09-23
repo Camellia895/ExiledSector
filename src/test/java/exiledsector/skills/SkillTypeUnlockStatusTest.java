@@ -8,6 +8,7 @@ import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,6 +26,7 @@ import static org.mockito.Mockito.when;
 class SkillTypeUnlockStatusTest {
 
     private MockedStatic<Global> globalMock;
+    private MockedStatic<LunaSettings> lunaSettingsMock;
     private SectorAPI sector;
     private CharacterDataAPI playerCharacter;
     private MemoryAPI sectorMemory;
@@ -39,11 +41,19 @@ class SkillTypeUnlockStatusTest {
 
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSector).thenReturn(sector);
+
+        lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", "exiledSector_disableBlueprintUnlock")).thenReturn(null);
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", "exiledSector_disableCharacterStatUnlock")).thenReturn(null);
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", "exiledSector_disableMinShipLevelUnlock")).thenReturn(null);
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", "exiledSector_disableMemoryFlagUnlock")).thenReturn(null);
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", "exiledSector_showHiddenNodesByDefault")).thenReturn(null);
     }
 
     @AfterEach
     void tearDown() {
         globalMock.close();
+        lunaSettingsMock.close();
     }
 
     private static SkillType typeWithConditions(UnlockCondition... conditions) {
@@ -175,5 +185,49 @@ class SkillTypeUnlockStatusTest {
         when(sectorMemory.getBoolean("$playerCanUseGates")).thenReturn(true);
 
         assertFalse(SkillTypeUnlockStatus.isLocked(type, new ShipSkillData()));
+    }
+
+    @Test
+    void disablingABlueprintOverrideUnlocksTheNodeWithoutQueryingTheRealBlueprint() {
+        SkillType type = typeWithConditions(UnlockCondition.blueprint(BlueprintCategory.HULLMOD, "escort_package"));
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", "exiledSector_disableBlueprintUnlock")).thenReturn(true);
+
+        assertFalse(SkillTypeUnlockStatus.isLocked(type, new ShipSkillData()));
+        globalMock.verify(Global::getSector, never());
+    }
+
+    @Test
+    void disablingOneConditionTypesOverrideDoesNotAffectAnother() {
+        SkillType type = typeWithConditions(UnlockCondition.characterStat("has_neural_link"));
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", "exiledSector_disableBlueprintUnlock")).thenReturn(true);
+        stubCharacterStat("has_neural_link", 0f);
+
+        assertTrue(SkillTypeUnlockStatus.isLocked(type, new ShipSkillData()));
+    }
+
+    @Test
+    void isHiddenIsFalseForAnUnlockedNode() {
+        SkillType type = typeWithConditions(UnlockCondition.blueprint(BlueprintCategory.HULLMOD, "escort_package"));
+        when(playerCharacter.knowsHullMod("escort_package")).thenReturn(true);
+
+        assertFalse(SkillTypeUnlockStatus.isHidden(type, new ShipSkillData()));
+    }
+
+    @Test
+    void isHiddenIsTrueForALockedNodeByDefault() {
+        SkillType type = typeWithConditions(UnlockCondition.blueprint(BlueprintCategory.HULLMOD, "escort_package"));
+        when(playerCharacter.knowsHullMod("escort_package")).thenReturn(false);
+
+        assertTrue(SkillTypeUnlockStatus.isHidden(type, new ShipSkillData()));
+    }
+
+    @Test
+    void isHiddenIsFalseForALockedNodeWhenShowHiddenNodesByDefaultIsEnabled() {
+        SkillType type = typeWithConditions(UnlockCondition.blueprint(BlueprintCategory.HULLMOD, "escort_package"));
+        when(playerCharacter.knowsHullMod("escort_package")).thenReturn(false);
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", "exiledSector_showHiddenNodesByDefault")).thenReturn(true);
+
+        assertFalse(SkillTypeUnlockStatus.isHidden(type, new ShipSkillData()));
+        assertTrue(SkillTypeUnlockStatus.isLocked(type, new ShipSkillData()));
     }
 }
