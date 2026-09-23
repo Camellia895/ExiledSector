@@ -2980,7 +2980,8 @@
 			"connectedTo": [
 				"luddic_1",
 				"small_flux_optional_54",
-				"small_flux_optional_56"
+				"small_flux_optional_56",
+				"fuel_core_overload_1"
 			],
 			"x": 3700,
 			"y": 5557,
@@ -2993,7 +2994,8 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_55",
-				"luddic_2"
+				"luddic_2",
+				"fuel_core_overload_1"
 			],
 			"x": 2390,
 			"y": 6867,
@@ -3005,7 +3007,8 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_54",
-				"small_flux_optional_56"
+				"small_flux_optional_56",
+				"fuel_core_overload_1"
 			],
 			"x": 3700,
 			"y": 8177,
@@ -3017,12 +3020,25 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_55",
-				"luddic_2"
+				"luddic_2",
+				"fuel_core_overload_1"
 			],
 			"x": 5010,
 			"y": 6867,
 			"orbitAnchorId": "luddic_inner",
 			"orbitAngle": 0
+		},
+		{
+			"id": "fuel_core_overload_1",
+			"type": "fuel_core_overload",
+			"connectedTo": [
+				"luddic_2",
+				"small_flux_optional_54",
+				"small_flux_optional_55",
+				"small_flux_optional_56"
+			],
+			"x": 3691,
+			"y": 6863
 		},
 		{
 			"id": "luddic_1",

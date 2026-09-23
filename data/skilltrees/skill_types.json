@@ -243,6 +243,18 @@
 			]
 		},
 		{
+			"id": "fuel_core_overload",
+			"name": "Fuel Core Overload",
+			"icon": "graphics/icons/fuel_core_overload.png",
+			"tier": "KEYSTONE",
+			"effects": [
+				{
+					"effect": "EXPLODE_ON_DEATH",
+					"magnitude": 150
+				}
+			]
+		},
+		{
 			"id": "advancedshieldemitter",
 			"name": "Accelerated Shields",
 			"icon": "graphics/icons/advancedshieldemitter.png",
