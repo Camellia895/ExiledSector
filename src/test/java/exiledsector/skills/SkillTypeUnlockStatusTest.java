@@ -3,6 +3,7 @@ package exiledsector.skills;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CharacterDataAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.StatBonus;
@@ -26,12 +27,15 @@ class SkillTypeUnlockStatusTest {
     private MockedStatic<Global> globalMock;
     private SectorAPI sector;
     private CharacterDataAPI playerCharacter;
+    private MemoryAPI sectorMemory;
 
     @BeforeEach
     void setUp() {
         sector = mock(SectorAPI.class);
         playerCharacter = mock(CharacterDataAPI.class);
+        sectorMemory = mock(MemoryAPI.class);
         when(sector.getCharacterData()).thenReturn(playerCharacter);
+        when(sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
 
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSector).thenReturn(sector);
@@ -42,44 +46,44 @@ class SkillTypeUnlockStatusTest {
         globalMock.close();
     }
 
-    private static SkillType typeWithLock(String lockedUntilHullMod) {
+    private static SkillType typeWithConditions(UnlockCondition... conditions) {
         return new SkillType("t", "T", "a.png", List.of(), List.of(), SkillTier.NOTABLE,
-                null, null, null, List.of(), List.of(), List.of(), lockedUntilHullMod);
+                null, null, null, List.of(), List.of(), List.of(), List.of(conditions));
+    }
+
+    private static ShipSkillData dataAtLevel(int level) {
+        ShipSkillData data = new ShipSkillData();
+        for (int i = 0; i < level; i++) {
+            data.incrementLevel();
+        }
+        return data;
     }
 
     @Test
-    void nodeWithNoLockedUntilHullModIsNeverLocked() {
-        SkillType type = typeWithLock(null);
+    void nodeWithNoConditionsIsNeverLocked() {
+        SkillType type = typeWithConditions();
 
-        assertFalse(SkillTypeUnlockStatus.isLocked(type));
+        assertFalse(SkillTypeUnlockStatus.isLocked(type, new ShipSkillData()));
         globalMock.verify(Global::getSector, never());
     }
 
     @Test
-    void isLockedWhenPlayerDoesNotKnowTheHullMod() {
-        SkillType type = typeWithLock("escort_package");
+    void isLockedWhenPlayerDoesNotKnowTheHullModBlueprint() {
+        SkillType type = typeWithConditions(UnlockCondition.blueprint(BlueprintCategory.HULLMOD, "escort_package"));
         when(playerCharacter.knowsHullMod("escort_package")).thenReturn(false);
 
-        assertTrue(SkillTypeUnlockStatus.isLocked(type));
+        assertTrue(SkillTypeUnlockStatus.isLocked(type, new ShipSkillData()));
     }
 
     @Test
-    void isUnlockedWhenPlayerKnowsTheHullMod() {
-        SkillType type = typeWithLock("escort_package");
+    void isUnlockedWhenPlayerKnowsTheHullModBlueprint() {
+        SkillType type = typeWithConditions(UnlockCondition.blueprint(BlueprintCategory.HULLMOD, "escort_package"));
         when(playerCharacter.knowsHullMod("escort_package")).thenReturn(true);
 
-        assertFalse(SkillTypeUnlockStatus.isLocked(type));
+        assertFalse(SkillTypeUnlockStatus.isLocked(type, new ShipSkillData()));
     }
 
-    @Test
-    void failsClosedWhenLookupThrows() {
-        SkillType type = typeWithLock("escort_package");
-        when(sector.getCharacterData()).thenThrow(new RuntimeException("boom"));
-
-        assertTrue(SkillTypeUnlockStatus.isLocked(type));
-    }
-
-    private void stubNeuralLinkStatFlag(float modifiedValue) {
+    private void stubCharacterStat(String statId, float flatBonus) {
         PersonAPI person = mock(PersonAPI.class);
         MutableCharacterStatsAPI stats = mock(MutableCharacterStatsAPI.class);
         DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
@@ -87,34 +91,89 @@ class SkillTypeUnlockStatusTest {
         when(playerCharacter.getPerson()).thenReturn(person);
         when(person.getStats()).thenReturn(stats);
         when(stats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getMod("has_neural_link")).thenReturn(mod);
-        when(mod.getFlatBonus()).thenReturn(modifiedValue);
+        when(dynamic.getMod(statId)).thenReturn(mod);
+        when(mod.getFlatBonus()).thenReturn(flatBonus);
     }
 
     @Test
-    void neuralInterfaceNodeIsUnlockedByTheNeuralLinkStatFlagEvenWithoutKnowingTheHullMod() {
-        SkillType type = typeWithLock("neural_interface");
+    void characterStatConditionUnlocksWhenTheStatIsActive() {
+        SkillType type = typeWithConditions(UnlockCondition.characterStat("has_neural_link"));
+        stubCharacterStat("has_neural_link", 1f);
+
+        assertFalse(SkillTypeUnlockStatus.isLocked(type, new ShipSkillData()));
+    }
+
+    @Test
+    void characterStatConditionStaysLockedWhenTheStatIsInactive() {
+        SkillType type = typeWithConditions(UnlockCondition.characterStat("has_neural_link"));
+        stubCharacterStat("has_neural_link", 0f);
+
+        assertTrue(SkillTypeUnlockStatus.isLocked(type, new ShipSkillData()));
+    }
+
+    @Test
+    void minShipLevelUnlocksOnceTheShipReachesThatLevel() {
+        SkillType type = typeWithConditions(UnlockCondition.minShipLevel(3));
+
+        assertTrue(SkillTypeUnlockStatus.isLocked(type, dataAtLevel(2)));
+        assertFalse(SkillTypeUnlockStatus.isLocked(type, dataAtLevel(3)));
+        assertFalse(SkillTypeUnlockStatus.isLocked(type, dataAtLevel(4)));
+    }
+
+    @Test
+    void memoryFlagUnlocksWhenTheSectorMemoryFlagIsSet() {
+        SkillType type = typeWithConditions(UnlockCondition.memoryFlag("$playerCanUseGates"));
+        when(sectorMemory.getBoolean("$playerCanUseGates")).thenReturn(true);
+
+        assertFalse(SkillTypeUnlockStatus.isLocked(type, new ShipSkillData()));
+    }
+
+    @Test
+    void memoryFlagStaysLockedWhenTheSectorMemoryFlagIsUnset() {
+        SkillType type = typeWithConditions(UnlockCondition.memoryFlag("$playerCanUseGates"));
+        when(sectorMemory.getBoolean("$playerCanUseGates")).thenReturn(false);
+
+        assertTrue(SkillTypeUnlockStatus.isLocked(type, new ShipSkillData()));
+    }
+
+    @Test
+    void multipleConditionsAreOrredTogether() {
+        SkillType type = typeWithConditions(
+                UnlockCondition.blueprint(BlueprintCategory.HULLMOD, "neural_interface"),
+                UnlockCondition.characterStat("has_neural_link"));
         when(playerCharacter.knowsHullMod("neural_interface")).thenReturn(false);
-        stubNeuralLinkStatFlag(1f);
+        stubCharacterStat("has_neural_link", 1f);
 
-        assertFalse(SkillTypeUnlockStatus.isLocked(type));
+        assertFalse(SkillTypeUnlockStatus.isLocked(type, new ShipSkillData()));
     }
 
     @Test
-    void neuralInterfaceNodeStaysLockedWithoutTheHullModOrTheStatFlag() {
-        SkillType type = typeWithLock("neural_interface");
+    void lockedWhenNoneOfSeveralConditionsAreSatisfied() {
+        SkillType type = typeWithConditions(
+                UnlockCondition.blueprint(BlueprintCategory.HULLMOD, "neural_interface"),
+                UnlockCondition.characterStat("has_neural_link"));
         when(playerCharacter.knowsHullMod("neural_interface")).thenReturn(false);
-        stubNeuralLinkStatFlag(0f);
+        stubCharacterStat("has_neural_link", 0f);
 
-        assertTrue(SkillTypeUnlockStatus.isLocked(type));
+        assertTrue(SkillTypeUnlockStatus.isLocked(type, new ShipSkillData()));
     }
 
     @Test
-    void neuralLinkStatFlagDoesNotUnlockAnUnrelatedHullMod() {
-        SkillType type = typeWithLock("escort_package");
-        when(playerCharacter.knowsHullMod("escort_package")).thenReturn(false);
-        stubNeuralLinkStatFlag(1f);
+    void failsClosedForTheFailingConditionWhenLookupThrows() {
+        SkillType type = typeWithConditions(UnlockCondition.blueprint(BlueprintCategory.HULLMOD, "escort_package"));
+        when(sector.getCharacterData()).thenThrow(new RuntimeException("boom"));
 
-        assertTrue(SkillTypeUnlockStatus.isLocked(type));
+        assertTrue(SkillTypeUnlockStatus.isLocked(type, new ShipSkillData()));
+    }
+
+    @Test
+    void aFailingConditionDoesNotPreventAnotherConditionFromUnlockingTheNode() {
+        SkillType type = typeWithConditions(
+                UnlockCondition.blueprint(BlueprintCategory.HULLMOD, "escort_package"),
+                UnlockCondition.memoryFlag("$playerCanUseGates"));
+        when(playerCharacter.knowsHullMod("escort_package")).thenThrow(new RuntimeException("boom"));
+        when(sectorMemory.getBoolean("$playerCanUseGates")).thenReturn(true);
+
+        assertFalse(SkillTypeUnlockStatus.isLocked(type, new ShipSkillData()));
     }
 }

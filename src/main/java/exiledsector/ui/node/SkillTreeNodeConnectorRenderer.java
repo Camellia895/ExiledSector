@@ -57,8 +57,8 @@ final class SkillTreeNodeConnectorRenderer {
                 float otherRadius = endpointRadius(other, data, satisfiedRootId, zoom);
                 boolean bothSatisfied = data.isSatisfied(node.getId(), satisfiedRootId) && data.isSatisfied(other.getId(), satisfiedRootId);
 
-                boolean fadeOtherToBlack = isClosedWormhole(other, data, satisfiedRootId) || isLocked(other);
-                boolean fadeNodeToBlack = isClosedWormhole(node, data, satisfiedRootId) || isLocked(node);
+                boolean fadeOtherToBlack = isClosedWormhole(other, data, satisfiedRootId) || isLocked(other, data);
+                boolean fadeNodeToBlack = isClosedWormhole(node, data, satisfiedRootId) || isLocked(node, data);
                 boolean tipFadeOtherToBlack = isOpenWormhole(other, data, satisfiedRootId);
                 boolean tipFadeNodeToBlack = isOpenWormhole(node, data, satisfiedRootId);
 
@@ -93,8 +93,8 @@ final class SkillTreeNodeConnectorRenderer {
         return node.getType().getTier() == SkillTier.WORMHOLE && !data.isSatisfied(node.getId(), satisfiedRootId);
     }
 
-    private static boolean isLocked(SkillNode node) {
-        return SkillTypeUnlockStatus.isLocked(node.getType());
+    private static boolean isLocked(SkillNode node, ShipSkillData data) {
+        return SkillTypeUnlockStatus.isLocked(node.getType(), data);
     }
 
     private void drawStraightNodeConnectorLine(float x1, float y1, float r1, float x2, float y2, float r2,

@@ -60,7 +60,7 @@ final class SkillTreeNodeTooltipRenderer {
                 && effectiveType.getDescriptionOverride() == null;
 
         SkillTreePanelStyle.TooltipText title = tooltipTitles.computeIfAbsent(node.getId(),
-                id -> buildTooltipText(font, titleText(node, effectiveType), TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR));
+                id -> buildTooltipText(font, titleText(node, effectiveType, data), TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR));
         SkillTreePanelStyle.TooltipText body = tooltipBodies.computeIfAbsent(node.getId(),
                 id -> buildTooltipText(font, bodyText(node, effectiveType, showOptionalHint, data), TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR));
 
@@ -95,12 +95,12 @@ final class SkillTreeNodeTooltipRenderer {
         body.drawable.draw(boxX + TOOLTIP_PADDING, bodyY);
     }
 
-    private String titleText(SkillNode node, SkillType effectiveType) {
-        return SkillTypeUnlockStatus.isLocked(node.getType()) ? LOCKED_NODE_TITLE : effectiveType.getDisplayName();
+    private String titleText(SkillNode node, SkillType effectiveType, ShipSkillData data) {
+        return SkillTypeUnlockStatus.isLocked(node.getType(), data) ? LOCKED_NODE_TITLE : effectiveType.getDisplayName();
     }
 
     private String bodyText(SkillNode node, SkillType effectiveType, boolean showOptionalHint, ShipSkillData data) {
-        if (SkillTypeUnlockStatus.isLocked(node.getType())) return LOCKED_NODE_BODY;
+        if (SkillTypeUnlockStatus.isLocked(node.getType(), data)) return LOCKED_NODE_BODY;
 
         String text = showOptionalHint ? OPTIONAL_NODE_HINT : SkillNode.describeType(effectiveType, member.getHullSpec().getHullSize());
         if (data.isFreeNode(node.getId())) {

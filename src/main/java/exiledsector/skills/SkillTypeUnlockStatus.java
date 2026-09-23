@@ -5,31 +5,68 @@ import com.fs.starfarer.api.campaign.CharacterDataAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import org.apache.log4j.Logger;
 
-public final class SkillTypeUnlockStatus {
+import java.util.List;
 
-    private static final String NEURAL_INTERFACE_HULLMOD_ID = "neural_interface";
-    private static final String HAS_NEURAL_LINK_STAT_ID = "has_neural_link";
+public final class SkillTypeUnlockStatus {
 
     private SkillTypeUnlockStatus() {
     }
 
-    public static boolean isLocked(SkillType type) {
-        String hullModId = type.getLockedUntilHullMod();
-        if (hullModId == null) return false;
+    public static boolean isLocked(SkillType type, ShipSkillData data) {
+        List<UnlockCondition> conditions = type.getUnlockConditions();
+        if (conditions.isEmpty()) return false;
 
+        for (UnlockCondition condition : conditions) {
+            if (isSatisfied(condition, data)) return false;
+        }
+        return true;
+    }
+
+    private static boolean isSatisfied(UnlockCondition condition, ShipSkillData data) {
         try {
-            CharacterDataAPI playerCharacter = Global.getSector().getCharacterData();
-            if (playerCharacter == null) return true;
-            if (playerCharacter.knowsHullMod(hullModId)) return false;
-            return !(hullModId.equals(NEURAL_INTERFACE_HULLMOD_ID) && hasNeuralLinkStatFlag(playerCharacter));
+            switch (condition.getType()) {
+                case BLUEPRINT:
+                    return isBlueprintKnown(condition);
+                case CHARACTER_STAT:
+                    return hasCharacterStat(condition);
+                case MIN_SHIP_LEVEL:
+                    return hasMinShipLevel(condition, data);
+                case MEMORY_FLAG:
+                    return hasMemoryFlag(condition);
+                default:
+                    return false;
+            }
         } catch (RuntimeException e) {
-            Logger.getLogger(SkillTypeUnlockStatus.class).error("Failed to check unlock status for hullmod " + hullModId, e);
-            return true;
+            Logger.getLogger(SkillTypeUnlockStatus.class).error("Failed to check unlock condition " + condition, e);
+            return false;
         }
     }
 
-    private static boolean hasNeuralLinkStatFlag(CharacterDataAPI playerCharacter) {
+    private static boolean isBlueprintKnown(UnlockCondition condition) {
+        String id = condition.getKey();
+        if (id == null) return false;
+
+        CharacterDataAPI playerCharacter = Global.getSector().getCharacterData();
+        return playerCharacter != null && playerCharacter.knowsHullMod(id);
+    }
+
+    private static boolean hasCharacterStat(UnlockCondition condition) {
+        String statId = condition.getKey();
+        if (statId == null) return false;
+
+        CharacterDataAPI playerCharacter = Global.getSector().getCharacterData();
+        if (playerCharacter == null) return false;
         PersonAPI person = playerCharacter.getPerson();
-        return person != null && person.getStats().getDynamic().getMod(HAS_NEURAL_LINK_STAT_ID).getFlatBonus() > 0f;
+        return person != null && person.getStats().getDynamic().getMod(statId).getFlatBonus() > 0f;
+    }
+
+    private static boolean hasMinShipLevel(UnlockCondition condition, ShipSkillData data) {
+        return data != null && data.getLevel() >= condition.getMinLevel();
+    }
+
+    private static boolean hasMemoryFlag(UnlockCondition condition) {
+        String key = condition.getKey();
+        if (key == null) return false;
+        return Global.getSector().getMemoryWithoutUpdate().getBoolean(key);
     }
 }

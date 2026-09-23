@@ -1,11 +1,15 @@
 package exiledsector.skills.loader;
 
+import exiledsector.skills.BlueprintCategory;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
+import exiledsector.skills.UnlockCondition;
+import exiledsector.skills.UnlockConditionType;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -215,7 +219,7 @@ class SkillTypeLoaderTest {
     }
 
     @Test
-    void missingLockedUntilHullModFieldDefaultsToNull() throws Exception {
+    void missingUnlockConditionsFieldMeansNeverLocked() throws Exception {
         JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
                 + "\"id\": \"hull\","
                 + "\"name\": \"Hull\","
@@ -224,22 +228,94 @@ class SkillTypeLoaderTest {
 
         SkillType hull = SkillTypeLoader.parseSkillTypes(root).get("hull");
 
-        assertNull(hull.getLockedUntilHullMod());
+        assertTrue(hull.getUnlockConditions().isEmpty());
     }
 
     @Test
-    void parsesLockedUntilHullMod() throws Exception {
+    void parsesABlueprintUnlockCondition() throws Exception {
         JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
                 + "\"id\": \"escort_package\","
                 + "\"name\": \"Escort Package\","
                 + "\"icon\": \"a.png\","
                 + "\"vanillaHullMod\": \"escort_package\","
-                + "\"lockedUntilHullMod\": \"escort_package\""
+                + "\"unlockConditions\": [ { \"type\": \"blueprint\", \"category\": \"hullmod\", \"id\": \"escort_package\" } ]"
                 + "} ] }");
 
         SkillType escortPackage = SkillTypeLoader.parseSkillTypes(root).get("escort_package");
 
-        assertEquals("escort_package", escortPackage.getLockedUntilHullMod());
+        List<UnlockCondition> conditions = escortPackage.getUnlockConditions();
+        assertEquals(1, conditions.size());
+        assertEquals(UnlockConditionType.BLUEPRINT, conditions.get(0).getType());
+        assertEquals(BlueprintCategory.HULLMOD, conditions.get(0).getBlueprintCategory());
+        assertEquals("escort_package", conditions.get(0).getKey());
+    }
+
+    @Test
+    void parsesACharacterStatUnlockCondition() throws Exception {
+        JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
+                + "\"id\": \"neural_interface\","
+                + "\"name\": \"Neural Interface\","
+                + "\"icon\": \"a.png\","
+                + "\"unlockConditions\": [ { \"type\": \"characterStat\", \"statId\": \"has_neural_link\" } ]"
+                + "} ] }");
+
+        SkillType type = SkillTypeLoader.parseSkillTypes(root).get("neural_interface");
+
+        UnlockCondition condition = type.getUnlockConditions().get(0);
+        assertEquals(UnlockConditionType.CHARACTER_STAT, condition.getType());
+        assertEquals("has_neural_link", condition.getKey());
+    }
+
+    @Test
+    void parsesAMinShipLevelUnlockCondition() throws Exception {
+        JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
+                + "\"id\": \"powerful_notable\","
+                + "\"name\": \"Powerful Notable\","
+                + "\"icon\": \"a.png\","
+                + "\"unlockConditions\": [ { \"type\": \"minShipLevel\", \"level\": 15 } ]"
+                + "} ] }");
+
+        SkillType type = SkillTypeLoader.parseSkillTypes(root).get("powerful_notable");
+
+        UnlockCondition condition = type.getUnlockConditions().get(0);
+        assertEquals(UnlockConditionType.MIN_SHIP_LEVEL, condition.getType());
+        assertEquals(15, condition.getMinLevel());
+    }
+
+    @Test
+    void parsesAMemoryFlagUnlockCondition() throws Exception {
+        JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
+                + "\"id\": \"wormhole\","
+                + "\"name\": \"Wormhole\","
+                + "\"icon\": \"a.png\","
+                + "\"unlockConditions\": [ { \"type\": \"memoryFlag\", \"key\": \"$playerCanUseGates\" } ]"
+                + "} ] }");
+
+        SkillType type = SkillTypeLoader.parseSkillTypes(root).get("wormhole");
+
+        UnlockCondition condition = type.getUnlockConditions().get(0);
+        assertEquals(UnlockConditionType.MEMORY_FLAG, condition.getType());
+        assertEquals("$playerCanUseGates", condition.getKey());
+    }
+
+    @Test
+    void parsesMultipleUnlockConditionsInOrder() throws Exception {
+        JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
+                + "\"id\": \"neural_interface\","
+                + "\"name\": \"Neural Interface\","
+                + "\"icon\": \"a.png\","
+                + "\"unlockConditions\": ["
+                + "  { \"type\": \"blueprint\", \"category\": \"hullmod\", \"id\": \"neural_interface\" },"
+                + "  { \"type\": \"characterStat\", \"statId\": \"has_neural_link\" }"
+                + "]"
+                + "} ] }");
+
+        SkillType type = SkillTypeLoader.parseSkillTypes(root).get("neural_interface");
+
+        List<UnlockCondition> conditions = type.getUnlockConditions();
+        assertEquals(2, conditions.size());
+        assertEquals(UnlockConditionType.BLUEPRINT, conditions.get(0).getType());
+        assertEquals(UnlockConditionType.CHARACTER_STAT, conditions.get(1).getType());
     }
 
     @Test

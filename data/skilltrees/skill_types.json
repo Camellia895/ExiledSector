@@ -214,7 +214,9 @@
 					"magnitude": 50
 				}
 			],
-			"lockedUntilHullMod": "advancedshieldemitter",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "advancedshieldemitter" }
+			],
 			"exclusiveHullMods": [
 				"advancedshieldemitter"
 			],
@@ -233,7 +235,9 @@
 					"magnitude": 40
 				}
 			],
-			"lockedUntilHullMod": "adaptive_coils",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "adaptive_coils" }
+			],
 			"exclusiveHullMods": [
 				"adaptive_coils"
 			],
@@ -258,7 +262,9 @@
 					"magnitude": -30
 				}
 			],
-			"lockedUntilHullMod": "advancedoptics",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "advancedoptics" }
+			],
 			"exclusiveHullMods": [
 				"advancedoptics"
 			],
@@ -282,7 +288,9 @@
 					"magnitude": 75
 				}
 			],
-			"lockedUntilHullMod": "turretgyros",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "turretgyros" }
+			],
 			"exclusiveHullMods": [
 				"turretgyros"
 			]
@@ -328,7 +336,9 @@
 					"magnitude": -50
 				}
 			],
-			"lockedUntilHullMod": "autorepair",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "autorepair" }
+			],
 			"exclusiveHullMods": [
 				"autorepair"
 			]
@@ -366,7 +376,9 @@
 			"icon": "graphics/icons/circular/notable_passives/ballistic_rangefinder.png",
 			"tier": "KEYSTONE",
 			"vanillaHullMod": "ballistic_rangefinder",
-			"lockedUntilHullMod": "ballistic_rangefinder",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "ballistic_rangefinder" }
+			],
 			"description": "Extends the base range of small and medium ballistic weapons, based on the size of this ship's largest ballistic weapon slot. Also extends hybrid weapon range, with a larger bonus.",
 			"todo": "Real vanilla effect is a per-weapon-slot range bonus (WeaponBaseRangeModifier) that varies by the ship's largest ballistic slot size and is capped per weapon, with a separate larger bonus for hybrid mounts - not a fixed magnitude on a single MutableShipStatsAPI stat. Deliberately left on vanillaHullMod passthrough rather than approximate it with a flat/percent BALLISTIC_WEAPON_RANGE_PERCENT effect, since that would only be correct for one specific loadout.",
 			"tags": [
@@ -423,7 +435,9 @@
 					"magnitude": 20
 				}
 			],
-			"lockedUntilHullMod": "converted_hangar",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "converted_hangar" }
+			],
 			"exclusiveHullMods": [
 				"converted_hangar"
 			],
@@ -450,7 +464,9 @@
 					"magnitude": 50
 				}
 			],
-			"lockedUntilHullMod": "converted_fighterbay",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "converted_fighterbay" }
+			],
 			"exclusiveHullMods": [
 				"converted_fighterbay"
 			],
@@ -493,7 +509,9 @@
 			"icon": "graphics/icons/circular/notable_passives/defensive_targeting_array.png",
 			"tier": "KEYSTONE",
 			"vanillaHullMod": "defensive_targeting_array",
-			"lockedUntilHullMod": "defensive_targeting_array",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "defensive_targeting_array" }
+			],
 			"description": "Increases the damage fighters launched from this ship deal to other fighters and missiles. Also locks launched fighters to stay near the ship instead of patrolling freely.",
 			"todo": "Deliberately kept on vanillaHullMod passthrough as a design choice, not a technical limitation - the fighter-spawn hook needed to convert this now exists (see FIGHTER_PD_DAMAGE_BONUS_PERCENT, reused by other nodes). Real vanilla effect also zeroes the launched fighters' patrol range (locking them near the ship) and tags certain fighter types to stay in front of the ship; neither of those is implemented as a reusable effect yet.",
 			"tags": [
@@ -539,7 +557,9 @@
 					"magnitude": -50
 				}
 			],
-			"lockedUntilHullMod": "eccm",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "eccm" }
+			],
 			"exclusiveHullMods": [
 				"eccm"
 			],
@@ -561,7 +581,9 @@
 					"capitalShip": 4
 				}
 			],
-			"lockedUntilHullMod": "ecm",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "ecm" }
+			],
 			"exclusiveHullMods": [
 				"ecm"
 			],
@@ -576,7 +598,9 @@
 			"icon": "graphics/icons/circular/notable_passives/escort_package.png",
 			"tier": "KEYSTONE",
 			"vanillaHullMod": "escort_package",
-			"lockedUntilHullMod": "escort_package",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "escort_package" }
+			],
 			"description": "When this ship is within approximately 1000 su of a larger friendly vessel, increases this ship's maneuverability by 25%, and top speed by 10%. Also increases ballistic and energy weapon range by 20%.\n\nThese bonuses are doubled for destroyers when the nearby friendly is a capital ship.",
 			"todo": "Real vanilla effect is a continuous proximity check against nearby larger friendly ships each combat frame - magnitude fades in/out with distance (full within ~700su, fading to 0 by ~1200su) and doubles for a destroyer escorting a capital ship. This is a dynamic, position-dependent combat mechanic, not a fixed per-ship magnitude - deliberately left on vanillaHullMod passthrough rather than approximate it as an always-on bonus."
 		},
@@ -599,7 +623,9 @@
 					"magnitude": 20
 				}
 			],
-			"lockedUntilHullMod": "expanded_deck_crew",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "expanded_deck_crew" }
+			],
 			"exclusiveHullMods": [
 				"expanded_deck_crew"
 			],
@@ -618,7 +644,9 @@
 					"magnitude": 50
 				}
 			],
-			"lockedUntilHullMod": "magazines",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "magazines" }
+			],
 			"exclusiveHullMods": [
 				"magazines"
 			]
@@ -634,7 +662,9 @@
 					"magnitude": 100
 				}
 			],
-			"lockedUntilHullMod": "missleracks",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "missleracks" }
+			],
 			"exclusiveHullMods": [
 				"missleracks"
 			],
@@ -653,7 +683,9 @@
 					"magnitude": 40
 				}
 			],
-			"lockedUntilHullMod": "extendedshieldemitter",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "extendedshieldemitter" }
+			],
 			"exclusiveHullMods": [
 				"extendedshieldemitter"
 			],
@@ -675,7 +707,9 @@
 					"effect": "REMOVE_SHIELD"
 				}
 			],
-			"lockedUntilHullMod": "shield_shunt",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "shield_shunt" }
+			],
 			"exclusiveHullMods": [
 				"shield_shunt",
 				"frontemitter",
@@ -701,7 +735,9 @@
 					"effect": "CREATE_FRONT_SHIELD_IF_NONE"
 				}
 			],
-			"lockedUntilHullMod": "frontshield",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "frontshield" }
+			],
 			"exclusiveHullMods": [
 				"frontshield",
 				"shield_shunt"
@@ -717,7 +753,9 @@
 			"icon": "graphics/icons/circular/notable_passives/missile_autoloader.png",
 			"tier": "KEYSTONE",
 			"vanillaHullMod": "missile_autoloader",
-			"lockedUntilHullMod": "missile_autoloader",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "missile_autoloader" }
+			],
 			"description": "Grants a limited number of automatic reloads to missile weapons in small missile mounts, drawn from a shared capacity pool that depends on hull size and mount count.",
 			"todo": "Real vanilla effect is a stateful per-weapon reload simulation (advanceInCombat tracks a shared reload-capacity pool by hull size/small-missile-mount count, per-weapon cooldowns, partial reloads) - not a stat modifier at all, and not expressible as a SkillEffect magnitude. Deliberately left on vanillaHullMod passthrough.",
 			"tags": [
@@ -730,7 +768,10 @@
 			"icon": "graphics/icons/circular/notable_passives/neural_interface_circular.png",
 			"tier": "KEYSTONE",
 			"vanillaHullMod": "neural_interface",
-			"lockedUntilHullMod": "neural_interface",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "neural_interface" },
+				{ "type": "characterStat", "statId": "has_neural_link" }
+			],
 			"description": "Links this ship with the flagship, allowing the player to instantly switch which ship they are piloting without using a shuttle pod. Transferring resets the destination ship's system cooldown and adds a charge. The transfer is instant if the combined deployment points of both ships are low enough; otherwise a short transfer time applies. The destination ship must not be under the command of an officer or an AI core.",
 			"todo": "Real vanilla effect links two ships and lets the player instantly swap which one they're piloting, resetting the destination ship's system cooldown and granting a charge, with transfer time gated by the combined deployment point total of both ships - a campaign/combat control-transfer mechanic, not a MutableShipStatsAPI stat modifier. Deliberately left on vanillaHullMod passthrough."
 		},
@@ -749,7 +790,9 @@
 					"magnitude": -50
 				}
 			],
-			"lockedUntilHullMod": "hardenedshieldemitter",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "hardenedshieldemitter" }
+			],
 			"exclusiveHullMods": [
 				"hardenedshieldemitter"
 			],
@@ -803,7 +846,9 @@
 					"capitalShip": 175
 				}
 			],
-			"lockedUntilHullMod": "heavyarmor",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "heavyarmor" }
+			],
 			"exclusiveHullMods": [
 				"heavyarmor"
 			],
@@ -826,7 +871,9 @@
 					"magnitude": -25
 				}
 			],
-			"lockedUntilHullMod": "high_scatter_amp",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "high_scatter_amp" }
+			],
 			"exclusiveHullMods": [
 				"high_scatter_amp"
 			],
@@ -852,7 +899,9 @@
 					"effect": "PD_RECLASSIFY_SMALL_WEAPONS"
 				}
 			],
-			"lockedUntilHullMod": "pointdefenseai",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "pointdefenseai" }
+			],
 			"exclusiveHullMods": [
 				"pointdefenseai"
 			]
@@ -878,7 +927,9 @@
 					"capitalShip": 40
 				}
 			],
-			"lockedUntilHullMod": "targetingunit",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "targetingunit" }
+			],
 			"exclusiveHullMods": [
 				"targetingunit"
 			],
@@ -900,7 +951,9 @@
 					"capitalShip": 5
 				}
 			],
-			"lockedUntilHullMod": "nav_relay",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "nav_relay" }
+			],
 			"exclusiveHullMods": [
 				"nav_relay"
 			],
@@ -922,7 +975,9 @@
 					"effect": "CONVERT_SHIELD_TO_FRONT"
 				}
 			],
-			"lockedUntilHullMod": "frontemitter",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "frontemitter" }
+			],
 			"exclusiveHullMods": [
 				"frontemitter",
 				"adaptiveshields",
@@ -948,7 +1003,9 @@
 					"magnitude": 0
 				}
 			],
-			"lockedUntilHullMod": "adaptiveshields",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "adaptiveshields" }
+			],
 			"exclusiveHullMods": [
 				"adaptiveshields",
 				"frontemitter",
@@ -970,7 +1027,9 @@
 					"magnitude": 2.5
 				}
 			],
-			"lockedUntilHullMod": "operations_center",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "operations_center" }
+			],
 			"exclusiveHullMods": [
 				"operations_center"
 			],
@@ -997,7 +1056,9 @@
 					"magnitude": 100
 				}
 			],
-			"lockedUntilHullMod": "phase_anchor",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "phase_anchor" }
+			],
 			"exclusiveHullMods": [
 				"phase_anchor"
 			],
@@ -1017,7 +1078,9 @@
 					"magnitude": -75
 				}
 			],
-			"lockedUntilHullMod": "recovery_shuttles",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "recovery_shuttles" }
+			],
 			"exclusiveHullMods": [
 				"recovery_shuttles"
 			],
@@ -1066,7 +1129,9 @@
 					"magnitude": 10
 				}
 			],
-			"lockedUntilHullMod": "fluxbreakers",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "fluxbreakers" }
+			],
 			"exclusiveHullMods": [
 				"fluxbreakers"
 			],
@@ -1086,7 +1151,9 @@
 					"magnitude": -40
 				}
 			],
-			"lockedUntilHullMod": "stabilizedshieldemitter",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "stabilizedshieldemitter" }
+			],
 			"exclusiveHullMods": [
 				"stabilizedshieldemitter"
 			],
@@ -1161,7 +1228,9 @@
 					"magnitude": 1
 				}
 			],
-			"lockedUntilHullMod": "augmentedengines",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "augmentedengines" }
+			],
 			"exclusiveHullMods": [
 				"augmentedengines"
 			],
@@ -1217,7 +1286,9 @@
 					"magnitude": 50
 				}
 			],
-			"lockedUntilHullMod": "efficiency_overhaul",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "efficiency_overhaul" }
+			],
 			"exclusiveHullMods": [
 				"efficiency_overhaul"
 			],
@@ -1260,7 +1331,9 @@
 					"capitalShip": 70
 				}
 			],
-			"lockedUntilHullMod": "hiressensors",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "hiressensors" }
+			],
 			"exclusiveHullMods": [
 				"hiressensors"
 			],
@@ -1287,7 +1360,9 @@
 					"magnitude": -50
 				}
 			],
-			"lockedUntilHullMod": "insulatedengine",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "insulatedengine" }
+			],
 			"exclusiveHullMods": [
 				"insulatedengine"
 			],
@@ -1326,7 +1401,9 @@
 			"icon": "graphics/icons/circular/notable_passives/solar_shielding2.png",
 			"tier": "NOTABLE",
 			"vanillaHullMod": "solar_shielding",
-			"lockedUntilHullMod": "solar_shielding",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "solar_shielding" }
+			],
 			"description": "Originally developed by Diktat engineers after spending cycles dealing with the unique conditions of the inner Askonia system. Decreases the effect operating in a solar corona has on combat readiness by 75%; also has the same effect against storms in deep hyperspace.\n\nIn combat, reduces energy damage taken by 10%.",
 			"todo": "Real effect is -75% CR loss from solar corona/deep hyperspace storms, plus -10% energy damage taken in combat. The energy damage part is trivial and safe (existing ENERGY_DAMAGE_TAKEN_PERCENT effect, magnitude -10) whenever we want it. The corona/storm part is NOT safe to implement yet - found the real dynamic stat key ('corona_resistance', confirmed shared by both StarCoronaTerrainPlugin and HyperspaceTerrainPlugin, matching the tooltip's 'same effect against storms' claim) but decompiling StarCoronaTerrainPlugin showed corona_resistance actually GATES whether a CR-loss event fires (if (corona_resistance > 0) applyCREvent(...) else <computes what looks like an interval/frequency ratio instead>) rather than scaling a loss percentage directly - the sign/semantics don't resolve cleanly and getting it backward could make ships MORE vulnerable, not less. Deliberately left the whole hullmod on vanillaHullMod passthrough (both effects still work correctly via vanilla's own code) rather than partially convert, since our apply loop is all-or-nothing per node and converting now would silently drop corona/storm protection. Needs more investigation (or someone who already knows this mechanic) before touching.",
 			"tags": [
@@ -1354,7 +1431,9 @@
 					"capitalShip": 20
 				}
 			],
-			"lockedUntilHullMod": "surveying_equipment",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "surveying_equipment" }
+			],
 			"exclusiveHullMods": [
 				"surveying_equipment"
 			],
@@ -1902,7 +1981,9 @@
 					"magnitude": 50
 				}
 			],
-			"lockedUntilHullMod": "magazines",
+			"unlockConditions": [
+				{ "type": "blueprint", "category": "hullmod", "id": "magazines" }
+			],
 			"tags": [
 				"energy",
 				"ammo"
@@ -1924,6 +2005,9 @@
 			"name": "Wormhole",
 			"icon": "",
 			"tier": "WORMHOLE",
+			"unlockConditions": [
+				{ "type": "memoryFlag", "key": "$playerCanUseGates" }
+			],
 			"description": "Allocating this wormhole and the corresponding wormhole allows you to allocate connected nodes as if the wormholes are connected."
 		},
 		{

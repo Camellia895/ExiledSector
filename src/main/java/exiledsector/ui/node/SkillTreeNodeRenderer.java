@@ -110,7 +110,7 @@ public final class SkillTreeNodeRenderer {
             float footprintSize = NODE_SIZE * zoom * tier.getSizeMultiplier();
             float iconSize = footprintSize * ICON_INSET_RATIO;
 
-            if (SkillTypeUnlockStatus.isLocked(node.getType())) {
+            if (SkillTypeUnlockStatus.isLocked(node.getType(), data)) {
                 ghostRenderer.draw(nodeX, nodeY, footprintSize, alphaMult, node.getId());
                 continue;
             }
@@ -278,7 +278,8 @@ public final class SkillTreeNodeRenderer {
     }
 
     private String blockAllocationReason(SkillType type) {
-        if (SkillTypeUnlockStatus.isLocked(type)) {
+        ShipSkillData data = ShipSkillDataManager.get(member.getId());
+        if (SkillTypeUnlockStatus.isLocked(type, data)) {
             return "Unidentified - explore the sector to discover this node.";
         }
 
@@ -298,7 +299,6 @@ public final class SkillTreeNodeRenderer {
 
         List<String> exclusiveSkillTypeIds = type.getExclusiveSkillTypeIds();
         if (!exclusiveSkillTypeIds.isEmpty()) {
-            ShipSkillData data = ShipSkillDataManager.get(member.getId());
             for (String nodeId : data.getAllocatedNodeIds()) {
                 SkillNode allocatedNode = SkillTree.get(nodeId);
                 if (allocatedNode == null) continue;

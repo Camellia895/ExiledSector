@@ -18,7 +18,7 @@ public class SkillType {
     private final List<String> optionalOptionIds;
     private final List<String> exclusiveHullModIds;
     private final List<String> exclusiveSkillTypeIds;
-    private final String lockedUntilHullMod;
+    private final List<UnlockCondition> unlockConditions;
 
     public SkillType(String id, String displayName, String iconPath,
                       List<SkillTypeEffect> effects, SkillTier tier, String vanillaHullModId,
@@ -60,7 +60,7 @@ public class SkillType {
     public SkillType(String id, String displayName, String iconPath,
                       List<SkillTypeEffect> effects, List<HullSizeSkillEffect> hullSizeEffects, SkillTier tier,
                       String vanillaHullModId, String descriptionOverride, String todo, List<String> optionalOptionIds,
-                      List<String> exclusiveHullModIds, List<String> exclusiveSkillTypeIds, String lockedUntilHullMod) {
+                      List<String> exclusiveHullModIds, List<String> exclusiveSkillTypeIds, List<UnlockCondition> unlockConditions) {
         this.id = id;
         this.displayName = displayName;
         this.iconPath = iconPath;
@@ -73,7 +73,7 @@ public class SkillType {
         this.optionalOptionIds = optionalOptionIds == null ? Collections.emptyList() : optionalOptionIds;
         this.exclusiveHullModIds = exclusiveHullModIds == null ? Collections.emptyList() : exclusiveHullModIds;
         this.exclusiveSkillTypeIds = exclusiveSkillTypeIds == null ? Collections.emptyList() : exclusiveSkillTypeIds;
-        this.lockedUntilHullMod = lockedUntilHullMod;
+        this.unlockConditions = unlockConditions == null ? Collections.emptyList() : unlockConditions;
     }
 
     public String getId() {
@@ -133,7 +133,7 @@ public class SkillType {
         return exclusiveSkillTypeIds;
     }
 
-    public String getLockedUntilHullMod() {
-        return lockedUntilHullMod;
+    public List<UnlockCondition> getUnlockConditions() {
+        return unlockConditions;
     }
 }

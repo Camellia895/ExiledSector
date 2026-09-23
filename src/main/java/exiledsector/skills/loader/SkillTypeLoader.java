@@ -1,10 +1,13 @@
 package exiledsector.skills.loader;
 
 import com.fs.starfarer.api.Global;
+import exiledsector.skills.BlueprintCategory;
 import exiledsector.skills.HullSizeSkillEffect;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.UnlockCondition;
+import exiledsector.skills.UnlockConditionType;
 import exiledsector.skills.skilleffect.SkillEffect;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -50,6 +53,7 @@ public final class SkillTypeLoader {
         List<String> optionalOptionIds = parseStringArray(json.optJSONArray("optionalOptions"));
         List<String> exclusiveHullModIds = parseStringArray(json.optJSONArray("exclusiveHullMods"));
         List<String> exclusiveSkillTypeIds = parseStringArray(json.optJSONArray("exclusiveSkillTypes"));
+        List<UnlockCondition> unlockConditions = parseUnlockConditions(json.optJSONArray("unlockConditions"));
 
         return new SkillType(
                 json.getString("id"),
@@ -64,7 +68,47 @@ public final class SkillTypeLoader {
                 optionalOptionIds,
                 exclusiveHullModIds,
                 exclusiveSkillTypeIds,
-                json.optString("lockedUntilHullMod", null));
+                unlockConditions);
+    }
+
+    private static List<UnlockCondition> parseUnlockConditions(JSONArray conditionsArray) throws JSONException {
+        List<UnlockCondition> conditions = new ArrayList<>();
+        if (conditionsArray == null) {
+            return conditions;
+        }
+        for (int i = 0; i < conditionsArray.length(); i++) {
+            conditions.add(parseUnlockCondition(conditionsArray.getJSONObject(i)));
+        }
+        return conditions;
+    }
+
+    private static UnlockCondition parseUnlockCondition(JSONObject json) throws JSONException {
+        UnlockConditionType type = UnlockConditionType.valueOf(toEnumName(json.getString("type")));
+        switch (type) {
+            case BLUEPRINT:
+                BlueprintCategory category = BlueprintCategory.valueOf(toEnumName(json.getString("category")));
+                return UnlockCondition.blueprint(category, json.getString("id"));
+            case CHARACTER_STAT:
+                return UnlockCondition.characterStat(json.getString("statId"));
+            case MIN_SHIP_LEVEL:
+                return UnlockCondition.minShipLevel(json.getInt("level"));
+            case MEMORY_FLAG:
+                return UnlockCondition.memoryFlag(json.getString("key"));
+            default:
+                throw new JSONException("Unknown unlock condition type \"" + json.getString("type") + "\"");
+        }
+    }
+
+    private static String toEnumName(String jsonValue) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < jsonValue.length(); i++) {
+            char c = jsonValue.charAt(i);
+            if (Character.isUpperCase(c) && i > 0) {
+                result.append('_');
+            }
+            result.append(Character.toUpperCase(c));
+        }
+        return result.toString();
     }
 
     private static List<String> parseStringArray(JSONArray array) throws JSONException {
