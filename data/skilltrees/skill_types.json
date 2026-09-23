@@ -1630,15 +1630,10 @@
 				{
 					"effect": "HULL_PERCENT",
 					"magnitude": 5
-				}
-			],
-			"hullSizeEffects": [
+				},
 				{
 					"effect": "FLUX_CAPACITY_PERCENT",
-					"frigate": 5,
-					"destroyer": 0,
-					"cruiser": 0,
-					"capitalShip": 0
+					"magnitude": 5
 				}
 			]
 		},

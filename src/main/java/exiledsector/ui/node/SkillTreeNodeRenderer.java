@@ -148,6 +148,10 @@ public final class SkillTreeNodeRenderer {
         dropdownRenderer.render(centerX, centerY, zoom, mouseX, mouseY, mouseKnown, alphaMult);
     }
 
+    public SkillNode getActiveRoot() {
+        return activeRoot;
+    }
+
     private static SkillNode findRootNode(String rootTypeId) {
         for (SkillNode node : SkillTree.getAllNodes().values()) {
             if (node.getType().getTier() == SkillTier.ROOT && node.getType().getId().equals(rootTypeId)) {

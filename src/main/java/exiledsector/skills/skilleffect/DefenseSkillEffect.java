@@ -20,6 +20,28 @@ public enum DefenseSkillEffect implements SkillEffect {
             return pctChange(magnitude, "hull points");
         }
     },
+    HULL_FLAT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getHullBonus().modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return flatChange(magnitude, "hull points");
+        }
+    },
+    HULL_MULT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            SkillEffectSupport.applyMult(stats.getHullBonus(), modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctMore(magnitude, "hull points");
+        }
+    },
     ARMOR_FLAT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {

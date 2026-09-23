@@ -184,7 +184,7 @@
 			"type": "hardened_subsystems",
 			"connectedTo": [],
 			"x": 2318,
-			"y": 1179
+			"y": 1173
 		},
 		{
 			"id": "turretgyros_1",
@@ -336,8 +336,8 @@
 				"shield_raise_rate_1",
 				"shield_turn_rate_1"
 			],
-			"x": 638,
-			"y": -2664,
+			"x": 711,
+			"y": -2659,
 			"orbitAnchorId": "anchor_2",
 			"orbitAngle": 270
 		},
@@ -380,8 +380,8 @@
 			"connectedTo": [
 				"armor_5"
 			],
-			"x": -386,
-			"y": 2620,
+			"x": -428,
+			"y": 2660,
 			"orbitAnchorId": "anchor_10",
 			"orbitAngle": 90
 		},
@@ -548,8 +548,8 @@
 			"connectedTo": [
 				"engine_durability_1"
 			],
-			"x": -392,
-			"y": 702,
+			"x": -395,
+			"y": 605,
 			"orbitAnchorId": "insulated_engine_assembly_anchor",
 			"orbitAngle": 0
 		},
@@ -569,10 +569,10 @@
 			"id": "solar_shielding_1",
 			"type": "solar_shielding",
 			"connectedTo": [
-				"small_logistics_optional_2"
+				"small_logistics_optional_4"
 			],
-			"x": -507,
-			"y": 510
+			"x": -246,
+			"y": 349
 		},
 		{
 			"id": "surveying_equipment_1",
@@ -997,8 +997,7 @@
 			"connectedTo": [
 				"small_logistics_optional_1",
 				"small_logistics_optional_4",
-				"crew_capacity_flat_1",
-				"solar_shielding_1"
+				"crew_capacity_flat_1"
 			],
 			"x": -507,
 			"y": 294
@@ -1010,7 +1009,8 @@
 				"small_logistics_optional_2",
 				"small_logistics_optional_5",
 				"small_logistics_optional_9",
-				"efficiency_overhaul_1"
+				"efficiency_overhaul_1",
+				"solar_shielding_1"
 			],
 			"x": -246,
 			"y": 133,
@@ -1259,8 +1259,8 @@
 				"engine_durability_2",
 				"insulatedengine_1"
 			],
-			"x": -541,
-			"y": 851,
+			"x": -544,
+			"y": 754,
 			"orbitAnchorId": "insulated_engine_assembly_anchor",
 			"orbitAngle": 90
 		},
@@ -1271,8 +1271,8 @@
 				"small_logistics_optional_1",
 				"engine_durability_1"
 			],
-			"x": -690,
-			"y": 702,
+			"x": -693,
+			"y": 605,
 			"orbitAnchorId": "insulated_engine_assembly_anchor",
 			"orbitAngle": 180
 		},
@@ -1654,8 +1654,8 @@
 				"shield_raise_rate_2",
 				"advancedshieldemitter_1"
 			],
-			"x": 772,
-			"y": -2582,
+			"x": 845,
+			"y": -2577,
 			"orbitAnchorId": "anchor_2",
 			"orbitAngle": -26.847754748827075
 		},
@@ -1666,8 +1666,8 @@
 				"shield_raise_rate_1",
 				"shield_turn_raise_rate_optional_1"
 			],
-			"x": 767,
-			"y": -2437,
+			"x": 840,
+			"y": -2432,
 			"orbitAnchorId": "anchor_2",
 			"orbitAngle": 31.00891551494835
 		},
@@ -1678,8 +1678,8 @@
 				"shield_turn_rate_2",
 				"advancedshieldemitter_1"
 			],
-			"x": 505,
-			"y": -2583,
+			"x": 578,
+			"y": -2578,
 			"orbitAnchorId": "anchor_2",
 			"orbitAngle": -152.49474818746805
 		},
@@ -1690,8 +1690,8 @@
 				"shield_turn_rate_1",
 				"shield_turn_raise_rate_optional_1"
 			],
-			"x": 509,
-			"y": -2438,
+			"x": 582,
+			"y": -2433,
 			"orbitAnchorId": "anchor_2",
 			"orbitAngle": 149.4392314359338
 		},
@@ -1841,8 +1841,8 @@
 				"shield_raise_rate_2",
 				"shield_turn_rate_2"
 			],
-			"x": 638,
-			"y": -2364,
+			"x": 711,
+			"y": -2359,
 			"orbitAnchorId": "anchor_2",
 			"orbitAngle": 90
 		},
@@ -2169,8 +2169,8 @@
 				"armor_5",
 				"small_flux_optional_35"
 			],
-			"x": -256,
-			"y": 2395,
+			"x": -298,
+			"y": 2435,
 			"orbitAnchorId": "anchor_10",
 			"orbitAngle": -29.999999999999996
 		},
@@ -2181,8 +2181,8 @@
 				"armor_4",
 				"shield_shunt_1"
 			],
-			"x": -516,
-			"y": 2395,
+			"x": -558,
+			"y": 2435,
 			"orbitAnchorId": "anchor_10",
 			"orbitAngle": -150.00000000000003
 		},
@@ -2226,8 +2226,8 @@
 			"id": "shield_arc_mult_2",
 			"type": "shield_arc_mult",
 			"connectedTo": [
-				"shield_arc_mult_1",
-				"adaptiveshields_1"
+				"adaptiveshields_1",
+				"shield_arc_mult_1"
 			],
 			"x": -872,
 			"y": -1526,
@@ -2982,14 +2982,14 @@
 		{
 			"a": "engine_durability_1",
 			"b": "engine_durability_2",
-			"controlX": -646,
-			"controlY": 807
+			"controlX": -649,
+			"controlY": 710
 		},
 		{
 			"a": "engine_durability_1",
 			"b": "insulatedengine_1",
-			"controlX": -436,
-			"controlY": 807
+			"controlX": -439,
+			"controlY": 710
 		},
 		{
 			"a": "small_logistics_optional_11",
@@ -3132,14 +3132,14 @@
 		{
 			"a": "shield_raise_rate_1",
 			"b": "shield_raise_rate_2",
-			"controlX": 788,
-			"controlY": -2509
+			"controlX": 861,
+			"controlY": -2504
 		},
 		{
 			"a": "shield_turn_rate_1",
 			"b": "shield_turn_rate_2",
-			"controlX": 488,
-			"controlY": -2510
+			"controlX": 561,
+			"controlY": -2505
 		},
 		{
 			"a": "small_flux_optional_25",
@@ -3372,32 +3372,32 @@
 		{
 			"a": "shield_raise_rate_2",
 			"b": "shield_turn_raise_rate_optional_1",
-			"controlX": 712,
-			"controlY": -2383
+			"controlX": 785,
+			"controlY": -2378
 		},
 		{
 			"a": "advancedshieldemitter_1",
 			"b": "shield_raise_rate_1",
-			"controlX": 717,
-			"controlY": -2642
+			"controlX": 790,
+			"controlY": -2637
 		},
 		{
 			"a": "advancedshieldemitter_1",
 			"b": "shield_turn_rate_1",
-			"controlX": 560,
-			"controlY": -2642
+			"controlX": 633,
+			"controlY": -2637
 		},
 		{
 			"a": "armor_4",
 			"b": "armor_5",
-			"controlX": -386,
-			"controlY": 2395
+			"controlX": -428,
+			"controlY": 2435
 		},
 		{
 			"a": "armor_5",
 			"b": "shield_shunt_1",
-			"controlX": -451,
-			"controlY": 2508
+			"controlX": -493,
+			"controlY": 2548
 		},
 		{
 			"a": "shield_arc_3",
@@ -3416,12 +3416,6 @@
 			"b": "shield_arc_mult_1",
 			"controlX": -1092,
 			"controlY": -1480
-		},
-		{
-			"a": "shield_arc_mult_1",
-			"b": "shield_arc_mult_2",
-			"controlX": -969,
-			"controlY": -1439
 		},
 		{
 			"a": "adaptiveshields_1",
@@ -3492,8 +3486,8 @@
 		{
 			"a": "shield_turn_raise_rate_optional_1",
 			"b": "shield_turn_rate_2",
-			"controlX": 564,
-			"controlY": -2384
+			"controlX": 637,
+			"controlY": -2379
 		},
 		{
 			"a": "weapon_durability_1",
@@ -3680,6 +3674,12 @@
 			"b": "small_logistics_optional_5",
 			"controlX": 185,
 			"controlY": -309
+		},
+		{
+			"a": "shield_arc_mult_1",
+			"b": "shield_arc_mult_2",
+			"controlX": -969,
+			"controlY": -1439
 		}
 	],
 	"hiddenConnectors": [
@@ -3737,8 +3737,8 @@
 		},
 		{
 			"id": "insulated_engine_assembly_anchor",
-			"x": -541,
-			"y": 702,
+			"x": -544,
+			"y": 605,
 			"radius": 149
 		},
 		{
@@ -3773,8 +3773,8 @@
 		},
 		{
 			"id": "anchor_2",
-			"x": 638,
-			"y": -2514,
+			"x": 711,
+			"y": -2509,
 			"radius": 150
 		},
 		{
@@ -3834,8 +3834,8 @@
 		},
 		{
 			"id": "anchor_10",
-			"x": -386,
-			"y": 2470,
+			"x": -428,
+			"y": 2510,
 			"radius": 150,
 			"shape": "triangle",
 			"rotation": 180

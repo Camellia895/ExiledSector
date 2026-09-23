@@ -64,6 +64,38 @@ class SkillEffectTest {
     }
 
     @Test
+    void hullFlatModifiesTheHullBonusStat() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        StatBonus hullBonus = mock(StatBonus.class);
+        when(stats.getHullBonus()).thenReturn(hullBonus);
+
+        DefenseSkillEffect.HULL_FLAT.apply(stats, "mod_id", 250f);
+
+        verify(hullBonus).modifyFlat("mod_id", 250f);
+    }
+
+    @Test
+    void hullFlatDescribesAFlatChangeToHullPoints() {
+        assertEquals("Increases hull points by 250.", DefenseSkillEffect.HULL_FLAT.describe(250f));
+    }
+
+    @Test
+    void hullMultModifiesTheHullBonusStatMultiplicatively() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        StatBonus hullBonus = mock(StatBonus.class);
+        when(stats.getHullBonus()).thenReturn(hullBonus);
+
+        DefenseSkillEffect.HULL_MULT.apply(stats, "mod_id", 2f);
+
+        verify(hullBonus).modifyMult("mod_id", 1.02f);
+    }
+
+    @Test
+    void hullMultDescribesAMultiplicativeChangeToHullPoints() {
+        assertEquals("2% more hull points.", DefenseSkillEffect.HULL_MULT.describe(2f));
+    }
+
+    @Test
     void armorModifiesTheArmorBonusStat() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         StatBonus armorBonus = mock(StatBonus.class);

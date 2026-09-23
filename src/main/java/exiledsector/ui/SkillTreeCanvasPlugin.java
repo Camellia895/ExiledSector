@@ -65,6 +65,12 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.ordnancePointsBar = new SkillTreeOrdnancePointsBar(member, variant);
         this.levelBar = new SkillTreeLevelBar(member);
         this.shipCardHeight = shipCardHeight;
+
+        SkillNode activeRoot = nodeRenderer.getActiveRoot();
+        if (activeRoot != null) {
+            this.panX = -activeRoot.getOffsetX();
+            this.panY = activeRoot.getOffsetY();
+        }
     }
 
     @Override
