@@ -28,49 +28,60 @@ public final class SkillTreeLoader {
     private SkillTreeLoader() {
     }
 
-    public static List<SkillNode> loadNodes() {
-        return loadJsonOrDefault(DATA_PATH, () -> {
-            Map<String, SkillType> skillTypes = SkillTypeLoader.loadSkillTypes();
-            return parseNodes(Global.getSettings().loadJSON(DATA_PATH), skillTypes);
-        }, new ArrayList<>());
+    public static JSONObject loadRoot() {
+        try {
+            return Global.getSettings().loadJSON(DATA_PATH);
+        } catch (IOException | JSONException e) {
+            Logger.getLogger(SkillTreeLoader.class).error("Failed to load " + DATA_PATH, e);
+            return null;
+        }
     }
 
-    public static Map<String, ConnectorCurve> loadConnectorCurves() {
-        return loadJsonOrDefault("connector curves from " + DATA_PATH,
-                () -> parseConnectorCurves(Global.getSettings().loadJSON(DATA_PATH)), new LinkedHashMap<>());
+    public static ParsedTree loadAll(Map<String, SkillType> skillTypes) {
+        JSONObject root = loadRoot();
+        if (root == null) {
+            return new ParsedTree(new ArrayList<>(), new LinkedHashMap<>(), new HashSet<>(),
+                    new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        }
+        return new ParsedTree(
+                safeParse("nodes", () -> parseNodes(root, skillTypes), new ArrayList<>()),
+                safeParse("connector curves", () -> parseConnectorCurves(root), new LinkedHashMap<>()),
+                safeParse("hidden connectors", () -> parseHiddenConnectors(root), new HashSet<>()),
+                safeParse("static images", () -> parseStaticImages(root), new ArrayList<>()),
+                safeParse("ring belts", () -> parseRingBelts(root), new ArrayList<>()),
+                safeParse("stars", () -> parseStars(root), new ArrayList<>()));
     }
 
-    public static Set<String> loadHiddenConnectors() {
-        return loadJsonOrDefault("hidden connectors from " + DATA_PATH,
-                () -> parseHiddenConnectors(Global.getSettings().loadJSON(DATA_PATH)), new HashSet<>());
-    }
-
-    public static List<StaticImage> loadStaticImages() {
-        return loadJsonOrDefault("static images from " + DATA_PATH,
-                () -> parseStaticImages(Global.getSettings().loadJSON(DATA_PATH)), new ArrayList<>());
-    }
-
-    public static List<RingBelt> loadRingBelts() {
-        return loadJsonOrDefault("ring belts from " + DATA_PATH,
-                () -> parseRingBelts(Global.getSettings().loadJSON(DATA_PATH)), new ArrayList<>());
-    }
-
-    public static List<Star> loadStars() {
-        return loadJsonOrDefault("stars from " + DATA_PATH,
-                () -> parseStars(Global.getSettings().loadJSON(DATA_PATH)), new ArrayList<>());
-    }
-
-    private static <T> T loadJsonOrDefault(String context, JsonParser<T> parser, T fallback) {
+    private static <T> T safeParse(String context, JsonParser<T> parser, T fallback) {
         try {
             return parser.parse();
-        } catch (IOException | JSONException e) {
-            Logger.getLogger(SkillTreeLoader.class).error("Failed to load " + context, e);
+        } catch (JSONException e) {
+            Logger.getLogger(SkillTreeLoader.class).error("Failed to parse " + context + " from " + DATA_PATH, e);
             return fallback;
         }
     }
 
     private interface JsonParser<T> {
-        T parse() throws IOException, JSONException;
+        T parse() throws JSONException;
+    }
+
+    public static final class ParsedTree {
+        public final List<SkillNode> nodes;
+        public final Map<String, ConnectorCurve> connectorCurves;
+        public final Set<String> hiddenConnectors;
+        public final List<StaticImage> staticImages;
+        public final List<RingBelt> ringBelts;
+        public final List<Star> stars;
+
+        ParsedTree(List<SkillNode> nodes, Map<String, ConnectorCurve> connectorCurves, Set<String> hiddenConnectors,
+                   List<StaticImage> staticImages, List<RingBelt> ringBelts, List<Star> stars) {
+            this.nodes = nodes;
+            this.connectorCurves = connectorCurves;
+            this.hiddenConnectors = hiddenConnectors;
+            this.staticImages = staticImages;
+            this.ringBelts = ringBelts;
+            this.stars = stars;
+        }
     }
 
     public static List<RingBelt> parseRingBelts(JSONObject root) throws JSONException {

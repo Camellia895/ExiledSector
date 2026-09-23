@@ -36,18 +36,22 @@ public class SkillTree {
         STATIC_IMAGES.clear();
         RING_BELTS.clear();
         STARS.clear();
-        TYPES.putAll(SkillTypeLoader.loadSkillTypes());
-        for (SkillNode node : SkillTreeLoader.loadNodes()) {
+
+        Map<String, SkillType> types = SkillTypeLoader.loadSkillTypes();
+        TYPES.putAll(types);
+
+        SkillTreeLoader.ParsedTree parsed = SkillTreeLoader.loadAll(types);
+        for (SkillNode node : parsed.nodes) {
             register(node);
         }
         for (String issue : WormholePairValidator.findIssues(NODES.values())) {
             Logger.getLogger(SkillTree.class).error(issue);
         }
-        CURVES.putAll(SkillTreeLoader.loadConnectorCurves());
-        HIDDEN_CONNECTOR_KEYS.addAll(SkillTreeLoader.loadHiddenConnectors());
-        STATIC_IMAGES.addAll(SkillTreeLoader.loadStaticImages());
-        RING_BELTS.addAll(SkillTreeLoader.loadRingBelts());
-        STARS.addAll(SkillTreeLoader.loadStars());
+        CURVES.putAll(parsed.connectorCurves);
+        HIDDEN_CONNECTOR_KEYS.addAll(parsed.hiddenConnectors);
+        STATIC_IMAGES.addAll(parsed.staticImages);
+        RING_BELTS.addAll(parsed.ringBelts);
+        STARS.addAll(parsed.stars);
     }
 
     public static void register(SkillNode node) {

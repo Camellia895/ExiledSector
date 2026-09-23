@@ -25,6 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class SkillTreeLoaderTest {
@@ -301,20 +303,6 @@ class SkillTreeLoaderTest {
     }
 
     @Test
-    void loadRingBeltsReturnsAnEmptyListWhenTheJsonFailsToLoad() throws Exception {
-        SettingsAPI settings = mock(SettingsAPI.class);
-        when(settings.loadJSON(anyString())).thenThrow(new IOException("boom"));
-
-        try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
-            globalMock.when(Global::getSettings).thenReturn(settings);
-
-            List<RingBelt> ringBelts = SkillTreeLoader.loadRingBelts();
-
-            assertEquals(List.of(), ringBelts);
-        }
-    }
-
-    @Test
     void missingStarsFieldMeansNoStars() throws Exception {
         JSONObject root = new JSONObject("{ \"nodes\": [] }");
 
@@ -375,16 +363,80 @@ class SkillTreeLoaderTest {
     }
 
     @Test
-    void loadStarsReturnsAnEmptyListWhenTheJsonFailsToLoad() throws Exception {
+    void loadRootReturnsNullWhenTheJsonFailsToLoad() throws Exception {
         SettingsAPI settings = mock(SettingsAPI.class);
         when(settings.loadJSON(anyString())).thenThrow(new IOException("boom"));
 
         try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
             globalMock.when(Global::getSettings).thenReturn(settings);
 
-            List<Star> stars = SkillTreeLoader.loadStars();
+            assertEquals(null, SkillTreeLoader.loadRoot());
+        }
+    }
 
-            assertEquals(List.of(), stars);
+    @Test
+    void loadAllReturnsAllEmptyCollectionsWhenTheJsonFailsToLoad() throws Exception {
+        SettingsAPI settings = mock(SettingsAPI.class);
+        when(settings.loadJSON(anyString())).thenThrow(new IOException("boom"));
+
+        try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
+            globalMock.when(Global::getSettings).thenReturn(settings);
+
+            SkillTreeLoader.ParsedTree parsed = SkillTreeLoader.loadAll(SKILL_TYPES);
+
+            assertTrue(parsed.nodes.isEmpty());
+            assertTrue(parsed.connectorCurves.isEmpty());
+            assertTrue(parsed.hiddenConnectors.isEmpty());
+            assertTrue(parsed.staticImages.isEmpty());
+            assertTrue(parsed.ringBelts.isEmpty());
+            assertTrue(parsed.stars.isEmpty());
+        }
+    }
+
+    @Test
+    void loadAllParsesEverySectionFromASingleRoot() throws Exception {
+        JSONObject root = new JSONObject("{"
+                + "\"nodes\": [ {\"id\": \"bare_node\", \"type\": \"bare\"} ],"
+                + "\"connectorCurves\": [ {\"a\": \"a\", \"b\": \"b\", \"controlX\": 1, \"controlY\": 2} ],"
+                + "\"hiddenConnectors\": [ {\"a\": \"a\", \"b\": \"b\"} ],"
+                + "\"staticImages\": [ {\"id\": \"img\", \"x\": 0, \"y\": 0, \"width\": 10, \"height\": 10, \"imagePath\": \"a.png\"} ],"
+                + "\"ringBelts\": [ {\"id\": \"belt\", \"x\": 0, \"y\": 0, \"innerRadius\": 10, \"outerRadius\": 20, \"ringArtPath\": \"a.png\"} ],"
+                + "\"stars\": [ {\"id\": \"star\", \"x\": 0, \"y\": 0, \"radius\": 100} ]"
+                + "}");
+        SettingsAPI settings = mock(SettingsAPI.class);
+        when(settings.loadJSON(anyString())).thenReturn(root);
+
+        try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
+            globalMock.when(Global::getSettings).thenReturn(settings);
+
+            SkillTreeLoader.ParsedTree parsed = SkillTreeLoader.loadAll(SKILL_TYPES);
+
+            assertEquals(1, parsed.nodes.size());
+            assertEquals(1, parsed.connectorCurves.size());
+            assertEquals(1, parsed.hiddenConnectors.size());
+            assertEquals(1, parsed.staticImages.size());
+            assertEquals(1, parsed.ringBelts.size());
+            assertEquals(1, parsed.stars.size());
+            verify(settings, times(1)).loadJSON(anyString());
+        }
+    }
+
+    @Test
+    void loadAllToleratesAMalformedSectionWithoutLosingTheOthers() throws Exception {
+        JSONObject root = new JSONObject("{"
+                + "\"nodes\": [ {\"id\": \"bare_node\", \"type\": \"bare\"} ],"
+                + "\"ringBelts\": [ {\"id\": \"belt\", \"x\": 0, \"y\": 0, \"innerRadius\": 10, \"outerRadius\": 20} ]"
+                + "}");
+        SettingsAPI settings = mock(SettingsAPI.class);
+        when(settings.loadJSON(anyString())).thenReturn(root);
+
+        try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
+            globalMock.when(Global::getSettings).thenReturn(settings);
+
+            SkillTreeLoader.ParsedTree parsed = SkillTreeLoader.loadAll(SKILL_TYPES);
+
+            assertEquals(1, parsed.nodes.size());
+            assertTrue(parsed.ringBelts.isEmpty());
         }
     }
 }
