@@ -2,12 +2,12 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 final class SkillConflictWarnings {
 
-    private static final Map<ShipVariantAPI, Removal> REMOVALS = new HashMap<>();
+    private static final Map<ShipVariantAPI, Removal> REMOVALS = new WeakHashMap<>();
 
     private SkillConflictWarnings() {
     }
