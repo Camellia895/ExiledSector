@@ -267,8 +267,6 @@ public final class SkillTreeNodeRenderer {
     private void refreshAfterAllocationChange(SkillNode node, boolean isAllocatedNow) {
         tooltipRenderer.invalidate(node.getId());
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(member.getHullSpec().getHullSize(), member.getStats(), SkillTreeHullMod.ID);
-        SkillTreeHullMod.syncOpSpentHullMod(member, variant);
-        SkillTreeHullMod.removeHullModsConflictingWithAllocatedSkills(member, variant);
         member.setStatUpdateNeeded(true);
         member.updateStats();
         if (refitButton != null) {
