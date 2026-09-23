@@ -1,7 +1,6 @@
 package exiledsector.ui.belt;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
-import com.fs.starfarer.api.util.Misc;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
@@ -23,7 +22,7 @@ public final class WormholeBandRenderer {
     public static void render(SpriteAPI texture, float cx, float cy, float innerRadius, float outerRadius,
                                int bandSlot, float rotationDeg, Color color, float alphaMult, float elapsedSeconds) {
         float circumference = (float) (2 * Math.PI * (innerRadius + outerRadius) / 2f);
-        float segments = Math.max(MIN_SEGMENTS_FOR_WOBBLE, Math.round(circumference / PIXELS_PER_SEGMENT));
+        int segments = RadialBandGL.computeSegments(circumference, PIXELS_PER_SEGMENT, MIN_SEGMENTS_FOR_WOBBLE);
         float anglePerSegment = (float) (2 * Math.PI) / segments;
         float thickness = outerRadius - innerRadius;
 
@@ -39,19 +38,13 @@ public final class WormholeBandRenderer {
         float rightTX = (bandSlot + 1f) * texWidth * BAND_WIDTH_IN_TEXTURE / imageWidth - 0.001f;
         float phaseAngleRad = (float) Math.toRadians((elapsedSeconds * PHASE_DEG_PER_SEC) % 360f);
 
-        GL11.glPushMatrix();
-        GL11.glTranslatef(cx, cy, 0f);
+        RadialBandGL.begin(texture, cx, cy, GL11.GL_SRC_ALPHA, GL11.GL_ONE, color, alphaMult);
         GL11.glRotatef(rotationDeg, 0f, 0f, 1f);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        texture.bindTexture();
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-        Misc.setColor(color, alphaMult);
 
         float texProgress = 0f;
         GL11.glBegin(GL11.GL_QUAD_STRIP);
         for (int i = 0; i <= segments; i++) {
-            int segIndex = i % (int) segments;
+            int segIndex = i % segments;
             float theta = anglePerSegment * segIndex;
             float wobbleOffset = (float) Math.sin(phaseAngleRad + segIndex * anglePerSegment * WOBBLE_FREQUENCY) * wobble;
 
@@ -69,6 +62,6 @@ public final class WormholeBandRenderer {
             texProgress += texPerSegment;
         }
         GL11.glEnd();
-        GL11.glPopMatrix();
+        RadialBandGL.end();
     }
 }
