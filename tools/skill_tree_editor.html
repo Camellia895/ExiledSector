@@ -3377,7 +3377,7 @@ function openTypeModal(existingType, onSave, onClose){
       '<hr class="sep">' +
       '<div class="field"><label>vanillaHullMod id</label><input id="tVanilla" value="' + (t.vanillaHullMod||'') + '"></div>' +
       '<hr class="sep">' +
-      '<div class="hint">Unlock conditions - if any are set, this node renders as blinking sensor ghosts and blocks allocation until at least ONE of them is satisfied (they're OR'd together, not all required). Leave empty for a normal, always-visible node.</div>' +
+      '<div class="hint">Unlock conditions - if set, this node renders as blinking sensor ghosts and blocks allocation until at least one of them is satisfied (any one is enough, not all required). Leave empty for a normal, always-visible node.</div>' +
       '<div class="field"><label>Unlock conditions</label>' + renderUnlockConditionRows('t', unlockConditionsDraft) + '</div>' +
       '<div class="btnRow"><button class="smallBtn" type="button" id="addUnlockConditionRowBtn">+ Add condition</button></div>' +
       '<div class="field"><label>Exclusive with hullmod ids (comma-separated)</label><input id="tExclusiveHullMods" value="' + ((t.exclusiveHullMods||[]).join(', ')) + '"></div>' +
