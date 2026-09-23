@@ -13,6 +13,8 @@ import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.skilleffect.ShieldSkillEffect;
 import exiledsector.ui.util.BorderedPanel;
 import exiledsector.ui.util.FallbackSupport;
+import exiledsector.ui.util.SpriteCache;
+import exiledsector.ui.util.SpriteDraw;
 import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.ui.LazyFont;
 
@@ -46,9 +48,16 @@ final class SkillTreeStatPanel {
     private static final Color STAT_INCREASED_COLOR = new Color(0x98, 0xFB, 0x00);
     private static final float STAT_COMPARISON_EPSILON = 0.001f;
 
+    private static final String COLLAPSE_ICON_PATH = "graphics/icons/ship_store.png";
+    private static final String EXPAND_ICON_PATH = "graphics/icons/ship_take.png";
+    private static final float COLLAPSE_BUTTON_SIZE = 40f;
+    private static final float COLLAPSE_BUTTON_MARGIN = 8f;
+    private static final float COLLAPSED_PANEL_SIZE = COLLAPSE_BUTTON_MARGIN * 2f + COLLAPSE_BUTTON_SIZE;
+
     private final FleetMemberAPI member;
     private final ShipVariantAPI variant;
     private final BorderedPanel borderedPanel = new BorderedPanel(SkillTreeStatPanel.class);
+    private final SpriteCache spriteCache = new SpriteCache(SkillTreeStatPanel.class);
     private final Map<String, List<StatLine>> lastStatGroupLines = new HashMap<>();
     private final Map<String, SkillTreePanelStyle.TooltipText> statGroupLabelText = new HashMap<>();
     private final Map<String, List<LazyFont.DrawableString>> statGroupValueLines = new HashMap<>();
@@ -57,31 +66,80 @@ final class SkillTreeStatPanel {
     private LazyFont statFont;
     private boolean fontLoadFailed = false;
 
+    private boolean collapsed = false;
+
     SkillTreeStatPanel(FleetMemberAPI member, ShipVariantAPI variant) {
         this.member = member;
         this.variant = variant;
+    }
+
+    void toggleCollapsed() {
+        collapsed = !collapsed;
+    }
+
+    boolean isCollapsed() {
+        return collapsed;
+    }
+
+    boolean isCollapseButtonHit(PositionAPI position, float x, float y) {
+        LazyFont font = getFont();
+        if (font == null) return false;
+        PanelLayout layout = layoutPanel(position, font);
+        if (layout == null) return false;
+
+        return isWithinButton(collapseButtonCenterX(layout), collapseButtonCenterY(layout), COLLAPSE_BUTTON_SIZE, x, y);
     }
 
     void render(PositionAPI position, float alphaMult) {
         LazyFont font = getFont();
         if (font == null) return;
 
-        float rowStep = STAT_PANEL_FONT_SIZE * FONT_LINE_HEIGHT_FACTOR;
+        PanelLayout layout = layoutPanel(position, font);
+        if (layout == null) return;
 
-        for (StatGroupLayout layout : layoutStatGroups(position, font)) {
-            borderedPanel.draw(layout.x, layout.y, layout.width, layout.height, alphaMult);
+        float panelWidth = collapsed ? COLLAPSED_PANEL_SIZE : layout.width;
+        float panelHeight = collapsed ? COLLAPSED_PANEL_SIZE : layout.fullHeight;
+        float rightEdge = layout.x + layout.width;
+        float panelX = rightEdge - panelWidth;
+        float bottomY = layout.topY - panelHeight;
 
-            LazyFont.DrawableString headerText = getStatGroupHeaderText(font, layout.name);
-            headerText.draw(layout.x + layout.width / 2f, layout.headerTextY);
+        borderedPanel.draw(panelX, bottomY, panelWidth, panelHeight, alphaMult);
 
-            layout.labelText.drawable.draw(layout.x + STAT_PANEL_PADDING, layout.bodyTextY);
+        if (!collapsed) {
+            float rowStep = STAT_PANEL_FONT_SIZE * FONT_LINE_HEIGHT_FACTOR;
+            for (GroupContent group : layout.groups) {
+                group.headerText.draw(layout.x + layout.width / 2f, group.headerTextY);
+                group.labelText.drawable.draw(layout.x + STAT_PANEL_PADDING, group.bodyTextY);
 
-            float rowY = layout.bodyTextY;
-            for (LazyFont.DrawableString valueLine : layout.valueLines) {
-                valueLine.draw(layout.x + layout.width - STAT_PANEL_PADDING, rowY);
-                rowY -= rowStep;
+                float rowY = group.bodyTextY;
+                for (LazyFont.DrawableString valueLine : group.valueLines) {
+                    valueLine.draw(layout.x + layout.width - STAT_PANEL_PADDING, rowY);
+                    rowY -= rowStep;
+                }
             }
         }
+
+        drawCollapseButton(layout, alphaMult);
+    }
+
+    private void drawCollapseButton(PanelLayout layout, float alphaMult) {
+        String iconPath = collapsed ? COLLAPSE_ICON_PATH : EXPAND_ICON_PATH;
+        SpriteDraw.drawAtCenter(spriteCache, iconPath, collapseButtonCenterX(layout), collapseButtonCenterY(layout),
+                COLLAPSE_BUTTON_SIZE, COLLAPSE_BUTTON_SIZE, null, alphaMult);
+    }
+
+    private static float collapseButtonCenterX(PanelLayout layout) {
+        return layout.x + layout.width - COLLAPSE_BUTTON_MARGIN - COLLAPSE_BUTTON_SIZE / 2f;
+    }
+
+    private static float collapseButtonCenterY(PanelLayout layout) {
+        return layout.topY - COLLAPSE_BUTTON_MARGIN - COLLAPSE_BUTTON_SIZE / 2f;
+    }
+
+    static boolean isWithinButton(float buttonCenterX, float buttonCenterY, float buttonSize, float x, float y) {
+        float half = buttonSize / 2f;
+        return x >= buttonCenterX - half && x <= buttonCenterX + half
+                && y >= buttonCenterY - half && y <= buttonCenterY + half;
     }
 
     private LazyFont getFont() {
@@ -92,12 +150,14 @@ final class SkillTreeStatPanel {
         return statFont;
     }
 
-    private List<StatGroupLayout> layoutStatGroups(PositionAPI position, LazyFont font) {
+    private PanelLayout layoutPanel(PositionAPI position, LazyFont font) {
         List<StatGroup> groups = buildStatGroups(member);
+        if (groups.isEmpty()) return null;
+
         List<SkillTreePanelStyle.TooltipText> labelTexts = new ArrayList<>();
         List<List<LazyFont.DrawableString>> valueLinesList = new ArrayList<>();
         float headerHeight = STAT_PANEL_HEADER_FONT_SIZE * FONT_LINE_HEIGHT_FACTOR;
-        float boxWidth = 0f;
+        float width = 0f;
 
         for (StatGroup group : groups) {
             SkillTreePanelStyle.TooltipText labelText = getOrBuildLabelText(font, group);
@@ -107,31 +167,36 @@ final class SkillTreeStatPanel {
             valueLinesList.add(valueLines);
             float headerMinWidth = font.calcWidth(group.name, STAT_PANEL_HEADER_FONT_SIZE) + STAT_PANEL_PADDING * 2f;
             float bodyWidth = labelText.width + STAT_PANEL_COLUMN_GAP + valueWidth + STAT_PANEL_PADDING * 2f;
-            boxWidth = Math.max(boxWidth, Math.max(headerMinWidth, bodyWidth));
+            width = Math.max(width, Math.max(headerMinWidth, bodyWidth));
         }
 
-        List<StatGroupLayout> layouts = new ArrayList<>();
-        float currentTop = position.getY() + position.getHeight() - STAT_PANEL_MARGIN;
+        float contentHeight = 0f;
+        for (int i = 0; i < groups.size(); i++) {
+            contentHeight += headerHeight + STAT_PANEL_HEADER_GAP + labelTexts.get(i).height;
+            if (i < groups.size() - 1) contentHeight += STAT_PANEL_GROUP_GAP;
+        }
+        float fullHeight = STAT_PANEL_PADDING * 2f + contentHeight;
 
+        float topY = position.getY() + position.getHeight() - STAT_PANEL_MARGIN;
+        float x = position.getX() + position.getWidth() - width - STAT_PANEL_MARGIN;
+
+        List<GroupContent> contents = new ArrayList<>();
+        float cursorY = topY - STAT_PANEL_PADDING;
         for (int i = 0; i < groups.size(); i++) {
             StatGroup group = groups.get(i);
             SkillTreePanelStyle.TooltipText labelText = labelTexts.get(i);
             List<LazyFont.DrawableString> valueLines = valueLinesList.get(i);
-            float contentHeight = labelText.height;
-            float boxHeight = STAT_PANEL_PADDING * 2f + headerHeight + STAT_PANEL_HEADER_GAP + contentHeight;
-            float boxX = position.getX() + position.getWidth() - boxWidth - STAT_PANEL_MARGIN;
-            float boxY = currentTop - boxHeight;
-            float boxTop = boxY + boxHeight;
-            float headerTextY = boxTop - STAT_PANEL_PADDING;
+
+            float headerTextY = cursorY;
             float bodyTextY = headerTextY - headerHeight - STAT_PANEL_HEADER_GAP;
 
-            layouts.add(new StatGroupLayout(group.name, boxX, boxY, boxWidth, boxHeight,
-                    labelText, valueLines, headerTextY, bodyTextY));
+            contents.add(new GroupContent(getStatGroupHeaderText(font, group.name), labelText, valueLines, headerTextY, bodyTextY));
 
-            currentTop = boxY - STAT_PANEL_GROUP_GAP;
+            float groupHeight = headerHeight + STAT_PANEL_HEADER_GAP + labelText.height;
+            cursorY = headerTextY - groupHeight - STAT_PANEL_GROUP_GAP;
         }
 
-        return layouts;
+        return new PanelLayout(x, topY, width, fullHeight, contents);
     }
 
     private LazyFont.DrawableString getStatGroupHeaderText(LazyFont font, String name) {
@@ -279,25 +344,32 @@ final class SkillTreeStatPanel {
         }
     }
 
-    private static final class StatGroupLayout {
-        final String name;
+    private static final class PanelLayout {
         final float x;
-        final float y;
+        final float topY;
         final float width;
-        final float height;
+        final float fullHeight;
+        final List<GroupContent> groups;
+
+        PanelLayout(float x, float topY, float width, float fullHeight, List<GroupContent> groups) {
+            this.x = x;
+            this.topY = topY;
+            this.width = width;
+            this.fullHeight = fullHeight;
+            this.groups = groups;
+        }
+    }
+
+    private static final class GroupContent {
+        final LazyFont.DrawableString headerText;
         final SkillTreePanelStyle.TooltipText labelText;
         final List<LazyFont.DrawableString> valueLines;
         final float headerTextY;
         final float bodyTextY;
 
-        StatGroupLayout(String name, float x, float y, float width, float height,
-                        SkillTreePanelStyle.TooltipText labelText, List<LazyFont.DrawableString> valueLines,
-                        float headerTextY, float bodyTextY) {
-            this.name = name;
-            this.x = x;
-            this.y = y;
-            this.width = width;
-            this.height = height;
+        GroupContent(LazyFont.DrawableString headerText, SkillTreePanelStyle.TooltipText labelText,
+                     List<LazyFont.DrawableString> valueLines, float headerTextY, float bodyTextY) {
+            this.headerText = headerText;
             this.labelText = labelText;
             this.valueLines = valueLines;
             this.headerTextY = headerTextY;

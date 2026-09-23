@@ -106,6 +106,11 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             if (event.isConsumed()) continue;
 
             if (event.isLMBDownEvent() && position.containsEvent(event)) {
+                if (statPanel.isCollapseButtonHit(position, event.getX(), event.getY())) {
+                    statPanel.toggleCollapsed();
+                    event.consume();
+                    continue;
+                }
                 if (nodeRenderer.isDropdownOpen()) {
                     SkillType option = nodeRenderer.findDropdownOptionAt(centerX(), centerY(), zoom, event.getX(), event.getY());
                     if (option != null) {
