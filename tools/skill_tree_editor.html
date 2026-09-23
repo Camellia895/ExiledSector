@@ -1333,6 +1333,15 @@ function validate(){
       if (!nodeById(p)) issues.push('Node "' + n.id + '" connection "' + p + '" does not exist');
     });
   });
+  state.nodes.forEach(function(n){
+    if (tierOf(typeById(n.type)) !== 'WORMHOLE') return;
+    if (!n.pairedWith) { issues.push('Wormhole node "' + n.id + '" has no paired wormhole set'); return; }
+    if (n.pairedWith === n.id) { issues.push('Wormhole node "' + n.id + '" is paired with itself'); return; }
+    var paired = nodeById(n.pairedWith);
+    if (!paired) { issues.push('Wormhole node "' + n.id + '" is paired with "' + n.pairedWith + '", which does not exist'); return; }
+    if (tierOf(typeById(paired.type)) !== 'WORMHOLE') { issues.push('Wormhole node "' + n.id + '" is paired with "' + n.pairedWith + '", which is not a wormhole-tier node'); return; }
+    if (paired.pairedWith !== n.id) { issues.push('Wormhole node "' + n.id + '" is paired with "' + n.pairedWith + '", but that node is paired with "' + (paired.pairedWith || 'nothing') + '" instead'); }
+  });
   return issues;
 }
 
@@ -2267,6 +2276,11 @@ function refreshInspector(){
   var otherNodeOptions = state.nodes.filter(function(o){ return o.id !== n.id; }).map(function(o){
     return '<option value="' + o.id + '">' + o.id + '</option>';
   }).join('');
+  var otherWormholeOptions = state.nodes.filter(function(o){
+    return o.id !== n.id && tierOf(typeById(o.type)) === 'WORMHOLE';
+  }).map(function(o){
+    return '<option value="' + o.id + '"' + (o.id === n.pairedWith ? ' selected' : '') + '>' + o.id + '</option>';
+  }).join('');
 
   var statsHtml = '';
   if (t) {
@@ -2309,7 +2323,8 @@ function refreshInspector(){
     : '') +
     (tier === 'WORMHOLE' ?
       '<div class="field"><label>Wormhole colour</label><input type="color" value="' + (n.wormholeColor || '#ffffff') + '" data-field="wormholeColor"></div>' +
-      '<div class="hint">To pair this wormhole with another, add it as a normal connection below, then check its box to hide the line. It stays a real prerequisite edge (allocating/deallocating behaves exactly like any other connection) - only the line is hidden.</div>'
+      '<div class="field"><label>Paired wormhole node</label><select data-field="pairedWith"><option value="">None (invalid)</option>' + otherWormholeOptions + '</select></div>' +
+      '<div class="hint">Every wormhole node must be paired with exactly one other wormhole node. Allocating either one automatically allocates the other for free, and deallocating either one deallocates both. Setting this here also sets the pair back on the other node.</div>'
     : '') +
     '<hr class="sep">' +
     statsHtml +
@@ -2355,6 +2370,23 @@ function refreshInspector(){
         if (!isNaN(width) && width > 0) n.ringBeltWidth = width; else delete n.ringBeltWidth;
       } else if (field === 'wormholeColor') {
         n.wormholeColor = inp.value;
+      } else if (field === 'pairedWith') {
+        var oldPairedId = n.pairedWith;
+        var oldPaired = oldPairedId ? nodeById(oldPairedId) : null;
+        if (oldPaired && oldPaired.pairedWith === n.id) delete oldPaired.pairedWith;
+
+        var newPairedId = inp.value;
+        if (newPairedId) {
+          n.pairedWith = newPairedId;
+          var newPaired = nodeById(newPairedId);
+          if (newPaired) {
+            var priorPartner = newPaired.pairedWith ? nodeById(newPaired.pairedWith) : null;
+            if (priorPartner && priorPartner.id !== n.id && priorPartner.pairedWith === newPaired.id) delete priorPartner.pairedWith;
+            newPaired.pairedWith = n.id;
+          }
+        } else {
+          delete n.pairedWith;
+        }
       }
       saveLocal(); render(); refreshInspector();
     });
@@ -3550,6 +3582,7 @@ function buildTreeExportObject(){
     if (n.ringBeltColor) out.ringBeltColor = n.ringBeltColor;
     if (n.ringBeltWidth) out.ringBeltWidth = n.ringBeltWidth;
     if (n.wormholeColor) out.wormholeColor = n.wormholeColor;
+    if (n.pairedWith) out.pairedWith = n.pairedWith;
     return out;
   });
   var out = { nodes: nodesOut };

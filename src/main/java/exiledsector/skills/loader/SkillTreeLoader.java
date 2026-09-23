@@ -187,6 +187,7 @@ public final class SkillTreeLoader {
                 json.optString("ringBeltPath", null),
                 json.optString("ringBeltColor", null),
                 json.has("ringBeltWidth") ? (float) json.getDouble("ringBeltWidth") : null,
-                json.optString("wormholeColor", null));
+                json.optString("wormholeColor", null),
+                json.optString("pairedWith", null));
     }
 }

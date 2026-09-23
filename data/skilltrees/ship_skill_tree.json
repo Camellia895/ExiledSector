@@ -2477,7 +2477,8 @@
 				"small_flux_optional_2"
 			],
 			"x": -320,
-			"y": -3361
+			"y": -3361,
+			"pairedWith": "wormhole_2"
 		},
 		{
 			"id": "wormhole_2",
@@ -2487,7 +2488,8 @@
 				"small_flux_optional_19"
 			],
 			"x": -3285,
-			"y": 1050
+			"y": 1050,
+			"pairedWith": "wormhole_1"
 		},
 		{
 			"id": "wormhole_3",
@@ -2498,7 +2500,8 @@
 			],
 			"x": 330,
 			"y": -3373,
-			"wormholeColor": "#5f64ec"
+			"wormholeColor": "#5f64ec",
+			"pairedWith": "wormhole_4"
 		},
 		{
 			"id": "wormhole_4",
@@ -2509,7 +2512,8 @@
 			],
 			"x": 3358,
 			"y": 1022,
-			"wormholeColor": "#5f64ec"
+			"wormholeColor": "#5f64ec",
+			"pairedWith": "wormhole_3"
 		},
 		{
 			"id": "wormhole_5",
@@ -2520,7 +2524,8 @@
 			],
 			"x": 2850,
 			"y": 2063,
-			"wormholeColor": "#cd7f4c"
+			"wormholeColor": "#cd7f4c",
+			"pairedWith": "wormhole_6"
 		},
 		{
 			"id": "wormhole_6",
@@ -2531,7 +2536,8 @@
 			],
 			"x": -2829,
 			"y": 2046,
-			"wormholeColor": "#cd7f4c"
+			"wormholeColor": "#cd7f4c",
+			"pairedWith": "wormhole_5"
 		},
 		{
 			"id": "ballistic_damage_4",

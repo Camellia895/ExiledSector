@@ -45,7 +45,8 @@ class SkillTreeLoaderTest {
                 + "\"ringBeltPath\": \"graphics/planets/ring_band_ice.png\","
                 + "\"ringBeltColor\": \"#8c78ff\","
                 + "\"ringBeltWidth\": 1.4,"
-                + "\"wormholeColor\": \"#ff5ad1\""
+                + "\"wormholeColor\": \"#ff5ad1\","
+                + "\"pairedWith\": \"capacitors_2\""
                 + "} ] }");
 
         List<SkillNode> nodes = SkillTreeLoader.parseNodes(root, SKILL_TYPES);
@@ -62,6 +63,7 @@ class SkillTreeLoaderTest {
         assertEquals("#8c78ff", node.getRingBeltColor());
         assertEquals(1.4f, node.getRingBeltWidth());
         assertEquals("#ff5ad1", node.getWormholeColor());
+        assertEquals("capacitors_2", node.getPairedNodeId());
     }
 
     @Test
@@ -80,6 +82,7 @@ class SkillTreeLoaderTest {
         assertEquals(null, node.getRingBeltColor());
         assertEquals(null, node.getRingBeltWidth());
         assertEquals(null, node.getWormholeColor());
+        assertEquals(null, node.getPairedNodeId());
     }
 
     @Test

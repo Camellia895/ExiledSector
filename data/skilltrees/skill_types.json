@@ -2008,7 +2008,7 @@
 			"unlockConditions": [
 				{ "type": "memoryFlag", "key": "$playerCanUseGates" }
 			],
-			"description": "Allocating this wormhole and the corresponding wormhole allows you to allocate connected nodes as if the wormholes are connected."
+			"description": "Allocating this wormhole automatically allocates its paired wormhole as well, at no extra cost, connecting both branches of the tree. Deallocating either end deallocates both."
 		},
 		{
 			"id": "pd_damage_to_missiles",

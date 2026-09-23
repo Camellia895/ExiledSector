@@ -6,6 +6,7 @@ import exiledsector.ui.decoration.RingBelt;
 import exiledsector.ui.decoration.Star;
 import exiledsector.ui.decoration.StaticImage;
 import exiledsector.ui.node.ConnectorCurve;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -38,6 +39,9 @@ public class SkillTree {
         TYPES.putAll(SkillTypeLoader.loadSkillTypes());
         for (SkillNode node : SkillTreeLoader.loadNodes()) {
             register(node);
+        }
+        for (String issue : WormholePairValidator.findIssues(NODES.values())) {
+            Logger.getLogger(SkillTree.class).error(issue);
         }
         CURVES.putAll(SkillTreeLoader.loadConnectorCurves());
         HIDDEN_CONNECTOR_KEYS.addAll(SkillTreeLoader.loadHiddenConnectors());

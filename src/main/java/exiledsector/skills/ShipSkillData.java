@@ -123,6 +123,12 @@ public class ShipSkillData {
         } else {
             spentOp += opCost;
         }
+
+        String pairedId = node.getPairedNodeId();
+        if (pairedId != null && !isAllocated(pairedId)) {
+            allocatedNodeIds.add(pairedId);
+            freeNodeIds().add(pairedId);
+        }
     }
 
     public void deallocate(SkillNode node, int opCost) {
@@ -135,10 +141,27 @@ public class ShipSkillData {
         } else {
             spentOp -= opCost;
         }
+
+        String pairedId = node.getPairedNodeId();
+        if (pairedId != null && allocatedNodeIds.remove(pairedId)) {
+            if (optionalSelections != null) {
+                optionalSelections.remove(pairedId);
+            }
+            if (freeNodeIds().remove(pairedId)) {
+                bankedFreeAllocations++;
+            } else {
+                spentOp -= opCost;
+            }
+        }
     }
 
     public boolean canAllocate(SkillNode node, String satisfiedRootId, int totalOp, int opCost, int maxAllocatedNodes) {
-        if (allocatedNodeIds.size() >= maxAllocatedNodes) {
+        int slotsNeeded = 1;
+        String pairedId = node.getPairedNodeId();
+        if (pairedId != null && !isAllocated(pairedId)) {
+            slotsNeeded = 2;
+        }
+        if (allocatedNodeIds.size() + slotsNeeded > maxAllocatedNodes) {
             return false;
         }
         if (opCost > 0 && bankedFreeAllocations <= 0 && spentOp + opCost > totalOp) {
@@ -165,11 +188,16 @@ public class ShipSkillData {
             }
         }
 
-        Set<String> reachableBefore = reachableAllocatedNodeIds(byId, childrenOf, satisfiedRootId, null);
-        Set<String> reachableAfter = reachableAllocatedNodeIds(byId, childrenOf, satisfiedRootId, node.getId());
+        Set<String> excluded = new HashSet<>();
+        excluded.add(node.getId());
+        String pairedId = node.getPairedNodeId();
+        if (pairedId != null) excluded.add(pairedId);
+
+        Set<String> reachableBefore = reachableAllocatedNodeIds(byId, childrenOf, satisfiedRootId, Set.of());
+        Set<String> reachableAfter = reachableAllocatedNodeIds(byId, childrenOf, satisfiedRootId, excluded);
 
         for (String allocatedId : reachableBefore) {
-            if (allocatedId.equals(node.getId())) continue;
+            if (excluded.contains(allocatedId)) continue;
             if (!reachableAfter.contains(allocatedId)) {
                 return false;
             }
@@ -178,14 +206,14 @@ public class ShipSkillData {
     }
 
     private Set<String> reachableAllocatedNodeIds(Map<String, SkillNode> byId, Map<String, List<String>> childrenOf,
-                                                    String satisfiedRootId, String excludedNodeId) {
+                                                    String satisfiedRootId, Set<String> excludedNodeIds) {
         Set<String> reachable = new HashSet<>();
         Deque<String> queue = new ArrayDeque<>();
-        if (satisfiedRootId != null && !satisfiedRootId.equals(excludedNodeId) && reachable.add(satisfiedRootId)) {
+        if (satisfiedRootId != null && !excludedNodeIds.contains(satisfiedRootId) && reachable.add(satisfiedRootId)) {
             queue.add(satisfiedRootId);
         }
         for (String allocatedId : allocatedNodeIds) {
-            if (allocatedId.equals(excludedNodeId)) continue;
+            if (excludedNodeIds.contains(allocatedId)) continue;
             SkillNode allocatedNode = byId.get(allocatedId);
             if (allocatedNode == null) continue;
             if (allocatedNode.getConnectedNodeIds().isEmpty() && reachable.add(allocatedId)) {
@@ -196,7 +224,7 @@ public class ShipSkillData {
         while (!queue.isEmpty()) {
             String currentId = queue.poll();
             for (String childId : childrenOf.getOrDefault(currentId, List.of())) {
-                if (childId.equals(excludedNodeId)) continue;
+                if (excludedNodeIds.contains(childId)) continue;
                 if (!isAllocated(childId)) continue;
                 if (reachable.add(childId)) {
                     queue.add(childId);

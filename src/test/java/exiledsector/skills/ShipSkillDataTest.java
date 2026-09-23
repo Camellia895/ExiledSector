@@ -37,6 +37,11 @@ class ShipSkillDataTest {
         return new SkillNode(id, type, prerequisiteIds, 0f, 0f);
     }
 
+    private static SkillNode wormholeNode(String id, List<String> prerequisiteIds, String pairedNodeId) {
+        SkillType type = new SkillType(id + "_type", id, "a.png", List.of(), SkillTier.WORMHOLE, null, null, null);
+        return new SkillNode(id, type, prerequisiteIds, 0f, 0f, null, null, null, null, pairedNodeId);
+    }
+
     @Test
     void startsWithNoProgress() {
         ShipSkillData data = new ShipSkillData();
@@ -725,5 +730,111 @@ class ShipSkillDataTest {
         data.allocate(a, 1);
 
         assertTrue(data.canAllocate(node("b", List.of()), null, AMPLE_BUDGET, 1, 2));
+    }
+
+    @Test
+    void allocatingAWormholeAlsoAllocatesItsPairForFree() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode a = wormholeNode("wormhole_a", List.of(), "wormhole_b");
+
+        data.allocate(a, 3);
+
+        assertTrue(data.isAllocated("wormhole_a"));
+        assertTrue(data.isAllocated("wormhole_b"));
+        assertTrue(data.isFreeNode("wormhole_b"));
+        assertFalse(data.isFreeNode("wormhole_a"));
+        assertEquals(3, data.getSpentOp());
+    }
+
+    @Test
+    void allocatingAWormholeDoesNotDoubleAllocateAnAlreadyAllocatedPair() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode a = wormholeNode("wormhole_a", List.of(), "wormhole_b");
+        SkillNode b = wormholeNode("wormhole_b", List.of(), "wormhole_a");
+        data.allocate(b, 3);
+
+        data.allocate(a, 3);
+
+        assertEquals(2, data.getAllocatedNodeIds().size());
+        assertEquals(6, data.getSpentOp());
+    }
+
+    @Test
+    void deallocatingAWormholeAlsoDeallocatesItsPair() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode a = wormholeNode("wormhole_a", List.of(), "wormhole_b");
+        data.allocate(a, 3);
+
+        data.deallocate(a, 3);
+
+        assertFalse(data.isAllocated("wormhole_a"));
+        assertFalse(data.isAllocated("wormhole_b"));
+        assertEquals(0, data.getSpentOp());
+    }
+
+    @Test
+    void deallocatingEitherEndOfAWormholePairDeallocatesBoth() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode a = wormholeNode("wormhole_a", List.of(), "wormhole_b");
+        SkillNode b = wormholeNode("wormhole_b", List.of(), "wormhole_a");
+        data.allocate(a, 3);
+
+        data.deallocate(b, 3);
+
+        assertFalse(data.isAllocated("wormhole_a"));
+        assertFalse(data.isAllocated("wormhole_b"));
+    }
+
+    @Test
+    void nonWormholeAllocationIsUnaffectedByPairing() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode plain = node("armor_1", List.of());
+
+        data.allocate(plain, 3);
+
+        assertEquals(1, data.getAllocatedNodeIds().size());
+        assertEquals(3, data.getSpentOp());
+    }
+
+    @Test
+    void canAllocateRequiresRoomForBothEndsOfAnUnallocatedPair() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode a = wormholeNode("wormhole_a", List.of(), "wormhole_b");
+
+        assertFalse(data.canAllocate(a, null, AMPLE_BUDGET, 1, 1));
+        assertTrue(data.canAllocate(a, null, AMPLE_BUDGET, 1, 2));
+    }
+
+    @Test
+    void canAllocateOnlyNeedsOneSlotWhenThePairIsAlreadyIndependentlyAllocated() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode a = wormholeNode("wormhole_a", List.of(), "wormhole_b");
+        data.getAllocatedNodeIds().add("wormhole_b");
+
+        assertFalse(data.canAllocate(a, null, AMPLE_BUDGET, 1, 1));
+        assertTrue(data.canAllocate(a, null, AMPLE_BUDGET, 1, 2));
+    }
+
+    @Test
+    void canDeallocateIsFalseWhenAChildOnlyReachesTheRootThroughTheOtherEndOfTheWormholePair() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode a = wormholeNode("wormhole_a", List.of(), "wormhole_b");
+        SkillNode b = wormholeNode("wormhole_b", List.of(), "wormhole_a");
+        SkillNode child = node("child", List.of("wormhole_b"));
+        data.allocate(a, 1);
+        data.allocate(child, 1);
+
+        assertFalse(data.canDeallocate(a, List.of(a, b, child), null));
+        assertFalse(data.canDeallocate(b, List.of(a, b, child), null));
+    }
+
+    @Test
+    void canDeallocateIsTrueWhenNothingDependsOnEitherEndOfTheWormholePair() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode a = wormholeNode("wormhole_a", List.of(), "wormhole_b");
+        SkillNode b = wormholeNode("wormhole_b", List.of(), "wormhole_a");
+        data.allocate(a, 1);
+
+        assertTrue(data.canDeallocate(a, List.of(a, b), null));
     }
 }
