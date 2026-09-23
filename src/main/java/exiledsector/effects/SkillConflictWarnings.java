@@ -13,8 +13,11 @@ final class SkillConflictWarnings {
     }
 
     static void record(ShipVariantAPI variant, String removedHullModId, String causeSkillDisplayName) {
-        REMOVALS.clear();
         REMOVALS.put(variant, new Removal(removedHullModId, causeSkillDisplayName));
+    }
+
+    static void clear(ShipVariantAPI variant) {
+        REMOVALS.remove(variant);
     }
 
     static Removal get(ShipVariantAPI variant) {
