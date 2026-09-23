@@ -3,7 +3,7 @@
 		{
 			"id": "flux_capacity",
 			"name": "Flux Capacity",
-			"icon": "graphics/icons/skill_icons/used/circular/flux_capacity.png",
+			"icon": "graphics/icons/flux_capacity.png",
 			"effects": [
 				{
 					"effect": "FLUX_CAPACITY_PERCENT",
@@ -17,7 +17,7 @@
 		{
 			"id": "flux_dissipation",
 			"name": "Flux Dissipation",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/flux_dissipation.png",
+			"icon": "graphics/icons/flux_dissipation.png",
 			"effects": [
 				{
 					"effect": "FLUX_DISSIPATION_PERCENT",
@@ -31,7 +31,7 @@
 		{
 			"id": "hybrid_flux",
 			"name": "Flux Capacity and Dissipation",
-			"icon": "graphics/icons/skill_icons/used/circular/small_passives/hybrid_flux.png",
+			"icon": "graphics/icons/hybrid_flux.png",
 			"tags": [
 				"flux"
 			]
@@ -39,7 +39,7 @@
 		{
 			"id": "hull",
 			"name": "Hull",
-			"icon": "graphics/icons/skill_icons/used/hull.png",
+			"icon": "graphics/icons/hull.png",
 			"effects": [
 				{
 					"effect": "HULL_PERCENT",
@@ -53,7 +53,7 @@
 		{
 			"id": "armor",
 			"name": "Armor",
-			"icon": "graphics/icons/skill_icons/used/circular/small_passives/armor.png",
+			"icon": "graphics/icons/armor.png",
 			"hullSizeEffects": [
 				{
 					"effect": "ARMOR_FLAT",
@@ -70,7 +70,7 @@
 		{
 			"id": "ballistic_damage",
 			"name": "Ballistic Weapon Damage",
-			"icon": "graphics/icons/skill_icons/used/circular/small_passives/ballistic_damage.png",
+			"icon": "graphics/icons/ballistic_damage.png",
 			"effects": [
 				{
 					"effect": "BALLISTIC_DAMAGE_PERCENT",
@@ -84,7 +84,7 @@
 		{
 			"id": "missile_damage",
 			"name": "Missile Weapon Damage",
-			"icon": "graphics/icons/skill_icons/used/circular/small_passives/missile_damage.png",
+			"icon": "graphics/icons/missile_damage.png",
 			"effects": [
 				{
 					"effect": "MISSILE_DAMAGE_PERCENT",
@@ -98,12 +98,12 @@
 		{
 			"id": "non_beam_energy_damage",
 			"name": "Non-Beam Energy Weapon Damage",
-			"icon": "graphics/icons/skill_icons/used/circular/small_passives/non_beam_energy_damage.png"
+			"icon": "graphics/icons/non_beam_energy_damage.png"
 		},
 		{
 			"id": "beam_damage",
 			"name": "Beam Weapon Damage",
-			"icon": "graphics/icons/skill_icons/used/circular/beam_damage.png",
+			"icon": "graphics/icons/beam_damage.png",
 			"effects": [
 				{
 					"effect": "BEAM_DAMAGE_PERCENT",
@@ -114,17 +114,17 @@
 		{
 			"id": "energy_damage",
 			"name": "Energy Weapon Damage",
-			"icon": "graphics/icons/skill_icons/used/circular/small_passives/energy_damage.png"
+			"icon": "graphics/icons/energy_damage.png"
 		},
 		{
 			"id": "weapon_damage",
 			"name": "All Weapon Damage",
-			"icon": "graphics/icons/skill_icons/used/circular/small_passives/weapon_damage.png"
+			"icon": "graphics/icons/weapon_damage.png"
 		},
 		{
 			"id": "repair_time",
 			"name": "Repair Time",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/repair_time.png",
+			"icon": "graphics/icons/repair_time.png",
 			"effects": [
 				{
 					"effect": "REPAIR_TIME_MULT",
@@ -138,7 +138,7 @@
 		{
 			"id": "weapon_turn_rate",
 			"name": "Weapon Turn Rate",
-			"icon": "graphics/icons/skill_icons/used/weapon_turn_rate.png",
+			"icon": "graphics/icons/weapon_turn_rate.png",
 			"effects": [
 				{
 					"effect": "WEAPON_TURN_RATE_PERCENT",
@@ -153,7 +153,7 @@
 		{
 			"id": "hull_multi",
 			"name": "Hull",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/hull_multi.png",
+			"icon": "graphics/icons/hull_multi.png",
 			"effects": [
 				{
 					"effect": "HULL_MULT",
@@ -167,7 +167,7 @@
 		{
 			"id": "packed_capacitors",
 			"name": "Packed Capacitors",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/packed_capacitors.png",
+			"icon": "graphics/icons/packed_capacitors.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -191,7 +191,7 @@
 		{
 			"id": "safety_overrides",
 			"name": "Safety Overrides",
-			"icon": "graphics/icons/skill_icons/used/circular/keystones/safety_overrides.png",
+			"icon": "graphics/icons/safety_overrides.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -245,7 +245,7 @@
 		{
 			"id": "advancedshieldemitter",
 			"name": "Accelerated Shields",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/advancedshieldemitter.png",
+			"icon": "graphics/icons/advancedshieldemitter.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -274,7 +274,7 @@
 		{
 			"id": "adaptive_coils",
 			"name": "Adaptive Phase Coils",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/adaptive_coils.png",
+			"icon": "graphics/icons/adaptive_coils.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -301,7 +301,7 @@
 		{
 			"id": "advancedoptics",
 			"name": "Advanced Optics",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/advancedoptics.png",
+			"icon": "graphics/icons/advancedoptics.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -331,7 +331,7 @@
 		{
 			"id": "turretgyros",
 			"name": "Advanced Turret Gyros",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/turretgyros.png",
+			"icon": "graphics/icons/turretgyros.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -357,7 +357,7 @@
 		{
 			"id": "armoredweapons",
 			"name": "Armored Weapon Mounts",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/armoredweapons.png",
+			"icon": "graphics/icons/armoredweapons.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -387,7 +387,7 @@
 		{
 			"id": "autorepair",
 			"name": "Automated Repair Unit",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/autorepair.png",
+			"icon": "graphics/icons/autorepair.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -409,7 +409,7 @@
 		{
 			"id": "auxiliarythrusters",
 			"name": "Auxiliary Thrusters",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/auxiliarythrusters.png",
+			"icon": "graphics/icons/auxiliarythrusters.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -436,7 +436,7 @@
 		{
 			"id": "ballistic_rangefinder",
 			"name": "Ballistic Rangefinder",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/ballistic_rangefinder.png",
+			"icon": "graphics/icons/ballistic_rangefinder.png",
 			"tier": "KEYSTONE",
 			"vanillaHullMod": "ballistic_rangefinder",
 			"unlockConditions": [
@@ -456,7 +456,7 @@
 		{
 			"id": "blast_doors",
 			"name": "Blast Doors",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/blast_doors.png",
+			"icon": "graphics/icons/blast_doors.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -478,7 +478,7 @@
 		{
 			"id": "converted_hangar",
 			"name": "Converted Hangar",
-			"icon": "graphics/icons/skill_icons/used/circular/keystones/converted_hangar.png",
+			"icon": "graphics/icons/converted_hangar.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -520,7 +520,7 @@
 		{
 			"id": "converted_fighterbay",
 			"name": "Converted Fighter Bay",
-			"icon": "graphics/icons/skill_icons/used/circular/keystones/converted_fighterbay.png",
+			"icon": "graphics/icons/converted_fighterbay.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -553,7 +553,7 @@
 		{
 			"id": "dedicated_targeting_core",
 			"name": "Dedicated Targeting Core",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/dedicated_targeting_core.png",
+			"icon": "graphics/icons/dedicated_targeting_core.png",
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -581,7 +581,7 @@
 		{
 			"id": "defensive_targeting_array",
 			"name": "Defensive Targeting Array",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/defensive_targeting_array.png",
+			"icon": "graphics/icons/defensive_targeting_array.png",
 			"tier": "KEYSTONE",
 			"vanillaHullMod": "defensive_targeting_array",
 			"unlockConditions": [
@@ -600,7 +600,7 @@
 		{
 			"id": "eccm",
 			"name": "ECCM Package",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/eccm.png",
+			"icon": "graphics/icons/eccm.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -653,7 +653,7 @@
 		{
 			"id": "ecm",
 			"name": "ECM Package",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/ecm.png",
+			"icon": "graphics/icons/ecm.png",
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -682,7 +682,7 @@
 		{
 			"id": "escort_package",
 			"name": "Escort Package",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/escort_package.png",
+			"icon": "graphics/icons/escort_package.png",
 			"tier": "KEYSTONE",
 			"vanillaHullMod": "escort_package",
 			"unlockConditions": [
@@ -698,7 +698,7 @@
 		{
 			"id": "expanded_deck_crew",
 			"name": "Expanded Deck Crew",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/expanded_deck_crew.png",
+			"icon": "graphics/icons/expanded_deck_crew.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -731,7 +731,7 @@
 		{
 			"id": "magazines",
 			"name": "Expanded Ballistic Magazines",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/magazines.png",
+			"icon": "graphics/icons/magazines.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -753,7 +753,7 @@
 		{
 			"id": "missleracks",
 			"name": "Expanded Missile Racks",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/missleracks.png",
+			"icon": "graphics/icons/missleracks.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -778,7 +778,7 @@
 		{
 			"id": "extendedshieldemitter",
 			"name": "Extended Shields",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/extendedshieldemitter.png",
+			"icon": "graphics/icons/extendedshieldemitter.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -803,7 +803,7 @@
 		{
 			"id": "shield_shunt",
 			"name": "Shield Shunt",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/shield_shunt.png",
+			"icon": "graphics/icons/shield_shunt.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -835,7 +835,7 @@
 		{
 			"id": "frontshield",
 			"name": "Makeshift Shield Generator",
-			"icon": "graphics/icons/skill_icons/used/circular/keystones/frontshield.png",
+			"icon": "graphics/icons/frontshield.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -865,7 +865,7 @@
 		{
 			"id": "missile_autoloader",
 			"name": "Missile Autoloader",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/missile_autoloader.png",
+			"icon": "graphics/icons/missile_autoloader.png",
 			"tier": "KEYSTONE",
 			"vanillaHullMod": "missile_autoloader",
 			"unlockConditions": [
@@ -884,7 +884,7 @@
 		{
 			"id": "neural_interface",
 			"name": "Neural Interface",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/neural_interface.png",
+			"icon": "graphics/icons/neural_interface.png",
 			"tier": "KEYSTONE",
 			"vanillaHullMod": "neural_interface",
 			"unlockConditions": [
@@ -904,7 +904,7 @@
 		{
 			"id": "hardenedshieldemitter",
 			"name": "Hardened Shields",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/hardenedshieldemitter.png",
+			"icon": "graphics/icons/hardenedshieldemitter.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -933,7 +933,7 @@
 		{
 			"id": "hardened_subsystems",
 			"name": "Hardened Subsystems",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/hardened_subsystems.png",
+			"icon": "graphics/icons/hardened_subsystems.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -952,7 +952,7 @@
 		{
 			"id": "heavyarmor",
 			"name": "Heavy Armor",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/heavyarmor.png",
+			"icon": "graphics/icons/heavyarmor.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -993,7 +993,7 @@
 		{
 			"id": "high_scatter_amp",
 			"name": "High Scatter Amplifier",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/high_scatter_amp.png",
+			"icon": "graphics/icons/high_scatter_amp.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1024,7 +1024,7 @@
 		{
 			"id": "pointdefenseai",
 			"name": "Integrated Point Defense AI",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/pointdefenseai.png",
+			"icon": "graphics/icons/pointdefenseai.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1051,7 +1051,7 @@
 		{
 			"id": "targetingunit",
 			"name": "Integrated Targeting Unit",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/targetingunit.png",
+			"icon": "graphics/icons/targetingunit.png",
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -1086,7 +1086,7 @@
 		{
 			"id": "nav_relay",
 			"name": "Nav Relay",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/nav_relay.png",
+			"icon": "graphics/icons/nav_relay.png",
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -1114,7 +1114,7 @@
 		{
 			"id": "frontemitter",
 			"name": "Shield Conversion - Front",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/frontemitter.png",
+			"icon": "graphics/icons/frontemitter.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1145,7 +1145,7 @@
 		{
 			"id": "adaptiveshields",
 			"name": "Shield Conversion - Omni",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/adaptiveshields.png",
+			"icon": "graphics/icons/adaptiveshields.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -1177,7 +1177,7 @@
 		{
 			"id": "operations_center",
 			"name": "Operations Center",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/operations_center.png",
+			"icon": "graphics/icons/operations_center.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -1202,7 +1202,7 @@
 		{
 			"id": "phase_anchor",
 			"name": "Phase Anchor",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/phase_anchor.png",
+			"icon": "graphics/icons/phase_anchor.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -1236,7 +1236,7 @@
 		{
 			"id": "recovery_shuttles",
 			"name": "Recovery Shuttles",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/recovery_shuttles.png",
+			"icon": "graphics/icons/recovery_shuttles.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1261,7 +1261,7 @@
 		{
 			"id": "reinforcedhull",
 			"name": "Reinforced Bulkheads",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/reinforcedhull.png",
+			"icon": "graphics/icons/reinforcedhull.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1287,7 +1287,7 @@
 		{
 			"id": "fluxbreakers",
 			"name": "Resistant Flux Conduits",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/fluxbreakers.png",
+			"icon": "graphics/icons/fluxbreakers.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1317,7 +1317,7 @@
 		{
 			"id": "stabilizedshieldemitter",
 			"name": "Stabilized Shields",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/stabilizedshieldemitter.png",
+			"icon": "graphics/icons/stabilizedshieldemitter.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1342,7 +1342,7 @@
 		{
 			"id": "unstable_injector",
 			"name": "Unstable Injector",
-			"icon": "graphics/icons/skill_icons/used/circular/keystones/unstable_injector.png",
+			"icon": "graphics/icons/unstable_injector.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -1377,7 +1377,7 @@
 		{
 			"id": "additional_berthing",
 			"name": "Additional Berthing",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/additional_berthing.png",
+			"icon": "graphics/icons/additional_berthing.png",
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -1398,7 +1398,7 @@
 		{
 			"id": "augmentedengines",
 			"name": "Augmented Drive Field",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/augmentedengines.png",
+			"icon": "graphics/icons/augmentedengines.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1423,7 +1423,7 @@
 		{
 			"id": "auxiliary_fuel_tanks",
 			"name": "Auxiliary Fuel Tanks",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/auxiliary_fuel_tanks.png",
+			"icon": "graphics/icons/auxiliary_fuel_tanks.png",
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -1444,7 +1444,7 @@
 		{
 			"id": "efficiency_overhaul",
 			"name": "Efficiency Overhaul",
-			"icon": "graphics/icons/skill_icons/used/circular/keystones/efficiency_overhaul.png",
+			"icon": "graphics/icons/efficiency_overhaul.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -1485,7 +1485,7 @@
 		{
 			"id": "expanded_cargo_holds",
 			"name": "Expanded Cargo Holds",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/expanded_cargo_holds.png",
+			"icon": "graphics/icons/expanded_cargo_holds.png",
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -1506,7 +1506,7 @@
 		{
 			"id": "hiressensors",
 			"name": "High Resolution Sensors",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/hiressensors.png",
+			"icon": "graphics/icons/hiressensors.png",
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -1534,7 +1534,7 @@
 		{
 			"id": "insulatedengine",
 			"name": "Insulated Engine Assembly",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/insulatedengine.png",
+			"icon": "graphics/icons/insulatedengine.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1567,7 +1567,7 @@
 		{
 			"id": "militarized_subsystems",
 			"name": "Militarized Subsystems",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/militarized_subsystems.png",
+			"icon": "graphics/icons/militarized_subsystems.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1592,7 +1592,7 @@
 		{
 			"id": "solar_shielding",
 			"name": "Solar Shielding",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/solar_shielding.png",
+			"icon": "graphics/icons/solar_shielding.png",
 			"tier": "NOTABLE",
 			"vanillaHullMod": "solar_shielding",
 			"unlockConditions": [
@@ -1611,7 +1611,7 @@
 		{
 			"id": "surveying_equipment",
 			"name": "Surveying Equipment",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/surveying_equipment.png",
+			"icon": "graphics/icons/surveying_equipment.png",
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -1646,7 +1646,7 @@
 		{
 			"id": "root_low_tech",
 			"name": "Low Tech",
-			"icon": "graphics/icons/skill_icons/used/circular/roots/root_low_tech.png",
+			"icon": "graphics/icons/root_low_tech.png",
 			"tier": "ROOT",
 			"effects": [
 				{
@@ -1667,7 +1667,7 @@
 		{
 			"id": "root_midline",
 			"name": "Midline",
-			"icon": "graphics/icons/skill_icons/used/circular/roots/root_midline.png",
+			"icon": "graphics/icons/root_midline.png",
 			"tier": "ROOT",
 			"effects": [
 				{
@@ -1683,7 +1683,7 @@
 		{
 			"id": "root_high_tech",
 			"name": "High Tech",
-			"icon": "graphics/icons/skill_icons/used/circular/roots/root_high_tech.png",
+			"icon": "graphics/icons/root_high_tech.png",
 			"tier": "ROOT",
 			"effects": [
 				{
@@ -1704,7 +1704,7 @@
 		{
 			"id": "increased_fuel",
 			"name": "Increased Fuel Capacity",
-			"icon": "graphics/icons/skill_icons/used/circular/small_passives/increased_fuel.png",
+			"icon": "graphics/icons/increased_fuel.png",
 			"effects": [
 				{
 					"effect": "FUEL_CAPACITY_PERCENT",
@@ -1718,7 +1718,7 @@
 		{
 			"id": "increased_cargo",
 			"name": "Increased Cargo Capacity",
-			"icon": "graphics/icons/skill_icons/used/circular/small_passives/increased_cargo.png",
+			"icon": "graphics/icons/increased_cargo.png",
 			"effects": [
 				{
 					"effect": "CARGO_CAPACITY_PERCENT",
@@ -1732,7 +1732,7 @@
 		{
 			"id": "increased_crew",
 			"name": "Increased Crew Capacity",
-			"icon": "graphics/icons/skill_icons/used/circular/small_passives/increased_crew.png",
+			"icon": "graphics/icons/increased_crew.png",
 			"effects": [
 				{
 					"effect": "CREW_CAPACITY_PERCENT",
@@ -1746,7 +1746,7 @@
 		{
 			"id": "fighter_weapon_damage",
 			"name": "Fighter Weapon Damage",
-			"icon": "graphics/icons/skill_icons/used/circular/small_passives/fighter_weapon_damage.png",
+			"icon": "graphics/icons/fighter_weapon_damage.png",
 			"effects": [
 				{
 					"effect": "FIGHTER_WEAPON_DAMAGE_PERCENT",
@@ -1761,7 +1761,7 @@
 		{
 			"id": "fighter_speed",
 			"name": "Fighter Speed",
-			"icon": "graphics/icons/skill_icons/used/circular/small_passives/fighter_speed.png",
+			"icon": "graphics/icons/fighter_speed.png",
 			"effects": [
 				{
 					"effect": "FIGHTER_TOP_SPEED_PERCENT",
@@ -1776,7 +1776,7 @@
 		{
 			"id": "small_logistics_optional",
 			"name": "Fuel, Crew or Cargo",
-			"icon": "graphics/icons/skill_icons/used/circular/small_passives/small_logistics_optional.png",
+			"icon": "graphics/icons/small_logistics_optional.png",
 			"optionalOptions": [
 				"increased_fuel",
 				"increased_cargo",
@@ -1789,7 +1789,7 @@
 		{
 			"id": "small_flux_optional",
 			"name": "Caps, Vents or Hull",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/small_flux_optional.png",
+			"icon": "graphics/icons/small_flux_optional.png",
 			"optionalOptions": [
 				"flux_capacity",
 				"flux_dissipation",
@@ -1803,7 +1803,7 @@
 		{
 			"id": "efficient_vents",
 			"name": "Efficient Vents",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/efficient_vents.png",
+			"icon": "graphics/icons/efficient_vents.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1827,7 +1827,7 @@
 		{
 			"id": "survey_mach_cost",
 			"name": "Survey Heavy Machinery Cost Reduction",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/survey_mach_cost.png",
+			"icon": "graphics/icons/survey_mach_cost.png",
 			"hullSizeEffects": [
 				{
 					"effect": "SURVEY_COST_REDUCTION_HEAVY_MACHINERY",
@@ -1844,7 +1844,7 @@
 		{
 			"id": "survey_supplies_cost_reduction",
 			"name": "Survey supplies cost reduction",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/survey_supplies_cost_reduction.png",
+			"icon": "graphics/icons/survey_supplies_cost_reduction.png",
 			"hullSizeEffects": [
 				{
 					"effect": "SURVEY_COST_REDUCTION_SUPPLIES",
@@ -1861,7 +1861,7 @@
 		{
 			"id": "survey_generic_cost_reduction",
 			"name": "Survey cost reduction",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/survey_generic_cost_reduction.png",
+			"icon": "graphics/icons/survey_generic_cost_reduction.png",
 			"hullSizeEffects": [
 				{
 					"effect": "SURVEY_COST_REDUCTION_HEAVY_MACHINERY",
@@ -1885,7 +1885,7 @@
 		{
 			"id": "increased_sensor_range",
 			"name": "Increased Sensor Range",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/increased_sensor_range.png",
+			"icon": "graphics/icons/increased_sensor_range.png",
 			"hullSizeEffects": [
 				{
 					"effect": "SENSOR_RANGE",
@@ -1902,7 +1902,7 @@
 		{
 			"id": "crew_capacity_flat",
 			"name": "Crew capacity",
-			"icon": "graphics/icons/skill_icons/used/circular/small_passives/crew_capacity_flat.png",
+			"icon": "graphics/icons/crew_capacity_flat.png",
 			"hullSizeEffects": [
 				{
 					"effect": "CREW_CAPACITY_FLAT",
@@ -1919,7 +1919,7 @@
 		{
 			"id": "engine_durability",
 			"name": "Engine Durability and Sensor Profile",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/engine_durability.png",
+			"icon": "graphics/icons/engine_durability.png",
 			"effects": [
 				{
 					"effect": "ENGINE_DURABILITY_PERCENT",
@@ -1937,7 +1937,7 @@
 		{
 			"id": "cargo_capacity_flat",
 			"name": "Cargo Capacity",
-			"icon": "graphics/icons/skill_icons/used/circular/cargo_capacity_flat.png",
+			"icon": "graphics/icons/cargo_capacity_flat.png",
 			"hullSizeEffects": [
 				{
 					"effect": "CARGO_CAPACITY_FLAT",
@@ -1954,7 +1954,7 @@
 		{
 			"id": "fuel_flat",
 			"name": "Fuel",
-			"icon": "graphics/icons/skill_icons/used/circular/small_passives/fuel_flat.png",
+			"icon": "graphics/icons/fuel_flat.png",
 			"hullSizeEffects": [
 				{
 					"effect": "FUEL_CAPACITY_FLAT",
@@ -1971,7 +1971,7 @@
 		{
 			"id": "shield_arc",
 			"name": "Shield Arc",
-			"icon": "graphics/icons/skill_icons/used/circular/shield_arc.png",
+			"icon": "graphics/icons/shield_arc.png",
 			"effects": [
 				{
 					"effect": "SHIELD_ARC_FLAT",
@@ -1985,7 +1985,7 @@
 		{
 			"id": "shield_raise_rate",
 			"name": "Shield Raise Rate",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/shield_raise_rate.png",
+			"icon": "graphics/icons/shield_raise_rate.png",
 			"effects": [
 				{
 					"effect": "SHIELD_RAISE_RATE_PERCENT",
@@ -1999,7 +1999,7 @@
 		{
 			"id": "shield_turn_rate",
 			"name": "Shield Turn Rate",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/shield_turn_rate.png",
+			"icon": "graphics/icons/shield_turn_rate.png",
 			"effects": [
 				{
 					"effect": "SHIELD_TURN_RATE_PERCENT",
@@ -2013,7 +2013,7 @@
 		{
 			"id": "shield_turn_raise_rate_optional",
 			"name": "Shield Raise rate or Shield Turn rate",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/shield_turn_raise_rate_optional.png",
+			"icon": "graphics/icons/shield_turn_raise_rate_optional.png",
 			"optionalOptions": [
 				"shield_raise_rate",
 				"shield_turn_rate"
@@ -2025,7 +2025,7 @@
 		{
 			"id": "ballistic_and_energy_weapon_range",
 			"name": "Ballistic and Energy Weapon Range",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/ballistic_and_energy_weapon_range.png",
+			"icon": "graphics/icons/ballistic_and_energy_weapon_range.png",
 			"hullSizeEffects": [
 				{
 					"effect": "BALLISTIC_WEAPON_RANGE_PERCENT",
@@ -2049,7 +2049,7 @@
 		{
 			"id": "shield_arc_mult",
 			"name": "Shield Arc Multiplier",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/shield_arc_mult.png",
+			"icon": "graphics/icons/shield_arc_mult.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2064,7 +2064,7 @@
 		{
 			"id": "shield_damage_taken_multi",
 			"name": "Shield flux/damage reduction",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/shield_damage_taken_multi.png",
+			"icon": "graphics/icons/shield_damage_taken_multi.png",
 			"effects": [
 				{
 					"effect": "SHIELD_DAMAGE_TAKEN_MULT",
@@ -2078,7 +2078,7 @@
 		{
 			"id": "shield_upkeep_multi",
 			"name": "Shield Upkeep Reduction",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/shield_upkeep_multi.png",
+			"icon": "graphics/icons/shield_upkeep_multi.png",
 			"effects": [
 				{
 					"effect": "SHIELD_UPKEEP_MULT",
@@ -2092,7 +2092,7 @@
 		{
 			"id": "top_speed",
 			"name": "Top Speed",
-			"icon": "graphics/icons/skill_icons/used/circular/top_speed.png",
+			"icon": "graphics/icons/top_speed.png",
 			"hullSizeEffects": [
 				{
 					"effect": "TOP_SPEED_FLAT",
@@ -2109,7 +2109,7 @@
 		{
 			"id": "phase_cloak_flux_threshold",
 			"name": "Phase Cloak Flux Threshold",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/phase_cloak_flux_threshold.png",
+			"icon": "graphics/icons/phase_cloak_flux_threshold.png",
 			"effects": [
 				{
 					"effect": "PHASE_CLOAK_FLUX_THRESHOLD_PERCENT",
@@ -2123,7 +2123,7 @@
 		{
 			"id": "emp_damage_taken_multi",
 			"name": "Less EMP damage taken",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/emp_damage_taken_multi.png",
+			"icon": "graphics/icons/emp_damage_taken_multi.png",
 			"effects": [
 				{
 					"effect": "EMP_DAMAGE_TAKEN_MULT",
@@ -2137,7 +2137,7 @@
 		{
 			"id": "increased_vent_rate",
 			"name": "Increased vent rate",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/increased_vent_rate.png",
+			"icon": "graphics/icons/increased_vent_rate.png",
 			"effects": [
 				{
 					"effect": "VENT_RATE_PERCENT",
@@ -2151,7 +2151,7 @@
 		{
 			"id": "vent_rate_and_emp_damage",
 			"name": "Vent rate and EMP damage",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/vent_rate_and_emp_damage.png",
+			"icon": "graphics/icons/vent_rate_and_emp_damage.png",
 			"effects": [
 				{
 					"effect": "VENT_RATE_PERCENT",
@@ -2170,7 +2170,7 @@
 		{
 			"id": "expanded_magazines_energy",
 			"name": "Expanded Energy Magazines",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/expanded_magazines_energy.png",
+			"icon": "graphics/icons/expanded_magazines_energy.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2193,7 +2193,7 @@
 		{
 			"id": "weapon_durability",
 			"name": "Weapon Durability",
-			"icon": "graphics/icons/skill_icons/used/circular/weapon_durability.png",
+			"icon": "graphics/icons/weapon_durability.png",
 			"effects": [
 				{
 					"effect": "WEAPON_DURABILITY_PERCENT",
@@ -2217,7 +2217,7 @@
 		{
 			"id": "pd_damage_to_missiles",
 			"name": "Point Defence Damage to Missiles",
-			"icon": "graphics/icons/skill_icons/used/circular/notable_passives/pd_damage_to_missiles.png",
+			"icon": "graphics/icons/pd_damage_to_missiles.png",
 			"effects": [
 				{
 					"effect": "PD_DAMAGE_TO_MISSILES_PERCENT",
@@ -2228,7 +2228,7 @@
 		{
 			"id": "maneuverability_percent",
 			"name": "Maneuverability",
-			"icon": "graphics/icons/skill_icons/used/circular/maneuverability_percent.png",
+			"icon": "graphics/icons/maneuverability_percent.png",
 			"effects": [
 				{
 					"effect": "MANEUVERABILITY_PERCENT",
@@ -2242,7 +2242,7 @@
 		{
 			"id": "acceleration_percent",
 			"name": "Acceleration",
-			"icon": "graphics/icons/skill_icons/used/circular/acceleration_percent.png",
+			"icon": "graphics/icons/acceleration_percent.png",
 			"effects": [
 				{
 					"effect": "ACCELERATION_PERCENT",
@@ -2256,7 +2256,7 @@
 		{
 			"id": "turn_acceleration_percent",
 			"name": "Turn speed",
-			"icon": "graphics/icons/skill_icons/used/circular/turn_acceleration_percent.png",
+			"icon": "graphics/icons/turn_acceleration_percent.png",
 			"effects": [
 				{
 					"effect": "TURN_ACCELERATION_PERCENT",
@@ -2270,7 +2270,7 @@
 		{
 			"id": "fighter_replacement",
 			"name": "Fighter Replacement",
-			"icon": "graphics/icons/skill_icons/used/circular/fighter_replacement.png",
+			"icon": "graphics/icons/fighter_replacement.png",
 			"effects": [
 				{
 					"effect": "FIGHTER_REPLACEMENT_RECOVERY_PERCENT",
@@ -2288,7 +2288,7 @@
 		{
 			"id": "reduced_monthly_supplies",
 			"name": "Reduced Monthly Supplies",
-			"icon": "graphics/icons/skill_icons/used/circular/reduced_monthly_supplies.png",
+			"icon": "graphics/icons/reduced_monthly_supplies.png",
 			"effects": [
 				{
 					"effect": "SUPPLIES_PER_MONTH_MULT",
@@ -2302,7 +2302,7 @@
 		{
 			"id": "rationing",
 			"name": "Rationing",
-			"icon": "graphics/icons/skill_icons/used/circular/rationing.png",
+			"icon": "graphics/icons/rationing.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2321,7 +2321,7 @@
 		{
 			"id": "combat_vision",
 			"name": "Combat Vision",
-			"icon": "graphics/icons/skill_icons/used/circular/combat_vision.png",
+			"icon": "graphics/icons/combat_vision.png",
 			"hullSizeEffects": [
 				{
 					"effect": "COMBAT_VISION",
@@ -2335,7 +2335,7 @@
 		{
 			"id": "optimised_lenses",
 			"name": "Optimised Lenses",
-			"icon": "graphics/icons/skill_icons/used/circular/optimised_lenses.png",
+			"icon": "graphics/icons/optimised_lenses.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{

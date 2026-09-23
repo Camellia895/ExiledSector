@@ -213,7 +213,8 @@ try {
                 } elseif (-not $suffix -or $suffix -match '[\\/:]') {
                     Write-JsonResponse $response 400 @{ ok = $false; message = "Suffix is required and cannot contain path separators." }
                 } else {
-                    $dir = [System.IO.Path]::GetDirectoryName($srcFull)
+                    $dir = Join-Path $projectRoot "graphics\unused\circular"
+                    if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Force -Path $dir | Out-Null }
                     $baseName = [System.IO.Path]::GetFileNameWithoutExtension($srcFull)
                     $destFull = Join-Path $dir ($baseName + "_" + $suffix + ".png")
                     try {

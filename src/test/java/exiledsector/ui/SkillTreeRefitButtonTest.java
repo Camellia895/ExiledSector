@@ -33,7 +33,7 @@ class SkillTreeRefitButtonTest {
 
     @Test
     void usesTheVanillaSkillsCodexIcon() {
-        assertEquals("graphics/icons/non_skill_icons/used/codex/skills.png", button.getIconName(null, null));
+        assertEquals("graphics/icons/skills.png", button.getIconName(null, null));
     }
 
     @Test

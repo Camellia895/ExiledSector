@@ -2501,7 +2501,7 @@ function refreshInspector(){
   if (selectImageBtn) {
     selectImageBtn.addEventListener('click', function(){
       openImagePickerModal(function(path){
-        t.icon = moveIconIfNeeded(t.icon, path, t.id);
+        t.icon = moveIconIfNeeded(path);
         saveLocal();
         render();
         refreshInspector();
@@ -3141,17 +3141,9 @@ function postImageOp(url, payload, onSuccess){
   });
 }
 
-function moveIconIfNeeded(oldPath, newPath, excludeTypeId){
-  if (oldPath && oldPath.indexOf('/skill_icons/used/') !== -1) {
-    var stillUsed = state.types.some(function(other){ return other.id !== excludeTypeId && other.icon === oldPath; });
-    if (!stillUsed) {
-      postImageOp('/move-image', { from: oldPath, to: oldPath.replace('/skill_icons/used/', '/skill_icons/unused/') }, function(){
-        fetchAllProjectImages();
-      });
-    }
-  }
-  if (newPath && newPath.indexOf('/skill_icons/unused/') !== -1) {
-    var finalPath = newPath.replace('/skill_icons/unused/', '/skill_icons/used/');
+function moveIconIfNeeded(newPath){
+  if (newPath && newPath.indexOf('graphics/unused/') === 0) {
+    var finalPath = 'graphics/icons/' + newPath.split('/').pop();
     postImageOp('/move-image', { from: newPath, to: finalPath }, function(){
       fetchAllProjectImages();
     });
@@ -3315,8 +3307,9 @@ function openImageEditorModal(){
       '<div class="imageBrowserPreview"><img id="imgEditPreview" src="' + selectedPath + '"></div>' +
       '<div class="imageBrowserPath">' + selectedPath + '</div>' +
       '<div class="field"><label>Hue shift (degrees)</label><input type="number" id="imgEditHue" value="240" step="1"></div>' +
-      '<div class="field"><label>New file suffix</label><input id="imgEditSuffix" value="blue" placeholder="e.g. blue"></div>' +
-      '<div class="hint">Saves as "' + imageBaseName(selectedPath) + '_&lt;suffix&gt;.png" next to the original. Preview is an approximation - the saved file is computed exactly.</div>' +
+      '<div class="field"><label>New file suffix</label><input id="imgEditSuffix" value="shifted" placeholder="e.g. shifted"></div>' +
+      '<div class="hint">Colour-shifted copy saves as "' + imageBaseName(selectedPath) + '_&lt;suffix&gt;.png" next to the original. ' +
+        'Circular copy always saves to graphics/unused/circular/. Preview is an approximation - the saved file is computed exactly.</div>' +
       '<div class="btnRow">' +
         '<button class="smallBtn primary" id="imgEditCreate">Create colour-shifted copy</button>' +
         '<button class="smallBtn" id="imgEditCircular">Make circular copy</button>' +
@@ -3370,7 +3363,6 @@ function openImageEditorModal(){
 
 function openTypeModal(existingType, onSave, onClose){
   var isNew = !existingType;
-  var originalIcon = existingType ? existingType.icon : '';
   var t = existingType ? deepCopy(existingType) : { id: '', name: '', icon: '', tier: 'NOTABLE', vanillaHullMod: '', description: '', todo: '', tags: [], optionalOptions: [], exclusiveHullMods: [], unlockConditions: [] };
   var effectsDraft = deepCopy(t.effects || []);
   var hullSizeEffectsDraft = deepCopy(t.hullSizeEffects || []);
@@ -3530,7 +3522,7 @@ function openTypeModal(existingType, onSave, onClose){
         todo: (t.todo||'').trim(),
         tags: tagsDraft
       };
-      updated.icon = moveIconIfNeeded(originalIcon, updated.icon, updated.id);
+      updated.icon = moveIconIfNeeded(updated.icon);
       if (isNew) state.types.push(updated);
       else {
         var idx = state.types.findIndex(function(x){ return x.id === t.id; });
