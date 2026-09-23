@@ -10,12 +10,10 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.persistence.ShipSkillDataManager;
-import exiledsector.skills.HullSizeSkillEffect;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
 import org.magiclib.util.MagicIncompatibleHullmods;
 
@@ -85,12 +83,7 @@ public class SkillTreeHullMod extends BaseHullMod {
             }
 
             String modId = MOD_ID_PREFIX + node.getId();
-            for (SkillTypeEffect effect : type.getEffects()) {
-                action.apply(effect.effect(), modId, effect.magnitude());
-            }
-            for (HullSizeSkillEffect effect : type.getHullSizeEffects()) {
-                action.apply(effect.effect(), modId, effect.valueFor(hullSize));
-            }
+            type.forEachEffect(hullSize, (effect, magnitude) -> action.apply(effect, modId, magnitude));
         }
     }
 

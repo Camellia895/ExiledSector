@@ -1,8 +1,12 @@
 package exiledsector.skills;
 
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.skills.skilleffect.SkillEffect;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 public class SkillType {
 
@@ -135,5 +139,14 @@ public class SkillType {
 
     public List<UnlockCondition> getUnlockConditions() {
         return unlockConditions;
+    }
+
+    public void forEachEffect(HullSize hullSize, BiConsumer<SkillEffect, Float> consumer) {
+        for (SkillTypeEffect effect : effects) {
+            consumer.accept(effect.effect(), effect.magnitude());
+        }
+        for (HullSizeSkillEffect effect : hullSizeEffects) {
+            consumer.accept(effect.effect(), effect.valueFor(hullSize));
+        }
     }
 }
