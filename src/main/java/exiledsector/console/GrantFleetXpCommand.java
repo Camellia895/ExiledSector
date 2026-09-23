@@ -2,19 +2,10 @@ package exiledsector.console;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledsector.persistence.ShipSkillDataManager;
-import exiledsector.skills.ShipLevelConfig;
 import exiledsector.skills.ShipLevelSystem;
-import exiledsector.skills.ShipSkillData;
-import exiledsector.skills.SkillNode;
-import exiledsector.skills.SkillNodeOpCost;
-import exiledsector.skills.SkillTree;
 import org.lazywizard.console.BaseCommand;
 import org.lazywizard.console.CommonStrings;
 import org.lazywizard.console.Console;
-
-import java.util.Collection;
 
 // Optional Console Commands integration (see data/console/commands.csv). Never referenced from any
 // other Exiled Sector class, so this only ever loads if Console Commands' own plugin instantiates
@@ -47,15 +38,8 @@ public class GrantFleetXpCommand implements BaseCommand {
             return CommandResult.ERROR;
         }
 
-        Collection<SkillNode> allNodes = SkillTree.getAllNodes().values();
-        int shipCount = 0;
-        for (FleetMemberAPI member : playerFleet.getFleetData().getMembersListCopy()) {
-            ShipSkillData data = ShipSkillDataManager.get(member.getId());
-            int opCostPerNode = SkillNodeOpCost.perNode(member.getHullSpec());
-            ShipLevelSystem.awardXp(data, xp, ShipLevelConfig.xpBase(), ShipLevelConfig.xpGrowth(),
-                    ShipLevelConfig.xpGrowthCutoffLevel(), ShipLevelConfig.maxLevel(), allNodes, opCostPerNode);
-            shipCount++;
-        }
+        int shipCount = playerFleet.getFleetData().getMembersListCopy().size();
+        ShipLevelSystem.awardXpToFleet(playerFleet, xp);
 
         Console.showMessage("Granted " + (int) xp + " XP to " + shipCount
                 + (shipCount == 1 ? " ship" : " ships") + " in the fleet.");

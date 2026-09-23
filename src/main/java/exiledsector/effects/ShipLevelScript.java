@@ -8,15 +8,8 @@ import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatFleetManagerAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.mission.FleetSide;
-import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipLevelConfig;
 import exiledsector.skills.ShipLevelSystem;
-import exiledsector.skills.ShipSkillData;
-import exiledsector.skills.SkillNode;
-import exiledsector.skills.SkillNodeOpCost;
-import exiledsector.skills.SkillTree;
-
-import java.util.Collection;
 
 public class ShipLevelScript implements EveryFrameScript {
 
@@ -55,13 +48,7 @@ public class ShipLevelScript implements EveryFrameScript {
             xp *= ShipLevelConfig.xpLossMultiplier();
         }
 
-        Collection<SkillNode> allNodes = SkillTree.getAllNodes().values();
-        for (FleetMemberAPI member : playerFleet.getFleetData().getMembersListCopy()) {
-            ShipSkillData data = ShipSkillDataManager.get(member.getId());
-            int opCostPerNode = SkillNodeOpCost.perNode(member.getHullSpec());
-            ShipLevelSystem.awardXp(data, xp, ShipLevelConfig.xpBase(), ShipLevelConfig.xpGrowth(),
-                    ShipLevelConfig.xpGrowthCutoffLevel(), ShipLevelConfig.maxLevel(), allNodes, opCostPerNode);
-        }
+        ShipLevelSystem.awardXpToFleet(playerFleet, xp);
     }
 
     private float enemyDeploymentPointsDestroyed(CombatEngineAPI engine) {

@@ -1,13 +1,29 @@
 package exiledsector.skills;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.FleetDataAPI;
+import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.persistence.ShipSkillDataManager;
+import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class ShipLevelSystemTest {
 
@@ -138,5 +154,44 @@ class ShipLevelSystemTest {
 
         assertEquals(1, data.getLevel());
         assertEquals(0f, data.getXp());
+    }
+
+    @Test
+    void awardXpToFleetAwardsXpToEveryMember() {
+        Map<String, Object> persistentData = new HashMap<>();
+        SectorAPI sector = mock(SectorAPI.class);
+        when(sector.getPersistentData()).thenReturn(persistentData);
+
+        try (MockedStatic<LunaSettings> lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
+             MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
+            lunaSettingsMock.when(() -> LunaSettings.getInt(anyString(), anyString())).thenReturn(null);
+            globalMock.when(Global::getSector).thenReturn(sector);
+
+            CampaignFleetAPI fleet = mock(CampaignFleetAPI.class);
+            FleetDataAPI fleetData = mock(FleetDataAPI.class);
+            when(fleet.getFleetData()).thenReturn(fleetData);
+            FleetMemberAPI memberA = mockMember("ship-a");
+            FleetMemberAPI memberB = mockMember("ship-b");
+            when(fleetData.getMembersListCopy()).thenReturn(List.of(memberA, memberB));
+
+            ShipLevelSystem.awardXpToFleet(fleet, 40f);
+
+            assertEquals(40f, ShipSkillDataManager.get("ship-a").getXp());
+            assertEquals(40f, ShipSkillDataManager.get("ship-b").getXp());
+        }
+    }
+
+    @Test
+    void awardXpToFleetDoesNothingWhenFleetIsNull() {
+        ShipLevelSystem.awardXpToFleet(null, 40f);
+    }
+
+    private static FleetMemberAPI mockMember(String id) {
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        ShipHullSpecAPI hullSpec = mock(ShipHullSpecAPI.class);
+        when(member.getId()).thenReturn(id);
+        when(member.getHullSpec()).thenReturn(hullSpec);
+        when(hullSpec.getHullSize()).thenReturn(HullSize.FRIGATE);
+        return member;
     }
 }
