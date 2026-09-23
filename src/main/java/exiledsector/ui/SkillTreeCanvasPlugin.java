@@ -109,6 +109,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                 }
                 event.consume();
             } else if (event.isLMBUpEvent()) {
+                boolean wasOurGesture = dragging || pendingDropdownOption != null || pendingClickNode != null;
                 dragging = false;
                 if (pendingDropdownOption != null) {
                     nodeRenderer.commitDropdownSelection(pendingDropdownOption);
@@ -116,6 +117,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                 } else if (pendingClickNode != null) {
                     nodeRenderer.toggleAllocation(pendingClickNode, pendingClickCtrlDown);
                     pendingClickNode = null;
+                }
+                if (wasOurGesture) {
+                    event.consume();
                 }
             } else if (event.isMouseMoveEvent()) {
                 mouseX = event.getX();

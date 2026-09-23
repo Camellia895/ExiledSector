@@ -3674,6 +3674,12 @@
 			"b": "hull_3",
 			"controlX": 427,
 			"controlY": 2440
+		},
+		{
+			"a": "converted_fighterbay_1",
+			"b": "small_logistics_optional_5",
+			"controlX": 185,
+			"controlY": -309
 		}
 	],
 	"hiddenConnectors": [

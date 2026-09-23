@@ -10,6 +10,8 @@ import exiledsector.ui.SkillTreePanelStyle;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
 import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_HALO_ALPHA;
 import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_HALO_THICKNESS;
@@ -29,6 +31,17 @@ final class SkillTreeNodeConnectorRenderer {
     private static final float WORMHOLE_TIP_FADE_MAX_FRACTION = 0.4f;
 
     private final SkillTreePanelStyle style;
+
+    // Every drawLine/drawGradientLine call within one connector's draw pass queues its vertices
+    // here instead of issuing its own glBegin/glEnd immediately - one connector can otherwise emit
+    // dozens of draw calls (a curved connector renders in CURVE_RENDER_SEGMENTS pieces, each of
+    // which draws 1-4 lines). Grouped by thickness (glLineWidth is a single GL state, not a
+    // per-vertex attribute, so segments can only share a batch if they share a thickness) and
+    // flushed once per connector, this collapses that down to at most 3 draw calls per connector
+    // while leaving the draw order between different connectors untouched.
+    private final List<LineVertex> dullLineVertices = new ArrayList<>();
+    private final List<LineVertex> glowLineVertices = new ArrayList<>();
+    private final List<LineVertex> glowHaloVertices = new ArrayList<>();
 
     SkillTreeNodeConnectorRenderer(SkillTreePanelStyle style) {
         this.style = style;
@@ -100,6 +113,15 @@ final class SkillTreeNodeConnectorRenderer {
     private void drawStraightNodeConnectorLine(float x1, float y1, float r1, float x2, float y2, float r2,
                                                 boolean glowing, boolean fadeR1ToBlack, boolean fadeR2ToBlack,
                                                 boolean tipFadeR1ToBlack, boolean tipFadeR2ToBlack, float zoom, float alphaMult) {
+        clearBatch();
+        drawStraightNodeConnectorLineImpl(x1, y1, r1, x2, y2, r2, glowing, fadeR1ToBlack, fadeR2ToBlack,
+                tipFadeR1ToBlack, tipFadeR2ToBlack, zoom, alphaMult);
+        flushBatch();
+    }
+
+    private void drawStraightNodeConnectorLineImpl(float x1, float y1, float r1, float x2, float y2, float r2,
+                                                     boolean glowing, boolean fadeR1ToBlack, boolean fadeR2ToBlack,
+                                                     boolean tipFadeR1ToBlack, boolean tipFadeR2ToBlack, float zoom, float alphaMult) {
         float dx = x2 - x1;
         float dy = y2 - y1;
         float length = (float) Math.sqrt(dx * dx + dy * dy);
@@ -163,6 +185,15 @@ final class SkillTreeNodeConnectorRenderer {
     private void drawCurvedNodeConnectorLine(float x0, float y0, float r1, float throughX, float throughY, float x2, float y2, float r2,
                                               boolean glowing, boolean fadeR1ToBlack, boolean fadeR2ToBlack,
                                               boolean tipFadeR1ToBlack, boolean tipFadeR2ToBlack, float zoom, float alphaMult) {
+        clearBatch();
+        drawCurvedNodeConnectorLineImpl(x0, y0, r1, throughX, throughY, x2, y2, r2, glowing, fadeR1ToBlack, fadeR2ToBlack,
+                tipFadeR1ToBlack, tipFadeR2ToBlack, zoom, alphaMult);
+        flushBatch();
+    }
+
+    private void drawCurvedNodeConnectorLineImpl(float x0, float y0, float r1, float throughX, float throughY, float x2, float y2, float r2,
+                                                  boolean glowing, boolean fadeR1ToBlack, boolean fadeR2ToBlack,
+                                                  boolean tipFadeR1ToBlack, boolean tipFadeR2ToBlack, float zoom, float alphaMult) {
         float cx = 2f * throughX - (x0 + x2) / 2f;
         float cy = 2f * throughY - (y0 + y2) / 2f;
         float[] xs = new float[CURVE_ARC_SAMPLES + 1];
@@ -338,21 +369,56 @@ final class SkillTreeNodeConnectorRenderer {
     }
 
     private void drawLine(float x1, float y1, float x2, float y2, Color color, float alpha, float thickness) {
-        Misc.setColor(color, alpha);
-        GL11.glLineWidth(thickness);
-        GL11.glBegin(GL11.GL_LINES);
-        GL11.glVertex2f(x1, y1);
-        GL11.glVertex2f(x2, y2);
-        GL11.glEnd();
+        drawGradientLine(x1, y1, color, x2, y2, color, alpha, thickness);
     }
 
     private void drawGradientLine(float x1, float y1, Color color1, float x2, float y2, Color color2, float alpha, float thickness) {
+        List<LineVertex> bucket = bucketFor(thickness);
+        bucket.add(new LineVertex(x1, y1, color1, alpha));
+        bucket.add(new LineVertex(x2, y2, color2, alpha));
+    }
+
+    private List<LineVertex> bucketFor(float thickness) {
+        if (thickness == NODE_CONNECTOR_LINE_THICKNESS) return dullLineVertices;
+        if (thickness == NODE_CONNECTOR_GLOW_LINE_THICKNESS) return glowLineVertices;
+        return glowHaloVertices;
+    }
+
+    private void clearBatch() {
+        dullLineVertices.clear();
+        glowLineVertices.clear();
+        glowHaloVertices.clear();
+    }
+
+    private void flushBatch() {
+        flushBucket(dullLineVertices, NODE_CONNECTOR_LINE_THICKNESS);
+        flushBucket(glowHaloVertices, NODE_CONNECTOR_GLOW_HALO_THICKNESS);
+        flushBucket(glowLineVertices, NODE_CONNECTOR_GLOW_LINE_THICKNESS);
+    }
+
+    private void flushBucket(List<LineVertex> vertices, float thickness) {
+        if (vertices.isEmpty()) return;
+
         GL11.glLineWidth(thickness);
         GL11.glBegin(GL11.GL_LINES);
-        Misc.setColor(color1, alpha);
-        GL11.glVertex2f(x1, y1);
-        Misc.setColor(color2, alpha);
-        GL11.glVertex2f(x2, y2);
+        for (LineVertex vertex : vertices) {
+            Misc.setColor(vertex.color, vertex.alpha);
+            GL11.glVertex2f(vertex.x, vertex.y);
+        }
         GL11.glEnd();
+    }
+
+    private static final class LineVertex {
+        final float x;
+        final float y;
+        final Color color;
+        final float alpha;
+
+        LineVertex(float x, float y, Color color, float alpha) {
+            this.x = x;
+            this.y = y;
+            this.color = color;
+            this.alpha = alpha;
+        }
     }
 }
