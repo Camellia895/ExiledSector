@@ -26,7 +26,7 @@ final class SkillTreeLevelBar {
     void advance(float amount, PositionAPI position, float mouseX, float mouseY, boolean mouseKnown) {
         refresh();
 
-        boolean hovered = mouseKnown && position != null && containsPoint(position, mouseX, mouseY);
+        boolean hovered = mouseKnown && isHovered(position, mouseX, mouseY);
         bar.advance(amount, xp, xpToNextLevel, hovered);
     }
 
@@ -46,8 +46,8 @@ final class SkillTreeLevelBar {
         return label;
     }
 
-    private boolean containsPoint(PositionAPI position, float x, float y) {
-        return SkillTreeReadoutBar.containsPoint(barLeft(position), barBottom(position), x, y);
+    boolean isHovered(PositionAPI position, float x, float y) {
+        return position != null && SkillTreeReadoutBar.containsPoint(barLeft(position), barBottom(position), x, y);
     }
 
     private float barLeft(PositionAPI position) {

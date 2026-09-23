@@ -26,6 +26,18 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private static final float ZOOM_STEP = 1.1f;
     private static final float SHIP_CARD_FRAME_OUTSET = 8f;
 
+    private static final String READOUT_TOOLTIP_TITLE = "Level, XP & Ordnance Points";
+    private static final String READOUT_TOOLTIP_BODY =
+            "Destroying enemy ships grants XP based on their deployment point cost. Leveling up either "
+                    + "converts your most recently allocated node to free, or banks a free allocation credit "
+                    + "if nothing is eligible.\n\n"
+                    + "Allocating a node costs Ordnance Points (OP) - more for larger hulls - unless you have "
+                    + "a banked free allocation, which is always spent first. Deallocating a node refunds "
+                    + "whatever it cost.\n\n"
+                    + "Click an unallocated node connected to an already-allocated node (or the root) to "
+                    + "allocate it. Hold Ctrl while allocating an optional node to allocate the same type "
+                    + "again without reopening the picker.";
+
     private final SkillTreePanelStyle style;
     private final SkillTreeStarfieldRenderer starfieldRenderer;
     private final SkillTreeStaticImageRenderer staticImageRenderer;
@@ -35,6 +47,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final SkillTreeStatPanel statPanel;
     private final SkillTreeOrdnancePointsBar ordnancePointsBar;
     private final SkillTreeLevelBar levelBar;
+    private final SkillTreeInfoTooltipRenderer readoutTooltipRenderer;
     private final BorderedPanel shipCardPanel = new BorderedPanel(SkillTreeCanvasPlugin.class);
     private final float shipCardHeight;
     private final FleetMemberAPI member;
@@ -64,6 +77,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.statPanel = new SkillTreeStatPanel(member, variant);
         this.ordnancePointsBar = new SkillTreeOrdnancePointsBar(member, variant);
         this.levelBar = new SkillTreeLevelBar(member);
+        this.readoutTooltipRenderer = new SkillTreeInfoTooltipRenderer(style);
         this.shipCardHeight = shipCardHeight;
 
         SkillNode activeRoot = nodeRenderer.getActiveRoot();
@@ -173,6 +187,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
         if (!dragging && mouseKnown) {
             nodeRenderer.renderHoverTooltip(centerX, centerY, zoom, mouseX, mouseY, alphaMult);
+            if (ordnancePointsBar.isHovered(position, mouseX, mouseY) || levelBar.isHovered(position, mouseX, mouseY)) {
+                readoutTooltipRenderer.render(READOUT_TOOLTIP_TITLE, READOUT_TOOLTIP_BODY, mouseX, mouseY, alphaMult);
+            }
         }
     }
 
