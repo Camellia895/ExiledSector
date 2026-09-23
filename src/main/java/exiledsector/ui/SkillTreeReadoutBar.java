@@ -77,6 +77,11 @@ final class SkillTreeReadoutBar {
         hoverFader.advance(amount);
     }
 
+    static boolean containsPoint(float barLeft, float barBottom, float x, float y) {
+        return x >= barLeft && x <= barLeft + BAR_WIDTH
+                && y >= barBottom && y <= barBottom + BAR_HEIGHT;
+    }
+
     void render(float left, float bottom, int spent, int total, float alphaMult) {
         render(left, bottom, spent, total, alphaMult, null);
     }

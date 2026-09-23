@@ -37,10 +37,7 @@ final class SkillTreeOrdnancePointsBar {
     }
 
     private boolean containsPoint(PositionAPI position, float x, float y) {
-        float barLeft = barLeft(position);
-        float barBottom = barBottom(position);
-        return x >= barLeft && x <= barLeft + SkillTreeReadoutBar.BAR_WIDTH
-                && y >= barBottom && y <= barBottom + SkillTreeReadoutBar.BAR_HEIGHT;
+        return SkillTreeReadoutBar.containsPoint(barLeft(position), barBottom(position), x, y);
     }
 
     private float barLeft(PositionAPI position) {
