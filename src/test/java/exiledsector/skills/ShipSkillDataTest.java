@@ -770,6 +770,7 @@ class ShipSkillDataTest {
         assertFalse(data.isAllocated("wormhole_a"));
         assertFalse(data.isAllocated("wormhole_b"));
         assertEquals(0, data.getSpentOp());
+        assertEquals(0, data.getBankedFreeAllocations());
     }
 
     @Test
@@ -783,6 +784,22 @@ class ShipSkillDataTest {
 
         assertFalse(data.isAllocated("wormhole_a"));
         assertFalse(data.isAllocated("wormhole_b"));
+        assertEquals(0, data.getSpentOp());
+        assertEquals(0, data.getBankedFreeAllocations());
+    }
+
+    @Test
+    void repeatedlyAllocatingAndDeallocatingAWormholePairNeverMintsFreeAllocationCredits() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode a = wormholeNode("wormhole_a", List.of(), "wormhole_b");
+
+        for (int i = 0; i < 3; i++) {
+            data.allocate(a, 3);
+            data.deallocate(a, 3);
+
+            assertEquals(0, data.getSpentOp());
+            assertEquals(0, data.getBankedFreeAllocations());
+        }
     }
 
     @Test

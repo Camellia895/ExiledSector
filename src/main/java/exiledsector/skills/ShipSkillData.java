@@ -22,12 +22,18 @@ public class ShipSkillData {
     private float xp = 0f;
     private int bankedFreeAllocations = 0;
     private Set<String> freeNodeIds = new LinkedHashSet<>();
+    private Set<String> pairedFreeNodeIds = new LinkedHashSet<>();
 
     // Ships saved before this field existed deserialize with freeNodeIds left null (XStream does not
     // run field initializers), so every access must go through this lazy accessor instead of the field.
     private Set<String> freeNodeIds() {
         if (freeNodeIds == null) freeNodeIds = new LinkedHashSet<>();
         return freeNodeIds;
+    }
+
+    private Set<String> pairedFreeNodeIds() {
+        if (pairedFreeNodeIds == null) pairedFreeNodeIds = new LinkedHashSet<>();
+        return pairedFreeNodeIds;
     }
 
     public boolean isAllocated(String nodeId) {
@@ -78,7 +84,7 @@ public class ShipSkillData {
     }
 
     public boolean isFreeNode(String nodeId) {
-        return freeNodeIds().contains(nodeId);
+        return freeNodeIds().contains(nodeId) || pairedFreeNodeIds().contains(nodeId);
     }
 
     public void addXp(float amount) {
@@ -127,7 +133,7 @@ public class ShipSkillData {
         String pairedId = node.getPairedNodeId();
         if (pairedId != null && !isAllocated(pairedId)) {
             allocatedNodeIds.add(pairedId);
-            freeNodeIds().add(pairedId);
+            pairedFreeNodeIds().add(pairedId);
         }
     }
 
@@ -138,7 +144,7 @@ public class ShipSkillData {
         }
         if (freeNodeIds().remove(node.getId())) {
             bankedFreeAllocations++;
-        } else {
+        } else if (!pairedFreeNodeIds().remove(node.getId())) {
             spentOp -= opCost;
         }
 
@@ -149,7 +155,7 @@ public class ShipSkillData {
             }
             if (freeNodeIds().remove(pairedId)) {
                 bankedFreeAllocations++;
-            } else {
+            } else if (!pairedFreeNodeIds().remove(pairedId)) {
                 spentOp -= opCost;
             }
         }
