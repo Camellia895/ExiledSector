@@ -89,6 +89,7 @@ public final class SkillTreeNodeRenderer {
     public void advance(float amount) {
         ringRenderer.advance(amount);
         ghostRenderer.advance(amount);
+        connectorRenderer.advance(amount, ShipSkillDataManager.get(member.getId()), satisfiedRootId());
     }
 
     public void render(float centerX, float centerY, float zoom, float alphaMult, float mouseX, float mouseY, boolean mouseKnown) {
