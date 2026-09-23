@@ -1,2 +1,2 @@
 command,class,tags,syntax,help
-GrantFleetXp,exiledsector.console.GrantFleetXpCommand,"cheat,campaign",grantfleetxp [amount],"Grants the given amount of Exiled Sector XP to every ship in the player's fleet. Defaults to 1000 if no amount is given."
+ExiledSectorGrantFleetXp,exiledsector.console.GrantFleetXpCommand,"cheat,campaign",exiledsectorgrantfleetxp [amount],"Grants the given amount of Exiled Sector XP to every ship in the player's fleet. Defaults to 1000 if no amount is given."
