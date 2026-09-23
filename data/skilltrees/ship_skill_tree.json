@@ -43,8 +43,8 @@
 				"ballistic_damage_2",
 				"ballistic_rangefinder_1"
 			],
-			"x": 1635,
-			"y": 1861,
+			"x": 1625,
+			"y": 1775,
 			"orbitAnchorId": "anchor_4",
 			"orbitAngle": 177.29999999999995
 		},
@@ -211,8 +211,8 @@
 			"id": "hardened_subsystems_1",
 			"type": "hardened_subsystems",
 			"connectedTo": [],
-			"x": 2318,
-			"y": 1173
+			"x": 2496,
+			"y": 1291
 		},
 		{
 			"id": "turretgyros_1",
@@ -220,34 +220,34 @@
 			"connectedTo": [
 				"weapon_turn_rate_2"
 			],
-			"x": -2391,
-			"y": 1266,
+			"x": -1792,
+			"y": 1892,
 			"orbitAnchorId": "anchor_30",
-			"orbitAngle": 180
+			"orbitAngle": 90
 		},
 		{
 			"id": "weapon_turn_rate_1",
 			"type": "weapon_turn_rate",
 			"connectedTo": [
-				"weapon_turn_rate_2",
-				"small_flux_optional_38"
+				"small_flux_optional_38",
+				"weapon_turn_rate_2"
 			],
-			"x": -2091,
-			"y": 1266,
+			"x": -1792,
+			"y": 1592,
 			"orbitAnchorId": "anchor_30",
-			"orbitAngle": 0
+			"orbitAngle": 270
 		},
 		{
 			"id": "weapon_turn_rate_2",
 			"type": "weapon_turn_rate",
 			"connectedTo": [
-				"weapon_turn_rate_1",
-				"turretgyros_1"
+				"turretgyros_1",
+				"weapon_turn_rate_1"
 			],
-			"x": -2241,
-			"y": 1416,
+			"x": -1942,
+			"y": 1742,
 			"orbitAnchorId": "anchor_30",
-			"orbitAngle": 90
+			"orbitAngle": 180
 		},
 		{
 			"id": "ballistic_rangefinder_1",
@@ -256,8 +256,8 @@
 				"ballistic_damage_3",
 				"ballistic_damage_1"
 			],
-			"x": 1792,
-			"y": 2004,
+			"x": 1782,
+			"y": 1918,
 			"orbitAnchorId": "anchor_4",
 			"orbitAngle": 87.29999999999994,
 			"ringBeltPath": "graphics/planets/aurorae.png",
@@ -280,8 +280,8 @@
 			"connectedTo": [
 				"pd_damage_to_missiles_1"
 			],
-			"x": -1725,
-			"y": 1848,
+			"x": 1668,
+			"y": -946,
 			"orbitAnchorId": "anchor_21",
 			"orbitAngle": 29.99999999999998
 		},
@@ -302,8 +302,10 @@
 			"connectedTo": [
 				"small_flux_optional_10"
 			],
-			"x": 2742,
-			"y": 0,
+			"x": 2707,
+			"y": 5,
+			"orbitAnchorId": "lowtech_zone",
+			"orbitAngle": -77.31778829644811,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#33ff36"
 		},
@@ -313,8 +315,8 @@
 			"connectedTo": [
 				"small_flux_optional_2"
 			],
-			"x": 215,
-			"y": -2815,
+			"x": 193,
+			"y": -2800,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#ec6fe8"
 		},
@@ -380,8 +382,8 @@
 			"id": "defensive_targeting_array_1",
 			"type": "defensive_targeting_array",
 			"connectedTo": [],
-			"x": 1532,
-			"y": 2109,
+			"x": 1522,
+			"y": 2023,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#99ffb3"
 		},
@@ -539,8 +541,8 @@
 			"connectedTo": [
 				"crew_capacity_flat_2"
 			],
-			"x": -860,
-			"y": -498,
+			"x": -799,
+			"y": -523,
 			"orbitAnchorId": "additional_berthing_anchor",
 			"orbitAngle": 270
 		},
@@ -866,7 +868,6 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_logistics_optional_21",
-				"crew_capacity_flat_1",
 				"small_logistics_optional_18"
 			],
 			"x": -1184,
@@ -957,7 +958,9 @@
 				"small_flux_optional_25",
 				"small_flux_optional_44",
 				"small_flux_optional_2",
-				"flux_dissipation_1"
+				"flux_dissipation_1",
+				"hightech_wormhole_2",
+				"hightech_wormhole_1"
 			],
 			"x": 0,
 			"y": -2200,
@@ -1228,11 +1231,10 @@
 			"type": "crew_capacity_flat",
 			"connectedTo": [
 				"crew_capacity_flat_2",
-				"small_logistics_optional_2",
-				"small_logistics_optional_20"
+				"small_logistics_optional_2"
 			],
-			"x": -860,
-			"y": -158,
+			"x": -799,
+			"y": -183,
 			"orbitAnchorId": "additional_berthing_anchor",
 			"orbitAngle": 90
 		},
@@ -1243,8 +1245,8 @@
 				"crew_capacity_flat_1",
 				"additional_berthing_1"
 			],
-			"x": -690,
-			"y": -328,
+			"x": -629,
+			"y": -353,
 			"orbitAnchorId": "additional_berthing_anchor",
 			"orbitAngle": 0
 		},
@@ -1387,8 +1389,6 @@
 				"small_flux_optional_24",
 				"small_flux_optional_6",
 				"small_flux_optional_4",
-				"wormhole_1",
-				"wormhole_3",
 				"neural_interface_1"
 			],
 			"x": 0,
@@ -1402,7 +1402,7 @@
 			"connectedTo": [
 				"small_flux_optional_2",
 				"small_flux_optional_7",
-				"wormhole_7"
+				"tritach_1"
 			],
 			"x": 927,
 			"y": -2853,
@@ -1466,8 +1466,7 @@
 			"connectedTo": [
 				"small_flux_optional_10",
 				"small_flux_optional_12",
-				"small_flux_optional_30",
-				"wormhole_4"
+				"small_flux_optional_30"
 			],
 			"x": 2853,
 			"y": 927,
@@ -1480,8 +1479,7 @@
 			"connectedTo": [
 				"small_flux_optional_11",
 				"small_flux_optional_13",
-				"small_flux_optional_31",
-				"wormhole_5"
+				"small_flux_optional_31"
 			],
 			"x": 2427,
 			"y": 1763,
@@ -1557,8 +1555,7 @@
 			"connectedTo": [
 				"small_flux_optional_19",
 				"small_flux_optional_17",
-				"small_flux_optional_38",
-				"wormhole_6"
+				"small_flux_optional_38"
 			],
 			"x": -2427,
 			"y": 1763,
@@ -1571,8 +1568,7 @@
 			"connectedTo": [
 				"small_flux_optional_20",
 				"small_flux_optional_18",
-				"small_flux_optional_39",
-				"wormhole_2"
+				"small_flux_optional_39"
 			],
 			"x": -2852,
 			"y": 931,
@@ -1636,7 +1632,8 @@
 			"connectedTo": [
 				"small_flux_optional_23",
 				"small_flux_optional_2",
-				"phase_anchor_1"
+				"phase_anchor_1",
+				"REDACTED_1"
 			],
 			"x": -927,
 			"y": -2853,
@@ -1749,7 +1746,8 @@
 			"connectedTo": [
 				"small_flux_optional_26",
 				"small_flux_optional_28",
-				"ballistic_and_energy_weapon_range_5"
+				"ballistic_and_energy_weapon_range_5",
+				"pd_damage_to_missiles_2"
 			],
 			"x": 1761,
 			"y": -1318,
@@ -1792,7 +1790,8 @@
 				"small_flux_optional_31",
 				"small_flux_optional_11",
 				"small_flux_optional_34",
-				"ballistic_and_energy_weapon_range_4"
+				"ballistic_and_energy_weapon_range_4",
+				"lowtech_wormhole_2"
 			],
 			"x": 2061,
 			"y": 770,
@@ -1807,8 +1806,9 @@
 				"small_flux_optional_32",
 				"small_flux_optional_34",
 				"small_flux_optional_12",
-				"ballistic_damage_2",
-				"hull_multi_1"
+				"hull_multi_1",
+				"lowtech_wormhole_1",
+				"ballistic_damage_2"
 			],
 			"x": 1773,
 			"y": 1302,
@@ -1928,9 +1928,9 @@
 				"small_flux_optional_39",
 				"small_flux_optional_45",
 				"small_flux_optional_18",
-				"pd_damage_to_missiles_2",
 				"repair_time_1",
-				"weapon_turn_rate_1"
+				"weapon_turn_rate_1",
+				"wormhole_6"
 			],
 			"x": -1785,
 			"y": 1286,
@@ -1944,7 +1944,8 @@
 				"small_flux_optional_38",
 				"small_flux_optional_40",
 				"small_flux_optional_19",
-				"small_flux_optional_45"
+				"small_flux_optional_45",
+				"midline_wormhole_1"
 			],
 			"x": -2076,
 			"y": 727,
@@ -2067,8 +2068,8 @@
 				"ballistic_damage_3",
 				"small_flux_optional_31"
 			],
-			"x": 1778,
-			"y": 1704,
+			"x": 1768,
+			"y": 1618,
 			"orbitAnchorId": "anchor_4",
 			"orbitAngle": -92.70000000000005
 		},
@@ -2079,8 +2080,8 @@
 				"ballistic_damage_2",
 				"ballistic_rangefinder_1"
 			],
-			"x": 1935,
-			"y": 1847,
+			"x": 1925,
+			"y": 1761,
 			"orbitAnchorId": "anchor_4",
 			"orbitAngle": -2.700000000000048
 		},
@@ -2434,60 +2435,60 @@
 			"y": 1714
 		},
 		{
-			"id": "wormhole_1",
+			"id": "hightech_wormhole_1",
 			"type": "wormhole",
 			"connectedTo": [
-				"wormhole_2",
-				"small_flux_optional_2"
+				"midline_wormhole_1",
+				"small_flux_optional_4"
 			],
-			"x": -320,
-			"y": -3361,
-			"pairedWith": "wormhole_2"
+			"x": -218,
+			"y": -1999,
+			"pairedWith": "midline_wormhole_1"
 		},
 		{
-			"id": "wormhole_2",
+			"id": "midline_wormhole_1",
 			"type": "wormhole",
 			"connectedTo": [
-				"wormhole_1",
-				"small_flux_optional_19"
+				"hightech_wormhole_1",
+				"small_flux_optional_39"
 			],
-			"x": -3285,
-			"y": 1050,
-			"pairedWith": "wormhole_1"
+			"x": -2292,
+			"y": 983,
+			"pairedWith": "hightech_wormhole_1"
 		},
 		{
-			"id": "wormhole_3",
+			"id": "hightech_wormhole_2",
 			"type": "wormhole",
 			"connectedTo": [
-				"wormhole_4",
-				"small_flux_optional_2"
+				"lowtech_wormhole_2",
+				"small_flux_optional_4"
 			],
-			"x": 330,
-			"y": -3373,
+			"x": 222,
+			"y": -1996,
 			"wormholeColor": "#5f64ec",
-			"pairedWith": "wormhole_4"
+			"pairedWith": "lowtech_wormhole_2"
 		},
 		{
-			"id": "wormhole_4",
+			"id": "lowtech_wormhole_2",
 			"type": "wormhole",
 			"connectedTo": [
-				"wormhole_3",
-				"small_flux_optional_11"
+				"hightech_wormhole_2",
+				"small_flux_optional_30"
 			],
-			"x": 3358,
-			"y": 1022,
+			"x": 2190,
+			"y": 1023,
 			"wormholeColor": "#5f64ec",
-			"pairedWith": "wormhole_3"
+			"pairedWith": "hightech_wormhole_2"
 		},
 		{
-			"id": "wormhole_5",
+			"id": "lowtech_wormhole_1",
 			"type": "wormhole",
 			"connectedTo": [
-				"small_flux_optional_12",
-				"wormhole_6"
+				"wormhole_6",
+				"small_flux_optional_31"
 			],
-			"x": 2850,
-			"y": 2063,
+			"x": 2075,
+			"y": 1302,
 			"wormholeColor": "#cd7f4c",
 			"pairedWith": "wormhole_6"
 		},
@@ -2495,13 +2496,13 @@
 			"id": "wormhole_6",
 			"type": "wormhole",
 			"connectedTo": [
-				"wormhole_5",
-				"small_flux_optional_18"
+				"lowtech_wormhole_1",
+				"small_flux_optional_38"
 			],
-			"x": -2829,
-			"y": 2046,
+			"x": -2133,
+			"y": 1262,
 			"wormholeColor": "#cd7f4c",
-			"pairedWith": "wormhole_5"
+			"pairedWith": "lowtech_wormhole_1"
 		},
 		{
 			"id": "ballistic_damage_4",
@@ -2558,8 +2559,8 @@
 				"pd_damage_to_missiles_2",
 				"pointdefenseai_1"
 			],
-			"x": -1985,
-			"y": 1848,
+			"x": 1408,
+			"y": -946,
 			"orbitAnchorId": "anchor_21",
 			"orbitAngle": 150.00000000000003
 		},
@@ -2568,10 +2569,10 @@
 			"type": "pd_damage_to_missiles",
 			"connectedTo": [
 				"pd_damage_to_missiles_1",
-				"small_flux_optional_38"
+				"small_flux_optional_27"
 			],
-			"x": -1855,
-			"y": 1623,
+			"x": 1538,
+			"y": -1171,
 			"orbitAnchorId": "anchor_21",
 			"orbitAngle": 270
 		},
@@ -2787,51 +2788,39 @@
 			"orbitAngle": -141.3
 		},
 		{
-			"id": "wormhole_7",
+			"id": "tritach_1",
 			"type": "wormhole",
 			"connectedTo": [
-				"wormhole_8",
+				"tritach_2",
 				"small_flux_optional_6"
 			],
-			"x": 1281,
-			"y": -3307,
-			"pairedWith": "wormhole_8"
+			"x": 1078,
+			"y": -3208,
+			"pairedWith": "tritach_2"
 		},
 		{
-			"id": "wormhole_8",
+			"id": "tritach_2",
 			"type": "wormhole",
 			"connectedTo": [
-				"wormhole_7",
+				"tritach_1",
 				"small_flux_optional_46",
-				"small_flux_optional_5"
+				"small_flux_optional_48"
 			],
-			"x": 2863,
-			"y": -5024,
+			"x": 4556,
+			"y": -5261,
 			"orbitAnchorId": "tritach_inner",
-			"orbitAngle": 135.5051437045878,
-			"pairedWith": "wormhole_7"
-		},
-		{
-			"id": "small_flux_optional_5",
-			"type": "small_flux_optional",
-			"connectedTo": [
-				"small_flux_optional_48",
-				"wormhole_8"
-			],
-			"x": 3797,
-			"y": -4632,
-			"orbitAnchorId": "tritach_inner",
-			"orbitAngle": 90
+			"orbitAngle": 90,
+			"pairedWith": "tritach_1"
 		},
 		{
 			"id": "small_flux_optional_46",
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_47",
-				"wormhole_8"
+				"tritach_2"
 			],
-			"x": 2487,
-			"y": -5942,
+			"x": 3246,
+			"y": -6571,
 			"orbitAnchorId": "tritach_inner",
 			"orbitAngle": 180
 		},
@@ -2842,8 +2831,8 @@
 				"small_flux_optional_46",
 				"small_flux_optional_48"
 			],
-			"x": 3797,
-			"y": -7252,
+			"x": 4556,
+			"y": -7881,
 			"orbitAnchorId": "tritach_inner",
 			"orbitAngle": 270
 		},
@@ -2852,12 +2841,73 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_47",
-				"small_flux_optional_5"
+				"tritach_2"
 			],
-			"x": 5107,
-			"y": -5942,
+			"x": 5866,
+			"y": -6571,
 			"orbitAnchorId": "tritach_inner",
 			"orbitAngle": 0
+		},
+		{
+			"id": "REDACTED_1",
+			"type": "wormhole",
+			"connectedTo": [
+				"small_flux_optional_24",
+				"REDACTED_2"
+			],
+			"x": -1078,
+			"y": -3257,
+			"pairedWith": "REDACTED_2"
+		},
+		{
+			"id": "small_flux_optional_49",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_50",
+				"REDACTED_2"
+			],
+			"x": -2761,
+			"y": -6457,
+			"orbitAnchorId": "REDACTED_inner",
+			"orbitAngle": 0
+		},
+		{
+			"id": "small_flux_optional_50",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_49",
+				"small_flux_optional_51"
+			],
+			"x": -4061,
+			"y": -7757,
+			"orbitAnchorId": "REDACTED_inner",
+			"orbitAngle": 270
+		},
+		{
+			"id": "small_flux_optional_51",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_50",
+				"REDACTED_2"
+			],
+			"x": -5361,
+			"y": -6457,
+			"orbitAnchorId": "REDACTED_inner",
+			"orbitAngle": 180
+		},
+		{
+			"id": "REDACTED_2",
+			"type": "wormhole",
+			"connectedTo": [
+				"REDACTED_1",
+				"small_flux_optional_49",
+				"small_flux_optional_51"
+			],
+			"x": -4061,
+			"y": -5157,
+			"orbitAnchorId": "REDACTED_inner",
+			"orbitAngle": 90,
+			"pairedWith": "REDACTED_1"
 		}
 	],
 	"connectorCurves": [
@@ -2978,14 +3028,14 @@
 		{
 			"a": "crew_capacity_flat_1",
 			"b": "crew_capacity_flat_2",
-			"controlX": -740,
-			"controlY": -208
+			"controlX": -679,
+			"controlY": -233
 		},
 		{
 			"a": "additional_berthing_1",
 			"b": "crew_capacity_flat_2",
-			"controlX": -740,
-			"controlY": -448
+			"controlX": -679,
+			"controlY": -473
 		},
 		{
 			"a": "militarized_subsystems_1",
@@ -3344,26 +3394,26 @@
 		{
 			"a": "ballistic_damage_1",
 			"b": "ballistic_damage_2",
-			"controlX": 1707,
-			"controlY": 1783
+			"controlX": 1697,
+			"controlY": 1697
 		},
 		{
 			"a": "ballistic_damage_2",
 			"b": "ballistic_damage_3",
-			"controlX": 1856,
-			"controlY": 1776
+			"controlX": 1846,
+			"controlY": 1690
 		},
 		{
 			"a": "ballistic_damage_3",
 			"b": "ballistic_rangefinder_1",
-			"controlX": 1863,
-			"controlY": 1925
+			"controlX": 1853,
+			"controlY": 1839
 		},
 		{
 			"a": "ballistic_damage_1",
 			"b": "ballistic_rangefinder_1",
-			"controlX": 1714,
-			"controlY": 1932
+			"controlX": 1704,
+			"controlY": 1846
 		},
 		{
 			"a": "flux_capacity_1",
@@ -3524,20 +3574,20 @@
 		{
 			"a": "wormhole_5",
 			"b": "wormhole_6",
-			"controlX": 38,
-			"controlY": 3356
+			"controlX": -41,
+			"controlY": 1808
 		},
 		{
 			"a": "wormhole_3",
 			"b": "wormhole_4",
-			"controlX": 2958,
-			"controlY": -1962
+			"controlX": 1682,
+			"controlY": -584
 		},
 		{
 			"a": "wormhole_1",
 			"b": "wormhole_2",
-			"controlX": -2824,
-			"controlY": -1895
+			"controlX": -1729,
+			"controlY": -600
 		},
 		{
 			"a": "ballistic_damage_4",
@@ -3566,14 +3616,14 @@
 		{
 			"a": "pd_damage_to_missiles_1",
 			"b": "pd_damage_to_missiles_2",
-			"controlX": -1920,
-			"controlY": 1736
+			"controlX": 1473,
+			"controlY": -1058
 		},
 		{
 			"a": "pd_damage_to_missiles_1",
 			"b": "pointdefenseai_1",
-			"controlX": -1855,
-			"controlY": 1848
+			"controlX": 1538,
+			"controlY": -946
 		},
 		{
 			"a": "maneuverability_percent_1",
@@ -3720,16 +3770,10 @@
 			"controlY": 2546
 		},
 		{
-			"a": "weapon_turn_rate_1",
-			"b": "weapon_turn_rate_2",
-			"controlX": -2135,
-			"controlY": 1372
-		},
-		{
 			"a": "turretgyros_1",
 			"b": "weapon_turn_rate_2",
-			"controlX": -2347,
-			"controlY": 1372
+			"controlX": -1898,
+			"controlY": 1848
 		},
 		{
 			"a": "small_logistics_optional_18",
@@ -3782,32 +3826,98 @@
 		{
 			"a": "small_flux_optional_46",
 			"b": "small_flux_optional_47",
-			"controlX": 2871,
-			"controlY": -6868
+			"controlX": 3630,
+			"controlY": -7497
 		},
 		{
 			"a": "small_flux_optional_47",
 			"b": "small_flux_optional_48",
-			"controlX": 4723,
-			"controlY": -6868
+			"controlX": 5482,
+			"controlY": -7497
 		},
 		{
-			"a": "small_flux_optional_48",
-			"b": "small_flux_optional_5",
-			"controlX": 4723,
-			"controlY": -5016
+			"a": "weapon_turn_rate_1",
+			"b": "weapon_turn_rate_2",
+			"controlX": -1898,
+			"controlY": 1636
+		},
+		{
+			"a": "small_flux_optional_49",
+			"b": "small_flux_optional_50",
+			"controlX": -3142,
+			"controlY": -7376
+		},
+		{
+			"a": "small_flux_optional_50",
+			"b": "small_flux_optional_51",
+			"controlX": -4980,
+			"controlY": -7376
 		},
 		{
 			"a": "small_flux_optional_46",
 			"b": "wormhole_8",
-			"controlX": 2585,
-			"controlY": -5446
+			"controlX": 3630,
+			"controlY": -5645
 		},
 		{
-			"a": "small_flux_optional_5",
+			"a": "small_flux_optional_48",
 			"b": "wormhole_8",
-			"controlX": 3290,
-			"controlY": -4734
+			"controlX": 5482,
+			"controlY": -5645
+		},
+		{
+			"a": "small_flux_optional_49",
+			"b": "wormhole_10",
+			"controlX": -3142,
+			"controlY": -5538
+		},
+		{
+			"a": "small_flux_optional_51",
+			"b": "wormhole_10",
+			"controlX": -4980,
+			"controlY": -5538
+		},
+		{
+			"a": "neural_interface_1",
+			"b": "small_flux_optional_2",
+			"controlX": 0,
+			"controlY": -3000
+		},
+		{
+			"a": "REDACTED_2",
+			"b": "small_flux_optional_49",
+			"controlX": -3142,
+			"controlY": -5538
+		},
+		{
+			"a": "REDACTED_2",
+			"b": "small_flux_optional_51",
+			"controlX": -4980,
+			"controlY": -5538
+		},
+		{
+			"a": "TRITACH_2",
+			"b": "small_flux_optional_46",
+			"controlX": 3630,
+			"controlY": -5645
+		},
+		{
+			"a": "TRITACH_2",
+			"b": "small_flux_optional_48",
+			"controlX": 5482,
+			"controlY": -5645
+		},
+		{
+			"a": "small_flux_optional_46",
+			"b": "tritach_2",
+			"controlX": 3630,
+			"controlY": -5645
+		},
+		{
+			"a": "small_flux_optional_48",
+			"b": "tritach_2",
+			"controlX": 5482,
+			"controlY": -5645
 		}
 	],
 	"hiddenConnectors": [
@@ -3826,6 +3936,34 @@
 		{
 			"a": "wormhole_8",
 			"b": "wormhole_7"
+		},
+		{
+			"a": "wormhole_9",
+			"b": "wormhole_10"
+		},
+		{
+			"a": "REDACTED_1",
+			"b": "REDACTED_2"
+		},
+		{
+			"a": "TRITACH_1",
+			"b": "TRITACH_2"
+		},
+		{
+			"a": "midline_wormhole_1",
+			"b": "hightech_wormhole_1"
+		},
+		{
+			"a": "lowtech_wormhole_2",
+			"b": "hightech_wormhole_2"
+		},
+		{
+			"a": "wormhole_6",
+			"b": "lowtech_wormhole_1"
+		},
+		{
+			"a": "tritach_1",
+			"b": "tritach_2"
 		}
 	],
 	"orbitAnchors": [
@@ -3857,8 +3995,8 @@
 		},
 		{
 			"id": "additional_berthing_anchor",
-			"x": -860,
-			"y": -328,
+			"x": -799,
+			"y": -353,
 			"radius": 170
 		},
 		{
@@ -3938,8 +4076,8 @@
 		},
 		{
 			"id": "anchor_4",
-			"x": 1785,
-			"y": 1854,
+			"x": 1775,
+			"y": 1768,
 			"radius": 150,
 			"shape": "square",
 			"rotation": 42.3
@@ -4087,8 +4225,8 @@
 		},
 		{
 			"id": "anchor_21",
-			"x": -1855,
-			"y": 1773,
+			"x": 1538,
+			"y": -1021,
 			"radius": 150,
 			"shape": "triangle"
 		},
@@ -4136,23 +4274,39 @@
 		},
 		{
 			"id": "anchor_30",
-			"x": -2241,
-			"y": 1266,
+			"x": -1792,
+			"y": 1742,
 			"radius": 150
 		},
 		{
 			"id": "tritach_inner",
-			"x": 3797,
-			"y": -5942,
+			"x": 4556,
+			"y": -6571,
 			"radius": 1310
 		},
 		{
-			"id": "anchor_29",
-			"x": 3797,
-			"y": -5943,
+			"id": "tritach_asteroids",
+			"x": 4556,
+			"y": -6572,
 			"radius": 1540,
 			"shape": "asteroidBelt",
-			"beltStyle": "ice"
+			"beltStyle": "ice",
+			"beltRotationSpeed": -0.8
+		},
+		{
+			"id": "REDACTED_inner",
+			"x": -4061,
+			"y": -6457,
+			"radius": 1300
+		},
+		{
+			"id": "luddic_asteroids",
+			"x": 3940,
+			"y": 5892,
+			"radius": 1600,
+			"shape": "asteroidBelt",
+			"beltBandWidth": 400,
+			"beltRotationSpeed": 0.6
 		}
 	],
 	"ringBelts": [
@@ -4175,12 +4329,22 @@
 			"rotationSpeed": -0.8
 		},
 		{
-			"id": "anchor_29",
-			"x": 3797,
-			"y": -5943,
+			"id": "tritach_asteroids",
+			"x": 4556,
+			"y": -6572,
 			"innerRadius": 1386,
 			"outerRadius": 1694,
-			"ringArtPath": "graphics/planets/ring_band_ice.png"
+			"ringArtPath": "graphics/planets/ring_band_ice.png",
+			"rotationSpeed": -0.8
+		},
+		{
+			"id": "luddic_asteroids",
+			"x": 3940,
+			"y": 5892,
+			"innerRadius": 1400,
+			"outerRadius": 1800,
+			"ringArtPath": "graphics/planets/ring_band_asteroids.png",
+			"rotationSpeed": 0.6
 		}
 	],
 	"staticImages": [
@@ -4302,11 +4466,49 @@
 		},
 		{
 			"id": "tritach_star",
-			"x": 3798,
-			"y": -5944,
+			"x": 4557,
+			"y": -6573,
 			"radius": 400,
 			"starType": "star_blue_giant",
 			"color": "#00479e"
+		},
+		{
+			"id": "REDACTED_star",
+			"x": -4062,
+			"y": -6455,
+			"radius": 300,
+			"starType": "black_hole"
+		},
+		{
+			"id": "pirate_star",
+			"x": 7206,
+			"y": 907,
+			"radius": 400,
+			"starType": "star_red_dwarf"
+		},
+		{
+			"id": "luddic_star",
+			"x": 3960,
+			"y": 5845,
+			"radius": 400,
+			"starType": "star_white",
+			"color": "#3c670c"
+		},
+		{
+			"id": "star_1",
+			"x": -3487,
+			"y": 5921,
+			"radius": 400,
+			"starType": "star_red_supergiant",
+			"color": "#ff4900"
+		},
+		{
+			"id": "star_2",
+			"x": -6758,
+			"y": 600,
+			"radius": 400,
+			"starType": "star_browndwarf",
+			"color": "#780039"
 		}
 	]
 }

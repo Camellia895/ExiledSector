@@ -2212,7 +2212,7 @@
 					"key": "$playerCanUseGates"
 				}
 			],
-			"description": "Allocating this wormhole automatically allocates its paired wormhole as well, at no extra cost, connecting both branches of the tree. Deallocating either end deallocates both."
+			"description": "Allocating this wormhole automatically allocates its paired wormhole as well at no extra cost, connecting both branches of the tree. \n\nDeallocating either end deallocates both.\n\nCtrl click on a wormhole to travel through it."
 		},
 		{
 			"id": "pd_damage_to_missiles",

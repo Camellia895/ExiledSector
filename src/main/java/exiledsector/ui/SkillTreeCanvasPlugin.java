@@ -135,7 +135,13 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                     nodeRenderer.commitDropdownSelection(pendingDropdownOption);
                     pendingDropdownOption = null;
                 } else if (pendingClickNode != null) {
-                    nodeRenderer.toggleAllocation(pendingClickNode, pendingClickCtrlDown);
+                    SkillNode jumpTarget = nodeRenderer.wormholeJumpTarget(pendingClickNode, pendingClickCtrlDown);
+                    if (jumpTarget != null) {
+                        panX = -jumpTarget.getOffsetX() * zoom;
+                        panY = jumpTarget.getOffsetY() * zoom;
+                    } else {
+                        nodeRenderer.toggleAllocation(pendingClickNode, pendingClickCtrlDown);
+                    }
                     pendingClickNode = null;
                 }
                 if (wasOurGesture) {
@@ -176,6 +182,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
         starfieldRenderer.render(position, panX, panY, alphaMult);
         starRenderer.renderDisc(centerX, centerY, zoom, alphaMult, position);
+        starRenderer.renderAtmosphere(centerX, centerY, zoom, alphaMult, position);
+        starRenderer.renderAurora(centerX, centerY, zoom, alphaMult, position);
         ringBeltRenderer.render(centerX, centerY, zoom, alphaMult, position);
         staticImageRenderer.render(centerX, centerY, zoom, alphaMult, position);
         nodeRenderer.render(centerX, centerY, zoom, alphaMult, mouseX, mouseY, mouseKnown);

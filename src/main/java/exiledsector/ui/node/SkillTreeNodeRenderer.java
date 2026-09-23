@@ -186,6 +186,16 @@ public final class SkillTreeNodeRenderer {
         return null;
     }
 
+    public SkillNode wormholeJumpTarget(SkillNode node, boolean ctrlDown) {
+        if (!ctrlDown) return null;
+        if (node.getType().getTier() != SkillTier.WORMHOLE) return null;
+        ShipSkillData data = ShipSkillDataManager.get(member.getId());
+        if (!data.isAllocated(node.getId())) return null;
+        String pairedId = node.getPairedNodeId();
+        if (pairedId == null) return null;
+        return SkillTree.get(pairedId);
+    }
+
     public void toggleAllocation(SkillNode node, boolean ctrlDown) {
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
         boolean wasAllocated = data.isAllocated(node.getId());

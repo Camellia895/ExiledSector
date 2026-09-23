@@ -3,6 +3,8 @@ package exiledsector.ui.decoration;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.PlanetSpecAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
+import com.fs.starfarer.api.impl.campaign.terrain.AuroraRenderer;
+import com.fs.starfarer.api.impl.campaign.terrain.RangeBlockerUtil;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.SkillTree;
@@ -10,6 +12,7 @@ import exiledsector.ui.util.ColorUtil;
 import exiledsector.ui.util.SpriteCache;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.Sphere;
+import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
 import java.util.HashMap;
@@ -22,9 +25,24 @@ public class SkillTreeStarRenderer {
     private static final float RIM_ALPHA_MULT = 0.37f;
     private static final String FALLBACK_STAR_TYPE = "star_yellow";
 
+    private static final String AURORA_TEXTURE_CATEGORY = "terrain";
+    private static final String AURORA_TEXTURE_ID = "aurora";
+    private static final float AURORA_INNER_RADIUS_MULT = 1.1f;
+    private static final float AURORA_OUTER_RADIUS_MULT = 1.6f;
+    private static final float AURORA_SHORTEN_MULT = 0.85f;
+    private static final int AURORA_ALPHA = 25;
+    private static final float AURORA_BAND_WIDTH_IN_TEXTURE = 256f;
+
+    private static final String ATMOSPHERE_TEXTURE_CATEGORY = "planets";
+    private static final String ATMOSPHERE_TEXTURE_ID = "atmosphere2";
+    private static final float ATMOSPHERE_INNER_INSET_MULT = 0.4f;
+    private static final int ATMOSPHERE_SEGMENTS = 64;
+
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeStarRenderer.class);
     private final Sphere sphere = new Sphere();
     private final Map<String, Float> angleById = new HashMap<>();
+    private final Map<String, AuroraRenderer> auroraById = new HashMap<>();
+    private final Map<String, AuroraDelegate> auroraDelegateById = new HashMap<>();
     private Map<String, PlanetSpecAPI> specsByType;
 
     public SkillTreeStarRenderer() {
@@ -38,6 +56,7 @@ public class SkillTreeStarRenderer {
             if (spec == null) continue;
             float angle = normalizeAngle(angleById.getOrDefault(star.getId(), 0f) + spec.getRotation() * amount);
             angleById.put(star.getId(), angle);
+            getOrCreateAurora(star).advance(amount);
         }
     }
 
@@ -90,6 +109,105 @@ public class SkillTreeStarRenderer {
         }
     }
 
+    public void renderAtmosphere(float centerX, float centerY, float zoom, float alphaMult, PositionAPI position) {
+        if (position == null) return;
+        List<Star> stars = SkillTree.getStars();
+        if (stars.isEmpty()) return;
+
+        SpriteAPI texture = Global.getSettings().getSprite(ATMOSPHERE_TEXTURE_CATEGORY, ATMOSPHERE_TEXTURE_ID);
+        if (texture == null) return;
+
+        for (Star star : stars) {
+            PlanetSpecAPI spec = resolveSpec(star.getStarType());
+            if (spec == null || spec.getAtmosphereThickness() <= 0f) continue;
+
+            float radius = star.getRadius() * zoom;
+            float thickness = Math.max(star.getRadius() * spec.getAtmosphereThickness(), spec.getAtmosphereThicknessMin()) * zoom;
+            if (thickness <= 0f) continue;
+
+            float innerRadius = radius - thickness * ATMOSPHERE_INNER_INSET_MULT;
+            float outerRadius = innerRadius + thickness;
+
+            float screenX = centerX + star.getX() * zoom;
+            float screenY = centerY - star.getY() * zoom;
+            Color color = resolveColor(star, spec.getAtmosphereColor());
+
+            drawAtmosphereRing(texture, screenX, screenY, innerRadius, outerRadius, color, alphaMult);
+        }
+    }
+
+    private void drawAtmosphereRing(SpriteAPI texture, float centerX, float centerY, float innerRadius, float outerRadius, Color color, float alphaMult) {
+        float anglePerSegment = (float) (Math.PI * 2.0 / ATMOSPHERE_SEGMENTS);
+
+        GL11.glPushMatrix();
+        GL11.glTranslatef(centerX, centerY, 0f);
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        texture.bindTexture();
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+        Misc.setColor(color, alphaMult);
+
+        GL11.glBegin(GL11.GL_QUAD_STRIP);
+        for (int i = 0; i <= ATMOSPHERE_SEGMENTS; i++) {
+            float theta = anglePerSegment * (i % ATMOSPHERE_SEGMENTS);
+            float cos = (float) Math.cos(theta);
+            float sin = (float) Math.sin(theta);
+            GL11.glTexCoord2f(0f, 0f);
+            GL11.glVertex2f(cos * innerRadius, sin * innerRadius);
+            GL11.glTexCoord2f(0f, 0.99f);
+            GL11.glVertex2f(cos * outerRadius, sin * outerRadius);
+        }
+        GL11.glEnd();
+
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glPopMatrix();
+    }
+
+    public void renderAurora(float centerX, float centerY, float zoom, float alphaMult, PositionAPI position) {
+        if (position == null) return;
+        List<Star> stars = SkillTree.getStars();
+        if (stars.isEmpty()) return;
+
+        SpriteAPI texture = Global.getSettings().getSprite(AURORA_TEXTURE_CATEGORY, AURORA_TEXTURE_ID);
+        if (texture == null) return;
+
+        for (Star star : stars) {
+            PlanetSpecAPI spec = resolveSpec(star.getStarType());
+            if (spec == null) continue;
+
+            float radius = star.getRadius() * zoom;
+
+            float screenX = centerX + star.getX() * zoom;
+            float screenY = centerY - star.getY() * zoom;
+            Color coronaColor = resolveColor(star, spec.getCoronaColor());
+
+            AuroraRenderer renderer = getOrCreateAurora(star);
+            AuroraDelegate delegate = auroraDelegateById.get(star.getId());
+            delegate.centerLoc.set(screenX, screenY);
+            delegate.innerRadius = radius * AURORA_INNER_RADIUS_MULT;
+            delegate.outerRadius = radius * AURORA_OUTER_RADIUS_MULT;
+            delegate.color = Misc.setAlpha(coronaColor, AURORA_ALPHA);
+            delegate.texture = texture;
+
+            renderer.render(alphaMult);
+
+            GL11.glDisable(GL11.GL_BLEND);
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
+        }
+    }
+
+    private AuroraRenderer getOrCreateAurora(Star star) {
+        AuroraRenderer renderer = auroraById.get(star.getId());
+        if (renderer == null) {
+            AuroraDelegate delegate = new AuroraDelegate();
+            renderer = new AuroraRenderer(delegate);
+            auroraDelegateById.put(star.getId(), delegate);
+            auroraById.put(star.getId(), renderer);
+        }
+        return renderer;
+    }
+
     public void renderGlow(float centerX, float centerY, float zoom, float alphaMult, PositionAPI position) {
         if (position == null) return;
         List<Star> stars = SkillTree.getStars();
@@ -137,5 +255,78 @@ public class SkillTreeStarRenderer {
     private static float normalizeAngle(float angle) {
         angle %= 360f;
         return angle < 0f ? angle + 360f : angle;
+    }
+
+    private static final class AuroraDelegate implements AuroraRenderer.AuroraRendererDelegate {
+        private final Vector2f centerLoc = new Vector2f();
+        private float innerRadius;
+        private float outerRadius;
+        private Color color = Color.WHITE;
+        private SpriteAPI texture;
+
+        @Override
+        public float getAuroraInnerRadius() {
+            return innerRadius;
+        }
+
+        @Override
+        public float getAuroraOuterRadius() {
+            return outerRadius;
+        }
+
+        @Override
+        public Vector2f getAuroraCenterLoc() {
+            return centerLoc;
+        }
+
+        @Override
+        public Color getAuroraColorForAngle(float angle) {
+            return color;
+        }
+
+        @Override
+        public float getAuroraAlphaMultForAngle(float angle) {
+            return 1f;
+        }
+
+        @Override
+        public float getAuroraShortenMult(float angle) {
+            return AURORA_SHORTEN_MULT;
+        }
+
+        @Override
+        public float getAuroraInnerOffsetMult(float angle) {
+            return 1f;
+        }
+
+        @Override
+        public float getAuroraThicknessMult(float angle) {
+            return 1f;
+        }
+
+        @Override
+        public float getAuroraThicknessFlat(float angle) {
+            return 0f;
+        }
+
+        @Override
+        public float getAuroraTexPerSegmentMult() {
+            return 1f;
+        }
+
+        @Override
+        public float getAuroraBandWidthInTexture() {
+            return AURORA_BAND_WIDTH_IN_TEXTURE;
+        }
+
+        @Override
+        public SpriteAPI getAuroraTexture() {
+            return texture;
+        }
+
+        @Override
+        public RangeBlockerUtil getAuroraBlocker() {
+            return null;
+        }
     }
 }
