@@ -1,8 +1,5 @@
 package exiledsector.ui.util;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.graphics.SpriteAPI;
-
 import java.awt.Color;
 
 public final class BorderedPanel {
@@ -43,12 +40,6 @@ public final class BorderedPanel {
 
     private void drawPiece(String path, float x, float y, float width, float height, float alphaMult) {
         if (width <= 0f || height <= 0f) return;
-        if (!spriteCache.ensureLoaded(path)) return;
-
-        SpriteAPI sprite = Global.getSettings().getSprite(path);
-        sprite.setSize(width, height);
-        sprite.setAlphaMult(alphaMult);
-        sprite.setColor(BORDER_TINT);
-        sprite.renderAtCenter(x + width / 2f, y + height / 2f);
+        SpriteDraw.drawAtCenter(spriteCache, path, x + width / 2f, y + height / 2f, width, height, BORDER_TINT, alphaMult);
     }
 }

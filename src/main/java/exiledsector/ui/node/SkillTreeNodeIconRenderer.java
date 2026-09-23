@@ -1,10 +1,9 @@
 package exiledsector.ui.node;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.graphics.SpriteAPI;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.ui.util.SpriteCache;
+import exiledsector.ui.util.SpriteDraw;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
@@ -19,13 +18,7 @@ final class SkillTreeNodeIconRenderer {
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeNodeIconRenderer.class);
 
     void drawIcon(String spritePath, float cx, float cy, float size, float alphaMult, Color tint) {
-        if (!spriteCache.ensureLoaded(spritePath)) return;
-
-        SpriteAPI sprite = Global.getSettings().getSprite(spritePath);
-        sprite.setSize(size, size);
-        sprite.setAlphaMult(alphaMult);
-        sprite.setColor(tint);
-        sprite.renderAtCenter(cx, cy);
+        SpriteDraw.drawAtCenter(spriteCache, spritePath, cx, cy, size, size, tint, alphaMult);
     }
 
     void drawSplitIcon(SkillType optionalType, float cx, float cy, float size, float alphaMult, Color tint) {

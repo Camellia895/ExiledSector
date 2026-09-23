@@ -10,6 +10,7 @@ import exiledsector.ui.belt.AuroraBeltRenderer;
 import exiledsector.ui.belt.RingBeltRenderer;
 import exiledsector.ui.belt.WormholeBandRenderer;
 import exiledsector.ui.util.SpriteCache;
+import exiledsector.ui.util.SpriteDraw;
 import org.apache.log4j.Logger;
 import org.lwjgl.opengl.GL11;
 
@@ -237,7 +238,6 @@ final class SkillTreeNodeRingRenderer {
 
         for (RingInstance instance : instances) {
             String path = RING_STACK_TEXTURES[instance.textureIndex];
-            if (!spriteCache.ensureLoaded(path)) continue;
 
             float radius = outerRadius * scaleRatio * instance.radiusFraction;
             float jitterMag = radius * RING_INSTANCE_JITTER_RATIO;
@@ -248,28 +248,18 @@ final class SkillTreeNodeRingRenderer {
             float jy = (float) Math.sin(wanderRad) * jitterMag;
             float size = radius * 2f * instance.sizeJitter;
 
-            SpriteAPI sprite = Global.getSettings().getSprite(path);
-            sprite.setSize(size, size);
-            sprite.setAngle(angle);
-            sprite.setColor(color);
-            sprite.setAlphaMult(alpha);
-            sprite.renderAtCenter(cx + jx, cy + jy);
+            SpriteDraw.drawAtCenter(spriteCache, path, cx + jx, cy + jy, size, size, color, alpha, angle);
         }
     }
 
     private void drawAmbientGlow(float cx, float cy, float footprintSize, float stateAlpha, float alphaMult) {
-        if (!spriteCache.ensureLoaded(GLOW_TEXTURE_PATH)) return;
-
         float size = footprintSize * AMBIENT_GLOW_SIZE_RATIO;
 
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
 
-        SpriteAPI sprite = Global.getSettings().getSprite(GLOW_TEXTURE_PATH);
-        sprite.setSize(size, size);
-        sprite.setColor(AMBIENT_GLOW_COLOR);
-        sprite.setAlphaMult(AMBIENT_GLOW_ALPHA * stateAlpha * alphaMult);
-        sprite.renderAtCenter(cx, cy);
+        SpriteDraw.drawAtCenter(spriteCache, GLOW_TEXTURE_PATH, cx, cy, size, size,
+                AMBIENT_GLOW_COLOR, AMBIENT_GLOW_ALPHA * stateAlpha * alphaMult);
     }
 
     private void drawKeystoneRingBelt(float cx, float cy, float footprintSize, float widthRatio, String ringArtPath, float stateAlpha, float alphaMult) {
@@ -311,25 +301,21 @@ final class SkillTreeNodeRingRenderer {
     }
 
     private void drawWormholeCorona(float cx, float cy, float baseRadius, Color color, float alphaMult) {
-        if (!spriteCache.ensureLoaded(WORMHOLE_CORONA_TEXTURE_PATH)) return;
         float size = baseRadius * 2f * WORMHOLE_CORONA_SIZE_RATIO;
         float orbit = baseRadius * WORMHOLE_CORONA_ORBIT_RATIO;
 
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
 
-        SpriteAPI sprite = Global.getSettings().getSprite(WORMHOLE_CORONA_TEXTURE_PATH);
-        sprite.setColor(color);
-        sprite.setAlphaMult(alphaMult);
         for (int i = 0; i < WORMHOLE_CORONA_COUNT; i++) {
             float baseAngle = 360f * i / WORMHOLE_CORONA_COUNT;
             float angle = baseAngle + elapsedSeconds * WORMHOLE_CORONA_ROTATION_SPEED_DEG;
             float rad = (float) Math.toRadians(angle);
             float pulse = 1f + (float) Math.sin(Math.toRadians(elapsedSeconds * WORMHOLE_CORONA_PULSE_SPEED_DEG + baseAngle)) * WORMHOLE_CORONA_PULSE_SIZE_RATIO;
 
-            sprite.setSize(size * pulse, size * pulse);
-            sprite.setAngle(angle);
-            sprite.renderAtCenter(cx + (float) Math.cos(rad) * orbit, cy + (float) Math.sin(rad) * orbit);
+            SpriteDraw.drawAtCenter(spriteCache, WORMHOLE_CORONA_TEXTURE_PATH,
+                    cx + (float) Math.cos(rad) * orbit, cy + (float) Math.sin(rad) * orbit,
+                    size * pulse, size * pulse, color, alphaMult, angle);
         }
     }
 

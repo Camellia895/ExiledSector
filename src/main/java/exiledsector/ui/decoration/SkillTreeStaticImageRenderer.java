@@ -1,10 +1,9 @@
 package exiledsector.ui.decoration;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.skills.SkillTree;
 import exiledsector.ui.util.SpriteCache;
+import exiledsector.ui.util.SpriteDraw;
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
@@ -30,19 +29,17 @@ public class SkillTreeStaticImageRenderer {
 
         for (StaticImage image : images) {
             String path = image.getImagePath();
-            if (path == null || path.isEmpty() || !spriteCache.ensureLoaded(path)) continue;
+            if (path == null || path.isEmpty()) continue;
 
-            SpriteAPI sprite = Global.getSettings().getSprite(path);
             float screenX = centerX + image.getX() * zoom;
             float screenY = centerY - image.getY() * zoom;
-            sprite.setSize(image.getWidth() * zoom, image.getHeight() * zoom);
-            sprite.setAlphaMult(alphaMult);
             // The editor authors rotation as an SVG rotate() transform, which is clockwise-positive
             // because SVG's Y-axis points down. This renderer's world space is Y-up (see the Y flip
             // above), where increasing angle is counter-clockwise - so the authored value must be
             // negated here to land in the same visual orientation shown in the editor.
-            sprite.setAngle(-(image.getRotation() + image.getRotationSpeed() * elapsedSeconds));
-            sprite.renderAtCenter(screenX, screenY);
+            float angleDeg = -(image.getRotation() + image.getRotationSpeed() * elapsedSeconds);
+            SpriteDraw.drawAtCenter(spriteCache, path, screenX, screenY,
+                    image.getWidth() * zoom, image.getHeight() * zoom, null, alphaMult, angleDeg);
         }
 
         GL11.glDisable(GL11.GL_BLEND);
