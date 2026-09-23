@@ -2501,7 +2501,7 @@ function refreshInspector(){
   if (selectImageBtn) {
     selectImageBtn.addEventListener('click', function(){
       openImagePickerModal(function(path){
-        t.icon = path;
+        t.icon = moveIconIfNeeded(t.icon, path, t.id);
         saveLocal();
         render();
         refreshInspector();
@@ -3141,6 +3141,25 @@ function postImageOp(url, payload, onSuccess){
   });
 }
 
+function moveIconIfNeeded(oldPath, newPath, excludeTypeId){
+  if (oldPath && oldPath.indexOf('/skill_icons/used/') !== -1) {
+    var stillUsed = state.types.some(function(other){ return other.id !== excludeTypeId && other.icon === oldPath; });
+    if (!stillUsed) {
+      postImageOp('/move-image', { from: oldPath, to: oldPath.replace('/skill_icons/used/', '/skill_icons/unused/') }, function(){
+        fetchAllProjectImages();
+      });
+    }
+  }
+  if (newPath && newPath.indexOf('/skill_icons/unused/') !== -1) {
+    var finalPath = newPath.replace('/skill_icons/unused/', '/skill_icons/used/');
+    postImageOp('/move-image', { from: newPath, to: finalPath }, function(){
+      fetchAllProjectImages();
+    });
+    return finalPath;
+  }
+  return newPath;
+}
+
 function openTypePickerModal(currentTypeId, onPick){
   var root = document.getElementById('modalRoot');
 
@@ -3351,6 +3370,7 @@ function openImageEditorModal(){
 
 function openTypeModal(existingType, onSave, onClose){
   var isNew = !existingType;
+  var originalIcon = existingType ? existingType.icon : '';
   var t = existingType ? deepCopy(existingType) : { id: '', name: '', icon: '', tier: 'NOTABLE', vanillaHullMod: '', description: '', todo: '', tags: [], optionalOptions: [], exclusiveHullMods: [], unlockConditions: [] };
   var effectsDraft = deepCopy(t.effects || []);
   var hullSizeEffectsDraft = deepCopy(t.hullSizeEffects || []);
@@ -3510,6 +3530,7 @@ function openTypeModal(existingType, onSave, onClose){
         todo: (t.todo||'').trim(),
         tags: tagsDraft
       };
+      updated.icon = moveIconIfNeeded(originalIcon, updated.icon, updated.id);
       if (isNew) state.types.push(updated);
       else {
         var idx = state.types.findIndex(function(x){ return x.id === t.id; });

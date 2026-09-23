@@ -9,8 +9,8 @@ import exiledsector.skills.SkillType;
 
 public final class RootCrestResolver {
 
-    private static final String PIRATE_CREST_PATH = "graphics/icons/circular/roots/crest_pirates.png";
-    private static final String REMNANT_CREST_PATH = "graphics/icons/circular/roots/crest_ai_remnant.png";
+    private static final String PIRATE_CREST_PATH = "graphics/icons/non_skill_icons/used/circular/roots/crest_pirates.png";
+    private static final String REMNANT_CREST_PATH = "graphics/icons/non_skill_icons/used/circular/roots/crest_ai_remnant.png";
 
     private RootCrestResolver() {
     }

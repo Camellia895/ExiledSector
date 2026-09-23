@@ -225,6 +225,33 @@ try {
                     }
                 }
             }
+            elseif ($request.HttpMethod -eq "POST" -and $request.Url.LocalPath -eq "/move-image") {
+                $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
+                $bodyText = $reader.ReadToEnd()
+                $body = $bodyText | ConvertFrom-Json
+
+                $fromRel = [string]$body.from
+                $toRel = [string]$body.to
+                $fullProjectRoot = [System.IO.Path]::GetFullPath($projectRoot)
+                $srcFull = [System.IO.Path]::GetFullPath((Join-Path $projectRoot $fromRel))
+                $destFull = [System.IO.Path]::GetFullPath((Join-Path $projectRoot $toRel))
+
+                if (-not $fromRel -or -not $toRel -or -not $srcFull.StartsWith($fullProjectRoot, [StringComparison]::OrdinalIgnoreCase) -or -not $destFull.StartsWith($fullProjectRoot, [StringComparison]::OrdinalIgnoreCase) -or -not (Test-Path $srcFull -PathType Leaf)) {
+                    Write-JsonResponse $response 400 @{ ok = $false; message = "Source image not found." }
+                } elseif (Test-Path $destFull) {
+                    Write-JsonResponse $response 400 @{ ok = $false; message = "Destination already exists." }
+                } else {
+                    try {
+                        $destDir = [System.IO.Path]::GetDirectoryName($destFull)
+                        if (-not (Test-Path $destDir)) { New-Item -ItemType Directory -Force -Path $destDir | Out-Null }
+                        Move-Item -Path $srcFull -Destination $destFull
+                        $destRel = $destFull.Substring($fullProjectRoot.Length + 1) -replace '\\', '/'
+                        Write-JsonResponse $response 200 @{ ok = $true; path = $destRel }
+                    } catch {
+                        Write-JsonResponse $response 500 @{ ok = $false; message = $_.Exception.Message }
+                    }
+                }
+            }
             elseif ($request.HttpMethod -eq "POST" -and $request.Url.LocalPath -eq "/delete-image") {
                 $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
                 $bodyText = $reader.ReadToEnd()

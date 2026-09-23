@@ -39,7 +39,7 @@ public class SkillTreeRefitButton extends BaseRefitButton {
 
     @Override
     public String getIconName(FleetMemberAPI member, ShipVariantAPI variant) {
-        return "graphics/icons/codex/skills.png";
+        return "graphics/icons/non_skill_icons/used/codex/skills.png";
     }
 
     @Override

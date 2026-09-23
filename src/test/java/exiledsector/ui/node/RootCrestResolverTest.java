@@ -77,21 +77,21 @@ class RootCrestResolverTest {
     @Test
     void resolveReturnsPirateCrestRegardlessOfTechLevel() {
         FleetMemberAPI member = mockMember("atlas2", "Pirate", null);
-        assertEquals("graphics/icons/circular/roots/crest_pirates.png", RootCrestResolver.resolve(member));
+        assertEquals("graphics/icons/non_skill_icons/used/circular/roots/crest_pirates.png", RootCrestResolver.resolve(member));
     }
 
     @Test
     void resolveReturnsRemnantCrestRegardlessOfTechLevel() {
         FleetMemberAPI member = mockMember("radiant", "Remnant", null);
-        assertEquals("graphics/icons/circular/roots/crest_ai_remnant.png", RootCrestResolver.resolve(member));
+        assertEquals("graphics/icons/non_skill_icons/used/circular/roots/crest_ai_remnant.png", RootCrestResolver.resolve(member));
     }
 
     @Test
     void resolveFallsBackToTheShipsTechLevelRootIconWhenNoFlagApplies() {
-        SkillTree.registerType(new SkillType("root_high_tech", "High Tech Root", "graphics/icons/circular/roots/crest_hightech.png",
+        SkillTree.registerType(new SkillType("root_high_tech", "High Tech Root", "graphics/icons/skill_icons/used/circular/roots/crest_hightech.png",
                 List.of(), SkillTier.ROOT, null, null, null));
 
         FleetMemberAPI member = mockMember("paragon", "High Tech", null);
-        assertEquals("graphics/icons/circular/roots/crest_hightech.png", RootCrestResolver.resolve(member));
+        assertEquals("graphics/icons/skill_icons/used/circular/roots/crest_hightech.png", RootCrestResolver.resolve(member));
     }
 }
