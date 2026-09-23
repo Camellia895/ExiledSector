@@ -1453,7 +1453,8 @@
 			"connectedTo": [
 				"small_flux_optional_9",
 				"small_flux_optional_11",
-				"missile_autoloader_1"
+				"missile_autoloader_1",
+				"pirate_wormhole_1"
 			],
 			"x": 3000,
 			"y": 0,
@@ -1491,7 +1492,8 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_12",
-				"small_flux_optional_14"
+				"small_flux_optional_14",
+				"luddic_1"
 			],
 			"x": 1763,
 			"y": 2427,
@@ -1542,7 +1544,8 @@
 			"connectedTo": [
 				"small_flux_optional_16",
 				"small_flux_optional_18",
-				"missile_damage_3"
+				"missile_damage_3",
+				"hegemony_1"
 			],
 			"x": -1763,
 			"y": 2427,
@@ -1568,7 +1571,8 @@
 			"connectedTo": [
 				"small_flux_optional_20",
 				"small_flux_optional_18",
-				"small_flux_optional_39"
+				"small_flux_optional_39",
+				"dictat_wormhole_1"
 			],
 			"x": -2852,
 			"y": 931,
@@ -2794,8 +2798,8 @@
 				"tritach_2",
 				"small_flux_optional_6"
 			],
-			"x": 1078,
-			"y": -3208,
+			"x": 1345,
+			"y": -3471,
 			"pairedWith": "tritach_2"
 		},
 		{
@@ -2806,8 +2810,8 @@
 				"small_flux_optional_46",
 				"small_flux_optional_48"
 			],
-			"x": 4556,
-			"y": -5261,
+			"x": 3074,
+			"y": -6041,
 			"orbitAnchorId": "tritach_inner",
 			"orbitAngle": 90,
 			"pairedWith": "tritach_1"
@@ -2819,8 +2823,8 @@
 				"small_flux_optional_47",
 				"tritach_2"
 			],
-			"x": 3246,
-			"y": -6571,
+			"x": 1764,
+			"y": -7351,
 			"orbitAnchorId": "tritach_inner",
 			"orbitAngle": 180
 		},
@@ -2831,8 +2835,8 @@
 				"small_flux_optional_46",
 				"small_flux_optional_48"
 			],
-			"x": 4556,
-			"y": -7881,
+			"x": 3074,
+			"y": -8661,
 			"orbitAnchorId": "tritach_inner",
 			"orbitAngle": 270
 		},
@@ -2843,8 +2847,8 @@
 				"small_flux_optional_47",
 				"tritach_2"
 			],
-			"x": 5866,
-			"y": -6571,
+			"x": 4384,
+			"y": -7351,
 			"orbitAnchorId": "tritach_inner",
 			"orbitAngle": 0
 		},
@@ -2855,8 +2859,8 @@
 				"small_flux_optional_24",
 				"REDACTED_2"
 			],
-			"x": -1078,
-			"y": -3257,
+			"x": -1316,
+			"y": -3449,
 			"pairedWith": "REDACTED_2"
 		},
 		{
@@ -2866,8 +2870,8 @@
 				"small_flux_optional_50",
 				"REDACTED_2"
 			],
-			"x": -2761,
-			"y": -6457,
+			"x": -1856,
+			"y": -7274,
 			"orbitAnchorId": "REDACTED_inner",
 			"orbitAngle": 0
 		},
@@ -2878,8 +2882,8 @@
 				"small_flux_optional_49",
 				"small_flux_optional_51"
 			],
-			"x": -4061,
-			"y": -7757,
+			"x": -3156,
+			"y": -8574,
 			"orbitAnchorId": "REDACTED_inner",
 			"orbitAngle": 270
 		},
@@ -2890,8 +2894,8 @@
 				"small_flux_optional_50",
 				"REDACTED_2"
 			],
-			"x": -5361,
-			"y": -6457,
+			"x": -4456,
+			"y": -7274,
 			"orbitAnchorId": "REDACTED_inner",
 			"orbitAngle": 180
 		},
@@ -2903,11 +2907,255 @@
 				"small_flux_optional_49",
 				"small_flux_optional_51"
 			],
-			"x": -4061,
-			"y": -5157,
+			"x": -3156,
+			"y": -5974,
 			"orbitAnchorId": "REDACTED_inner",
 			"orbitAngle": 90,
 			"pairedWith": "REDACTED_1"
+		},
+		{
+			"id": "small_flux_optional_5",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"dictat_wormhole_2",
+				"small_flux_optional_52"
+			],
+			"x": -7829,
+			"y": -273,
+			"orbitAnchorId": "dictat_inner",
+			"orbitAngle": 270
+		},
+		{
+			"id": "dictat_wormhole_1",
+			"type": "wormhole",
+			"connectedTo": [
+				"dictat_wormhole_2",
+				"small_flux_optional_19"
+			],
+			"x": -3649,
+			"y": 931,
+			"pairedWith": "dictat_wormhole_2"
+		},
+		{
+			"id": "dictat_wormhole_2",
+			"type": "wormhole",
+			"connectedTo": [
+				"dictat_wormhole_1",
+				"small_flux_optional_5",
+				"small_flux_optional_53"
+			],
+			"x": -6611,
+			"y": 945,
+			"orbitAnchorId": "dictat_inner",
+			"orbitAngle": 0,
+			"pairedWith": "dictat_wormhole_1"
+		},
+		{
+			"id": "small_flux_optional_52",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_5",
+				"small_flux_optional_53"
+			],
+			"x": -9047,
+			"y": 945,
+			"orbitAnchorId": "dictat_inner",
+			"orbitAngle": 180
+		},
+		{
+			"id": "small_flux_optional_53",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_52",
+				"dictat_wormhole_2"
+			],
+			"x": -7829,
+			"y": 2163,
+			"orbitAnchorId": "dictat_inner",
+			"orbitAngle": 90
+		},
+		{
+			"id": "luddic_2",
+			"type": "wormhole",
+			"connectedTo": [
+				"luddic_1",
+				"small_flux_optional_54",
+				"small_flux_optional_56"
+			],
+			"x": 3700,
+			"y": 5557,
+			"orbitAnchorId": "luddic_inner",
+			"orbitAngle": 270,
+			"pairedWith": "luddic_1"
+		},
+		{
+			"id": "small_flux_optional_54",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_55",
+				"luddic_2"
+			],
+			"x": 2390,
+			"y": 6867,
+			"orbitAnchorId": "luddic_inner",
+			"orbitAngle": 180
+		},
+		{
+			"id": "small_flux_optional_55",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_54",
+				"small_flux_optional_56"
+			],
+			"x": 3700,
+			"y": 8177,
+			"orbitAnchorId": "luddic_inner",
+			"orbitAngle": 90
+		},
+		{
+			"id": "small_flux_optional_56",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_55",
+				"luddic_2"
+			],
+			"x": 5010,
+			"y": 6867,
+			"orbitAnchorId": "luddic_inner",
+			"orbitAngle": 0
+		},
+		{
+			"id": "luddic_1",
+			"type": "wormhole",
+			"connectedTo": [
+				"luddic_2",
+				"small_flux_optional_13"
+			],
+			"x": 2193,
+			"y": 3129,
+			"pairedWith": "luddic_2"
+		},
+		{
+			"id": "hegemony_2",
+			"type": "wormhole",
+			"connectedTo": [
+				"hegemony_1",
+				"small_flux_optional_57",
+				"small_flux_optional_59"
+			],
+			"x": -3857,
+			"y": 5515,
+			"orbitAnchorId": "hegemony_inner",
+			"orbitAngle": 270,
+			"pairedWith": "hegemony_1"
+		},
+		{
+			"id": "small_flux_optional_57",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_58",
+				"hegemony_2"
+			],
+			"x": -2557,
+			"y": 6815,
+			"orbitAnchorId": "hegemony_inner",
+			"orbitAngle": 0
+		},
+		{
+			"id": "small_flux_optional_58",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_57",
+				"small_flux_optional_59"
+			],
+			"x": -3857,
+			"y": 8115,
+			"orbitAnchorId": "hegemony_inner",
+			"orbitAngle": 90
+		},
+		{
+			"id": "small_flux_optional_59",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_58",
+				"hegemony_2"
+			],
+			"x": -5157,
+			"y": 6815,
+			"orbitAnchorId": "hegemony_inner",
+			"orbitAngle": 180
+		},
+		{
+			"id": "hegemony_1",
+			"type": "wormhole",
+			"connectedTo": [
+				"small_flux_optional_17",
+				"hegemony_2"
+			],
+			"x": -2227,
+			"y": 3132,
+			"pairedWith": "hegemony_2"
+		},
+		{
+			"id": "pirate_wormhole_2",
+			"type": "wormhole",
+			"connectedTo": [
+				"pirate_wormhole_1",
+				"small_flux_optional_60",
+				"small_flux_optional_62"
+			],
+			"x": 6479,
+			"y": 24,
+			"orbitAnchorId": "pirate_inner",
+			"orbitAngle": 180,
+			"pairedWith": "pirate_wormhole_1"
+		},
+		{
+			"id": "small_flux_optional_60",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"pirate_wormhole_2",
+				"small_flux_optional_61"
+			],
+			"x": 7697,
+			"y": -1194,
+			"orbitAnchorId": "pirate_inner",
+			"orbitAngle": 270
+		},
+		{
+			"id": "small_flux_optional_61",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_60",
+				"small_flux_optional_62"
+			],
+			"x": 8915,
+			"y": 24,
+			"orbitAnchorId": "pirate_inner",
+			"orbitAngle": 0
+		},
+		{
+			"id": "small_flux_optional_62",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_61",
+				"pirate_wormhole_2"
+			],
+			"x": 7697,
+			"y": 1242,
+			"orbitAnchorId": "pirate_inner",
+			"orbitAngle": 90
+		},
+		{
+			"id": "pirate_wormhole_1",
+			"type": "wormhole",
+			"connectedTo": [
+				"pirate_wormhole_2",
+				"small_flux_optional_10"
+			],
+			"x": 4138,
+			"y": 5,
+			"pairedWith": "pirate_wormhole_2"
 		}
 	],
 	"connectorCurves": [
@@ -3586,8 +3834,8 @@
 		{
 			"a": "wormhole_1",
 			"b": "wormhole_2",
-			"controlX": -1729,
-			"controlY": -600
+			"controlX": -1585,
+			"controlY": -3
 		},
 		{
 			"a": "ballistic_damage_4",
@@ -3826,14 +4074,14 @@
 		{
 			"a": "small_flux_optional_46",
 			"b": "small_flux_optional_47",
-			"controlX": 3630,
-			"controlY": -7497
+			"controlX": 2148,
+			"controlY": -8277
 		},
 		{
 			"a": "small_flux_optional_47",
 			"b": "small_flux_optional_48",
-			"controlX": 5482,
-			"controlY": -7497
+			"controlX": 4000,
+			"controlY": -8277
 		},
 		{
 			"a": "weapon_turn_rate_1",
@@ -3844,38 +4092,38 @@
 		{
 			"a": "small_flux_optional_49",
 			"b": "small_flux_optional_50",
-			"controlX": -3142,
-			"controlY": -7376
+			"controlX": -2237,
+			"controlY": -8193
 		},
 		{
 			"a": "small_flux_optional_50",
 			"b": "small_flux_optional_51",
-			"controlX": -4980,
-			"controlY": -7376
+			"controlX": -4075,
+			"controlY": -8193
 		},
 		{
 			"a": "small_flux_optional_46",
 			"b": "wormhole_8",
-			"controlX": 3630,
-			"controlY": -5645
+			"controlX": 2148,
+			"controlY": -6425
 		},
 		{
 			"a": "small_flux_optional_48",
 			"b": "wormhole_8",
-			"controlX": 5482,
-			"controlY": -5645
+			"controlX": 4000,
+			"controlY": -6425
 		},
 		{
 			"a": "small_flux_optional_49",
 			"b": "wormhole_10",
-			"controlX": -3142,
-			"controlY": -5538
+			"controlX": -2237,
+			"controlY": -6355
 		},
 		{
 			"a": "small_flux_optional_51",
 			"b": "wormhole_10",
-			"controlX": -4980,
-			"controlY": -5538
+			"controlX": -4075,
+			"controlY": -6355
 		},
 		{
 			"a": "neural_interface_1",
@@ -3886,38 +4134,134 @@
 		{
 			"a": "REDACTED_2",
 			"b": "small_flux_optional_49",
-			"controlX": -3142,
-			"controlY": -5538
+			"controlX": -2237,
+			"controlY": -6355
 		},
 		{
 			"a": "REDACTED_2",
 			"b": "small_flux_optional_51",
-			"controlX": -4980,
-			"controlY": -5538
+			"controlX": -4075,
+			"controlY": -6355
 		},
 		{
 			"a": "TRITACH_2",
 			"b": "small_flux_optional_46",
-			"controlX": 3630,
-			"controlY": -5645
+			"controlX": 2148,
+			"controlY": -6425
 		},
 		{
 			"a": "TRITACH_2",
 			"b": "small_flux_optional_48",
-			"controlX": 5482,
-			"controlY": -5645
+			"controlX": 4000,
+			"controlY": -6425
 		},
 		{
 			"a": "small_flux_optional_46",
 			"b": "tritach_2",
-			"controlX": 3630,
-			"controlY": -5645
+			"controlX": 2148,
+			"controlY": -6425
 		},
 		{
 			"a": "small_flux_optional_48",
 			"b": "tritach_2",
-			"controlX": 5482,
-			"controlY": -5645
+			"controlX": 4000,
+			"controlY": -6425
+		},
+		{
+			"a": "dictat_wormhole_2",
+			"b": "small_flux_optional_5",
+			"controlX": -6968,
+			"controlY": 84
+		},
+		{
+			"a": "small_flux_optional_5",
+			"b": "small_flux_optional_52",
+			"controlX": -8690,
+			"controlY": 84
+		},
+		{
+			"a": "small_flux_optional_52",
+			"b": "small_flux_optional_53",
+			"controlX": -8690,
+			"controlY": 1806
+		},
+		{
+			"a": "dictat_wormhole_2",
+			"b": "small_flux_optional_53",
+			"controlX": -6968,
+			"controlY": 1806
+		},
+		{
+			"a": "hegemony_2",
+			"b": "small_flux_optional_57",
+			"controlX": -2931,
+			"controlY": 5903
+		},
+		{
+			"a": "hegemony_2",
+			"b": "small_flux_optional_59",
+			"controlX": -4769,
+			"controlY": 5903
+		},
+		{
+			"a": "small_flux_optional_57",
+			"b": "small_flux_optional_58",
+			"controlX": -2938,
+			"controlY": 7734
+		},
+		{
+			"a": "small_flux_optional_58",
+			"b": "small_flux_optional_59",
+			"controlX": -4776,
+			"controlY": 7734
+		},
+		{
+			"a": "luddic_2",
+			"b": "small_flux_optional_54",
+			"controlX": 2774,
+			"controlY": 5941
+		},
+		{
+			"a": "luddic_2",
+			"b": "small_flux_optional_56",
+			"controlX": 4633,
+			"controlY": 5934
+		},
+		{
+			"a": "small_flux_optional_54",
+			"b": "small_flux_optional_55",
+			"controlX": 2774,
+			"controlY": 7793
+		},
+		{
+			"a": "small_flux_optional_55",
+			"b": "small_flux_optional_56",
+			"controlX": 4633,
+			"controlY": 7786
+		},
+		{
+			"a": "pirate_wormhole_2",
+			"b": "small_flux_optional_60",
+			"controlX": 6836,
+			"controlY": -837
+		},
+		{
+			"a": "pirate_wormhole_2",
+			"b": "small_flux_optional_62",
+			"controlX": 6836,
+			"controlY": 885
+		},
+		{
+			"a": "small_flux_optional_60",
+			"b": "small_flux_optional_61",
+			"controlX": 8569,
+			"controlY": -837
+		},
+		{
+			"a": "small_flux_optional_61",
+			"b": "small_flux_optional_62",
+			"controlX": 8569,
+			"controlY": 885
 		}
 	],
 	"hiddenConnectors": [
@@ -3964,6 +4308,14 @@
 		{
 			"a": "tritach_1",
 			"b": "tritach_2"
+		},
+		{
+			"a": "dictat_wormhole_2",
+			"b": "dictat_wormhole_1"
+		},
+		{
+			"a": "luddic_2",
+			"b": "luddic_1"
 		}
 	],
 	"orbitAnchors": [
@@ -4280,14 +4632,14 @@
 		},
 		{
 			"id": "tritach_inner",
-			"x": 4556,
-			"y": -6571,
+			"x": 3074,
+			"y": -7351,
 			"radius": 1310
 		},
 		{
 			"id": "tritach_asteroids",
-			"x": 4556,
-			"y": -6572,
+			"x": 3074,
+			"y": -7352,
 			"radius": 1540,
 			"shape": "asteroidBelt",
 			"beltStyle": "ice",
@@ -4295,18 +4647,33 @@
 		},
 		{
 			"id": "REDACTED_inner",
-			"x": -4061,
-			"y": -6457,
+			"x": -3156,
+			"y": -7274,
 			"radius": 1300
 		},
 		{
-			"id": "luddic_asteroids",
-			"x": 3940,
-			"y": 5892,
-			"radius": 1600,
-			"shape": "asteroidBelt",
-			"beltBandWidth": 400,
-			"beltRotationSpeed": 0.6
+			"id": "dictat_inner",
+			"x": -7829,
+			"y": 945,
+			"radius": 1218
+		},
+		{
+			"id": "luddic_inner",
+			"x": 3700,
+			"y": 6867,
+			"radius": 1310
+		},
+		{
+			"id": "hegemony_inner",
+			"x": -3857,
+			"y": 6815,
+			"radius": 1300
+		},
+		{
+			"id": "pirate_inner",
+			"x": 7697,
+			"y": 24,
+			"radius": 1218
 		}
 	],
 	"ringBelts": [
@@ -4330,21 +4697,12 @@
 		},
 		{
 			"id": "tritach_asteroids",
-			"x": 4556,
-			"y": -6572,
+			"x": 3074,
+			"y": -7352,
 			"innerRadius": 1386,
 			"outerRadius": 1694,
 			"ringArtPath": "graphics/planets/ring_band_ice.png",
 			"rotationSpeed": -0.8
-		},
-		{
-			"id": "luddic_asteroids",
-			"x": 3940,
-			"y": 5892,
-			"innerRadius": 1400,
-			"outerRadius": 1800,
-			"ringArtPath": "graphics/planets/ring_band_asteroids.png",
-			"rotationSpeed": 0.6
 		}
 	],
 	"staticImages": [
@@ -4454,6 +4812,14 @@
 			"height": 508,
 			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_05.png",
 			"rotation": 230
+		},
+		{
+			"id": "luddic_nebula",
+			"x": 3691,
+			"y": 6863,
+			"width": 3400,
+			"height": 3400,
+			"imagePath": "graphics/backgrounds/static_images/luddic_nebula_circular.png"
 		}
 	],
 	"stars": [
@@ -4466,46 +4832,38 @@
 		},
 		{
 			"id": "tritach_star",
-			"x": 4557,
-			"y": -6573,
+			"x": 3075,
+			"y": -7353,
 			"radius": 400,
 			"starType": "star_blue_giant",
 			"color": "#00479e"
 		},
 		{
 			"id": "REDACTED_star",
-			"x": -4062,
-			"y": -6455,
+			"x": -3157,
+			"y": -7272,
 			"radius": 300,
 			"starType": "black_hole"
 		},
 		{
 			"id": "pirate_star",
-			"x": 7206,
-			"y": 907,
+			"x": 7697,
+			"y": 24,
 			"radius": 400,
 			"starType": "star_red_dwarf"
 		},
 		{
-			"id": "luddic_star",
-			"x": 3960,
-			"y": 5845,
-			"radius": 400,
-			"starType": "star_white",
-			"color": "#3c670c"
-		},
-		{
-			"id": "star_1",
-			"x": -3487,
-			"y": 5921,
+			"id": "hegemony_star",
+			"x": -3857,
+			"y": 6815,
 			"radius": 400,
 			"starType": "star_red_supergiant",
 			"color": "#ff4900"
 		},
 		{
-			"id": "star_2",
-			"x": -6758,
-			"y": 600,
+			"id": "dictat_star",
+			"x": -7824,
+			"y": 944,
 			"radius": 400,
 			"starType": "star_browndwarf",
 			"color": "#780039"
