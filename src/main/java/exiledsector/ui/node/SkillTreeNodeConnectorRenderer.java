@@ -92,8 +92,8 @@ final class SkillTreeNodeConnectorRenderer {
                 float otherRadius = endpointRadius(other, data, satisfiedRootId, zoom);
                 boolean bothSatisfied = data.isSatisfied(node.getId(), satisfiedRootId) && data.isSatisfied(other.getId(), satisfiedRootId);
 
-                boolean fadeOtherToBlack = isClosedWormhole(other, data, satisfiedRootId) || isHiddenNode(other, data);
-                boolean fadeNodeToBlack = isClosedWormhole(node, data, satisfiedRootId) || isHiddenNode(node, data);
+                boolean fadeOtherToBlack = isWormhole(other) || isHiddenNode(other, data);
+                boolean fadeNodeToBlack = isWormhole(node) || isHiddenNode(node, data);
                 boolean tipFadeOtherToBlack = isOpenWormhole(other, data, satisfiedRootId);
                 boolean tipFadeNodeToBlack = isOpenWormhole(node, data, satisfiedRootId);
 
@@ -123,8 +123,8 @@ final class SkillTreeNodeConnectorRenderer {
         return node.getType().getTier() == SkillTier.WORMHOLE && data.isSatisfied(node.getId(), satisfiedRootId);
     }
 
-    private static boolean isClosedWormhole(SkillNode node, ShipSkillData data, String satisfiedRootId) {
-        return node.getType().getTier() == SkillTier.WORMHOLE && !data.isSatisfied(node.getId(), satisfiedRootId);
+    private static boolean isWormhole(SkillNode node) {
+        return node.getType().getTier() == SkillTier.WORMHOLE;
     }
 
     private static boolean isHiddenNode(SkillNode node, ShipSkillData data) {
