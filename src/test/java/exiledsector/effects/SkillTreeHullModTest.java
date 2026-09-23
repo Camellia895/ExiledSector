@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -250,6 +251,52 @@ class SkillTreeHullModTest {
         verify(variant, never()).removeMod(SkillTreeHullMod.ID);
         verify(variant, never()).removeMod("armoredcladding");
         verify(variant).removeMod("exiledSector_conflictWarning");
+    }
+
+    @Test
+    void removeHullModsConflictingWithAllocatedSkillsRemovesTheWarningHullModOnceTheConflictIsGone() {
+        SkillType frontType = new SkillType("frontemitter", "Shield Conversion - Front", "a.png", List.of(), List.of(), SkillTier.NOTABLE, null, null, null,
+                List.of(), List.of("adaptiveshields"));
+        SkillNode frontNode = new SkillNode("frontemitter_1", frontType, List.of(), 0f, 0f);
+        SkillTree.register(frontNode);
+
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        ShipSkillData data = ShipSkillDataManager.get("ship-a");
+        data.allocate(frontNode, 1);
+
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(variant.hasHullMod("adaptiveshields")).thenReturn(true);
+        when(variant.getHullMods()).thenReturn(new LinkedHashSet<>(List.of("adaptiveshields")));
+        when(variant.getSMods()).thenReturn(new LinkedHashSet<>());
+
+        SettingsAPI settings = mock(SettingsAPI.class);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+
+        SkillTreeHullMod.removeHullModsConflictingWithAllocatedSkills(member, variant);
+        verify(variant).addMod("exiledSector_conflictWarning");
+
+        data.deallocate(frontNode, 1);
+        when(variant.hasHullMod("adaptiveshields")).thenReturn(false);
+        when(variant.hasHullMod("exiledSector_conflictWarning")).thenReturn(true);
+
+        SkillTreeHullMod.removeHullModsConflictingWithAllocatedSkills(member, variant);
+
+        verify(variant).removeMod("exiledSector_conflictWarning");
+        assertNull(SkillConflictWarnings.get(variant));
+    }
+
+    @Test
+    void removeHullModsConflictingWithAllocatedSkillsDoesNothingWhenNoConflictWasEverPresent() {
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(variant.hasHullMod("exiledSector_conflictWarning")).thenReturn(false);
+
+        SkillTreeHullMod.removeHullModsConflictingWithAllocatedSkills(member, variant);
+
+        verify(variant, never()).removeMod("exiledSector_conflictWarning");
     }
 
     @Test

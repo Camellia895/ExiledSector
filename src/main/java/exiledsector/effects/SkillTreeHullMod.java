@@ -119,6 +119,7 @@ public class SkillTreeHullMod extends BaseHullMod {
         if (member == null || variant == null) return;
 
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
+        boolean conflictFound = false;
         for (String nodeId : data.getAllocatedNodeIds()) {
             SkillNode node = SkillTree.get(nodeId);
             if (node == null) continue;
@@ -130,8 +131,16 @@ public class SkillTreeHullMod extends BaseHullMod {
                     variant.removeMod(MAGICLIB_WARNING_HULLMOD_ID);
                     variant.addMod(CONFLICT_WARNING_HULLMOD_ID);
                     SkillConflictWarnings.record(variant, hullModId, type.getDisplayName());
+                    conflictFound = true;
                 }
             }
+        }
+
+        if (!conflictFound) {
+            if (variant.hasHullMod(CONFLICT_WARNING_HULLMOD_ID)) {
+                variant.removeMod(CONFLICT_WARNING_HULLMOD_ID);
+            }
+            SkillConflictWarnings.clear(variant);
         }
     }
 
