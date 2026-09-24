@@ -2814,8 +2814,8 @@
 				"tritach_2",
 				"small_flux_optional_2"
 			],
-			"x": 0,
-			"y": -3567,
+			"x": 1,
+			"y": -3628,
 			"pairedWith": "tritach_2"
 		},
 		{
@@ -2861,12 +2861,25 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_47",
-				"tritach_2"
+				"tritach_2",
+				"non_beam_energy_damage_4"
 			],
 			"x": 1316,
 			"y": -7175,
 			"orbitAnchorId": "tritach_inner",
 			"orbitAngle": 0
+		},
+		{
+			"id": "energy_chain_1",
+			"type": "energy_chain",
+			"connectedTo": [
+				"non_beam_energy_damage_3",
+				"non_beam_energy_damage_5"
+			],
+			"x": 732,
+			"y": -7171,
+			"orbitAnchorId": "anchor_32",
+			"orbitAngle": 180
 		},
 		{
 			"id": "REDACTED_1",
@@ -2952,8 +2965,8 @@
 				"dictat_wormhole_2",
 				"small_flux_optional_22"
 			],
-			"x": -3015,
-			"y": -2002,
+			"x": -2931,
+			"y": -2197,
 			"pairedWith": "dictat_wormhole_2"
 		},
 		{
@@ -3137,8 +3150,8 @@
 				"small_flux_optional_17",
 				"hegemony_2"
 			],
-			"x": -2227,
-			"y": 3132,
+			"x": -2238,
+			"y": 3104,
 			"pairedWith": "hegemony_2"
 		},
 		{
@@ -3422,6 +3435,43 @@
 			"x": -7985,
 			"y": -5149,
 			"orbitAnchorId": "anchor_31",
+			"orbitAngle": 270
+		},
+		{
+			"id": "non_beam_energy_damage_3",
+			"type": "non_beam_energy_damage",
+			"connectedTo": [
+				"non_beam_energy_damage_4",
+				"energy_chain_1"
+			],
+			"x": 919,
+			"y": -6984,
+			"orbitAnchorId": "anchor_32",
+			"orbitAngle": 90
+		},
+		{
+			"id": "non_beam_energy_damage_4",
+			"type": "non_beam_energy_damage",
+			"connectedTo": [
+				"non_beam_energy_damage_3",
+				"small_flux_optional_48",
+				"non_beam_energy_damage_5"
+			],
+			"x": 1106,
+			"y": -7171,
+			"orbitAnchorId": "anchor_32",
+			"orbitAngle": 0
+		},
+		{
+			"id": "non_beam_energy_damage_5",
+			"type": "non_beam_energy_damage",
+			"connectedTo": [
+				"non_beam_energy_damage_4",
+				"energy_chain_1"
+			],
+			"x": 919,
+			"y": -7358,
+			"orbitAnchorId": "anchor_32",
 			"orbitAngle": 270
 		}
 	],
@@ -4643,6 +4693,30 @@
 			"b": "beam_split_reduced_damage_1",
 			"controlX": -7845,
 			"controlY": -5091
+		},
+		{
+			"a": "non_beam_energy_damage_3",
+			"b": "non_beam_energy_damage_4",
+			"controlX": 1051,
+			"controlY": -7039
+		},
+		{
+			"a": "energy_chain_1",
+			"b": "non_beam_energy_damage_3",
+			"controlX": 787,
+			"controlY": -7039
+		},
+		{
+			"a": "non_beam_energy_damage_4",
+			"b": "non_beam_energy_damage_5",
+			"controlX": 1051,
+			"controlY": -7303
+		},
+		{
+			"a": "energy_chain_1",
+			"b": "non_beam_energy_damage_5",
+			"controlX": 787,
+			"controlY": -7303
 		}
 	],
 	"hiddenConnectors": [
@@ -5079,6 +5153,12 @@
 			"x": -7985,
 			"y": -4951,
 			"radius": 198
+		},
+		{
+			"id": "anchor_32",
+			"x": 919,
+			"y": -7171,
+			"radius": 187
 		}
 	],
 	"ringBelts": [

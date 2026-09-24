@@ -98,7 +98,13 @@
 		{
 			"id": "non_beam_energy_damage",
 			"name": "Non-Beam Energy Weapon Damage",
-			"icon": "graphics/icons/non_beam_energy_damage.png"
+			"icon": "graphics/icons/non_beam_energy_damage.png",
+			"effects": [
+				{
+					"effect": "NON_BEAM_ENERGY_DAMAGE_PERCENT",
+					"magnitude": 10
+				}
+			]
 		},
 		{
 			"id": "beam_damage",
@@ -285,6 +291,25 @@
 			],
 			"tags": [
 				"luddic_path"
+			]
+		},
+		{
+			"id": "energy_chain",
+			"name": "Refracting Projectiles",
+			"icon": "graphics/icons/navigation_circular.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "NON_BEAM_ENERGY_CHAIN_CHANCE_PERCENT",
+					"magnitude": 20
+				},
+				{
+					"effect": "NON_BEAM_ENERGY_CHAIN_FALLOFF_PERCENT",
+					"magnitude": 20
+				}
+			],
+			"tags": [
+				"energy"
 			]
 		},
 		{
@@ -2069,7 +2094,7 @@
 		},
 		{
 			"id": "ballistic_and_energy_weapon_range",
-			"name": "Ballistic and Energy Weapon Range",
+			"name": "Weapon Range",
 			"icon": "graphics/icons/ballistic_and_energy_weapon_range.png",
 			"hullSizeEffects": [
 				{
@@ -2113,7 +2138,7 @@
 			"effects": [
 				{
 					"effect": "SHIELD_DAMAGE_TAKEN_MULT",
-					"magnitude": 5
+					"magnitude": -5
 				}
 			],
 			"tags": [

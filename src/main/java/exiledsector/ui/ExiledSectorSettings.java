@@ -1,6 +1,7 @@
 package exiledsector.ui;
 
 import exiledsector.skills.HiddenNodeDisplayConfig;
+import exiledsector.skills.MaxChainHopsConfig;
 import exiledsector.skills.ShipLevelConfig;
 import exiledsector.skills.SkillNodeOpCost;
 import exiledsector.skills.UnlockConditionOverrides;
@@ -82,5 +83,11 @@ public final class ExiledSectorSettings {
                 "Disable Minimum Ship Level Unlock Conditions", "", UnlockConditionOverrides.DEFAULT_DISABLED, "");
         LunaSettings.SettingsCreator.addBoolean(MOD_ID, UnlockConditionOverrides.DISABLE_MEMORY_FLAG_FIELD_ID,
                 "Disable Game State Unlock Conditions", "", UnlockConditionOverrides.DEFAULT_DISABLED, "");
+
+        LunaSettings.SettingsCreator.addHeader(MOD_ID, "exiledSector_energyChainHeader", "Non-Beam Energy Chain", "");
+        LunaSettings.SettingsCreator.addInt(MOD_ID, MaxChainHopsConfig.FIELD_ID,
+                "Max Chain Hops", "Safety limit on how many times a single non-beam energy chain can hop, "
+                        + "independent of chance rolls succeeding. Not intended as a balance knob.",
+                MaxChainHopsConfig.DEFAULT, 1, 20, "");
     }
 }

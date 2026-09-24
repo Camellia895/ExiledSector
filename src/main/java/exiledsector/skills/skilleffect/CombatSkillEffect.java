@@ -8,6 +8,7 @@ import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
+import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
@@ -16,6 +17,7 @@ import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.combat.listeners.HullDamageAboutToBeTakenListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.skills.MaxChainHopsConfig;
 import org.lazywizard.lazylib.MathUtils;
 import org.lazywizard.lazylib.VectorUtils;
 import org.lwjgl.util.vector.Vector2f;
@@ -26,6 +28,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import static exiledsector.skills.skilleffect.SkillEffectText.pct;
@@ -87,12 +90,56 @@ public enum CombatSkillEffect implements SkillEffect {
         public String describe(float magnitude) {
             return "Any collision, however slight, is instantly fatal to this ship.";
         }
+    },
+    NON_BEAM_ENERGY_CHAIN_CHANCE_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(NON_BEAM_ENERGY_CHAIN_CHANCE_KEY).modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
+            if (!ship.hasListenerOfClass(EnergyChainListener.class)) {
+                ship.addListener(new EnergyChainListener(ship));
+            }
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return "Non-beam energy weapon hits that land on an enemy shield have a " + pct(magnitude)
+                    + "% chance to chain to a nearby enemy ship, continuing further as long as each hop also "
+                    + "lands on a shield.";
+        }
+    },
+    NON_BEAM_ENERGY_CHAIN_FALLOFF_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(NON_BEAM_ENERGY_CHAIN_FALLOFF_KEY).modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
+            if (!ship.hasListenerOfClass(EnergyChainListener.class)) {
+                ship.addListener(new EnergyChainListener(ship));
+            }
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return "Each hop of a non-beam energy chain deals " + pct(magnitude) + "% less damage than the "
+                    + "previous hop.";
+        }
     };
 
     private static final String BEAM_SPLIT_TARGETS_KEY = "exiledSector_beamSplitTargets";
     private static final float SPLIT_RADIUS_MULT_OF_BEAM_RANGE = 0.5f;
     private static final float SPLIT_BEAM_FULL_DURATION = 0.05f;
     private static final float SPLIT_BEAM_FADE_DURATION = 0.15f;
+
+    private static final String NON_BEAM_ENERGY_CHAIN_CHANCE_KEY = "exiledSector_energyChainChance";
+    private static final String NON_BEAM_ENERGY_CHAIN_FALLOFF_KEY = "exiledSector_energyChainFalloff";
+    private static final String NON_BEAM_ENERGY_CHAIN_HIT_LIST_KEY = "exiledSector_energyChainHitList";
+    private static final String NON_BEAM_ENERGY_CHAIN_HOP_COUNT_KEY = "exiledSector_energyChainHopCount";
 
     @Override
     public abstract void apply(MutableShipStatsAPI stats, String modId, float magnitude);
@@ -195,6 +242,82 @@ public enum CombatSkillEffect implements SkillEffect {
         MagicFakeBeamPlugin.addBeam(SPLIT_BEAM_FULL_DURATION, SPLIT_BEAM_FADE_DURATION, sourceBeam.getWidth(),
                 from, angle, MathUtils.getDistance(from, impactPoint) + 10f,
                 sourceBeam.getCoreColor(), sourceBeam.getFringeColor());
+    }
+
+    private static final class EnergyChainListener implements DamageDealtModifier {
+
+        private final ShipAPI ship;
+
+        private EnergyChainListener(ShipAPI ship) {
+            this.ship = ship;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
+            if (!shieldHit) return null;
+            if (!(param instanceof DamagingProjectileAPI)) return null;
+            if (!(target instanceof ShipAPI)) return null;
+
+            DamagingProjectileAPI proj = (DamagingProjectileAPI) param;
+            WeaponAPI weapon = proj.getWeapon();
+            if (weapon == null || weapon.getType() != WeaponAPI.WeaponType.ENERGY) return null;
+
+            Map<String, Object> customData = proj.getCustomData();
+            int hopCount = customData.get(NON_BEAM_ENERGY_CHAIN_HOP_COUNT_KEY) instanceof Integer
+                    ? (Integer) customData.get(NON_BEAM_ENERGY_CHAIN_HOP_COUNT_KEY) : 0;
+            if (hopCount >= MaxChainHopsConfig.get()) return null;
+
+            float chancePercent = ship.getMutableStats().getDynamic().getValue(NON_BEAM_ENERGY_CHAIN_CHANCE_KEY, 0f);
+            if (chancePercent <= 0f) return null;
+            if (Math.random() >= chancePercent / 100.0) return null;
+
+            List<ShipAPI> hitSoFar = new ArrayList<>();
+            Object storedHits = customData.get(NON_BEAM_ENERGY_CHAIN_HIT_LIST_KEY);
+            if (storedHits instanceof List) {
+                hitSoFar.addAll((List<ShipAPI>) storedHits);
+            } else {
+                hitSoFar.add(ship);
+            }
+            hitSoFar.add((ShipAPI) target);
+
+            ShipAPI nextTarget = findNearestChainTarget(ship, point, weapon.getRange(), hitSoFar);
+            if (nextTarget == null) return null;
+
+            float falloffPercent = ship.getMutableStats().getDynamic().getValue(NON_BEAM_ENERGY_CHAIN_FALLOFF_KEY, 0f);
+            float nextDamage = damage.getDamage() * (1f - falloffPercent / 100f);
+            if (nextDamage <= 0f) return null;
+
+            spawnChainProjectile(ship, weapon, point, nextTarget, nextDamage, hitSoFar, hopCount + 1);
+            return null;
+        }
+    }
+
+    private static ShipAPI findNearestChainTarget(ShipAPI source, Vector2f point, float range, List<ShipAPI> excluded) {
+        ShipAPI nearest = null;
+        float nearestDistanceSq = Float.MAX_VALUE;
+        for (ShipAPI candidate : shipsMatching(other -> !excluded.contains(other) && other.isAlive() && !other.isHulk()
+                && isHostile(source, other) && withinRadius(other.getLocation(), point, range))) {
+            float distanceSq = Vector2f.sub(candidate.getLocation(), point, null).lengthSquared();
+            if (distanceSq < nearestDistanceSq) {
+                nearestDistanceSq = distanceSq;
+                nearest = candidate;
+            }
+        }
+        return nearest;
+    }
+
+    private static void spawnChainProjectile(ShipAPI source, WeaponAPI weapon, Vector2f from, ShipAPI target,
+                                              float damageAmount, List<ShipAPI> hitSoFar, int hopCount) {
+        CombatEngineAPI engine = Global.getCombatEngine();
+        float facing = VectorUtils.getAngle(from, target.getLocation());
+        CombatEntityAPI spawned = engine.spawnProjectile(source, weapon, weapon.getId(), from, facing, new Vector2f());
+        if (spawned instanceof DamagingProjectileAPI) {
+            DamagingProjectileAPI chainProj = (DamagingProjectileAPI) spawned;
+            chainProj.getDamage().setDamage(damageAmount);
+            chainProj.setCustomData(NON_BEAM_ENERGY_CHAIN_HIT_LIST_KEY, hitSoFar);
+            chainProj.setCustomData(NON_BEAM_ENERGY_CHAIN_HOP_COUNT_KEY, hopCount);
+        }
     }
 
     private static final class DeathExplosionListener implements HullDamageAboutToBeTakenListener {
