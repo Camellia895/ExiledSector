@@ -1599,7 +1599,7 @@
 					"effect": "SENSOR_RANGE",
 					"frigate": 40,
 					"destroyer": 50,
-					"cruiser": 40,
+					"cruiser": 60,
 					"capitalShip": 70
 				}
 			],
