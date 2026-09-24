@@ -245,7 +245,7 @@
 		{
 			"id": "fuel_core_overload",
 			"name": "Fuel Core Overload",
-			"icon": "graphics/icons/applied_physics_circular_alt1.png",
+			"icon": "graphics/icons/combat_circular.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -260,7 +260,7 @@
 		{
 			"id": "exposed_fuel_lines",
 			"name": "Exposed Fuel Lines",
-			"icon": "graphics/icons/blastoff.png",
+			"icon": "graphics/icons/evasive_maneuvering_circular.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{

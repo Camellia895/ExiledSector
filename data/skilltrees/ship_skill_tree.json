@@ -1389,7 +1389,8 @@
 				"small_flux_optional_24",
 				"small_flux_optional_6",
 				"small_flux_optional_4",
-				"neural_interface_1"
+				"neural_interface_1",
+				"tritach_1"
 			],
 			"x": 0,
 			"y": -3000,
@@ -1401,8 +1402,7 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_2",
-				"small_flux_optional_7",
-				"tritach_1"
+				"small_flux_optional_7"
 			],
 			"x": 927,
 			"y": -2853,
@@ -1427,7 +1427,8 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_7",
-				"small_flux_optional_9"
+				"small_flux_optional_9",
+				"REDACTED_1"
 			],
 			"x": 2427,
 			"y": -1763,
@@ -1572,7 +1573,7 @@
 				"small_flux_optional_20",
 				"small_flux_optional_18",
 				"small_flux_optional_39",
-				"dictat_wormhole_1"
+				"league_wormhole_1"
 			],
 			"x": -2852,
 			"y": 931,
@@ -1610,7 +1611,8 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_21",
-				"small_flux_optional_23"
+				"small_flux_optional_23",
+				"dictat_wormhole_1"
 			],
 			"x": -2427,
 			"y": -1763,
@@ -1636,8 +1638,7 @@
 			"connectedTo": [
 				"small_flux_optional_23",
 				"small_flux_optional_2",
-				"phase_anchor_1",
-				"REDACTED_1"
+				"phase_anchor_1"
 			],
 			"x": -927,
 			"y": -2853,
@@ -2799,10 +2800,10 @@
 			"type": "wormhole",
 			"connectedTo": [
 				"tritach_2",
-				"small_flux_optional_6"
+				"small_flux_optional_2"
 			],
-			"x": 1345,
-			"y": -3471,
+			"x": 0,
+			"y": -3567,
 			"pairedWith": "tritach_2"
 		},
 		{
@@ -2813,8 +2814,8 @@
 				"small_flux_optional_46",
 				"small_flux_optional_48"
 			],
-			"x": 3074,
-			"y": -6041,
+			"x": 6,
+			"y": -5865,
 			"orbitAnchorId": "tritach_inner",
 			"orbitAngle": 90,
 			"pairedWith": "tritach_1"
@@ -2826,8 +2827,8 @@
 				"small_flux_optional_47",
 				"tritach_2"
 			],
-			"x": 1764,
-			"y": -7351,
+			"x": -1304,
+			"y": -7175,
 			"orbitAnchorId": "tritach_inner",
 			"orbitAngle": 180
 		},
@@ -2838,8 +2839,8 @@
 				"small_flux_optional_46",
 				"small_flux_optional_48"
 			],
-			"x": 3074,
-			"y": -8661,
+			"x": 6,
+			"y": -8485,
 			"orbitAnchorId": "tritach_inner",
 			"orbitAngle": 270
 		},
@@ -2850,8 +2851,8 @@
 				"small_flux_optional_47",
 				"tritach_2"
 			],
-			"x": 4384,
-			"y": -7351,
+			"x": 1316,
+			"y": -7175,
 			"orbitAnchorId": "tritach_inner",
 			"orbitAngle": 0
 		},
@@ -2859,11 +2860,11 @@
 			"id": "REDACTED_1",
 			"type": "wormhole",
 			"connectedTo": [
-				"small_flux_optional_24",
+				"small_flux_optional_8",
 				"REDACTED_2"
 			],
-			"x": -1316,
-			"y": -3449,
+			"x": 3149,
+			"y": -2262,
 			"pairedWith": "REDACTED_2"
 		},
 		{
@@ -2871,10 +2872,11 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_50",
-				"REDACTED_2"
+				"REDACTED_2",
+				"small_flux_optional_66"
 			],
-			"x": -1856,
-			"y": -7274,
+			"x": 7834,
+			"y": -5904,
 			"orbitAnchorId": "REDACTED_inner",
 			"orbitAngle": 0
 		},
@@ -2883,10 +2885,11 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_49",
-				"small_flux_optional_51"
+				"small_flux_optional_51",
+				"small_flux_optional_69"
 			],
-			"x": -3156,
-			"y": -8574,
+			"x": 6534,
+			"y": -7204,
 			"orbitAnchorId": "REDACTED_inner",
 			"orbitAngle": 270
 		},
@@ -2895,10 +2898,11 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_50",
-				"REDACTED_2"
+				"REDACTED_2",
+				"small_flux_optional_72"
 			],
-			"x": -4456,
-			"y": -7274,
+			"x": 5234,
+			"y": -5904,
 			"orbitAnchorId": "REDACTED_inner",
 			"orbitAngle": 180
 		},
@@ -2906,12 +2910,13 @@
 			"id": "REDACTED_2",
 			"type": "wormhole",
 			"connectedTo": [
-				"REDACTED_1",
 				"small_flux_optional_49",
-				"small_flux_optional_51"
+				"small_flux_optional_51",
+				"small_flux_optional_75",
+				"REDACTED_1"
 			],
-			"x": -3156,
-			"y": -5974,
+			"x": 6534,
+			"y": -4604,
 			"orbitAnchorId": "REDACTED_inner",
 			"orbitAngle": 90,
 			"pairedWith": "REDACTED_1"
@@ -2923,8 +2928,8 @@
 				"dictat_wormhole_2",
 				"small_flux_optional_52"
 			],
-			"x": -7829,
-			"y": -273,
+			"x": -6704,
+			"y": -4223,
 			"orbitAnchorId": "dictat_inner",
 			"orbitAngle": 270
 		},
@@ -2933,10 +2938,10 @@
 			"type": "wormhole",
 			"connectedTo": [
 				"dictat_wormhole_2",
-				"small_flux_optional_19"
+				"small_flux_optional_22"
 			],
-			"x": -3649,
-			"y": 931,
+			"x": -3015,
+			"y": -2002,
 			"pairedWith": "dictat_wormhole_2"
 		},
 		{
@@ -2947,8 +2952,8 @@
 				"small_flux_optional_5",
 				"small_flux_optional_53"
 			],
-			"x": -6611,
-			"y": 945,
+			"x": -5486,
+			"y": -3005,
 			"orbitAnchorId": "dictat_inner",
 			"orbitAngle": 0,
 			"pairedWith": "dictat_wormhole_1"
@@ -2960,8 +2965,8 @@
 				"small_flux_optional_5",
 				"small_flux_optional_53"
 			],
-			"x": -9047,
-			"y": 945,
+			"x": -7922,
+			"y": -3005,
 			"orbitAnchorId": "dictat_inner",
 			"orbitAngle": 180
 		},
@@ -2972,8 +2977,8 @@
 				"small_flux_optional_52",
 				"dictat_wormhole_2"
 			],
-			"x": -7829,
-			"y": 2163,
+			"x": -6704,
+			"y": -1787,
 			"orbitAnchorId": "dictat_inner",
 			"orbitAngle": 90
 		},
@@ -3193,6 +3198,183 @@
 			],
 			"x": 3196,
 			"y": 6741
+		},
+		{
+			"id": "league_wormhole_1",
+			"type": "wormhole",
+			"connectedTo": [
+				"league_wormhole_2",
+				"small_flux_optional_19"
+			],
+			"x": -3647,
+			"y": 1080,
+			"pairedWith": "league_wormhole_2"
+		},
+		{
+			"id": "league_wormhole_2",
+			"type": "wormhole",
+			"connectedTo": [
+				"league_wormhole_1",
+				"small_flux_optional_63",
+				"small_flux_optional_65"
+			],
+			"x": -6360,
+			"y": 1662,
+			"orbitAnchorId": "anchor_29",
+			"orbitAngle": 0,
+			"pairedWith": "league_wormhole_1"
+		},
+		{
+			"id": "small_flux_optional_63",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"league_wormhole_2",
+				"small_flux_optional_64"
+			],
+			"x": -7564,
+			"y": 458,
+			"orbitAnchorId": "anchor_29",
+			"orbitAngle": 270
+		},
+		{
+			"id": "small_flux_optional_64",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_63",
+				"small_flux_optional_65"
+			],
+			"x": -8768,
+			"y": 1662,
+			"orbitAnchorId": "anchor_29",
+			"orbitAngle": 180
+		},
+		{
+			"id": "small_flux_optional_65",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_64",
+				"league_wormhole_2"
+			],
+			"x": -7564,
+			"y": 2866,
+			"orbitAnchorId": "anchor_29",
+			"orbitAngle": 90
+		},
+		{
+			"id": "small_flux_optional_66",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_49",
+				"small_flux_optional_67"
+			],
+			"x": 7348,
+			"y": -6424
+		},
+		{
+			"id": "small_flux_optional_67",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_66",
+				"small_flux_optional_68"
+			],
+			"x": 6899,
+			"y": -6450
+		},
+		{
+			"id": "small_flux_optional_68",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_67"
+			],
+			"x": 6538,
+			"y": -6091
+		},
+		{
+			"id": "small_flux_optional_69",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_50",
+				"small_flux_optional_70"
+			],
+			"x": 5979,
+			"y": -6706
+		},
+		{
+			"id": "small_flux_optional_70",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_69",
+				"small_flux_optional_71"
+			],
+			"x": 5962,
+			"y": -6211
+		},
+		{
+			"id": "small_flux_optional_71",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_70"
+			],
+			"x": 6323,
+			"y": -5924
+		},
+		{
+			"id": "small_flux_optional_72",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_51",
+				"small_flux_optional_73"
+			],
+			"x": 5649,
+			"y": -5411
+		},
+		{
+			"id": "small_flux_optional_73",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_72",
+				"small_flux_optional_74"
+			],
+			"x": 6200,
+			"y": -5411
+		},
+		{
+			"id": "small_flux_optional_74",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_73"
+			],
+			"x": 6524,
+			"y": -5696
+		},
+		{
+			"id": "small_flux_optional_75",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"REDACTED_2",
+				"small_flux_optional_76"
+			],
+			"x": 6943,
+			"y": -4969
+		},
+		{
+			"id": "small_flux_optional_76",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_75",
+				"small_flux_optional_77"
+			],
+			"x": 7045,
+			"y": -5554
+		},
+		{
+			"id": "small_flux_optional_77",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_76"
+			],
+			"x": 6730,
+			"y": -5890
 		}
 	],
 	"connectorCurves": [
@@ -3871,8 +4053,8 @@
 		{
 			"a": "wormhole_1",
 			"b": "wormhole_2",
-			"controlX": -1585,
-			"controlY": -3
+			"controlX": -714,
+			"controlY": -54
 		},
 		{
 			"a": "ballistic_damage_4",
@@ -4111,14 +4293,14 @@
 		{
 			"a": "small_flux_optional_46",
 			"b": "small_flux_optional_47",
-			"controlX": 2148,
-			"controlY": -8277
+			"controlX": -920,
+			"controlY": -8101
 		},
 		{
 			"a": "small_flux_optional_47",
 			"b": "small_flux_optional_48",
-			"controlX": 4000,
-			"controlY": -8277
+			"controlX": 932,
+			"controlY": -8101
 		},
 		{
 			"a": "weapon_turn_rate_1",
@@ -4129,38 +4311,38 @@
 		{
 			"a": "small_flux_optional_49",
 			"b": "small_flux_optional_50",
-			"controlX": -2237,
-			"controlY": -8193
+			"controlX": 7453,
+			"controlY": -6823
 		},
 		{
 			"a": "small_flux_optional_50",
 			"b": "small_flux_optional_51",
-			"controlX": -4075,
-			"controlY": -8193
+			"controlX": 5615,
+			"controlY": -6823
 		},
 		{
 			"a": "small_flux_optional_46",
 			"b": "wormhole_8",
-			"controlX": 2148,
-			"controlY": -6425
+			"controlX": -920,
+			"controlY": -6249
 		},
 		{
 			"a": "small_flux_optional_48",
 			"b": "wormhole_8",
-			"controlX": 4000,
-			"controlY": -6425
+			"controlX": 932,
+			"controlY": -6249
 		},
 		{
 			"a": "small_flux_optional_49",
 			"b": "wormhole_10",
-			"controlX": -2237,
-			"controlY": -6355
+			"controlX": 7453,
+			"controlY": -4985
 		},
 		{
 			"a": "small_flux_optional_51",
 			"b": "wormhole_10",
-			"controlX": -4075,
-			"controlY": -6355
+			"controlX": 5615,
+			"controlY": -4985
 		},
 		{
 			"a": "neural_interface_1",
@@ -4171,62 +4353,62 @@
 		{
 			"a": "REDACTED_2",
 			"b": "small_flux_optional_49",
-			"controlX": -2237,
-			"controlY": -6355
+			"controlX": 7453,
+			"controlY": -4985
 		},
 		{
 			"a": "REDACTED_2",
 			"b": "small_flux_optional_51",
-			"controlX": -4075,
-			"controlY": -6355
+			"controlX": 5615,
+			"controlY": -4985
 		},
 		{
 			"a": "TRITACH_2",
 			"b": "small_flux_optional_46",
-			"controlX": 2148,
-			"controlY": -6425
+			"controlX": -920,
+			"controlY": -6249
 		},
 		{
 			"a": "TRITACH_2",
 			"b": "small_flux_optional_48",
-			"controlX": 4000,
-			"controlY": -6425
+			"controlX": 932,
+			"controlY": -6249
 		},
 		{
 			"a": "small_flux_optional_46",
 			"b": "tritach_2",
-			"controlX": 2148,
-			"controlY": -6425
+			"controlX": -920,
+			"controlY": -6249
 		},
 		{
 			"a": "small_flux_optional_48",
 			"b": "tritach_2",
-			"controlX": 4000,
-			"controlY": -6425
+			"controlX": 932,
+			"controlY": -6249
 		},
 		{
 			"a": "dictat_wormhole_2",
 			"b": "small_flux_optional_5",
-			"controlX": -6968,
-			"controlY": 84
+			"controlX": -5843,
+			"controlY": -3866
 		},
 		{
 			"a": "small_flux_optional_5",
 			"b": "small_flux_optional_52",
-			"controlX": -8690,
-			"controlY": 84
+			"controlX": -7565,
+			"controlY": -3866
 		},
 		{
 			"a": "small_flux_optional_52",
 			"b": "small_flux_optional_53",
-			"controlX": -8690,
-			"controlY": 1806
+			"controlX": -7565,
+			"controlY": -2144
 		},
 		{
 			"a": "dictat_wormhole_2",
 			"b": "small_flux_optional_53",
-			"controlX": -6968,
-			"controlY": 1806
+			"controlX": -5843,
+			"controlY": -2144
 		},
 		{
 			"a": "hegemony_2",
@@ -4299,6 +4481,102 @@
 			"b": "small_flux_optional_62",
 			"controlX": 8569,
 			"controlY": 885
+		},
+		{
+			"a": "league_wormhole_2",
+			"b": "small_flux_optional_63",
+			"controlX": -6713,
+			"controlY": 811
+		},
+		{
+			"a": "small_flux_optional_63",
+			"b": "small_flux_optional_64",
+			"controlX": -8415,
+			"controlY": 811
+		},
+		{
+			"a": "small_flux_optional_64",
+			"b": "small_flux_optional_65",
+			"controlX": -8415,
+			"controlY": 2513
+		},
+		{
+			"a": "league_wormhole_2",
+			"b": "small_flux_optional_65",
+			"controlX": -6713,
+			"controlY": 2513
+		},
+		{
+			"a": "small_flux_optional_49",
+			"b": "small_flux_optional_66",
+			"controlX": 7668,
+			"controlY": -6237
+		},
+		{
+			"a": "small_flux_optional_66",
+			"b": "small_flux_optional_67",
+			"controlX": 7130,
+			"controlY": -6474
+		},
+		{
+			"a": "small_flux_optional_67",
+			"b": "small_flux_optional_68",
+			"controlX": 6671,
+			"controlY": -6306
+		},
+		{
+			"a": "small_flux_optional_50",
+			"b": "small_flux_optional_69",
+			"controlX": 6196,
+			"controlY": -7033
+		},
+		{
+			"a": "small_flux_optional_73",
+			"b": "small_flux_optional_74",
+			"controlX": 6390,
+			"controlY": -5535
+		},
+		{
+			"a": "small_flux_optional_72",
+			"b": "small_flux_optional_73",
+			"controlX": 5929,
+			"controlY": -5375
+		},
+		{
+			"a": "small_flux_optional_51",
+			"b": "small_flux_optional_72",
+			"controlX": 5386,
+			"controlY": -5595
+		},
+		{
+			"a": "small_flux_optional_70",
+			"b": "small_flux_optional_71",
+			"controlX": 6079,
+			"controlY": -6020
+		},
+		{
+			"a": "small_flux_optional_69",
+			"b": "small_flux_optional_70",
+			"controlX": 5924,
+			"controlY": -6459
+		},
+		{
+			"a": "small_flux_optional_76",
+			"b": "small_flux_optional_77",
+			"controlX": 6949,
+			"controlY": -5791
+		},
+		{
+			"a": "small_flux_optional_75",
+			"b": "small_flux_optional_76",
+			"controlX": 7029,
+			"controlY": -5248
+		},
+		{
+			"a": "REDACTED_2",
+			"b": "small_flux_optional_75",
+			"controlX": 6770,
+			"controlY": -4743
 		}
 	],
 	"hiddenConnectors": [
@@ -4353,6 +4631,18 @@
 		{
 			"a": "luddic_2",
 			"b": "luddic_1"
+		},
+		{
+			"a": "league_wormhole_1",
+			"b": "league_wormhole_2"
+		},
+		{
+			"a": "hegemony_1",
+			"b": "hegemony_2"
+		},
+		{
+			"a": "pirate_wormhole_2",
+			"b": "pirate_wormhole_1"
 		}
 	],
 	"orbitAnchors": [
@@ -4669,14 +4959,14 @@
 		},
 		{
 			"id": "tritach_inner",
-			"x": 3074,
-			"y": -7351,
+			"x": 6,
+			"y": -7175,
 			"radius": 1310
 		},
 		{
 			"id": "tritach_asteroids",
-			"x": 3074,
-			"y": -7352,
+			"x": 6,
+			"y": -7176,
 			"radius": 1540,
 			"shape": "asteroidBelt",
 			"beltStyle": "ice",
@@ -4684,14 +4974,14 @@
 		},
 		{
 			"id": "REDACTED_inner",
-			"x": -3156,
-			"y": -7274,
+			"x": 6534,
+			"y": -5904,
 			"radius": 1300
 		},
 		{
 			"id": "dictat_inner",
-			"x": -7829,
-			"y": 945,
+			"x": -6704,
+			"y": -3005,
 			"radius": 1218
 		},
 		{
@@ -4711,6 +5001,12 @@
 			"x": 7697,
 			"y": 24,
 			"radius": 1218
+		},
+		{
+			"id": "anchor_29",
+			"x": -7564,
+			"y": 1662,
+			"radius": 1204
 		}
 	],
 	"ringBelts": [
@@ -4734,8 +5030,8 @@
 		},
 		{
 			"id": "tritach_asteroids",
-			"x": 3074,
-			"y": -7352,
+			"x": 6,
+			"y": -7176,
 			"innerRadius": 1386,
 			"outerRadius": 1694,
 			"ringArtPath": "graphics/planets/ring_band_ice.png",
@@ -4870,16 +5166,16 @@
 		},
 		{
 			"id": "tritach_star",
-			"x": 3075,
-			"y": -7353,
+			"x": 7,
+			"y": -7177,
 			"radius": 400,
 			"starType": "star_blue_giant",
 			"color": "#00479e"
 		},
 		{
 			"id": "REDACTED_star",
-			"x": -3157,
-			"y": -7272,
+			"x": 6533,
+			"y": -5902,
 			"radius": 300,
 			"starType": "black_hole"
 		},
@@ -4900,11 +5196,19 @@
 		},
 		{
 			"id": "dictat_star",
-			"x": -7824,
-			"y": 944,
+			"x": -6699,
+			"y": -3006,
 			"radius": 400,
 			"starType": "star_browndwarf",
 			"color": "#780039"
+		},
+		{
+			"id": "star_1",
+			"x": -7564,
+			"y": 1663,
+			"radius": 400,
+			"starType": "star_orange",
+			"color": "#f4c537"
 		}
 	]
 }
