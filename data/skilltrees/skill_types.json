@@ -166,9 +166,9 @@
 		},
 		{
 			"id": "beam_split",
-			"name": "Beam Splitting",
-			"icon": "graphics/icons/beam_damage.png",
-			"tier": "NOTABLE",
+			"name": "Lion's Gaze",
+			"icon": "graphics/icons/wolfpack_circular_alt1.png",
+			"tier": "KEYSTONE",
 			"effects": [
 				{
 					"effect": "BEAM_SPLIT_TARGETS_FLAT",
@@ -2399,6 +2399,24 @@
 			],
 			"tags": [
 				"range"
+			]
+		},
+		{
+			"id": "beam_split_reduced_damage",
+			"name": "Additional Beam Splits",
+			"icon": "graphics/icons/weapon_drills_circular_shifted.png",
+			"effects": [
+				{
+					"effect": "BEAM_SPLIT_TARGETS_FLAT",
+					"magnitude": 1
+				},
+				{
+					"effect": "BEAM_DAMAGE_PERCENT",
+					"magnitude": -20
+				}
+			],
+			"tags": [
+				"beam"
 			]
 		}
 	]

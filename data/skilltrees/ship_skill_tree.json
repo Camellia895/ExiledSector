@@ -343,9 +343,14 @@
 		{
 			"id": "beam_split_1",
 			"type": "beam_split",
-			"connectedTo": [],
-			"x": -2677,
-			"y": -900
+			"connectedTo": [
+				"ballistic_and_energy_weapon_range_8",
+				"beam_split_reduced_damage_1"
+			],
+			"x": -7300,
+			"y": -3001,
+			"orbitAnchorId": "anchor_31",
+			"orbitAngle": 0
 		},
 		{
 			"id": "advancedoptics_1",
@@ -2970,7 +2975,8 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_5",
-				"small_flux_optional_53"
+				"small_flux_optional_53",
+				"ballistic_and_energy_weapon_range_7"
 			],
 			"x": -7922,
 			"y": -3005,
@@ -3382,6 +3388,41 @@
 			],
 			"x": 6730,
 			"y": -5890
+		},
+		{
+			"id": "ballistic_and_energy_weapon_range_7",
+			"type": "ballistic_and_energy_weapon_range",
+			"connectedTo": [
+				"ballistic_and_energy_weapon_range_8",
+				"small_flux_optional_52"
+			],
+			"x": -7696,
+			"y": -3001,
+			"orbitAnchorId": "anchor_31",
+			"orbitAngle": 180
+		},
+		{
+			"id": "ballistic_and_energy_weapon_range_8",
+			"type": "ballistic_and_energy_weapon_range",
+			"connectedTo": [
+				"ballistic_and_energy_weapon_range_7",
+				"beam_split_1"
+			],
+			"x": -7498,
+			"y": -2803,
+			"orbitAnchorId": "anchor_31",
+			"orbitAngle": 90
+		},
+		{
+			"id": "beam_split_reduced_damage_1",
+			"type": "beam_split_reduced_damage",
+			"connectedTo": [
+				"beam_split_1"
+			],
+			"x": -7498,
+			"y": -3199,
+			"orbitAnchorId": "anchor_31",
+			"orbitAngle": 270
 		}
 	],
 	"connectorCurves": [
@@ -4584,6 +4625,24 @@
 			"b": "small_flux_optional_75",
 			"controlX": 6770,
 			"controlY": -4743
+		},
+		{
+			"a": "ballistic_and_energy_weapon_range_7",
+			"b": "ballistic_and_energy_weapon_range_8",
+			"controlX": -7638,
+			"controlY": -2861
+		},
+		{
+			"a": "ballistic_and_energy_weapon_range_8",
+			"b": "beam_split_1",
+			"controlX": -7358,
+			"controlY": -2861
+		},
+		{
+			"a": "beam_split_1",
+			"b": "beam_split_reduced_damage_1",
+			"controlX": -7358,
+			"controlY": -3141
 		}
 	],
 	"hiddenConnectors": [
@@ -5014,6 +5073,12 @@
 			"x": -7564,
 			"y": 1662,
 			"radius": 1204
+		},
+		{
+			"id": "anchor_31",
+			"x": -7498,
+			"y": -3001,
+			"radius": 198
 		}
 	],
 	"ringBelts": [

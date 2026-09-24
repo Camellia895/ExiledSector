@@ -10,10 +10,12 @@ import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.combat.listeners.HullDamageAboutToBeTakenListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.util.Misc;
 import org.lazywizard.lazylib.MathUtils;
 import org.lazywizard.lazylib.VectorUtils;
 import org.lwjgl.util.vector.Vector2f;
@@ -24,6 +26,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static exiledsector.skills.skilleffect.SkillEffectText.pct;
 
@@ -116,18 +119,20 @@ public enum CombatSkillEffect implements SkillEffect {
             if (splitCount <= 0) return null;
 
             BeamAPI beam = (BeamAPI) param;
-            float splitRadius = beam.getWeapon().getRange() * SPLIT_RADIUS_MULT_OF_BEAM_RANGE;
+            WeaponAPI weapon = beam.getWeapon();
+            float splitRadius = weapon.getRange() * SPLIT_RADIUS_MULT_OF_BEAM_RANGE;
             List<ShipAPI> splitTargets = findNearbyEnemies(ship, (ShipAPI) target, point, splitRadius, splitCount);
             if (splitTargets.isEmpty()) return null;
 
             float perTargetDamage = damage.getDamage() / (1 + splitTargets.size());
             damage.setDamage(perTargetDamage);
+            float perTargetEmp = perTargetDamage * empToDamageRatio(weapon);
 
             CombatEngineAPI engine = Global.getCombatEngine();
             processingSplit = true;
             try {
                 for (ShipAPI splitTarget : splitTargets) {
-                    spawnSplitBeam(engine, point, splitTarget, beam, perTargetDamage, damage.getType(), ship);
+                    spawnSplitBeam(engine, point, splitTarget, beam, perTargetDamage, perTargetEmp, damage.getType(), ship);
                 }
             } finally {
                 processingSplit = false;
@@ -136,22 +141,41 @@ public enum CombatSkillEffect implements SkillEffect {
         }
     }
 
+    private static float empToDamageRatio(WeaponAPI weapon) {
+        WeaponAPI.DerivedWeaponStatsAPI stats = weapon.getDerivedStats();
+        float dps = stats.getDps();
+        return dps > 0f ? stats.getEmpPerSecond() / dps : 0f;
+    }
+
     private static List<ShipAPI> findNearbyEnemies(ShipAPI source, ShipAPI primaryTarget, Vector2f point, float radius, int count) {
-        List<ShipAPI> candidates = new ArrayList<>();
-        for (ShipAPI other : Global.getCombatEngine().getShips()) {
-            if (other == source || other == primaryTarget) continue;
-            if (other.getOwner() == source.getOwner()) continue;
-            if (!other.isAlive() || other.isHulk()) continue;
-            float distanceSq = Vector2f.sub(other.getLocation(), point, null).lengthSquared();
-            if (distanceSq > radius * radius) continue;
-            candidates.add(other);
-        }
+        List<ShipAPI> candidates = shipsMatching(other -> other != source && other != primaryTarget
+                && other.isAlive() && !other.isHulk()
+                && isHostile(source, other) && withinRadius(other.getLocation(), point, radius));
         candidates.sort(Comparator.comparingDouble(other -> Vector2f.sub(other.getLocation(), point, null).lengthSquared()));
         return candidates.size() > count ? candidates.subList(0, count) : candidates;
     }
 
+    private static boolean isHostile(ShipAPI source, ShipAPI other) {
+        return other.getOwner() != source.getOwner() && other.getOwner() != Misc.OWNER_NEUTRAL;
+    }
+
+    private static boolean withinRadius(Vector2f a, Vector2f b, float radius) {
+        return Vector2f.sub(a, b, null).lengthSquared() <= radius * radius;
+    }
+
+    private static List<ShipAPI> shipsMatching(Predicate<ShipAPI> filter) {
+        List<ShipAPI> result = new ArrayList<>();
+        for (ShipAPI ship : Global.getCombatEngine().getShips()) {
+            if (filter.test(ship)) {
+                result.add(ship);
+            }
+        }
+        return result;
+    }
+
     private static void spawnSplitBeam(CombatEngineAPI engine, Vector2f from, ShipAPI splitTarget,
-                                        BeamAPI sourceBeam, float damageAmount, DamageType damageType, ShipAPI source) {
+                                        BeamAPI sourceBeam, float damageAmount, float empAmount,
+                                        DamageType damageType, ShipAPI source) {
         float angle = VectorUtils.getAngle(from, splitTarget.getLocation());
         float range = MathUtils.getDistance(from, splitTarget.getLocation()) + 50f;
         Vector2f segEnd = MathUtils.getPoint(from, range, angle);
@@ -163,7 +187,7 @@ public enum CombatSkillEffect implements SkillEffect {
         // Pass sourceBeam as the dealer (not just source) so other beam-gated listeners
         // (e.g. BEAM_DAMAGE_HARD_FLUX_PERCENT's DamageDealtModifier, which checks
         // `param instanceof BeamAPI`) correctly recognize and apply to split hits too.
-        engine.applyDamage(sourceBeam, splitTarget, impactPoint, damageAmount, damageType, 0f, false, true, source, false);
+        engine.applyDamage(sourceBeam, splitTarget, impactPoint, damageAmount, damageType, empAmount, false, true, source, false);
 
         float impactSize = sourceBeam.getWidth() * 2f;
         engine.addHitParticle(impactPoint, new Vector2f(), impactSize, 1f,
@@ -205,14 +229,10 @@ public enum CombatSkillEffect implements SkillEffect {
             float radius = Math.max(MIN_RADIUS, ship.getCollisionRadius() * RADIUS_MULT);
             float damage = fuelDamage();
 
-            for (ShipAPI other : engine.getShips()) {
-                if (other == ship || other.isHulk() || other.isShuttlePod()) {
-                    continue;
-                }
+            List<ShipAPI> nearby = shipsMatching(other -> other != ship && !other.isHulk() && !other.isShuttlePod()
+                    && withinRadius(other.getLocation(), loc, radius));
+            for (ShipAPI other : nearby) {
                 float distance = Vector2f.sub(other.getLocation(), loc, null).length();
-                if (distance >= radius) {
-                    continue;
-                }
                 float dealt = damage * (radius - distance) / radius;
                 if (dealt <= 0f) {
                     continue;
@@ -264,20 +284,18 @@ public enum CombatSkillEffect implements SkillEffect {
         }
 
         private boolean isHullTouchingAnything() {
-            CombatEngineAPI engine = Global.getCombatEngine();
             Vector2f loc = ship.getLocation();
             float myRadius = ship.getCollisionRadius();
 
-            for (ShipAPI other : engine.getShips()) {
-                if (other == ship || other.isFighter() || other.isHulk() || other.isShuttlePod()
-                        || other.getCollisionClass() == CollisionClass.NONE) {
-                    continue;
-                }
-                if (isBroadPhaseNear(loc, myRadius, other) && hullsOverlap(ship, other)) {
+            List<ShipAPI> nearby = shipsMatching(other -> other != ship && !other.isFighter() && !other.isHulk()
+                    && !other.isShuttlePod() && other.getCollisionClass() != CollisionClass.NONE
+                    && isBroadPhaseNear(loc, myRadius, other));
+            for (ShipAPI other : nearby) {
+                if (hullsOverlap(ship, other)) {
                     return true;
                 }
             }
-            for (CombatEntityAPI asteroid : engine.getAsteroids()) {
+            for (CombatEntityAPI asteroid : Global.getCombatEngine().getAsteroids()) {
                 if (isBroadPhaseNear(loc, myRadius, asteroid) && hullsOverlap(ship, asteroid)) {
                     return true;
                 }
@@ -287,7 +305,7 @@ public enum CombatSkillEffect implements SkillEffect {
 
         private boolean isBroadPhaseNear(Vector2f loc, float myRadius, CombatEntityAPI other) {
             float triggerRadius = (myRadius + other.getCollisionRadius()) * BROAD_PHASE_MARGIN;
-            return Vector2f.sub(other.getLocation(), loc, null).lengthSquared() <= triggerRadius * triggerRadius;
+            return withinRadius(other.getLocation(), loc, triggerRadius);
         }
 
         private boolean hullsOverlap(CombatEntityAPI a, CombatEntityAPI b) {
