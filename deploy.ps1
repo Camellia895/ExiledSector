@@ -22,7 +22,8 @@ function Sync-OpSpentHullModPool {
         "Exiled Sector OP Reserve $_,exiledSector_opSpent_$_,,,,hide_in_codex,,,,TRUE,TRUE,0,0,0,0,exiledsector.effects.SkillTreeOpSpentHullMod,`"Internal marker hullmod used by Exiled Sector to reserve ordnance points spent on allocated skill tree nodes for one ship slot. Its OP cost is set programmatically. Always installed automatically; not player-visible.`",,,"
     }
     $out = @($header) + $fixedRows + $pool
-    Set-Content -Path $csvFile -Value $out -Encoding UTF8
+    $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+    [System.IO.File]::WriteAllLines($csvFile, $out, $utf8NoBom)
     Write-Host "Synced OP-reservation hullmod pool to $slotCount slots (from SLOT_COUNT in OpSpentSlotManager.java)"
 }
 
