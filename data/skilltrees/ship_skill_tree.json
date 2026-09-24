@@ -341,6 +341,13 @@
 			"y": -600
 		},
 		{
+			"id": "beam_split_1",
+			"type": "beam_split",
+			"connectedTo": [],
+			"x": -2677,
+			"y": -900
+		},
+		{
 			"id": "advancedoptics_1",
 			"type": "advancedoptics",
 			"connectedTo": [

@@ -165,6 +165,21 @@
 			]
 		},
 		{
+			"id": "beam_split",
+			"name": "Beam Splitting",
+			"icon": "graphics/icons/beam_damage.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "BEAM_SPLIT_TARGETS_FLAT",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"beam"
+			]
+		},
+		{
 			"id": "packed_capacitors",
 			"name": "Packed Capacitors",
 			"icon": "graphics/icons/packed_capacitors.png",

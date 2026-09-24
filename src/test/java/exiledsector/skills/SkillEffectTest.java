@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.BeamAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
+import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.FluxTrackerAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
@@ -13,11 +14,13 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipSystemAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
+import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.combat.listeners.HullDamageAboutToBeTakenListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.fleet.RepairTrackerAPI;
+import exiledsector.skills.skilleffect.CombatSkillEffect;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.FighterSkillEffect;
 import exiledsector.skills.skilleffect.FluxSkillEffect;
@@ -29,10 +32,13 @@ import exiledsector.skills.skilleffect.ShieldSkillEffect;
 import exiledsector.skills.skilleffect.WeaponSkillEffect;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
+import org.magiclib.plugins.MagicFakeBeamPlugin;
+import org.magiclib.util.MagicFakeBeam;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,9 +49,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyFloat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -1233,5 +1242,315 @@ class SkillEffectTest {
         listener.advance(0.1f);
 
         verify(ship, never()).setRetreating(true, false);
+    }
+
+    @Test
+    void beamSplitTargetsFlatModifiesTheDynamicStat() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
+        when(stats.getDynamic()).thenReturn(dynamic);
+        StatBonus splitTargets = mock(StatBonus.class);
+        when(dynamic.getMod("exiledSector_beamSplitTargets")).thenReturn(splitTargets);
+
+        CombatSkillEffect.BEAM_SPLIT_TARGETS_FLAT.apply(stats, "mod_id", 1f);
+
+        verify(splitTargets).modifyFlat("mod_id", 1f);
+    }
+
+    @Test
+    void beamSplitTargetsFlatDescribesTheSplitCount() {
+        assertEquals("Beam weapon hits split their damage evenly across the target and up to 1 nearby enemy.",
+                CombatSkillEffect.BEAM_SPLIT_TARGETS_FLAT.describe(1f));
+        assertEquals("Beam weapon hits split their damage evenly across the target and up to 3 nearby enemies.",
+                CombatSkillEffect.BEAM_SPLIT_TARGETS_FLAT.describe(3f));
+    }
+
+    @Test
+    void beamSplitTargetsFlatAddsAListenerOnce() {
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.hasListenerOfClass(any())).thenReturn(false);
+
+        CombatSkillEffect.BEAM_SPLIT_TARGETS_FLAT.applyAfterShipCreation(ship, "mod_id", 1f);
+
+        verify(ship).addListener(any(DamageDealtModifier.class));
+    }
+
+    @Test
+    void beamSplitTargetsFlatDoesNotDuplicateTheListener() {
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.hasListenerOfClass(any())).thenReturn(true);
+
+        CombatSkillEffect.BEAM_SPLIT_TARGETS_FLAT.applyAfterShipCreation(ship, "mod_id", 1f);
+
+        verify(ship, never()).addListener(any());
+    }
+
+    private DamageDealtModifier captureBeamSplitListener(ShipAPI ship) {
+        when(ship.hasListenerOfClass(any())).thenReturn(false);
+        CombatSkillEffect.BEAM_SPLIT_TARGETS_FLAT.applyAfterShipCreation(ship, "mod_id", 1f);
+        ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
+        verify(ship).addListener(captor.capture());
+        return (DamageDealtModifier) captor.getValue();
+    }
+
+    private ShipAPI mockBeamSplitEnemy(int owner, Vector2f location) {
+        ShipAPI enemy = mock(ShipAPI.class);
+        when(enemy.getOwner()).thenReturn(owner);
+        when(enemy.isAlive()).thenReturn(true);
+        when(enemy.isHulk()).thenReturn(false);
+        when(enemy.getLocation()).thenReturn(location);
+        return enemy;
+    }
+
+    @Test
+    void beamSplitListenerIgnoresNonBeamDamageSources() {
+        ShipAPI ship = mock(ShipAPI.class);
+        DamageDealtModifier listener = captureBeamSplitListener(ship);
+
+        ShipAPI target = mock(ShipAPI.class);
+        DamageAPI damage = mock(DamageAPI.class);
+
+        listener.modifyDamageDealt(new Object(), target, damage, new Vector2f(0f, 0f), false);
+
+        verify(damage, never()).setDamage(anyFloat());
+    }
+
+    @Test
+    void beamSplitListenerIgnoresNonShipTargets() {
+        ShipAPI ship = mock(ShipAPI.class);
+        DamageDealtModifier listener = captureBeamSplitListener(ship);
+
+        BeamAPI beam = mock(BeamAPI.class);
+        CombatEntityAPI target = mock(CombatEntityAPI.class);
+        DamageAPI damage = mock(DamageAPI.class);
+
+        listener.modifyDamageDealt(beam, target, damage, new Vector2f(0f, 0f), false);
+
+        verify(damage, never()).setDamage(anyFloat());
+    }
+
+    @Test
+    void beamSplitListenerDoesNothingWhenNoSplitTargetsGranted() {
+        ShipAPI ship = mock(ShipAPI.class);
+        MutableShipStatsAPI shipStats = mock(MutableShipStatsAPI.class);
+        com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
+        when(ship.getMutableStats()).thenReturn(shipStats);
+        when(shipStats.getDynamic()).thenReturn(dynamic);
+        when(dynamic.getValue("exiledSector_beamSplitTargets", 0f)).thenReturn(0f);
+
+        DamageDealtModifier listener = captureBeamSplitListener(ship);
+
+        BeamAPI beam = mock(BeamAPI.class);
+        ShipAPI target = mock(ShipAPI.class);
+        DamageAPI damage = mock(DamageAPI.class);
+
+        listener.modifyDamageDealt(beam, target, damage, new Vector2f(0f, 0f), false);
+
+        verify(damage, never()).setDamage(anyFloat());
+    }
+
+    private WeaponAPI mockBeamSplitWeapon(BeamAPI beam, float range) {
+        WeaponAPI weapon = mock(WeaponAPI.class);
+        when(weapon.getRange()).thenReturn(range);
+        when(beam.getWeapon()).thenReturn(weapon);
+        return weapon;
+    }
+
+    @Test
+    void beamSplitListenerSplitsDamageAcrossNearbyEnemies() {
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.getOwner()).thenReturn(0);
+        MutableShipStatsAPI shipStats = mock(MutableShipStatsAPI.class);
+        com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
+        when(ship.getMutableStats()).thenReturn(shipStats);
+        when(shipStats.getDynamic()).thenReturn(dynamic);
+        when(dynamic.getValue("exiledSector_beamSplitTargets", 0f)).thenReturn(2f);
+
+        DamageDealtModifier listener = captureBeamSplitListener(ship);
+
+        BeamAPI beam = mock(BeamAPI.class);
+        when(beam.getWidth()).thenReturn(10f);
+        when(beam.getCoreColor()).thenReturn(java.awt.Color.WHITE);
+        when(beam.getFringeColor()).thenReturn(java.awt.Color.RED);
+        mockBeamSplitWeapon(beam, 2000f);
+
+        ShipAPI primaryTarget = mock(ShipAPI.class);
+        when(primaryTarget.getOwner()).thenReturn(1);
+
+        Vector2f point = new Vector2f(0f, 0f);
+        ShipAPI enemy1 = mockBeamSplitEnemy(1, new Vector2f(100f, 0f));
+        ShipAPI enemy2 = mockBeamSplitEnemy(1, new Vector2f(0f, 100f));
+
+        DamageAPI damage = mock(DamageAPI.class);
+        when(damage.getDamage()).thenReturn(90f);
+        when(damage.getType()).thenReturn(DamageType.ENERGY);
+
+        try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class);
+             MockedStatic<MagicFakeBeam> fakeBeamMock = Mockito.mockStatic(MagicFakeBeam.class);
+             MockedStatic<MagicFakeBeamPlugin> fakeBeamPluginMock = Mockito.mockStatic(MagicFakeBeamPlugin.class)) {
+            CombatEngineAPI engine = mock(CombatEngineAPI.class);
+            globalMock.when(Global::getCombatEngine).thenReturn(engine);
+            when(engine.getShips()).thenReturn(Arrays.asList(ship, primaryTarget, enemy1, enemy2));
+            fakeBeamMock.when(() -> MagicFakeBeam.getShipCollisionPoint(any(), any(), any(), anyFloat()))
+                    .thenAnswer(invocation -> ((ShipAPI) invocation.getArgument(2)).getLocation());
+
+            listener.modifyDamageDealt(beam, primaryTarget, damage, point, false);
+
+            verify(damage).setDamage(30f);
+            verify(engine).applyDamage(eq(beam), eq(enemy1), any(Vector2f.class), eq(30f), eq(DamageType.ENERGY),
+                    eq(0f), eq(false), eq(true), eq(ship), eq(false));
+            verify(engine).applyDamage(eq(beam), eq(enemy2), any(Vector2f.class), eq(30f), eq(DamageType.ENERGY),
+                    eq(0f), eq(false), eq(true), eq(ship), eq(false));
+        }
+    }
+
+    @Test
+    void beamSplitListenerDoesNotReSplitItsOwnSyntheticHits() {
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.getOwner()).thenReturn(0);
+        MutableShipStatsAPI shipStats = mock(MutableShipStatsAPI.class);
+        com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
+        when(ship.getMutableStats()).thenReturn(shipStats);
+        when(shipStats.getDynamic()).thenReturn(dynamic);
+        when(dynamic.getValue("exiledSector_beamSplitTargets", 0f)).thenReturn(2f);
+
+        DamageDealtModifier listener = captureBeamSplitListener(ship);
+
+        BeamAPI beam = mock(BeamAPI.class);
+        when(beam.getWidth()).thenReturn(10f);
+        when(beam.getCoreColor()).thenReturn(java.awt.Color.WHITE);
+        when(beam.getFringeColor()).thenReturn(java.awt.Color.RED);
+        mockBeamSplitWeapon(beam, 2000f);
+
+        ShipAPI primaryTarget = mock(ShipAPI.class);
+        when(primaryTarget.getOwner()).thenReturn(1);
+
+        Vector2f point = new Vector2f(0f, 0f);
+        ShipAPI enemy1 = mockBeamSplitEnemy(1, new Vector2f(100f, 0f));
+        ShipAPI enemy2 = mockBeamSplitEnemy(1, new Vector2f(0f, 100f));
+
+        DamageAPI damage = mock(DamageAPI.class);
+        when(damage.getDamage()).thenReturn(90f);
+        when(damage.getType()).thenReturn(DamageType.ENERGY);
+
+        try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class);
+             MockedStatic<MagicFakeBeam> fakeBeamMock = Mockito.mockStatic(MagicFakeBeam.class);
+             MockedStatic<MagicFakeBeamPlugin> fakeBeamPluginMock = Mockito.mockStatic(MagicFakeBeamPlugin.class)) {
+            CombatEngineAPI engine = mock(CombatEngineAPI.class);
+            globalMock.when(Global::getCombatEngine).thenReturn(engine);
+            when(engine.getShips()).thenReturn(Arrays.asList(ship, primaryTarget, enemy1, enemy2));
+            fakeBeamMock.when(() -> MagicFakeBeam.getShipCollisionPoint(any(), any(), any(), anyFloat()))
+                    .thenAnswer(invocation -> ((ShipAPI) invocation.getArgument(2)).getLocation());
+            // Simulate the real engine re-invoking every DamageDealtModifier (including this
+            // very listener) when our own applyDamage(beam, ...) calls go through.
+            Mockito.doAnswer(invocation -> {
+                DamageAPI splitDamage = mock(DamageAPI.class);
+                when(splitDamage.getDamage()).thenReturn((Float) invocation.getArgument(3));
+                when(splitDamage.getType()).thenReturn((DamageType) invocation.getArgument(4));
+                listener.modifyDamageDealt(invocation.getArgument(0), invocation.getArgument(1), splitDamage,
+                        invocation.getArgument(2), false);
+                return null;
+            }).when(engine).applyDamage(any(), any(), any(), anyFloat(), any(), anyFloat(), anyBoolean(), anyBoolean(), any(), anyBoolean());
+
+            listener.modifyDamageDealt(beam, primaryTarget, damage, point, false);
+
+            verify(engine, times(2)).applyDamage(eq(beam), any(), any(), anyFloat(), any(),
+                    anyFloat(), anyBoolean(), anyBoolean(), eq(ship), anyBoolean());
+        }
+    }
+
+    @Test
+    void beamSplitListenerOnlySplitsAcrossEnemiesActuallyInRange() {
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.getOwner()).thenReturn(0);
+        MutableShipStatsAPI shipStats = mock(MutableShipStatsAPI.class);
+        com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
+        when(ship.getMutableStats()).thenReturn(shipStats);
+        when(shipStats.getDynamic()).thenReturn(dynamic);
+        when(dynamic.getValue("exiledSector_beamSplitTargets", 0f)).thenReturn(2f);
+
+        DamageDealtModifier listener = captureBeamSplitListener(ship);
+
+        BeamAPI beam = mock(BeamAPI.class);
+        when(beam.getWidth()).thenReturn(10f);
+        when(beam.getCoreColor()).thenReturn(java.awt.Color.WHITE);
+        when(beam.getFringeColor()).thenReturn(java.awt.Color.RED);
+        mockBeamSplitWeapon(beam, 2000f);
+
+        ShipAPI primaryTarget = mock(ShipAPI.class);
+        when(primaryTarget.getOwner()).thenReturn(1);
+
+        Vector2f point = new Vector2f(0f, 0f);
+        ShipAPI enemyInRange = mockBeamSplitEnemy(1, new Vector2f(100f, 0f));
+        ShipAPI enemyOutOfRange = mockBeamSplitEnemy(1, new Vector2f(5000f, 0f));
+
+        DamageAPI damage = mock(DamageAPI.class);
+        when(damage.getDamage()).thenReturn(90f);
+        when(damage.getType()).thenReturn(DamageType.ENERGY);
+
+        try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class);
+             MockedStatic<MagicFakeBeam> fakeBeamMock = Mockito.mockStatic(MagicFakeBeam.class);
+             MockedStatic<MagicFakeBeamPlugin> fakeBeamPluginMock = Mockito.mockStatic(MagicFakeBeamPlugin.class)) {
+            CombatEngineAPI engine = mock(CombatEngineAPI.class);
+            globalMock.when(Global::getCombatEngine).thenReturn(engine);
+            when(engine.getShips()).thenReturn(Arrays.asList(ship, primaryTarget, enemyInRange, enemyOutOfRange));
+            fakeBeamMock.when(() -> MagicFakeBeam.getShipCollisionPoint(any(), any(), any(), anyFloat()))
+                    .thenAnswer(invocation -> ((ShipAPI) invocation.getArgument(2)).getLocation());
+
+            listener.modifyDamageDealt(beam, primaryTarget, damage, point, false);
+
+            verify(damage).setDamage(45f);
+            verify(engine).applyDamage(eq(beam), eq(enemyInRange), any(Vector2f.class), eq(45f), eq(DamageType.ENERGY),
+                    eq(0f), eq(false), eq(true), eq(ship), eq(false));
+            verify(engine, never()).applyDamage(eq(beam), eq(enemyOutOfRange), any(Vector2f.class), anyFloat(), any(),
+                    anyFloat(), anyBoolean(), anyBoolean(), any(), anyBoolean());
+        }
+    }
+
+    @Test
+    void beamSplitRadiusIsHalfTheBeamsModifiedRange() {
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.getOwner()).thenReturn(0);
+        MutableShipStatsAPI shipStats = mock(MutableShipStatsAPI.class);
+        com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
+        when(ship.getMutableStats()).thenReturn(shipStats);
+        when(shipStats.getDynamic()).thenReturn(dynamic);
+        when(dynamic.getValue("exiledSector_beamSplitTargets", 0f)).thenReturn(1f);
+
+        DamageDealtModifier listener = captureBeamSplitListener(ship);
+
+        BeamAPI beam = mock(BeamAPI.class);
+        when(beam.getWidth()).thenReturn(10f);
+        when(beam.getCoreColor()).thenReturn(java.awt.Color.WHITE);
+        when(beam.getFringeColor()).thenReturn(java.awt.Color.RED);
+        // Range 1000 -> split radius 500: an enemy at 600 should be excluded, but included once range doubles.
+        mockBeamSplitWeapon(beam, 1000f);
+
+        ShipAPI primaryTarget = mock(ShipAPI.class);
+        when(primaryTarget.getOwner()).thenReturn(1);
+
+        Vector2f point = new Vector2f(0f, 0f);
+        ShipAPI enemyJustOutOfHalfRange = mockBeamSplitEnemy(1, new Vector2f(600f, 0f));
+
+        DamageAPI damage = mock(DamageAPI.class);
+        when(damage.getDamage()).thenReturn(90f);
+        when(damage.getType()).thenReturn(DamageType.ENERGY);
+
+        try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class);
+             MockedStatic<MagicFakeBeam> fakeBeamMock = Mockito.mockStatic(MagicFakeBeam.class);
+             MockedStatic<MagicFakeBeamPlugin> fakeBeamPluginMock = Mockito.mockStatic(MagicFakeBeamPlugin.class)) {
+            CombatEngineAPI engine = mock(CombatEngineAPI.class);
+            globalMock.when(Global::getCombatEngine).thenReturn(engine);
+            when(engine.getShips()).thenReturn(Arrays.asList(ship, primaryTarget, enemyJustOutOfHalfRange));
+            fakeBeamMock.when(() -> MagicFakeBeam.getShipCollisionPoint(any(), any(), any(), anyFloat()))
+                    .thenAnswer(invocation -> ((ShipAPI) invocation.getArgument(2)).getLocation());
+
+            listener.modifyDamageDealt(beam, primaryTarget, damage, point, false);
+            verify(damage, never()).setDamage(anyFloat());
+
+            when(beam.getWeapon().getRange()).thenReturn(1400f);
+            listener.modifyDamageDealt(beam, primaryTarget, damage, point, false);
+            verify(damage).setDamage(45f);
+        }
     }
 }

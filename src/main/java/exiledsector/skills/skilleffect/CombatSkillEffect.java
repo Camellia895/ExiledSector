@@ -1,25 +1,54 @@
 package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.combat.BeamAPI;
 import com.fs.starfarer.api.combat.BoundsAPI;
 import com.fs.starfarer.api.combat.CollisionClass;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
+import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
+import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.combat.listeners.HullDamageAboutToBeTakenListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import org.lazywizard.lazylib.MathUtils;
+import org.lazywizard.lazylib.VectorUtils;
 import org.lwjgl.util.vector.Vector2f;
+import org.magiclib.plugins.MagicFakeBeamPlugin;
+import org.magiclib.util.MagicFakeBeam;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static exiledsector.skills.skilleffect.SkillEffectText.pct;
 
 public enum CombatSkillEffect implements SkillEffect {
 
+    BEAM_SPLIT_TARGETS_FLAT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(BEAM_SPLIT_TARGETS_KEY).modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
+            if (!ship.hasListenerOfClass(BeamSplitListener.class)) {
+                ship.addListener(new BeamSplitListener(ship));
+            }
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            int count = Math.round(magnitude);
+            return "Beam weapon hits split their damage evenly across the target and up to "
+                    + pct(magnitude) + " nearby enem" + (count == 1 ? "y" : "ies") + ".";
+        }
+    },
     EXPLODE_ON_DEATH {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -57,11 +86,92 @@ public enum CombatSkillEffect implements SkillEffect {
         }
     };
 
+    private static final String BEAM_SPLIT_TARGETS_KEY = "exiledSector_beamSplitTargets";
+    private static final float SPLIT_RADIUS_MULT_OF_BEAM_RANGE = 0.5f;
+    private static final float SPLIT_BEAM_FULL_DURATION = 0.05f;
+    private static final float SPLIT_BEAM_FADE_DURATION = 0.15f;
+
     @Override
     public abstract void apply(MutableShipStatsAPI stats, String modId, float magnitude);
 
     @Override
     public abstract String describe(float magnitude);
+
+    private static final class BeamSplitListener implements DamageDealtModifier {
+
+        private final ShipAPI ship;
+        private boolean processingSplit;
+
+        private BeamSplitListener(ShipAPI ship) {
+            this.ship = ship;
+        }
+
+        @Override
+        public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
+            if (processingSplit) return null;
+            if (!(param instanceof BeamAPI)) return null;
+            if (!(target instanceof ShipAPI)) return null;
+
+            int splitCount = Math.round(ship.getMutableStats().getDynamic().getValue(BEAM_SPLIT_TARGETS_KEY, 0f));
+            if (splitCount <= 0) return null;
+
+            BeamAPI beam = (BeamAPI) param;
+            float splitRadius = beam.getWeapon().getRange() * SPLIT_RADIUS_MULT_OF_BEAM_RANGE;
+            List<ShipAPI> splitTargets = findNearbyEnemies(ship, (ShipAPI) target, point, splitRadius, splitCount);
+            if (splitTargets.isEmpty()) return null;
+
+            float perTargetDamage = damage.getDamage() / (1 + splitTargets.size());
+            damage.setDamage(perTargetDamage);
+
+            CombatEngineAPI engine = Global.getCombatEngine();
+            processingSplit = true;
+            try {
+                for (ShipAPI splitTarget : splitTargets) {
+                    spawnSplitBeam(engine, point, splitTarget, beam, perTargetDamage, damage.getType(), ship);
+                }
+            } finally {
+                processingSplit = false;
+            }
+            return null;
+        }
+    }
+
+    private static List<ShipAPI> findNearbyEnemies(ShipAPI source, ShipAPI primaryTarget, Vector2f point, float radius, int count) {
+        List<ShipAPI> candidates = new ArrayList<>();
+        for (ShipAPI other : Global.getCombatEngine().getShips()) {
+            if (other == source || other == primaryTarget) continue;
+            if (other.getOwner() == source.getOwner()) continue;
+            if (!other.isAlive() || other.isHulk()) continue;
+            float distanceSq = Vector2f.sub(other.getLocation(), point, null).lengthSquared();
+            if (distanceSq > radius * radius) continue;
+            candidates.add(other);
+        }
+        candidates.sort(Comparator.comparingDouble(other -> Vector2f.sub(other.getLocation(), point, null).lengthSquared()));
+        return candidates.size() > count ? candidates.subList(0, count) : candidates;
+    }
+
+    private static void spawnSplitBeam(CombatEngineAPI engine, Vector2f from, ShipAPI splitTarget,
+                                        BeamAPI sourceBeam, float damageAmount, DamageType damageType, ShipAPI source) {
+        float angle = VectorUtils.getAngle(from, splitTarget.getLocation());
+        float range = MathUtils.getDistance(from, splitTarget.getLocation()) + 50f;
+        Vector2f segEnd = MathUtils.getPoint(from, range, angle);
+        Vector2f impactPoint = MagicFakeBeam.getShipCollisionPoint(from, segEnd, splitTarget, angle);
+        if (impactPoint == null) {
+            impactPoint = splitTarget.getLocation();
+        }
+
+        // Pass sourceBeam as the dealer (not just source) so other beam-gated listeners
+        // (e.g. BEAM_DAMAGE_HARD_FLUX_PERCENT's DamageDealtModifier, which checks
+        // `param instanceof BeamAPI`) correctly recognize and apply to split hits too.
+        engine.applyDamage(sourceBeam, splitTarget, impactPoint, damageAmount, damageType, 0f, false, true, source, false);
+
+        float impactSize = sourceBeam.getWidth() * 2f;
+        engine.addHitParticle(impactPoint, new Vector2f(), impactSize, 1f,
+                SPLIT_BEAM_FULL_DURATION + SPLIT_BEAM_FADE_DURATION, sourceBeam.getFringeColor());
+        MagicFakeBeamPlugin.addBeam(SPLIT_BEAM_FULL_DURATION, SPLIT_BEAM_FADE_DURATION, sourceBeam.getWidth(),
+                from, angle, MathUtils.getDistance(from, impactPoint) + 10f,
+                sourceBeam.getCoreColor(), sourceBeam.getFringeColor());
+    }
 
     private static final class DeathExplosionListener implements HullDamageAboutToBeTakenListener {
 
