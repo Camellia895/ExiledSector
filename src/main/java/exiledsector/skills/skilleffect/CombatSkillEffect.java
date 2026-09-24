@@ -70,8 +70,7 @@ public enum CombatSkillEffect implements SkillEffect {
         @Override
         public String describe(float magnitude) {
             return "When this ship is destroyed, it detonates violently, dealing explosive damage equal to up to "
-                    + pct(magnitude) + "% of its maximum fuel capacity to nearby ships, tapering off with distance "
-                    + "from the wreck.";
+                    + pct(magnitude) + "% of its maximum fuel capacity to nearby ships, tapering off with distance ";
         }
     },
     DEATH_ON_COLLISION {
@@ -107,8 +106,8 @@ public enum CombatSkillEffect implements SkillEffect {
         @Override
         public String describe(float magnitude) {
             return "Non-beam energy weapon hits that land on an enemy shield have a " + pct(magnitude)
-                    + "% chance to chain to a nearby enemy ship, continuing further as long as the chain "
-                    + "keeps landing on shields.";
+                    + "% chance to chain to a nearby enemy ship. The chaining projectile has an equal " +
+                    "chance to chain again, as long as it hits a shield.";
         }
     },
     NON_BEAM_ENERGY_CHAIN_FALLOFF_PERCENT {

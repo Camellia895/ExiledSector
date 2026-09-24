@@ -94,7 +94,7 @@ public enum FluxSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return "Allows the zero-flux engine boost to take effect regardless of flux level.";
+            return "Allows the zero-flux speed boost to take effect regardless of flux level.";
         }
     },
     FLUX_DISSIPATION_WHILE_VENTING_PERCENT {

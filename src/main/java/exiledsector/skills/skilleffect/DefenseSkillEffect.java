@@ -50,7 +50,7 @@ public enum DefenseSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return flatChange(magnitude, "armor rating");
+            return flatChange(magnitude, "armor");
         }
     },
     SHIP_RECOVERY_CHANCE_BONUS {
@@ -83,7 +83,7 @@ public enum DefenseSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "armor rating");
+            return pctChange(magnitude, "armor");
         }
     },
     SHIELD_ABSORPTION_PERCENT {

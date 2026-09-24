@@ -161,7 +161,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "armor rating of fighters launched from this ship");
+            return pctChange(magnitude, "armor of fighters launched from this ship");
         }
     },
     FIGHTER_SHIELD_DAMAGE_TAKEN_PERCENT {
@@ -238,7 +238,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "weapon damage of Fighter-role wings launched from this ship");
+            return pctChange(magnitude, "weapon damage of Fighters launched from this ship");
         }
     },
     FIGHTER_ROLE_TOP_SPEED_PERCENT {
@@ -253,7 +253,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "top speed of Fighter-role wings launched from this ship");
+            return pctChange(magnitude, "top speed of Fighters launched from this ship");
         }
     },
     FIGHTER_ROLE_ARMOR_PERCENT {
@@ -268,7 +268,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "armor rating of Fighter-role wings launched from this ship");
+            return pctChange(magnitude, "armor of Fighters launched from this ship");
         }
     },
     FIGHTER_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT {
@@ -283,7 +283,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "damage taken by shields of Fighter-role wings launched from this ship");
+            return pctChange(magnitude, "damage taken by shields of Fighters launched from this ship");
         }
     },
     FIGHTER_ROLE_RATE_OF_FIRE_PERCENT {
@@ -298,7 +298,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "weapon rate of fire of Fighter-role wings launched from this ship");
+            return pctChange(magnitude, "weapon rate of fire of Fighters launched from this ship");
         }
     },
     FIGHTER_ROLE_ENGAGEMENT_RANGE_PERCENT {
@@ -313,7 +313,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "engagement range of Fighter-role wings launched from this ship");
+            return pctChange(magnitude, "engagement range of Fighters launched from this ship");
         }
     },
     INTERCEPTOR_ROLE_DAMAGE_PERCENT {
@@ -328,7 +328,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "weapon damage of Interceptor-role wings launched from this ship");
+            return pctChange(magnitude, "weapon damage of Interceptors launched from this ship");
         }
     },
     INTERCEPTOR_ROLE_TOP_SPEED_PERCENT {
@@ -343,7 +343,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "top speed of Interceptor-role wings launched from this ship");
+            return pctChange(magnitude, "top speed of Interceptors launched from this ship");
         }
     },
     INTERCEPTOR_ROLE_ARMOR_PERCENT {
@@ -358,7 +358,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "armor rating of Interceptor-role wings launched from this ship");
+            return pctChange(magnitude, "armor of Interceptors launched from this ship");
         }
     },
     INTERCEPTOR_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT {
@@ -373,7 +373,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "damage taken by shields of Interceptor-role wings launched from this ship");
+            return pctChange(magnitude, "damage taken by shields of Interceptors launched from this ship");
         }
     },
     INTERCEPTOR_ROLE_RATE_OF_FIRE_PERCENT {
@@ -388,7 +388,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "weapon rate of fire of Interceptor-role wings launched from this ship");
+            return pctChange(magnitude, "weapon rate of fire of Interceptors launched from this ship");
         }
     },
     INTERCEPTOR_ROLE_ENGAGEMENT_RANGE_PERCENT {
@@ -403,7 +403,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "engagement range of Interceptor-role wings launched from this ship");
+            return pctChange(magnitude, "engagement range of Interceptors launched from this ship");
         }
     },
     BOMBER_ROLE_DAMAGE_PERCENT {
@@ -418,7 +418,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "weapon damage of Bomber-role wings launched from this ship");
+            return pctChange(magnitude, "weapon damage of Bombers launched from this ship");
         }
     },
     BOMBER_ROLE_TOP_SPEED_PERCENT {
@@ -433,7 +433,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "top speed of Bomber-role wings launched from this ship");
+            return pctChange(magnitude, "top speed of Bombers launched from this ship");
         }
     },
     BOMBER_ROLE_ARMOR_PERCENT {
@@ -448,7 +448,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "armor rating of Bomber-role wings launched from this ship");
+            return pctChange(magnitude, "armor of Bombers launched from this ship");
         }
     },
     BOMBER_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT {
@@ -463,7 +463,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "damage taken by shields of Bomber-role wings launched from this ship");
+            return pctChange(magnitude, "damage taken by shields of Bombers launched from this ship");
         }
     },
     BOMBER_ROLE_RATE_OF_FIRE_PERCENT {
@@ -478,7 +478,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "weapon rate of fire of Bomber-role wings launched from this ship");
+            return pctChange(magnitude, "weapon rate of fire of Bombers launched from this ship");
         }
     },
     BOMBER_ROLE_ENGAGEMENT_RANGE_PERCENT {
@@ -493,7 +493,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "engagement range of Bomber-role wings launched from this ship");
+            return pctChange(magnitude, "engagement range of Bombers launched from this ship");
         }
     },
     SUPPORT_ROLE_DAMAGE_PERCENT {
@@ -508,7 +508,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "weapon damage of Support-role wings launched from this ship");
+            return pctChange(magnitude, "weapon damage of Support fighters launched from this ship");
         }
     },
     SUPPORT_ROLE_TOP_SPEED_PERCENT {
@@ -523,7 +523,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "top speed of Support-role wings launched from this ship");
+            return pctChange(magnitude, "top speed of Support fighters launched from this ship");
         }
     },
     SUPPORT_ROLE_ARMOR_PERCENT {
@@ -538,7 +538,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "armor rating of Support-role wings launched from this ship");
+            return pctChange(magnitude, "armor of Support fighters launched from this ship");
         }
     },
     SUPPORT_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT {
@@ -553,7 +553,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "damage taken by shields of Support-role wings launched from this ship");
+            return pctChange(magnitude, "damage taken by shields of Support fighters launched from this ship");
         }
     },
     SUPPORT_ROLE_RATE_OF_FIRE_PERCENT {
@@ -568,7 +568,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "weapon rate of fire of Support-role wings launched from this ship");
+            return pctChange(magnitude, "weapon rate of fire of Support fighters launched from this ship");
         }
     },
     SUPPORT_ROLE_ENGAGEMENT_RANGE_PERCENT {
@@ -583,7 +583,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "engagement range of Support-role wings launched from this ship");
+            return pctChange(magnitude, "engagement range of Support fighters launched from this ship");
         }
     },
     REMOVE_ALL_FIGHTER_BAYS {

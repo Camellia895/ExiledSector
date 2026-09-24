@@ -273,7 +273,7 @@ public enum LogisticsSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctMore(magnitude, "fuel use rate");
+            return pctMore(magnitude, "fuel consumption rate");
         }
     },
     REMOVE_CIVILIAN_HULL_PENALTY {
@@ -285,7 +285,7 @@ public enum LogisticsSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return "Removes the sensor strength and sensor profile penalties of a civilian-grade hull.";
+            return "Removes the penalties of a civilian-grade hull.";
         }
     },
     CREW_LOSS_PERCENT {

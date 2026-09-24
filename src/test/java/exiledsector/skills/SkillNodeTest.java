@@ -48,7 +48,7 @@ class SkillNodeTest {
                 SkillTier.NOTABLE, null, null, null);
         SkillNode node = new SkillNode("heavyarmor_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Increases armor rating by 15%.\n\nIncreases hull points by 5%.", node.getDescription());
+        assertEquals("Increases armor by 15%.\n\nIncreases hull points by 5%.", node.getDescription());
     }
 
     @Test
@@ -105,7 +105,7 @@ class SkillNodeTest {
                 List.of(), List.of("armoredcladding"));
         SkillNode node = new SkillNode("heavyarmor_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Increases armor rating by 15%.\n\nMutually exclusive with: Armored Cladding.", node.getDescription());
+        assertEquals("Increases armor by 15%.\n\nMutually exclusive with: Armored Cladding.", node.getDescription());
     }
 
     @Test

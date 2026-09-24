@@ -897,7 +897,7 @@
 				"adaptiveshields",
 				"frontshield"
 			],
-			"description": "Removes this ship's shields entirely, increasing its armor rating in exchange.",
+			"description": "Removes this ship's shields entirely, increasing its armor in exchange.",
 			"tags": [
 				"armour"
 			]

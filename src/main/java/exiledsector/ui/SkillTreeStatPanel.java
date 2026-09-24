@@ -244,7 +244,7 @@ final class SkillTreeStatPanel {
 
         List<StatLine> general = new ArrayList<>();
         addComparedStat(general, "Hull Points", stats.getHullBonus().computeEffective(hullSpec.getHitpoints()), hullSpec.getHitpoints());
-        addComparedStat(general, "Armor Rating", stats.getArmorBonus().computeEffective(hullSpec.getArmorRating()), hullSpec.getArmorRating());
+        addComparedStat(general, "armor", stats.getArmorBonus().computeEffective(hullSpec.getArmorRating()), hullSpec.getArmorRating());
         addComparedStat(general, "Max Flux", stats.getFluxCapacity().getModifiedValue(), stats.getFluxCapacity().getBaseValue());
         addComparedStat(general, "Flux Dissipation", stats.getFluxDissipation().getModifiedValue(), stats.getFluxDissipation().getBaseValue());
         groups.add(new StatGroup("General", general));
