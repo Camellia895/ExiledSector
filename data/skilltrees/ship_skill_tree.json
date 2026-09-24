@@ -2620,9 +2620,12 @@
 		{
 			"id": "top_speed_3",
 			"type": "top_speed",
-			"connectedTo": [],
-			"x": -981,
-			"y": 2293
+			"connectedTo": [
+				"top_speed_4",
+				"small_flux_optional_54"
+			],
+			"x": 2791,
+			"y": 6801
 		},
 		{
 			"id": "fighter_replacement_1",
@@ -2980,8 +2983,7 @@
 			"connectedTo": [
 				"luddic_1",
 				"small_flux_optional_54",
-				"small_flux_optional_56",
-				"fuel_core_overload_1"
+				"small_flux_optional_56"
 			],
 			"x": 3700,
 			"y": 5557,
@@ -2995,7 +2997,7 @@
 			"connectedTo": [
 				"small_flux_optional_55",
 				"luddic_2",
-				"fuel_core_overload_1"
+				"top_speed_3"
 			],
 			"x": 2390,
 			"y": 6867,
@@ -3007,8 +3009,7 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_54",
-				"small_flux_optional_56",
-				"fuel_core_overload_1"
+				"small_flux_optional_56"
 			],
 			"x": 3700,
 			"y": 8177,
@@ -3020,8 +3021,7 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_55",
-				"luddic_2",
-				"fuel_core_overload_1"
+				"luddic_2"
 			],
 			"x": 5010,
 			"y": 6867,
@@ -3032,13 +3032,24 @@
 			"id": "fuel_core_overload_1",
 			"type": "fuel_core_overload",
 			"connectedTo": [
-				"luddic_2",
-				"small_flux_optional_54",
-				"small_flux_optional_55",
-				"small_flux_optional_56"
+				"top_speed_4",
+				"exposed_fuel_lines_1"
 			],
-			"x": 3691,
-			"y": 6863
+			"x": 3580,
+			"y": 6684,
+			"ringBeltPath": "graphics/planets/aurorae.png",
+			"ringBeltColor": "#f82a2a"
+		},
+		{
+			"id": "exposed_fuel_lines_1",
+			"type": "exposed_fuel_lines",
+			"connectedTo": [
+				"fuel_core_overload_1"
+			],
+			"x": 3540,
+			"y": 6897,
+			"ringBeltPath": "graphics/planets/aurorae.png",
+			"ringBeltColor": "#ff0f0f"
 		},
 		{
 			"id": "luddic_1",
@@ -3172,6 +3183,16 @@
 			"x": 4138,
 			"y": 5,
 			"pairedWith": "pirate_wormhole_2"
+		},
+		{
+			"id": "top_speed_4",
+			"type": "top_speed",
+			"connectedTo": [
+				"fuel_core_overload_1",
+				"top_speed_3"
+			],
+			"x": 3196,
+			"y": 6741
 		}
 	],
 	"connectorCurves": [
@@ -4835,7 +4856,8 @@
 			"y": 6863,
 			"width": 3400,
 			"height": 3400,
-			"imagePath": "graphics/backgrounds/static_images/luddic_nebula_circular.png"
+			"imagePath": "graphics/backgrounds/static_images/luddic_nebula_circular.png",
+			"rotation": 285
 		}
 	],
 	"stars": [

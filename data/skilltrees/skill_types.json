@@ -245,13 +245,31 @@
 		{
 			"id": "fuel_core_overload",
 			"name": "Fuel Core Overload",
-			"icon": "graphics/icons/fuel_core_overload.png",
+			"icon": "graphics/icons/applied_physics_circular_alt1.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
 					"effect": "EXPLODE_ON_DEATH",
-					"magnitude": 150
+					"magnitude": 2000
 				}
+			],
+			"tags": [
+				"luddic_path"
+			]
+		},
+		{
+			"id": "exposed_fuel_lines",
+			"name": "Exposed Fuel Lines",
+			"icon": "graphics/icons/blastoff.png",
+			"tier": "KEYSTONE",
+			"effects": [
+				{
+					"effect": "DEATH_ON_COLLISION",
+					"magnitude": 0
+				}
+			],
+			"tags": [
+				"luddic_path"
 			]
 		},
 		{
