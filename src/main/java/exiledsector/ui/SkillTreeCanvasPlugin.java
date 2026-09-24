@@ -62,6 +62,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     public SkillTreeCanvasPlugin(FleetMemberAPI member, ShipVariantAPI variant, float shipCardHeight, BaseRefitButton refitButton) {
         this.member = member;
         this.variant = variant;
+        SkillTreeHullMod.syncOpSpentHullMod(member, variant);
         this.style = new SkillTreePanelStyle(RootCrestResolver.resolve(member));
         this.starfieldRenderer = new SkillTreeStarfieldRenderer(style);
         this.staticImageRenderer = new SkillTreeStaticImageRenderer();
@@ -174,8 +175,6 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     @Override
     public void render(float alphaMult) {
         if (position == null) return;
-
-        SkillTreeHullMod.syncOpSpentHullMod(member, variant);
 
         float centerX = centerX();
         float centerY = centerY();

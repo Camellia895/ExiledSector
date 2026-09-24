@@ -3,7 +3,6 @@ package exiledsector.ui;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.skills.ShipOpBudget;
 import org.apache.log4j.Logger;
 
@@ -51,7 +50,6 @@ final class SkillTreeOrdnancePointsBar {
 
     private boolean refreshBudget() {
         try {
-            SkillTreeHullMod.syncOpSpentHullMod(member, variant);
             ShipOpBudget budget = ShipOpBudget.of(member, variant);
             totalPoints = budget.total;
             spentPoints = budget.used;

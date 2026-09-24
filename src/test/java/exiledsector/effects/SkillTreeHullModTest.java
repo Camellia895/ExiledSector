@@ -336,12 +336,12 @@ class SkillTreeHullModTest {
         when(stats.getFleetMember()).thenReturn(member);
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(stats.getVariant()).thenReturn(variant);
-        when(variant.hasHullMod("exiledSector_opSpent")).thenReturn(false);
+        when(variant.hasHullMod("exiledSector_opSpent_0")).thenReturn(false);
 
         SettingsAPI settings = mock(SettingsAPI.class);
         globalMock.when(Global::getSettings).thenReturn(settings);
         HullModSpecAPI opSpentSpec = mock(HullModSpecAPI.class);
-        when(settings.getHullModSpec("exiledSector_opSpent")).thenReturn(opSpentSpec);
+        when(settings.getHullModSpec("exiledSector_opSpent_0")).thenReturn(opSpentSpec);
 
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
 
@@ -349,7 +349,7 @@ class SkillTreeHullModTest {
         verify(opSpentSpec).setDestroyerCost(4);
         verify(opSpentSpec).setCruiserCost(4);
         verify(opSpentSpec).setCapitalCost(4);
-        verify(variant).addMod("exiledSector_opSpent");
+        verify(variant).addMod("exiledSector_opSpent_0");
     }
 
     @Test
@@ -361,16 +361,16 @@ class SkillTreeHullModTest {
         when(stats.getFleetMember()).thenReturn(member);
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(stats.getVariant()).thenReturn(variant);
-        when(variant.hasHullMod("exiledSector_opSpent")).thenReturn(true);
+        when(variant.hasHullMod("exiledSector_opSpent_0")).thenReturn(true);
 
         SettingsAPI settings = mock(SettingsAPI.class);
         globalMock.when(Global::getSettings).thenReturn(settings);
         HullModSpecAPI opSpentSpec = mock(HullModSpecAPI.class);
-        when(settings.getHullModSpec("exiledSector_opSpent")).thenReturn(opSpentSpec);
+        when(settings.getHullModSpec("exiledSector_opSpent_0")).thenReturn(opSpentSpec);
 
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
 
-        verify(variant).removeMod("exiledSector_opSpent");
+        verify(variant).removeMod("exiledSector_opSpent_0");
         verify(variant, never()).addMod(anyString());
     }
 
