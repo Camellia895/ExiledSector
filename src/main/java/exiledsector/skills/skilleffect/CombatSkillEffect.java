@@ -17,7 +17,7 @@ import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.combat.listeners.HullDamageAboutToBeTakenListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledsector.skills.MaxChainHopsConfig;
+import exiledsector.skills.MaxChainCountConfig;
 import org.lazywizard.lazylib.MathUtils;
 import org.lazywizard.lazylib.VectorUtils;
 import org.lwjgl.util.vector.Vector2f;
@@ -52,7 +52,7 @@ public enum CombatSkillEffect implements SkillEffect {
         public String describe(float magnitude) {
             int count = Math.round(magnitude);
             return "Beam weapon hits split their damage evenly across the target and up to "
-                    + pct(magnitude) + " nearby enem" + (count == 1 ? "y" : "ies") + ".";
+                    + pct(magnitude) + " additional nearby enem" + (count == 1 ? "y" : "ies") + ".";
         }
     },
     EXPLODE_ON_DEATH {
@@ -107,8 +107,8 @@ public enum CombatSkillEffect implements SkillEffect {
         @Override
         public String describe(float magnitude) {
             return "Non-beam energy weapon hits that land on an enemy shield have a " + pct(magnitude)
-                    + "% chance to chain to a nearby enemy ship, continuing further as long as each hop also "
-                    + "lands on a shield.";
+                    + "% chance to chain to a nearby enemy ship, continuing further as long as the chain "
+                    + "keeps landing on shields.";
         }
     },
     NON_BEAM_ENERGY_CHAIN_FALLOFF_PERCENT {
@@ -126,8 +126,8 @@ public enum CombatSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return "Each hop of a non-beam energy chain deals " + pct(magnitude) + "% less damage than the "
-                    + "previous hop.";
+            return "Each successive hit in a non-beam energy chain deals " + pct(magnitude) + "% less damage "
+                    + "than the one before it.";
         }
     };
 
@@ -139,7 +139,7 @@ public enum CombatSkillEffect implements SkillEffect {
     private static final String NON_BEAM_ENERGY_CHAIN_CHANCE_KEY = "exiledSector_energyChainChance";
     private static final String NON_BEAM_ENERGY_CHAIN_FALLOFF_KEY = "exiledSector_energyChainFalloff";
     private static final String NON_BEAM_ENERGY_CHAIN_HIT_LIST_KEY = "exiledSector_energyChainHitList";
-    private static final String NON_BEAM_ENERGY_CHAIN_HOP_COUNT_KEY = "exiledSector_energyChainHopCount";
+    private static final String NON_BEAM_ENERGY_CHAIN_COUNT_KEY = "exiledSector_energyChainCount";
 
     @Override
     public abstract void apply(MutableShipStatsAPI stats, String modId, float magnitude);
@@ -264,9 +264,9 @@ public enum CombatSkillEffect implements SkillEffect {
             if (weapon == null || weapon.getType() != WeaponAPI.WeaponType.ENERGY) return null;
 
             Map<String, Object> customData = proj.getCustomData();
-            int hopCount = customData.get(NON_BEAM_ENERGY_CHAIN_HOP_COUNT_KEY) instanceof Integer
-                    ? (Integer) customData.get(NON_BEAM_ENERGY_CHAIN_HOP_COUNT_KEY) : 0;
-            if (hopCount >= MaxChainHopsConfig.get()) return null;
+            int chainCount = customData.get(NON_BEAM_ENERGY_CHAIN_COUNT_KEY) instanceof Integer
+                    ? (Integer) customData.get(NON_BEAM_ENERGY_CHAIN_COUNT_KEY) : 0;
+            if (chainCount >= MaxChainCountConfig.get()) return null;
 
             float chancePercent = ship.getMutableStats().getDynamic().getValue(NON_BEAM_ENERGY_CHAIN_CHANCE_KEY, 0f);
             if (chancePercent <= 0f) return null;
@@ -288,7 +288,7 @@ public enum CombatSkillEffect implements SkillEffect {
             float nextDamage = damage.getDamage() * (1f - falloffPercent / 100f);
             if (nextDamage <= 0f) return null;
 
-            spawnChainProjectile(ship, weapon, point, nextTarget, nextDamage, hitSoFar, hopCount + 1);
+            spawnChainProjectile(ship, weapon, point, nextTarget, nextDamage, hitSoFar, chainCount + 1);
             return null;
         }
     }
@@ -308,7 +308,7 @@ public enum CombatSkillEffect implements SkillEffect {
     }
 
     private static void spawnChainProjectile(ShipAPI source, WeaponAPI weapon, Vector2f from, ShipAPI target,
-                                              float damageAmount, List<ShipAPI> hitSoFar, int hopCount) {
+                                              float damageAmount, List<ShipAPI> hitSoFar, int chainCount) {
         CombatEngineAPI engine = Global.getCombatEngine();
         float facing = VectorUtils.getAngle(from, target.getLocation());
         CombatEntityAPI spawned = engine.spawnProjectile(source, weapon, weapon.getId(), from, facing, new Vector2f());
@@ -316,7 +316,7 @@ public enum CombatSkillEffect implements SkillEffect {
             DamagingProjectileAPI chainProj = (DamagingProjectileAPI) spawned;
             chainProj.getDamage().setDamage(damageAmount);
             chainProj.setCustomData(NON_BEAM_ENERGY_CHAIN_HIT_LIST_KEY, hitSoFar);
-            chainProj.setCustomData(NON_BEAM_ENERGY_CHAIN_HOP_COUNT_KEY, hopCount);
+            chainProj.setCustomData(NON_BEAM_ENERGY_CHAIN_COUNT_KEY, chainCount);
         }
     }
 

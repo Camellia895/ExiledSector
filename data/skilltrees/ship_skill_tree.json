@@ -350,7 +350,8 @@
 			"x": -7787,
 			"y": -4951,
 			"orbitAnchorId": "anchor_31",
-			"orbitAngle": 0
+			"orbitAngle": 0,
+			"ringBeltPath": "graphics/planets/aurorae.png"
 		},
 		{
 			"id": "advancedoptics_1",
@@ -3430,7 +3431,8 @@
 			"id": "beam_split_reduced_damage_1",
 			"type": "beam_split_reduced_damage",
 			"connectedTo": [
-				"beam_split_1"
+				"beam_split_1",
+				"beam_split_reduced_damage_2"
 			],
 			"x": -7985,
 			"y": -5149,
@@ -3473,6 +3475,25 @@
 			"y": -7358,
 			"orbitAnchorId": "anchor_32",
 			"orbitAngle": 270
+		},
+		{
+			"id": "beam_split_reduced_damage_2",
+			"type": "beam_split_reduced_damage",
+			"connectedTo": [
+				"beam_split_reduced_damage_1",
+				"beam_split_reduced_damage_3"
+			],
+			"x": -7869,
+			"y": -5399
+		},
+		{
+			"id": "beam_split_reduced_damage_3",
+			"type": "beam_split_reduced_damage",
+			"connectedTo": [
+				"beam_split_reduced_damage_2"
+			],
+			"x": -7675,
+			"y": -5607
 		}
 	],
 	"connectorCurves": [
@@ -4717,6 +4738,18 @@
 			"b": "non_beam_energy_damage_5",
 			"controlX": 787,
 			"controlY": -7303
+		},
+		{
+			"a": "beam_split_reduced_damage_2",
+			"b": "beam_split_reduced_damage_3",
+			"controlX": -7781,
+			"controlY": -5511
+		},
+		{
+			"a": "beam_split_reduced_damage_1",
+			"b": "beam_split_reduced_damage_2",
+			"controlX": -7938,
+			"controlY": -5280
 		}
 	],
 	"hiddenConnectors": [

@@ -2437,7 +2437,7 @@
 				},
 				{
 					"effect": "BEAM_DAMAGE_PERCENT",
-					"magnitude": -20
+					"magnitude": -7
 				}
 			],
 			"tags": [
