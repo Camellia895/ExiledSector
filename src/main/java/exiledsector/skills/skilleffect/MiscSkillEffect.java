@@ -48,7 +48,7 @@ public enum MiscSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "damage dealt to missiles");
+            return pctChange(magnitude, "damage dealt to missiles by point defence weapons");
         }
     },
     PD_RECLASSIFY_SMALL_WEAPONS {

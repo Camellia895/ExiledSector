@@ -52,7 +52,8 @@ public enum CombatSkillEffect implements SkillEffect {
         public String describe(float magnitude) {
             int count = Math.round(magnitude);
             return "Beam weapon hits split their damage evenly across the target and up to "
-                    + pct(magnitude) + " additional nearby enem" + (count == 1 ? "y" : "ies") + ".";
+                    + pct(magnitude) + " additional nearby enem" + (count == 1 ? "y" : "ies") + ". " +
+                    "The target acquisition range is half the beam weapon's range.";
         }
     },
     EXPLODE_ON_DEATH {

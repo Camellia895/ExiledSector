@@ -3186,12 +3186,24 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_60",
-				"small_flux_optional_62"
+				"small_flux_optional_62",
+				"ballistic_damage_6"
 			],
 			"x": 8915,
 			"y": 24,
 			"orbitAnchorId": "pirate_inner",
 			"orbitAngle": 0
+		},
+		{
+			"id": "ballistic_momentum_1",
+			"type": "ballistic_momentum",
+			"connectedTo": [
+				"ballistic_damage_7"
+			],
+			"x": 8334,
+			"y": 23,
+			"orbitAnchorId": "anchor_33",
+			"orbitAngle": 180
 		},
 		{
 			"id": "small_flux_optional_62",
@@ -3494,6 +3506,30 @@
 			],
 			"x": -7675,
 			"y": -5607
+		},
+		{
+			"id": "ballistic_damage_6",
+			"type": "ballistic_damage",
+			"connectedTo": [
+				"ballistic_damage_7",
+				"small_flux_optional_61"
+			],
+			"x": 8704,
+			"y": 23,
+			"orbitAnchorId": "anchor_33",
+			"orbitAngle": 0
+		},
+		{
+			"id": "ballistic_damage_7",
+			"type": "ballistic_damage",
+			"connectedTo": [
+				"ballistic_damage_6",
+				"ballistic_momentum_1"
+			],
+			"x": 8519,
+			"y": -162,
+			"orbitAnchorId": "anchor_33",
+			"orbitAngle": 270
 		}
 	],
 	"connectorCurves": [
@@ -4592,13 +4628,13 @@
 		{
 			"a": "small_flux_optional_60",
 			"b": "small_flux_optional_61",
-			"controlX": 8569,
+			"controlX": 8558,
 			"controlY": -837
 		},
 		{
 			"a": "small_flux_optional_61",
 			"b": "small_flux_optional_62",
-			"controlX": 8569,
+			"controlX": 8558,
 			"controlY": 885
 		},
 		{
@@ -4750,6 +4786,18 @@
 			"b": "beam_split_reduced_damage_2",
 			"controlX": -7938,
 			"controlY": -5280
+		},
+		{
+			"a": "ballistic_damage_6",
+			"b": "ballistic_damage_7",
+			"controlX": 8650,
+			"controlY": -108
+		},
+		{
+			"a": "ballistic_damage_7",
+			"b": "ballistic_momentum_1",
+			"controlX": 8388,
+			"controlY": -108
 		}
 	],
 	"hiddenConnectors": [
@@ -5192,6 +5240,12 @@
 			"x": 919,
 			"y": -7171,
 			"radius": 187
+		},
+		{
+			"id": "anchor_33",
+			"x": 8519,
+			"y": 23,
+			"radius": 185
 		}
 	],
 	"ringBelts": [

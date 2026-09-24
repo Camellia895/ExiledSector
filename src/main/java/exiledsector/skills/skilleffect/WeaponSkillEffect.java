@@ -1,6 +1,8 @@
 package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.MutableStat;
+import com.fs.starfarer.api.combat.ShipAPI;
 
 import static exiledsector.skills.skilleffect.SkillEffectText.pct;
 import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
@@ -409,6 +411,25 @@ public enum WeaponSkillEffect implements SkillEffect {
         @Override
         public String describe(float magnitude) {
             return "Increases the chance for missiles to resist enemy ECM and flares by " + pct(magnitude * 100f) + "%.";
+        }
+    },
+    BALLISTIC_DAMAGE_PER_BURN_LEVEL_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
+            MutableShipStatsAPI stats = ship.getMutableStats();
+            MutableStat burnLevel = stats.getMaxBurnLevel();
+            float burnOverDefault = Math.max(0f, burnLevel.getModifiedValue() - burnLevel.getBaseValue());
+            stats.getBallisticWeaponDamageMult().modifyPercent(modId, burnOverDefault * magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return "Grants " + pct(magnitude) + "% more ballistic weapon damage for every burn level this ship "
+                    + "has above its hull's default, from any source.";
         }
     };
 

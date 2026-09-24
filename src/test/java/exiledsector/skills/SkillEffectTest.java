@@ -1259,9 +1259,9 @@ class SkillEffectTest {
 
     @Test
     void beamSplitTargetsFlatDescribesTheSplitCount() {
-        assertEquals("Beam weapon hits split their damage evenly across the target and up to 1 nearby enemy.",
+        assertEquals("Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy.",
                 CombatSkillEffect.BEAM_SPLIT_TARGETS_FLAT.describe(1f));
-        assertEquals("Beam weapon hits split their damage evenly across the target and up to 3 nearby enemies.",
+        assertEquals("Beam weapon hits split their damage evenly across the target and up to 3 additional nearby enemies.",
                 CombatSkillEffect.BEAM_SPLIT_TARGETS_FLAT.describe(3f));
     }
 

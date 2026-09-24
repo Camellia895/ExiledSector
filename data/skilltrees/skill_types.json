@@ -313,6 +313,22 @@
 			]
 		},
 		{
+			"id": "ballistic_momentum",
+			"name": "Ballistic Momentum",
+			"icon": "graphics/icons/engine_circular_alt1.png",
+			"tier": "KEYSTONE",
+			"effects": [
+				{
+					"effect": "BALLISTIC_DAMAGE_PER_BURN_LEVEL_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"ballistic",
+				"speed"
+			]
+		},
+		{
 			"id": "advancedshieldemitter",
 			"name": "Accelerated Shields",
 			"icon": "graphics/icons/advancedshieldemitter.png",
