@@ -256,7 +256,9 @@ public enum ShieldSkillEffect implements SkillEffect {
             this.ship = ship;
         }
 
+        // return value is an unused damage-modifier reason string; this listener never needs to supply one
         @Override
+        @SuppressWarnings("java:S3516")
         public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
             if (!shieldHit) return null;
             if (!(param instanceof BeamAPI)) return null;

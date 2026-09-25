@@ -14,12 +14,13 @@ public final class ShipLevelSystem {
     public static void awardXpToFleet(CampaignFleetAPI fleet, float xpAmount) {
         if (fleet == null) return;
 
+        LevelCurve curve = new LevelCurve(ShipLevelConfig.xpBase(), ShipLevelConfig.xpGrowth(),
+                ShipLevelConfig.xpGrowthCutoffLevel(), ShipLevelConfig.maxLevel());
         Collection<SkillNode> allNodes = SkillTree.getAllNodes().values();
         for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
             ShipSkillData data = ShipSkillDataManager.get(member.getId());
             int opCostPerNode = SkillNodeOpCost.perNode(member.getHullSpec());
-            awardXp(data, xpAmount, ShipLevelConfig.xpBase(), ShipLevelConfig.xpGrowth(),
-                    ShipLevelConfig.xpGrowthCutoffLevel(), ShipLevelConfig.maxLevel(), allNodes, opCostPerNode);
+            awardXp(data, xpAmount, curve, allNodes, opCostPerNode);
         }
     }
 
@@ -28,13 +29,13 @@ public final class ShipLevelSystem {
         return xpBase * (float) Math.pow(xpGrowth, cappedLevel);
     }
 
-    public static void awardXp(ShipSkillData data, float xpAmount, float xpBase, float xpGrowth, int growthCutoffLevel,
-                                int maxLevel, Collection<SkillNode> allNodes, int opCostPerNode) {
-        if (data.getLevel() >= maxLevel) return;
+    public static void awardXp(ShipSkillData data, float xpAmount, LevelCurve curve,
+                                Collection<SkillNode> allNodes, int opCostPerNode) {
+        if (data.getLevel() >= curve.maxLevel()) return;
 
         data.addXp(xpAmount);
-        while (data.getLevel() < maxLevel) {
-            float required = xpToReachNextLevel(data.getLevel(), xpBase, xpGrowth, growthCutoffLevel);
+        while (data.getLevel() < curve.maxLevel()) {
+            float required = xpToReachNextLevel(data.getLevel(), curve.xpBase(), curve.xpGrowth(), curve.growthCutoffLevel());
             if (data.getXp() < required) break;
 
             data.subtractXp(required);
@@ -43,5 +44,8 @@ public final class ShipLevelSystem {
                 data.addFreeAllocationCredit();
             }
         }
+    }
+
+    public record LevelCurve(float xpBase, float xpGrowth, int growthCutoffLevel, int maxLevel) {
     }
 }

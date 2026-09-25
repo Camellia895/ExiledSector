@@ -43,6 +43,10 @@ class ShipLevelSystemTest {
         SkillTree.getAllTypes().clear();
     }
 
+    private static ShipLevelSystem.LevelCurve curve(int growthCutoffLevel, int maxLevel) {
+        return new ShipLevelSystem.LevelCurve(XP_BASE, XP_GROWTH, growthCutoffLevel, maxLevel);
+    }
+
     private static SkillNode node(String id) {
         SkillType type = new SkillType.Builder(id, id, "a.png", SkillTier.SMALL)
                 .effects(List.of())
@@ -74,7 +78,7 @@ class ShipLevelSystemTest {
     void awardXpBelowTheThresholdOnlyAccumulatesXpWithoutLevelingUp() {
         ShipSkillData data = new ShipSkillData();
 
-        ShipLevelSystem.awardXp(data, 50f, XP_BASE, XP_GROWTH, NO_GROWTH_CUTOFF, 50, List.of(), OP_COST_PER_NODE);
+        ShipLevelSystem.awardXp(data, 50f, curve(NO_GROWTH_CUTOFF, 50), List.of(), OP_COST_PER_NODE);
 
         assertEquals(0, data.getLevel());
         assertEquals(50f, data.getXp());
@@ -86,7 +90,7 @@ class ShipLevelSystemTest {
         SkillNode a = node("a");
         data.allocate(a, OP_COST_PER_NODE);
 
-        ShipLevelSystem.awardXp(data, XP_BASE, XP_BASE, XP_GROWTH, NO_GROWTH_CUTOFF, 50, List.of(a), OP_COST_PER_NODE);
+        ShipLevelSystem.awardXp(data, XP_BASE, curve(NO_GROWTH_CUTOFF, 50), List.of(a), OP_COST_PER_NODE);
 
         assertEquals(1, data.getLevel());
         assertEquals(0f, data.getXp());
@@ -98,7 +102,7 @@ class ShipLevelSystemTest {
     void awardXpBanksACreditWhenNothingIsEligibleToConvert() {
         ShipSkillData data = new ShipSkillData();
 
-        ShipLevelSystem.awardXp(data, XP_BASE, XP_BASE, XP_GROWTH, NO_GROWTH_CUTOFF, 50, List.of(), OP_COST_PER_NODE);
+        ShipLevelSystem.awardXp(data, XP_BASE, curve(NO_GROWTH_CUTOFF, 50), List.of(), OP_COST_PER_NODE);
 
         assertEquals(1, data.getLevel());
         assertEquals(1, data.getBankedFreeAllocations());
@@ -112,7 +116,7 @@ class ShipLevelSystemTest {
         data.allocate(a, OP_COST_PER_NODE);
         data.allocate(b, OP_COST_PER_NODE);
 
-        ShipLevelSystem.awardXp(data, 300f, XP_BASE, XP_GROWTH, NO_GROWTH_CUTOFF, 50, List.of(a, b), OP_COST_PER_NODE);
+        ShipLevelSystem.awardXp(data, 300f, curve(NO_GROWTH_CUTOFF, 50), List.of(a, b), OP_COST_PER_NODE);
 
         assertEquals(2, data.getLevel());
         assertEquals(0f, data.getXp());
@@ -124,11 +128,11 @@ class ShipLevelSystemTest {
     void awardXpUsesTheFlatCutoffCostPastTheCutoffLevel() {
         ShipSkillData data = new ShipSkillData();
 
-        ShipLevelSystem.awardXp(data, 100f + 200f + 400f, XP_BASE, XP_GROWTH, 3, 50, List.of(), OP_COST_PER_NODE);
+        ShipLevelSystem.awardXp(data, 100f + 200f + 400f, curve(3, 50), List.of(), OP_COST_PER_NODE);
         assertEquals(3, data.getLevel());
         assertEquals(0f, data.getXp());
 
-        ShipLevelSystem.awardXp(data, 400f, XP_BASE, XP_GROWTH, 3, 50, List.of(), OP_COST_PER_NODE);
+        ShipLevelSystem.awardXp(data, 400f, curve(3, 50), List.of(), OP_COST_PER_NODE);
         assertEquals(4, data.getLevel());
         assertEquals(0f, data.getXp());
     }
@@ -137,7 +141,7 @@ class ShipLevelSystemTest {
     void awardXpDoesNotLevelPastTheConfiguredMaxLevel() {
         ShipSkillData data = new ShipSkillData();
 
-        ShipLevelSystem.awardXp(data, 100000f, XP_BASE, XP_GROWTH, NO_GROWTH_CUTOFF, 2, List.of(), OP_COST_PER_NODE);
+        ShipLevelSystem.awardXp(data, 100000f, curve(NO_GROWTH_CUTOFF, 2), List.of(), OP_COST_PER_NODE);
 
         assertEquals(2, data.getLevel());
     }
@@ -145,11 +149,11 @@ class ShipLevelSystemTest {
     @Test
     void awardXpDoesNothingWhenAlreadyAtMaxLevel() {
         ShipSkillData data = new ShipSkillData();
-        ShipLevelSystem.awardXp(data, XP_BASE, XP_BASE, XP_GROWTH, NO_GROWTH_CUTOFF, 1, List.of(), OP_COST_PER_NODE);
+        ShipLevelSystem.awardXp(data, XP_BASE, curve(NO_GROWTH_CUTOFF, 1), List.of(), OP_COST_PER_NODE);
         assertEquals(1, data.getLevel());
         assertEquals(0f, data.getXp());
 
-        ShipLevelSystem.awardXp(data, 50f, XP_BASE, XP_GROWTH, NO_GROWTH_CUTOFF, 1, List.of(), OP_COST_PER_NODE);
+        ShipLevelSystem.awardXp(data, 50f, curve(NO_GROWTH_CUTOFF, 1), List.of(), OP_COST_PER_NODE);
 
         assertEquals(1, data.getLevel());
         assertEquals(0f, data.getXp());

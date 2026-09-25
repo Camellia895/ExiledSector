@@ -97,10 +97,11 @@ public final class SkillTreeNodeRenderer {
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
         String satisfiedRootId = satisfiedRootId();
         int totalOpBudget = totalOpBudgetForNodes();
+        Vector2f center = new Vector2f(centerX, centerY);
 
         for (SkillNode node : SkillTree.getAllNodes().values()) {
             if (node.getType().getTier() != SkillTier.ROOT) {
-                renderNode(node, centerX, centerY, zoom, alphaMult, data, satisfiedRootId, totalOpBudget);
+                renderNode(node, center, zoom, alphaMult, data, satisfiedRootId, totalOpBudget);
             }
         }
 
@@ -108,18 +109,18 @@ public final class SkillTreeNodeRenderer {
 
         for (SkillNode node : SkillTree.getAllNodes().values()) {
             if (node.getType().getTier() == SkillTier.ROOT) {
-                renderRootNode(node, centerX, centerY, zoom, alphaMult, data, satisfiedRootId, totalOpBudget);
+                renderRootNode(node, center, zoom, alphaMult, data, satisfiedRootId, totalOpBudget);
             }
         }
 
         dropdownRenderer.render(centerX, centerY, zoom, mouseX, mouseY, mouseKnown, alphaMult);
     }
 
-    private void renderNode(SkillNode node, float centerX, float centerY, float zoom, float alphaMult,
+    private void renderNode(SkillNode node, Vector2f center, float zoom, float alphaMult,
                              ShipSkillData data, String satisfiedRootId, int totalOpBudget) {
         SkillTier tier = node.getType().getTier();
-        float nodeX = centerX + node.getOffsetX() * zoom;
-        float nodeY = centerY - node.getOffsetY() * zoom;
+        float nodeX = center.x + node.getOffsetX() * zoom;
+        float nodeY = center.y - node.getOffsetY() * zoom;
         float footprintSize = NODE_SIZE * zoom * tier.getSizeMultiplier();
 
         if (SkillTypeUnlockStatus.isHidden(node.getType(), data)) {
@@ -144,10 +145,10 @@ public final class SkillTreeNodeRenderer {
         }
     }
 
-    private void renderRootNode(SkillNode node, float centerX, float centerY, float zoom, float alphaMult,
+    private void renderRootNode(SkillNode node, Vector2f center, float zoom, float alphaMult,
                                  ShipSkillData data, String satisfiedRootId, int totalOpBudget) {
-        float nodeX = centerX + node.getOffsetX() * zoom;
-        float nodeY = centerY - node.getOffsetY() * zoom;
+        float nodeX = center.x + node.getOffsetX() * zoom;
+        float nodeY = center.y - node.getOffsetY() * zoom;
         boolean isActiveRoot = activeRoot != null && node.getId().equals(activeRoot.getId());
         boolean allocated = data.isAllocated(node.getId());
         boolean breathing = !allocated && data.canAllocate(node, satisfiedRootId, totalOpBudget, opCostFor(node), ShipLevelConfig.maxAllocatedNodes());
