@@ -109,7 +109,7 @@ public class ShipSkillData {
         List<String> order = new ArrayList<>(allocatedNodeIds);
         for (int i = order.size() - 1; i >= 0; i--) {
             String nodeId = order.get(i);
-            if (freeNodeIds().contains(nodeId)) continue;
+            if (freeNodeIds().contains(nodeId) || pairedFreeNodeIds().contains(nodeId)) continue;
             SkillNode node = byId.get(nodeId);
             if (node != null && node.getType().getTier() == SkillTier.ROOT) continue;
             freeNodeIds().add(nodeId);

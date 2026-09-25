@@ -667,6 +667,24 @@ class ShipSkillDataTest {
     }
 
     @Test
+    void convertMostRecentAllocationToFreeSkipsTheAutoGrantedWormholeCompanion() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode a = wormholeNode("wormhole_a", List.of(), "wormhole_b");
+        SkillNode b = wormholeNode("wormhole_b", List.of(), "wormhole_a");
+        data.allocate(a, 3);
+
+        boolean converted = data.convertMostRecentAllocationToFree(List.of(a, b), 3);
+
+        assertTrue(converted);
+        assertTrue(data.isFreeNode("wormhole_a"));
+        assertEquals(0, data.getSpentOp());
+
+        data.deallocate(a, 3);
+
+        assertEquals(0, data.getSpentOp());
+    }
+
+    @Test
     void convertMostRecentAllocationToFreeReturnsFalseWhenNothingIsEligible() {
         ShipSkillData data = new ShipSkillData();
         SkillNode root = rootNode("root_low_tech_1", List.of());
