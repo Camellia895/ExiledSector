@@ -303,16 +303,12 @@ public enum FighterSkillEffect implements SkillEffect {
     }
 
     private static String roleDisplayName(WingRole role) {
-        switch (role) {
-            case INTERCEPTOR:
-                return "Interceptors";
-            case BOMBER:
-                return "Bombers";
-            case SUPPORT:
-                return "Support fighters";
-            default:
-                return "Fighters";
-        }
+        return switch (role) {
+            case INTERCEPTOR -> "Interceptors";
+            case BOMBER -> "Bombers";
+            case SUPPORT -> "Support fighters";
+            default -> "Fighters";
+        };
     }
 
     private final WingRole role;

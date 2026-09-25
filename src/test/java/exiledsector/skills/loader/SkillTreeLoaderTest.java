@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -84,11 +85,11 @@ class SkillTreeLoaderTest {
         assertTrue(node.getConnectedNodeIds().isEmpty());
         assertEquals(0f, node.getOffsetX());
         assertEquals(0f, node.getOffsetY());
-        assertEquals(null, node.getRingBeltPath());
-        assertEquals(null, node.getRingBeltColor());
-        assertEquals(null, node.getRingBeltWidth());
-        assertEquals(null, node.getWormholeColor());
-        assertEquals(null, node.getPairedNodeId());
+        assertNull(node.getRingBeltPath());
+        assertNull(node.getRingBeltColor());
+        assertNull(node.getRingBeltWidth());
+        assertNull(node.getWormholeColor());
+        assertNull(node.getPairedNodeId());
     }
 
     @Test
@@ -351,7 +352,7 @@ class SkillTreeLoaderTest {
 
         Star star = stars.get(0);
         assertEquals("star_yellow", star.getStarType());
-        assertEquals(null, star.getColor());
+        assertNull(star.getColor());
     }
 
     @Test
@@ -374,7 +375,7 @@ class SkillTreeLoaderTest {
         try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
             globalMock.when(Global::getSettings).thenReturn(settings);
 
-            assertEquals(null, SkillTreeLoader.loadRoot());
+            assertNull(SkillTreeLoader.loadRoot());
         }
     }
 

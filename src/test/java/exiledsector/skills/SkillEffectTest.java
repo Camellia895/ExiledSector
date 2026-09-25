@@ -1376,12 +1376,11 @@ class SkillEffectTest {
         return weapon;
     }
 
-    private WeaponAPI.DerivedWeaponStatsAPI mockBeamSplitDerivedStats(WeaponAPI weapon, float dps, float empPerSecond) {
+    private void mockBeamSplitDerivedStats(WeaponAPI weapon, float dps, float empPerSecond) {
         WeaponAPI.DerivedWeaponStatsAPI derivedStats = mock(WeaponAPI.DerivedWeaponStatsAPI.class);
         when(derivedStats.getDps()).thenReturn(dps);
         when(derivedStats.getEmpPerSecond()).thenReturn(empPerSecond);
         when(weapon.getDerivedStats()).thenReturn(derivedStats);
-        return derivedStats;
     }
 
     @Test
@@ -1473,8 +1472,8 @@ class SkillEffectTest {
             // very listener) when our own applyDamage(beam, ...) calls go through.
             Mockito.doAnswer(invocation -> {
                 DamageAPI splitDamage = mock(DamageAPI.class);
-                when(splitDamage.getDamage()).thenReturn((Float) invocation.getArgument(3));
-                when(splitDamage.getType()).thenReturn((DamageType) invocation.getArgument(4));
+                when(splitDamage.getDamage()).thenReturn(invocation.getArgument(3));
+                when(splitDamage.getType()).thenReturn(invocation.getArgument(4));
                 listener.modifyDamageDealt(invocation.getArgument(0), invocation.getArgument(1), splitDamage,
                         invocation.getArgument(2), false);
                 return null;

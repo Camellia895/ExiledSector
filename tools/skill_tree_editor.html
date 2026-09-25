@@ -2673,7 +2673,7 @@ function refreshImageInspector(body){
     pickerHtml = '<div class="image-picker">' + state.availableImages.map(function(path){
       var sel = path === img.imagePath;
       return '<div class="image-picker-item' + (sel ? ' selected' : '') + '" data-pick-image="' + path + '" title="' + path + '">' +
-        '<img src="' + path + '" loading="lazy"></div>';
+        '<img src="' + path + '" alt="' + path + '" loading="lazy"></div>';
     }).join('') + '</div>';
   } else {
     pickerHtml = '<div class="hint">No images found under graphics/backgrounds/static_images/ - ' +
@@ -3125,7 +3125,7 @@ function syncHullSizeEffectsFromInputs(idPrefix, hullSizeEffectsDraft){
 function imageTileHtml(path, isSelected){
   var name = path.split('/').pop();
   return '<div class="image-picker-item' + (isSelected ? ' selected' : '') + '" data-image-path="' + path + '" title="' + path + '">' +
-    '<img src="' + path + '" loading="lazy">' +
+    '<img src="' + path + '" alt="' + name + '" loading="lazy">' +
     '<div class="imgName">' + name + '</div>' +
   '</div>';
 }
@@ -3212,7 +3212,7 @@ function openTypePickerModal(currentTypeId, onPick){
     var list = document.getElementById('typePickerList');
     list.innerHTML = filtered.map(function(t){
       var tier = tierOf(t);
-      var iconHtml = t.icon ? '<img class="typePickerIcon" src="' + t.icon + '" loading="lazy">' : '<div class="typePickerIcon"></div>';
+      var iconHtml = t.icon ? '<img class="typePickerIcon" src="' + t.icon + '" alt="' + t.name + '" loading="lazy">' : '<div class="typePickerIcon"></div>';
       var cls = 'typePickerRow selectableRow' + (t.id === currentTypeId ? ' selected' : '');
       return '<div class="' + cls + '" data-type-id="' + t.id + '">' +
         iconHtml +
@@ -3337,7 +3337,7 @@ function openImageEditorModal(){
       return;
     }
     detail.innerHTML =
-      '<div class="imageBrowserPreview"><img id="imgEditPreview" src="' + selectedPath + '"></div>' +
+      '<div class="imageBrowserPreview"><img id="imgEditPreview" src="' + selectedPath + '" alt="' + selectedPath + '"></div>' +
       '<div class="imageBrowserPath">' + selectedPath + '</div>' +
       '<div class="field"><label>Hue shift (degrees)</label><input type="number" id="imgEditHue" value="240" step="1"></div>' +
       '<div class="field"><label>New file suffix</label><input id="imgEditSuffix" value="shifted" placeholder="e.g. shifted"></div>' +
@@ -3426,7 +3426,7 @@ function openTypeModal(existingType, onSave, onClose){
     var tierOptions = ['SMALL','NOTABLE','KEYSTONE','WORMHOLE','ROOT'].map(function(tr){ return '<option value="'+tr+'"'+(tr===tierOf(t)?' selected':'')+'>'+tr+'</option>'; }).join('');
     var effectRows = renderEffectRows('t', effectsDraft, '<div class="hint">No effects yet - click "+ Add effect" below, or set a vanillaHullMod id instead.</div>');
 
-    var html =
+    root.innerHTML =
       '<div class="modalOverlay"><div class="modal">' +
       '<h3>' + (isNew ? 'New skill type' : 'Edit type "' + t.id + '"') + '</h3>' +
       '<div class="field"><label>Id</label><input id="tId" value="' + (t.id||'') + '" ' + (isNew?'':'disabled') + '></div>' +
@@ -3462,7 +3462,6 @@ function openTypeModal(existingType, onSave, onClose){
         '<button class="smallBtn primary" id="mSave2">Save type</button>' +
       '</div>' +
       '</div></div>';
-    root.innerHTML = html;
 
     document.getElementById('mCancel2').addEventListener('click', function(){ root.innerHTML=''; if (onClose) onClose(); });
     wireEffectFilters(root);
@@ -3606,8 +3605,7 @@ function serializeType(t){
 }
 function toTabbedJson(obj, rootKey){
   var wrapper = {}; wrapper[rootKey] = obj;
-  var raw = JSON.stringify(wrapper, null, '\t');
-  return raw;
+  return JSON.stringify(wrapper, null, '\t');
 }
 function buildTreeExportObject(){
   var nodesOut = state.nodes.map(function(n){

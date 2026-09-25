@@ -50,11 +50,8 @@ final class SkillTreeNodeConnectorRenderer {
         for (SkillNode node : SkillTree.getAllNodes().values()) {
             if (node.getType().getTier() != SkillTier.WORMHOLE) continue;
 
-            FaderUtil fader = wormholeOpenFaders.get(node.getId());
-            if (fader == null) {
-                fader = new FaderUtil(0f, WORMHOLE_OPEN_FADE_SECONDS, WORMHOLE_OPEN_FADE_SECONDS);
-                wormholeOpenFaders.put(node.getId(), fader);
-            }
+            FaderUtil fader = wormholeOpenFaders.computeIfAbsent(node.getId(),
+                    key -> new FaderUtil(0f, WORMHOLE_OPEN_FADE_SECONDS, WORMHOLE_OPEN_FADE_SECONDS));
 
             if (data.isSatisfied(node.getId(), satisfiedRootId)) {
                 fader.fadeIn();

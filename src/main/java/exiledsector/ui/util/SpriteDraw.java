@@ -11,19 +11,17 @@ public final class SpriteDraw {
     private SpriteDraw() {
     }
 
-    public static boolean drawAtCenter(SpriteCache cache, String path, Vector2f center, Vector2f size, Color tint, float alphaMult) {
+    public static void drawAtCenter(SpriteCache cache, String path, Vector2f center, Vector2f size, Color tint, float alphaMult) {
         SpriteAPI sprite = prepare(cache, path, size, tint, alphaMult);
-        if (sprite == null) return false;
+        if (sprite == null) return;
         sprite.renderAtCenter(center.x, center.y);
-        return true;
     }
 
-    public static boolean drawAtCenter(SpriteCache cache, String path, Vector2f center, Vector2f size, Color tint, float alphaMult, float angleDeg) {
+    public static void drawAtCenter(SpriteCache cache, String path, Vector2f center, Vector2f size, Color tint, float alphaMult, float angleDeg) {
         SpriteAPI sprite = prepare(cache, path, size, tint, alphaMult);
-        if (sprite == null) return false;
+        if (sprite == null) return;
         sprite.setAngle(angleDeg);
         sprite.renderAtCenter(center.x, center.y);
-        return true;
     }
 
     private static SpriteAPI prepare(SpriteCache cache, String path, Vector2f size, Color tint, float alphaMult) {

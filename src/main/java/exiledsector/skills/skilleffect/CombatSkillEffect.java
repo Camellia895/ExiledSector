@@ -247,13 +247,12 @@ public enum CombatSkillEffect implements SkillEffect {
         @SuppressWarnings("java:S3516")
         public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
             if (processingSplit) return null;
-            if (!(param instanceof BeamAPI)) return null;
+            if (!(param instanceof BeamAPI beam)) return null;
             if (!(target instanceof ShipAPI)) return null;
 
             int splitCount = Math.round(ship.getMutableStats().getDynamic().getValue(BEAM_SPLIT_TARGETS_KEY, 0f));
             if (splitCount <= 0) return null;
 
-            BeamAPI beam = (BeamAPI) param;
             WeaponAPI weapon = beam.getWeapon();
             float splitRadius = weapon.getRange() * SPLIT_RADIUS_MULT_OF_BEAM_RANGE;
             List<ShipAPI> splitTargets = findNearbyEnemies((ShipAPI) target, point, splitRadius, splitCount);
@@ -346,10 +345,9 @@ public enum CombatSkillEffect implements SkillEffect {
         @SuppressWarnings({"unchecked", "java:S3516"})
         public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
             if (!shieldHit) return null;
-            if (!(param instanceof DamagingProjectileAPI)) return null;
+            if (!(param instanceof DamagingProjectileAPI proj)) return null;
             if (!(target instanceof ShipAPI)) return null;
 
-            DamagingProjectileAPI proj = (DamagingProjectileAPI) param;
             WeaponAPI weapon = proj.getWeapon();
             if (weapon == null || weapon.getType() != WeaponAPI.WeaponType.ENERGY) return null;
 

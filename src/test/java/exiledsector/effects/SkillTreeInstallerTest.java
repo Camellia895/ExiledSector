@@ -38,7 +38,6 @@ class SkillTreeInstallerTest {
 
     private MockedStatic<Global> globalMock;
     private SectorAPI sector;
-    private CampaignFleetAPI playerFleet;
     private FleetDataAPI fleetData;
 
     @BeforeEach
@@ -47,7 +46,7 @@ class SkillTreeInstallerTest {
         sector = mock(SectorAPI.class);
         when(sector.getPersistentData()).thenReturn(persistentData);
 
-        playerFleet = mock(CampaignFleetAPI.class);
+        CampaignFleetAPI playerFleet = mock(CampaignFleetAPI.class);
         fleetData = mock(FleetDataAPI.class);
         when(playerFleet.getFleetData()).thenReturn(fleetData);
 

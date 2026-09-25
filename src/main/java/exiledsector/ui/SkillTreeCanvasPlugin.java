@@ -32,7 +32,6 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     private final String readoutTooltipBody;
 
-    private final SkillTreePanelStyle style;
     private final SkillTreeStarfieldRenderer starfieldRenderer;
     private final SkillTreeStaticImageRenderer staticImageRenderer;
     private final SkillTreeRingBeltRenderer ringBeltRenderer;
@@ -59,7 +58,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     public SkillTreeCanvasPlugin(FleetMemberAPI member, ShipVariantAPI variant, float shipCardHeight, BaseRefitButton refitButton) {
         SkillTreeHullMod.syncOpSpentHullMod(member, variant);
-        this.style = new SkillTreePanelStyle(RootCrestResolver.resolve(member));
+        SkillTreePanelStyle style = new SkillTreePanelStyle(RootCrestResolver.resolve(member));
         this.starfieldRenderer = new SkillTreeStarfieldRenderer(style);
         this.staticImageRenderer = new SkillTreeStaticImageRenderer();
         this.ringBeltRenderer = new SkillTreeRingBeltRenderer();

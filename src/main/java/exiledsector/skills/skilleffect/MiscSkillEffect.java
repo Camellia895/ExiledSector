@@ -172,5 +172,5 @@ public enum MiscSkillEffect implements SkillEffect {
         public String describe(float magnitude) {
             return flatChange(magnitude, "command point recovery rate while this ship is the flagship");
         }
-    };
+    }
 }

@@ -26,11 +26,10 @@ import static org.mockito.Mockito.when;
 class ShipSkillDataManagerTest {
 
     private MockedStatic<Global> globalMock;
-    private Map<String, Object> persistentData;
 
     @BeforeEach
     void setUp() {
-        persistentData = new HashMap<>();
+        Map<String, Object> persistentData = new HashMap<>();
         SectorAPI sector = mock(SectorAPI.class);
         when(sector.getPersistentData()).thenReturn(persistentData);
 

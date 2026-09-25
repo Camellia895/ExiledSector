@@ -1,13 +1,11 @@
 package exiledsector.ui;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.util.Misc;
 import exiledsector.ui.util.FallbackSupport;
 import exiledsector.ui.util.GLDraw;
 import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.ui.FontException;
 import org.lazywizard.lazylib.ui.LazyFont;
-import org.lwjgl.opengl.GL11;
 
 import javax.imageio.ImageIO;
 import java.awt.Color;
@@ -34,7 +32,6 @@ public final class SkillTreePanelStyle {
     private static final Color DEFAULT_ACCENT_COLOR = GLOW_COLOR;
     private static final int COLOR_QUANTIZE_STEP = 24;
     private static final int MIN_ALPHA_TO_SAMPLE = 128;
-    private static final float HEADER_BACKGROUND_DARKEN_FACTOR = 0.2f;
 
     private static final float TOOLTIP_PADDING = 10f;
     private static final float TOOLTIP_WIDTH_SAFETY_MARGIN = 8f;
@@ -46,7 +43,6 @@ public final class SkillTreePanelStyle {
     private LazyFont tooltipFont;
     private boolean tooltipFontLoadFailed = false;
     private Color accentColor;
-    private Color headerBackgroundColor;
 
     public SkillTreePanelStyle(String accentIconPath) {
         this.accentIconPath = accentIconPath;
@@ -71,19 +67,7 @@ public final class SkillTreePanelStyle {
 
     public void drawTooltipBackground(float x, float y, float width, float height, float alphaMult, Color borderColor) {
         GLDraw.fillQuad(x, y, width, height, TOOLTIP_BACKGROUND_COLOR, alphaMult);
-
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        Misc.setColor(borderColor, alphaMult);
-        GL11.glLineWidth(TOOLTIP_BORDER_THICKNESS);
-        GL11.glBegin(GL11.GL_LINE_LOOP);
-        GL11.glVertex2f(x, y);
-        GL11.glVertex2f(x + width, y);
-        GL11.glVertex2f(x + width, y + height);
-        GL11.glVertex2f(x, y + height);
-        GL11.glEnd();
-
-        GL11.glDisable(GL11.GL_BLEND);
+        GLDraw.strokeQuad(x, y, width, height, borderColor, TOOLTIP_BORDER_THICKNESS, alphaMult);
     }
 
     public void drawTitleBodyTooltip(TooltipText title, TooltipText body, float mouseX, float mouseY, float alphaMult) {
@@ -107,17 +91,6 @@ public final class SkillTreePanelStyle {
             accentColor = computeDominantColor(accentIconPath);
         }
         return accentColor;
-    }
-
-    public Color getHeaderBackgroundColor() {
-        if (headerBackgroundColor == null) {
-            Color accent = getAccentColor();
-            headerBackgroundColor = new Color(
-                    (int) (accent.getRed() * HEADER_BACKGROUND_DARKEN_FACTOR),
-                    (int) (accent.getGreen() * HEADER_BACKGROUND_DARKEN_FACTOR),
-                    (int) (accent.getBlue() * HEADER_BACKGROUND_DARKEN_FACTOR));
-        }
-        return headerBackgroundColor;
     }
 
     private static Color computeDominantColor(String path) {

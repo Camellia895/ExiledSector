@@ -83,10 +83,6 @@ final class SkillTreeStatPanel {
         collapsed = !collapsed;
     }
 
-    boolean isCollapsed() {
-        return collapsed;
-    }
-
     boolean isCollapseButtonHit(PositionAPI position, float x, float y) {
         LazyFont font = getFont();
         if (font == null) return false;
@@ -319,8 +315,7 @@ final class SkillTreeStatPanel {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (!(o instanceof StatGroup)) return false;
-            StatGroup other = (StatGroup) o;
+            if (!(o instanceof StatGroup other)) return false;
             return name.equals(other.name) && statLines.equals(other.statLines);
         }
 
@@ -348,8 +343,7 @@ final class SkillTreeStatPanel {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (!(o instanceof StatLine)) return false;
-            StatLine other = (StatLine) o;
+            if (!(o instanceof StatLine other)) return false;
             return label.equals(other.label) && value.equals(other.value) && valueColor.equals(other.valueColor);
         }
 
