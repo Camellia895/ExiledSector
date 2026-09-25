@@ -59,6 +59,7 @@ public class SkillTreeStarfieldRenderer {
 
     private final SkillTreePanelStyle style;
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeStarfieldRenderer.class);
+    private final Random random = new Random();
 
     private boolean initialized = false;
     private float fieldWidth;
@@ -123,7 +124,6 @@ public class SkillTreeStarfieldRenderer {
         fieldHeight = panelHeight * 1.2f;
         float areaScale = (fieldWidth * fieldHeight) / (REFERENCE_WIDTH * REFERENCE_HEIGHT);
 
-        Random random = new Random();
         layers = new List[LAYER_SPECS.length];
         for (int i = 0; i < LAYER_SPECS.length; i++) {
             LayerSpec spec = LAYER_SPECS[i];

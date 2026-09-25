@@ -120,7 +120,7 @@ final class SkillTreeReadoutBar {
         drawCornerAccents(left, bottom, barColor, alphaMult);
 
         String label = labelOverride != null ? labelOverride : (Math.round(displayedSpent) + " / " + Math.round(displayedTotal));
-        drawLabel(font, label, left, bottom, alphaMult);
+        drawLabel(font, label, left, bottom);
     }
 
     private void drawLeadingEdgeGlow(float edgeX, float bottom, Color color, float alphaMult, float glowBoost) {
@@ -227,7 +227,7 @@ final class SkillTreeReadoutBar {
                 (byte) (int) (255f * Math.max(0f, Math.min(1f, alpha))));
     }
 
-    private void drawLabel(LazyFont font, String label, float left, float bottom, float alphaMult) {
+    private void drawLabel(LazyFont font, String label, float left, float bottom) {
         float textWidth = font.calcWidth(label, FONT_SIZE);
         float textHeight = FONT_SIZE * SkillTreePanelStyle.FONT_LINE_HEIGHT_FACTOR;
         float textX = left + (BAR_WIDTH - textWidth) / 2f;
