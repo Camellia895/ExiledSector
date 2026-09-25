@@ -1713,7 +1713,6 @@
 			"name": "Solar Shielding",
 			"icon": "graphics/icons/solar_shielding.png",
 			"tier": "NOTABLE",
-			"vanillaHullMod": "solar_shielding",
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1721,8 +1720,21 @@
 					"id": "solar_shielding"
 				}
 			],
+			"effects": [
+				{
+					"effect": "ENERGY_DAMAGE_TAKEN_PERCENT",
+					"magnitude": -10
+				},
+				{
+					"effect": "ENERGY_SHIELD_DAMAGE_TAKEN_PERCENT",
+					"magnitude": -10
+				},
+				{
+					"effect": "CORONA_RESISTANCE_MULT",
+					"magnitude": -75
+				}
+			],
 			"description": "Originally developed by Diktat engineers after spending cycles dealing with the unique conditions of the inner Askonia system. Decreases the effect operating in a solar corona has on combat readiness by 75%; also has the same effect against storms in deep hyperspace.\n\nIn combat, reduces energy damage taken by 10%.",
-			"todo": "Real effect is -75% CR loss from solar corona/deep hyperspace storms, plus -10% energy damage taken in combat. The energy damage part is trivial and safe (existing ENERGY_DAMAGE_TAKEN_PERCENT effect, magnitude -10) whenever we want it. The corona/storm part is NOT safe to implement yet - found the real dynamic stat key ('corona_resistance', confirmed shared by both StarCoronaTerrainPlugin and HyperspaceTerrainPlugin, matching the tooltip's 'same effect against storms' claim) but decompiling StarCoronaTerrainPlugin showed corona_resistance actually GATES whether a CR-loss event fires (if (corona_resistance > 0) applyCREvent(...) else <computes what looks like an interval/frequency ratio instead>) rather than scaling a loss percentage directly - the sign/semantics don't resolve cleanly and getting it backward could make ships MORE vulnerable, not less. Deliberately left the whole hullmod on vanillaHullMod passthrough (both effects still work correctly via vanilla's own code) rather than partially convert, since our apply loop is all-or-nothing per node and converting now would silently drop corona/storm protection. Needs more investigation (or someone who already knows this mechanic) before touching.",
 			"tags": [
 				"logistics"
 			]

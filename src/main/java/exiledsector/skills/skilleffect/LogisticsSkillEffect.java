@@ -1,6 +1,7 @@
 package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Stats;
 
 import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
 import static exiledsector.skills.skilleffect.SkillEffectText.pctMore;
@@ -330,6 +331,18 @@ public enum LogisticsSkillEffect implements SkillEffect {
         @Override
         public String describe(float magnitude) {
             return flatChange(magnitude, "supplies required to perform surveys (fleet-wide)");
+        }
+    },
+    CORONA_RESISTANCE_MULT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            SkillEffectSupport.applyMult(stats.getDynamic().getStat(Stats.CORONA_EFFECT_MULT), modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "combat readiness loss from being in a solar corona or a deep "
+                    + "hyperspace storm");
         }
     };
 
