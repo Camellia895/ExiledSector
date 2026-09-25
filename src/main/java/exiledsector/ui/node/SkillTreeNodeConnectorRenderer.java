@@ -9,6 +9,7 @@ import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillTypeUnlockStatus;
 import exiledsector.ui.SkillTreePanelStyle;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -74,43 +75,49 @@ final class SkillTreeNodeConnectorRenderer {
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
+        Vector2f center = new Vector2f(centerX, centerY);
         for (SkillNode node : SkillTree.getAllNodes().values()) {
             if (node.getType().getTier() == SkillTier.ROOT) continue;
 
             float nodeX = centerX + node.getOffsetX() * zoom;
             float nodeY = centerY - node.getOffsetY() * zoom;
-            float nodeRadius = endpointRadius(node, zoom);
+            ConnectorEndpoint nodeEndpoint = new ConnectorEndpoint(new Vector2f(nodeX, nodeY), endpointRadius(node, zoom));
 
-            for (String connectedId : node.getConnectedNodeIds()) {
-                SkillNode other = SkillTree.get(connectedId);
-                if (other == null) continue;
-                if (other.getType().getTier() != SkillTier.ROOT && node.getId().compareTo(other.getId()) >= 0) continue;
-                if (!SkillTree.isConnectorVisible(node.getId(), other.getId())) continue;
-
-                float otherX = centerX + other.getOffsetX() * zoom;
-                float otherY = centerY - other.getOffsetY() * zoom;
-                float otherRadius = endpointRadius(other, zoom);
-                boolean bothSatisfied = data.isSatisfied(node.getId(), satisfiedRootId) && data.isSatisfied(other.getId(), satisfiedRootId);
-
-                boolean fadeOtherToBlack = isWormhole(other) || isHiddenNode(other, data);
-                boolean fadeNodeToBlack = isWormhole(node) || isHiddenNode(node, data);
-                boolean tipFadeOtherToBlack = isOpenWormhole(other, data, satisfiedRootId);
-                boolean tipFadeNodeToBlack = isOpenWormhole(node, data, satisfiedRootId);
-
-                ConnectorCurve curve = SkillTree.getCurve(node.getId(), other.getId());
-                if (curve == null) {
-                    drawStraightNodeConnectorLine(otherX, otherY, otherRadius, nodeX, nodeY, nodeRadius,
-                            bothSatisfied, fadeOtherToBlack, fadeNodeToBlack, tipFadeOtherToBlack, tipFadeNodeToBlack, zoom, alphaMult);
-                } else {
-                    float throughX = centerX + curve.getControlOffsetX() * zoom;
-                    float throughY = centerY - curve.getControlOffsetY() * zoom;
-                    drawCurvedNodeConnectorLine(otherX, otherY, otherRadius, throughX, throughY, nodeX, nodeY, nodeRadius,
-                            bothSatisfied, fadeOtherToBlack, fadeNodeToBlack, tipFadeOtherToBlack, tipFadeNodeToBlack, zoom, alphaMult);
-                }
-            }
+            drawConnectorsFrom(node, nodeEndpoint, center, zoom, data, satisfiedRootId, alphaMult);
         }
 
         GL11.glDisable(GL11.GL_BLEND);
+    }
+
+    private void drawConnectorsFrom(SkillNode node, ConnectorEndpoint nodeEndpoint, Vector2f center, float zoom,
+                                     ShipSkillData data, String satisfiedRootId, float alphaMult) {
+        for (String connectedId : node.getConnectedNodeIds()) {
+            SkillNode other = SkillTree.get(connectedId);
+            if (other == null) continue;
+            if (other.getType().getTier() != SkillTier.ROOT && node.getId().compareTo(other.getId()) >= 0) continue;
+            if (!SkillTree.isConnectorVisible(node.getId(), other.getId())) continue;
+
+            float otherX = center.x + other.getOffsetX() * zoom;
+            float otherY = center.y - other.getOffsetY() * zoom;
+            ConnectorEndpoint otherEndpoint = new ConnectorEndpoint(new Vector2f(otherX, otherY), endpointRadius(other, zoom));
+            boolean bothSatisfied = data.isSatisfied(node.getId(), satisfiedRootId) && data.isSatisfied(other.getId(), satisfiedRootId);
+
+            ConnectorFade fade = new ConnectorFade(
+                    bothSatisfied,
+                    isWormhole(other) || isHiddenNode(other, data),
+                    isWormhole(node) || isHiddenNode(node, data),
+                    isOpenWormhole(other, data, satisfiedRootId),
+                    isOpenWormhole(node, data, satisfiedRootId));
+
+            ConnectorCurve curve = SkillTree.getCurve(node.getId(), other.getId());
+            if (curve == null) {
+                drawStraightNodeConnectorLine(otherEndpoint, nodeEndpoint, fade, zoom, alphaMult);
+            } else {
+                float throughX = center.x + curve.getControlOffsetX() * zoom;
+                float throughY = center.y - curve.getControlOffsetY() * zoom;
+                drawCurvedNodeConnectorLine(otherEndpoint, new Vector2f(throughX, throughY), nodeEndpoint, fade, zoom, alphaMult);
+            }
+        }
     }
 
     private float endpointRadius(SkillNode node, float zoom) {
@@ -131,18 +138,19 @@ final class SkillTreeNodeConnectorRenderer {
         return SkillTypeUnlockStatus.isHidden(node.getType(), data);
     }
 
-    private void drawStraightNodeConnectorLine(float x1, float y1, float r1, float x2, float y2, float r2,
-                                                boolean glowing, boolean fadeR1ToBlack, boolean fadeR2ToBlack,
-                                                boolean tipFadeR1ToBlack, boolean tipFadeR2ToBlack, float zoom, float alphaMult) {
+    private void drawStraightNodeConnectorLine(ConnectorEndpoint a, ConnectorEndpoint b, ConnectorFade fade, float zoom, float alphaMult) {
         clearBatch();
-        drawStraightNodeConnectorLineImpl(x1, y1, r1, x2, y2, r2, glowing, fadeR1ToBlack, fadeR2ToBlack,
-                tipFadeR1ToBlack, tipFadeR2ToBlack, zoom, alphaMult);
+        drawStraightNodeConnectorLineImpl(a, b, fade, zoom, alphaMult);
         flushBatch();
     }
 
-    private void drawStraightNodeConnectorLineImpl(float x1, float y1, float r1, float x2, float y2, float r2,
-                                                     boolean glowing, boolean fadeR1ToBlack, boolean fadeR2ToBlack,
-                                                     boolean tipFadeR1ToBlack, boolean tipFadeR2ToBlack, float zoom, float alphaMult) {
+    private void drawStraightNodeConnectorLineImpl(ConnectorEndpoint a, ConnectorEndpoint b, ConnectorFade fade, float zoom, float alphaMult) {
+        float x1 = a.point().x;
+        float y1 = a.point().y;
+        float r1 = a.radius();
+        float x2 = b.point().x;
+        float y2 = b.point().y;
+        float r2 = b.radius();
         float dx = x2 - x1;
         float dy = y2 - y1;
         float length = (float) Math.sqrt(dx * dx + dy * dy);
@@ -156,23 +164,24 @@ final class SkillTreeNodeConnectorRenderer {
         float endY = y2 - dirY * r2;
         float visibleLength = length - r1 - r2;
 
-        if (glowing) {
-            if (tipFadeR1ToBlack || tipFadeR2ToBlack) {
-                drawGlowingLineWithTipFade(startX, startY, endX, endY, visibleLength, tipFadeR1ToBlack, tipFadeR2ToBlack, zoom, alphaMult);
+        if (fade.glowing()) {
+            if (fade.tipFadeR1ToBlack() || fade.tipFadeR2ToBlack()) {
+                drawGlowingLineWithTipFade(new Vector2f(startX, startY), new Vector2f(endX, endY), visibleLength,
+                        fade.tipFadeR1ToBlack(), fade.tipFadeR2ToBlack(), zoom, alphaMult);
             } else {
                 drawConnectorSegment(startX, startY, endX, endY, true, alphaMult);
             }
-        } else if (fadeR1ToBlack || fadeR2ToBlack) {
-            drawFadedDullLine(startX, startY, endX, endY, fadeR1ToBlack, fadeR2ToBlack, alphaMult);
+        } else if (fade.fadeR1ToBlack() || fade.fadeR2ToBlack()) {
+            drawFadedDullLine(startX, startY, endX, endY, fade.fadeR1ToBlack(), fade.fadeR2ToBlack(), alphaMult);
         } else {
             drawConnectorSegment(startX, startY, endX, endY, false, alphaMult);
         }
     }
 
-    private void drawGlowingLineWithTipFade(float x1, float y1, float x2, float y2, float visibleLength,
+    private void drawGlowingLineWithTipFade(Vector2f p1, Vector2f p2, float visibleLength,
                                              boolean tipFadeR1ToBlack, boolean tipFadeR2ToBlack, float zoom, float alphaMult) {
         if (visibleLength <= 0.0001f) {
-            drawConnectorSegment(x1, y1, x2, y2, true, alphaMult);
+            drawConnectorSegment(p1.x, p1.y, p2.x, p2.y, true, alphaMult);
             return;
         }
 
@@ -180,55 +189,43 @@ final class SkillTreeNodeConnectorRenderer {
         float tipLen1 = tipFadeR1ToBlack ? Math.min(WORMHOLE_TIP_FADE_LENGTH * zoom, maxTip) : 0f;
         float tipLen2 = tipFadeR2ToBlack ? Math.min(WORMHOLE_TIP_FADE_LENGTH * zoom, maxTip) : 0f;
 
-        float dirX = (x2 - x1) / visibleLength;
-        float dirY = (y2 - y1) / visibleLength;
+        float dirX = (p2.x - p1.x) / visibleLength;
+        float dirY = (p2.y - p1.y) / visibleLength;
         Color accent = style.getAccentColor();
 
-        float innerX1 = x1 + dirX * tipLen1;
-        float innerY1 = y1 + dirY * tipLen1;
-        float innerX2 = x2 - dirX * tipLen2;
-        float innerY2 = y2 - dirY * tipLen2;
+        float innerX1 = p1.x + dirX * tipLen1;
+        float innerY1 = p1.y + dirY * tipLen1;
+        float innerX2 = p2.x - dirX * tipLen2;
+        float innerY2 = p2.y - dirY * tipLen2;
 
         if (tipLen1 > 0f) {
-            drawGradientLine(x1, y1, Color.BLACK, innerX1, innerY1, accent, alphaMult * NODE_CONNECTOR_GLOW_HALO_ALPHA, NODE_CONNECTOR_GLOW_HALO_THICKNESS);
-            drawGradientLine(x1, y1, Color.BLACK, innerX1, innerY1, accent, alphaMult, NODE_CONNECTOR_GLOW_LINE_THICKNESS);
+            Vector2f inner1 = new Vector2f(innerX1, innerY1);
+            drawGradientLine(p1, Color.BLACK, inner1, accent, alphaMult * NODE_CONNECTOR_GLOW_HALO_ALPHA, NODE_CONNECTOR_GLOW_HALO_THICKNESS);
+            drawGradientLine(p1, Color.BLACK, inner1, accent, alphaMult, NODE_CONNECTOR_GLOW_LINE_THICKNESS);
         }
         if (tipLen2 > 0f) {
-            drawGradientLine(innerX2, innerY2, accent, x2, y2, Color.BLACK, alphaMult * NODE_CONNECTOR_GLOW_HALO_ALPHA, NODE_CONNECTOR_GLOW_HALO_THICKNESS);
-            drawGradientLine(innerX2, innerY2, accent, x2, y2, Color.BLACK, alphaMult, NODE_CONNECTOR_GLOW_LINE_THICKNESS);
+            Vector2f inner2 = new Vector2f(innerX2, innerY2);
+            drawGradientLine(inner2, accent, p2, Color.BLACK, alphaMult * NODE_CONNECTOR_GLOW_HALO_ALPHA, NODE_CONNECTOR_GLOW_HALO_THICKNESS);
+            drawGradientLine(inner2, accent, p2, Color.BLACK, alphaMult, NODE_CONNECTOR_GLOW_LINE_THICKNESS);
         }
 
         drawConnectorSegment(innerX1, innerY1, innerX2, innerY2, true, alphaMult);
     }
 
-    private void drawCurvedNodeConnectorLine(float x0, float y0, float r1, float throughX, float throughY, float x2, float y2, float r2,
-                                              boolean glowing, boolean fadeR1ToBlack, boolean fadeR2ToBlack,
-                                              boolean tipFadeR1ToBlack, boolean tipFadeR2ToBlack, float zoom, float alphaMult) {
+    private void drawCurvedNodeConnectorLine(ConnectorEndpoint a, Vector2f through, ConnectorEndpoint b, ConnectorFade fade, float zoom, float alphaMult) {
         clearBatch();
-        drawCurvedNodeConnectorLineImpl(x0, y0, r1, throughX, throughY, x2, y2, r2, glowing, fadeR1ToBlack, fadeR2ToBlack,
-                tipFadeR1ToBlack, tipFadeR2ToBlack, zoom, alphaMult);
+        drawCurvedNodeConnectorLineImpl(a, through, b, fade, zoom, alphaMult);
         flushBatch();
     }
 
-    private void drawCurvedNodeConnectorLineImpl(float x0, float y0, float r1, float throughX, float throughY, float x2, float y2, float r2,
-                                                  boolean glowing, boolean fadeR1ToBlack, boolean fadeR2ToBlack,
-                                                  boolean tipFadeR1ToBlack, boolean tipFadeR2ToBlack, float zoom, float alphaMult) {
-        float cx = 2f * throughX - (x0 + x2) / 2f;
-        float cy = 2f * throughY - (y0 + y2) / 2f;
-        float[] xs = new float[CURVE_ARC_SAMPLES + 1];
-        float[] ys = new float[CURVE_ARC_SAMPLES + 1];
-        float[] cumLen = new float[CURVE_ARC_SAMPLES + 1];
-        for (int i = 0; i <= CURVE_ARC_SAMPLES; i++) {
-            float t = (float) i / CURVE_ARC_SAMPLES;
-            float omt = 1f - t;
-            xs[i] = omt * omt * x0 + 2f * omt * t * cx + t * t * x2;
-            ys[i] = omt * omt * y0 + 2f * omt * t * cy + t * t * y2;
-            if (i > 0) {
-                float dx = xs[i] - xs[i - 1];
-                float dy = ys[i] - ys[i - 1];
-                cumLen[i] = cumLen[i - 1] + (float) Math.sqrt(dx * dx + dy * dy);
-            }
-        }
+    private void drawCurvedNodeConnectorLineImpl(ConnectorEndpoint a, Vector2f through, ConnectorEndpoint b, ConnectorFade fade, float zoom, float alphaMult) {
+        float r1 = a.radius();
+        float r2 = b.radius();
+        float cx = 2f * through.x - (a.point().x + b.point().x) / 2f;
+        float cy = 2f * through.y - (a.point().y + b.point().y) / 2f;
+        QuadraticCurve curve = new QuadraticCurve(a.point().x, a.point().y, cx, cy, b.point().x, b.point().y);
+
+        float[] cumLen = computeCumulativeArcLength(curve);
         float totalLength = cumLen[CURVE_ARC_SAMPLES];
         if (totalLength <= r1 + r2) return;
 
@@ -236,30 +233,50 @@ final class SkillTreeNodeConnectorRenderer {
         float tEnd = curveParamAtArcLength(cumLen, totalLength - r2);
         if (tEnd <= tStart) return;
 
-        boolean dullFading = !glowing && (fadeR1ToBlack || fadeR2ToBlack);
-        boolean glowTipFading = glowing && (tipFadeR1ToBlack || tipFadeR2ToBlack);
-        float visibleArcLength = totalLength - r1 - r2;
-        float maxTip = visibleArcLength * WORMHOLE_TIP_FADE_MAX_FRACTION;
-        float tipFraction1 = glowTipFading && tipFadeR1ToBlack ? Math.min(WORMHOLE_TIP_FADE_LENGTH * zoom, maxTip) / visibleArcLength : 0f;
-        float tipFraction2 = glowTipFading && tipFadeR2ToBlack ? Math.min(WORMHOLE_TIP_FADE_LENGTH * zoom, maxTip) / visibleArcLength : 0f;
+        renderCurveSegments(curve, tStart, tEnd, totalLength - r1 - r2, fade, zoom, alphaMult);
+    }
 
-        float prevX = 0;
-        float prevY = 0;
-        for (int i = 0; i <= CURVE_RENDER_SEGMENTS; i++) {
+    private float[] computeCumulativeArcLength(QuadraticCurve curve) {
+        float[] cumLen = new float[CURVE_ARC_SAMPLES + 1];
+        float prevX = curve.xAt(0f);
+        float prevY = curve.yAt(0f);
+        for (int i = 1; i <= CURVE_ARC_SAMPLES; i++) {
+            float t = (float) i / CURVE_ARC_SAMPLES;
+            float x = curve.xAt(t);
+            float y = curve.yAt(t);
+            float dx = x - prevX;
+            float dy = y - prevY;
+            cumLen[i] = cumLen[i - 1] + (float) Math.sqrt(dx * dx + dy * dy);
+            prevX = x;
+            prevY = y;
+        }
+        return cumLen;
+    }
+
+    private void renderCurveSegments(QuadraticCurve curve, float tStart, float tEnd, float visibleArcLength,
+                                      ConnectorFade fade, float zoom, float alphaMult) {
+        boolean dullFading = !fade.glowing() && (fade.fadeR1ToBlack() || fade.fadeR2ToBlack());
+        boolean glowTipFading = fade.glowing() && (fade.tipFadeR1ToBlack() || fade.tipFadeR2ToBlack());
+        float maxTip = visibleArcLength * WORMHOLE_TIP_FADE_MAX_FRACTION;
+        float tipFraction1 = glowTipFading && fade.tipFadeR1ToBlack() ? Math.min(WORMHOLE_TIP_FADE_LENGTH * zoom, maxTip) / visibleArcLength : 0f;
+        float tipFraction2 = glowTipFading && fade.tipFadeR2ToBlack() ? Math.min(WORMHOLE_TIP_FADE_LENGTH * zoom, maxTip) / visibleArcLength : 0f;
+
+        float prevX = curve.xAt(tStart);
+        float prevY = curve.yAt(tStart);
+        for (int i = 1; i <= CURVE_RENDER_SEGMENTS; i++) {
             float t = tStart + (tEnd - tStart) * i / CURVE_RENDER_SEGMENTS;
-            float omt = 1f - t;
-            float x = omt * omt * x0 + 2f * omt * t * cx + t * t * x2;
-            float y = omt * omt * y0 + 2f * omt * t * cy + t * t * y2;
-            if (i > 0) {
-                float progressPrev = (float) (i - 1) / CURVE_RENDER_SEGMENTS;
-                float progressCur = (float) i / CURVE_RENDER_SEGMENTS;
-                if (dullFading) {
-                    drawFadedDullSegment(prevX, prevY, x, y, progressPrev, progressCur, fadeR1ToBlack, fadeR2ToBlack, alphaMult);
-                } else if (glowTipFading) {
-                    drawGlowingSegmentWithTipFade(prevX, prevY, x, y, progressPrev, progressCur, tipFraction1, tipFraction2, alphaMult);
-                } else {
-                    drawConnectorSegment(prevX, prevY, x, y, glowing, alphaMult);
-                }
+            float x = curve.xAt(t);
+            float y = curve.yAt(t);
+            float progressPrev = (float) (i - 1) / CURVE_RENDER_SEGMENTS;
+            float progressCur = (float) i / CURVE_RENDER_SEGMENTS;
+            if (dullFading) {
+                drawFadedDullSegment(new Vector2f(prevX, prevY), new Vector2f(x, y), progressPrev, progressCur,
+                        fade.fadeR1ToBlack(), fade.fadeR2ToBlack(), alphaMult);
+            } else if (glowTipFading) {
+                drawGlowingSegmentWithTipFade(new Vector2f(prevX, prevY), new Vector2f(x, y), progressPrev, progressCur,
+                        tipFraction1, tipFraction2, alphaMult);
+            } else {
+                drawConnectorSegment(prevX, prevY, x, y, fade.glowing(), alphaMult);
             }
             prevX = x;
             prevY = y;
@@ -316,16 +333,16 @@ final class SkillTreeNodeConnectorRenderer {
         Color endColor = colorForFadeProgress(1f, fadeR1ToBlack, fadeR2ToBlack);
         float alpha = alphaMult * RING_DULL_ALPHA;
 
-        drawGradientLine(x1 + perpX, y1 + perpY, startColor, midX + perpX, midY + perpY, midColor, alpha, NODE_CONNECTOR_LINE_THICKNESS);
-        drawGradientLine(midX + perpX, midY + perpY, midColor, x2 + perpX, y2 + perpY, endColor, alpha, NODE_CONNECTOR_LINE_THICKNESS);
-        drawGradientLine(x1 - perpX, y1 - perpY, startColor, midX - perpX, midY - perpY, midColor, alpha, NODE_CONNECTOR_LINE_THICKNESS);
-        drawGradientLine(midX - perpX, midY - perpY, midColor, x2 - perpX, y2 - perpY, endColor, alpha, NODE_CONNECTOR_LINE_THICKNESS);
+        drawGradientLine(new Vector2f(x1 + perpX, y1 + perpY), startColor, new Vector2f(midX + perpX, midY + perpY), midColor, alpha, NODE_CONNECTOR_LINE_THICKNESS);
+        drawGradientLine(new Vector2f(midX + perpX, midY + perpY), midColor, new Vector2f(x2 + perpX, y2 + perpY), endColor, alpha, NODE_CONNECTOR_LINE_THICKNESS);
+        drawGradientLine(new Vector2f(x1 - perpX, y1 - perpY), startColor, new Vector2f(midX - perpX, midY - perpY), midColor, alpha, NODE_CONNECTOR_LINE_THICKNESS);
+        drawGradientLine(new Vector2f(midX - perpX, midY - perpY), midColor, new Vector2f(x2 - perpX, y2 - perpY), endColor, alpha, NODE_CONNECTOR_LINE_THICKNESS);
     }
 
-    private void drawFadedDullSegment(float x1, float y1, float x2, float y2, float progress0, float progress1,
+    private void drawFadedDullSegment(Vector2f p1, Vector2f p2, float progress0, float progress1,
                                        boolean fadeR1ToBlack, boolean fadeR2ToBlack, float alphaMult) {
-        float dx = x2 - x1;
-        float dy = y2 - y1;
+        float dx = p2.x - p1.x;
+        float dy = p2.y - p1.y;
         float length = (float) Math.sqrt(dx * dx + dy * dy);
         if (length <= 0.0001f) return;
         float dirX = dx / length;
@@ -337,16 +354,16 @@ final class SkillTreeNodeConnectorRenderer {
         Color color1 = colorForFadeProgress(progress1, fadeR1ToBlack, fadeR2ToBlack);
         float alpha = alphaMult * RING_DULL_ALPHA;
 
-        drawGradientLine(x1 + perpX, y1 + perpY, color0, x2 + perpX, y2 + perpY, color1, alpha, NODE_CONNECTOR_LINE_THICKNESS);
-        drawGradientLine(x1 - perpX, y1 - perpY, color0, x2 - perpX, y2 - perpY, color1, alpha, NODE_CONNECTOR_LINE_THICKNESS);
+        drawGradientLine(new Vector2f(p1.x + perpX, p1.y + perpY), color0, new Vector2f(p2.x + perpX, p2.y + perpY), color1, alpha, NODE_CONNECTOR_LINE_THICKNESS);
+        drawGradientLine(new Vector2f(p1.x - perpX, p1.y - perpY), color0, new Vector2f(p2.x - perpX, p2.y - perpY), color1, alpha, NODE_CONNECTOR_LINE_THICKNESS);
     }
 
-    private void drawGlowingSegmentWithTipFade(float x1, float y1, float x2, float y2, float progress0, float progress1,
+    private void drawGlowingSegmentWithTipFade(Vector2f p1, Vector2f p2, float progress0, float progress1,
                                                 float tipFraction1, float tipFraction2, float alphaMult) {
         Color color0 = colorForTipFade(progress0, tipFraction1, tipFraction2);
         Color color1 = colorForTipFade(progress1, tipFraction1, tipFraction2);
-        drawGradientLine(x1, y1, color0, x2, y2, color1, alphaMult * NODE_CONNECTOR_GLOW_HALO_ALPHA, NODE_CONNECTOR_GLOW_HALO_THICKNESS);
-        drawGradientLine(x1, y1, color0, x2, y2, color1, alphaMult, NODE_CONNECTOR_GLOW_LINE_THICKNESS);
+        drawGradientLine(p1, color0, p2, color1, alphaMult * NODE_CONNECTOR_GLOW_HALO_ALPHA, NODE_CONNECTOR_GLOW_HALO_THICKNESS);
+        drawGradientLine(p1, color0, p2, color1, alphaMult, NODE_CONNECTOR_GLOW_LINE_THICKNESS);
     }
 
     private Color colorForTipFade(float progress, float tipFraction1, float tipFraction2) {
@@ -378,13 +395,13 @@ final class SkillTreeNodeConnectorRenderer {
     }
 
     private void drawLine(float x1, float y1, float x2, float y2, Color color, float alpha, float thickness) {
-        drawGradientLine(x1, y1, color, x2, y2, color, alpha, thickness);
+        drawGradientLine(new Vector2f(x1, y1), color, new Vector2f(x2, y2), color, alpha, thickness);
     }
 
-    private void drawGradientLine(float x1, float y1, Color color1, float x2, float y2, Color color2, float alpha, float thickness) {
+    private void drawGradientLine(Vector2f p1, Color color1, Vector2f p2, Color color2, float alpha, float thickness) {
         List<LineVertex> bucket = bucketFor(thickness);
-        bucket.add(new LineVertex(x1, y1, color1, alpha));
-        bucket.add(new LineVertex(x2, y2, color2, alpha));
+        bucket.add(new LineVertex(p1.x, p1.y, color1, alpha));
+        bucket.add(new LineVertex(p2.x, p2.y, color2, alpha));
     }
 
     private List<LineVertex> bucketFor(float thickness) {
@@ -415,6 +432,25 @@ final class SkillTreeNodeConnectorRenderer {
             GL11.glVertex2f(vertex.x, vertex.y);
         }
         GL11.glEnd();
+    }
+
+    private record ConnectorEndpoint(Vector2f point, float radius) {
+    }
+
+    private record ConnectorFade(boolean glowing, boolean fadeR1ToBlack, boolean fadeR2ToBlack,
+                                  boolean tipFadeR1ToBlack, boolean tipFadeR2ToBlack) {
+    }
+
+    private record QuadraticCurve(float x0, float y0, float cx, float cy, float x2, float y2) {
+        float xAt(float t) {
+            float omt = 1f - t;
+            return omt * omt * x0 + 2f * omt * t * cx + t * t * x2;
+        }
+
+        float yAt(float t) {
+            float omt = 1f - t;
+            return omt * omt * y0 + 2f * omt * t * cy + t * t * y2;
+        }
     }
 
     private static final class LineVertex {

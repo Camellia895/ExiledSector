@@ -21,34 +21,18 @@ public class SkillNode extends SkillTreeObject {
     private final String pairedNodeId;
 
     public SkillNode(String id, SkillType type, List<String> connectedNodeIds, float offsetX, float offsetY) {
-        this(id, type, connectedNodeIds, offsetX, offsetY, null, null);
+        this(id, type, connectedNodeIds, offsetX, offsetY, SkillNodeDecoration.NONE);
     }
 
-    public SkillNode(String id, SkillType type, List<String> connectedNodeIds, float offsetX, float offsetY, String ringBeltPath) {
-        this(id, type, connectedNodeIds, offsetX, offsetY, ringBeltPath, null);
-    }
-
-    public SkillNode(String id, SkillType type, List<String> connectedNodeIds, float offsetX, float offsetY, String ringBeltPath, String ringBeltColor) {
-        this(id, type, connectedNodeIds, offsetX, offsetY, ringBeltPath, ringBeltColor, null);
-    }
-
-    public SkillNode(String id, SkillType type, List<String> connectedNodeIds, float offsetX, float offsetY, String ringBeltPath, String ringBeltColor, Float ringBeltWidth) {
-        this(id, type, connectedNodeIds, offsetX, offsetY, ringBeltPath, ringBeltColor, ringBeltWidth, null);
-    }
-
-    public SkillNode(String id, SkillType type, List<String> connectedNodeIds, float offsetX, float offsetY, String ringBeltPath, String ringBeltColor, Float ringBeltWidth, String wormholeColor) {
-        this(id, type, connectedNodeIds, offsetX, offsetY, ringBeltPath, ringBeltColor, ringBeltWidth, wormholeColor, null);
-    }
-
-    public SkillNode(String id, SkillType type, List<String> connectedNodeIds, float offsetX, float offsetY, String ringBeltPath, String ringBeltColor, Float ringBeltWidth, String wormholeColor, String pairedNodeId) {
+    public SkillNode(String id, SkillType type, List<String> connectedNodeIds, float offsetX, float offsetY, SkillNodeDecoration decoration) {
         super(id, offsetX, offsetY);
         this.type = type;
         this.connectedNodeIds = connectedNodeIds == null ? Collections.emptyList() : connectedNodeIds;
-        this.ringBeltPath = ringBeltPath;
-        this.ringBeltColor = ringBeltColor;
-        this.ringBeltWidth = ringBeltWidth;
-        this.wormholeColor = wormholeColor;
-        this.pairedNodeId = pairedNodeId;
+        this.ringBeltPath = decoration.ringBeltPath();
+        this.ringBeltColor = decoration.ringBeltColor();
+        this.ringBeltWidth = decoration.ringBeltWidth();
+        this.wormholeColor = decoration.wormholeColor();
+        this.pairedNodeId = decoration.pairedNodeId();
     }
 
     public SkillType getType() {

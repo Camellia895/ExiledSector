@@ -213,6 +213,13 @@ public class ShipSkillData {
                                                     String satisfiedRootId, Set<String> excludedNodeIds) {
         Set<String> reachable = new HashSet<>();
         Deque<String> queue = new ArrayDeque<>();
+        seedReachableFrontier(byId, satisfiedRootId, excludedNodeIds, reachable, queue);
+        expandReachableFrontier(childrenOf, excludedNodeIds, reachable, queue);
+        return reachable;
+    }
+
+    private void seedReachableFrontier(Map<String, SkillNode> byId, String satisfiedRootId, Set<String> excludedNodeIds,
+                                        Set<String> reachable, Deque<String> queue) {
         if (satisfiedRootId != null && !excludedNodeIds.contains(satisfiedRootId) && reachable.add(satisfiedRootId)) {
             queue.add(satisfiedRootId);
         }
@@ -224,7 +231,10 @@ public class ShipSkillData {
                 queue.add(allocatedId);
             }
         }
+    }
 
+    private void expandReachableFrontier(Map<String, List<String>> childrenOf, Set<String> excludedNodeIds,
+                                          Set<String> reachable, Deque<String> queue) {
         while (!queue.isEmpty()) {
             String currentId = queue.poll();
             for (String childId : childrenOf.getOrDefault(currentId, List.of())) {
@@ -235,7 +245,6 @@ public class ShipSkillData {
                 }
             }
         }
-        return reachable;
     }
 
     public void toggle(SkillNode node, Collection<SkillNode> allNodes, String satisfiedRootId, int totalOp, int opCost, int maxAllocatedNodes) {

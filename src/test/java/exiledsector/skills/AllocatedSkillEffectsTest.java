@@ -60,9 +60,10 @@ class AllocatedSkillEffectsTest {
     @Test
     void includesHullSizeScaledEffectsNotJustFlatEffects() {
         HullSizeSkillEffect hullSizeEffect = new HullSizeSkillEffect(DefenseSkillEffect.ARMOR_PERCENT, 5f, 10f, 15f, 20f);
-        SkillType type = new SkillType("hull", "Hull", "a.png",
-                List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)), List.of(hullSizeEffect),
-                SkillTier.SMALL, null, null, null);
+        SkillType type = new SkillType.Builder("hull", "Hull", "a.png", SkillTier.SMALL)
+                .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)))
+                .hullSizeEffects(List.of(hullSizeEffect))
+                .build();
         SkillNode node = new SkillNode("hull_1", type, List.of(), 0f, 0f);
         SkillTree.register(node);
 
@@ -77,9 +78,10 @@ class AllocatedSkillEffectsTest {
 
     @Test
     void skipsNodesBackedByAVanillaHullMod() {
-        SkillType type = new SkillType("hull", "Hull", "a.png",
-                List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)), SkillTier.SMALL,
-                "some_vanilla_hullmod", null, null);
+        SkillType type = new SkillType.Builder("hull", "Hull", "a.png", SkillTier.SMALL)
+                .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)))
+                .vanillaHullModId("some_vanilla_hullmod")
+                .build();
         SkillNode node = new SkillNode("hull_1", type, List.of(), 0f, 0f);
         SkillTree.register(node);
 

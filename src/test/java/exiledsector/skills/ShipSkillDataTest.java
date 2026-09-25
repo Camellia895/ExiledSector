@@ -28,18 +28,24 @@ class ShipSkillDataTest {
     }
 
     private static SkillNode node(String id, List<String> prerequisiteIds) {
-        SkillType type = new SkillType(id, id, "graphics/hullmods/heavy_armor.png", List.of(), SkillTier.SMALL, null, null, null);
+        SkillType type = new SkillType.Builder(id, id, "graphics/hullmods/heavy_armor.png", SkillTier.SMALL)
+                .effects(List.of())
+                .build();
         return new SkillNode(id, type, prerequisiteIds, 0f, 0f);
     }
 
     private static SkillNode rootNode(String id, List<String> prerequisiteIds) {
-        SkillType type = new SkillType(id, id, "a.png", List.of(), SkillTier.ROOT, null, null, null);
+        SkillType type = new SkillType.Builder(id, id, "a.png", SkillTier.ROOT)
+                .effects(List.of())
+                .build();
         return new SkillNode(id, type, prerequisiteIds, 0f, 0f);
     }
 
     private static SkillNode wormholeNode(String id, List<String> prerequisiteIds, String pairedNodeId) {
-        SkillType type = new SkillType(id + "_type", id, "a.png", List.of(), SkillTier.WORMHOLE, null, null, null);
-        return new SkillNode(id, type, prerequisiteIds, 0f, 0f, null, null, null, null, pairedNodeId);
+        SkillType type = new SkillType.Builder(id + "_type", id, "a.png", SkillTier.WORMHOLE)
+                .effects(List.of())
+                .build();
+        return new SkillNode(id, type, prerequisiteIds, 0f, 0f, new SkillNodeDecoration(null, null, null, null, pairedNodeId));
     }
 
     @Test
@@ -412,7 +418,9 @@ class ShipSkillDataTest {
 
     @Test
     void canDeallocateIsFalseWhenASecondAllocatedRootOnlyReachesTheTrueRootThroughTheRemovedNode() {
-        SkillType rootType = new SkillType("secondRootType", "Second Root", "a.png", List.of(), SkillTier.ROOT, null, null, null);
+        SkillType rootType = new SkillType.Builder("secondRootType", "Second Root", "a.png", SkillTier.ROOT)
+                .effects(List.of())
+                .build();
         SkillNode secondRoot = new SkillNode("secondRoot", rootType, List.of("bridge", "descendant"), 0f, 0f);
         SkillNode bridge = node("bridge", List.of("root_low_tech_1", "secondRoot"));
         SkillNode descendant = node("descendant", List.of("secondRoot"));
@@ -427,7 +435,9 @@ class ShipSkillDataTest {
 
     @Test
     void canDeallocateIsTrueWhenASecondAllocatedRootStillTracesBackToTheTrueRootAfterRemoval() {
-        SkillType rootType = new SkillType("secondRootType", "Second Root", "a.png", List.of(), SkillTier.ROOT, null, null, null);
+        SkillType rootType = new SkillType.Builder("secondRootType", "Second Root", "a.png", SkillTier.ROOT)
+                .effects(List.of())
+                .build();
         SkillNode secondRoot = new SkillNode("secondRoot", rootType, List.of("bridgeA", "bridgeB"), 0f, 0f);
         SkillNode bridgeA = node("bridgeA", List.of("root_low_tech_1", "secondRoot"));
         SkillNode bridgeB = node("bridgeB", List.of("root_low_tech_1", "secondRoot"));
@@ -443,7 +453,9 @@ class ShipSkillDataTest {
     @Test
     void reproduceReportedLoopLockup() {
         SkillNode rootLowTech = new SkillNode("root_low_tech_1",
-                new SkillType("root_low_tech", "Root Low Tech", "a.png", List.of(), SkillTier.ROOT, null, null, null),
+                new SkillType.Builder("root_low_tech", "Root Low Tech", "a.png", SkillTier.ROOT)
+                        .effects(List.of())
+                        .build(),
                 List.of("small_logistics_optional_11", "small_logistics_optional_31", "small_logistics_optional_14", "small_flux_optional_34"),
                 0f, 0f);
         SkillNode n3 = node("small_logistics_optional_3", List.of("root_high_tech_1", "small_logistics_optional_6", "small_logistics_optional_24"));
@@ -510,7 +522,9 @@ class ShipSkillDataTest {
     void selectOptionAllocatesTheSlotNodeAndSpendsTheGivenOpCost() {
         ShipSkillData data = new ShipSkillData();
         SkillNode slot = node("slot_1", List.of());
-        SkillType chosenOption = new SkillType("hull", "Hull", "a.png", List.of(), SkillTier.SMALL, null, null, null);
+        SkillType chosenOption = new SkillType.Builder("hull", "Hull", "a.png", SkillTier.SMALL)
+                .effects(List.of())
+                .build();
 
         data.selectOption(slot, chosenOption, 1);
 
@@ -524,7 +538,9 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         data.addFreeAllocationCredit();
         SkillNode slot = node("slot_1", List.of());
-        SkillType chosenOption = new SkillType("hull", "Hull", "a.png", List.of(), SkillTier.SMALL, null, null, null);
+        SkillType chosenOption = new SkillType.Builder("hull", "Hull", "a.png", SkillTier.SMALL)
+                .effects(List.of())
+                .build();
 
         data.selectOption(slot, chosenOption, 1);
 
@@ -539,7 +555,9 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         data.addFreeAllocationCredit();
         SkillNode slot = node("slot_1", List.of());
-        SkillType chosenOption = new SkillType("hull", "Hull", "a.png", List.of(), SkillTier.SMALL, null, null, null);
+        SkillType chosenOption = new SkillType.Builder("hull", "Hull", "a.png", SkillTier.SMALL)
+                .effects(List.of())
+                .build();
         SkillTree.registerType(chosenOption);
         data.selectOption(slot, chosenOption, 1);
 
@@ -554,7 +572,9 @@ class ShipSkillDataTest {
     void deallocateRefundsTheSlotsOpCostRegardlessOfSelectedOption() {
         ShipSkillData data = new ShipSkillData();
         SkillNode slot = node("slot_1", List.of());
-        SkillType chosenOption = new SkillType("hull", "Hull", "a.png", List.of(), SkillTier.SMALL, null, null, null);
+        SkillType chosenOption = new SkillType.Builder("hull", "Hull", "a.png", SkillTier.SMALL)
+                .effects(List.of())
+                .build();
         SkillTree.registerType(chosenOption);
         data.selectOption(slot, chosenOption, 1);
 
@@ -569,7 +589,9 @@ class ShipSkillDataTest {
     void togglingASelectedOptionalNodeOffClearsTheSelection() {
         ShipSkillData data = new ShipSkillData();
         SkillNode slot = node("slot_1", List.of());
-        SkillType chosenOption = new SkillType("hull", "Hull", "a.png", List.of(), SkillTier.SMALL, null, null, null);
+        SkillType chosenOption = new SkillType.Builder("hull", "Hull", "a.png", SkillTier.SMALL)
+                .effects(List.of())
+                .build();
         SkillTree.registerType(chosenOption);
         data.selectOption(slot, chosenOption, 1);
 
@@ -583,8 +605,12 @@ class ShipSkillDataTest {
     void selectingAnotherOptionOnAnAlreadyAllocatedNodeDoesNotChargeAnotherOpCost() {
         ShipSkillData data = new ShipSkillData();
         SkillNode slot = node("slot_1", List.of());
-        SkillType hullOption = new SkillType("hull", "Hull", "a.png", List.of(), SkillTier.SMALL, null, null, null);
-        SkillType armorOption = new SkillType("armor", "Armor", "a.png", List.of(), SkillTier.SMALL, null, null, null);
+        SkillType hullOption = new SkillType.Builder("hull", "Hull", "a.png", SkillTier.SMALL)
+                .effects(List.of())
+                .build();
+        SkillType armorOption = new SkillType.Builder("armor", "Armor", "a.png", SkillTier.SMALL)
+                .effects(List.of())
+                .build();
         SkillTree.registerType(hullOption);
         SkillTree.registerType(armorOption);
         data.selectOption(slot, hullOption, 1);
@@ -600,7 +626,9 @@ class ShipSkillDataTest {
     void reselectingTheSameOptionOnAnAlreadyAllocatedNodeDoesNotDoubleChargeIt() {
         ShipSkillData data = new ShipSkillData();
         SkillNode slot = node("slot_1", List.of());
-        SkillType hullOption = new SkillType("hull", "Hull", "a.png", List.of(), SkillTier.SMALL, null, null, null);
+        SkillType hullOption = new SkillType.Builder("hull", "Hull", "a.png", SkillTier.SMALL)
+                .effects(List.of())
+                .build();
         SkillTree.registerType(hullOption);
         data.selectOption(slot, hullOption, 1);
 

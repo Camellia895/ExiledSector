@@ -19,8 +19,12 @@ public final class WormholeBandRenderer {
     private WormholeBandRenderer() {
     }
 
-    public static void render(SpriteAPI texture, float cx, float cy, float innerRadius, float outerRadius,
-                               int bandSlot, float rotationDeg, Color color, float alphaMult, float elapsedSeconds) {
+    public static void render(SpriteAPI texture, RadialBand band, int bandSlot, float rotationDeg,
+                               Color color, float alphaMult, float elapsedSeconds) {
+        float cx = band.center().x;
+        float cy = band.center().y;
+        float innerRadius = band.innerRadius();
+        float outerRadius = band.outerRadius();
         float circumference = (float) (2 * Math.PI * (innerRadius + outerRadius) / 2f);
         int segments = RadialBandGL.computeSegments(circumference, PIXELS_PER_SEGMENT, MIN_SEGMENTS_FOR_WOBBLE);
         float anglePerSegment = (float) (2 * Math.PI) / segments;

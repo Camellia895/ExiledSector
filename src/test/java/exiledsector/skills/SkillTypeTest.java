@@ -14,7 +14,10 @@ import static org.mockito.Mockito.mock;
 class SkillTypeTest {
 
     private static SkillType type(List<SkillTypeEffect> effects, List<HullSizeSkillEffect> hullSizeEffects) {
-        return new SkillType("id", "Name", "a.png", effects, hullSizeEffects, SkillTier.SMALL, null, null, null);
+        return new SkillType.Builder("id", "Name", "a.png", SkillTier.SMALL)
+                .effects(effects)
+                .hullSizeEffects(hullSizeEffects)
+                .build();
     }
 
     @Test

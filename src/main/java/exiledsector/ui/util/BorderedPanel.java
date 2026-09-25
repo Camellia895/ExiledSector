@@ -1,5 +1,7 @@
 package exiledsector.ui.util;
 
+import org.lwjgl.util.vector.Vector2f;
+
 import java.awt.Color;
 
 public final class BorderedPanel {
@@ -40,6 +42,7 @@ public final class BorderedPanel {
 
     private void drawPiece(String path, float x, float y, float width, float height, float alphaMult) {
         if (width <= 0f || height <= 0f) return;
-        SpriteDraw.drawAtCenter(spriteCache, path, x + width / 2f, y + height / 2f, width, height, BORDER_TINT, alphaMult);
+        SpriteDraw.drawAtCenter(spriteCache, path, new Vector2f(x + width / 2f, y + height / 2f),
+                new Vector2f(width, height), BORDER_TINT, alphaMult);
     }
 }

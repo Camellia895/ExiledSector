@@ -1,7 +1,9 @@
 package exiledsector.skills.loader;
 
 import com.fs.starfarer.api.Global;
+import exiledsector.skills.Rotation;
 import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillNodeDecoration;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.ui.decoration.RingBelt;
@@ -97,8 +99,7 @@ public final class SkillTreeLoader {
                     (float) beltJson.getDouble("innerRadius"),
                     (float) beltJson.getDouble("outerRadius"),
                     beltJson.getString("ringArtPath"),
-                    (float) beltJson.optDouble("rotation", 0.0),
-                    (float) beltJson.optDouble("rotationSpeed", 0.0)));
+                    new Rotation((float) beltJson.optDouble("rotation", 0.0), (float) beltJson.optDouble("rotationSpeed", 0.0))));
         }
         return ringBelts;
     }
@@ -116,8 +117,7 @@ public final class SkillTreeLoader {
                     (float) imageJson.getDouble("width"),
                     (float) imageJson.getDouble("height"),
                     imageJson.getString("imagePath"),
-                    (float) imageJson.optDouble("rotation", 0.0),
-                    (float) imageJson.optDouble("rotationSpeed", 0.0)));
+                    new Rotation((float) imageJson.optDouble("rotation", 0.0), (float) imageJson.optDouble("rotationSpeed", 0.0))));
         }
         return images;
     }
@@ -195,10 +195,11 @@ public final class SkillTreeLoader {
                 connectedTo,
                 (float) json.optDouble("x", 0),
                 (float) json.optDouble("y", 0),
-                json.optString("ringBeltPath", null),
-                json.optString("ringBeltColor", null),
-                json.has("ringBeltWidth") ? (float) json.getDouble("ringBeltWidth") : null,
-                json.optString("wormholeColor", null),
-                json.optString("pairedWith", null));
+                new SkillNodeDecoration(
+                        json.optString("ringBeltPath", null),
+                        json.optString("ringBeltColor", null),
+                        json.has("ringBeltWidth") ? (float) json.getDouble("ringBeltWidth") : null,
+                        json.optString("wormholeColor", null),
+                        json.optString("pairedWith", null)));
     }
 }

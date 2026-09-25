@@ -24,60 +24,92 @@ public class SkillType {
     private final List<String> exclusiveSkillTypeIds;
     private final List<UnlockCondition> unlockConditions;
 
-    public SkillType(String id, String displayName, String iconPath,
-                      List<SkillTypeEffect> effects, SkillTier tier, String vanillaHullModId,
-                      String descriptionOverride, String todo) {
-        this(id, displayName, iconPath, effects, Collections.emptyList(), tier,
-                vanillaHullModId, descriptionOverride, todo, Collections.emptyList());
+    private SkillType(Builder builder) {
+        this.id = builder.id;
+        this.displayName = builder.displayName;
+        this.iconPath = builder.iconPath;
+        this.effects = builder.effects == null ? Collections.emptyList() : builder.effects;
+        this.hullSizeEffects = builder.hullSizeEffects == null ? Collections.emptyList() : builder.hullSizeEffects;
+        this.tier = builder.tier;
+        this.vanillaHullModId = builder.vanillaHullModId;
+        this.descriptionOverride = builder.descriptionOverride;
+        this.todo = builder.todo;
+        this.optionalOptionIds = builder.optionalOptionIds == null ? Collections.emptyList() : builder.optionalOptionIds;
+        this.exclusiveHullModIds = builder.exclusiveHullModIds == null ? Collections.emptyList() : builder.exclusiveHullModIds;
+        this.exclusiveSkillTypeIds = builder.exclusiveSkillTypeIds == null ? Collections.emptyList() : builder.exclusiveSkillTypeIds;
+        this.unlockConditions = builder.unlockConditions == null ? Collections.emptyList() : builder.unlockConditions;
     }
 
-    public SkillType(String id, String displayName, String iconPath,
-                      List<SkillTypeEffect> effects, List<HullSizeSkillEffect> hullSizeEffects, SkillTier tier,
-                      String vanillaHullModId, String descriptionOverride, String todo) {
-        this(id, displayName, iconPath, effects, hullSizeEffects, tier,
-                vanillaHullModId, descriptionOverride, todo, Collections.emptyList());
-    }
+    public static final class Builder {
+        private final String id;
+        private final String displayName;
+        private final String iconPath;
+        private final SkillTier tier;
+        private List<SkillTypeEffect> effects = Collections.emptyList();
+        private List<HullSizeSkillEffect> hullSizeEffects = Collections.emptyList();
+        private String vanillaHullModId;
+        private String descriptionOverride;
+        private String todo;
+        private List<String> optionalOptionIds = Collections.emptyList();
+        private List<String> exclusiveHullModIds = Collections.emptyList();
+        private List<String> exclusiveSkillTypeIds = Collections.emptyList();
+        private List<UnlockCondition> unlockConditions = Collections.emptyList();
 
-    public SkillType(String id, String displayName, String iconPath,
-                      List<SkillTypeEffect> effects, List<HullSizeSkillEffect> hullSizeEffects, SkillTier tier,
-                      String vanillaHullModId, String descriptionOverride, String todo, List<String> optionalOptionIds) {
-        this(id, displayName, iconPath, effects, hullSizeEffects, tier,
-                vanillaHullModId, descriptionOverride, todo, optionalOptionIds, Collections.emptyList());
-    }
+        public Builder(String id, String displayName, String iconPath, SkillTier tier) {
+            this.id = id;
+            this.displayName = displayName;
+            this.iconPath = iconPath;
+            this.tier = tier;
+        }
 
-    public SkillType(String id, String displayName, String iconPath,
-                      List<SkillTypeEffect> effects, List<HullSizeSkillEffect> hullSizeEffects, SkillTier tier,
-                      String vanillaHullModId, String descriptionOverride, String todo, List<String> optionalOptionIds,
-                      List<String> exclusiveHullModIds) {
-        this(id, displayName, iconPath, effects, hullSizeEffects, tier,
-                vanillaHullModId, descriptionOverride, todo, optionalOptionIds, exclusiveHullModIds, Collections.emptyList());
-    }
+        public Builder effects(List<SkillTypeEffect> effects) {
+            this.effects = effects;
+            return this;
+        }
 
-    public SkillType(String id, String displayName, String iconPath,
-                      List<SkillTypeEffect> effects, List<HullSizeSkillEffect> hullSizeEffects, SkillTier tier,
-                      String vanillaHullModId, String descriptionOverride, String todo, List<String> optionalOptionIds,
-                      List<String> exclusiveHullModIds, List<String> exclusiveSkillTypeIds) {
-        this(id, displayName, iconPath, effects, hullSizeEffects, tier,
-                vanillaHullModId, descriptionOverride, todo, optionalOptionIds, exclusiveHullModIds, exclusiveSkillTypeIds, null);
-    }
+        public Builder hullSizeEffects(List<HullSizeSkillEffect> hullSizeEffects) {
+            this.hullSizeEffects = hullSizeEffects;
+            return this;
+        }
 
-    public SkillType(String id, String displayName, String iconPath,
-                      List<SkillTypeEffect> effects, List<HullSizeSkillEffect> hullSizeEffects, SkillTier tier,
-                      String vanillaHullModId, String descriptionOverride, String todo, List<String> optionalOptionIds,
-                      List<String> exclusiveHullModIds, List<String> exclusiveSkillTypeIds, List<UnlockCondition> unlockConditions) {
-        this.id = id;
-        this.displayName = displayName;
-        this.iconPath = iconPath;
-        this.effects = effects == null ? Collections.emptyList() : effects;
-        this.hullSizeEffects = hullSizeEffects == null ? Collections.emptyList() : hullSizeEffects;
-        this.tier = tier;
-        this.vanillaHullModId = vanillaHullModId;
-        this.descriptionOverride = descriptionOverride;
-        this.todo = todo;
-        this.optionalOptionIds = optionalOptionIds == null ? Collections.emptyList() : optionalOptionIds;
-        this.exclusiveHullModIds = exclusiveHullModIds == null ? Collections.emptyList() : exclusiveHullModIds;
-        this.exclusiveSkillTypeIds = exclusiveSkillTypeIds == null ? Collections.emptyList() : exclusiveSkillTypeIds;
-        this.unlockConditions = unlockConditions == null ? Collections.emptyList() : unlockConditions;
+        public Builder vanillaHullModId(String vanillaHullModId) {
+            this.vanillaHullModId = vanillaHullModId;
+            return this;
+        }
+
+        public Builder descriptionOverride(String descriptionOverride) {
+            this.descriptionOverride = descriptionOverride;
+            return this;
+        }
+
+        public Builder todo(String todo) {
+            this.todo = todo;
+            return this;
+        }
+
+        public Builder optionalOptionIds(List<String> optionalOptionIds) {
+            this.optionalOptionIds = optionalOptionIds;
+            return this;
+        }
+
+        public Builder exclusiveHullModIds(List<String> exclusiveHullModIds) {
+            this.exclusiveHullModIds = exclusiveHullModIds;
+            return this;
+        }
+
+        public Builder exclusiveSkillTypeIds(List<String> exclusiveSkillTypeIds) {
+            this.exclusiveSkillTypeIds = exclusiveSkillTypeIds;
+            return this;
+        }
+
+        public Builder unlockConditions(List<UnlockCondition> unlockConditions) {
+            this.unlockConditions = unlockConditions;
+            return this;
+        }
+
+        public SkillType build() {
+            return new SkillType(this);
+        }
     }
 
     public String getId() {

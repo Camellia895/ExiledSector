@@ -5,6 +5,7 @@ import exiledsector.skills.SkillTree;
 import exiledsector.ui.util.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Vector2f;
 
 import java.util.List;
 
@@ -34,8 +35,8 @@ public class SkillTreeStaticImageRenderer {
             float screenX = centerX + image.getX() * zoom;
             float screenY = centerY - image.getY() * zoom;
             float angleDeg = -(image.getRotation() + image.getRotationSpeed() * elapsedSeconds);
-            SpriteDraw.drawAtCenter(spriteCache, path, screenX, screenY,
-                    image.getWidth() * zoom, image.getHeight() * zoom, null, alphaMult, angleDeg);
+            SpriteDraw.drawAtCenter(spriteCache, path, new Vector2f(screenX, screenY),
+                    new Vector2f(image.getWidth() * zoom, image.getHeight() * zoom), null, alphaMult, angleDeg);
         }
 
         GL11.glDisable(GL11.GL_BLEND);

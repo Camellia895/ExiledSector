@@ -73,7 +73,12 @@ class SkillTreeHullModTest {
 
     @Test
     void appliesTheEffectOfEachAllocatedNodeWithOneRegisteredOnTheTree() {
-        SkillType hullType = new SkillType("hull", "Reinforced Hull", "graphics/hullmods/reinforced_bulkheads.png", List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)), SkillTier.SMALL, null, null, null);
+        SkillType hullType = new SkillType.Builder("hull", "Reinforced Hull", "graphics/hullmods/reinforced_bulkheads.png", SkillTier.SMALL)
+                .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)))
+                .vanillaHullModId(null)
+                .descriptionOverride(null)
+                .todo(null)
+                .build();
         SkillNode hullNode = new SkillNode("hull_1", hullType, List.of(), 0f, 0f);
         SkillTree.register(hullNode);
 
@@ -93,8 +98,20 @@ class SkillTreeHullModTest {
 
     @Test
     void appliesTheSelectedOptionsEffectForAnOptionalNodeNotThePlaceholders() {
-        SkillType placeholder = new SkillType("slot", "Optional Skill", "a.png", List.of(), List.of(), SkillTier.SMALL, null, null, null, List.of("hull"));
-        SkillType hullOption = new SkillType("hull", "Reinforced Hull", "graphics/hullmods/reinforced_bulkheads.png", List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)), SkillTier.SMALL, null, null, null);
+        SkillType placeholder = new SkillType.Builder("slot", "Optional Skill", "a.png", SkillTier.SMALL)
+                .effects(List.of())
+                .hullSizeEffects(List.of())
+                .vanillaHullModId(null)
+                .descriptionOverride(null)
+                .todo(null)
+                .optionalOptionIds(List.of("hull"))
+                .build();
+        SkillType hullOption = new SkillType.Builder("hull", "Reinforced Hull", "graphics/hullmods/reinforced_bulkheads.png", SkillTier.SMALL)
+                .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)))
+                .vanillaHullModId(null)
+                .descriptionOverride(null)
+                .todo(null)
+                .build();
         SkillTree.registerType(hullOption);
         SkillNode slotNode = new SkillNode("slot_1", placeholder, List.of(), 0f, 0f);
         SkillTree.register(slotNode);
@@ -115,8 +132,12 @@ class SkillTreeHullModTest {
 
     @Test
     void appliesEachEffectOnANodeWithMultipleEffectsIndependently() {
-        SkillType multiType = new SkillType("heavyarmor", "Heavy Armor", "graphics/icons/notable_hullmods/heavy_armor.png", List.of(new SkillTypeEffect(DefenseSkillEffect.ARMOR_PERCENT, 15f), new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 5f)),
-                SkillTier.NOTABLE, null, null, null);
+        SkillType multiType = new SkillType.Builder("heavyarmor", "Heavy Armor", "graphics/icons/notable_hullmods/heavy_armor.png", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.ARMOR_PERCENT, 15f), new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 5f)))
+                .vanillaHullModId(null)
+                .descriptionOverride(null)
+                .todo(null)
+                .build();
         SkillNode multiNode = new SkillNode("heavyarmor_1", multiType, List.of(), 0f, 0f);
         SkillTree.register(multiNode);
 
@@ -139,7 +160,12 @@ class SkillTreeHullModTest {
 
     @Test
     void skipsNodesWithNoEffectDefinedYet() {
-        SkillType cosmeticType = new SkillType("capacitors", "Capacitors", "graphics/hullmods/flux_coil_adjunct.png", List.of(), SkillTier.SMALL, null, null, null);
+        SkillType cosmeticType = new SkillType.Builder("capacitors", "Capacitors", "graphics/hullmods/flux_coil_adjunct.png", SkillTier.SMALL)
+                .effects(List.of())
+                .vanillaHullModId(null)
+                .descriptionOverride(null)
+                .todo(null)
+                .build();
         SkillNode cosmeticNode = new SkillNode("capacitors_1", cosmeticType, List.of(), 0f, 0f);
         SkillTree.register(cosmeticNode);
 
@@ -157,7 +183,12 @@ class SkillTreeHullModTest {
 
     @Test
     void delegatesToTheRealVanillaHullModEffectWhenTypeSpecifiesOne() {
-        SkillType keystoneType = new SkillType("safety_overrides", "Safety Overrides", "graphics/icons/skills/helmsmanship.png", List.of(), SkillTier.KEYSTONE, "safetyoverrides", null, null);
+        SkillType keystoneType = new SkillType.Builder("safety_overrides", "Safety Overrides", "graphics/icons/skills/helmsmanship.png", SkillTier.KEYSTONE)
+                .effects(List.of())
+                .vanillaHullModId("safetyoverrides")
+                .descriptionOverride(null)
+                .todo(null)
+                .build();
         SkillNode keystoneNode = new SkillNode("safety_overrides_1", keystoneType, List.of(), 0f, 0f);
         SkillTree.register(keystoneNode);
 
@@ -192,8 +223,15 @@ class SkillTreeHullModTest {
 
     @Test
     void beforeShipCreationRemovesARealHullModThatConflictsWithAnAllocatedSkill() {
-        SkillType frontType = new SkillType("frontemitter", "Shield Conversion - Front", "a.png", List.of(), List.of(), SkillTier.NOTABLE, null, null, null,
-                List.of(), List.of("adaptiveshields"));
+        SkillType frontType = new SkillType.Builder("frontemitter", "Shield Conversion - Front", "a.png", SkillTier.NOTABLE)
+                .effects(List.of())
+                .hullSizeEffects(List.of())
+                .vanillaHullModId(null)
+                .descriptionOverride(null)
+                .todo(null)
+                .optionalOptionIds(List.of())
+                .exclusiveHullModIds(List.of("adaptiveshields"))
+                .build();
         SkillNode frontNode = new SkillNode("frontemitter_1", frontType, List.of(), 0f, 0f);
         SkillTree.register(frontNode);
 
@@ -226,8 +264,15 @@ class SkillTreeHullModTest {
 
     @Test
     void beforeShipCreationNeverRemovesTheUmbrellaHullModEvenWhenTheConflictingHullModIsSModded() {
-        SkillType hullType = new SkillType("hull", "Reinforced Hull", "graphics/hullmods/reinforced_bulkheads.png", List.of(), List.of(), SkillTier.SMALL, null, null, null,
-                List.of(), List.of("armoredcladding"));
+        SkillType hullType = new SkillType.Builder("hull", "Reinforced Hull", "graphics/hullmods/reinforced_bulkheads.png", SkillTier.SMALL)
+                .effects(List.of())
+                .hullSizeEffects(List.of())
+                .vanillaHullModId(null)
+                .descriptionOverride(null)
+                .todo(null)
+                .optionalOptionIds(List.of())
+                .exclusiveHullModIds(List.of("armoredcladding"))
+                .build();
         SkillNode hullNode = new SkillNode("hull_1", hullType, List.of(), 0f, 0f);
         SkillTree.register(hullNode);
 
@@ -255,8 +300,15 @@ class SkillTreeHullModTest {
 
     @Test
     void removeHullModsConflictingWithAllocatedSkillsRemovesTheWarningHullModOnceTheConflictIsGone() {
-        SkillType frontType = new SkillType("frontemitter", "Shield Conversion - Front", "a.png", List.of(), List.of(), SkillTier.NOTABLE, null, null, null,
-                List.of(), List.of("adaptiveshields"));
+        SkillType frontType = new SkillType.Builder("frontemitter", "Shield Conversion - Front", "a.png", SkillTier.NOTABLE)
+                .effects(List.of())
+                .hullSizeEffects(List.of())
+                .vanillaHullModId(null)
+                .descriptionOverride(null)
+                .todo(null)
+                .optionalOptionIds(List.of())
+                .exclusiveHullModIds(List.of("adaptiveshields"))
+                .build();
         SkillNode frontNode = new SkillNode("frontemitter_1", frontType, List.of(), 0f, 0f);
         SkillTree.register(frontNode);
 
@@ -301,8 +353,15 @@ class SkillTreeHullModTest {
 
     @Test
     void beforeShipCreationDoesNotRemoveAnythingWhenNoConflictingHullModIsInstalled() {
-        SkillType frontType = new SkillType("frontemitter", "Shield Conversion - Front", "a.png", List.of(), List.of(), SkillTier.NOTABLE, null, null, null,
-                List.of(), List.of("adaptiveshields"));
+        SkillType frontType = new SkillType.Builder("frontemitter", "Shield Conversion - Front", "a.png", SkillTier.NOTABLE)
+                .effects(List.of())
+                .hullSizeEffects(List.of())
+                .vanillaHullModId(null)
+                .descriptionOverride(null)
+                .todo(null)
+                .optionalOptionIds(List.of())
+                .exclusiveHullModIds(List.of("adaptiveshields"))
+                .build();
         SkillNode frontNode = new SkillNode("frontemitter_1", frontType, List.of(), 0f, 0f);
         SkillTree.register(frontNode);
 
@@ -328,7 +387,12 @@ class SkillTreeHullModTest {
     void beforeShipCreationInstallsAndCostsTheOpSpentHullModWhenOpHasBeenSpentOnAllocatedNodes() {
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        SkillType type = new SkillType("t", "t", "a.png", List.of(), SkillTier.SMALL, null, null, null);
+        SkillType type = new SkillType.Builder("t", "t", "a.png", SkillTier.SMALL)
+                .effects(List.of())
+                .vanillaHullModId(null)
+                .descriptionOverride(null)
+                .todo(null)
+                .build();
         SkillNode node = new SkillNode("armor_1", type, List.of(), 0f, 0f);
         ShipSkillDataManager.get("ship-a").allocate(node, 4);
 
@@ -376,7 +440,12 @@ class SkillTreeHullModTest {
 
     @Test
     void delegatesToTheRealVanillaHullModEffectAfterShipCreationWhenTypeSpecifiesOne() {
-        SkillType keystoneType = new SkillType("frontshield", "Makeshift Shield Generator", "graphics/icons/skills/front_shield_generator.png", List.of(), SkillTier.KEYSTONE, "frontshield", null, null);
+        SkillType keystoneType = new SkillType.Builder("frontshield", "Makeshift Shield Generator", "graphics/icons/skills/front_shield_generator.png", SkillTier.KEYSTONE)
+                .effects(List.of())
+                .vanillaHullModId("frontshield")
+                .descriptionOverride(null)
+                .todo(null)
+                .build();
         SkillNode keystoneNode = new SkillNode("frontshield_1", keystoneType, List.of(), 0f, 0f);
         SkillTree.register(keystoneNode);
 
@@ -401,7 +470,12 @@ class SkillTreeHullModTest {
 
     @Test
     void afterShipCreationSkipsNodesWithoutAVanillaHullMod() {
-        SkillType hullType = new SkillType("hull", "Reinforced Hull", "graphics/hullmods/reinforced_bulkheads.png", List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)), SkillTier.SMALL, null, null, null);
+        SkillType hullType = new SkillType.Builder("hull", "Reinforced Hull", "graphics/hullmods/reinforced_bulkheads.png", SkillTier.SMALL)
+                .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)))
+                .vanillaHullModId(null)
+                .descriptionOverride(null)
+                .todo(null)
+                .build();
         SkillNode hullNode = new SkillNode("hull_1", hullType, List.of(), 0f, 0f);
         SkillTree.register(hullNode);
 
@@ -422,7 +496,12 @@ class SkillTreeHullModTest {
 
     @Test
     void fighterSpawnDelegatesToTheRealVanillaHullModEffectWhenTypeSpecifiesOne() {
-        SkillType passthroughType = new SkillType("defensive_targeting_array", "Defensive Targeting Array", "graphics/icons/skills/defensive_targeting_array.png", List.of(), SkillTier.NOTABLE, "defensive_targeting_array", null, null);
+        SkillType passthroughType = new SkillType.Builder("defensive_targeting_array", "Defensive Targeting Array", "graphics/icons/skills/defensive_targeting_array.png", SkillTier.NOTABLE)
+                .effects(List.of())
+                .vanillaHullModId("defensive_targeting_array")
+                .descriptionOverride(null)
+                .todo(null)
+                .build();
         SkillNode passthroughNode = new SkillNode("defensive_targeting_array_1", passthroughType, List.of(), 0f, 0f);
         SkillTree.register(passthroughNode);
 
@@ -449,7 +528,12 @@ class SkillTreeHullModTest {
     @Test
     void fighterSpawnCallsApplyToFighterSpawnedByShipOnNonPassthroughEffects() {
         exiledsector.skills.skilleffect.SkillEffect fighterEffect = mock(exiledsector.skills.skilleffect.SkillEffect.class);
-        SkillType fighterType = new SkillType("fighter_weapon_damage", "Fighter Weapon Damage", "graphics/hullmods/fighter_uplink2.png", List.of(new SkillTypeEffect(fighterEffect, 15f)), SkillTier.SMALL, null, null, null);
+        SkillType fighterType = new SkillType.Builder("fighter_weapon_damage", "Fighter Weapon Damage", "graphics/hullmods/fighter_uplink2.png", SkillTier.SMALL)
+                .effects(List.of(new SkillTypeEffect(fighterEffect, 15f)))
+                .vanillaHullModId(null)
+                .descriptionOverride(null)
+                .todo(null)
+                .build();
         SkillNode fighterNode = new SkillNode("fighter_weapon_damage_1", fighterType, List.of(), 0f, 0f);
         SkillTree.register(fighterNode);
 
@@ -482,7 +566,12 @@ class SkillTreeHullModTest {
     @Test
     void afterShipCreationCallsApplyAfterShipCreationOnNonPassthroughEffects() {
         exiledsector.skills.skilleffect.SkillEffect listenerEffect = mock(exiledsector.skills.skilleffect.SkillEffect.class);
-        SkillType listenerType = new SkillType("high_scatter_amp", "High Scatter Amplifier", "graphics/hullmods/high_scatter_amp.png", List.of(new SkillTypeEffect(listenerEffect, 50f)), SkillTier.NOTABLE, null, null, null);
+        SkillType listenerType = new SkillType.Builder("high_scatter_amp", "High Scatter Amplifier", "graphics/hullmods/high_scatter_amp.png", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(listenerEffect, 50f)))
+                .vanillaHullModId(null)
+                .descriptionOverride(null)
+                .todo(null)
+                .build();
         SkillNode listenerNode = new SkillNode("high_scatter_amp_1", listenerType, List.of(), 0f, 0f);
         SkillTree.register(listenerNode);
 
@@ -520,7 +609,12 @@ class SkillTreeHullModTest {
 
     @Test
     void advanceInCombatAppliesConditionalEffectWhileVenting() {
-        SkillType ventType = new SkillType("fluxbreakers", "Resistant Flux Conduits", "graphics/icons/notable_hullmods/resistant_flux_conduits.png", List.of(new SkillTypeEffect(FluxSkillEffect.FLUX_DISSIPATION_WHILE_VENTING_PERCENT, 25f)), SkillTier.NOTABLE, null, null, null);
+        SkillType ventType = new SkillType.Builder("fluxbreakers", "Resistant Flux Conduits", "graphics/icons/notable_hullmods/resistant_flux_conduits.png", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(FluxSkillEffect.FLUX_DISSIPATION_WHILE_VENTING_PERCENT, 25f)))
+                .vanillaHullModId(null)
+                .descriptionOverride(null)
+                .todo(null)
+                .build();
         SkillNode ventNode = new SkillNode("fluxbreakers_1", ventType, List.of(), 0f, 0f);
         SkillTree.register(ventNode);
 
@@ -544,7 +638,12 @@ class SkillTreeHullModTest {
 
     @Test
     void advanceInCombatRemovesConditionalEffectWhenNotVenting() {
-        SkillType ventType = new SkillType("fluxbreakers", "Resistant Flux Conduits", "graphics/icons/notable_hullmods/resistant_flux_conduits.png", List.of(new SkillTypeEffect(FluxSkillEffect.FLUX_DISSIPATION_WHILE_VENTING_PERCENT, 25f)), SkillTier.NOTABLE, null, null, null);
+        SkillType ventType = new SkillType.Builder("fluxbreakers", "Resistant Flux Conduits", "graphics/icons/notable_hullmods/resistant_flux_conduits.png", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(FluxSkillEffect.FLUX_DISSIPATION_WHILE_VENTING_PERCENT, 25f)))
+                .vanillaHullModId(null)
+                .descriptionOverride(null)
+                .todo(null)
+                .build();
         SkillNode ventNode = new SkillNode("fluxbreakers_1", ventType, List.of(), 0f, 0f);
         SkillTree.register(ventNode);
 
@@ -568,7 +667,12 @@ class SkillTreeHullModTest {
 
     @Test
     void advanceInCombatDoesNotTouchNonConditionalEffects() {
-        SkillType hullType = new SkillType("hull", "Reinforced Hull", "graphics/hullmods/reinforced_bulkheads.png", List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)), SkillTier.SMALL, null, null, null);
+        SkillType hullType = new SkillType.Builder("hull", "Reinforced Hull", "graphics/hullmods/reinforced_bulkheads.png", SkillTier.SMALL)
+                .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)))
+                .vanillaHullModId(null)
+                .descriptionOverride(null)
+                .todo(null)
+                .build();
         SkillNode hullNode = new SkillNode("hull_1", hullType, List.of(), 0f, 0f);
         SkillTree.register(hullNode);
 
@@ -599,7 +703,12 @@ class SkillTreeHullModTest {
 
     @Test
     void advanceInCombatDoublesStatsWhilePhased() {
-        SkillType phaseType = new SkillType("phase_anchor", "Phase Anchor", "graphics/icons/notable_hullmods/phase_anchor.png", List.of(new SkillTypeEffect(PhaseSkillEffect.COMBAT_BOOST_WHILE_PHASED, 100f)), SkillTier.NOTABLE, null, null, null);
+        SkillType phaseType = new SkillType.Builder("phase_anchor", "Phase Anchor", "graphics/icons/notable_hullmods/phase_anchor.png", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(PhaseSkillEffect.COMBAT_BOOST_WHILE_PHASED, 100f)))
+                .vanillaHullModId(null)
+                .descriptionOverride(null)
+                .todo(null)
+                .build();
         SkillNode phaseNode = new SkillNode("phase_anchor_1", phaseType, List.of(), 0f, 0f);
         SkillTree.register(phaseNode);
 
@@ -634,7 +743,12 @@ class SkillTreeHullModTest {
 
     @Test
     void advanceInCombatUndoesTheBoostWhenNotPhased() {
-        SkillType phaseType = new SkillType("phase_anchor", "Phase Anchor", "graphics/icons/notable_hullmods/phase_anchor.png", List.of(new SkillTypeEffect(PhaseSkillEffect.COMBAT_BOOST_WHILE_PHASED, 100f)), SkillTier.NOTABLE, null, null, null);
+        SkillType phaseType = new SkillType.Builder("phase_anchor", "Phase Anchor", "graphics/icons/notable_hullmods/phase_anchor.png", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(PhaseSkillEffect.COMBAT_BOOST_WHILE_PHASED, 100f)))
+                .vanillaHullModId(null)
+                .descriptionOverride(null)
+                .todo(null)
+                .build();
         SkillNode phaseNode = new SkillNode("phase_anchor_1", phaseType, List.of(), 0f, 0f);
         SkillTree.register(phaseNode);
 
@@ -668,7 +782,12 @@ class SkillTreeHullModTest {
 
     @Test
     void advanceInCombatGrantsCommandPointRecoveryWhenFlagship() {
-        SkillType opsType = new SkillType("operations_center", "Operations Center", "graphics/icons/notable_hullmods/operations_center.png", List.of(new SkillTypeEffect(MiscSkillEffect.COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP, 2.5f)), SkillTier.NOTABLE, null, null, null);
+        SkillType opsType = new SkillType.Builder("operations_center", "Operations Center", "graphics/icons/notable_hullmods/operations_center.png", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(MiscSkillEffect.COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP, 2.5f)))
+                .vanillaHullModId(null)
+                .descriptionOverride(null)
+                .todo(null)
+                .build();
         SkillNode opsNode = new SkillNode("operations_center_1", opsType, List.of(), 0f, 0f);
         SkillTree.register(opsNode);
 
@@ -694,7 +813,12 @@ class SkillTreeHullModTest {
 
     @Test
     void advanceInCombatWithholdsCommandPointRecoveryWhenNotFlagship() {
-        SkillType opsType = new SkillType("operations_center", "Operations Center", "graphics/icons/notable_hullmods/operations_center.png", List.of(new SkillTypeEffect(MiscSkillEffect.COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP, 2.5f)), SkillTier.NOTABLE, null, null, null);
+        SkillType opsType = new SkillType.Builder("operations_center", "Operations Center", "graphics/icons/notable_hullmods/operations_center.png", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(MiscSkillEffect.COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP, 2.5f)))
+                .vanillaHullModId(null)
+                .descriptionOverride(null)
+                .todo(null)
+                .build();
         SkillNode opsNode = new SkillNode("operations_center_1", opsType, List.of(), 0f, 0f);
         SkillTree.register(opsNode);
 

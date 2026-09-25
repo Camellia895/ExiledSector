@@ -18,6 +18,7 @@ import exiledsector.ui.util.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
 import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.ui.LazyFont;
+import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -129,8 +130,9 @@ final class SkillTreeStatPanel {
 
     private void drawCollapseButton(PanelLayout layout, float alphaMult) {
         String iconPath = collapsed ? COLLAPSE_ICON_PATH : EXPAND_ICON_PATH;
-        SpriteDraw.drawAtCenter(spriteCache, iconPath, collapseButtonCenterX(layout), collapseButtonCenterY(layout),
-                COLLAPSE_BUTTON_SIZE, COLLAPSE_BUTTON_SIZE, null, alphaMult);
+        SpriteDraw.drawAtCenter(spriteCache, iconPath,
+                new Vector2f(collapseButtonCenterX(layout), collapseButtonCenterY(layout)),
+                new Vector2f(COLLAPSE_BUTTON_SIZE, COLLAPSE_BUTTON_SIZE), null, alphaMult);
     }
 
     private static float collapseButtonCenterX(PanelLayout layout) {

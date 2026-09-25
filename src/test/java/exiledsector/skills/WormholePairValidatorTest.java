@@ -10,12 +10,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class WormholePairValidatorTest {
 
     private static SkillNode wormholeNode(String id, String pairedNodeId) {
-        SkillType type = new SkillType(id + "_type", id, "a.png", List.of(), SkillTier.WORMHOLE, null, null, null);
-        return new SkillNode(id, type, List.of(), 0f, 0f, null, null, null, null, pairedNodeId);
+        SkillType type = new SkillType.Builder(id + "_type", id, "a.png", SkillTier.WORMHOLE)
+                .effects(List.of())
+                .build();
+        return new SkillNode(id, type, List.of(), 0f, 0f, new SkillNodeDecoration(null, null, null, null, pairedNodeId));
     }
 
     private static SkillNode plainNode(String id) {
-        SkillType type = new SkillType(id + "_type", id, "a.png", List.of(), SkillTier.SMALL, null, null, null);
+        SkillType type = new SkillType.Builder(id + "_type", id, "a.png", SkillTier.SMALL)
+                .effects(List.of())
+                .build();
         return new SkillNode(id, type, List.of(), 0f, 0f);
     }
 

@@ -57,8 +57,17 @@ class SkillTypeUnlockStatusTest {
     }
 
     private static SkillType typeWithConditions(UnlockCondition... conditions) {
-        return new SkillType("t", "T", "a.png", List.of(), List.of(), SkillTier.NOTABLE,
-                null, null, null, List.of(), List.of(), List.of(), List.of(conditions));
+        return new SkillType.Builder("t", "T", "a.png", SkillTier.NOTABLE)
+                .effects(List.of())
+                .hullSizeEffects(List.of())
+                .vanillaHullModId(null)
+                .descriptionOverride(null)
+                .todo(null)
+                .optionalOptionIds(List.of())
+                .exclusiveHullModIds(List.of())
+                .exclusiveSkillTypeIds(List.of())
+                .unlockConditions(List.of(conditions))
+                .build();
     }
 
     private static ShipSkillData dataAtLevel(int level) {

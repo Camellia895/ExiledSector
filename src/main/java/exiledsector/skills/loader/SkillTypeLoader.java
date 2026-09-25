@@ -59,20 +59,17 @@ public final class SkillTypeLoader {
         List<String> exclusiveSkillTypeIds = parseStringArray(json.optJSONArray("exclusiveSkillTypes"));
         List<UnlockCondition> unlockConditions = parseUnlockConditions(json.optJSONArray("unlockConditions"));
 
-        return new SkillType(
-                json.getString("id"),
-                json.getString("name"),
-                json.getString("icon"),
-                effects,
-                hullSizeEffects,
-                tier,
-                json.optString("vanillaHullMod", null),
-                json.optString("description", null),
-                json.optString("todo", null),
-                optionalOptionIds,
-                exclusiveHullModIds,
-                exclusiveSkillTypeIds,
-                unlockConditions);
+        return new SkillType.Builder(json.getString("id"), json.getString("name"), json.getString("icon"), tier)
+                .effects(effects)
+                .hullSizeEffects(hullSizeEffects)
+                .vanillaHullModId(json.optString("vanillaHullMod", null))
+                .descriptionOverride(json.optString("description", null))
+                .todo(json.optString("todo", null))
+                .optionalOptionIds(optionalOptionIds)
+                .exclusiveHullModIds(exclusiveHullModIds)
+                .exclusiveSkillTypeIds(exclusiveSkillTypeIds)
+                .unlockConditions(unlockConditions)
+                .build();
     }
 
     private static List<UnlockCondition> parseUnlockConditions(JSONArray conditionsArray) throws JSONException {

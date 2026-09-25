@@ -1,5 +1,6 @@
 package exiledsector.ui.decoration;
 
+import exiledsector.skills.Rotation;
 import exiledsector.skills.SkillTreeObject;
 
 public class RingBelt extends SkillTreeObject {
@@ -7,17 +8,15 @@ public class RingBelt extends SkillTreeObject {
     private final float innerRadius;
     private final float outerRadius;
     private final String ringArtPath;
-    private final float rotation;
-    private final float rotationSpeed;
+    private final Rotation rotation;
 
     public RingBelt(String id, float x, float y, float innerRadius, float outerRadius, String ringArtPath,
-                     float rotation, float rotationSpeed) {
+                     Rotation rotation) {
         super(id, x, y);
         this.innerRadius = innerRadius;
         this.outerRadius = outerRadius;
         this.ringArtPath = ringArtPath;
         this.rotation = rotation;
-        this.rotationSpeed = rotationSpeed;
     }
 
     public float getInnerRadius() {
@@ -33,10 +32,10 @@ public class RingBelt extends SkillTreeObject {
     }
 
     public float getRotation() {
-        return rotation;
+        return rotation.degrees();
     }
 
     public float getRotationSpeed() {
-        return rotationSpeed;
+        return rotation.speed();
     }
 }

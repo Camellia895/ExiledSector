@@ -32,8 +32,12 @@ import static org.mockito.Mockito.when;
 class SkillTreeLoaderTest {
 
     private static final Map<String, SkillType> SKILL_TYPES = Map.of(
-            "capacitors", new SkillType("capacitors", "Capacitors", "graphics/hullmods/flux_coil_adjunct.png", List.of(), SkillTier.SMALL, null, null, null),
-            "bare", new SkillType("bare", "Bare", "graphics/icons/skills/combat.png", List.of(), SkillTier.SMALL, null, null, null)
+            "capacitors", new SkillType.Builder("capacitors", "Capacitors", "graphics/hullmods/flux_coil_adjunct.png", SkillTier.SMALL)
+                    .effects(List.of())
+                    .build(),
+            "bare", new SkillType.Builder("bare", "Bare", "graphics/icons/skills/combat.png", SkillTier.SMALL)
+                    .effects(List.of())
+                    .build()
     );
 
     @Test

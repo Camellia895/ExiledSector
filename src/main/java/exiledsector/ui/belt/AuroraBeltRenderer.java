@@ -19,8 +19,9 @@ public final class AuroraBeltRenderer {
     private AuroraBeltRenderer() {
     }
 
-    public static void render(SpriteAPI texture, float cx, float cy, float innerRadius, float outerRadius,
-                               Color color, float alphaMult, float elapsedSeconds) {
+    public static void render(SpriteAPI texture, RadialBand band, Color color, float alphaMult, float elapsedSeconds) {
+        float innerRadius = band.innerRadius();
+        float outerRadius = band.outerRadius();
         float phaseAngleDeg = (elapsedSeconds * PHASE_DEG_PER_SEC) % 360f;
 
         float circumference = (float) (2 * Math.PI * (innerRadius + outerRadius) / 2f);
@@ -36,7 +37,7 @@ public final class AuroraBeltRenderer {
         float texPerSegment = tileCount / segments;
         float wobble = Math.min(thickness * WOBBLE_RATIO, outerRadius * MAX_SAFE_WOBBLE_FRACTION / MAX_WOBBLE_FREQUENCY);
 
-        RadialBandGL.begin(texture, cx, cy, GL11.GL_SRC_ALPHA, GL11.GL_ONE, color, alphaMult);
+        RadialBandGL.begin(texture, band.center().x, band.center().y, GL11.GL_SRC_ALPHA, GL11.GL_ONE, color, alphaMult);
 
         for (int iter = 0; iter < 2; iter++) {
             float bandIndex = iter == 0 ? 1f : 0f;

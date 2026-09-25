@@ -1,5 +1,6 @@
 package exiledsector.ui.decoration;
 
+import exiledsector.skills.Rotation;
 import exiledsector.skills.SkillTreeObject;
 
 public class StaticImage extends SkillTreeObject {
@@ -7,16 +8,14 @@ public class StaticImage extends SkillTreeObject {
     private final float width;
     private final float height;
     private final String imagePath;
-    private final float rotation;
-    private final float rotationSpeed;
+    private final Rotation rotation;
 
-    public StaticImage(String id, float x, float y, float width, float height, String imagePath, float rotation, float rotationSpeed) {
+    public StaticImage(String id, float x, float y, float width, float height, String imagePath, Rotation rotation) {
         super(id, x, y);
         this.width = width;
         this.height = height;
         this.imagePath = imagePath;
         this.rotation = rotation;
-        this.rotationSpeed = rotationSpeed;
     }
 
     public float getWidth() {
@@ -32,10 +31,10 @@ public class StaticImage extends SkillTreeObject {
     }
 
     public float getRotation() {
-        return rotation;
+        return rotation.degrees();
     }
 
     public float getRotationSpeed() {
-        return rotationSpeed;
+        return rotation.speed();
     }
 }

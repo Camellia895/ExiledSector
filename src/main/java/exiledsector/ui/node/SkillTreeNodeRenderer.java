@@ -20,6 +20,7 @@ import exiledsector.skills.SkillTypeUnlockStatus;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.ui.SkillTreePanelStyle;
 import lunalib.lunaRefit.BaseRefitButton;
+import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
 import java.util.List;
@@ -114,7 +115,7 @@ public final class SkillTreeNodeRenderer {
                 continue;
             }
 
-            ringRenderer.draw(nodeX, nodeY, footprintSize, alphaMult, allocated, breathing, zoom, node);
+            ringRenderer.draw(new Vector2f(nodeX, nodeY), footprintSize, alphaMult, allocated, breathing, zoom, node);
 
             if (tier != SkillTier.WORMHOLE) {
                 Color tint = allocated ? ALLOCATED_TINT : UNALLOCATED_TINT;
@@ -137,7 +138,7 @@ public final class SkillTreeNodeRenderer {
             boolean allocated = data.isAllocated(node.getId());
             boolean breathing = !allocated && data.canAllocate(node, satisfiedRootId, totalOpBudget, opCostFor(node), ShipLevelConfig.maxAllocatedNodes());
             float footprintSize = NODE_SIZE * zoom * SkillTier.ROOT.getSizeMultiplier();
-            ringRenderer.draw(nodeX, nodeY, footprintSize, alphaMult, allocated, breathing, zoom, node);
+            ringRenderer.draw(new Vector2f(nodeX, nodeY), footprintSize, alphaMult, allocated, breathing, zoom, node);
 
             Color tint = allocated ? ALLOCATED_TINT : UNALLOCATED_TINT;
             String iconPath = isActiveRoot ? RootCrestResolver.resolve(member) : node.getType().getIconPath();

@@ -18,14 +18,18 @@ public final class AllocatedSkillEffects {
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
         HullSize hullSize = member.getHullSpec().getHullSize();
         for (String nodeId : data.getAllocatedNodeIds()) {
-            SkillNode node = SkillTree.get(nodeId);
-            if (node == null) continue;
-
-            SkillType type = node.resolveEffectiveType(data);
-            if (type.getVanillaHullModId() != null) continue;
-
-            type.forEachEffect(hullSize, (effect, magnitude) -> effects.add(effect));
+            collectEffects(nodeId, data, hullSize, effects);
         }
         return effects;
+    }
+
+    private static void collectEffects(String nodeId, ShipSkillData data, HullSize hullSize, List<SkillEffect> effects) {
+        SkillNode node = SkillTree.get(nodeId);
+        if (node == null) return;
+
+        SkillType type = node.resolveEffectiveType(data);
+        if (type.getVanillaHullModId() != null) return;
+
+        type.forEachEffect(hullSize, (effect, magnitude) -> effects.add(effect));
     }
 }
