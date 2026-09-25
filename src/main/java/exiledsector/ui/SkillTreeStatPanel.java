@@ -12,6 +12,7 @@ import exiledsector.skills.ShipOpBudget;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.skilleffect.ShieldSkillEffect;
 import exiledsector.ui.util.BorderedPanel;
+import exiledsector.ui.util.CachedText;
 import exiledsector.ui.util.FallbackSupport;
 import exiledsector.ui.util.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
@@ -58,10 +59,7 @@ final class SkillTreeStatPanel {
     private final ShipVariantAPI variant;
     private final BorderedPanel borderedPanel = new BorderedPanel(SkillTreeStatPanel.class);
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeStatPanel.class);
-    private final Map<String, List<StatLine>> lastStatGroupLines = new HashMap<>();
-    private final Map<String, SkillTreePanelStyle.TooltipText> statGroupLabelText = new HashMap<>();
-    private final Map<String, List<LazyFont.DrawableString>> statGroupValueLines = new HashMap<>();
-    private final Map<String, Float> statGroupValueWidth = new HashMap<>();
+    private final CachedText<String, GroupTexts> groupTextCache = new CachedText<>();
     private final Map<String, LazyFont.DrawableString> statGroupHeaderText = new HashMap<>();
     private LazyFont statFont;
     private boolean fontLoadFailed = false;
@@ -173,13 +171,11 @@ final class SkillTreeStatPanel {
         float width = 0f;
 
         for (StatGroup group : groups) {
-            SkillTreePanelStyle.TooltipText labelText = getOrBuildLabelText(font, group);
-            List<LazyFont.DrawableString> valueLines = getOrBuildValueLines(font, group);
-            float valueWidth = getValueWidth(font, group);
-            labelTexts.add(labelText);
-            valueLinesList.add(valueLines);
+            GroupTexts texts = getGroupTexts(font, group);
+            labelTexts.add(texts.labelText);
+            valueLinesList.add(texts.valueLines);
             float headerMinWidth = font.calcWidth(group.name, STAT_PANEL_HEADER_FONT_SIZE) + STAT_PANEL_PADDING * 2f;
-            float bodyWidth = labelText.width + STAT_PANEL_COLUMN_GAP + valueWidth + STAT_PANEL_PADDING * 2f;
+            float bodyWidth = texts.labelText.width + STAT_PANEL_COLUMN_GAP + texts.valueWidth + STAT_PANEL_PADDING * 2f;
             width = Math.max(width, Math.max(headerMinWidth, bodyWidth));
         }
 
@@ -223,26 +219,11 @@ final class SkillTreeStatPanel {
                 n -> SkillTreePanelStyle.buildSimpleText(font, n, STAT_PANEL_HEADER_FONT_SIZE, STAT_PANEL_HEADER_TEXT_COLOR, LazyFont.TextAnchor.TOP_CENTER));
     }
 
-    private SkillTreePanelStyle.TooltipText getOrBuildLabelText(LazyFont font, StatGroup group) {
-        refreshStatGroupTextIfChanged(font, group);
-        return statGroupLabelText.get(group.name);
+    private GroupTexts getGroupTexts(LazyFont font, StatGroup group) {
+        return groupTextCache.get(group.name, group.statLines, name -> buildGroupTexts(font, group));
     }
 
-    private List<LazyFont.DrawableString> getOrBuildValueLines(LazyFont font, StatGroup group) {
-        refreshStatGroupTextIfChanged(font, group);
-        return statGroupValueLines.get(group.name);
-    }
-
-    private float getValueWidth(LazyFont font, StatGroup group) {
-        refreshStatGroupTextIfChanged(font, group);
-        return statGroupValueWidth.get(group.name);
-    }
-
-    private void refreshStatGroupTextIfChanged(LazyFont font, StatGroup group) {
-        List<StatLine> cached = lastStatGroupLines.get(group.name);
-        if (group.statLines.equals(cached)) return;
-
-        lastStatGroupLines.put(group.name, group.statLines);
+    private GroupTexts buildGroupTexts(LazyFont font, StatGroup group) {
         List<String> labels = new ArrayList<>();
         List<LazyFont.DrawableString> valueLines = new ArrayList<>();
         float valueWidth = 0f;
@@ -251,9 +232,8 @@ final class SkillTreeStatPanel {
             valueLines.add(SkillTreePanelStyle.buildSimpleText(font, line.value, STAT_PANEL_FONT_SIZE, line.valueColor, LazyFont.TextAnchor.TOP_RIGHT));
             valueWidth = Math.max(valueWidth, font.calcWidth(line.value, STAT_PANEL_FONT_SIZE));
         }
-        statGroupLabelText.put(group.name, SkillTreePanelStyle.buildJoinedText(font, labels, STAT_PANEL_FONT_SIZE, STAT_PANEL_LABEL_COLOR));
-        statGroupValueLines.put(group.name, valueLines);
-        statGroupValueWidth.put(group.name, valueWidth);
+        SkillTreePanelStyle.TooltipText labelText = SkillTreePanelStyle.buildJoinedText(font, labels, STAT_PANEL_FONT_SIZE, STAT_PANEL_LABEL_COLOR);
+        return new GroupTexts(labelText, valueLines, valueWidth);
     }
 
     private List<StatGroup> buildStatGroups(FleetMemberAPI member) {
@@ -390,6 +370,18 @@ final class SkillTreeStatPanel {
             this.width = width;
             this.fullHeight = fullHeight;
             this.groups = groups;
+        }
+    }
+
+    private static final class GroupTexts {
+        final SkillTreePanelStyle.TooltipText labelText;
+        final List<LazyFont.DrawableString> valueLines;
+        final float valueWidth;
+
+        GroupTexts(SkillTreePanelStyle.TooltipText labelText, List<LazyFont.DrawableString> valueLines, float valueWidth) {
+            this.labelText = labelText;
+            this.valueLines = valueLines;
+            this.valueWidth = valueWidth;
         }
     }
 

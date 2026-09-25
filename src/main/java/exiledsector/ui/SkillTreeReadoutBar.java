@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.FaderUtil;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.ui.util.CachedText;
 import exiledsector.ui.util.FallbackSupport;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.SpriteCache;
@@ -50,9 +51,7 @@ final class SkillTreeReadoutBar {
 
     private LazyFont cachedFont;
     private boolean fontLoadFailed = false;
-    private String lastLabel;
-    private LazyFont.DrawableString labelText;
-    private LazyFont.DrawableString labelShadowText;
+    private final CachedText<Void, LabelTexts> labelCache = new CachedText<>();
 
     private Color fillColor;
     private Color overflowColor;
@@ -234,9 +233,11 @@ final class SkillTreeReadoutBar {
         float textX = left + (BAR_WIDTH - textWidth) / 2f;
         float textY = bottom + (BAR_HEIGHT + textHeight) / 2f;
 
-        buildLabelTextIfNeeded(font, label);
-        labelShadowText.draw(textX + TEXT_SHADOW_OFFSET_X, textY + TEXT_SHADOW_OFFSET_Y);
-        labelText.draw(textX, textY);
+        LabelTexts texts = labelCache.get(label, () -> new LabelTexts(
+                SkillTreePanelStyle.buildSimpleText(font, label, FONT_SIZE, TEXT_COLOR),
+                SkillTreePanelStyle.buildSimpleText(font, label, FONT_SIZE, TEXT_SHADOW_COLOR)));
+        texts.labelShadowText.draw(textX + TEXT_SHADOW_OFFSET_X, textY + TEXT_SHADOW_OFFSET_Y);
+        texts.labelText.draw(textX, textY);
     }
 
     private Color getFillColor() {
@@ -266,10 +267,13 @@ final class SkillTreeReadoutBar {
         return cachedFont;
     }
 
-    private void buildLabelTextIfNeeded(LazyFont font, String label) {
-        if (label.equals(lastLabel)) return;
-        lastLabel = label;
-        labelText = SkillTreePanelStyle.buildSimpleText(font, label, FONT_SIZE, TEXT_COLOR);
-        labelShadowText = SkillTreePanelStyle.buildSimpleText(font, label, FONT_SIZE, TEXT_SHADOW_COLOR);
+    private static final class LabelTexts {
+        final LazyFont.DrawableString labelText;
+        final LazyFont.DrawableString labelShadowText;
+
+        LabelTexts(LazyFont.DrawableString labelText, LazyFont.DrawableString labelShadowText) {
+            this.labelText = labelText;
+            this.labelShadowText = labelShadowText;
+        }
     }
 }

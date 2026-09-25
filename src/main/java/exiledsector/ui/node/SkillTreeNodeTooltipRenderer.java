@@ -7,11 +7,10 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeUnlockStatus;
 import exiledsector.ui.SkillTreePanelStyle;
+import exiledsector.ui.util.CachedText;
 import org.lazywizard.lazylib.ui.LazyFont;
 
 import java.awt.Color;
-import java.util.HashMap;
-import java.util.Map;
 
 import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_BODY_COLOR;
 import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE;
@@ -35,19 +34,14 @@ final class SkillTreeNodeTooltipRenderer {
 
     private final FleetMemberAPI member;
     private final SkillTreePanelStyle style;
-    private final Map<String, SkillTreePanelStyle.TooltipText> tooltipTitles = new HashMap<>();
-    private final Map<String, SkillTreePanelStyle.TooltipText> tooltipBodies = new HashMap<>();
-    private final Map<String, SkillTreePanelStyle.TooltipText> typeTooltipTitles = new HashMap<>();
-    private final Map<String, SkillTreePanelStyle.TooltipText> typeTooltipBodies = new HashMap<>();
+    private final CachedText<String, SkillTreePanelStyle.TooltipText> tooltipTitles = new CachedText<>();
+    private final CachedText<String, SkillTreePanelStyle.TooltipText> tooltipBodies = new CachedText<>();
+    private final CachedText<String, SkillTreePanelStyle.TooltipText> typeTooltipTitles = new CachedText<>();
+    private final CachedText<String, SkillTreePanelStyle.TooltipText> typeTooltipBodies = new CachedText<>();
 
     SkillTreeNodeTooltipRenderer(FleetMemberAPI member, SkillTreePanelStyle style) {
         this.member = member;
         this.style = style;
-    }
-
-    void invalidate(String nodeId) {
-        tooltipTitles.remove(nodeId);
-        tooltipBodies.remove(nodeId);
     }
 
     void renderTooltip(SkillNode node, float mouseX, float mouseY, float alphaMult) {
@@ -59,10 +53,13 @@ final class SkillTreeNodeTooltipRenderer {
         boolean showOptionalHint = effectiveType == node.getType() && effectiveType.isOptional()
                 && effectiveType.getDescriptionOverride() == null;
 
-        SkillTreePanelStyle.TooltipText title = tooltipTitles.computeIfAbsent(node.getId(),
-                id -> buildTooltipText(font, titleText(node, effectiveType, data), TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR));
-        SkillTreePanelStyle.TooltipText body = tooltipBodies.computeIfAbsent(node.getId(),
-                id -> buildTooltipText(font, bodyText(node, effectiveType, showOptionalHint, data), TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR));
+        String titleText = titleText(node, effectiveType, data);
+        String bodyText = bodyText(node, effectiveType, showOptionalHint, data);
+
+        SkillTreePanelStyle.TooltipText title = tooltipTitles.get(node.getId(), titleText,
+                id -> buildTooltipText(font, titleText, TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR));
+        SkillTreePanelStyle.TooltipText body = tooltipBodies.get(node.getId(), bodyText,
+                id -> buildTooltipText(font, bodyText, TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR));
 
         drawTooltipBox(title, body, mouseX, mouseY, alphaMult);
     }
@@ -71,10 +68,13 @@ final class SkillTreeNodeTooltipRenderer {
         LazyFont font = style.getFont();
         if (font == null) return;
 
-        SkillTreePanelStyle.TooltipText title = typeTooltipTitles.computeIfAbsent(type.getId(),
-                id -> buildTooltipText(font, type.getDisplayName(), TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR));
-        SkillTreePanelStyle.TooltipText body = typeTooltipBodies.computeIfAbsent(type.getId(),
-                id -> buildTooltipText(font, SkillNode.describeType(type, member.getHullSpec().getHullSize()), TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR));
+        String titleText = type.getDisplayName();
+        String bodyText = SkillNode.describeType(type, member.getHullSpec().getHullSize());
+
+        SkillTreePanelStyle.TooltipText title = typeTooltipTitles.get(type.getId(), titleText,
+                id -> buildTooltipText(font, titleText, TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR));
+        SkillTreePanelStyle.TooltipText body = typeTooltipBodies.get(type.getId(), bodyText,
+                id -> buildTooltipText(font, bodyText, TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR));
 
         drawTooltipBox(title, body, mouseX, mouseY, alphaMult);
     }
