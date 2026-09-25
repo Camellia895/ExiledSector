@@ -7,15 +7,11 @@ public record HullSizeSkillEffect(SkillEffect effect, float frigate, float destr
 
     public float valueFor(HullSize hullSize) {
         if (hullSize == null) return capitalShip;
-        switch (hullSize) {
-            case FRIGATE:
-                return frigate;
-            case DESTROYER:
-                return destroyer;
-            case CRUISER:
-                return cruiser;
-            default:
-                return capitalShip;
-        }
+        return switch (hullSize) {
+            case FRIGATE -> frigate;
+            case DESTROYER -> destroyer;
+            case CRUISER -> cruiser;
+            default -> capitalShip;
+        };
     }
 }

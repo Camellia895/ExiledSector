@@ -15,10 +15,6 @@ public enum FighterSkillEffect implements SkillEffect {
 
     FIGHTER_WEAPON_DAMAGE_PERCENT {
         @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-        }
-
-        @Override
         public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
             applyRoleDamage(fighter, modId, magnitude);
         }
@@ -29,10 +25,6 @@ public enum FighterSkillEffect implements SkillEffect {
         }
     },
     FIGHTER_TOP_SPEED_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-        }
-
         @Override
         public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
             applyRoleTopSpeed(fighter, modId, magnitude);
@@ -125,10 +117,6 @@ public enum FighterSkillEffect implements SkillEffect {
     },
     FIGHTER_PD_DAMAGE_BONUS_PERCENT {
         @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-        }
-
-        @Override
         public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
             MutableShipStatsAPI fighterStats = fighter.getMutableStats();
             fighterStats.getDamageToFighters().modifyPercent(modId, magnitude);
@@ -153,10 +141,6 @@ public enum FighterSkillEffect implements SkillEffect {
     },
     FIGHTER_ARMOR_PERCENT {
         @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-        }
-
-        @Override
         public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
             applyRoleArmor(fighter, modId, magnitude);
         }
@@ -167,10 +151,6 @@ public enum FighterSkillEffect implements SkillEffect {
         }
     },
     FIGHTER_SHIELD_DAMAGE_TAKEN_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-        }
-
         @Override
         public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
             applyRoleShieldDamageTaken(fighter, modId, magnitude);
@@ -183,10 +163,6 @@ public enum FighterSkillEffect implements SkillEffect {
     },
     FIGHTER_RATE_OF_FIRE_PERCENT {
         @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-        }
-
-        @Override
         public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
             applyRoleRateOfFire(fighter, modId, magnitude);
         }
@@ -198,10 +174,6 @@ public enum FighterSkillEffect implements SkillEffect {
     },
     FIGHTER_ENGAGEMENT_RANGE_PERCENT {
         @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-        }
-
-        @Override
         public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
             applyRoleEngagementRange(fighter, modId, magnitude);
         }
@@ -212,10 +184,6 @@ public enum FighterSkillEffect implements SkillEffect {
         }
     },
     FIGHTER_WEAPON_RANGE_FLAT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-        }
-
         @Override
         public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
             MutableShipStatsAPI fighterStats = fighter.getMutableStats();
