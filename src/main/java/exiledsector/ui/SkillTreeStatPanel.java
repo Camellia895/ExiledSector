@@ -282,6 +282,7 @@ final class SkillTreeStatPanel {
         addStat(logistics, "Fuel Use", member.getFuelUse());
         addComparedStat(logistics, "Burn Level", stats.getMaxBurnLevel().getModifiedValue(), stats.getMaxBurnLevel().getBaseValue());
         addComparedStatLowerIsBetter(logistics, "Sensor Profile", stats.getSensorProfile().getModifiedValue(), stats.getSensorProfile().getBaseValue());
+        addComparedStat(logistics, "Sensor Strength", stats.getSensorStrength().getModifiedValue(), stats.getSensorStrength().getBaseValue());
         try {
             ShipOpBudget budget = ShipOpBudget.of(member, variant);
             logistics.add(new StatLine("Ordnance Points", budget.used + "/" + budget.total));

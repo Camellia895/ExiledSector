@@ -431,6 +431,25 @@ public enum WeaponSkillEffect implements SkillEffect {
             return "Grants " + pct(magnitude) + "% more ballistic weapon damage for every burn level this ship "
                     + "has above its hull's default, from any source.";
         }
+    },
+    ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
+            MutableShipStatsAPI stats = ship.getMutableStats();
+            float rangeBonus = stats.getSensorStrength().getModifiedValue() * magnitude;
+            stats.getBeamWeaponRangeBonus().modifyFlat(modId, rangeBonus);
+            stats.getEnergyWeaponRangeBonus().modifyFlat(modId, rangeBonus);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return "Increases beam and non-beam energy weapon range by " + pct(magnitude) + " for every point "
+                    + "of this ship's sensor strength (after modifiers).";
+        }
     };
 
     @Override

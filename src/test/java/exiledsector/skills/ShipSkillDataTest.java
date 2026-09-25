@@ -454,7 +454,7 @@ class ShipSkillDataTest {
         SkillNode n5 = node("small_logistics_optional_5", List.of("small_logistics_optional_7", "small_logistics_optional_25"));
         SkillNode n7 = node("small_logistics_optional_7", List.of("small_logistics_optional_5", "small_logistics_optional_10", "survey_generic_cost_reduction_1"));
         SkillNode n9 = node("small_logistics_optional_9", List.of("small_logistics_optional_13", "small_logistics_optional_25"));
-        SkillNode n10 = node("small_logistics_optional_10", List.of("small_logistics_optional_7", "root_high_tech_1", "increased_sensor_range_2", "small_logistics_optional_23"));
+        SkillNode n10 = node("small_logistics_optional_10", List.of("small_logistics_optional_7", "root_high_tech_1", "increased_sensor_strength_2", "small_logistics_optional_23"));
         SkillNode n13 = node("small_logistics_optional_13", List.of("small_logistics_optional_9", "small_logistics_optional_14", "cargo_capacity_flat_2", "fuel_flat_2"));
         SkillNode n14 = node("small_logistics_optional_14", List.of("small_logistics_optional_13", "root_low_tech_1", "small_logistics_optional_22"));
         SkillNode n25 = node("small_logistics_optional_25", List.of("small_logistics_optional_4", "small_logistics_optional_9", "small_logistics_optional_5", "operations_center_1", "efficiency_overhaul_1", "converted_fighterbay_1"));

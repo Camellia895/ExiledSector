@@ -394,9 +394,11 @@
 		{
 			"id": "defensive_targeting_array_1",
 			"type": "defensive_targeting_array",
-			"connectedTo": [],
-			"x": 1522,
-			"y": 2023,
+			"connectedTo": [
+				"small_flux_optional_36"
+			],
+			"x": -900,
+			"y": 2380,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#99ffb3"
 		},
@@ -608,10 +610,13 @@
 			"id": "hiressensors_1",
 			"type": "hiressensors",
 			"connectedTo": [
-				"increased_sensor_range_3"
+				"increased_sensor_strength_1",
+				"increased_sensor_strength_2"
 			],
-			"x": -344,
-			"y": -874
+			"x": -434,
+			"y": -810,
+			"orbitAnchorId": "high_res_sensors_anchor",
+			"orbitAngle": 148.95450917313687
 		},
 		{
 			"id": "insulatedengine_1",
@@ -795,13 +800,6 @@
 			"orbitAngle": 180
 		},
 		{
-			"id": "fighter_speed_1",
-			"type": "fighter_speed",
-			"connectedTo": [],
-			"x": -926,
-			"y": 2443
-		},
-		{
 			"id": "small_logistics_optional_3",
 			"type": "small_flux_optional",
 			"connectedTo": [
@@ -856,7 +854,7 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"root_high_tech_1",
-				"increased_sensor_range_1",
+				"increased_sensor_strength_1",
 				"small_logistics_optional_18"
 			],
 			"x": -507,
@@ -1099,7 +1097,7 @@
 			"connectedTo": [
 				"small_logistics_optional_7",
 				"root_high_tech_1",
-				"increased_sensor_range_2",
+				"increased_sensor_strength_2",
 				"small_logistics_optional_23"
 			],
 			"x": 0,
@@ -1179,41 +1177,28 @@
 			"orbitAngle": 0
 		},
 		{
-			"id": "increased_sensor_range_1",
-			"type": "increased_sensor_range",
+			"id": "increased_sensor_strength_1",
+			"type": "increased_sensor_strength",
 			"connectedTo": [
-				"increased_sensor_range_3",
-				"small_logistics_optional_17"
+				"small_logistics_optional_17",
+				"hiressensors_1"
 			],
-			"x": -344,
-			"y": -1050,
+			"x": -328,
+			"y": -998,
 			"orbitAnchorId": "high_res_sensors_anchor",
 			"orbitAngle": 270
 		},
 		{
-			"id": "increased_sensor_range_2",
-			"type": "increased_sensor_range",
+			"id": "increased_sensor_strength_2",
+			"type": "increased_sensor_strength",
 			"connectedTo": [
-				"increased_sensor_range_3",
-				"small_logistics_optional_10"
+				"small_logistics_optional_10",
+				"hiressensors_1"
 			],
-			"x": -168,
+			"x": -204,
 			"y": -874,
 			"orbitAnchorId": "high_res_sensors_anchor",
 			"orbitAngle": 0
-		},
-		{
-			"id": "increased_sensor_range_3",
-			"type": "increased_sensor_range",
-			"connectedTo": [
-				"increased_sensor_range_1",
-				"increased_sensor_range_2",
-				"hiressensors_1"
-			],
-			"x": -221,
-			"y": -999,
-			"orbitAnchorId": "high_res_sensors_anchor",
-			"orbitAngle": -45.454408225219744
 		},
 		{
 			"id": "small_logistics_optional_23",
@@ -1919,7 +1904,8 @@
 			"connectedTo": [
 				"small_flux_optional_35",
 				"small_flux_optional_37",
-				"ballistic_damage_5"
+				"ballistic_damage_5",
+				"defensive_targeting_array_1"
 			],
 			"x": -745,
 			"y": 2070,
@@ -3245,8 +3231,8 @@
 				"league_wormhole_2",
 				"small_flux_optional_19"
 			],
-			"x": -3647,
-			"y": 1080,
+			"x": -3642,
+			"y": 1078,
 			"pairedWith": "league_wormhole_2"
 		},
 		{
@@ -3258,7 +3244,7 @@
 				"small_flux_optional_65"
 			],
 			"x": -6360,
-			"y": 1662,
+			"y": 1585,
 			"orbitAnchorId": "anchor_29",
 			"orbitAngle": 0,
 			"pairedWith": "league_wormhole_1"
@@ -3271,7 +3257,7 @@
 				"small_flux_optional_64"
 			],
 			"x": -7564,
-			"y": 458,
+			"y": 381,
 			"orbitAnchorId": "anchor_29",
 			"orbitAngle": 270
 		},
@@ -3280,12 +3266,24 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_63",
-				"small_flux_optional_65"
+				"small_flux_optional_65",
+				"increased_sensor_strength_4"
 			],
 			"x": -8768,
-			"y": 1662,
+			"y": 1585,
 			"orbitAnchorId": "anchor_29",
 			"orbitAngle": 180
+		},
+		{
+			"id": "attuned_sensors_1",
+			"type": "attuned_sensors",
+			"connectedTo": [
+				"increased_sensor_strength_3"
+			],
+			"x": -8397,
+			"y": 1434,
+			"orbitAnchorId": "anchor_34",
+			"orbitAngle": 270
 		},
 		{
 			"id": "small_flux_optional_65",
@@ -3295,7 +3293,7 @@
 				"league_wormhole_2"
 			],
 			"x": -7564,
-			"y": 2866,
+			"y": 2789,
 			"orbitAnchorId": "anchor_29",
 			"orbitAngle": 90
 		},
@@ -3530,6 +3528,30 @@
 			"y": -162,
 			"orbitAnchorId": "anchor_33",
 			"orbitAngle": 270
+		},
+		{
+			"id": "increased_sensor_strength_4",
+			"type": "increased_sensor_strength",
+			"connectedTo": [
+				"increased_sensor_strength_3",
+				"small_flux_optional_64"
+			],
+			"x": -8547,
+			"y": 1584,
+			"orbitAnchorId": "anchor_34",
+			"orbitAngle": 180
+		},
+		{
+			"id": "increased_sensor_strength_3",
+			"type": "increased_sensor_strength",
+			"connectedTo": [
+				"increased_sensor_strength_4",
+				"attuned_sensors_1"
+			],
+			"x": -8293,
+			"y": 1692,
+			"orbitAnchorId": "anchor_34",
+			"orbitAngle": 45.855500883956424
 		}
 	],
 	"connectorCurves": [
@@ -3622,18 +3644,6 @@
 			"b": "survey_mach_cost_1",
 			"controlX": 271,
 			"controlY": -462
-		},
-		{
-			"a": "increased_sensor_range_1",
-			"b": "increased_sensor_range_3",
-			"controlX": -277,
-			"controlY": -1037
-		},
-		{
-			"a": "increased_sensor_range_2",
-			"b": "increased_sensor_range_3",
-			"controlX": -182,
-			"controlY": -942
 		},
 		{
 			"a": "augmentedengines_1",
@@ -4641,25 +4651,25 @@
 			"a": "league_wormhole_2",
 			"b": "small_flux_optional_63",
 			"controlX": -6713,
-			"controlY": 811
+			"controlY": 734
 		},
 		{
 			"a": "small_flux_optional_63",
 			"b": "small_flux_optional_64",
 			"controlX": -8415,
-			"controlY": 811
+			"controlY": 734
 		},
 		{
 			"a": "small_flux_optional_64",
 			"b": "small_flux_optional_65",
 			"controlX": -8415,
-			"controlY": 2513
+			"controlY": 2436
 		},
 		{
 			"a": "league_wormhole_2",
 			"b": "small_flux_optional_65",
 			"controlX": -6713,
-			"controlY": 2513
+			"controlY": 2436
 		},
 		{
 			"a": "small_flux_optional_49",
@@ -4798,6 +4808,30 @@
 			"b": "ballistic_momentum_1",
 			"controlX": 8388,
 			"controlY": -108
+		},
+		{
+			"a": "hiressensors_1",
+			"b": "increased_sensor_strength_1",
+			"controlX": -436,
+			"controlY": -935
+		},
+		{
+			"a": "hiressensors_1",
+			"b": "increased_sensor_strength_2",
+			"controlX": -295,
+			"controlY": -755
+		},
+		{
+			"a": "increased_sensor_strength_3",
+			"b": "increased_sensor_strength_4",
+			"controlX": -8455,
+			"controlY": 1720
+		},
+		{
+			"a": "attuned_sensors_1",
+			"b": "increased_sensor_strength_3",
+			"controlX": -8260,
+			"controlY": 1520
 		}
 	],
 	"hiddenConnectors": [
@@ -4889,9 +4923,9 @@
 		},
 		{
 			"id": "high_res_sensors_anchor",
-			"x": -344,
+			"x": -328,
 			"y": -874,
-			"radius": 176
+			"radius": 124
 		},
 		{
 			"id": "additional_berthing_anchor",
@@ -5226,7 +5260,7 @@
 		{
 			"id": "anchor_29",
 			"x": -7564,
-			"y": 1662,
+			"y": 1585,
 			"radius": 1204
 		},
 		{
@@ -5246,6 +5280,12 @@
 			"x": 8519,
 			"y": 23,
 			"radius": 185
+		},
+		{
+			"id": "anchor_34",
+			"x": -8397,
+			"y": 1584,
+			"radius": 150
 		}
 	],
 	"ringBelts": [
@@ -5444,7 +5484,7 @@
 		{
 			"id": "star_1",
 			"x": -7564,
-			"y": 1663,
+			"y": 1586,
 			"radius": 400,
 			"starType": "star_orange",
 			"color": "#f4c537"

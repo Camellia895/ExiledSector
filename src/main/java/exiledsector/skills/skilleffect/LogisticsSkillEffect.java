@@ -130,15 +130,15 @@ public enum LogisticsSkillEffect implements SkillEffect {
             return pctChange(magnitude, "sensor strength");
         }
     },
-    SENSOR_RANGE {
+    SENSOR_STRENGTH_FLAT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod("hrs_sensor_range_mod").modifyFlat(modId, magnitude);
+            stats.getSensorStrength().modifyFlat(modId, magnitude);
         }
 
         @Override
         public String describe(float magnitude) {
-            return flatChange(magnitude, "sensor range (fleet-wide)");
+            return flatChange(magnitude, "sensor strength");
         }
     },
     COMBAT_VISION {
