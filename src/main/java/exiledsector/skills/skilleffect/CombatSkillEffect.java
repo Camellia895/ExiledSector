@@ -10,12 +10,15 @@ import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.combat.listeners.HullDamageAboutToBeTakenListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.util.IntervalUtil;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.MaxChainCountConfig;
 import org.lazywizard.lazylib.MathUtils;
@@ -132,6 +135,85 @@ public enum CombatSkillEffect implements SkillEffect {
             return "Each successive hit in a non-beam energy chain deals " + pct(magnitude) + "% less damage "
                     + "than the one before it.";
         }
+    },
+    ESCORT_MANEUVER_BONUS_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(ESCORT_MANEUVER_BONUS_KEY).modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
+            if (!ship.hasListenerOfClass(EscortListener.class)) {
+                ship.addListener(new EscortListener(ship));
+            }
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return "While within range of a larger friendly ship, increases maneuverability (acceleration, "
+                    + "deceleration, and turn rate) by up to " + pct(magnitude) + "%, fading out with distance. "
+                    + "Doubled for a destroyer escorting a capital ship.";
+        }
+    },
+    ESCORT_SPEED_BONUS_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(ESCORT_SPEED_BONUS_KEY).modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
+            if (!ship.hasListenerOfClass(EscortListener.class)) {
+                ship.addListener(new EscortListener(ship));
+            }
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return "While within range of a larger friendly ship, increases top speed by up to "
+                    + pct(magnitude) + "%, fading out with distance. Doubled for a destroyer escorting a "
+                    + "capital ship.";
+        }
+    },
+    ESCORT_WEAPON_RANGE_BONUS_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(ESCORT_WEAPON_RANGE_BONUS_KEY).modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
+            if (!ship.hasListenerOfClass(EscortListener.class)) {
+                ship.addListener(new EscortListener(ship));
+            }
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return "While within range of a larger friendly ship, increases ballistic and energy weapon range "
+                    + "by up to " + pct(magnitude) + "%, fading out with distance. Doubled for a destroyer "
+                    + "escorting a capital ship.";
+        }
+    },
+    ESCORT_PROXIMITY_RANGE_FLAT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(ESCORT_PROXIMITY_RANGE_KEY).modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
+            if (!ship.hasListenerOfClass(EscortListener.class)) {
+                ship.addListener(new EscortListener(ship));
+            }
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return "The escort bonuses above apply at full strength within " + pct(magnitude)
+                    + " su of the larger friendly ship, fading out over an additional 500 su beyond that.";
+        }
     };
 
     private static final String EXPLODE_ON_DEATH_FUEL_DAMAGE_KEY = "exiledSector_explodeOnDeathFuelDamagePercent";
@@ -145,6 +227,11 @@ public enum CombatSkillEffect implements SkillEffect {
     private static final String NON_BEAM_ENERGY_CHAIN_FALLOFF_KEY = "exiledSector_energyChainFalloff";
     private static final String NON_BEAM_ENERGY_CHAIN_HIT_LIST_KEY = "exiledSector_energyChainHitList";
     private static final String NON_BEAM_ENERGY_CHAIN_COUNT_KEY = "exiledSector_energyChainCount";
+
+    private static final String ESCORT_MANEUVER_BONUS_KEY = "exiledSector_escortManeuverBonusPercent";
+    private static final String ESCORT_SPEED_BONUS_KEY = "exiledSector_escortSpeedBonusPercent";
+    private static final String ESCORT_WEAPON_RANGE_BONUS_KEY = "exiledSector_escortWeaponRangeBonusPercent";
+    private static final String ESCORT_PROXIMITY_RANGE_KEY = "exiledSector_escortProximityRange";
 
     private static final class BeamSplitListener implements DamageDealtModifier {
 
@@ -465,6 +552,109 @@ public enum CombatSkillEffect implements SkillEffect {
 
         private float cross(Vector2f a, Vector2f b, Vector2f c) {
             return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+        }
+    }
+
+    private static final class EscortListener implements AdvanceableListener {
+
+        private static final float PROXIMITY_FADE_DISTANCE = 500f;
+        private static final float SHIELD_RADIUS_OVERLAP_MULT = 0.75f;
+        private static final float DESTROYER_ESCORTING_CAPITAL_MULT = 2f;
+        private static final float TURN_ACCELERATION_MULT = 2f;
+        // AdvanceableListener.advance has no modId parameter, so the four escort effects can't
+        // pass their own node id in here - one fixed id is used for this listener's own stat mods.
+        private static final String ESCORT_BONUS_MOD_ID = "exiledSector_escortBonus";
+
+        private final ShipAPI ship;
+        private final IntervalUtil interval = new IntervalUtil(0.9f, 1.1f);
+
+        private EscortListener(ShipAPI ship) {
+            this.ship = ship;
+        }
+
+        @Override
+        public void advance(float amount) {
+            if (!ship.isAlive() || ship.isHulk()) {
+                return;
+            }
+            interval.advance(amount);
+            if (!interval.intervalElapsed()) {
+                return;
+            }
+            applyBonuses(proximityMagnitude());
+        }
+
+        private float proximityMagnitude() {
+            ShipAPI escorted = findNearestLargerFriendly();
+            if (escorted == null) {
+                return 0f;
+            }
+
+            float range = ship.getMutableStats().getDynamic().getValue(ESCORT_PROXIMITY_RANGE_KEY, 0f);
+            float radiusOverlap = (ship.getShieldRadiusEvenIfNoShield() + escorted.getShieldRadiusEvenIfNoShield())
+                    * SHIELD_RADIUS_OVERLAP_MULT;
+            float distance = Vector2f.sub(ship.getShieldCenterEvenIfNoShield(),
+                    escorted.getShieldCenterEvenIfNoShield(), null).length() - radiusOverlap;
+
+            float mag;
+            if (distance < range) {
+                mag = 1f;
+            } else if (distance < range + PROXIMITY_FADE_DISTANCE) {
+                mag = 1f - (distance - range) / PROXIMITY_FADE_DISTANCE;
+            } else {
+                mag = 0f;
+            }
+
+            if (ship.isDestroyer() && escorted.isCapital()) {
+                mag *= DESTROYER_ESCORTING_CAPITAL_MULT;
+            }
+            return mag;
+        }
+
+        private ShipAPI findNearestLargerFriendly() {
+            ShipAPI nearest = null;
+            float nearestDistanceSq = Float.MAX_VALUE;
+            for (ShipAPI other : shipsMatching(candidate -> candidate != ship
+                    && candidate.getOwner() == ship.getOwner() && candidate.isAlive() && !candidate.isHulk()
+                    && candidate.getHullSize().ordinal() > ship.getHullSize().ordinal())) {
+                float distanceSq = Vector2f.sub(other.getLocation(), ship.getLocation(), null).lengthSquared();
+                if (distanceSq < nearestDistanceSq) {
+                    nearestDistanceSq = distanceSq;
+                    nearest = other;
+                }
+            }
+            return nearest;
+        }
+
+        private void applyBonuses(float mag) {
+            MutableShipStatsAPI stats = ship.getMutableStats();
+            MutableStat[] maneuverStats = {stats.getAcceleration(), stats.getDeceleration(), stats.getMaxTurnRate()};
+            StatBonus[] rangeStats = {stats.getBallisticWeaponRangeBonus(), stats.getEnergyWeaponRangeBonus()};
+
+            if (mag <= 0f) {
+                for (MutableStat stat : maneuverStats) {
+                    stat.unmodify(ESCORT_BONUS_MOD_ID);
+                }
+                stats.getTurnAcceleration().unmodify(ESCORT_BONUS_MOD_ID);
+                stats.getMaxSpeed().unmodify(ESCORT_BONUS_MOD_ID);
+                for (StatBonus stat : rangeStats) {
+                    stat.unmodify(ESCORT_BONUS_MOD_ID);
+                }
+                return;
+            }
+
+            float maneuverPercent = stats.getDynamic().getValue(ESCORT_MANEUVER_BONUS_KEY, 0f) * mag;
+            for (MutableStat stat : maneuverStats) {
+                stat.modifyPercent(ESCORT_BONUS_MOD_ID, maneuverPercent);
+            }
+            stats.getTurnAcceleration().modifyPercent(ESCORT_BONUS_MOD_ID, maneuverPercent * TURN_ACCELERATION_MULT);
+            stats.getMaxSpeed().modifyPercent(ESCORT_BONUS_MOD_ID,
+                    stats.getDynamic().getValue(ESCORT_SPEED_BONUS_KEY, 0f) * mag);
+
+            float rangePercent = stats.getDynamic().getValue(ESCORT_WEAPON_RANGE_BONUS_KEY, 0f) * mag;
+            for (StatBonus stat : rangeStats) {
+                stat.modifyPercent(ESCORT_BONUS_MOD_ID, rangePercent);
+            }
         }
     }
 }
