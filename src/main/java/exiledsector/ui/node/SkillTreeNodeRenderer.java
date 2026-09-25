@@ -99,53 +99,64 @@ public final class SkillTreeNodeRenderer {
         int totalOpBudget = totalOpBudgetForNodes();
 
         for (SkillNode node : SkillTree.getAllNodes().values()) {
-            SkillTier tier = node.getType().getTier();
-            if (tier == SkillTier.ROOT) continue;
-
-            float nodeX = centerX + node.getOffsetX() * zoom;
-            float nodeY = centerY - node.getOffsetY() * zoom;
-            boolean allocated = data.isAllocated(node.getId());
-            boolean breathing = !allocated && data.canAllocate(node, satisfiedRootId, totalOpBudget, opCostFor(node), ShipLevelConfig.maxAllocatedNodes());
-            SkillType effectiveType = node.resolveEffectiveType(data);
-            float footprintSize = NODE_SIZE * zoom * tier.getSizeMultiplier();
-            float iconSize = footprintSize * ICON_INSET_RATIO;
-
-            if (SkillTypeUnlockStatus.isHidden(node.getType(), data)) {
-                ghostRenderer.draw(nodeX, nodeY, footprintSize, alphaMult, node.getId());
-                continue;
-            }
-
-            ringRenderer.draw(new Vector2f(nodeX, nodeY), footprintSize, alphaMult, allocated, breathing, zoom, node);
-
-            if (tier != SkillTier.WORMHOLE) {
-                Color tint = allocated ? ALLOCATED_TINT : UNALLOCATED_TINT;
-                if (effectiveType.isOptional()) {
-                    iconRenderer.drawSplitIcon(effectiveType, nodeX, nodeY, iconSize, alphaMult, tint);
-                } else {
-                    iconRenderer.drawIcon(effectiveType.getIconPath(), nodeX, nodeY, iconSize, alphaMult, tint);
-                }
+            if (node.getType().getTier() != SkillTier.ROOT) {
+                renderNode(node, centerX, centerY, zoom, alphaMult, data, satisfiedRootId, totalOpBudget);
             }
         }
 
         connectorRenderer.draw(centerX, centerY, zoom, data, satisfiedRootId, alphaMult);
 
         for (SkillNode node : SkillTree.getAllNodes().values()) {
-            if (node.getType().getTier() != SkillTier.ROOT) continue;
-
-            float nodeX = centerX + node.getOffsetX() * zoom;
-            float nodeY = centerY - node.getOffsetY() * zoom;
-            boolean isActiveRoot = activeRoot != null && node.getId().equals(activeRoot.getId());
-            boolean allocated = data.isAllocated(node.getId());
-            boolean breathing = !allocated && data.canAllocate(node, satisfiedRootId, totalOpBudget, opCostFor(node), ShipLevelConfig.maxAllocatedNodes());
-            float footprintSize = NODE_SIZE * zoom * SkillTier.ROOT.getSizeMultiplier();
-            ringRenderer.draw(new Vector2f(nodeX, nodeY), footprintSize, alphaMult, allocated, breathing, zoom, node);
-
-            Color tint = allocated ? ALLOCATED_TINT : UNALLOCATED_TINT;
-            String iconPath = isActiveRoot ? RootCrestResolver.resolve(member) : node.getType().getIconPath();
-            iconRenderer.drawIcon(iconPath, nodeX, nodeY, footprintSize, alphaMult, tint);
+            if (node.getType().getTier() == SkillTier.ROOT) {
+                renderRootNode(node, centerX, centerY, zoom, alphaMult, data, satisfiedRootId, totalOpBudget);
+            }
         }
 
         dropdownRenderer.render(centerX, centerY, zoom, mouseX, mouseY, mouseKnown, alphaMult);
+    }
+
+    private void renderNode(SkillNode node, float centerX, float centerY, float zoom, float alphaMult,
+                             ShipSkillData data, String satisfiedRootId, int totalOpBudget) {
+        SkillTier tier = node.getType().getTier();
+        float nodeX = centerX + node.getOffsetX() * zoom;
+        float nodeY = centerY - node.getOffsetY() * zoom;
+        float footprintSize = NODE_SIZE * zoom * tier.getSizeMultiplier();
+
+        if (SkillTypeUnlockStatus.isHidden(node.getType(), data)) {
+            ghostRenderer.draw(nodeX, nodeY, footprintSize, alphaMult, node.getId());
+            return;
+        }
+
+        boolean allocated = data.isAllocated(node.getId());
+        boolean breathing = !allocated && data.canAllocate(node, satisfiedRootId, totalOpBudget, opCostFor(node), ShipLevelConfig.maxAllocatedNodes());
+        SkillType effectiveType = node.resolveEffectiveType(data);
+        float iconSize = footprintSize * ICON_INSET_RATIO;
+
+        ringRenderer.draw(new Vector2f(nodeX, nodeY), footprintSize, alphaMult, allocated, breathing, zoom, node);
+
+        if (tier != SkillTier.WORMHOLE) {
+            Color tint = allocated ? ALLOCATED_TINT : UNALLOCATED_TINT;
+            if (effectiveType.isOptional()) {
+                iconRenderer.drawSplitIcon(effectiveType, nodeX, nodeY, iconSize, alphaMult, tint);
+            } else {
+                iconRenderer.drawIcon(effectiveType.getIconPath(), nodeX, nodeY, iconSize, alphaMult, tint);
+            }
+        }
+    }
+
+    private void renderRootNode(SkillNode node, float centerX, float centerY, float zoom, float alphaMult,
+                                 ShipSkillData data, String satisfiedRootId, int totalOpBudget) {
+        float nodeX = centerX + node.getOffsetX() * zoom;
+        float nodeY = centerY - node.getOffsetY() * zoom;
+        boolean isActiveRoot = activeRoot != null && node.getId().equals(activeRoot.getId());
+        boolean allocated = data.isAllocated(node.getId());
+        boolean breathing = !allocated && data.canAllocate(node, satisfiedRootId, totalOpBudget, opCostFor(node), ShipLevelConfig.maxAllocatedNodes());
+        float footprintSize = NODE_SIZE * zoom * SkillTier.ROOT.getSizeMultiplier();
+        ringRenderer.draw(new Vector2f(nodeX, nodeY), footprintSize, alphaMult, allocated, breathing, zoom, node);
+
+        Color tint = allocated ? ALLOCATED_TINT : UNALLOCATED_TINT;
+        String iconPath = isActiveRoot ? RootCrestResolver.resolve(member) : node.getType().getIconPath();
+        iconRenderer.drawIcon(iconPath, nodeX, nodeY, footprintSize, alphaMult, tint);
     }
 
     public SkillNode getActiveRoot() {
@@ -205,32 +216,11 @@ public final class SkillTreeNodeRenderer {
         int opCost = opCostFor(node);
 
         if (!wasAllocated && isOptional) {
-            if (!data.canAllocate(node, satisfiedRootId(), totalOpBudgetForNodes(), opCost, ShipLevelConfig.maxAllocatedNodes())) {
-                return;
-            }
-            SkillType repeated = ctrlDown ? repeatableOptionFor(node) : null;
-            if (repeated != null) {
-                allocateOptionalNode(node, repeated);
-            } else {
-                dropdownRenderer.open(node);
-            }
+            toggleOptionalAllocation(node, ctrlDown, data, opCost);
             return;
         }
 
-        if (wasAllocated && isStartingRoot(node)) {
-            return;
-        }
-
-        if (wasAllocated) {
-            boolean canDeallocate = blockDeallocationReason(node) == null
-                    && data.canDeallocate(node, SkillTree.getAllNodes().values(), satisfiedRootId());
-            if (!canDeallocate) {
-                if (isOptional) {
-                    dropdownRenderer.open(node);
-                }
-                return;
-            }
-        } else if (blockAllocationReason(node.getType()) != null) {
+        if (!canToggle(node, data, wasAllocated, isOptional)) {
             return;
         }
 
@@ -239,6 +229,35 @@ public final class SkillTreeNodeRenderer {
         if (isAllocatedNow != wasAllocated) {
             refreshAfterAllocationChange(node, isAllocatedNow);
         }
+    }
+
+    private void toggleOptionalAllocation(SkillNode node, boolean ctrlDown, ShipSkillData data, int opCost) {
+        if (!data.canAllocate(node, satisfiedRootId(), totalOpBudgetForNodes(), opCost, ShipLevelConfig.maxAllocatedNodes())) {
+            return;
+        }
+        SkillType repeated = ctrlDown ? repeatableOptionFor(node) : null;
+        if (repeated != null) {
+            allocateOptionalNode(node, repeated);
+        } else {
+            dropdownRenderer.open(node);
+        }
+    }
+
+    private boolean canToggle(SkillNode node, ShipSkillData data, boolean wasAllocated, boolean isOptional) {
+        if (wasAllocated && isStartingRoot(node)) {
+            return false;
+        }
+
+        if (!wasAllocated) {
+            return blockAllocationReason(node.getType()) == null;
+        }
+
+        boolean canDeallocate = blockDeallocationReason(node) == null
+                && data.canDeallocate(node, SkillTree.getAllNodes().values(), satisfiedRootId());
+        if (!canDeallocate && isOptional) {
+            dropdownRenderer.open(node);
+        }
+        return canDeallocate;
     }
 
     public boolean isDropdownOpen() {
@@ -294,32 +313,58 @@ public final class SkillTreeNodeRenderer {
             return "Unidentified - explore the sector to discover this node.";
         }
 
+        String hullModReason = hullModConflictReason(type);
+        if (hullModReason != null) {
+            return hullModReason;
+        }
+
+        String skillTypeReason = skillTypeConflictReason(type, data);
+        if (skillTypeReason != null) {
+            return skillTypeReason;
+        }
+
+        return effectBlockReason(type);
+    }
+
+    private String hullModConflictReason(SkillType type) {
         List<String> exclusiveHullModIds = type.getExclusiveHullModIds();
-        if (!exclusiveHullModIds.isEmpty()) {
-            member.setStatUpdateNeeded(true);
-            member.updateStats();
-            SkillTreeHullMod.syncOpSpentHullMod(member, variant);
-            for (String hullModId : exclusiveHullModIds) {
-                if (variant.hasHullMod(hullModId)) {
-                    HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
-                    String name = spec != null ? spec.getDisplayName() : hullModId;
-                    return "Ship already has " + name + " installed.";
-                }
-            }
+        if (exclusiveHullModIds.isEmpty()) {
+            return null;
         }
 
+        member.setStatUpdateNeeded(true);
+        member.updateStats();
+        SkillTreeHullMod.syncOpSpentHullMod(member, variant);
+        for (String hullModId : exclusiveHullModIds) {
+            if (variant.hasHullMod(hullModId)) {
+                HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
+                String name = spec != null ? spec.getDisplayName() : hullModId;
+                return "Ship already has " + name + " installed.";
+            }
+        }
+        return null;
+    }
+
+    private String skillTypeConflictReason(SkillType type, ShipSkillData data) {
         List<String> exclusiveSkillTypeIds = type.getExclusiveSkillTypeIds();
-        if (!exclusiveSkillTypeIds.isEmpty()) {
-            for (String nodeId : data.getAllocatedNodeIds()) {
-                SkillNode allocatedNode = SkillTree.get(nodeId);
-                if (allocatedNode == null) continue;
-                SkillType allocatedType = allocatedNode.resolveEffectiveType(data);
-                if (exclusiveSkillTypeIds.contains(allocatedType.getId())) {
-                    return "Already have " + allocatedType.getDisplayName() + " allocated.";
-                }
-            }
+        if (exclusiveSkillTypeIds.isEmpty()) {
+            return null;
         }
 
+        for (String nodeId : data.getAllocatedNodeIds()) {
+            SkillNode allocatedNode = SkillTree.get(nodeId);
+            if (allocatedNode == null) {
+                continue;
+            }
+            SkillType allocatedType = allocatedNode.resolveEffectiveType(data);
+            if (exclusiveSkillTypeIds.contains(allocatedType.getId())) {
+                return "Already have " + allocatedType.getDisplayName() + " allocated.";
+            }
+        }
+        return null;
+    }
+
+    private String effectBlockReason(SkillType type) {
         List<SkillEffect> currentlyAllocatedEffects = AllocatedSkillEffects.forMember(member);
         String[] blockReason = new String[1];
         type.forEachEffect(member.getHullSpec().getHullSize(), (effect, magnitude) -> {
