@@ -100,72 +100,92 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         if (position == null) return;
 
         for (InputEventAPI event : events) {
-            if (event.isConsumed()) continue;
-
-            if (event.isLMBDownEvent() && position.containsEvent(event)) {
-                if (statPanel.isCollapseButtonHit(position, event.getX(), event.getY())) {
-                    statPanel.toggleCollapsed();
-                    event.consume();
-                    continue;
-                }
-                if (nodeRenderer.isDropdownOpen()) {
-                    SkillType option = nodeRenderer.findDropdownOptionAt(centerX(), centerY(), zoom, event.getX(), event.getY());
-                    if (option != null) {
-                        pendingDropdownOption = option;
-                    } else {
-                        nodeRenderer.closeDropdown();
-                    }
-                } else {
-                    SkillNode clicked = nodeRenderer.findNodeAt(centerX(), centerY(), zoom, event.getX(), event.getY());
-                    if (clicked != null) {
-                        pendingClickNode = clicked;
-                        pendingClickCtrlDown = event.isCtrlDown();
-                    } else {
-                        dragging = true;
-                    }
-                }
-                event.consume();
-            } else if (event.isLMBUpEvent()) {
-                boolean wasOurGesture = dragging || pendingDropdownOption != null || pendingClickNode != null;
-                dragging = false;
-                if (pendingDropdownOption != null) {
-                    nodeRenderer.commitDropdownSelection(pendingDropdownOption);
-                    pendingDropdownOption = null;
-                } else if (pendingClickNode != null) {
-                    SkillNode jumpTarget = nodeRenderer.wormholeJumpTarget(pendingClickNode, pendingClickCtrlDown);
-                    if (jumpTarget != null) {
-                        panX = -jumpTarget.getOffsetX() * zoom;
-                        panY = jumpTarget.getOffsetY() * zoom;
-                    } else {
-                        nodeRenderer.toggleAllocation(pendingClickNode, pendingClickCtrlDown);
-                    }
-                    pendingClickNode = null;
-                }
-                if (wasOurGesture) {
-                    event.consume();
-                }
-            } else if (event.isMouseMoveEvent()) {
-                mouseX = event.getX();
-                mouseY = event.getY();
-                mouseKnown = true;
-                if (dragging) {
-                    panX += event.getDX();
-                    panY += event.getDY();
-                    event.consume();
-                }
-            } else if (event.isMouseScrollEvent() && position.containsEvent(event)) {
-                float oldZoom = zoom;
-                if (event.getEventValue() > 0) {
-                    zoom = Math.min(MAX_ZOOM, zoom * ZOOM_STEP);
-                } else {
-                    zoom = Math.max(MIN_ZOOM, zoom / ZOOM_STEP);
-                }
-                float zoomRatio = zoom / oldZoom;
-                panX *= zoomRatio;
-                panY *= zoomRatio;
-                event.consume();
+            if (!event.isConsumed()) {
+                handleEvent(event);
             }
         }
+    }
+
+    private void handleEvent(InputEventAPI event) {
+        if (event.isLMBDownEvent() && position.containsEvent(event)) {
+            handleLmbDown(event);
+        } else if (event.isLMBUpEvent()) {
+            handleLmbUp(event);
+        } else if (event.isMouseMoveEvent()) {
+            handleMouseMove(event);
+        } else if (event.isMouseScrollEvent() && position.containsEvent(event)) {
+            handleMouseScroll(event);
+        }
+    }
+
+    private void handleLmbDown(InputEventAPI event) {
+        if (statPanel.isCollapseButtonHit(position, event.getX(), event.getY())) {
+            statPanel.toggleCollapsed();
+            event.consume();
+            return;
+        }
+        if (nodeRenderer.isDropdownOpen()) {
+            SkillType option = nodeRenderer.findDropdownOptionAt(centerX(), centerY(), zoom, event.getX(), event.getY());
+            if (option != null) {
+                pendingDropdownOption = option;
+            } else {
+                nodeRenderer.closeDropdown();
+            }
+        } else {
+            SkillNode clicked = nodeRenderer.findNodeAt(centerX(), centerY(), zoom, event.getX(), event.getY());
+            if (clicked != null) {
+                pendingClickNode = clicked;
+                pendingClickCtrlDown = event.isCtrlDown();
+            } else {
+                dragging = true;
+            }
+        }
+        event.consume();
+    }
+
+    private void handleLmbUp(InputEventAPI event) {
+        boolean wasOurGesture = dragging || pendingDropdownOption != null || pendingClickNode != null;
+        dragging = false;
+        if (pendingDropdownOption != null) {
+            nodeRenderer.commitDropdownSelection(pendingDropdownOption);
+            pendingDropdownOption = null;
+        } else if (pendingClickNode != null) {
+            SkillNode jumpTarget = nodeRenderer.wormholeJumpTarget(pendingClickNode, pendingClickCtrlDown);
+            if (jumpTarget != null) {
+                panX = -jumpTarget.getOffsetX() * zoom;
+                panY = jumpTarget.getOffsetY() * zoom;
+            } else {
+                nodeRenderer.toggleAllocation(pendingClickNode, pendingClickCtrlDown);
+            }
+            pendingClickNode = null;
+        }
+        if (wasOurGesture) {
+            event.consume();
+        }
+    }
+
+    private void handleMouseMove(InputEventAPI event) {
+        mouseX = event.getX();
+        mouseY = event.getY();
+        mouseKnown = true;
+        if (dragging) {
+            panX += event.getDX();
+            panY += event.getDY();
+            event.consume();
+        }
+    }
+
+    private void handleMouseScroll(InputEventAPI event) {
+        float oldZoom = zoom;
+        if (event.getEventValue() > 0) {
+            zoom = Math.min(MAX_ZOOM, zoom * ZOOM_STEP);
+        } else {
+            zoom = Math.max(MIN_ZOOM, zoom / ZOOM_STEP);
+        }
+        float zoomRatio = zoom / oldZoom;
+        panX *= zoomRatio;
+        panY *= zoomRatio;
+        event.consume();
     }
 
     @Override
