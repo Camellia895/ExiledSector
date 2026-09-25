@@ -59,7 +59,7 @@ public enum CombatSkillEffect implements SkillEffect {
     EXPLODE_ON_DEATH {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-w            stats.getDynamic().getMod(EXPLODE_ON_DEATH_FUEL_DAMAGE_KEY).modifyFlat(modId, magnitude);
+            stats.getDynamic().getMod(EXPLODE_ON_DEATH_FUEL_DAMAGE_KEY).modifyFlat(modId, magnitude);
         }
 
         @Override
