@@ -68,10 +68,11 @@ public class SkillTreeHullMod extends BaseHullMod {
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
         for (String nodeId : data.getAllocatedNodeIds()) {
             SkillNode node = SkillTree.get(nodeId);
-            if (node == null) continue;
+            if (node == null) {
+                continue;
+            }
 
             SkillType type = node.resolveEffectiveType(data);
-
             String vanillaHullModId = type.getVanillaHullModId();
             if (vanillaHullModId != null) {
                 if (vanillaDelegate != null) {
@@ -80,11 +81,10 @@ public class SkillTreeHullMod extends BaseHullMod {
                         vanillaDelegate.apply(spec.getEffect(), vanillaHullModId);
                     }
                 }
-                continue;
+            } else {
+                String modId = MOD_ID_PREFIX + node.getId();
+                type.forEachEffect(hullSize, (effect, magnitude) -> action.apply(effect, modId, magnitude));
             }
-
-            String modId = MOD_ID_PREFIX + node.getId();
-            type.forEachEffect(hullSize, (effect, magnitude) -> action.apply(effect, modId, magnitude));
         }
     }
 

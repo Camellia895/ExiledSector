@@ -93,9 +93,12 @@ final class SkillTreeNodeConnectorRenderer {
                                      ShipSkillData data, String satisfiedRootId, float alphaMult) {
         for (String connectedId : node.getConnectedNodeIds()) {
             SkillNode other = SkillTree.get(connectedId);
-            if (other == null) continue;
-            if (other.getType().getTier() != SkillTier.ROOT && node.getId().compareTo(other.getId()) >= 0) continue;
-            if (!SkillTree.isConnectorVisible(node.getId(), other.getId())) continue;
+            boolean skip = other == null
+                    || (other.getType().getTier() != SkillTier.ROOT && node.getId().compareTo(other.getId()) >= 0)
+                    || !SkillTree.isConnectorVisible(node.getId(), other.getId());
+            if (skip) {
+                continue;
+            }
 
             float otherX = center.x + other.getOffsetX() * zoom;
             float otherY = center.y - other.getOffsetY() * zoom;
