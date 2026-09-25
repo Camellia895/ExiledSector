@@ -265,7 +265,7 @@
 		},
 		{
 			"id": "fuel_core_overload",
-			"name": "Fuel Core Overload",
+			"name": "Ludd's Light",
 			"icon": "graphics/icons/combat_circular.png",
 			"tier": "KEYSTONE",
 			"effects": [
@@ -280,7 +280,7 @@
 		},
 		{
 			"id": "exposed_fuel_lines",
-			"name": "Exposed Fuel Lines",
+			"name": "At Any Cost",
 			"icon": "graphics/icons/evasive_maneuvering_circular.png",
 			"tier": "KEYSTONE",
 			"effects": [
@@ -787,13 +787,6 @@
 			"name": "Escort Package",
 			"icon": "graphics/icons/escort_package.png",
 			"tier": "KEYSTONE",
-			"unlockConditions": [
-				{
-					"type": "blueprint",
-					"category": "hullmod",
-					"id": "escort_package"
-				}
-			],
 			"effects": [
 				{
 					"effect": "ESCORT_MANEUVER_BONUS_PERCENT",
@@ -810,6 +803,13 @@
 				{
 					"effect": "ESCORT_PROXIMITY_RANGE_FLAT",
 					"magnitude": 700
+				}
+			],
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "escort_package"
 				}
 			],
 			"description": "When this ship is within approximately 700 su of a larger friendly vessel, increases this ship's maneuverability by 25%, and top speed by 10%. Also increases ballistic and energy weapon range by 20%. These bonuses fade out over an additional 500 su beyond that range.\n\nThese bonuses are doubled for destroyers when the nearby friendly is a capital ship."
@@ -1713,13 +1713,6 @@
 			"name": "Solar Shielding",
 			"icon": "graphics/icons/solar_shielding.png",
 			"tier": "NOTABLE",
-			"unlockConditions": [
-				{
-					"type": "blueprint",
-					"category": "hullmod",
-					"id": "solar_shielding"
-				}
-			],
 			"effects": [
 				{
 					"effect": "ENERGY_DAMAGE_TAKEN_PERCENT",
@@ -1732,6 +1725,13 @@
 				{
 					"effect": "CORONA_RESISTANCE_MULT",
 					"magnitude": -75
+				}
+			],
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "solar_shielding"
 				}
 			],
 			"description": "Originally developed by Diktat engineers after spending cycles dealing with the unique conditions of the inner Askonia system. Decreases the effect operating in a solar corona has on combat readiness by 75%; also has the same effect against storms in deep hyperspace.\n\nIn combat, reduces energy damage taken by 10%.",

@@ -1041,10 +1041,10 @@
 			"type": "small_logistics_optional",
 			"connectedTo": [
 				"small_logistics_optional_2",
-				"small_logistics_optional_5",
 				"small_logistics_optional_9",
 				"efficiency_overhaul_1",
-				"solar_shielding_1"
+				"solar_shielding_1",
+				"small_logistics_optional_5"
 			],
 			"x": -246,
 			"y": 133,
@@ -1057,8 +1057,8 @@
 			"connectedTo": [
 				"small_logistics_optional_7",
 				"reduced_monthly_supplies_1",
-				"small_logistics_optional_4",
-				"small_logistics_optional_9"
+				"small_logistics_optional_9",
+				"small_logistics_optional_4"
 			],
 			"x": 0,
 			"y": -280,
@@ -4330,22 +4330,16 @@
 			"controlY": -656
 		},
 		{
-			"a": "small_logistics_optional_4",
-			"b": "small_logistics_optional_5",
-			"controlX": -217,
-			"controlY": -142
-		},
-		{
 			"a": "small_logistics_optional_5",
 			"b": "small_logistics_optional_9",
-			"controlX": 224,
-			"controlY": -127
+			"controlX": 243,
+			"controlY": -140
 		},
 		{
 			"a": "small_logistics_optional_4",
 			"b": "small_logistics_optional_9",
-			"controlX": 0,
-			"controlY": 256
+			"controlX": -4,
+			"controlY": 280
 		},
 		{
 			"a": "armor_1",
@@ -4832,6 +4826,12 @@
 			"b": "increased_sensor_strength_3",
 			"controlX": -8260,
 			"controlY": 1520
+		},
+		{
+			"a": "small_logistics_optional_4",
+			"b": "small_logistics_optional_5",
+			"controlX": -241,
+			"controlY": -143
 		}
 	],
 	"hiddenConnectors": [
