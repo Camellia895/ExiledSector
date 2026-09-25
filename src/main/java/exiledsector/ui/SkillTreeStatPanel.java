@@ -66,6 +66,13 @@ final class SkillTreeStatPanel {
     private LazyFont statFont;
     private boolean fontLoadFailed = false;
 
+    private PanelLayout cachedLayout;
+    private List<StatGroup> cachedLayoutGroups;
+    private float cachedLayoutX;
+    private float cachedLayoutY;
+    private float cachedLayoutWidth;
+    private float cachedLayoutHeight;
+
     private boolean collapsed = false;
 
     SkillTreeStatPanel(FleetMemberAPI member, ShipVariantAPI variant) {
@@ -154,6 +161,12 @@ final class SkillTreeStatPanel {
         List<StatGroup> groups = buildStatGroups(member);
         if (groups.isEmpty()) return null;
 
+        if (cachedLayout != null && groups.equals(cachedLayoutGroups)
+                && position.getX() == cachedLayoutX && position.getY() == cachedLayoutY
+                && position.getWidth() == cachedLayoutWidth && position.getHeight() == cachedLayoutHeight) {
+            return cachedLayout;
+        }
+
         List<SkillTreePanelStyle.TooltipText> labelTexts = new ArrayList<>();
         List<List<LazyFont.DrawableString>> valueLinesList = new ArrayList<>();
         float headerHeight = STAT_PANEL_HEADER_FONT_SIZE * FONT_LINE_HEIGHT_FACTOR;
@@ -196,7 +209,13 @@ final class SkillTreeStatPanel {
             cursorY = headerTextY - groupHeight - STAT_PANEL_GROUP_GAP;
         }
 
-        return new PanelLayout(x, topY, width, fullHeight, contents);
+        cachedLayout = new PanelLayout(x, topY, width, fullHeight, contents);
+        cachedLayoutGroups = groups;
+        cachedLayoutX = position.getX();
+        cachedLayoutY = position.getY();
+        cachedLayoutWidth = position.getWidth();
+        cachedLayoutHeight = position.getHeight();
+        return cachedLayout;
     }
 
     private LazyFont.DrawableString getStatGroupHeaderText(LazyFont font, String name) {
@@ -313,6 +332,19 @@ final class SkillTreeStatPanel {
         StatGroup(String name, List<StatLine> statLines) {
             this.name = name;
             this.statLines = statLines;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof StatGroup)) return false;
+            StatGroup other = (StatGroup) o;
+            return name.equals(other.name) && statLines.equals(other.statLines);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name, statLines);
         }
     }
 
