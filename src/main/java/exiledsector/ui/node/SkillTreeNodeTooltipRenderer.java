@@ -14,18 +14,13 @@ import java.awt.Color;
 
 import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_BODY_COLOR;
 import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE;
+import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_MAX_TEXT_WIDTH;
+import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_TITLE_COLOR;
 import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE;
 
 final class SkillTreeNodeTooltipRenderer {
 
-    private static final float TOOLTIP_MAX_TEXT_WIDTH = 480f;
     private static final float TOOLTIP_MAX_TEXT_HEIGHT = 800f;
-    private static final float TOOLTIP_WIDTH_SAFETY_MARGIN = 8f;
-    private static final float TOOLTIP_PADDING = 10f;
-    private static final float TOOLTIP_TITLE_BODY_GAP = 6f;
-    private static final float TOOLTIP_CURSOR_OFFSET = 18f;
-    private static final float TOOLTIP_TITLE_BOLD_OFFSET = 1f;
-    private static final Color TOOLTIP_TITLE_COLOR = Color.WHITE;
 
     private static final String OPTIONAL_NODE_HINT = "Click to choose an option.";
     private static final String FREE_NODE_NOTE = "Granted free by a level-up.";
@@ -61,7 +56,7 @@ final class SkillTreeNodeTooltipRenderer {
         SkillTreePanelStyle.TooltipText body = tooltipBodies.get(node.getId(), bodyText,
                 id -> buildTooltipText(font, bodyText, TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR));
 
-        drawTooltipBox(title, body, mouseX, mouseY, alphaMult);
+        style.drawTitleBodyTooltip(title, body, mouseX, mouseY, alphaMult);
     }
 
     void renderTooltipForType(SkillType type, float mouseX, float mouseY, float alphaMult) {
@@ -76,23 +71,7 @@ final class SkillTreeNodeTooltipRenderer {
         SkillTreePanelStyle.TooltipText body = typeTooltipBodies.get(type.getId(), bodyText,
                 id -> buildTooltipText(font, bodyText, TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR));
 
-        drawTooltipBox(title, body, mouseX, mouseY, alphaMult);
-    }
-
-    private void drawTooltipBox(SkillTreePanelStyle.TooltipText title, SkillTreePanelStyle.TooltipText body, float mouseX, float mouseY, float alphaMult) {
-        float boxWidth = Math.max(title.width, body.width) + TOOLTIP_PADDING * 2f + TOOLTIP_WIDTH_SAFETY_MARGIN;
-        float boxHeight = title.height + TOOLTIP_TITLE_BODY_GAP + body.height + TOOLTIP_PADDING * 2f;
-        float boxX = mouseX + TOOLTIP_CURSOR_OFFSET;
-        float boxY = mouseY - boxHeight - TOOLTIP_CURSOR_OFFSET;
-
-        style.drawTooltipBackground(boxX, boxY, boxWidth, boxHeight, alphaMult, style.getAccentColor());
-
-        float titleY = boxY + boxHeight - TOOLTIP_PADDING;
-        float bodyY = titleY - title.height - TOOLTIP_TITLE_BODY_GAP;
-        float titleX = boxX + (boxWidth - title.width) / 2f;
-        title.drawable.draw(titleX, titleY);
-        title.drawable.draw(titleX + TOOLTIP_TITLE_BOLD_OFFSET, titleY);
-        body.drawable.draw(boxX + TOOLTIP_PADDING, bodyY);
+        style.drawTitleBodyTooltip(title, body, mouseX, mouseY, alphaMult);
     }
 
     private String titleText(SkillNode node, SkillType effectiveType, ShipSkillData data) {
