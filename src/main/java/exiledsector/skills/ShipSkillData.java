@@ -109,9 +109,12 @@ public class ShipSkillData {
         List<String> order = new ArrayList<>(allocatedNodeIds);
         for (int i = order.size() - 1; i >= 0; i--) {
             String nodeId = order.get(i);
-            if (freeNodeIds().contains(nodeId) || pairedFreeNodeIds().contains(nodeId)) continue;
             SkillNode node = byId.get(nodeId);
-            if (node != null && node.getType().getTier() == SkillTier.ROOT) continue;
+            boolean alreadyFree = freeNodeIds().contains(nodeId) || pairedFreeNodeIds().contains(nodeId);
+            boolean isRoot = node != null && node.getType().getTier() == SkillTier.ROOT;
+            if (alreadyFree || isRoot) {
+                continue;
+            }
             freeNodeIds().add(nodeId);
             spentOp -= opCostPerNode;
             return true;
@@ -224,10 +227,11 @@ public class ShipSkillData {
             queue.add(satisfiedRootId);
         }
         for (String allocatedId : allocatedNodeIds) {
-            if (excludedNodeIds.contains(allocatedId)) continue;
+            if (excludedNodeIds.contains(allocatedId)) {
+                continue;
+            }
             SkillNode allocatedNode = byId.get(allocatedId);
-            if (allocatedNode == null) continue;
-            if (allocatedNode.getConnectedNodeIds().isEmpty() && reachable.add(allocatedId)) {
+            if (allocatedNode != null && allocatedNode.getConnectedNodeIds().isEmpty() && reachable.add(allocatedId)) {
                 queue.add(allocatedId);
             }
         }
@@ -238,8 +242,9 @@ public class ShipSkillData {
         while (!queue.isEmpty()) {
             String currentId = queue.poll();
             for (String childId : childrenOf.getOrDefault(currentId, List.of())) {
-                if (excludedNodeIds.contains(childId)) continue;
-                if (!isAllocated(childId)) continue;
+                if (excludedNodeIds.contains(childId) || !isAllocated(childId)) {
+                    continue;
+                }
                 if (reachable.add(childId)) {
                     queue.add(childId);
                 }
