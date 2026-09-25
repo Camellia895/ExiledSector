@@ -276,8 +276,8 @@ final class SkillTreeNodeRingRenderer {
     private void drawKeystoneRingBelt(float cx, float cy, float footprintSize, float widthRatio, String ringArtPath, float stateAlpha, float alphaMult) {
         if (!spriteCache.ensureLoaded(ringArtPath)) return;
         SpriteAPI sprite = Global.getSettings().getSprite(ringArtPath);
-        RingBeltRenderer.render(sprite, cx, cy, beltInnerRadius(footprintSize), beltOuterRadius(footprintSize, widthRatio),
-                Color.WHITE, stateAlpha * alphaMult);
+        RadialBand band = new RadialBand(new Vector2f(cx, cy), beltInnerRadius(footprintSize), beltOuterRadius(footprintSize, widthRatio));
+        RingBeltRenderer.render(sprite, band, Color.WHITE, stateAlpha * alphaMult);
     }
 
     private void drawKeystoneAuroraBelt(float cx, float cy, float footprintSize, float widthRatio, Color tint, float stateAlpha, float alphaMult) {

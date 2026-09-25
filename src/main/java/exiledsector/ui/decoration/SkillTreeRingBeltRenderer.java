@@ -4,8 +4,10 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.skills.SkillTree;
+import exiledsector.ui.belt.RadialBand;
 import exiledsector.ui.belt.RingBeltRenderer;
 import exiledsector.ui.util.SpriteCache;
+import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
 import java.util.List;
@@ -33,8 +35,8 @@ public class SkillTreeRingBeltRenderer {
             float screenX = centerX + belt.getX() * zoom;
             float screenY = centerY - belt.getY() * zoom;
             float rotationDeg = belt.getRotation() + belt.getRotationSpeed() * elapsedSeconds;
-            RingBeltRenderer.render(sprite, screenX, screenY, belt.getInnerRadius() * zoom, belt.getOuterRadius() * zoom,
-                    Color.WHITE, alphaMult, rotationDeg);
+            RadialBand band = new RadialBand(new Vector2f(screenX, screenY), belt.getInnerRadius() * zoom, belt.getOuterRadius() * zoom);
+            RingBeltRenderer.render(sprite, band, Color.WHITE, alphaMult, rotationDeg);
         }
     }
 }
