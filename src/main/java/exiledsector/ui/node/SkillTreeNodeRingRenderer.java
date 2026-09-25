@@ -357,6 +357,7 @@ final class SkillTreeNodeRingRenderer {
         sprite.setColor(color);
         sprite.setSize(size, size);
         sprite.setAlphaMult(alpha);
+        //intentionally rendering two because it's prettier
         sprite.renderAtCenter(cx, cy);
         sprite.renderAtCenter(cx, cy);
     }

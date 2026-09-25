@@ -183,6 +183,7 @@ public enum PhaseSkillEffect implements SkillEffect {
             ship.setRetreating(true, false);
             ship.blockCommandForOneFrame(ShipCommand.USE_SYSTEM);
 
+            // multiplying (not dividing) by chargeUpDur matches vanilla's own phase-anchor dive timing exactly
             diveProgress += amount * phaseCloak.getChargeUpDur();
             float extraAlphaMult = ship.getExtraAlphaMult();
             phaseCloak.forceState(ShipSystemAPI.SystemState.IN, Math.min(1f, Math.max(extraAlphaMult, diveProgress)));

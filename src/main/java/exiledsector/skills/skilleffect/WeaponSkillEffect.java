@@ -403,6 +403,7 @@ public enum WeaponSkillEffect implements SkillEffect {
         }
     },
     ECCM_CHANCE {
+        // magnitude is a fraction (0-1) matching getEccmChance()'s own units; describe() only scales by 100 for display
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getEccmChance().modifyFlat(modId, magnitude);
