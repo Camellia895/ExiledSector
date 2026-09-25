@@ -9,6 +9,8 @@ public final class FallbackSupport {
 
     @FunctionalInterface
     public interface ThrowingSupplier<T> {
+        // deliberately generic: callers wrap unrelated Starsector API calls that each throw different exception types
+        @SuppressWarnings("java:S112")
         T get() throws Exception;
     }
 
