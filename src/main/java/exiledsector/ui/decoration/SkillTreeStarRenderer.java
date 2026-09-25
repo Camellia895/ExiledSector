@@ -67,9 +67,10 @@ public class SkillTreeStarRenderer {
 
         for (Star star : stars) {
             PlanetSpecAPI spec = resolveSpec(star.getStarType());
-            if (spec == null) continue;
-            String texturePath = spec.getTexture();
-            if (texturePath == null || texturePath.isEmpty() || !spriteCache.ensureLoaded(texturePath)) continue;
+            String texturePath = spec == null ? null : spec.getTexture();
+            if (texturePath == null || texturePath.isEmpty() || !spriteCache.ensureLoaded(texturePath)) {
+                continue;
+            }
 
             SpriteAPI texture = Global.getSettings().getSprite(texturePath);
             float screenX = centerX + star.getX() * zoom;
@@ -119,20 +120,22 @@ public class SkillTreeStarRenderer {
 
         for (Star star : stars) {
             PlanetSpecAPI spec = resolveSpec(star.getStarType());
-            if (spec == null || spec.getAtmosphereThickness() <= 0f) continue;
+            if (spec == null || spec.getAtmosphereThickness() <= 0f) {
+                continue;
+            }
 
             float radius = star.getRadius() * zoom;
             float thickness = Math.max(star.getRadius() * spec.getAtmosphereThickness(), spec.getAtmosphereThicknessMin()) * zoom;
-            if (thickness <= 0f) continue;
+            if (thickness > 0f) {
+                float innerRadius = radius - thickness * ATMOSPHERE_INNER_INSET_MULT;
+                float outerRadius = innerRadius + thickness;
 
-            float innerRadius = radius - thickness * ATMOSPHERE_INNER_INSET_MULT;
-            float outerRadius = innerRadius + thickness;
+                float screenX = centerX + star.getX() * zoom;
+                float screenY = centerY - star.getY() * zoom;
+                Color color = resolveColor(star, spec.getAtmosphereColor());
 
-            float screenX = centerX + star.getX() * zoom;
-            float screenY = centerY - star.getY() * zoom;
-            Color color = resolveColor(star, spec.getAtmosphereColor());
-
-            drawAtmosphereRing(texture, screenX, screenY, innerRadius, outerRadius, color, alphaMult);
+                drawAtmosphereRing(texture, screenX, screenY, innerRadius, outerRadius, color, alphaMult);
+            }
         }
     }
 
@@ -215,24 +218,25 @@ public class SkillTreeStarRenderer {
 
         for (Star star : stars) {
             PlanetSpecAPI spec = resolveSpec(star.getStarType());
-            if (spec == null) continue;
-            String coronaPath = spec.getCoronaTexture();
-            if (coronaPath == null || coronaPath.isEmpty() || !spriteCache.ensureLoaded(coronaPath)) continue;
+            String coronaPath = spec == null ? null : spec.getCoronaTexture();
+            if (coronaPath == null || coronaPath.isEmpty() || !spriteCache.ensureLoaded(coronaPath)) {
+                continue;
+            }
 
             float radius = star.getRadius() * zoom;
             float haloRadius = star.getRadius() * spec.getCoronaSize() * zoom;
-            if (haloRadius <= radius) continue;
+            if (haloRadius > radius) {
+                SpriteAPI corona = Global.getSettings().getSprite(coronaPath);
+                float screenX = centerX + star.getX() * zoom;
+                float screenY = centerY - star.getY() * zoom;
+                Color coronaColor = resolveColor(star, spec.getCoronaColor());
 
-            SpriteAPI corona = Global.getSettings().getSprite(coronaPath);
-            float screenX = centerX + star.getX() * zoom;
-            float screenY = centerY - star.getY() * zoom;
-            Color coronaColor = resolveColor(star, spec.getCoronaColor());
-
-            corona.setBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-            corona.setColor(coronaColor);
-            corona.setAlphaMult(alphaMult);
-            corona.setSize(haloRadius * 2f, haloRadius * 2f);
-            corona.renderAtCenter(screenX, screenY);
+                corona.setBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+                corona.setColor(coronaColor);
+                corona.setAlphaMult(alphaMult);
+                corona.setSize(haloRadius * 2f, haloRadius * 2f);
+                corona.renderAtCenter(screenX, screenY);
+            }
         }
     }
 
