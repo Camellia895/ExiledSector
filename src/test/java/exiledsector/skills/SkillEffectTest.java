@@ -684,15 +684,15 @@ class SkillEffectTest {
     }
 
     @Test
-    void removeAllFighterBaysZeroesOutTheShipSOwnBaseBayCount() {
+    void removeAllFighterBaysZeroesOutTheFinalBayCountRegardlessOfOtherModifiers() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         MutableStat numFighterBays = mock(MutableStat.class);
         when(stats.getNumFighterBays()).thenReturn(numFighterBays);
-        when(numFighterBays.getBaseValue()).thenReturn(3f);
 
         FighterSkillEffect.REMOVE_ALL_FIGHTER_BAYS.apply(stats, "mod_id", 0f);
 
-        verify(numFighterBays).modifyFlat("mod_id", -3f);
+        verify(numFighterBays).modifyMult("mod_id", 0f);
+        verify(numFighterBays, never()).modifyFlat(any(), anyFloat());
     }
 
     @Test

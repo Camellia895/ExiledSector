@@ -591,8 +591,7 @@ public enum FighterSkillEffect implements SkillEffect {
     REMOVE_ALL_FIGHTER_BAYS {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            float bays = stats.getNumFighterBays().getBaseValue();
-            stats.getNumFighterBays().modifyFlat(modId, -bays);
+            stats.getNumFighterBays().modifyMult(modId, 0f);
         }
 
         @Override
