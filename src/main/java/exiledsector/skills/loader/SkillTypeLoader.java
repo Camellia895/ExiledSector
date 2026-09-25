@@ -41,6 +41,10 @@ public final class SkillTypeLoader {
         JSONArray typeArray = root.getJSONArray("skillTypes");
         for (int i = 0; i < typeArray.length(); i++) {
             SkillType type = parseSkillType(typeArray.getJSONObject(i));
+            if (types.containsKey(type.getId())) {
+                Logger.getLogger(SkillTypeLoader.class).error("Duplicate skill type id \"" + type.getId()
+                        + "\" in " + DATA_PATH + " - the earlier definition was overwritten.");
+            }
             types.put(type.getId(), type);
         }
         return types;

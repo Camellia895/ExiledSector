@@ -55,6 +55,9 @@ public class SkillTree {
     }
 
     public static void register(SkillNode node) {
+        if (NODES.containsKey(node.getId())) {
+            Logger.getLogger(SkillTree.class).error("Duplicate skill node id \"" + node.getId() + "\" - the earlier definition was overwritten.");
+        }
         NODES.put(node.getId(), node);
     }
 
@@ -71,6 +74,9 @@ public class SkillTree {
     }
 
     public static void registerType(SkillType type) {
+        if (TYPES.containsKey(type.getId())) {
+            Logger.getLogger(SkillTree.class).error("Duplicate skill type id \"" + type.getId() + "\" - the earlier definition was overwritten.");
+        }
         TYPES.put(type.getId(), type);
     }
 

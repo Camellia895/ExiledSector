@@ -331,4 +331,17 @@ class SkillTypeLoaderTest {
         assertEquals("A", types.get("a").getDisplayName());
         assertEquals("B", types.get("b").getDisplayName());
     }
+
+    @Test
+    void aDuplicateIdOverwritesTheEarlierDefinitionInsteadOfBeingRejected() throws Exception {
+        JSONObject root = new JSONObject("{ \"skillTypes\": ["
+                + "{\"id\": \"a\", \"name\": \"First\", \"icon\": \"a.png\"},"
+                + "{\"id\": \"a\", \"name\": \"Second\", \"icon\": \"a.png\"}"
+                + "] }");
+
+        Map<String, SkillType> types = SkillTypeLoader.parseSkillTypes(root);
+
+        assertEquals(1, types.size());
+        assertEquals("Second", types.get("a").getDisplayName());
+    }
 }
