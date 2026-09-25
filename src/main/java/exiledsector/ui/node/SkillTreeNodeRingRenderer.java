@@ -387,7 +387,7 @@ final class SkillTreeNodeRingRenderer {
     private static List<RingInstance> generateRingInstances(String seedKey, int count, float radiusDecay) {
         Random random = new Random(seedKey.hashCode());
         List<RingInstance> instances = new ArrayList<>(count);
-        float rawMin = (float) Math.pow(radiusDecay, count - 1);
+        float rawMin = (float) Math.pow(radiusDecay, count - 1.0);
         float rawRange = 1f - rawMin;
         for (int i = 0; i < count; i++) {
             RingInstance instance = new RingInstance();
