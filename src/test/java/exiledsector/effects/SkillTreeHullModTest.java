@@ -613,12 +613,18 @@ class SkillTreeHullModTest {
         when(ship.getPhaseCloak()).thenReturn(null);
         MutableStat dissipation = mock(MutableStat.class);
         when(stats.getFluxDissipation()).thenReturn(dissipation);
-        when(stats.getBallisticRoFMult()).thenReturn(mock(MutableStat.class));
-        when(stats.getEnergyRoFMult()).thenReturn(mock(MutableStat.class));
-        when(stats.getMissileRoFMult()).thenReturn(mock(MutableStat.class));
-        when(stats.getBallisticAmmoRegenMult()).thenReturn(mock(MutableStat.class));
-        when(stats.getEnergyAmmoRegenMult()).thenReturn(mock(MutableStat.class));
-        when(stats.getMissileAmmoRegenMult()).thenReturn(mock(MutableStat.class));
+        MutableStat ballisticRoF = mock(MutableStat.class);
+        MutableStat energyRoF = mock(MutableStat.class);
+        MutableStat missileRoF = mock(MutableStat.class);
+        MutableStat ballisticAmmoRegen = mock(MutableStat.class);
+        MutableStat energyAmmoRegen = mock(MutableStat.class);
+        MutableStat missileAmmoRegen = mock(MutableStat.class);
+        when(stats.getBallisticRoFMult()).thenReturn(ballisticRoF);
+        when(stats.getEnergyRoFMult()).thenReturn(energyRoF);
+        when(stats.getMissileRoFMult()).thenReturn(missileRoF);
+        when(stats.getBallisticAmmoRegenMult()).thenReturn(ballisticAmmoRegen);
+        when(stats.getEnergyAmmoRegenMult()).thenReturn(energyAmmoRegen);
+        when(stats.getMissileAmmoRegenMult()).thenReturn(missileAmmoRegen);
 
         new SkillTreeHullMod().advanceInCombat(ship, 0.1f);
 
@@ -641,12 +647,18 @@ class SkillTreeHullModTest {
         when(ship.isPhased()).thenReturn(false);
         MutableStat dissipation = mock(MutableStat.class);
         when(stats.getFluxDissipation()).thenReturn(dissipation);
-        when(stats.getBallisticRoFMult()).thenReturn(mock(MutableStat.class));
-        when(stats.getEnergyRoFMult()).thenReturn(mock(MutableStat.class));
-        when(stats.getMissileRoFMult()).thenReturn(mock(MutableStat.class));
-        when(stats.getBallisticAmmoRegenMult()).thenReturn(mock(MutableStat.class));
-        when(stats.getEnergyAmmoRegenMult()).thenReturn(mock(MutableStat.class));
-        when(stats.getMissileAmmoRegenMult()).thenReturn(mock(MutableStat.class));
+        MutableStat ballisticRoF = mock(MutableStat.class);
+        MutableStat energyRoF = mock(MutableStat.class);
+        MutableStat missileRoF = mock(MutableStat.class);
+        MutableStat ballisticAmmoRegen = mock(MutableStat.class);
+        MutableStat energyAmmoRegen = mock(MutableStat.class);
+        MutableStat missileAmmoRegen = mock(MutableStat.class);
+        when(stats.getBallisticRoFMult()).thenReturn(ballisticRoF);
+        when(stats.getEnergyRoFMult()).thenReturn(energyRoF);
+        when(stats.getMissileRoFMult()).thenReturn(missileRoF);
+        when(stats.getBallisticAmmoRegenMult()).thenReturn(ballisticAmmoRegen);
+        when(stats.getEnergyAmmoRegenMult()).thenReturn(energyAmmoRegen);
+        when(stats.getMissileAmmoRegenMult()).thenReturn(missileAmmoRegen);
 
         new SkillTreeHullMod().advanceInCombat(ship, 0.1f);
 

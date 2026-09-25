@@ -39,10 +39,12 @@ class ExiledSectorModPluginTest {
         when(settings.loadJSON("data/skilltrees/skill_types.json")).thenReturn(new JSONObject("{ \"skillTypes\": [] }"));
         when(settings.loadJSON("data/skilltrees/ship_skill_tree.json")).thenReturn(new JSONObject("{ \"nodes\": [] }"));
 
+        Logger logger = mock(Logger.class);
+
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSector).thenReturn(sector);
         globalMock.when(Global::getSettings).thenReturn(settings);
-        globalMock.when(() -> Global.getLogger(any())).thenReturn(mock(Logger.class));
+        globalMock.when(() -> Global.getLogger(any())).thenReturn(logger);
     }
 
     @AfterEach

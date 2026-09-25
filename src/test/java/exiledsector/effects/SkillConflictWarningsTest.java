@@ -14,8 +14,8 @@ class SkillConflictWarningsTest {
         ShipVariantAPI a = mock(ShipVariantAPI.class);
         ShipVariantAPI b = mock(ShipVariantAPI.class);
 
-        SkillConflictWarnings.record(a, "adaptiveshields", "Shield Conversion - Front");
-        SkillConflictWarnings.record(b, "armoredcladding", "Reinforced Hull");
+        SkillConflictWarnings.recordRemoval(a, "adaptiveshields", "Shield Conversion - Front");
+        SkillConflictWarnings.recordRemoval(b, "armoredcladding", "Reinforced Hull");
 
         assertEquals("adaptiveshields", SkillConflictWarnings.get(a).removedHullModId);
         assertEquals("armoredcladding", SkillConflictWarnings.get(b).removedHullModId);
@@ -25,8 +25,8 @@ class SkillConflictWarningsTest {
     void clearRemovesOnlyTheGivenVariantsEntry() {
         ShipVariantAPI a = mock(ShipVariantAPI.class);
         ShipVariantAPI b = mock(ShipVariantAPI.class);
-        SkillConflictWarnings.record(a, "adaptiveshields", "Shield Conversion - Front");
-        SkillConflictWarnings.record(b, "armoredcladding", "Reinforced Hull");
+        SkillConflictWarnings.recordRemoval(a, "adaptiveshields", "Shield Conversion - Front");
+        SkillConflictWarnings.recordRemoval(b, "armoredcladding", "Reinforced Hull");
 
         SkillConflictWarnings.clear(a);
 

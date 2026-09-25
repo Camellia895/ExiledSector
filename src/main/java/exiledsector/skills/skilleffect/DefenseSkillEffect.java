@@ -17,7 +17,7 @@ public enum DefenseSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "hull points");
+            return pctChange(magnitude, STAT_HULL_POINTS);
         }
     },
     HULL_FLAT {
@@ -28,7 +28,7 @@ public enum DefenseSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return flatChange(magnitude, "hull points");
+            return flatChange(magnitude, STAT_HULL_POINTS);
         }
     },
     HULL_MULT {
@@ -39,7 +39,7 @@ public enum DefenseSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctMore(magnitude, "hull points");
+            return pctMore(magnitude, STAT_HULL_POINTS);
         }
     },
     ARMOR_FLAT {
@@ -178,9 +178,5 @@ public enum DefenseSkillEffect implements SkillEffect {
         }
     };
 
-    @Override
-    public abstract void apply(MutableShipStatsAPI stats, String modId, float magnitude);
-
-    @Override
-    public abstract String describe(float magnitude);
+    private static final String STAT_HULL_POINTS = "hull points";
 }

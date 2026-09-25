@@ -160,6 +160,7 @@ public final class SkillTreePanelStyle {
                     mostCommon = entry;
                 }
             }
+            if (mostCommon == null) return DEFAULT_ACCENT_COLOR;
 
             int[] sum = bucketSums.get(mostCommon.getKey());
             int pixelCount = mostCommon.getValue();

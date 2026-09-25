@@ -44,8 +44,6 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final SkillTreeInfoTooltipRenderer readoutTooltipRenderer;
     private final BorderedPanel shipCardPanel = new BorderedPanel(SkillTreeCanvasPlugin.class);
     private final float shipCardHeight;
-    private final FleetMemberAPI member;
-    private final ShipVariantAPI variant;
 
     private PositionAPI position;
     private boolean dragging = false;
@@ -60,8 +58,6 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private SkillType pendingDropdownOption;
 
     public SkillTreeCanvasPlugin(FleetMemberAPI member, ShipVariantAPI variant, float shipCardHeight, BaseRefitButton refitButton) {
-        this.member = member;
-        this.variant = variant;
         SkillTreeHullMod.syncOpSpentHullMod(member, variant);
         this.style = new SkillTreePanelStyle(RootCrestResolver.resolve(member));
         this.starfieldRenderer = new SkillTreeStarfieldRenderer(style);

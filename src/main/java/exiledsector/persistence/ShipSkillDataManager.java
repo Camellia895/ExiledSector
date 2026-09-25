@@ -17,21 +17,10 @@ public class ShipSkillDataManager {
     @SuppressWarnings("unchecked")
     private static Map<String, ShipSkillData> getStore() {
         Map<String, Object> persistentData = Global.getSector().getPersistentData();
-        Map<String, ShipSkillData> store = (Map<String, ShipSkillData>) persistentData.get(DATA_KEY);
-        if (store == null) {
-            store = new HashMap<>();
-            persistentData.put(DATA_KEY, store);
-        }
-        return store;
+        return (Map<String, ShipSkillData>) persistentData.computeIfAbsent(DATA_KEY, key -> new HashMap<String, ShipSkillData>());
     }
 
     public static ShipSkillData get(String shipId) {
-        Map<String, ShipSkillData> store = getStore();
-        ShipSkillData data = store.get(shipId);
-        if (data == null) {
-            data = new ShipSkillData();
-            store.put(shipId, data);
-        }
-        return data;
+        return getStore().computeIfAbsent(shipId, key -> new ShipSkillData());
     }
 }

@@ -46,7 +46,7 @@ public final class AuroraBeltRenderer {
 
             GL11.glBegin(GL11.GL_QUAD_STRIP);
             for (int i = 0; i <= segments; i++) {
-                int segIndex = (int) (i % segments);
+                int segIndex = i % segments;
                 float theta = anglePerSegment * segIndex;
                 float phaseAngleRad = iter == 0
                         ? (float) Math.toRadians(phaseAngleDeg) + segIndex * anglePerSegment * 10f

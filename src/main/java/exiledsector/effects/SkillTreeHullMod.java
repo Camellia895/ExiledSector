@@ -125,7 +125,7 @@ public class SkillTreeHullMod extends BaseHullMod {
                     MagicIncompatibleHullmods.removeHullmodWithWarning(variant, hullModId, CONFLICT_WARNING_HULLMOD_ID);
                     variant.removeMod(MAGICLIB_WARNING_HULLMOD_ID);
                     variant.addMod(CONFLICT_WARNING_HULLMOD_ID);
-                    SkillConflictWarnings.record(variant, hullModId, type.getDisplayName());
+                    SkillConflictWarnings.recordRemoval(variant, hullModId, type.getDisplayName());
                     conflictFound = true;
                 }
             }

@@ -173,10 +173,4 @@ public enum MiscSkillEffect implements SkillEffect {
             return flatChange(magnitude, "command point recovery rate while this ship is the flagship");
         }
     };
-
-    @Override
-    public abstract void apply(MutableShipStatsAPI stats, String modId, float magnitude);
-
-    @Override
-    public abstract String describe(float magnitude);
 }

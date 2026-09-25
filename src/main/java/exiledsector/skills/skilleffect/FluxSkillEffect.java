@@ -39,7 +39,7 @@ public enum FluxSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "flux dissipation");
+            return pctChange(magnitude, STAT_FLUX_DISSIPATION);
         }
     },
     FLUX_DISSIPATION_FLAT {
@@ -50,7 +50,7 @@ public enum FluxSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return flatChange(magnitude, "flux dissipation");
+            return flatChange(magnitude, STAT_FLUX_DISSIPATION);
         }
     },
     FLUX_DISSIPATION_MULT {
@@ -61,7 +61,7 @@ public enum FluxSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctMore(magnitude, "flux dissipation");
+            return pctMore(magnitude, STAT_FLUX_DISSIPATION);
         }
     },
     VENT_RATE_PERCENT {
@@ -122,9 +122,5 @@ public enum FluxSkillEffect implements SkillEffect {
         }
     };
 
-    @Override
-    public abstract void apply(MutableShipStatsAPI stats, String modId, float magnitude);
-
-    @Override
-    public abstract String describe(float magnitude);
+    private static final String STAT_FLUX_DISSIPATION = "flux dissipation";
 }

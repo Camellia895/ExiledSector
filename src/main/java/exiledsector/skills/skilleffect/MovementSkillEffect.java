@@ -27,7 +27,7 @@ public enum MovementSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "top speed");
+            return pctChange(magnitude, STAT_TOP_SPEED);
         }
     },
     TOP_SPEED_FLAT {
@@ -38,7 +38,7 @@ public enum MovementSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return flatChange(magnitude, "top speed");
+            return flatChange(magnitude, STAT_TOP_SPEED);
         }
     },
     TOP_SPEED_MULT {
@@ -49,7 +49,7 @@ public enum MovementSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctMore(magnitude, "top speed");
+            return pctMore(magnitude, STAT_TOP_SPEED);
         }
     },
     ACCELERATION_PERCENT {
@@ -108,9 +108,5 @@ public enum MovementSkillEffect implements SkillEffect {
         }
     };
 
-    @Override
-    public abstract void apply(MutableShipStatsAPI stats, String modId, float magnitude);
-
-    @Override
-    public abstract String describe(float magnitude);
+    private static final String STAT_TOP_SPEED = "top speed";
 }

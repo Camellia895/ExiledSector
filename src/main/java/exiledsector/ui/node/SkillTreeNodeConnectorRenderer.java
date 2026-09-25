@@ -79,7 +79,7 @@ final class SkillTreeNodeConnectorRenderer {
 
             float nodeX = centerX + node.getOffsetX() * zoom;
             float nodeY = centerY - node.getOffsetY() * zoom;
-            float nodeRadius = endpointRadius(node, data, satisfiedRootId, zoom);
+            float nodeRadius = endpointRadius(node, zoom);
 
             for (String connectedId : node.getConnectedNodeIds()) {
                 SkillNode other = SkillTree.get(connectedId);
@@ -89,7 +89,7 @@ final class SkillTreeNodeConnectorRenderer {
 
                 float otherX = centerX + other.getOffsetX() * zoom;
                 float otherY = centerY - other.getOffsetY() * zoom;
-                float otherRadius = endpointRadius(other, data, satisfiedRootId, zoom);
+                float otherRadius = endpointRadius(other, zoom);
                 boolean bothSatisfied = data.isSatisfied(node.getId(), satisfiedRootId) && data.isSatisfied(other.getId(), satisfiedRootId);
 
                 boolean fadeOtherToBlack = isWormhole(other) || isHiddenNode(other, data);
@@ -113,7 +113,7 @@ final class SkillTreeNodeConnectorRenderer {
         GL11.glDisable(GL11.GL_BLEND);
     }
 
-    private float endpointRadius(SkillNode node, ShipSkillData data, String satisfiedRootId, float zoom) {
+    private float endpointRadius(SkillNode node, float zoom) {
         float fullRadius = connectorEndpointRadius(node.getType().getTier(), NODE_SIZE * zoom * node.getType().getTier().getSizeMultiplier(), zoom);
         if (node.getType().getTier() != SkillTier.WORMHOLE) return fullRadius;
         return fullRadius * (1f - wormholeOpenFraction(node.getId()));
@@ -243,7 +243,8 @@ final class SkillTreeNodeConnectorRenderer {
         float tipFraction1 = glowTipFading && tipFadeR1ToBlack ? Math.min(WORMHOLE_TIP_FADE_LENGTH * zoom, maxTip) / visibleArcLength : 0f;
         float tipFraction2 = glowTipFading && tipFadeR2ToBlack ? Math.min(WORMHOLE_TIP_FADE_LENGTH * zoom, maxTip) / visibleArcLength : 0f;
 
-        float prevX = 0, prevY = 0;
+        float prevX = 0;
+        float prevY = 0;
         for (int i = 0; i <= CURVE_RENDER_SEGMENTS; i++) {
             float t = tStart + (tEnd - tStart) * i / CURVE_RENDER_SEGMENTS;
             float omt = 1f - t;

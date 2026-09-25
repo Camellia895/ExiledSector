@@ -68,7 +68,10 @@ final class SkillTreeNodeDropdownRenderer {
         List<DropdownRow> rows = computeRows(centerX, centerY, zoom, font);
         if (rows.isEmpty()) return;
 
-        float minX = Float.MAX_VALUE, minY = Float.MAX_VALUE, maxX = -Float.MAX_VALUE, maxY = -Float.MAX_VALUE;
+        float minX = Float.MAX_VALUE;
+        float minY = Float.MAX_VALUE;
+        float maxX = -Float.MAX_VALUE;
+        float maxY = -Float.MAX_VALUE;
         for (DropdownRow row : rows) {
             minX = Math.min(minX, row.x);
             minY = Math.min(minY, row.y);

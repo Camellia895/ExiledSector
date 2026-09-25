@@ -204,7 +204,7 @@ public enum LogisticsSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctMore(magnitude, "minimum crew required");
+            return pctMore(magnitude, STAT_MIN_CREW_REQUIRED);
         }
     },
     MIN_CREW_PERCENT {
@@ -215,7 +215,7 @@ public enum LogisticsSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "minimum crew required");
+            return pctChange(magnitude, STAT_MIN_CREW_REQUIRED);
         }
     },
     MIN_CREW_FLAT {
@@ -226,7 +226,7 @@ public enum LogisticsSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return flatChange(magnitude, "minimum crew required");
+            return flatChange(magnitude, STAT_MIN_CREW_REQUIRED);
         }
     },
     MIN_CREW_PER_FIGHTER_BAY {
@@ -333,9 +333,5 @@ public enum LogisticsSkillEffect implements SkillEffect {
         }
     };
 
-    @Override
-    public abstract void apply(MutableShipStatsAPI stats, String modId, float magnitude);
-
-    @Override
-    public abstract String describe(float magnitude);
+    private static final String STAT_MIN_CREW_REQUIRED = "minimum crew required";
 }

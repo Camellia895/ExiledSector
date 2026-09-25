@@ -141,7 +141,7 @@ public enum WeaponSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "beam weapon range");
+            return pctChange(magnitude, STAT_BEAM_WEAPON_RANGE);
         }
     },
     BEAM_WEAPON_RANGE_MULT {
@@ -152,7 +152,7 @@ public enum WeaponSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctMore(magnitude, "beam weapon range");
+            return pctMore(magnitude, STAT_BEAM_WEAPON_RANGE);
         }
     },
     BALLISTIC_AMMO_PERCENT {
@@ -273,7 +273,7 @@ public enum WeaponSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return flatChange(magnitude, "beam weapon range");
+            return flatChange(magnitude, STAT_BEAM_WEAPON_RANGE);
         }
     },
     BEAM_WEAPON_TURN_RATE_PERCENT {
@@ -452,9 +452,5 @@ public enum WeaponSkillEffect implements SkillEffect {
         }
     };
 
-    @Override
-    public abstract void apply(MutableShipStatsAPI stats, String modId, float magnitude);
-
-    @Override
-    public abstract String describe(float magnitude);
+    private static final String STAT_BEAM_WEAPON_RANGE = "beam weapon range";
 }

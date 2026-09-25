@@ -37,12 +37,7 @@ public final class OpSpentSlotManager {
 
     @SuppressWarnings("unchecked")
     private static Map<String, Integer> getSlots(Map<String, Object> persistentData) {
-        Map<String, Integer> slots = (Map<String, Integer>) persistentData.get(SLOTS_KEY);
-        if (slots == null) {
-            slots = new HashMap<>();
-            persistentData.put(SLOTS_KEY, slots);
-        }
-        return slots;
+        return (Map<String, Integer>) persistentData.computeIfAbsent(SLOTS_KEY, key -> new HashMap<String, Integer>());
     }
 
     private static int nextFreeSlot(Map<String, Object> persistentData) {

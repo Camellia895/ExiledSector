@@ -7,6 +7,9 @@ import java.util.Map;
 
 public final class WormholePairValidator {
 
+    private static final String WORMHOLE_NODE_PREFIX = "Wormhole node \"";
+    private static final String PAIRED_WITH = "\" is paired with \"";
+
     private WormholePairValidator() {
     }
 
@@ -22,25 +25,25 @@ public final class WormholePairValidator {
 
             String pairedId = node.getPairedNodeId();
             if (pairedId == null) {
-                issues.add("Wormhole node \"" + node.getId() + "\" has no pairedWith id set.");
+                issues.add(WORMHOLE_NODE_PREFIX + node.getId() + "\" has no pairedWith id set.");
                 continue;
             }
             if (pairedId.equals(node.getId())) {
-                issues.add("Wormhole node \"" + node.getId() + "\" is paired with itself.");
+                issues.add(WORMHOLE_NODE_PREFIX + node.getId() + "\" is paired with itself.");
                 continue;
             }
 
             SkillNode paired = byId.get(pairedId);
             if (paired == null) {
-                issues.add("Wormhole node \"" + node.getId() + "\" is paired with \"" + pairedId + "\", which does not exist.");
+                issues.add(WORMHOLE_NODE_PREFIX + node.getId() + PAIRED_WITH + pairedId + "\", which does not exist.");
                 continue;
             }
             if (paired.getType().getTier() != SkillTier.WORMHOLE) {
-                issues.add("Wormhole node \"" + node.getId() + "\" is paired with \"" + pairedId + "\", which is not a wormhole-tier node.");
+                issues.add(WORMHOLE_NODE_PREFIX + node.getId() + PAIRED_WITH + pairedId + "\", which is not a wormhole-tier node.");
                 continue;
             }
             if (!node.getId().equals(paired.getPairedNodeId())) {
-                issues.add("Wormhole node \"" + node.getId() + "\" is paired with \"" + pairedId
+                issues.add(WORMHOLE_NODE_PREFIX + node.getId() + PAIRED_WITH + pairedId
                         + "\", but that node's pairedWith is \"" + paired.getPairedNodeId() + "\" instead.");
             }
         }

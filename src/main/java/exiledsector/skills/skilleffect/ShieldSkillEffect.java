@@ -133,7 +133,7 @@ public enum ShieldSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "shield arc");
+            return pctChange(magnitude, STAT_SHIELD_ARC);
         }
     },
     SHIELD_ARC_FLAT {
@@ -144,7 +144,7 @@ public enum ShieldSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return flatChange(magnitude, "shield arc");
+            return flatChange(magnitude, STAT_SHIELD_ARC);
         }
     },
     SHIELD_ARC_MULT {
@@ -155,7 +155,7 @@ public enum ShieldSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctMore(magnitude, "shield arc");
+            return pctMore(magnitude, STAT_SHIELD_ARC);
         }
     },
     SHIELD_PIERCE_CHANCE_PERCENT {
@@ -226,28 +226,23 @@ public enum ShieldSkillEffect implements SkillEffect {
     };
 
     private static final String BEAM_DAMAGE_HARD_FLUX_KEY = "exiledSector_beamDamageHardFluxPercent";
+    private static final String STAT_SHIELD_ARC = "shield arc";
 
     public static final float MAKESHIFT_SHIELD_EFFICIENCY = 0.5f;
     public static final float MAKESHIFT_SHIELD_TURN_RATE_MULT = 1.2f;
     public static final float MAKESHIFT_SHIELD_ARC = 90f;
-
-    @Override
-    public abstract void apply(MutableShipStatsAPI stats, String modId, float magnitude);
-
-    @Override
-    public abstract String describe(float magnitude);
 
     public static ShieldAPI.ShieldType resolveDisplayShieldType(ShieldAPI.ShieldType baseType, List<SkillEffect> effectsInAllocationOrder) {
         ShieldAPI.ShieldType type = baseType;
         for (SkillEffect effect : effectsInAllocationOrder) {
             if (effect == REMOVE_SHIELD) {
                 type = ShieldAPI.ShieldType.NONE;
-            } else if (effect == CREATE_FRONT_SHIELD_IF_NONE) {
-                if (type == ShieldAPI.ShieldType.NONE) type = ShieldAPI.ShieldType.FRONT;
-            } else if (effect == CONVERT_SHIELD_TO_FRONT) {
-                if (type != ShieldAPI.ShieldType.NONE) type = ShieldAPI.ShieldType.FRONT;
-            } else if (effect == CONVERT_SHIELD_TO_OMNI) {
-                if (type != ShieldAPI.ShieldType.NONE) type = ShieldAPI.ShieldType.OMNI;
+            } else if (effect == CREATE_FRONT_SHIELD_IF_NONE && type == ShieldAPI.ShieldType.NONE) {
+                type = ShieldAPI.ShieldType.FRONT;
+            } else if (effect == CONVERT_SHIELD_TO_FRONT && type != ShieldAPI.ShieldType.NONE) {
+                type = ShieldAPI.ShieldType.FRONT;
+            } else if (effect == CONVERT_SHIELD_TO_OMNI && type != ShieldAPI.ShieldType.NONE) {
+                type = ShieldAPI.ShieldType.OMNI;
             }
         }
         return type;

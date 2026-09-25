@@ -113,12 +113,6 @@ public enum PhaseSkillEffect implements SkillEffect {
 
     private static final String PHASE_ANCHOR_CR_PENALTY_KEY = "exiledSector_phaseAnchorCrPenaltyPercent";
 
-    @Override
-    public abstract void apply(MutableShipStatsAPI stats, String modId, float magnitude);
-
-    @Override
-    public abstract String describe(float magnitude);
-
     private static final class PhaseAnchorDiveListener implements HullDamageAboutToBeTakenListener, AdvanceableListener {
 
         private static final String DIVE_FLAG_KEY = "phaseAnchor_canDive";

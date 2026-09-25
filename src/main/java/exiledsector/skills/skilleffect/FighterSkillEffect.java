@@ -228,33 +228,33 @@ public enum FighterSkillEffect implements SkillEffect {
             return flatChange(magnitude, "weapon range of fighters launched from this ship");
         }
     },
-    FIGHTER_ROLE_DAMAGE_PERCENT(WingRole.FIGHTER, "weapon damage", FighterSkillEffect::applyRoleDamage),
-    FIGHTER_ROLE_TOP_SPEED_PERCENT(WingRole.FIGHTER, "top speed", FighterSkillEffect::applyRoleTopSpeed),
-    FIGHTER_ROLE_ARMOR_PERCENT(WingRole.FIGHTER, "armor", FighterSkillEffect::applyRoleArmor),
-    FIGHTER_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT(WingRole.FIGHTER, "damage taken by shields", FighterSkillEffect::applyRoleShieldDamageTaken),
-    FIGHTER_ROLE_RATE_OF_FIRE_PERCENT(WingRole.FIGHTER, "weapon rate of fire", FighterSkillEffect::applyRoleRateOfFire),
-    FIGHTER_ROLE_ENGAGEMENT_RANGE_PERCENT(WingRole.FIGHTER, "engagement range", FighterSkillEffect::applyRoleEngagementRange),
+    FIGHTER_ROLE_DAMAGE_PERCENT(WingRole.FIGHTER, RoleStat.WEAPON_DAMAGE),
+    FIGHTER_ROLE_TOP_SPEED_PERCENT(WingRole.FIGHTER, RoleStat.TOP_SPEED),
+    FIGHTER_ROLE_ARMOR_PERCENT(WingRole.FIGHTER, RoleStat.ARMOR),
+    FIGHTER_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT(WingRole.FIGHTER, RoleStat.SHIELD_DAMAGE_TAKEN),
+    FIGHTER_ROLE_RATE_OF_FIRE_PERCENT(WingRole.FIGHTER, RoleStat.RATE_OF_FIRE),
+    FIGHTER_ROLE_ENGAGEMENT_RANGE_PERCENT(WingRole.FIGHTER, RoleStat.ENGAGEMENT_RANGE),
 
-    INTERCEPTOR_ROLE_DAMAGE_PERCENT(WingRole.INTERCEPTOR, "weapon damage", FighterSkillEffect::applyRoleDamage),
-    INTERCEPTOR_ROLE_TOP_SPEED_PERCENT(WingRole.INTERCEPTOR, "top speed", FighterSkillEffect::applyRoleTopSpeed),
-    INTERCEPTOR_ROLE_ARMOR_PERCENT(WingRole.INTERCEPTOR, "armor", FighterSkillEffect::applyRoleArmor),
-    INTERCEPTOR_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT(WingRole.INTERCEPTOR, "damage taken by shields", FighterSkillEffect::applyRoleShieldDamageTaken),
-    INTERCEPTOR_ROLE_RATE_OF_FIRE_PERCENT(WingRole.INTERCEPTOR, "weapon rate of fire", FighterSkillEffect::applyRoleRateOfFire),
-    INTERCEPTOR_ROLE_ENGAGEMENT_RANGE_PERCENT(WingRole.INTERCEPTOR, "engagement range", FighterSkillEffect::applyRoleEngagementRange),
+    INTERCEPTOR_ROLE_DAMAGE_PERCENT(WingRole.INTERCEPTOR, RoleStat.WEAPON_DAMAGE),
+    INTERCEPTOR_ROLE_TOP_SPEED_PERCENT(WingRole.INTERCEPTOR, RoleStat.TOP_SPEED),
+    INTERCEPTOR_ROLE_ARMOR_PERCENT(WingRole.INTERCEPTOR, RoleStat.ARMOR),
+    INTERCEPTOR_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT(WingRole.INTERCEPTOR, RoleStat.SHIELD_DAMAGE_TAKEN),
+    INTERCEPTOR_ROLE_RATE_OF_FIRE_PERCENT(WingRole.INTERCEPTOR, RoleStat.RATE_OF_FIRE),
+    INTERCEPTOR_ROLE_ENGAGEMENT_RANGE_PERCENT(WingRole.INTERCEPTOR, RoleStat.ENGAGEMENT_RANGE),
 
-    BOMBER_ROLE_DAMAGE_PERCENT(WingRole.BOMBER, "weapon damage", FighterSkillEffect::applyRoleDamage),
-    BOMBER_ROLE_TOP_SPEED_PERCENT(WingRole.BOMBER, "top speed", FighterSkillEffect::applyRoleTopSpeed),
-    BOMBER_ROLE_ARMOR_PERCENT(WingRole.BOMBER, "armor", FighterSkillEffect::applyRoleArmor),
-    BOMBER_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT(WingRole.BOMBER, "damage taken by shields", FighterSkillEffect::applyRoleShieldDamageTaken),
-    BOMBER_ROLE_RATE_OF_FIRE_PERCENT(WingRole.BOMBER, "weapon rate of fire", FighterSkillEffect::applyRoleRateOfFire),
-    BOMBER_ROLE_ENGAGEMENT_RANGE_PERCENT(WingRole.BOMBER, "engagement range", FighterSkillEffect::applyRoleEngagementRange),
+    BOMBER_ROLE_DAMAGE_PERCENT(WingRole.BOMBER, RoleStat.WEAPON_DAMAGE),
+    BOMBER_ROLE_TOP_SPEED_PERCENT(WingRole.BOMBER, RoleStat.TOP_SPEED),
+    BOMBER_ROLE_ARMOR_PERCENT(WingRole.BOMBER, RoleStat.ARMOR),
+    BOMBER_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT(WingRole.BOMBER, RoleStat.SHIELD_DAMAGE_TAKEN),
+    BOMBER_ROLE_RATE_OF_FIRE_PERCENT(WingRole.BOMBER, RoleStat.RATE_OF_FIRE),
+    BOMBER_ROLE_ENGAGEMENT_RANGE_PERCENT(WingRole.BOMBER, RoleStat.ENGAGEMENT_RANGE),
 
-    SUPPORT_ROLE_DAMAGE_PERCENT(WingRole.SUPPORT, "weapon damage", FighterSkillEffect::applyRoleDamage),
-    SUPPORT_ROLE_TOP_SPEED_PERCENT(WingRole.SUPPORT, "top speed", FighterSkillEffect::applyRoleTopSpeed),
-    SUPPORT_ROLE_ARMOR_PERCENT(WingRole.SUPPORT, "armor", FighterSkillEffect::applyRoleArmor),
-    SUPPORT_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT(WingRole.SUPPORT, "damage taken by shields", FighterSkillEffect::applyRoleShieldDamageTaken),
-    SUPPORT_ROLE_RATE_OF_FIRE_PERCENT(WingRole.SUPPORT, "weapon rate of fire", FighterSkillEffect::applyRoleRateOfFire),
-    SUPPORT_ROLE_ENGAGEMENT_RANGE_PERCENT(WingRole.SUPPORT, "engagement range", FighterSkillEffect::applyRoleEngagementRange),
+    SUPPORT_ROLE_DAMAGE_PERCENT(WingRole.SUPPORT, RoleStat.WEAPON_DAMAGE),
+    SUPPORT_ROLE_TOP_SPEED_PERCENT(WingRole.SUPPORT, RoleStat.TOP_SPEED),
+    SUPPORT_ROLE_ARMOR_PERCENT(WingRole.SUPPORT, RoleStat.ARMOR),
+    SUPPORT_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT(WingRole.SUPPORT, RoleStat.SHIELD_DAMAGE_TAKEN),
+    SUPPORT_ROLE_RATE_OF_FIRE_PERCENT(WingRole.SUPPORT, RoleStat.RATE_OF_FIRE),
+    SUPPORT_ROLE_ENGAGEMENT_RANGE_PERCENT(WingRole.SUPPORT, RoleStat.ENGAGEMENT_RANGE),
 
     REMOVE_ALL_FIGHTER_BAYS {
         @Override
@@ -348,17 +348,15 @@ public enum FighterSkillEffect implements SkillEffect {
     }
 
     private final WingRole role;
-    private final String roleStatDescription;
-    private final RoleStatApplier roleStatApplier;
+    private final RoleStat roleStat;
 
     FighterSkillEffect() {
-        this(null, null, null);
+        this(null, null);
     }
 
-    FighterSkillEffect(WingRole role, String roleStatDescription, RoleStatApplier roleStatApplier) {
+    FighterSkillEffect(WingRole role, RoleStat roleStat) {
         this.role = role;
-        this.roleStatDescription = roleStatDescription;
-        this.roleStatApplier = roleStatApplier;
+        this.roleStat = roleStat;
     }
 
     @Override
@@ -367,18 +365,35 @@ public enum FighterSkillEffect implements SkillEffect {
 
     @Override
     public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
-        if (roleStatApplier != null && matchesRole(fighter, role)) {
-            roleStatApplier.apply(fighter, modId, magnitude);
+        if (roleStat != null && matchesRole(fighter, role)) {
+            roleStat.applier.apply(fighter, modId, magnitude);
         }
     }
 
     @Override
     public String describe(float magnitude) {
-        return pctChange(magnitude, roleStatDescription + " of " + roleDisplayName(role) + " launched from this ship");
+        return pctChange(magnitude, roleStat.description + " of " + roleDisplayName(role) + " launched from this ship");
     }
 
     @FunctionalInterface
     private interface RoleStatApplier {
         void apply(ShipAPI fighter, String modId, float magnitude);
+    }
+
+    private enum RoleStat {
+        WEAPON_DAMAGE("weapon damage", FighterSkillEffect::applyRoleDamage),
+        TOP_SPEED("top speed", FighterSkillEffect::applyRoleTopSpeed),
+        ARMOR("armor", FighterSkillEffect::applyRoleArmor),
+        SHIELD_DAMAGE_TAKEN("damage taken by shields", FighterSkillEffect::applyRoleShieldDamageTaken),
+        RATE_OF_FIRE("weapon rate of fire", FighterSkillEffect::applyRoleRateOfFire),
+        ENGAGEMENT_RANGE("engagement range", FighterSkillEffect::applyRoleEngagementRange);
+
+        private final String description;
+        private final RoleStatApplier applier;
+
+        RoleStat(String description, RoleStatApplier applier) {
+            this.description = description;
+            this.applier = applier;
+        }
     }
 }
