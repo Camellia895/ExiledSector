@@ -1,5 +1,6 @@
 package exiledsector.skills;
 
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.skilleffect.SkillEffect;
@@ -15,6 +16,7 @@ public final class AllocatedSkillEffects {
     public static List<SkillEffect> forMember(FleetMemberAPI member) {
         List<SkillEffect> effects = new ArrayList<>();
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
+        HullSize hullSize = member.getHullSpec().getHullSize();
         for (String nodeId : data.getAllocatedNodeIds()) {
             SkillNode node = SkillTree.get(nodeId);
             if (node == null) continue;
@@ -22,9 +24,7 @@ public final class AllocatedSkillEffects {
             SkillType type = node.resolveEffectiveType(data);
             if (type.getVanillaHullModId() != null) continue;
 
-            for (SkillTypeEffect effect : type.getEffects()) {
-                effects.add(effect.effect());
-            }
+            type.forEachEffect(hullSize, (effect, magnitude) -> effects.add(effect));
         }
         return effects;
     }
