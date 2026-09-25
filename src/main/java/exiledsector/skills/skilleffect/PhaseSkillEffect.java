@@ -91,12 +91,13 @@ public enum PhaseSkillEffect implements SkillEffect {
     PHASE_ANCHOR_EMERGENCY_DIVE {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(PHASE_ANCHOR_CR_PENALTY_KEY).modifyFlat(modId, magnitude);
         }
 
         @Override
         public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
             if (!ship.hasListenerOfClass(PhaseAnchorDiveListener.class)) {
-                ship.addListener(new PhaseAnchorDiveListener(ship, modId, magnitude));
+                ship.addListener(new PhaseAnchorDiveListener(ship, modId));
             }
         }
 
@@ -110,6 +111,8 @@ public enum PhaseSkillEffect implements SkillEffect {
         }
     };
 
+    private static final String PHASE_ANCHOR_CR_PENALTY_KEY = "exiledSector_phaseAnchorCrPenaltyPercent";
+
     @Override
     public abstract void apply(MutableShipStatsAPI stats, String modId, float magnitude);
 
@@ -122,15 +125,13 @@ public enum PhaseSkillEffect implements SkillEffect {
 
         private final ShipAPI ship;
         private final String modId;
-        private final float crPenaltyMult;
         private final FaderUtil diveFader = new FaderUtil(1f, 1f);
         private boolean diving;
         private float diveProgress;
 
-        private PhaseAnchorDiveListener(ShipAPI ship, String modId, float magnitude) {
+        private PhaseAnchorDiveListener(ShipAPI ship, String modId) {
             this.ship = ship;
             this.modId = modId;
-            this.crPenaltyMult = magnitude / 100f;
         }
 
         @Override
@@ -149,6 +150,7 @@ public enum PhaseSkillEffect implements SkillEffect {
 
             FleetMemberAPI member = ship.getFleetMember();
             float deployCost = member != null ? member.getDeployCost() : 0f;
+            float crPenaltyMult = ship.getMutableStats().getDynamic().getValue(PHASE_ANCHOR_CR_PENALTY_KEY, 0f) / 100f;
             float crCost = crPenaltyMult * deployCost;
             if (ship.getCurrentCR() < crCost) {
                 return false;

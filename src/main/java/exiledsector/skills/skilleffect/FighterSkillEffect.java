@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.WingRole;
 
+import static exiledsector.skills.skilleffect.SkillEffectText.pct;
 import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
 import static exiledsector.skills.skilleffect.SkillEffectText.pctMore;
 import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
@@ -96,7 +97,8 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctMore(magnitude, "fighter replacement rate (both decay and recovery)");
+            String verb = magnitude >= 0 ? "slower" : "faster";
+            return pct(Math.abs(magnitude)) + "% " + verb + " fighter replacement rate decay and recovery.";
         }
     },
     FIGHTER_REPLACEMENT_DECAY_PERCENT {

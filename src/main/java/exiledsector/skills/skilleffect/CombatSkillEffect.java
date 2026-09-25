@@ -59,12 +59,13 @@ public enum CombatSkillEffect implements SkillEffect {
     EXPLODE_ON_DEATH {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+w            stats.getDynamic().getMod(EXPLODE_ON_DEATH_FUEL_DAMAGE_KEY).modifyFlat(modId, magnitude);
         }
 
         @Override
         public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
             if (!ship.hasListenerOfClass(DeathExplosionListener.class)) {
-                ship.addListener(new DeathExplosionListener(ship, magnitude));
+                ship.addListener(new DeathExplosionListener(ship));
             }
         }
 
@@ -130,6 +131,8 @@ public enum CombatSkillEffect implements SkillEffect {
                     + "than the one before it.";
         }
     };
+
+    private static final String EXPLODE_ON_DEATH_FUEL_DAMAGE_KEY = "exiledSector_explodeOnDeathFuelDamagePercent";
 
     private static final String BEAM_SPLIT_TARGETS_KEY = "exiledSector_beamSplitTargets";
     private static final float SPLIT_RADIUS_MULT_OF_BEAM_RANGE = 0.5f;
@@ -328,12 +331,10 @@ public enum CombatSkillEffect implements SkillEffect {
         private static final Color CORE_COLOR = new Color(255, 255, 255, 60);
 
         private final ShipAPI ship;
-        private final float fuelDamagePercent;
         private boolean exploded;
 
-        private DeathExplosionListener(ShipAPI ship, float fuelDamagePercent) {
+        private DeathExplosionListener(ShipAPI ship) {
             this.ship = ship;
-            this.fuelDamagePercent = fuelDamagePercent;
         }
 
         @Override
@@ -372,6 +373,7 @@ public enum CombatSkillEffect implements SkillEffect {
             if (member == null) {
                 return 0f;
             }
+            float fuelDamagePercent = ship.getMutableStats().getDynamic().getValue(EXPLODE_ON_DEATH_FUEL_DAMAGE_KEY, 0f);
             return member.getFuelCapacity() * fuelDamagePercent / 100f;
         }
     }

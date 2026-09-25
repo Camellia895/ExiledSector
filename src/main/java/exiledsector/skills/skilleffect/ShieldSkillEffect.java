@@ -24,12 +24,13 @@ public enum ShieldSkillEffect implements SkillEffect {
     BEAM_DAMAGE_HARD_FLUX_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(BEAM_DAMAGE_HARD_FLUX_KEY).modifyFlat(modId, magnitude);
         }
 
         @Override
         public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
             if (!ship.hasListenerOfClass(BeamHardFluxListener.class)) {
-                ship.addListener(new BeamHardFluxListener(magnitude));
+                ship.addListener(new BeamHardFluxListener(ship));
             }
         }
 
@@ -224,6 +225,8 @@ public enum ShieldSkillEffect implements SkillEffect {
         }
     };
 
+    private static final String BEAM_DAMAGE_HARD_FLUX_KEY = "exiledSector_beamDamageHardFluxPercent";
+
     public static final float MAKESHIFT_SHIELD_EFFICIENCY = 0.5f;
     public static final float MAKESHIFT_SHIELD_TURN_RATE_MULT = 1.2f;
     public static final float MAKESHIFT_SHIELD_ARC = 90f;
@@ -252,10 +255,10 @@ public enum ShieldSkillEffect implements SkillEffect {
 
     private static final class BeamHardFluxListener implements DamageDealtModifier {
 
-        private final float percent;
+        private final ShipAPI ship;
 
-        private BeamHardFluxListener(float percent) {
-            this.percent = percent;
+        private BeamHardFluxListener(ShipAPI ship) {
+            this.ship = ship;
         }
 
         @Override
@@ -264,6 +267,7 @@ public enum ShieldSkillEffect implements SkillEffect {
             if (!(param instanceof BeamAPI)) return null;
             if (!(target instanceof ShipAPI)) return null;
 
+            float percent = ship.getMutableStats().getDynamic().getValue(BEAM_DAMAGE_HARD_FLUX_KEY, 0f);
             float hardPortion = damage.getDamage() * (percent / 100f);
             if (hardPortion <= 0f) return null;
 

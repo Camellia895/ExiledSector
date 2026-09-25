@@ -1001,12 +1001,16 @@ class SkillEffectTest {
     }
 
     @Test
-    void beamDamageHardFluxPercentDoesNotTouchStatsDirectly() {
+    void beamDamageHardFluxPercentModifiesTheDynamicStat() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
+        when(stats.getDynamic()).thenReturn(dynamic);
+        StatBonus hardFluxPercent = mock(StatBonus.class);
+        when(dynamic.getMod("exiledSector_beamDamageHardFluxPercent")).thenReturn(hardFluxPercent);
 
         ShieldSkillEffect.BEAM_DAMAGE_HARD_FLUX_PERCENT.apply(stats, "mod_id", 50f);
 
-        verifyNoInteractions(stats);
+        verify(hardFluxPercent).modifyFlat("mod_id", 50f);
     }
 
     @Test
@@ -1031,6 +1035,11 @@ class SkillEffectTest {
 
     private DamageDealtModifier captureBeamHardFluxListener(float magnitude) {
         ShipAPI ship = mock(ShipAPI.class);
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
+        when(ship.getMutableStats()).thenReturn(stats);
+        when(stats.getDynamic()).thenReturn(dynamic);
+        when(dynamic.getValue("exiledSector_beamDamageHardFluxPercent", 0f)).thenReturn(magnitude);
         when(ship.hasListenerOfClass(any())).thenReturn(false);
         ShieldSkillEffect.BEAM_DAMAGE_HARD_FLUX_PERCENT.applyAfterShipCreation(ship, "mod_id", magnitude);
         ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
@@ -1097,12 +1106,16 @@ class SkillEffectTest {
     }
 
     @Test
-    void phaseAnchorEmergencyDiveDoesNotTouchStatsDirectly() {
+    void phaseAnchorEmergencyDiveModifiesTheDynamicCrPenaltyStat() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
+        when(stats.getDynamic()).thenReturn(dynamic);
+        StatBonus crPenalty = mock(StatBonus.class);
+        when(dynamic.getMod("exiledSector_phaseAnchorCrPenaltyPercent")).thenReturn(crPenalty);
 
         PhaseSkillEffect.PHASE_ANCHOR_EMERGENCY_DIVE.apply(stats, "mod_id", 100f);
 
-        verifyNoInteractions(stats);
+        verify(crPenalty).modifyFlat("mod_id", 100f);
     }
 
     @Test
@@ -1126,6 +1139,11 @@ class SkillEffectTest {
     }
 
     private Object capturePhaseAnchorDiveListener(ShipAPI ship, float magnitude) {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
+        when(ship.getMutableStats()).thenReturn(stats);
+        when(stats.getDynamic()).thenReturn(dynamic);
+        when(dynamic.getValue("exiledSector_phaseAnchorCrPenaltyPercent", 0f)).thenReturn(magnitude);
         when(ship.hasListenerOfClass(any())).thenReturn(false);
         PhaseSkillEffect.PHASE_ANCHOR_EMERGENCY_DIVE.applyAfterShipCreation(ship, "mod_id", magnitude);
         ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
