@@ -116,6 +116,7 @@ public class SkillTreeStarfieldRenderer {
         GL11.glDisable(GL11.GL_BLEND);
     }
 
+    // generic array creation isn't allowed directly; the raw List[] is only ever populated with List<Star>
     @SuppressWarnings("unchecked")
     private void initStars(float panelWidth, float panelHeight) {
         fieldWidth = panelWidth * 1.2f;

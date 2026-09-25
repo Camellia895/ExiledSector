@@ -35,6 +35,7 @@ public final class OpSpentSlotManager {
         return assigned;
     }
 
+    // persistentData is a raw Object map; this key is only ever written as Map<String, Integer>
     @SuppressWarnings("unchecked")
     private static Map<String, Integer> getSlots(Map<String, Object> persistentData) {
         return (Map<String, Integer>) persistentData.computeIfAbsent(SLOTS_KEY, key -> new HashMap<String, Integer>());

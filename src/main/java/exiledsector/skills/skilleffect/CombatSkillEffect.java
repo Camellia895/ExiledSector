@@ -76,7 +76,9 @@ public enum CombatSkillEffect implements SkillEffect {
         }
     },
     DEATH_ON_COLLISION {
+        // this effect has no stat to modify - it only acts via the listener added in applyAfterShipCreation
         @Override
+        @SuppressWarnings("java:S1186")
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
         }
 
@@ -153,7 +155,9 @@ public enum CombatSkillEffect implements SkillEffect {
             this.ship = ship;
         }
 
+        // return value is an unused damage-modifier reason string; this listener never needs to supply one
         @Override
+        @SuppressWarnings("java:S3516")
         public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
             if (processingSplit) return null;
             if (!(param instanceof BeamAPI)) return null;
@@ -249,8 +253,10 @@ public enum CombatSkillEffect implements SkillEffect {
             this.ship = ship;
         }
 
+        // unchecked: storedHits is only ever written by this class as List<ShipAPI>
+        // S3516: return value is an unused damage-modifier reason string; this listener never needs to supply one
         @Override
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({"unchecked", "java:S3516"})
         public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
             if (!shieldHit) return null;
             if (!(param instanceof DamagingProjectileAPI)) return null;
@@ -330,7 +336,9 @@ public enum CombatSkillEffect implements SkillEffect {
             this.ship = ship;
         }
 
+        // this listener never cancels hull damage, only reacts to it, so it always returns false
         @Override
+        @SuppressWarnings("java:S3516")
         public boolean notifyAboutToTakeHullDamage(Object param, ShipAPI ship, Vector2f point, float damageAmount) {
             if (exploded || damageAmount < ship.getHitpoints()) {
                 return false;

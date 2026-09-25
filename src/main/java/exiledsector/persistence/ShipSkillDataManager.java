@@ -14,6 +14,7 @@ public class ShipSkillDataManager {
     private ShipSkillDataManager() {
     }
 
+    // persistentData is a raw Object map; this key is only ever written as Map<String, ShipSkillData>
     @SuppressWarnings("unchecked")
     private static Map<String, ShipSkillData> getStore() {
         Map<String, Object> persistentData = Global.getSector().getPersistentData();
