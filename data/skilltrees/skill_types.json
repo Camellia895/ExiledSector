@@ -908,6 +908,35 @@
 			]
 		},
 		{
+			"id": "hoarded_arms",
+			"name": "Hoarded Arms",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "BALLISTIC_AMMO_PERCENT",
+					"magnitude": 20
+				},
+				{
+					"effect": "ENERGY_AMMO_PERCENT",
+					"magnitude": 20
+				},
+				{
+					"effect": "BALLISTIC_AMMO_REGEN_PERCENT",
+					"magnitude": 20
+				},
+				{
+					"effect": "ENERGY_AMMO_REGEN_PERCENT",
+					"magnitude": 20
+				}
+			],
+			"tags": [
+				"ballistic",
+				"energy",
+				"ammo"
+			]
+		},
+		{
 			"id": "magazines",
 			"name": "Expanded Ballistic Magazines",
 			"icon": "graphics/icons/magazines.png",
@@ -2108,8 +2137,14 @@
 		{
 			"id": "waste_not",
 			"name": "Waste Not",
-			"icon": "",
+			"icon": "graphics/icons/cargo_capacity_flat_shifted.png",
 			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CR_RECOVERY_RATE_PERCENT",
+					"magnitude": 10
+				}
+			],
 			"hullSizeEffects": [
 				{
 					"effect": "POST_BATTLE_SALVAGE_PERCENT",
@@ -2320,10 +2355,10 @@
 			"hullSizeEffects": [
 				{
 					"effect": "TOP_SPEED_FLAT",
-					"frigate": 30,
-					"destroyer": 20,
-					"cruiser": 10,
-					"capitalShip": 5
+					"frigate": 10,
+					"destroyer": 8,
+					"cruiser": 6,
+					"capitalShip": 4
 				}
 			],
 			"tags": [

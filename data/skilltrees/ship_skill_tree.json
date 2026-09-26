@@ -37,18 +37,6 @@
 			"orbitAngle": 90
 		},
 		{
-			"id": "ballistic_damage_1",
-			"type": "ballistic_damage",
-			"connectedTo": [
-				"ballistic_damage_2",
-				"ballistic_rangefinder_1"
-			],
-			"x": 1625,
-			"y": 1775,
-			"orbitAnchorId": "anchor_4",
-			"orbitAngle": 177.29999999999995
-		},
-		{
 			"id": "beam_damage_1",
 			"type": "beam_damage",
 			"connectedTo": [
@@ -120,8 +108,8 @@
 			"connectedTo": [
 				"weapon_durability_1"
 			],
-			"x": 734,
-			"y": 1570,
+			"x": 832,
+			"y": 1530,
 			"orbitAnchorId": "anchor_18",
 			"orbitAngle": -29.999999999999996
 		},
@@ -254,7 +242,7 @@
 			"type": "ballistic_rangefinder",
 			"connectedTo": [
 				"ballistic_damage_3",
-				"ballistic_damage_1"
+				"ballistic_projectile_speed_3"
 			],
 			"x": 1782,
 			"y": 1918,
@@ -397,8 +385,8 @@
 			"connectedTo": [
 				"small_flux_optional_36"
 			],
-			"x": -900,
-			"y": 2380,
+			"x": -878,
+			"y": 2385,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#99ffb3"
 		},
@@ -556,7 +544,7 @@
 			"connectedTo": [
 				"crew_capacity_flat_2"
 			],
-			"x": -799,
+			"x": -826,
 			"y": -523,
 			"orbitAnchorId": "additional_berthing_anchor",
 			"orbitAngle": 270
@@ -579,8 +567,8 @@
 			"connectedTo": [
 				"fuel_flat_1"
 			],
-			"x": 505,
-			"y": 928,
+			"x": 414,
+			"y": 904,
 			"orbitAnchorId": "flat_fuel_anchor",
 			"orbitAngle": 90
 		},
@@ -624,8 +612,8 @@
 			"connectedTo": [
 				"engine_durability_1"
 			],
-			"x": -395,
-			"y": 605,
+			"x": -245,
+			"y": 723,
 			"orbitAnchorId": "insulated_engine_assembly_anchor",
 			"orbitAngle": 0
 		},
@@ -656,8 +644,10 @@
 			"connectedTo": [
 				"survey_generic_cost_reduction_2"
 			],
-			"x": 346,
-			"y": -538
+			"x": 494,
+			"y": -537,
+			"orbitAnchorId": "survey_anchor",
+			"orbitAngle": 0
 		},
 		{
 			"id": "converted_hangar_1",
@@ -1127,36 +1117,11 @@
 			"y": 442
 		},
 		{
-			"id": "survey_mach_cost_1",
-			"type": "survey_mach_cost",
-			"connectedTo": [
-				"survey_generic_cost_reduction_1",
-				"survey_generic_cost_reduction_2"
-			],
-			"x": 346,
-			"y": -389,
-			"orbitAnchorId": "survey_anchor",
-			"orbitAngle": 90
-		},
-		{
-			"id": "survey_supplies_cost_reduction_1",
-			"type": "survey_supplies_cost_reduction",
-			"connectedTo": [
-				"survey_generic_cost_reduction_1",
-				"survey_generic_cost_reduction_2"
-			],
-			"x": 346,
-			"y": -685,
-			"orbitAnchorId": "survey_anchor",
-			"orbitAngle": 270
-		},
-		{
 			"id": "survey_generic_cost_reduction_1",
 			"type": "survey_generic_cost_reduction",
 			"connectedTo": [
 				"small_logistics_optional_7",
-				"survey_supplies_cost_reduction_1",
-				"survey_mach_cost_1"
+				"survey_generic_cost_reduction_2"
 			],
 			"x": 198,
 			"y": -537,
@@ -1167,14 +1132,13 @@
 			"id": "survey_generic_cost_reduction_2",
 			"type": "survey_generic_cost_reduction",
 			"connectedTo": [
-				"survey_supplies_cost_reduction_1",
-				"survey_mach_cost_1",
-				"surveying_equipment_1"
+				"surveying_equipment_1",
+				"survey_generic_cost_reduction_1"
 			],
-			"x": 494,
-			"y": -537,
+			"x": 346,
+			"y": -389,
 			"orbitAnchorId": "survey_anchor",
-			"orbitAngle": 0
+			"orbitAngle": 90
 		},
 		{
 			"id": "increased_sensor_strength_1",
@@ -1231,7 +1195,7 @@
 				"crew_capacity_flat_2",
 				"small_logistics_optional_2"
 			],
-			"x": -799,
+			"x": -826,
 			"y": -183,
 			"orbitAnchorId": "additional_berthing_anchor",
 			"orbitAngle": 90
@@ -1243,7 +1207,7 @@
 				"crew_capacity_flat_1",
 				"additional_berthing_1"
 			],
-			"x": -629,
+			"x": -656,
 			"y": -353,
 			"orbitAnchorId": "additional_berthing_anchor",
 			"orbitAngle": 0
@@ -1279,8 +1243,8 @@
 				"engine_durability_2",
 				"insulatedengine_1"
 			],
-			"x": -544,
-			"y": 754,
+			"x": -394,
+			"y": 872,
 			"orbitAnchorId": "insulated_engine_assembly_anchor",
 			"orbitAngle": 90
 		},
@@ -1291,8 +1255,8 @@
 				"small_logistics_optional_1",
 				"engine_durability_1"
 			],
-			"x": -693,
-			"y": 605,
+			"x": -543,
+			"y": 723,
 			"orbitAnchorId": "insulated_engine_assembly_anchor",
 			"orbitAngle": 180
 		},
@@ -1363,8 +1327,8 @@
 				"fuel_flat_2",
 				"auxiliary_fuel_tanks_1"
 			],
-			"x": 305,
-			"y": 728,
+			"x": 241,
+			"y": 731,
 			"orbitAnchorId": "flat_fuel_anchor",
 			"orbitAngle": 180
 		},
@@ -1375,8 +1339,8 @@
 				"fuel_flat_1",
 				"small_logistics_optional_13"
 			],
-			"x": 505,
-			"y": 528,
+			"x": 414,
+			"y": 558,
 			"orbitAnchorId": "flat_fuel_anchor",
 			"orbitAngle": 270
 		},
@@ -2068,9 +2032,9 @@
 			"id": "ballistic_damage_2",
 			"type": "ballistic_damage",
 			"connectedTo": [
-				"ballistic_damage_1",
 				"ballistic_damage_3",
-				"small_flux_optional_31"
+				"small_flux_optional_31",
+				"ballistic_projectile_speed_3"
 			],
 			"x": 1768,
 			"y": 1618,
@@ -2408,8 +2372,8 @@
 				"weapon_durability_2",
 				"armoredweapons_1"
 			],
-			"x": 474,
-			"y": 1570,
+			"x": 572,
+			"y": 1530,
 			"orbitAnchorId": "anchor_18",
 			"orbitAngle": -150.00000000000003
 		},
@@ -2420,8 +2384,8 @@
 				"weapon_durability_1",
 				"small_flux_optional_33"
 			],
-			"x": 604,
-			"y": 1795,
+			"x": 702,
+			"y": 1755,
 			"orbitAnchorId": "anchor_18",
 			"orbitAngle": 90
 		},
@@ -2479,8 +2443,8 @@
 				"hightech_wormhole_2",
 				"small_flux_optional_30"
 			],
-			"x": 2190,
-			"y": 1023,
+			"x": 2195,
+			"y": 994,
 			"wormholeColor": "#5f64ec",
 			"pairedWith": "hightech_wormhole_2"
 		},
@@ -2491,8 +2455,8 @@
 				"wormhole_6",
 				"small_flux_optional_31"
 			],
-			"x": 2075,
-			"y": 1302,
+			"x": 2073,
+			"y": 1262,
 			"wormholeColor": "#cd7f4c",
 			"pairedWith": "wormhole_6"
 		},
@@ -3251,7 +3215,7 @@
 				"small_flux_optional_60"
 			],
 			"x": 7697,
-			"y": -1994
+			"y": -789
 		},
 		{
 			"id": "small_flux_optional_61",
@@ -3264,6 +3228,15 @@
 			"y": 24,
 			"orbitAnchorId": "pirate_inner",
 			"orbitAngle": 0
+		},
+		{
+			"id": "hoarded_arms_1",
+			"type": "hoarded_arms",
+			"connectedTo": [
+				"small_flux_optional_61"
+			],
+			"x": 9715,
+			"y": 24
 		},
 		{
 			"id": "ballistic_momentum_1",
@@ -3710,6 +3683,18 @@
 			"y": -4076,
 			"orbitAnchorId": "anchor_38",
 			"orbitAngle": 90
+		},
+		{
+			"id": "ballistic_projectile_speed_3",
+			"type": "ballistic_projectile_speed",
+			"connectedTo": [
+				"ballistic_damage_2",
+				"ballistic_rangefinder_1"
+			],
+			"x": 1625,
+			"y": 1775,
+			"orbitAnchorId": "anchor_4",
+			"orbitAngle": 177.29999999999995
 		}
 	],
 	"connectorCurves": [
@@ -3780,30 +3765,6 @@
 			"controlY": -1245
 		},
 		{
-			"a": "survey_generic_cost_reduction_2",
-			"b": "survey_mach_cost_1",
-			"controlX": 421,
-			"controlY": -462
-		},
-		{
-			"a": "survey_generic_cost_reduction_2",
-			"b": "survey_supplies_cost_reduction_1",
-			"controlX": 421,
-			"controlY": -612
-		},
-		{
-			"a": "survey_generic_cost_reduction_1",
-			"b": "survey_supplies_cost_reduction_1",
-			"controlX": 271,
-			"controlY": -612
-		},
-		{
-			"a": "survey_generic_cost_reduction_1",
-			"b": "survey_mach_cost_1",
-			"controlX": 271,
-			"controlY": -462
-		},
-		{
 			"a": "augmentedengines_1",
 			"b": "small_logistics_optional_24",
 			"controlX": 426,
@@ -3818,13 +3779,13 @@
 		{
 			"a": "crew_capacity_flat_1",
 			"b": "crew_capacity_flat_2",
-			"controlX": -679,
+			"controlX": -706,
 			"controlY": -233
 		},
 		{
 			"a": "additional_berthing_1",
 			"b": "crew_capacity_flat_2",
-			"controlX": -679,
+			"controlX": -706,
 			"controlY": -473
 		},
 		{
@@ -3866,26 +3827,26 @@
 		{
 			"a": "fuel_flat_1",
 			"b": "fuel_flat_2",
-			"controlX": 364,
-			"controlY": 587
+			"controlX": 292,
+			"controlY": 609
 		},
 		{
 			"a": "auxiliary_fuel_tanks_1",
 			"b": "fuel_flat_1",
-			"controlX": 364,
-			"controlY": 869
+			"controlX": 292,
+			"controlY": 853
 		},
 		{
 			"a": "engine_durability_1",
 			"b": "engine_durability_2",
-			"controlX": -649,
-			"controlY": 710
+			"controlX": -499,
+			"controlY": 828
 		},
 		{
 			"a": "engine_durability_1",
 			"b": "insulatedengine_1",
-			"controlX": -442,
-			"controlY": 710
+			"controlX": -289,
+			"controlY": 828
 		},
 		{
 			"a": "small_logistics_optional_11",
@@ -4182,12 +4143,6 @@
 			"controlY": 2652
 		},
 		{
-			"a": "ballistic_damage_1",
-			"b": "ballistic_damage_2",
-			"controlX": 1697,
-			"controlY": 1697
-		},
-		{
 			"a": "ballistic_damage_2",
 			"b": "ballistic_damage_3",
 			"controlX": 1846,
@@ -4198,12 +4153,6 @@
 			"b": "ballistic_rangefinder_1",
 			"controlX": 1853,
 			"controlY": 1839
-		},
-		{
-			"a": "ballistic_damage_1",
-			"b": "ballistic_rangefinder_1",
-			"controlX": 1704,
-			"controlY": 1846
 		},
 		{
 			"a": "flux_capacity_1",
@@ -4352,14 +4301,14 @@
 		{
 			"a": "weapon_durability_1",
 			"b": "weapon_durability_2",
-			"controlX": 539,
-			"controlY": 1683
+			"controlX": 637,
+			"controlY": 1643
 		},
 		{
 			"a": "armoredweapons_1",
 			"b": "weapon_durability_1",
-			"controlX": 604,
-			"controlY": 1570
+			"controlX": 702,
+			"controlY": 1530
 		},
 		{
 			"a": "wormhole_5",
@@ -4796,14 +4745,20 @@
 		{
 			"a": "small_flux_optional_60",
 			"b": "waste_not_1",
-			"controlX": 7697,
-			"controlY": -1594
+			"controlX": 7690,
+			"controlY": -389
 		},
 		{
 			"a": "small_flux_optional_60",
 			"b": "small_flux_optional_61",
 			"controlX": 8558,
 			"controlY": -837
+		},
+		{
+			"a": "small_flux_optional_61",
+			"b": "hoarded_arms_1",
+			"controlX": 9315,
+			"controlY": 24
 		},
 		{
 			"a": "small_flux_optional_61",
@@ -5038,6 +4993,30 @@
 			"b": "less_energy_damage_taken_2",
 			"controlX": -6690,
 			"controlY": -4129
+		},
+		{
+			"a": "survey_generic_cost_reduction_2",
+			"b": "surveying_equipment_1",
+			"controlX": 421,
+			"controlY": -462
+		},
+		{
+			"a": "survey_generic_cost_reduction_1",
+			"b": "survey_generic_cost_reduction_2",
+			"controlX": 271,
+			"controlY": -462
+		},
+		{
+			"a": "ballistic_damage_2",
+			"b": "ballistic_projectile_speed_3",
+			"controlX": 1697,
+			"controlY": 1697
+		},
+		{
+			"a": "ballistic_projectile_speed_3",
+			"b": "ballistic_rangefinder_1",
+			"controlX": 1704,
+			"controlY": 1846
 		}
 	],
 	"hiddenConnectors": [
@@ -5135,7 +5114,7 @@
 		},
 		{
 			"id": "additional_berthing_anchor",
-			"x": -799,
+			"x": -826,
 			"y": -353,
 			"radius": 170
 		},
@@ -5147,8 +5126,8 @@
 		},
 		{
 			"id": "insulated_engine_assembly_anchor",
-			"x": -544,
-			"y": 605,
+			"x": -394,
+			"y": 723,
 			"radius": 149
 		},
 		{
@@ -5165,9 +5144,9 @@
 		},
 		{
 			"id": "flat_fuel_anchor",
-			"x": 505,
-			"y": 728,
-			"radius": 200
+			"x": 414,
+			"y": 731,
+			"radius": 173
 		},
 		{
 			"id": "outer_ring",
@@ -5300,8 +5279,8 @@
 		},
 		{
 			"id": "anchor_18",
-			"x": 604,
-			"y": 1645,
+			"x": 702,
+			"y": 1605,
 			"radius": 150,
 			"shape": "triangle",
 			"rotation": 180

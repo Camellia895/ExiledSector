@@ -199,6 +199,61 @@ public enum WeaponSkillEffect implements SkillEffect {
             return pctChange(magnitude, "missile weapon ammo capacity");
         }
     },
+    BALLISTIC_AMMO_REGEN_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getBallisticAmmoRegenMult().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "ballistic weapon ammo regeneration rate");
+        }
+    },
+    ENERGY_AMMO_REGEN_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getEnergyAmmoRegenMult().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "energy weapon ammo/charge regeneration rate");
+        }
+    },
+    BALLISTIC_WEAPON_FIRE_RATE_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getBallisticRoFMult().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "ballistic weapon rate of fire");
+        }
+    },
+    ENERGY_WEAPON_FIRE_RATE_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getEnergyRoFMult().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "energy weapon rate of fire");
+        }
+    },
+    MISSILE_WEAPON_FIRE_RATE_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getMissileRoFMult().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "missile weapon rate of fire");
+        }
+    },
     WEAPON_TURN_RATE_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
