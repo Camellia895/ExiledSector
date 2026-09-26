@@ -17,7 +17,7 @@ public enum FluxSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "flux capacity");
+            return pctChange(magnitude, STAT_FLUX_CAPACITY);
         }
     },
     FLUX_CAPACITY_FLAT {
@@ -28,7 +28,7 @@ public enum FluxSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return flatChange(magnitude, "flux capacity");
+            return flatChange(magnitude, STAT_FLUX_CAPACITY);
         }
     },
     FLUX_CAPACITY_MULT {
@@ -39,7 +39,7 @@ public enum FluxSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctMore(magnitude, "flux capacity");
+            return pctMore(magnitude, STAT_FLUX_CAPACITY);
         }
     },
     FLUX_DISSIPATION_PERCENT {
@@ -133,5 +133,6 @@ public enum FluxSkillEffect implements SkillEffect {
         }
     };
 
+    private static final String STAT_FLUX_CAPACITY = "flux capacity";
     private static final String STAT_FLUX_DISSIPATION = "flux dissipation";
 }
