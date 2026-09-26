@@ -3134,11 +3134,18 @@
 		{
 			"id": "heavy_ballistics_integration_1",
 			"type": "heavy_ballistics_integration",
+			"connectedTo": [],
+			"x": -4536,
+			"y": 8379
+		},
+		{
+			"id": "ballistic_projectile_speed_1",
+			"type": "ballistic_projectile_speed",
 			"connectedTo": [
-				"small_flux_optional_58"
+				"heavy_ballistics_integration_1"
 			],
-			"x": -3857,
-			"y": 8915
+			"x": -5236,
+			"y": 8879
 		},
 		{
 			"id": "small_flux_optional_59",
@@ -4691,12 +4698,6 @@
 		},
 		{
 			"a": "small_flux_optional_58",
-			"b": "heavy_ballistics_integration_1",
-			"controlX": -3857,
-			"controlY": 8515
-		},
-		{
-			"a": "small_flux_optional_58",
 			"b": "small_flux_optional_59",
 			"controlX": -4776,
 			"controlY": 7734
@@ -4976,6 +4977,12 @@
 			"b": "torpedo_specialisation_1",
 			"controlX": -4664,
 			"controlY": 6921
+		},
+		{
+			"a": "heavy_ballistics_integration_1",
+			"b": "ballistic_projectile_speed_1",
+			"controlX": -4886,
+			"controlY": 8629
 		},
 		{
 			"a": "exposed_fuel_lines_1",

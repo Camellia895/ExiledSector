@@ -82,6 +82,20 @@
 			]
 		},
 		{
+			"id": "ballistic_projectile_speed",
+			"name": "Ballistic Projectile Speed",
+			"icon": "",
+			"effects": [
+				{
+					"effect": "BALLISTIC_PROJECTILE_SPEED_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"tags": [
+				"ballistic"
+			]
+		},
+		{
 			"id": "missile_top_speed",
 			"name": "Missile Top Speed",
 			"icon": "graphics/icons/missile_speed_circular.png",
@@ -98,7 +112,7 @@
 		{
 			"id": "heavy_ballistics_integration",
 			"name": "Heavy Ballistics Integration",
-			"icon": "",
+			"icon": "graphics/icons/ballistics_integration_circular.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{

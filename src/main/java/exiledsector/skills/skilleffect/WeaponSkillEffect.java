@@ -22,6 +22,17 @@ public enum WeaponSkillEffect implements SkillEffect {
             return pctChange(magnitude, "ballistic weapon damage");
         }
     },
+    BALLISTIC_PROJECTILE_SPEED_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getBallisticProjectileSpeedMult().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "ballistic projectile speed");
+        }
+    },
     MISSILE_DAMAGE_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
