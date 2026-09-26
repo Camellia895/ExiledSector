@@ -95,19 +95,16 @@ public final class SkillTypeLoader {
 
     private static UnlockCondition parseUnlockCondition(JSONObject json) throws JSONException {
         UnlockConditionType type = UnlockConditionType.valueOf(toEnumName(json.getString("type")));
-        switch (type) {
-            case BLUEPRINT:
+        return switch (type) {
+            case BLUEPRINT -> {
                 BlueprintCategory category = BlueprintCategory.valueOf(toEnumName(json.getString("category")));
-                return UnlockCondition.blueprint(category, json.getString("id"));
-            case CHARACTER_STAT:
-                return UnlockCondition.characterStat(json.getString("statId"));
-            case MIN_SHIP_LEVEL:
-                return UnlockCondition.minShipLevel(json.getInt("level"));
-            case MEMORY_FLAG:
-                return UnlockCondition.memoryFlag(json.getString("key"));
-            default:
-                throw new JSONException("Unknown unlock condition type \"" + json.getString("type") + "\"");
-        }
+                yield UnlockCondition.blueprint(category, json.getString("id"));
+            }
+            case CHARACTER_STAT -> UnlockCondition.characterStat(json.getString("statId"));
+            case MIN_SHIP_LEVEL -> UnlockCondition.minShipLevel(json.getInt("level"));
+            case MEMORY_FLAG -> UnlockCondition.memoryFlag(json.getString("key"));
+            default -> throw new JSONException("Unknown unlock condition type \"" + json.getString("type") + "\"");
+        };
     }
 
     private static String toEnumName(String jsonValue) {

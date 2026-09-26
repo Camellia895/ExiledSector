@@ -30,18 +30,13 @@ public final class SkillTypeUnlockStatus {
         if (UnlockConditionOverrides.isDisabled(condition.getType())) return true;
 
         try {
-            switch (condition.getType()) {
-                case BLUEPRINT:
-                    return isBlueprintKnown(condition);
-                case CHARACTER_STAT:
-                    return hasCharacterStat(condition);
-                case MIN_SHIP_LEVEL:
-                    return hasMinShipLevel(condition, data);
-                case MEMORY_FLAG:
-                    return hasMemoryFlag(condition);
-                default:
-                    return false;
-            }
+            return switch (condition.getType()) {
+                case BLUEPRINT -> isBlueprintKnown(condition);
+                case CHARACTER_STAT -> hasCharacterStat(condition);
+                case MIN_SHIP_LEVEL -> hasMinShipLevel(condition, data);
+                case MEMORY_FLAG -> hasMemoryFlag(condition);
+                default -> false;
+            };
         } catch (RuntimeException e) {
             Logger.getLogger(SkillTypeUnlockStatus.class).error("Failed to check unlock condition " + condition, e);
             return false;
