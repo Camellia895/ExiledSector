@@ -1,6 +1,10 @@
 package exiledsector.skills.skilleffect;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 
 import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
@@ -344,7 +348,44 @@ public enum LogisticsSkillEffect implements SkillEffect {
             return pctChange(magnitude, "combat readiness loss from being in a solar corona or a deep "
                     + "hyperspace storm");
         }
+    },
+    POST_BATTLE_SALVAGE_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            // stashed on this ship's own stats (reset automatically along with everything else
+            // whenever this ship's stats are rebuilt) rather than written straight to the fleet,
+            // since post-battle salvage is a real fleet-level dynamic stat (Stats.BATTLE_SALVAGE_
+            // MULT_FLEET, confirmed via the vanilla Salvaging skill and the Second In Command mod's
+            // Piracy "Legitimate Salvage" perk) with no per-ship equivalent - recomputeFleetSalvageBonus
+            // below sums every current fleet member's stashed contribution into one fleet-wide modifier
+            stats.getDynamic().getMod(POST_BATTLE_SALVAGE_CONTRIBUTION_KEY).modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
+            recomputeFleetSalvageBonus();
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "post-battle salvage recovered (fleet-wide)");
+        }
     };
 
     private static final String STAT_MIN_CREW_REQUIRED = "minimum crew required";
+    private static final String POST_BATTLE_SALVAGE_CONTRIBUTION_KEY = "exiledSector_postBattleSalvageContribution";
+    private static final String POST_BATTLE_SALVAGE_FLEET_MOD_ID = "exiledSector_postBattleSalvage";
+
+    private static void recomputeFleetSalvageBonus() {
+        CampaignFleetAPI fleet = Global.getSector() != null ? Global.getSector().getPlayerFleet() : null;
+        if (fleet == null) {
+            return;
+        }
+        float totalPercent = 0f;
+        for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
+            totalPercent += member.getStats().getDynamic().getValue(POST_BATTLE_SALVAGE_CONTRIBUTION_KEY, 0f);
+        }
+        fleet.getStats().getDynamic().getStat(Stats.BATTLE_SALVAGE_MULT_FLEET)
+                .modifyFlat(POST_BATTLE_SALVAGE_FLEET_MOD_ID, totalPercent / 100f);
+    }
 }

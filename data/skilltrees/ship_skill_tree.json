@@ -3245,6 +3245,15 @@
 			"orbitAngle": 270
 		},
 		{
+			"id": "waste_not_1",
+			"type": "waste_not",
+			"connectedTo": [
+				"small_flux_optional_60"
+			],
+			"x": 7697,
+			"y": -1994
+		},
+		{
 			"id": "small_flux_optional_61",
 			"type": "small_flux_optional",
 			"connectedTo": [
@@ -4783,6 +4792,12 @@
 			"b": "small_flux_optional_62",
 			"controlX": 6836,
 			"controlY": 885
+		},
+		{
+			"a": "small_flux_optional_60",
+			"b": "waste_not_1",
+			"controlX": 7697,
+			"controlY": -1594
 		},
 		{
 			"a": "small_flux_optional_60",

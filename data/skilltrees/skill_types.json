@@ -2106,6 +2106,24 @@
 			]
 		},
 		{
+			"id": "waste_not",
+			"name": "Waste Not",
+			"icon": "",
+			"tier": "NOTABLE",
+			"hullSizeEffects": [
+				{
+					"effect": "POST_BATTLE_SALVAGE_PERCENT",
+					"frigate": 3,
+					"destroyer": 6,
+					"cruiser": 10,
+					"capitalShip": 15
+				}
+			],
+			"tags": [
+				"logistics"
+			]
+		},
+		{
 			"id": "crew_capacity_flat",
 			"name": "Crew capacity",
 			"icon": "graphics/icons/crew_capacity_flat.png",
