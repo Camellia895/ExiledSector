@@ -544,11 +544,14 @@ class SkillEffectTest {
     void energyDamageTakenModifiesTheEnergyDamageTakenMultStat() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         MutableStat damageTakenMult = mock(MutableStat.class);
+        MutableStat shieldDamageTakenMult = mock(MutableStat.class);
         when(stats.getEnergyDamageTakenMult()).thenReturn(damageTakenMult);
+        when(stats.getEnergyShieldDamageTakenMult()).thenReturn(shieldDamageTakenMult);
 
         DefenseSkillEffect.ENERGY_DAMAGE_TAKEN_PERCENT.apply(stats, "mod_id", -10f);
 
         verify(damageTakenMult).modifyPercent("mod_id", -10f);
+        verify(shieldDamageTakenMult).modifyPercent("mod_id", -10f);
     }
 
     @Test

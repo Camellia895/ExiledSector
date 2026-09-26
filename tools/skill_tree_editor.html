@@ -668,7 +668,7 @@
 "use strict";
 
 var SHIPPED_TYPES = [
-{"id":"flux_capacity","name":"Flux Capacity","icon":"graphics/icons/circular/small_passives/containment_procedures.png","effects":[{"effect":"FLUX_CAPACITY_PERCENT","magnitude":1}],"tags":["flux"]},
+{"id":"flux_capacity","name":"Flux Capacity","icon":"graphics/icons/circular/small_passives/containment_procedures.png","effects":[{"effect":"FLUX_CAPACITY_MULT","magnitude":2}],"tags":["flux"]},
 {"id":"flux_dissipation","name":"Flux Dissipation","icon":"graphics/icons/circular/small_passives/systems_expertise.png","effects":[{"effect":"FLUX_DISSIPATION_PERCENT","magnitude":1}],"tags":["flux"]},
 {"id":"hybrid_flux","name":"Flux Capacity and Dissipation","icon":"graphics/icons/circular/small_passives/flux_dynamics.png","tags":["flux"]},
 {"id":"hull","name":"Hull","icon":"graphics/icons/circular/small_passives/damage_control2.png","tags":["hull"]},
@@ -731,7 +731,7 @@ var SHIPPED_TYPES = [
 {"id":"hiressensors","name":"High Resolution Sensors","icon":"graphics/icons/circular/notable_passives/high_res_sensors.png","tier":"NOTABLE","hullSizeEffects":[{"effect":"SENSOR_STRENGTH_FLAT","frigate":50,"destroyer":75,"cruiser":100,"capitalShip":150}],"tags":["logistics"]},
 {"id":"insulatedengine","name":"Insulated Engine Assembly","icon":"graphics/icons/circular/notable_passives/insulated_engine_assembly.png","tier":"NOTABLE","effects":[{"effect":"ENGINE_DURABILITY_PERCENT","magnitude":100},{"effect":"HULL_PERCENT","magnitude":10}],"tags":["logistics"]},
 {"id":"militarized_subsystems","name":"Militarized Subsystems","icon":"graphics/icons/circular/notable_passives/militarized_subsystems.png","tier":"NOTABLE","effects":[{"effect":"BURN_LEVEL_FLAT","magnitude":1},{"effect":"MIN_CREW_PERCENT","magnitude":100},{"effect":"REMOVE_CIVILIAN_HULL_PENALTY","magnitude":0}],"tags":["logistics"]},
-{"id":"solar_shielding","name":"Solar Shielding","icon":"graphics/icons/circular/notable_passives/solar_shielding2.png","tier":"NOTABLE","effects":[{"effect":"ENERGY_DAMAGE_TAKEN_PERCENT","magnitude":-10},{"effect":"ENERGY_SHIELD_DAMAGE_TAKEN_PERCENT","magnitude":-10},{"effect":"CORONA_RESISTANCE_MULT","magnitude":-75}],"description":"Reduces energy damage taken in combat, and greatly reduces combat readiness loss from solar coronas and deep hyperspace storms.","tags":["logistics"]},
+{"id":"solar_shielding","name":"Solar Shielding","icon":"graphics/icons/circular/notable_passives/solar_shielding2.png","tier":"NOTABLE","effects":[{"effect":"ENERGY_DAMAGE_TAKEN_PERCENT","magnitude":-10},{"effect":"CORONA_RESISTANCE_MULT","magnitude":-75}],"description":"Reduces energy damage taken in combat, and greatly reduces combat readiness loss from solar coronas and deep hyperspace storms.","tags":["logistics"]},
 {"id":"surveying_equipment","name":"Surveying Equipment","icon":"graphics/icons/circular/notable_passives/surveying_equipment.png","tier":"NOTABLE","hullSizeEffects":[{"effect":"SURVEY_COST_REDUCTION_HEAVY_MACHINERY","frigate":3,"destroyer":5,"cruiser":10,"capitalShip":20},{"effect":"SURVEY_COST_REDUCTION_SUPPLIES","frigate":3,"destroyer":5,"cruiser":10,"capitalShip":20}],"tags":["logistics"]},
 {"id":"root_low_tech","name":"Low Tech Root","icon":"graphics/icons/circular/roots/crest_lowtech.png","tier":"ROOT"},
 {"id":"root_midline","name":"Midline Root","icon":"graphics/icons/circular/roots/crest_midline.png","tier":"ROOT"},
@@ -2917,7 +2917,7 @@ function addNodeOfType(typeId, x, y){
   selectNode(node.id);
 }
 
-var EFFECT_NAMES = ['HULL_PERCENT','HULL_FLAT','HULL_MULT','ARMOR_PERCENT','ARMOR_FLAT','FLUX_CAPACITY_PERCENT','FLUX_CAPACITY_FLAT','FLUX_DISSIPATION_PERCENT','FLUX_DISSIPATION_FLAT','BALLISTIC_DAMAGE_PERCENT','MISSILE_DAMAGE_PERCENT',
+var EFFECT_NAMES = ['HULL_PERCENT','HULL_FLAT','HULL_MULT','ARMOR_PERCENT','ARMOR_FLAT','FLUX_CAPACITY_PERCENT','FLUX_CAPACITY_FLAT','FLUX_CAPACITY_MULT','FLUX_DISSIPATION_PERCENT','FLUX_DISSIPATION_FLAT','BALLISTIC_DAMAGE_PERCENT','MISSILE_DAMAGE_PERCENT',
   'NON_BEAM_ENERGY_DAMAGE_PERCENT','BEAM_DAMAGE_PERCENT','ENERGY_DAMAGE_PERCENT','ALL_WEAPON_DAMAGE_PERCENT','MANEUVERABILITY_PERCENT','FUEL_CAPACITY_PERCENT','FUEL_CAPACITY_FLAT',
   'CARGO_CAPACITY_PERCENT','CARGO_CAPACITY_FLAT','CREW_CAPACITY_PERCENT','CREW_CAPACITY_FLAT','BURN_LEVEL_FLAT','SENSOR_PROFILE_PERCENT','SENSOR_STRENGTH_PERCENT','SENSOR_STRENGTH_FLAT','COMBAT_VISION','ELECTRONIC_WARFARE','NAV_RATING','BALLISTIC_WEAPON_RANGE_PERCENT',
   'ENERGY_WEAPON_RANGE_PERCENT','NON_BEAM_ENERGY_WEAPON_RANGE_FLAT','BEAM_WEAPON_RANGE_PERCENT','BALLISTIC_AMMO_PERCENT','ENERGY_AMMO_PERCENT','MISSILE_AMMO_PERCENT','WEAPON_TURN_RATE_PERCENT',
@@ -2951,7 +2951,7 @@ var EFFECT_NAMES = ['HULL_PERCENT','HULL_FLAT','HULL_MULT','ARMOR_PERCENT','ARMO
   'NON_BEAM_ENERGY_CHAIN_CHANCE_PERCENT','NON_BEAM_ENERGY_CHAIN_FALLOFF_PERCENT',
   'BALLISTIC_DAMAGE_PER_BURN_LEVEL_PERCENT','ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT',
   'ESCORT_MANEUVER_BONUS_PERCENT','ESCORT_SPEED_BONUS_PERCENT','ESCORT_WEAPON_RANGE_BONUS_PERCENT','ESCORT_PROXIMITY_RANGE_FLAT',
-  'ENERGY_SHIELD_DAMAGE_TAKEN_PERCENT','CORONA_RESISTANCE_MULT','LARGE_BALLISTIC_OP_COST_FLAT','BALLISTIC_PROJECTILE_SPEED_PERCENT'];
+  'CORONA_RESISTANCE_MULT','LARGE_BALLISTIC_OP_COST_FLAT','BALLISTIC_PROJECTILE_SPEED_PERCENT'];
 
 var EFFECT_NAMES_SORTED = EFFECT_NAMES.slice().sort();
 function sortedEffectOptionsHtml(selected){

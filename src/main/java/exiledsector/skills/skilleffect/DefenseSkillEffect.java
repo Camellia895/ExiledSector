@@ -170,22 +170,12 @@ public enum DefenseSkillEffect implements SkillEffect {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getEnergyDamageTakenMult().modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "energy damage taken");
-        }
-    },
-    ENERGY_SHIELD_DAMAGE_TAKEN_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getEnergyShieldDamageTakenMult().modifyPercent(modId, magnitude);
         }
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "energy damage taken by shields");
+            return pctChange(magnitude, "energy damage taken, including hits on shields, armor, and hull");
         }
     };
 

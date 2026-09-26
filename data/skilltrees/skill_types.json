@@ -6,7 +6,7 @@
 			"icon": "graphics/icons/flux_capacity.png",
 			"effects": [
 				{
-					"effect": "FLUX_CAPACITY_PERCENT",
+					"effect": "FLUX_CAPACITY_MULT",
 					"magnitude": 2
 				}
 			],
@@ -20,8 +20,8 @@
 			"icon": "graphics/icons/flux_dissipation.png",
 			"effects": [
 				{
-					"effect": "FLUX_DISSIPATION_PERCENT",
-					"magnitude": 5
+					"effect": "FLUX_DISSIPATION_MULT",
+					"magnitude": 2
 				}
 			],
 			"tags": [
@@ -42,8 +42,8 @@
 			"icon": "graphics/icons/hull.png",
 			"effects": [
 				{
-					"effect": "HULL_PERCENT",
-					"magnitude": 5
+					"effect": "HULL_MULT",
+					"magnitude": 2
 				}
 			],
 			"tags": [
@@ -84,11 +84,11 @@
 		{
 			"id": "ballistic_projectile_speed",
 			"name": "Ballistic Projectile Speed",
-			"icon": "",
+			"icon": "graphics/icons/target_analysis_circular.png",
 			"effects": [
 				{
 					"effect": "BALLISTIC_PROJECTILE_SPEED_PERCENT",
-					"magnitude": 5
+					"magnitude": 10
 				}
 			],
 			"tags": [
@@ -258,16 +258,11 @@
 			"effects": [
 				{
 					"effect": "FLUX_CAPACITY_PERCENT",
-					"magnitude": 5
-				}
-			],
-			"hullSizeEffects": [
+					"magnitude": 15
+				},
 				{
 					"effect": "FLUX_CAPACITY_FLAT",
-					"frigate": 200,
-					"destroyer": 400,
-					"cruiser": 600,
-					"capitalShip": 1000
+					"magnitude": 600
 				}
 			],
 			"tags": [
@@ -1302,11 +1297,12 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "SHIELD_ARC_FLAT",
+					"effect": "SHIELD_ARC_PERCENT",
 					"magnitude": 100
 				},
 				{
-					"effect": "CONVERT_SHIELD_TO_FRONT"
+					"effect": "CONVERT_SHIELD_TO_FRONT",
+					"magnitude": 0
 				}
 			],
 			"unlockConditions": [
@@ -1780,14 +1776,6 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "ENERGY_DAMAGE_TAKEN_PERCENT",
-					"magnitude": -10
-				},
-				{
-					"effect": "ENERGY_SHIELD_DAMAGE_TAKEN_PERCENT",
-					"magnitude": -10
-				},
-				{
 					"effect": "CORONA_RESISTANCE_MULT",
 					"magnitude": -75
 				}
@@ -1799,7 +1787,6 @@
 					"id": "solar_shielding"
 				}
 			],
-			"description": "Originally developed by Diktat engineers after spending cycles dealing with the unique conditions of the inner Askonia system. Decreases the effect operating in a solar corona has on combat readiness by 75%; also has the same effect against storms in deep hyperspace.\n\nIn combat, reduces energy damage taken by 10%.",
 			"tags": [
 				"logistics"
 			]
@@ -2004,16 +1991,11 @@
 			"effects": [
 				{
 					"effect": "FLUX_DISSIPATION_PERCENT",
-					"magnitude": 10
-				}
-			],
-			"hullSizeEffects": [
+					"magnitude": 15
+				},
 				{
 					"effect": "FLUX_DISSIPATION_FLAT",
-					"frigate": 30,
-					"destroyer": 50,
-					"cruiser": 80,
-					"capitalShip": 150
+					"magnitude": 50
 				}
 			],
 			"tags": [
@@ -2596,6 +2578,37 @@
 			],
 			"tags": [
 				"beam"
+			]
+		},
+		{
+			"id": "sindrian_shielding",
+			"name": "Sindrian Shielding",
+			"icon": "graphics/icons/solar_shielding_purple.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "SHIELD_DAMAGE_TAKEN_MULT",
+					"magnitude": -10
+				},
+				{
+					"effect": "CORONA_RESISTANCE_MULT",
+					"magnitude": -25
+				}
+			],
+			"tags": [
+				"logistics",
+				"shield"
+			]
+		},
+		{
+			"id": "less_energy_damage_taken",
+			"name": "Energy Damage Resistance",
+			"icon": "graphics/icons/icy_space_circular.png",
+			"effects": [
+				{
+					"effect": "ENERGY_DAMAGE_TAKEN_PERCENT",
+					"magnitude": -5
+				}
 			]
 		}
 	]

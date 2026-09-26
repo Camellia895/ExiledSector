@@ -31,6 +31,17 @@ public enum FluxSkillEffect implements SkillEffect {
             return flatChange(magnitude, "flux capacity");
         }
     },
+    FLUX_CAPACITY_MULT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            SkillEffectSupport.applyMult(stats.getFluxCapacity(), modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctMore(magnitude, "flux capacity");
+        }
+    },
     FLUX_DISSIPATION_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
