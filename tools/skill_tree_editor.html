@@ -2316,6 +2316,11 @@ function refreshInspector(){
       '<div class="btnRow"><button class="smallBtn" id="addStatRowBtn">+ Add effect</button></div>' +
       '<div class="field"><label>Hull-size-dependent stats</label>' + renderHullSizeEffectRows('insp', t.hullSizeEffects) + '</div>' +
       '<div class="btnRow"><button class="smallBtn" id="addHsStatRowBtn">+ Add hull-size effect</button></div>' +
+      '<div class="field"><label>Item cost</label><div class="fieldRow">' +
+        '<input id="inspItemCostId" placeholder="commodity id, e.g. lobster" value="' + ((t.itemCost && t.itemCost.itemId) || '') + '" style="flex:2">' +
+        '<input id="inspItemCostQuantity" type="number" placeholder="quantity" value="' + ((t.itemCost && t.itemCost.quantity) || '') + '" style="flex:1">' +
+      '</div></div>' +
+      '<div class="hint">Commodity cost paid from fleet cargo on top of the usual OP cost, refunded on deallocation. Leave the item id blank for no cargo cost.</div>' +
       '<div class="hint">Shared by every node using this type - editing here affects them all, not just "' + n.id + '".</div>' +
       '<hr class="sep">';
   }
@@ -2509,6 +2514,17 @@ function refreshInspector(){
         saveLocal(); refreshInspector();
       });
     }
+    var inspItemCostId = document.getElementById('inspItemCostId');
+    var inspItemCostQuantity = document.getElementById('inspItemCostQuantity');
+    var syncInspItemCost = function(){
+      var itemId = inspItemCostId.value.trim();
+      var quantity = parseFloat(inspItemCostQuantity.value) || 0;
+      if (itemId) t.itemCost = { itemId: itemId, quantity: quantity };
+      else delete t.itemCost;
+      saveLocal();
+    };
+    inspItemCostId.addEventListener('change', function(){ syncInspItemCost(); refreshInspector(); });
+    inspItemCostQuantity.addEventListener('change', function(){ syncInspItemCost(); refreshInspector(); });
   }
   document.getElementById('deleteNodeBtn').addEventListener('click', deleteSelectedNodes);
   document.getElementById('duplicateBtn').addEventListener('click', function(){ duplicateNode(n); });
@@ -2935,7 +2951,7 @@ var EFFECT_NAMES = ['HULL_PERCENT','HULL_FLAT','HULL_MULT','ARMOR_PERCENT','ARMO
   'NON_BEAM_ENERGY_CHAIN_CHANCE_PERCENT','NON_BEAM_ENERGY_CHAIN_FALLOFF_PERCENT',
   'BALLISTIC_DAMAGE_PER_BURN_LEVEL_PERCENT','ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT',
   'ESCORT_MANEUVER_BONUS_PERCENT','ESCORT_SPEED_BONUS_PERCENT','ESCORT_WEAPON_RANGE_BONUS_PERCENT','ESCORT_PROXIMITY_RANGE_FLAT',
-  'ENERGY_SHIELD_DAMAGE_TAKEN_PERCENT','CORONA_RESISTANCE_MULT'];
+  'ENERGY_SHIELD_DAMAGE_TAKEN_PERCENT','CORONA_RESISTANCE_MULT','LARGE_BALLISTIC_OP_COST_FLAT'];
 
 var EFFECT_NAMES_SORTED = EFFECT_NAMES.slice().sort();
 function sortedEffectOptionsHtml(selected){
@@ -3401,6 +3417,7 @@ function openTypeModal(existingType, onSave, onClose){
   var hullSizeEffectsDraft = deepCopy(t.hullSizeEffects || []);
   var unlockConditionsDraft = deepCopy(t.unlockConditions || []);
   var tagsDraft = deepCopy(t.tags || []);
+  var itemCostDraft = deepCopy(t.itemCost || { itemId: '', quantity: 0 });
   var root = document.getElementById('modalRoot');
 
   function syncDraftFromInputs(){
@@ -3417,6 +3434,8 @@ function openTypeModal(existingType, onSave, onClose){
     }
     t.description = document.getElementById('tDescription').value;
     t.todo = document.getElementById('tTodo').value;
+    itemCostDraft.itemId = document.getElementById('tItemCostId').value.trim();
+    itemCostDraft.quantity = parseFloat(document.getElementById('tItemCostQuantity').value) || 0;
     syncEffectRowsFromInputs('t', effectsDraft);
     syncHullSizeEffectsFromInputs('t', hullSizeEffectsDraft);
     syncUnlockConditionRowsFromInputs('t', unlockConditionsDraft);
@@ -3450,6 +3469,9 @@ function openTypeModal(existingType, onSave, onClose){
       '<div class="btnRow"><button class="smallBtn" type="button" id="addUnlockConditionRowBtn">+ Add condition</button></div>' +
       '<div class="field"><label>Exclusive with hullmod ids (comma-separated)</label><input id="tExclusiveHullMods" value="' + ((t.exclusiveHullMods||[]).join(', ')) + '"></div>' +
       '<div class="hint">If the ship already has any of these vanilla hullmods installed, this node cannot be allocated. vanillaHullMod above is always implicitly included here too, no need to repeat it.</div>' +
+      '<hr class="sep">' +
+      '<div class="hint">Item cost (optional) - a commodity cost paid from fleet cargo on top of the usual OP cost, refunded to cargo on deallocation. Leave the item id blank for a normal node with no cargo cost.</div>' +
+      '<div class="field"><label>Item cost</label><div class="fieldRow"><input id="tItemCostId" placeholder="commodity id, e.g. lobster" value="' + (itemCostDraft.itemId||'') + '" style="flex:2"><input id="tItemCostQuantity" type="number" placeholder="quantity" value="' + (itemCostDraft.quantity||0) + '" style="flex:1"></div></div>' +
       '<hr class="sep">' +
       '<div class="hint">Optional slot options - pick other types this node can resolve to (ctrl/cmd-click to select several; any tier is allowed, so a notable or keystone can offer small effects). Non-empty means this node renders as a dropdown picker instead of a fixed effect: clicking it while unallocated opens the dropdown, picking an option allocates and applies that option\\u0027s cost/effects, and deallocating it reverts it to this unselected placeholder.</div>' +
       '<div class="field"><label>Optional slot options</label>' + renderOptionalOptionsSelect(t.optionalOptions||[], t.id) + '</div>' +
@@ -3547,6 +3569,7 @@ function openTypeModal(existingType, onSave, onClose){
         effects: effectsDraft,
         hullSizeEffects: hullSizeEffectsDraft,
         vanillaHullMod: (t.vanillaHullMod||'').trim(),
+        itemCost: itemCostDraft.itemId ? { itemId: itemCostDraft.itemId, quantity: itemCostDraft.quantity || 0 } : null,
         unlockConditions: unlockConditionsDraft,
         exclusiveHullMods: t.exclusiveHullMods || [],
         optionalOptions: t.optionalOptions || [],
@@ -3594,6 +3617,7 @@ function serializeType(t){
   if (t.effects && t.effects.length) out.effects = t.effects.map(function(e){ return { effect: e.effect, magnitude: e.magnitude }; });
   if (t.hullSizeEffects && t.hullSizeEffects.length) out.hullSizeEffects = t.hullSizeEffects.map(function(e){ return { effect: e.effect, frigate: e.frigate, destroyer: e.destroyer, cruiser: e.cruiser, capitalShip: e.capitalShip }; });
   if (t.vanillaHullMod) out.vanillaHullMod = t.vanillaHullMod;
+  if (t.itemCost && t.itemCost.itemId) out.itemCost = { itemId: t.itemCost.itemId, quantity: t.itemCost.quantity || 0 };
   var unlockConditionsOut = serializeUnlockConditions(t.unlockConditions);
   if (unlockConditionsOut.length) out.unlockConditions = unlockConditionsOut;
   if (t.exclusiveHullMods && t.exclusiveHullMods.length) out.exclusiveHullMods = t.exclusiveHullMods;

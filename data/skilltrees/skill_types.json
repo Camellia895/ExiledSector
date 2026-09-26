@@ -82,13 +82,64 @@
 			]
 		},
 		{
+			"id": "missile_top_speed",
+			"name": "Missile Top Speed",
+			"icon": "graphics/icons/missile_speed_circular.png",
+			"effects": [
+				{
+					"effect": "MISSILE_SPEED_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"tags": [
+				"missile"
+			]
+		},
+		{
+			"id": "heavy_ballistics_integration",
+			"name": "Heavy Ballistics Integration",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "LARGE_BALLISTIC_OP_COST_FLAT",
+					"magnitude": -5
+				}
+			],
+			"exclusiveHullMods": [
+				"hbi"
+			],
+			"tags": [
+				"ballistic"
+			]
+		},
+		{
+			"id": "torpedo_specialisation",
+			"name": "Torpedo Specialisation",
+			"icon": "graphics/icons/engine_circular.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "MISSILE_SPEED_PERCENT",
+					"magnitude": 30
+				},
+				{
+					"effect": "MISSILE_TURN_RATE_PERCENT",
+					"magnitude": -30
+				}
+			],
+			"tags": [
+				"missile"
+			]
+		},
+		{
 			"id": "missile_damage",
 			"name": "Missile Weapon Damage",
 			"icon": "graphics/icons/missile_damage.png",
 			"effects": [
 				{
 					"effect": "MISSILE_DAMAGE_PERCENT",
-					"magnitude": 10
+					"magnitude": 5
 				}
 			],
 			"tags": [
@@ -113,7 +164,7 @@
 			"effects": [
 				{
 					"effect": "BEAM_DAMAGE_PERCENT",
-					"magnitude": 10
+					"magnitude": 5
 				}
 			]
 		},
@@ -2026,6 +2077,34 @@
 					"capitalShip": 30
 				}
 			],
+			"tags": [
+				"logistics"
+			]
+		},
+		{
+			"id": "crustacean_integration",
+			"name": "Crustacean Integration",
+			"icon": "graphics/icons/lobster.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CR_RECOVERY_RATE_PERCENT",
+					"magnitude": 15
+				},
+				{
+					"effect": "TOP_SPEED_PERCENT",
+					"magnitude": 10
+				},
+				{
+					"effect": "PEAK_CR_DURATION_PERCENT",
+					"magnitude": 30
+				}
+			],
+			"itemCost": {
+				"itemId": "lobster",
+				"quantity": 1000
+			},
+			"description": "Costs 1000 Volturnian Lobsters to allocate.\n\nDe-allocating this node refunds the lobsters to your inventory.\n\nYou control the speed at which these lobsters die.",
 			"tags": [
 				"logistics"
 			]

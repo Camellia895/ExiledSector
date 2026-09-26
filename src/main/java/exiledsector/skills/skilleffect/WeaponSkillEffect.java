@@ -451,7 +451,21 @@ public enum WeaponSkillEffect implements SkillEffect {
             return "Increases beam and non-beam energy weapon range by " + pct(magnitude) + " for every point "
                     + "of this ship's sensor strength (after modifiers).";
         }
+    },
+    LARGE_BALLISTIC_OP_COST_FLAT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            // "large_ballistic_mod" is the same dynamic stat key vanilla's own Heavy Ballistics
+            // Integration hull mod reads to reduce the ordnance point cost of large ballistic weapons
+            stats.getDynamic().getMod(LARGE_BALLISTIC_OP_COST_KEY).modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return flatChange(magnitude, "ordnance point cost of large ballistic weapons");
+        }
     };
 
     private static final String STAT_BEAM_WEAPON_RANGE = "beam weapon range";
+    private static final String LARGE_BALLISTIC_OP_COST_KEY = "large_ballistic_mod";
 }

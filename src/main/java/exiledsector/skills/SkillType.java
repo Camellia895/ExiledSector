@@ -17,6 +17,7 @@ public class SkillType {
     private final List<HullSizeSkillEffect> hullSizeEffects;
     private final SkillTier tier;
     private final String vanillaHullModId;
+    private final SkillItemCost itemCost;
     private final String descriptionOverride;
     private final String todo;
     private final List<String> optionalOptionIds;
@@ -32,6 +33,7 @@ public class SkillType {
         this.hullSizeEffects = builder.hullSizeEffects == null ? Collections.emptyList() : builder.hullSizeEffects;
         this.tier = builder.tier;
         this.vanillaHullModId = builder.vanillaHullModId;
+        this.itemCost = builder.itemCost;
         this.descriptionOverride = builder.descriptionOverride;
         this.todo = builder.todo;
         this.optionalOptionIds = builder.optionalOptionIds == null ? Collections.emptyList() : builder.optionalOptionIds;
@@ -48,6 +50,7 @@ public class SkillType {
         private List<SkillTypeEffect> effects = Collections.emptyList();
         private List<HullSizeSkillEffect> hullSizeEffects = Collections.emptyList();
         private String vanillaHullModId;
+        private SkillItemCost itemCost;
         private String descriptionOverride;
         private String todo;
         private List<String> optionalOptionIds = Collections.emptyList();
@@ -74,6 +77,11 @@ public class SkillType {
 
         public Builder vanillaHullModId(String vanillaHullModId) {
             this.vanillaHullModId = vanillaHullModId;
+            return this;
+        }
+
+        public Builder itemCost(SkillItemCost itemCost) {
+            this.itemCost = itemCost;
             return this;
         }
 
@@ -138,6 +146,10 @@ public class SkillType {
 
     public String getVanillaHullModId() {
         return vanillaHullModId;
+    }
+
+    public SkillItemCost getItemCost() {
+        return itemCost;
     }
 
     public String getDescriptionOverride() {

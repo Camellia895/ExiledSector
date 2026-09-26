@@ -43,6 +43,13 @@ public class SkillTreeHullMod extends BaseHullMod {
                 (effect, modId, magnitude) -> effect.applyAfterShipCreation(ship, modId, magnitude));
     }
 
+    // some allocated effects (e.g. LARGE_BALLISTIC_OP_COST_FLAT) change weapon OP costs, so the
+    // refit screen needs to recompute them when this hull mod's effects change
+    @Override
+    public boolean affectsOPCosts() {
+        return true;
+    }
+
     @Override
     public void applyEffectsToFighterSpawnedByShip(ShipAPI fighter, ShipAPI ship, String id) {
         forEachAllocatedEffect(ship.getMutableStats().getFleetMember(), ship.getHullSize(),

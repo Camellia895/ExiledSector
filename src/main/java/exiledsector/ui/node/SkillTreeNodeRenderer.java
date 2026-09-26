@@ -1,6 +1,7 @@
 package exiledsector.ui.node;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
@@ -10,6 +11,7 @@ import exiledsector.skills.AllocatedSkillEffects;
 import exiledsector.skills.ShipLevelConfig;
 import exiledsector.skills.ShipOpBudget;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.ShipTechLevel;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillNodeOpCost;
@@ -228,7 +230,21 @@ public final class SkillTreeNodeRenderer {
         data.toggle(node, SkillTree.getAllNodes().values(), satisfiedRootId(), totalOpBudgetForNodes(), opCost, ShipLevelConfig.maxAllocatedNodes());
         boolean isAllocatedNow = data.isAllocated(node.getId());
         if (isAllocatedNow != wasAllocated) {
+            applyItemCost(node.getType(), isAllocatedNow);
             refreshAfterAllocationChange(node, isAllocatedNow);
+        }
+    }
+
+    private void applyItemCost(SkillType type, boolean allocated) {
+        SkillItemCost itemCost = type.getItemCost();
+        if (itemCost == null) {
+            return;
+        }
+        CargoAPI cargo = Global.getSector().getPlayerFleet().getCargo();
+        if (allocated) {
+            cargo.removeCommodity(itemCost.itemId(), itemCost.quantity());
+        } else {
+            cargo.addCommodity(itemCost.itemId(), itemCost.quantity());
         }
     }
 
@@ -324,7 +340,26 @@ public final class SkillTreeNodeRenderer {
             return skillTypeReason;
         }
 
+        String itemCostReason = itemCostReason(type);
+        if (itemCostReason != null) {
+            return itemCostReason;
+        }
+
         return effectBlockReason(type);
+    }
+
+    private String itemCostReason(SkillType type) {
+        SkillItemCost itemCost = type.getItemCost();
+        if (itemCost == null) {
+            return null;
+        }
+        CargoAPI cargo = Global.getSector().getPlayerFleet().getCargo();
+        float have = cargo.getCommodityQuantity(itemCost.itemId());
+        if (have >= itemCost.quantity()) {
+            return null;
+        }
+        return "Requires " + itemCost.formattedQuantity() + " " + itemCost.commodityName()
+                + " (have " + SkillItemCost.formatQuantity(have) + ").";
     }
 
     private String hullModConflictReason(SkillType type) {

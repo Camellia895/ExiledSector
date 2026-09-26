@@ -3,6 +3,7 @@ package exiledsector.skills.loader;
 import com.fs.starfarer.api.Global;
 import exiledsector.skills.BlueprintCategory;
 import exiledsector.skills.HullSizeSkillEffect;
+import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
@@ -58,11 +59,13 @@ public final class SkillTypeLoader {
         List<String> exclusiveHullModIds = parseStringArray(json.optJSONArray("exclusiveHullMods"));
         List<String> exclusiveSkillTypeIds = parseStringArray(json.optJSONArray("exclusiveSkillTypes"));
         List<UnlockCondition> unlockConditions = parseUnlockConditions(json.optJSONArray("unlockConditions"));
+        SkillItemCost itemCost = parseItemCost(json.optJSONObject("itemCost"));
 
         return new SkillType.Builder(json.getString("id"), json.getString("name"), json.getString("icon"), tier)
                 .effects(effects)
                 .hullSizeEffects(hullSizeEffects)
                 .vanillaHullModId(json.optString("vanillaHullMod", null))
+                .itemCost(itemCost)
                 .descriptionOverride(json.optString("description", null))
                 .todo(json.optString("todo", null))
                 .optionalOptionIds(optionalOptionIds)
@@ -70,6 +73,13 @@ public final class SkillTypeLoader {
                 .exclusiveSkillTypeIds(exclusiveSkillTypeIds)
                 .unlockConditions(unlockConditions)
                 .build();
+    }
+
+    private static SkillItemCost parseItemCost(JSONObject itemCostJson) throws JSONException {
+        if (itemCostJson == null) {
+            return null;
+        }
+        return new SkillItemCost(itemCostJson.getString("itemId"), (float) itemCostJson.getDouble("quantity"));
     }
 
     private static List<UnlockCondition> parseUnlockConditions(JSONArray conditionsArray) throws JSONException {

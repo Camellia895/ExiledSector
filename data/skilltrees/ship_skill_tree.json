@@ -2938,12 +2938,24 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"dictat_wormhole_2",
-				"small_flux_optional_52"
+				"small_flux_optional_52",
+				"beam_damage_4"
 			],
 			"x": -7191,
 			"y": -6173,
 			"orbitAnchorId": "dictat_inner",
 			"orbitAngle": 270
+		},
+		{
+			"id": "crustacean_integration_1",
+			"type": "crustacean_integration",
+			"connectedTo": [
+				"beam_damage_6"
+			],
+			"x": -7186,
+			"y": -5651,
+			"orbitAnchorId": "anchor_35",
+			"orbitAngle": 90
 		},
 		{
 			"id": "dictat_wormhole_1",
@@ -3099,7 +3111,8 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_58",
-				"hegemony_2"
+				"hegemony_2",
+				"ballistic_damage_6"
 			],
 			"x": -2557,
 			"y": 6815,
@@ -3119,15 +3132,63 @@
 			"orbitAngle": 90
 		},
 		{
+			"id": "heavy_ballistics_integration_1",
+			"type": "heavy_ballistics_integration",
+			"connectedTo": [
+				"small_flux_optional_58"
+			],
+			"x": -3857,
+			"y": 8915
+		},
+		{
 			"id": "small_flux_optional_59",
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_58",
-				"hegemony_2"
+				"hegemony_2",
+				"missile_top_speed_2"
 			],
 			"x": -5157,
 			"y": 6815,
 			"orbitAnchorId": "hegemony_inner",
+			"orbitAngle": 180
+		},
+		{
+			"id": "torpedo_specialisation_1",
+			"type": "torpedo_specialisation",
+			"connectedTo": [
+				"small_flux_optional_59",
+				"missile_damage_5",
+				"missile_top_speed_1"
+			],
+			"x": -4620,
+			"y": 6815,
+			"orbitAnchorId": "anchor_36",
+			"orbitAngle": 0
+		},
+		{
+			"id": "missile_top_speed_1",
+			"type": "missile_top_speed",
+			"connectedTo": [
+				"missile_top_speed_2",
+				"torpedo_specialisation_1"
+			],
+			"x": -4770,
+			"y": 6965,
+			"orbitAnchorId": "anchor_36",
+			"orbitAngle": 90
+		},
+		{
+			"id": "missile_top_speed_2",
+			"type": "missile_top_speed",
+			"connectedTo": [
+				"missile_damage_5",
+				"missile_top_speed_1",
+				"small_flux_optional_59"
+			],
+			"x": -4920,
+			"y": 6815,
+			"orbitAnchorId": "anchor_36",
 			"orbitAngle": 180
 		},
 		{
@@ -3172,8 +3233,7 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_60",
-				"small_flux_optional_62",
-				"ballistic_damage_6"
+				"small_flux_optional_62"
 			],
 			"x": 8915,
 			"y": 24,
@@ -3186,8 +3246,8 @@
 			"connectedTo": [
 				"ballistic_damage_7"
 			],
-			"x": 8334,
-			"y": 23,
+			"x": -3211,
+			"y": 6812,
 			"orbitAnchorId": "anchor_33",
 			"orbitAngle": 180
 		},
@@ -3510,10 +3570,10 @@
 			"type": "ballistic_damage",
 			"connectedTo": [
 				"ballistic_damage_7",
-				"small_flux_optional_61"
+				"small_flux_optional_57"
 			],
-			"x": 8704,
-			"y": 23,
+			"x": -2841,
+			"y": 6812,
 			"orbitAnchorId": "anchor_33",
 			"orbitAngle": 0
 		},
@@ -3524,8 +3584,8 @@
 				"ballistic_damage_6",
 				"ballistic_momentum_1"
 			],
-			"x": 8519,
-			"y": -162,
+			"x": -3026,
+			"y": 6627,
 			"orbitAnchorId": "anchor_33",
 			"orbitAngle": 270
 		},
@@ -3552,6 +3612,42 @@
 			"y": 1692,
 			"orbitAnchorId": "anchor_34",
 			"orbitAngle": 45.855500883956424
+		},
+		{
+			"id": "beam_damage_4",
+			"type": "beam_damage",
+			"connectedTo": [
+				"beam_damage_6",
+				"small_flux_optional_5"
+			],
+			"x": -7186,
+			"y": -5951,
+			"orbitAnchorId": "anchor_35",
+			"orbitAngle": 270
+		},
+		{
+			"id": "beam_damage_6",
+			"type": "beam_damage",
+			"connectedTo": [
+				"beam_damage_4",
+				"crustacean_integration_1"
+			],
+			"x": -7036,
+			"y": -5801,
+			"orbitAnchorId": "anchor_35",
+			"orbitAngle": 0
+		},
+		{
+			"id": "missile_damage_5",
+			"type": "missile_damage",
+			"connectedTo": [
+				"missile_top_speed_2",
+				"torpedo_specialisation_1"
+			],
+			"x": -4770,
+			"y": 6665,
+			"orbitAnchorId": "anchor_36",
+			"orbitAngle": 270
 		}
 	],
 	"connectorCurves": [
@@ -4582,10 +4678,22 @@
 			"controlY": 5903
 		},
 		{
+			"a": "small_flux_optional_59",
+			"b": "torpedo_specialisation_1",
+			"controlX": -5123,
+			"controlY": 7051
+		},
+		{
 			"a": "small_flux_optional_57",
 			"b": "small_flux_optional_58",
 			"controlX": -2938,
 			"controlY": 7734
+		},
+		{
+			"a": "small_flux_optional_58",
+			"b": "heavy_ballistics_integration_1",
+			"controlX": -3857,
+			"controlY": 8515
 		},
 		{
 			"a": "small_flux_optional_58",
@@ -4794,14 +4902,14 @@
 		{
 			"a": "ballistic_damage_6",
 			"b": "ballistic_damage_7",
-			"controlX": 8650,
-			"controlY": -108
+			"controlX": -2895,
+			"controlY": 6681
 		},
 		{
 			"a": "ballistic_damage_7",
 			"b": "ballistic_momentum_1",
-			"controlX": 8388,
-			"controlY": -108
+			"controlX": -3157,
+			"controlY": 6681
 		},
 		{
 			"a": "hiressensors_1",
@@ -4832,6 +4940,48 @@
 			"b": "small_logistics_optional_5",
 			"controlX": -241,
 			"controlY": -143
+		},
+		{
+			"a": "beam_damage_4",
+			"b": "beam_damage_6",
+			"controlX": -7080,
+			"controlY": -5907
+		},
+		{
+			"a": "beam_damage_6",
+			"b": "crustacean_integration_1",
+			"controlX": -7080,
+			"controlY": -5695
+		},
+		{
+			"a": "missile_damage_5",
+			"b": "missile_top_speed_2",
+			"controlX": -4876,
+			"controlY": 6709
+		},
+		{
+			"a": "missile_top_speed_1",
+			"b": "missile_top_speed_2",
+			"controlX": -4876,
+			"controlY": 6921
+		},
+		{
+			"a": "missile_damage_5",
+			"b": "torpedo_specialisation_1",
+			"controlX": -4664,
+			"controlY": 6709
+		},
+		{
+			"a": "missile_top_speed_1",
+			"b": "torpedo_specialisation_1",
+			"controlX": -4664,
+			"controlY": 6921
+		},
+		{
+			"a": "exposed_fuel_lines_1",
+			"b": "fuel_core_overload_1",
+			"controlX": 3601,
+			"controlY": 6793
 		}
 	],
 	"hiddenConnectors": [
@@ -5277,14 +5427,26 @@
 		},
 		{
 			"id": "anchor_33",
-			"x": 8519,
-			"y": 23,
+			"x": -3026,
+			"y": 6812,
 			"radius": 185
 		},
 		{
 			"id": "anchor_34",
 			"x": -8397,
 			"y": 1584,
+			"radius": 150
+		},
+		{
+			"id": "anchor_35",
+			"x": -7186,
+			"y": -5801,
+			"radius": 150
+		},
+		{
+			"id": "anchor_36",
+			"x": -4770,
+			"y": 6815,
 			"radius": 150
 		}
 	],

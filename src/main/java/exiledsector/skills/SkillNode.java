@@ -77,6 +77,10 @@ public class SkillNode extends SkillTreeObject {
         }
         lines.addAll(effectLines);
         lines.addAll(warnings);
+        SkillItemCost itemCost = type.getItemCost();
+        if (itemCost != null) {
+            lines.add("Costs " + itemCost.formattedQuantity() + " " + itemCost.commodityName() + " to allocate.");
+        }
         String exclusivityLine = describeExclusivity(type);
         if (exclusivityLine != null) {
             lines.add(exclusivityLine);

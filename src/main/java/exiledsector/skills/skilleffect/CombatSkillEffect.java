@@ -74,7 +74,7 @@ public enum CombatSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return "When this ship is destroyed, it detonates violently, dealing explosive damage equal to up to "
+            return "When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to "
                     + pct(magnitude) + "% of its maximum fuel capacity to nearby ships, tapering off with distance ";
         }
     },
