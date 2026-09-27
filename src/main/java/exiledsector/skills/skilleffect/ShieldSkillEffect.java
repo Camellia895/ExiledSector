@@ -1,5 +1,6 @@
 package exiledsector.skills.skilleffect;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.BeamAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
@@ -7,12 +8,15 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
+import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import org.lwjgl.util.vector.Vector2f;
 
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static exiledsector.skills.skilleffect.SkillEffectText.pct;
 import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
@@ -223,10 +227,32 @@ public enum ShieldSkillEffect implements SkillEffect {
         public String describe(float magnitude) {
             return pctChange(magnitude, "shield raise rate");
         }
+    },
+    SHIELD_DAMAGE_SHARED_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(SHIELD_DAMAGE_SHARED_KEY).modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
+            if (!ship.hasListenerOfClass(SharedShieldDamageListener.class)) {
+                ship.addListener(new SharedShieldDamageListener(ship));
+            }
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return "Disperses " + pct(magnitude) + "% of shield damage taken to nearby allied ships within "
+                    + Math.round(SHARED_SHIELD_DAMAGE_RANGE) + " su, split evenly between them as hard flux.";
+        }
     };
 
     private static final String BEAM_DAMAGE_HARD_FLUX_KEY = "exiledSector_beamDamageHardFluxPercent";
     private static final String STAT_SHIELD_ARC = "shield arc";
+
+    private static final String SHIELD_DAMAGE_SHARED_KEY = "exiledSector_shieldDamageSharedPercent";
+    private static final float SHARED_SHIELD_DAMAGE_RANGE = 1000f;
 
     public static final float MAKESHIFT_SHIELD_EFFICIENCY = 0.5f;
     public static final float MAKESHIFT_SHIELD_TURN_RATE_MULT = 1.2f;
@@ -272,6 +298,55 @@ public enum ShieldSkillEffect implements SkillEffect {
             float hardFlux = damage.computeFluxDealt(hardPortion);
             ((ShipAPI) target).getFluxTracker().increaseFlux(hardFlux, true);
             return null;
+        }
+    }
+
+    private static final class SharedShieldDamageListener implements DamageTakenModifier {
+
+        private final ShipAPI ship;
+
+        private SharedShieldDamageListener(ShipAPI ship) {
+            this.ship = ship;
+        }
+
+        // return value is an unused damage-modifier reason string; this listener never needs to supply one
+        @Override
+        @SuppressWarnings("java:S3516")
+        public String modifyDamageTaken(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
+            if (!shieldHit) return null;
+
+            float percent = ship.getMutableStats().getDynamic().getValue(SHIELD_DAMAGE_SHARED_KEY, 0f);
+            if (percent <= 0f) return null;
+
+            List<ShipAPI> allies = shipsMatching(other -> other != ship && other.getOwner() == ship.getOwner()
+                    && other.isAlive() && !other.isHulk()
+                    && withinRadius(other.getLocation(), ship.getLocation(), SHARED_SHIELD_DAMAGE_RANGE));
+            if (allies.isEmpty()) return null;
+
+            float rawDamage = damage.getDamage();
+            float sharePerAlly = rawDamage * (percent / 100f) / (allies.size() + 1);
+            if (sharePerAlly <= 0f) return null;
+
+            damage.setDamage(rawDamage - sharePerAlly * allies.size());
+            float hardFluxPerAlly = damage.computeFluxDealt(sharePerAlly);
+            for (ShipAPI ally : allies) {
+                ally.getFluxTracker().increaseFlux(hardFluxPerAlly, true);
+            }
+            return null;
+        }
+
+        private static boolean withinRadius(Vector2f a, Vector2f b, float radius) {
+            return Vector2f.sub(a, b, null).lengthSquared() <= radius * radius;
+        }
+
+        private static List<ShipAPI> shipsMatching(Predicate<ShipAPI> filter) {
+            List<ShipAPI> result = new ArrayList<>();
+            for (ShipAPI ship : Global.getCombatEngine().getShips()) {
+                if (filter.test(ship)) {
+                    result.add(ship);
+                }
+            }
+            return result;
         }
     }
 }

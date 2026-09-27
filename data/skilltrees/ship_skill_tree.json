@@ -3348,12 +3348,32 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_64",
-				"league_wormhole_2"
+				"league_wormhole_2",
+				"shared_fate",
+				"shared_damage_taken"
 			],
 			"x": -7564,
 			"y": 2789,
 			"orbitAnchorId": "anchor_29",
 			"orbitAngle": 90
+		},
+		{
+			"id": "shared_fate",
+			"type": "shared_fate",
+			"connectedTo": [
+				"small_flux_optional_65"
+			],
+			"x": -6360,
+			"y": 2789
+		},
+		{
+			"id": "shared_damage_taken",
+			"type": "shared_damage_taken",
+			"connectedTo": [
+				"small_flux_optional_65"
+			],
+			"x": -7564,
+			"y": 3993
 		},
 		{
 			"id": "small_flux_optional_66",

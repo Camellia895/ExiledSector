@@ -2032,6 +2032,37 @@
 			]
 		},
 		{
+			"id": "shared_fate",
+			"name": "Shared Fate",
+			"icon": "graphics/icons/shield_damage_taken_multi.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "SHIELD_DAMAGE_SHARED_PERCENT",
+					"magnitude": 20
+				}
+			],
+			"tags": [
+				"shield",
+				"flux"
+			]
+		},
+		{
+			"id": "shared_damage_taken",
+			"name": "Shared Damage Taken",
+			"icon": "graphics/icons/shield_damage_taken_multi.png",
+			"effects": [
+				{
+					"effect": "SHIELD_DAMAGE_SHARED_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"tags": [
+				"shield",
+				"flux"
+			]
+		},
+		{
 			"id": "survey_mach_cost",
 			"name": "Survey Heavy Machinery Cost Reduction",
 			"icon": "graphics/icons/survey_mach_cost.png",
