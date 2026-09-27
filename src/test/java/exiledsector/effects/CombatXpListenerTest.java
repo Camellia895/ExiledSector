@@ -117,7 +117,8 @@ class CombatXpListenerTest {
         } else {
             when(result.getWinnerResult()).thenReturn(enemy);
         }
-        when(result.getLastCombatDamageData()).thenReturn(mock(CombatDamageData.class));
+        CombatDamageData combatDamageData = mock(CombatDamageData.class);
+        when(result.getLastCombatDamageData()).thenReturn(combatDamageData);
         return result;
     }
 
@@ -130,6 +131,21 @@ class CombatXpListenerTest {
 
         assertEquals(40f, ShipSkillDataManager.get("ship-a").getXp());
         assertEquals(40f, ShipSkillDataManager.get("ship-b").getXp());
+    }
+
+    @Test
+    void countsDisabledEnemyShipsAlongsideDestroyedOnes() {
+        List<FleetMemberAPI> members = List.of(member("ship-a"));
+        when(fleetData.getMembersListCopy()).thenReturn(members);
+        EngagementResultAPI result = engagement(true, 40f);
+        FleetMemberAPI disabled = mock(FleetMemberAPI.class);
+        when(disabled.getDeploymentPointsCost()).thenReturn(15f);
+        List<FleetMemberAPI> disabledShips = List.of(disabled);
+        when(result.getLoserResult().getDisabled()).thenReturn(disabledShips);
+
+        new CombatXpListener().reportPlayerEngagement(result);
+
+        assertEquals(55f, ShipSkillDataManager.get("ship-a").getXp());
     }
 
     @Test

@@ -30,26 +30,30 @@ public class CombatXpListener extends BaseCampaignEventListener {
         if (result == null || result.getLastCombatDamageData() == null || playerFleet == null) {
             return;
         }
-        float destroyedDp = enemyDeploymentPointsDestroyed(result);
+        float defeatedDp = enemyDeploymentPointsDefeated(result);
         boolean lost = !result.didPlayerWin();
-        float xp = destroyedDp * ShipLevelConfig.xpPerDeploymentPoint();
+        float xp = defeatedDp * ShipLevelConfig.xpPerDeploymentPoint();
         if (lost) {
             xp *= ShipLevelConfig.xpLossMultiplier();
         }
 
         Map<FleetMemberAPI, Integer> levelsBefore = levelsOf(playerFleet);
         ShipLevelSystem.awardXpToFleet(playerFleet, xp);
-        report(new CombatXpReport(xp, destroyedDp, lost, levelUps(levelsBefore)));
+        report(new CombatXpReport(xp, defeatedDp, lost, levelUps(levelsBefore)));
     }
 
-    private static float enemyDeploymentPointsDestroyed(EngagementResultAPI result) {
+    private static float enemyDeploymentPointsDefeated(EngagementResultAPI result) {
         EngagementResultForFleetAPI enemy = result.didPlayerWin() ? result.getLoserResult() : result.getWinnerResult();
         if (enemy == null) {
             return 0f;
         }
+        return deploymentPointsOf(enemy.getDestroyed()) + deploymentPointsOf(enemy.getDisabled());
+    }
+
+    private static float deploymentPointsOf(List<FleetMemberAPI> members) {
         float total = 0f;
-        for (FleetMemberAPI destroyed : enemy.getDestroyed()) {
-            total += destroyed.getDeploymentPointsCost();
+        for (FleetMemberAPI member : members) {
+            total += member.getDeploymentPointsCost();
         }
         return total;
     }
@@ -87,10 +91,10 @@ public class CombatXpListener extends BaseCampaignEventListener {
         String xp = report.xpText();
         String dp = report.dpText();
         if (report.lost()) {
-            text.addPara("Every ship in your fleet earned %s XP from %s enemy deployment points destroyed, "
+            text.addPara("Every ship in your fleet earned %s XP from %s enemy deployment points destroyed or disabled, "
                     + "reduced because the battle was lost.", Misc.getHighlightColor(), xp, dp);
         } else {
-            text.addPara("Every ship in your fleet earned %s XP from %s enemy deployment points destroyed.",
+            text.addPara("Every ship in your fleet earned %s XP from %s enemy deployment points destroyed or disabled.",
                     Misc.getHighlightColor(), xp, dp);
         }
         for (String levelUp : report.levelUps()) {
@@ -98,14 +102,14 @@ public class CombatXpListener extends BaseCampaignEventListener {
         }
     }
 
-    record CombatXpReport(float xp, float destroyedDp, boolean lost, List<String> levelUps) {
+    record CombatXpReport(float xp, float defeatedDp, boolean lost, List<String> levelUps) {
 
         String xpText() {
             return String.valueOf(Math.round(xp));
         }
 
         String dpText() {
-            return String.valueOf(Math.round(destroyedDp));
+            return String.valueOf(Math.round(defeatedDp));
         }
     }
 }
