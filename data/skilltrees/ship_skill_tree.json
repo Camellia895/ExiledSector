@@ -2904,7 +2904,7 @@
 			"connectedTo": [
 				"small_flux_optional_49",
 				"small_flux_optional_51",
-				"small_flux_optional_69"
+				"combat_readiness_4"
 			],
 			"x": 6534,
 			"y": -7204,
@@ -2930,7 +2930,7 @@
 			"connectedTo": [
 				"small_flux_optional_49",
 				"small_flux_optional_51",
-				"small_flux_optional_75",
+				"combat_readiness_1",
 				"REDACTED_1"
 			],
 			"x": 6534,
@@ -3512,20 +3512,20 @@
 			"y": -6091
 		},
 		{
-			"id": "small_flux_optional_69",
-			"type": "small_flux_optional",
+			"id": "combat_readiness_4",
+			"type": "combat_readiness",
 			"connectedTo": [
 				"small_flux_optional_50",
-				"small_flux_optional_70"
+				"combat_readiness_3"
 			],
 			"x": 5979,
 			"y": -6706
 		},
 		{
-			"id": "small_flux_optional_70",
-			"type": "small_flux_optional",
+			"id": "combat_readiness_3",
+			"type": "combat_readiness",
 			"connectedTo": [
-				"small_flux_optional_69",
+				"combat_readiness_4",
 				"terrifying_presence_1"
 			],
 			"x": 5962,
@@ -3535,7 +3535,7 @@
 			"id": "terrifying_presence_1",
 			"type": "terrifying_presence",
 			"connectedTo": [
-				"small_flux_optional_70"
+				"combat_readiness_3"
 			],
 			"x": 6323,
 			"y": -5924
@@ -3570,20 +3570,20 @@
 			"y": -5696
 		},
 		{
-			"id": "small_flux_optional_75",
-			"type": "small_flux_optional",
+			"id": "combat_readiness_1",
+			"type": "combat_readiness",
 			"connectedTo": [
 				"REDACTED_2",
-				"small_flux_optional_76"
+				"combat_readiness_2"
 			],
 			"x": 6943,
 			"y": -4969
 		},
 		{
-			"id": "small_flux_optional_76",
-			"type": "small_flux_optional",
+			"id": "combat_readiness_2",
+			"type": "combat_readiness",
 			"connectedTo": [
-				"small_flux_optional_75",
+				"combat_readiness_1",
 				"disintegration_1"
 			],
 			"x": 7045,
@@ -3593,7 +3593,7 @@
 			"id": "disintegration_1",
 			"type": "disintegration",
 			"connectedTo": [
-				"small_flux_optional_76"
+				"combat_readiness_2"
 			],
 			"x": 6730,
 			"y": -5890
@@ -5165,7 +5165,7 @@
 		},
 		{
 			"a": "small_flux_optional_50",
-			"b": "small_flux_optional_69",
+			"b": "combat_readiness_4",
 			"controlX": 6196,
 			"controlY": -7033
 		},
@@ -5188,32 +5188,32 @@
 			"controlY": -5595
 		},
 		{
-			"a": "small_flux_optional_70",
+			"a": "combat_readiness_3",
 			"b": "terrifying_presence_1",
 			"controlX": 6079,
 			"controlY": -6020
 		},
 		{
-			"a": "small_flux_optional_69",
-			"b": "small_flux_optional_70",
+			"a": "combat_readiness_4",
+			"b": "combat_readiness_3",
 			"controlX": 5924,
 			"controlY": -6459
 		},
 		{
-			"a": "small_flux_optional_76",
+			"a": "combat_readiness_2",
 			"b": "disintegration_1",
 			"controlX": 6949,
 			"controlY": -5791
 		},
 		{
-			"a": "small_flux_optional_75",
-			"b": "small_flux_optional_76",
+			"a": "combat_readiness_1",
+			"b": "combat_readiness_2",
 			"controlX": 7029,
 			"controlY": -5248
 		},
 		{
 			"a": "REDACTED_2",
-			"b": "small_flux_optional_75",
+			"b": "combat_readiness_1",
 			"controlX": 6770,
 			"controlY": -4743
 		},

@@ -190,6 +190,20 @@
 			]
 		},
 		{
+			"id": "combat_readiness",
+			"name": "Combat Readiness",
+			"icon": "graphics/icons/combat_endurance3_circular.png",
+			"effects": [
+				{
+					"effect": "MAX_COMBAT_READINESS_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"tags": [
+				"logistics"
+			]
+		},
+		{
 			"id": "nanoforge_mending",
 			"name": "Nanoforge Mending",
 			"icon": "graphics/icons/computer_systems_circular.png",
@@ -1327,7 +1341,7 @@
 			],
 			"hullSizeEffects": [
 				{
-					"effect": "HULL_PERCENT",
+					"effect": "HULL_FLAT",
 					"frigate": 150,
 					"destroyer": 300,
 					"cruiser": 400,

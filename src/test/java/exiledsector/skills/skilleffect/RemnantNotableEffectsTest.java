@@ -52,6 +52,19 @@ class RemnantNotableEffectsTest {
     }
 
     @Test
+    void maxCombatReadinessAddsTheMagnitudeAsAFlatFraction() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        MutableStat maxCr = mock(MutableStat.class);
+        when(stats.getMaxCombatReadiness()).thenReturn(maxCr);
+
+        LogisticsSkillEffect.MAX_COMBAT_READINESS_PERCENT.apply(stats, "mod_id", 5f);
+
+        verify(maxCr).modifyFlat("mod_id", 0.05f, "Ship skill tree");
+        assertEquals("Increases maximum combat readiness by 5%.",
+                LogisticsSkillEffect.MAX_COMBAT_READINESS_PERCENT.describe(5f));
+    }
+
+    @Test
     void nanoforgeMendsHullOnlyAfterGoingUndamagedForTheDelay() {
         ShipAPI ship = shipWithDynamicValue(NanoforgeMendingListener.REGEN_PERCENT_KEY, 1f);
         when(ship.getMaxHitpoints()).thenReturn(1000f);

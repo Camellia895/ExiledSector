@@ -108,37 +108,31 @@ public class SkillNode extends SkillTreeObject {
     }
 
     private static String describeExclusivity(SkillType type) {
-        List<String> lines = new ArrayList<>();
-        Set<String> namesAlreadyShown = new LinkedHashSet<>();
-
-        List<String> hullModNames = new ArrayList<>();
+        Set<String> hullModNames = new LinkedHashSet<>();
         for (String hullModId : type.getExclusiveHullModIds()) {
-            if (type.getInstalledHullModIds().contains(hullModId)) {
-                continue;
-            }
-            HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
-            String name = spec != null ? spec.getDisplayName() : hullModId;
-            if (namesAlreadyShown.add(name)) {
-                hullModNames.add(name);
+            if (!type.getInstalledHullModIds().contains(hullModId)) {
+                HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
+                hullModNames.add(spec != null ? spec.getDisplayName() : hullModId);
             }
         }
-        if (!hullModNames.isEmpty()) {
-            lines.add("Mutually exclusive with: " + String.join(", ", hullModNames) + ".");
-        }
-
-        List<String> skillTypeNames = new ArrayList<>();
+        Set<String> nodeNames = new LinkedHashSet<>();
         for (String skillTypeId : type.getExclusiveSkillTypeIds()) {
             SkillType other = SkillTree.getType(skillTypeId);
-            String name = other != null ? other.getDisplayName() : skillTypeId;
-            if (namesAlreadyShown.add(name)) {
-                skillTypeNames.add(name);
-            }
-        }
-        if (!skillTypeNames.isEmpty()) {
-            lines.add("Mutually exclusive with " + String.join(", ", skillTypeNames) + ".");
+            nodeNames.add(other != null ? other.getDisplayName() : skillTypeId);
         }
 
+        List<String> lines = new ArrayList<>();
+        addIfPresent(lines, exclusivityLine("hullmod", hullModNames));
+        addIfPresent(lines, exclusivityLine("node", nodeNames));
         return lines.isEmpty() ? null : String.join("\n\n", lines);
+    }
+
+    private static String exclusivityLine(String kind, Set<String> names) {
+        if (names.isEmpty()) {
+            return null;
+        }
+        String label = names.size() == 1 ? kind : kind + "s";
+        return "Mutually exclusive with " + label + ": " + String.join(", ", names) + ".";
     }
 
     public SkillType resolveEffectiveType(ShipSkillData data) {

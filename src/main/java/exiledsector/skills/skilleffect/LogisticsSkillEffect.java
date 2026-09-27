@@ -175,6 +175,17 @@ public enum LogisticsSkillEffect implements SkillEffect {
             return pctChange(magnitude, "combat readiness recovery rate");
         }
     },
+    MAX_COMBAT_READINESS_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getMaxCombatReadiness().modifyFlat(modId, magnitude / 100f, "Ship skill tree");
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "maximum combat readiness");
+        }
+    },
     REPAIR_RATE_PER_DAY_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
