@@ -849,7 +849,7 @@
 			"exclusiveHullMods": [
 				"converted_fighterbay"
 			],
-			"description": "Converts this ship's built-in fighter bays into cargo capacity, reducing crew requirements per bay converted.",
+			"description": "Converts this ship's built-in fighter bays into cargo capacity.",
 			"tags": [
 				"logistics"
 			]
@@ -1015,9 +1015,8 @@
 					"category": "hullmod",
 					"id": "escort_package"
 				}
-			],
-			"description": "When this ship is within approximately 700 su of a larger friendly vessel, increases this ship's maneuverability by 25%, and top speed by 10%. Also increases ballistic and energy weapon range by 20%. These bonuses fade out over an additional 500 su beyond that range.\n\nThese bonuses are doubled for destroyers when the nearby friendly is a capital ship."
-		},
+			]
+			},
 		{
 			"id": "expanded_deck_crew",
 			"name": "Expanded Deck Crew",
@@ -1197,7 +1196,6 @@
 				"adaptiveshields",
 				"frontshield"
 			],
-			"description": "Removes this ship's shields entirely, increasing its armor in exchange.",
 			"tags": [
 				"armour"
 			]
@@ -1230,7 +1228,6 @@
 			"exclusiveSkillTypes": [
 				"shield_shunt"
 			],
-			"description": "Installs a makeshift, inefficient shield generator on the ship. The shield emitter is locked in a forward-facing position and has a 90 degree arc.\n\nThe shield generator draws much of its power from engines and reduces the ship's top speed by 20%.",
 			"tags": [
 				"shield"
 			]
@@ -1271,9 +1268,8 @@
 					"statId": "has_neural_link"
 				}
 			],
-			"description": "Links this ship with the flagship, allowing the player to instantly switch which ship they are piloting without using a shuttle pod. Transferring resets the destination ship's system cooldown and adds a charge. The transfer is instant if the combined deployment points of both ships are low enough; otherwise a short transfer time applies. The destination ship must not be under the command of an officer or an AI core.",
-			"todo": "Real vanilla effect links two ships and lets the player instantly swap which one they're piloting, resetting the destination ship's system cooldown and granting a charge, with transfer time gated by the combined deployment point total of both ships - a campaign/combat control-transfer mechanic, not a MutableShipStatsAPI stat modifier. Deliberately left on vanillaHullMod passthrough."
-		},
+			"description": "Links this ship with the flagship, allowing the player to instantly switch which ship they are piloting without using a shuttle pod. Transferring resets the destination ship's system cooldown and adds a charge. The transfer is instant if the combined deployment points of both ships are low enough; otherwise a short transfer time applies. The destination ship must not be under the command of an officer or an AI core."
+			},
 		{
 			"id": "hardenedshieldemitter",
 			"name": "Hardened Shields",
@@ -1553,7 +1549,7 @@
 				"frontemitter",
 				"shield_shunt"
 			],
-			"description": "Converts this ship's shield to omni-directional coverage, reducing its arc in exchange.",
+			"description": "Converts this ship's shield to omni-directional.",
 			"tags": [
 				"shield"
 			]

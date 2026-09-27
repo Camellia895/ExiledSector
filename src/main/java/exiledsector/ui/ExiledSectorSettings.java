@@ -89,5 +89,7 @@ public final class ExiledSectorSettings {
                 "Max Chain Count", "Safety limit on how many links a single non-beam energy chain can have, "
                         + "independent of chance rolls succeeding. Not intended as a balance knob.",
                 MaxChainCountConfig.DEFAULT, 1, 20, "");
+
+        LunaSettings.SettingsCreator.refresh(MOD_ID);
     }
 }

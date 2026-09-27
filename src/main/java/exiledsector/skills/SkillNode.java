@@ -104,7 +104,7 @@ public class SkillNode extends SkillTreeObject {
         if (itemCost == null) {
             return null;
         }
-        return "Costs " + itemCost.formattedQuantity() + " " + itemCost.commodityName() + " to allocate. It is retuned to you upon de-allocation";
+        return "Costs " + itemCost.formattedQuantity() + " " + itemCost.commodityName() + " to allocate. It is returned to you upon de-allocation.";
     }
 
     private static String describeExclusivity(SkillType type) {

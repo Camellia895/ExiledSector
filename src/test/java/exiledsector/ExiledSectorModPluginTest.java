@@ -7,6 +7,7 @@ import exiledsector.effects.SkillTreeInstaller;
 import exiledsector.ui.SkillTreeRefitButton;
 import lunalib.lunaRefit.BaseRefitButton;
 import lunalib.lunaRefit.LunaRefitManager;
+import lunalib.lunaSettings.LunaSettings;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -28,6 +29,7 @@ import static org.mockito.Mockito.when;
 class ExiledSectorModPluginTest {
 
     private MockedStatic<Global> globalMock;
+    private MockedStatic<LunaSettings.SettingsCreator> settingsCreatorMock;
     private SectorAPI sector;
 
     @BeforeEach
@@ -50,10 +52,12 @@ class ExiledSectorModPluginTest {
         globalMock.when(Global::getSector).thenReturn(sector);
         globalMock.when(Global::getSettings).thenReturn(settings);
         globalMock.when(() -> Global.getLogger(any())).thenReturn(logger);
+        settingsCreatorMock = Mockito.mockStatic(LunaSettings.SettingsCreator.class);
     }
 
     @AfterEach
     void tearDown() {
+        settingsCreatorMock.close();
         globalMock.close();
         BaseRefitButton registered = LunaRefitManager.getFirstButtonOfClass(SkillTreeRefitButton.class);
         if (registered != null) {
@@ -66,6 +70,13 @@ class ExiledSectorModPluginTest {
         new ExiledSectorModPlugin().onApplicationLoad();
 
         assertTrue(LunaRefitManager.hasButtonOfClass(SkillTreeRefitButton.class));
+    }
+
+    @Test
+    void onApplicationLoadRefreshesLunaSettingsSoNewSettingsAreWrittenWithTheirDefaults() throws Exception {
+        new ExiledSectorModPlugin().onApplicationLoad();
+
+        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.refresh("exiledSector"));
     }
 
     @Test
