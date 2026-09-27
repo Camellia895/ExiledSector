@@ -1,8 +1,8 @@
 package second_in_command;
 
-public class SICData {
+public class SCData {
 
     public boolean isSkillActive(String skillId) {
-        return SICUtils.ACTIVE_SKILLS.contains(skillId);
+        return SCUtils.ACTIVE_SKILLS.contains(skillId);
     }
 }

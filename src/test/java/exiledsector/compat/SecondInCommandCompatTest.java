@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Answers;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import second_in_command.SICUtils;
+import second_in_command.SCUtils;
 
 import java.util.List;
 
@@ -57,18 +57,18 @@ class SecondInCommandCompatTest {
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSettings).thenReturn(settings);
         globalMock.when(Global::getSector).thenReturn(sector);
-        SICUtils.ACTIVE_SKILLS.clear();
+        SCUtils.ACTIVE_SKILLS.clear();
     }
 
     @AfterEach
     void tearDown() {
         globalMock.close();
-        SICUtils.ACTIVE_SKILLS.clear();
+        SCUtils.ACTIVE_SKILLS.clear();
     }
 
     private void enableSecondInCommandWith(String... activeSkillIds) {
         when(modManager.isModEnabled(SecondInCommandCompat.MOD_ID)).thenReturn(true);
-        SICUtils.ACTIVE_SKILLS.addAll(List.of(activeSkillIds));
+        SCUtils.ACTIVE_SKILLS.addAll(List.of(activeSkillIds));
     }
 
     private MutableShipStatsAPI mockStats() {
@@ -79,7 +79,7 @@ class SecondInCommandCompatTest {
 
     @Test
     void skillIsNeverActiveWhenSecondInCommandIsNotEnabled() {
-        SICUtils.ACTIVE_SKILLS.add(SecondInCommandCompat.REDISTRIBUTION_SKILL_ID);
+        SCUtils.ACTIVE_SKILLS.add(SecondInCommandCompat.REDISTRIBUTION_SKILL_ID);
 
         assertFalse(SecondInCommandCompat.isSkillActive(member, SecondInCommandCompat.REDISTRIBUTION_SKILL_ID));
     }
@@ -89,7 +89,7 @@ class SecondInCommandCompatTest {
         enableSecondInCommandWith();
         assertFalse(SecondInCommandCompat.isSkillActive(member, SecondInCommandCompat.REDISTRIBUTION_SKILL_ID));
 
-        SICUtils.ACTIVE_SKILLS.add(SecondInCommandCompat.REDISTRIBUTION_SKILL_ID);
+        SCUtils.ACTIVE_SKILLS.add(SecondInCommandCompat.REDISTRIBUTION_SKILL_ID);
 
         assertTrue(SecondInCommandCompat.isSkillActive(member, SecondInCommandCompat.REDISTRIBUTION_SKILL_ID));
     }

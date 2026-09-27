@@ -163,7 +163,7 @@
 		{
 			"id": "tactical_superiority",
 			"name": "Tactical Superiority",
-			"icon": "",
+			"icon": "graphics/icons/advanced_tactics_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -178,7 +178,7 @@
 		{
 			"id": "objective_capture_range",
 			"name": "Objective Capture Range",
-			"icon": "",
+			"icon": "graphics/icons/helmsmanship_circular.png",
 			"effects": [
 				{
 					"effect": "OBJECTIVE_CAPTURE_RANGE_FLAT",

@@ -2812,7 +2812,8 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_46",
-				"small_flux_optional_48"
+				"small_flux_optional_48",
+				"objective_capture_range_2"
 			],
 			"x": 6,
 			"y": -8485,
@@ -3961,7 +3962,8 @@
 			"id": "objective_capture_range_2",
 			"type": "objective_capture_range",
 			"connectedTo": [
-				"objective_capture_range_1"
+				"objective_capture_range_1",
+				"small_flux_optional_47"
 			],
 			"x": 9,
 			"y": -8232,
@@ -6069,7 +6071,8 @@
 			"x": 6533,
 			"y": -5902,
 			"radius": 300,
-			"starType": "black_hole"
+			"starType": "black_hole",
+			"color": "#60f1fb"
 		},
 		{
 			"id": "pirate_star",
