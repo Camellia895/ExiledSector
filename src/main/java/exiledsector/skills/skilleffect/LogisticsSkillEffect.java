@@ -295,6 +295,11 @@ public enum LogisticsSkillEffect implements SkillEffect {
         }
 
         @Override
+        public boolean supportsTemporaryGating() {
+            return false;
+        }
+
+        @Override
         public String describe(float magnitude) {
             return "Removes the penalties of a civilian-grade hull.";
         }
@@ -358,18 +363,17 @@ public enum LogisticsSkillEffect implements SkillEffect {
     POST_BATTLE_SALVAGE_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            // stashed on this ship's own stats (reset automatically along with everything else
-            // whenever this ship's stats are rebuilt) rather than written straight to the fleet,
-            // since post-battle salvage is a real fleet-level dynamic stat (Stats.BATTLE_SALVAGE_
-            // MULT_FLEET, confirmed via the vanilla Salvaging skill and the Second In Command mod's
-            // Piracy "Legitimate Salvage" perk) with no per-ship equivalent - recomputeFleetSalvageBonus
-            // below sums every current fleet member's stashed contribution into one fleet-wide modifier
             stats.getDynamic().getMod(POST_BATTLE_SALVAGE_CONTRIBUTION_KEY).modifyFlat(modId, magnitude);
         }
 
         @Override
         public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
             recomputeFleetSalvageBonus();
+        }
+
+        @Override
+        public boolean supportsTemporaryGating() {
+            return false;
         }
 
         @Override
@@ -380,18 +384,17 @@ public enum LogisticsSkillEffect implements SkillEffect {
     PHASE_FIELD_CONTRIBUTION_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            // magnitude is what percentage of THIS ship's own sensor strength counts toward the
-            // fleet-wide detected-at range reduction that vanilla's Phase Field hull mod normally
-            // reserves for actual phase ships only (see PhaseField.getPhaseFieldMultBaseProfileAndTotal,
-            // which gates on `variant.hasHullMod("phasefield")`) - stashed per-ship so
-            // recomputeExtendedPhaseField can scan the whole fleet and fold non-phase contributors in,
-            // without touching this ship's own sensor profile or sensor strength at all
             stats.getDynamic().getMod(PHASE_FIELD_CONTRIBUTION_KEY).modifyFlat(modId, magnitude);
         }
 
         @Override
         public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
             recomputeExtendedPhaseField();
+        }
+
+        @Override
+        public boolean supportsTemporaryGating() {
+            return false;
         }
 
         @Override
@@ -428,10 +431,6 @@ public enum LogisticsSkillEffect implements SkillEffect {
                 .modifyFlat(POST_BATTLE_SALVAGE_FLEET_MOD_ID, totalPercent / 100f);
     }
 
-    // Called from SkillTreeInstaller's once-per-second fleet-wide upkeep, in addition to
-    // applyAfterShipCreation above, so this stays correct even when nothing else touches ship
-    // stats (e.g. right after a transponder toggle, which is the only thing that would otherwise
-    // trigger vanilla's own Phase Field recompute).
     public static void recomputeExtendedPhaseField() {
         CampaignFleetAPI fleet = getPlayerFleet();
         if (fleet == null) {
@@ -481,8 +480,6 @@ public enum LogisticsSkillEffect implements SkillEffect {
                 .modifyMult(EXTENDED_PHASE_FIELD_MOD_ID, mult, "Phase ships and phase sensor networks in fleet");
     }
 
-    // null if this member doesn't count toward the shared phase-sensor pool at all; otherwise the
-    // sensor strength value (full for a real phase ship, weighted for a node contributor) it contributes
     private static Float phaseSensorContribution(FleetMemberAPI member) {
         if (member.isMothballed() || member.getRepairTracker().getCR() < PhaseField.MIN_CR) {
             return null;

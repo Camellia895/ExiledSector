@@ -42,6 +42,11 @@ public enum FighterSkillEffect implements SkillEffect {
         }
 
         @Override
+        public boolean supportsTemporaryGating() {
+            return true;
+        }
+
+        @Override
         public String describe(float magnitude) {
             return pctChange(magnitude, "casualties suffered by fighter pilots launched from this ship");
         }
@@ -50,6 +55,11 @@ public enum FighterSkillEffect implements SkillEffect {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             SkillEffectSupport.applyMult(stats.getDynamic().getStat("fighter_crew_loss_mult"), modId, magnitude);
+        }
+
+        @Override
+        public boolean supportsTemporaryGating() {
+            return true;
         }
 
         @Override
@@ -64,6 +74,11 @@ public enum FighterSkillEffect implements SkillEffect {
         }
 
         @Override
+        public boolean supportsTemporaryGating() {
+            return true;
+        }
+
+        @Override
         public String describe(float magnitude) {
             return pctMore(magnitude, "fighter refit time");
         }
@@ -72,6 +87,11 @@ public enum FighterSkillEffect implements SkillEffect {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getFighterRefitTimeMult().modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public boolean supportsTemporaryGating() {
+            return true;
         }
 
         @Override
@@ -88,6 +108,11 @@ public enum FighterSkillEffect implements SkillEffect {
         }
 
         @Override
+        public boolean supportsTemporaryGating() {
+            return true;
+        }
+
+        @Override
         public String describe(float magnitude) {
             String verb = magnitude >= 0 ? "slower" : "faster";
             return pct(Math.abs(magnitude)) + "% " + verb + " fighter replacement rate decay and recovery.";
@@ -100,6 +125,11 @@ public enum FighterSkillEffect implements SkillEffect {
         }
 
         @Override
+        public boolean supportsTemporaryGating() {
+            return true;
+        }
+
+        @Override
         public String describe(float magnitude) {
             return pctChange(magnitude, "rate at which fighter replacement capability decays from losses");
         }
@@ -108,6 +138,11 @@ public enum FighterSkillEffect implements SkillEffect {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getDynamic().getStat("replacement_rate_increase_mult").modifyPercent(modId, magnitude);
+        }
+
+        @Override
+        public boolean supportsTemporaryGating() {
+            return true;
         }
 
         @Override
@@ -132,6 +167,11 @@ public enum FighterSkillEffect implements SkillEffect {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getDynamic().getMod("fighter_rearm_time_extra_fraction_of_base_refit_time_mod").modifyFlat(modId, magnitude / 100f);
+        }
+
+        @Override
+        public boolean supportsTemporaryGating() {
+            return true;
         }
 
         @Override
@@ -242,6 +282,11 @@ public enum FighterSkillEffect implements SkillEffect {
         }
 
         @Override
+        public boolean supportsTemporaryGating() {
+            return true;
+        }
+
+        @Override
         public String describe(float magnitude) {
             return flatChange(magnitude, "number of fighter bays");
         }
@@ -325,6 +370,11 @@ public enum FighterSkillEffect implements SkillEffect {
 
     @Override
     public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+    }
+
+    @Override
+    public boolean supportsTemporaryGating() {
+        return false;
     }
 
     @Override

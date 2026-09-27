@@ -18,6 +18,7 @@ public class SkillType {
     private final SkillTier tier;
     private final String vanillaHullModId;
     private final SkillItemCost itemCost;
+    private final Float temporaryAfterDeploymentSeconds;
     private final String descriptionOverride;
     private final String todo;
     private final List<String> optionalOptionIds;
@@ -34,6 +35,7 @@ public class SkillType {
         this.tier = builder.tier;
         this.vanillaHullModId = builder.vanillaHullModId;
         this.itemCost = builder.itemCost;
+        this.temporaryAfterDeploymentSeconds = builder.temporaryAfterDeploymentSeconds;
         this.descriptionOverride = builder.descriptionOverride;
         this.todo = builder.todo;
         this.optionalOptionIds = builder.optionalOptionIds == null ? Collections.emptyList() : builder.optionalOptionIds;
@@ -51,6 +53,7 @@ public class SkillType {
         private List<HullSizeSkillEffect> hullSizeEffects = Collections.emptyList();
         private String vanillaHullModId;
         private SkillItemCost itemCost;
+        private Float temporaryAfterDeploymentSeconds;
         private String descriptionOverride;
         private String todo;
         private List<String> optionalOptionIds = Collections.emptyList();
@@ -82,6 +85,11 @@ public class SkillType {
 
         public Builder itemCost(SkillItemCost itemCost) {
             this.itemCost = itemCost;
+            return this;
+        }
+
+        public Builder temporaryAfterDeploymentSeconds(Float temporaryAfterDeploymentSeconds) {
+            this.temporaryAfterDeploymentSeconds = temporaryAfterDeploymentSeconds;
             return this;
         }
 
@@ -150,6 +158,10 @@ public class SkillType {
 
     public SkillItemCost getItemCost() {
         return itemCost;
+    }
+
+    public Float getTemporaryAfterDeploymentSeconds() {
+        return temporaryAfterDeploymentSeconds;
     }
 
     public String getDescriptionOverride() {

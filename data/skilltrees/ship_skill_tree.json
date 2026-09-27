@@ -3019,6 +3019,15 @@
 			"orbitAngle": 90
 		},
 		{
+			"id": "violence_of_action_1",
+			"type": "violence_of_action",
+			"connectedTo": [
+				"small_flux_optional_55"
+			],
+			"x": 3700,
+			"y": 8977
+		},
+		{
 			"id": "small_flux_optional_56",
 			"type": "small_flux_optional",
 			"connectedTo": [
@@ -4748,6 +4757,12 @@
 			"b": "small_flux_optional_55",
 			"controlX": 2774,
 			"controlY": 7793
+		},
+		{
+			"a": "small_flux_optional_55",
+			"b": "violence_of_action_1",
+			"controlX": 3700,
+			"controlY": 8577
 		},
 		{
 			"a": "small_flux_optional_55",

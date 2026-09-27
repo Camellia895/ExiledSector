@@ -16,6 +16,10 @@ public interface SkillEffect {
         return false;
     }
 
+    default boolean supportsTemporaryGating() {
+        return true;
+    }
+
     default void advanceInCombat(ShipAPI ship, String modId, float magnitude) {
     }
 

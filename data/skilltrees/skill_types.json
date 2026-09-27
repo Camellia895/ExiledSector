@@ -2125,6 +2125,26 @@
 			]
 		},
 		{
+			"id": "violence_of_action",
+			"name": "Violence of Action",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "ACCELERATION_PERCENT",
+					"magnitude": 20
+				},
+				{
+					"effect": "TOP_SPEED_PERCENT",
+					"magnitude": 20
+				}
+			],
+			"temporaryAfterDeploymentSeconds": 60,
+			"tags": [
+				"hull"
+			]
+		},
+		{
 			"id": "restriction_breeds_creativity",
 			"name": "Restriction Breeds Creativity",
 			"icon": "",

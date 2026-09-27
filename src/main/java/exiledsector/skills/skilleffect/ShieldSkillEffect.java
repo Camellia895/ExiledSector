@@ -35,6 +35,11 @@ public enum ShieldSkillEffect implements SkillEffect {
         }
 
         @Override
+        public boolean supportsTemporaryGating() {
+            return false;
+        }
+
+        @Override
         public String describe(float magnitude) {
             return "Causes " + pct(magnitude) + "% of beam weapon damage dealt to shields to be hard flux.";
         }
@@ -47,6 +52,11 @@ public enum ShieldSkillEffect implements SkillEffect {
         @Override
         public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
             ship.setShield(ShieldAPI.ShieldType.NONE, 0f, 1f, 1f);
+        }
+
+        @Override
+        public boolean supportsTemporaryGating() {
+            return false;
         }
 
         @Override
@@ -73,6 +83,11 @@ public enum ShieldSkillEffect implements SkillEffect {
         }
 
         @Override
+        public boolean supportsTemporaryGating() {
+            return false;
+        }
+
+        @Override
         public String describe(float magnitude) {
             return "Installs a makeshift, front-facing shield if this ship has none.";
         }
@@ -88,6 +103,11 @@ public enum ShieldSkillEffect implements SkillEffect {
             if (shield != null) {
                 shield.setType(ShieldAPI.ShieldType.FRONT);
             }
+        }
+
+        @Override
+        public boolean supportsTemporaryGating() {
+            return false;
         }
 
         @Override
@@ -112,6 +132,11 @@ public enum ShieldSkillEffect implements SkillEffect {
             if (shield != null) {
                 shield.setType(ShieldAPI.ShieldType.OMNI);
             }
+        }
+
+        @Override
+        public boolean supportsTemporaryGating() {
+            return false;
         }
 
         @Override
@@ -256,9 +281,7 @@ public enum ShieldSkillEffect implements SkillEffect {
             this.ship = ship;
         }
 
-        // return value is an unused damage-modifier reason string; this listener never needs to supply one
         @Override
-        @SuppressWarnings("java:S3516")
         public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
             if (!shieldHit) return null;
             if (!(param instanceof BeamAPI)) return null;

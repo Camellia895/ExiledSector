@@ -56,6 +56,11 @@ public enum PhaseSkillEffect implements SkillEffect {
         }
 
         @Override
+        public boolean supportsTemporaryGating() {
+            return false;
+        }
+
+        @Override
         public void advanceInCombat(ShipAPI ship, String modId, float magnitude) {
             boolean active = ship.isPhased();
             ShipSystemAPI phaseCloak = ship.getPhaseCloak();
@@ -99,6 +104,11 @@ public enum PhaseSkillEffect implements SkillEffect {
             if (!ship.hasListenerOfClass(PhaseAnchorDiveListener.class)) {
                 ship.addListener(new PhaseAnchorDiveListener(ship, modId));
             }
+        }
+
+        @Override
+        public boolean supportsTemporaryGating() {
+            return false;
         }
 
         @Override
