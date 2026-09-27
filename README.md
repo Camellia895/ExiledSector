@@ -21,7 +21,7 @@ Navigate to the outfit screen and click the skill tree button on any of your shi
 - **Synergistic allocation** 
   - Every allocated node costs OP: 1 for frigates, 2 for destroyers, 3 for cruisers and 4 for capitals (configurable).
   - Ships also earn XP in combat. Each level turns the ship's most recently OP-bought node into a free one, so veteran ships get their ordnance points back (to be spent on more nodes!).
-- **Hidden nodes.** Some nodes appear as unidentified until you learn the matching blueprint.
+- **Hidden, unlockable nodes.**
 
 <img src="\graphics\description\Unidentified_node.png" alt="Hidden Node">
   
@@ -44,35 +44,35 @@ Optional:
 
 - **Console Commands** adds `ExiledSectorGrantFleetXp [amount]`, which grants XP to every ship in your fleet.
 
-## Installation
-
-There is no prebuilt release yet, so build the mod from source first (see below). Then copy `mod_info.json`, `jars/`, `data/` and `graphics/` into `Starsector/mods/ExiledSector/` and enable the mod in the launcher.
-
-> [!WARNING]
-> Exiled Sector adds permanent hull mods to the ships in your fleet. Don't remove it from a save that has used it.
-
 ## Configuration
 
-All settings are in the LunaLib mod settings menu:
+Play your own way! All settings are in the LunaLib mod settings menu:
 
 - OP cost per node, by hull size
 - Leveling curve: max level, XP per level, XP growth, and XP gained from a lost battle
 - Maximum number of allocated nodes per ship
 - Whether hidden nodes are revealed, and which unlock conditions are enforced
 
-Play your own way!
-
 ## Disclaimer
 
-This mod is in (very) early development. It is my first mod, and first foray into UI design/game development.
+This mod is in (very) early development. 
 
-I am seeking any feedback, bug reports and node suggestions. Please
+It is my first mod, and first foray into OpenGL/game development, and is by no means feature complete or bug free.
+
+I have used starsector-core graphics and royalty-free art assets for all art in the mod. I will not use LLM-generated art.
+
+I am seeking any feedback, bug reports, node suggestions, or faction designs. 
+
+You can find me on the [Unofficial Starsector Discord](https://fractalsoftworks.com/forum/index.php?topic=11488.0) or by direct message @portals_ 
 
 ### Compatibility
 
+> [!WARNING]
+> Exiled Sector adds permanent hull mods to the ships in your fleet. Don't remove it from a save that has used it.
+
 I have done what I can for some mods, but there is a long way to go for complete mod compatibility.
 
-**Second-in-Command** is (theoretically) supported.
+**[Second-in-Command](https://fractalsoftworks.com/forum/index.php?topic=30407.0)** is (theoretically) supported.
 
 Some weapons from other mods misbehave when their beams are split or their shots are chained. These are listed in:
 
