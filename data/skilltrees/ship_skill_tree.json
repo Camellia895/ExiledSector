@@ -3274,7 +3274,8 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"pirate_wormhole_2",
-				"small_flux_optional_61"
+				"small_flux_optional_61",
+				"turn_acceleration_percent_2"
 			],
 			"x": 7697,
 			"y": -1194,
@@ -3287,8 +3288,8 @@
 			"connectedTo": [
 				"small_flux_optional_60"
 			],
-			"x": 7697,
-			"y": -789
+			"x": 8560,
+			"y": -163
 		},
 		{
 			"id": "small_flux_optional_61",
@@ -3317,8 +3318,8 @@
 			"id": "ground_support_1",
 			"type": "ground_support",
 			"connectedTo": [],
-			"x": 8469,
-			"y": 34
+			"x": 8563,
+			"y": 189
 		},
 		{
 			"id": "ballistic_momentum_1",
@@ -3969,6 +3970,55 @@
 			"y": -8232,
 			"orbitAnchorId": "anchor_44",
 			"orbitAngle": 270
+		},
+		{
+			"id": "reckless_assault_1",
+			"type": "reckless_assault",
+			"connectedTo": [
+				"maneuverability_percent_2",
+				"acceleration_percent_2"
+			],
+			"x": 7699,
+			"y": -625,
+			"orbitAnchorId": "anchor_45",
+			"orbitAngle": 90
+		},
+		{
+			"id": "turn_acceleration_percent_2",
+			"type": "turn_acceleration_percent",
+			"connectedTo": [
+				"small_flux_optional_60",
+				"maneuverability_percent_2",
+				"acceleration_percent_2"
+			],
+			"x": 7699,
+			"y": -985,
+			"orbitAnchorId": "anchor_45",
+			"orbitAngle": 270
+		},
+		{
+			"id": "acceleration_percent_2",
+			"type": "acceleration_percent",
+			"connectedTo": [
+				"turn_acceleration_percent_2",
+				"reckless_assault_1"
+			],
+			"x": 7879,
+			"y": -805,
+			"orbitAnchorId": "anchor_45",
+			"orbitAngle": 0
+		},
+		{
+			"id": "maneuverability_percent_2",
+			"type": "maneuverability_percent",
+			"connectedTo": [
+				"turn_acceleration_percent_2",
+				"reckless_assault_1"
+			],
+			"x": 7519,
+			"y": -805,
+			"orbitAnchorId": "anchor_45",
+			"orbitAngle": 180
 		}
 	],
 	"connectorCurves": [
@@ -5008,13 +5058,13 @@
 			"a": "pirate_wormhole_2",
 			"b": "small_flux_optional_62",
 			"controlX": 6836,
-			"controlY": 887
+			"controlY": 885
 		},
 		{
 			"a": "small_flux_optional_60",
 			"b": "waste_not_1",
-			"controlX": 7690,
-			"controlY": -389
+			"controlX": 8553,
+			"controlY": 237
 		},
 		{
 			"a": "small_flux_optional_60",
@@ -5026,7 +5076,7 @@
 			"a": "small_flux_optional_61",
 			"b": "small_flux_optional_62",
 			"controlX": 8558,
-			"controlY": 887
+			"controlY": 885
 		},
 		{
 			"a": "league_wormhole_2",
@@ -5387,6 +5437,30 @@
 			"b": "tritach_2",
 			"controlX": 932,
 			"controlY": -6249
+		},
+		{
+			"a": "maneuverability_percent_2",
+			"b": "turn_acceleration_percent_2",
+			"controlX": 7572,
+			"controlY": -932
+		},
+		{
+			"a": "acceleration_percent_2",
+			"b": "turn_acceleration_percent_2",
+			"controlX": 7826,
+			"controlY": -932
+		},
+		{
+			"a": "maneuverability_percent_2",
+			"b": "reckless_assault_1",
+			"controlX": 7572,
+			"controlY": -678
+		},
+		{
+			"a": "acceleration_percent_2",
+			"b": "reckless_assault_1",
+			"controlX": 7826,
+			"controlY": -678
 		}
 	],
 	"hiddenConnectors": [
@@ -5901,6 +5975,12 @@
 			"x": 9,
 			"y": -8082,
 			"radius": 150
+		},
+		{
+			"id": "anchor_45",
+			"x": 7699,
+			"y": -805,
+			"radius": 180
 		}
 	],
 	"ringBelts": [

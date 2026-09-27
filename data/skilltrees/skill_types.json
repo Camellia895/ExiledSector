@@ -651,7 +651,7 @@
 			"effects": [
 				{
 					"effect": "ACCELERATION_PERCENT",
-					"magnitude": 60
+					"magnitude": 70
 				},
 				{
 					"effect": "DECELERATION_PERCENT",
@@ -2700,7 +2700,7 @@
 			"effects": [
 				{
 					"effect": "ACCELERATION_PERCENT",
-					"magnitude": 50
+					"magnitude": 30
 				}
 			],
 			"tags": [
@@ -2901,6 +2901,26 @@
 			"temporaryAfterDeploymentSeconds": 90,
 			"tags": [
 				"speed"
+			]
+		},
+		{
+			"id": "reckless_assault",
+			"name": "Reckless Assault",
+			"icon": "graphics/icons/explosion2_shifted.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CREW_LOSS_PERCENT",
+					"magnitude": -50
+				},
+				{
+					"effect": "ALL_WEAPON_DAMAGE_PERCENT",
+					"magnitude": 30
+				},
+				{
+					"effect": "SHIELD_DAMAGE_TAKEN_MULT",
+					"magnitude": -10
+				}
 			]
 		}
 	]
