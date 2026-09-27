@@ -908,6 +908,24 @@
 			]
 		},
 		{
+			"id": "phase_sensor_upgrades",
+			"name": "Phase Sensor Upgrades",
+			"icon": "graphics/icons/phase_field_circular.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "PHASE_FIELD_CONTRIBUTION_PERCENT",
+					"magnitude": 100
+				}
+			],
+			"exclusiveHullMods": [
+				"phasefield"
+			],
+			"tags": [
+				"logistics"
+			]
+		},
+		{
 			"id": "hoarded_arms",
 			"name": "Hoarded Arms",
 			"icon": "",
@@ -2314,6 +2332,13 @@
 				{
 					"effect": "SHIELD_ARC_MULT",
 					"magnitude": 15
+				}
+			],
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "adaptiveshields"
 				}
 			],
 			"tags": [

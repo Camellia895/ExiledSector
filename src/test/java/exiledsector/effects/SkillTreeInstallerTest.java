@@ -10,6 +10,7 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.skills.SkillNode;
@@ -49,6 +50,11 @@ class SkillTreeInstallerTest {
         CampaignFleetAPI playerFleet = mock(CampaignFleetAPI.class);
         fleetData = mock(FleetDataAPI.class);
         when(playerFleet.getFleetData()).thenReturn(fleetData);
+        MutableFleetStatsAPI fleetStats = mock(MutableFleetStatsAPI.class);
+        when(playerFleet.getStats()).thenReturn(fleetStats);
+        StatBonus detectedRangeMod = mock(StatBonus.class);
+        when(fleetStats.getDetectedRangeMod()).thenReturn(detectedRangeMod);
+        when(playerFleet.isTransponderOn()).thenReturn(true);
 
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSector).thenReturn(sector);
@@ -95,7 +101,8 @@ class SkillTreeInstallerTest {
 
         installer.advance(0.01f);
 
-        globalMock.verify(Global::getSector, times(1));
+        // once from SkillTreeInstaller.advance itself, once from LogisticsSkillEffect.recomputeExtendedPhaseField
+        globalMock.verify(Global::getSector, times(2));
     }
 
     @Test
@@ -104,10 +111,10 @@ class SkillTreeInstallerTest {
         installer.advance(0.01f);
 
         installer.advance(0.5f);
-        globalMock.verify(Global::getSector, times(1));
+        globalMock.verify(Global::getSector, times(2));
 
         installer.advance(0.5f);
-        globalMock.verify(Global::getSector, times(2));
+        globalMock.verify(Global::getSector, times(4));
     }
 
     @Test
