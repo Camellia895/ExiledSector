@@ -25,7 +25,8 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
 
     @Override
     public void onGameLoad(boolean newGame) {
-        Global.getSector().addScript(new SkillTreeInstaller());
+        Global.getSector().removeScriptsOfClass(SkillTreeInstaller.class);
+        Global.getSector().addTransientScript(new SkillTreeInstaller());
         Global.getSector().addTransientListener(new CombatXpListener());
     }
 }

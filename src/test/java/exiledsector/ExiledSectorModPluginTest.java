@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -23,7 +24,9 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -89,10 +92,20 @@ class ExiledSectorModPluginTest {
     }
 
     @Test
-    void onGameLoadRegistersTheInstallerScript() {
+    void onGameLoadRegistersTheInstallerScriptAsTransientSoItIsNeverSaved() {
         new ExiledSectorModPlugin().onGameLoad(true);
 
-        verify(sector).addScript(any(SkillTreeInstaller.class));
+        verify(sector).addTransientScript(any(SkillTreeInstaller.class));
+        verify(sector, never()).addScript(any(SkillTreeInstaller.class));
+    }
+
+    @Test
+    void onGameLoadRemovesInstallerCopiesPersistedByOlderSavesBeforeAddingTheTransientOne() {
+        new ExiledSectorModPlugin().onGameLoad(false);
+
+        InOrder order = inOrder(sector);
+        order.verify(sector).removeScriptsOfClass(SkillTreeInstaller.class);
+        order.verify(sector).addTransientScript(any(SkillTreeInstaller.class));
     }
 
     @Test
