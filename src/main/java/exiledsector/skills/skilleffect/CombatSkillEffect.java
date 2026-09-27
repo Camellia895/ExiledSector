@@ -56,7 +56,8 @@ public enum CombatSkillEffect implements SkillEffect {
             int count = Math.round(magnitude);
             return "Beam weapon hits split their damage evenly across the target and up to "
                     + pct(magnitude) + " additional nearby enem" + (count == 1 ? "y" : "ies") + ". " +
-                    "The target acquisition range is half the beam weapon's range.";
+                    "The target acquisition range is half the beam weapon's range. " +
+                    "Split beams also carry the weapon's special beam effects.";
         }
     },
     EXPLODE_ON_DEATH {
@@ -238,13 +239,19 @@ public enum CombatSkillEffect implements SkillEffect {
     private static final String ESCORT_WEAPON_RANGE_BONUS_KEY = "exiledSector_escortWeaponRangeBonusPercent";
     private static final String ESCORT_PROXIMITY_RANGE_KEY = "exiledSector_escortProximityRange";
 
-    private static final class BeamSplitListener implements DamageDealtModifier {
+    private static final class BeamSplitListener implements DamageDealtModifier, AdvanceableListener {
 
         private final ShipAPI ship;
+        private final SplitBeamEffects splitBeamEffects = new SplitBeamEffects();
         private boolean processingSplit;
 
         private BeamSplitListener(ShipAPI ship) {
             this.ship = ship;
+        }
+
+        @Override
+        public void advance(float amount) {
+            splitBeamEffects.advance(amount);
         }
 
         @Override
@@ -303,6 +310,7 @@ public enum CombatSkillEffect implements SkillEffect {
             }
 
             engine.applyDamage(sourceBeam, splitTarget, impactPoint, damageAmount, damageType, empAmount, false, true, ship, false);
+            splitBeamEffects.refresh(sourceBeam, splitTarget, from, impactPoint);
 
             float impactSize = sourceBeam.getWidth() * 2f;
             engine.addHitParticle(impactPoint, new Vector2f(), impactSize, 1f,

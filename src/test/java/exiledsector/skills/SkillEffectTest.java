@@ -2,6 +2,8 @@ package exiledsector.skills;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.BeamAPI;
+import com.fs.starfarer.api.combat.BeamEffectPlugin;
+import com.fs.starfarer.api.loading.BeamWeaponSpecAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
@@ -39,6 +41,7 @@ import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -1280,10 +1283,12 @@ class SkillEffectTest {
     @Test
     void beamSplitTargetsFlatDescribesTheSplitCount() {
         assertEquals("Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy. "
-                        + "The target acquisition range is half the beam weapon's range.",
+                        + "The target acquisition range is half the beam weapon's range. "
+                        + "Split beams also carry the weapon's special beam effects.",
                 CombatSkillEffect.BEAM_SPLIT_TARGETS_FLAT.describe(1f));
         assertEquals("Beam weapon hits split their damage evenly across the target and up to 3 additional nearby enemies. "
-                        + "The target acquisition range is half the beam weapon's range.",
+                        + "The target acquisition range is half the beam weapon's range. "
+                        + "Split beams also carry the weapon's special beam effects.",
                 CombatSkillEffect.BEAM_SPLIT_TARGETS_FLAT.describe(3f));
     }
 
@@ -1432,6 +1437,61 @@ class SkillEffectTest {
             verify(engine).applyDamage(eq(beam), eq(enemy2), any(Vector2f.class), eq(30f), eq(DamageType.ENERGY),
                     eq(0f), eq(false), eq(true), eq(ship), eq(false));
         }
+    }
+
+    public static class SplitTargetRecordingBeamEffect implements BeamEffectPlugin {
+        static final List<CombatEntityAPI> targetsSeen = new ArrayList<>();
+
+        @Override
+        public void advance(float amount, CombatEngineAPI engine, BeamAPI beam) {
+            targetsSeen.add(beam.getDamageTarget());
+        }
+    }
+
+    @Test
+    void beamSplitListenerRunsTheWeaponsBeamEffectAgainstEachSplitTargetEveryFrame() {
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.getOwner()).thenReturn(0);
+        MutableShipStatsAPI shipStats = mock(MutableShipStatsAPI.class);
+        com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
+        when(ship.getMutableStats()).thenReturn(shipStats);
+        when(shipStats.getDynamic()).thenReturn(dynamic);
+        when(dynamic.getValue("exiledSector_beamSplitTargets", 0f)).thenReturn(1f);
+
+        DamageDealtModifier listener = captureBeamSplitListener(ship);
+
+        BeamAPI beam = mock(BeamAPI.class);
+        when(beam.getCoreColor()).thenReturn(java.awt.Color.WHITE);
+        when(beam.getFringeColor()).thenReturn(java.awt.Color.RED);
+        WeaponAPI weapon = mockBeamSplitWeapon(beam, 2000f);
+        BeamWeaponSpecAPI spec = mock(BeamWeaponSpecAPI.class);
+        when(weapon.getSpec()).thenReturn(spec);
+        when(spec.getBeamEffect()).thenReturn(new SplitTargetRecordingBeamEffect());
+        SplitTargetRecordingBeamEffect.targetsSeen.clear();
+
+        ShipAPI primaryTarget = mock(ShipAPI.class);
+        when(primaryTarget.getOwner()).thenReturn(1);
+        ShipAPI enemy = mockBeamSplitEnemy(1, new Vector2f(100f, 0f));
+        DamageAPI damage = mock(DamageAPI.class);
+        when(damage.getDamage()).thenReturn(90f);
+        when(damage.getType()).thenReturn(DamageType.ENERGY);
+
+        try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class);
+             MockedStatic<MagicFakeBeam> fakeBeamMock = Mockito.mockStatic(MagicFakeBeam.class);
+             MockedStatic<MagicFakeBeamPlugin> fakeBeamPluginMock = Mockito.mockStatic(MagicFakeBeamPlugin.class)) {
+            CombatEngineAPI engine = mock(CombatEngineAPI.class);
+            globalMock.when(Global::getCombatEngine).thenReturn(engine);
+            when(engine.getShips()).thenReturn(Arrays.asList(ship, primaryTarget, enemy));
+            fakeBeamMock.when(() -> MagicFakeBeam.getShipCollisionPoint(any(), any(), any(), anyFloat()))
+                    .thenAnswer(invocation -> ((ShipAPI) invocation.getArgument(2)).getLocation());
+
+            listener.modifyDamageDealt(beam, primaryTarget, damage, new Vector2f(0f, 0f), false);
+            ((AdvanceableListener) listener).advance(0.016f);
+            ((AdvanceableListener) listener).advance(0.016f);
+        }
+
+        List<CombatEntityAPI> targetsSeen = SplitTargetRecordingBeamEffect.targetsSeen;
+        assertEquals(List.of(enemy, enemy), targetsSeen);
     }
 
     @Test
