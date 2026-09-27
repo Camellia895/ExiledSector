@@ -48,6 +48,17 @@ class SkillNodeTest {
     }
 
     @Test
+    void descriptionStatesHowLongATemporaryAfterDeploymentNodeLasts() {
+        SkillType type = new SkillType.Builder("hull", "Hull", "a.png", SkillTier.SMALL)
+                .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)))
+                .temporaryAfterDeploymentSeconds(60f)
+                .build();
+
+        assertEquals("Increases hull points by 10%.\n\nThese effects only last for the first 60 seconds after the ship is deployed.",
+                SkillNode.describeType(type, null));
+    }
+
+    @Test
     void descriptionJoinsMultipleEffectsOnSeparateLines() {
         SkillType type = new SkillType.Builder("heavyarmor", "Heavy Armor", "graphics/icons/notable_hullmods/heavy_armor.png", SkillTier.NOTABLE)
                 .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.ARMOR_PERCENT, 15f), new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 5f)))

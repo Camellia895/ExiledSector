@@ -63,22 +63,18 @@ public class SkillNode extends SkillTreeObject {
 
     public static String describeType(SkillType type, HullSize hullSize) {
         List<String> lines = new ArrayList<>();
-        if (type.getDescriptionOverride() != null) {
-            lines.add(type.getDescriptionOverride());
-        }
+        addIfPresent(lines, type.getDescriptionOverride());
         List<String> effectLines = new ArrayList<>();
         List<String> warnings = new ArrayList<>();
         for (SkillTypeEffect effect : type.getEffects()) {
             addIfPresent(effectLines, effect.effect().describe(effect.magnitude()));
-            String warning = effect.effect().deallocationWarning(effect.magnitude());
-            if (warning != null) warnings.add(warning);
+            addIfPresent(warnings, effect.effect().deallocationWarning(effect.magnitude()));
         }
         if (hullSize != null) {
             for (HullSizeSkillEffect effect : type.getHullSizeEffects()) {
                 float magnitude = effect.valueFor(hullSize);
                 addIfPresent(effectLines, effect.effect().describe(magnitude));
-                String warning = effect.effect().deallocationWarning(magnitude);
-                if (warning != null) warnings.add(warning);
+                addIfPresent(warnings, effect.effect().deallocationWarning(magnitude));
             }
         }
         for (String hullModId : type.getInstalledHullModIds()) {
@@ -87,16 +83,28 @@ public class SkillNode extends SkillTreeObject {
             effectLines.add("Installs the " + name + " hull mod at no OP cost.");
         }
         lines.addAll(effectLines);
+        addIfPresent(lines, describeTemporaryDuration(type));
         lines.addAll(warnings);
-        SkillItemCost itemCost = type.getItemCost();
-        if (itemCost != null) {
-            lines.add("Costs " + itemCost.formattedQuantity() + " " + itemCost.commodityName() + " to allocate.");
-        }
-        String exclusivityLine = describeExclusivity(type);
-        if (exclusivityLine != null) {
-            lines.add(exclusivityLine);
-        }
+        addIfPresent(lines, describeItemCost(type));
+        addIfPresent(lines, describeExclusivity(type));
         return String.join("\n\n", lines);
+    }
+
+    private static String describeTemporaryDuration(SkillType type) {
+        Float seconds = type.getTemporaryAfterDeploymentSeconds();
+        if (seconds == null) {
+            return null;
+        }
+        String formatted = seconds == Math.rint(seconds) ? String.valueOf(seconds.intValue()) : String.valueOf(seconds);
+        return "These effects only last for the first " + formatted + " seconds after the ship is deployed.";
+    }
+
+    private static String describeItemCost(SkillType type) {
+        SkillItemCost itemCost = type.getItemCost();
+        if (itemCost == null) {
+            return null;
+        }
+        return "Costs " + itemCost.formattedQuantity() + " " + itemCost.commodityName() + " to allocate. It is retuned to you upon de-allocation";
     }
 
     private static String describeExclusivity(SkillType type) {
