@@ -18,8 +18,10 @@ import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.loading.BeamWeaponSpecAPI;
 import com.fs.starfarer.api.loading.WeaponGroupSpec;
 import com.fs.starfarer.api.loading.WeaponGroupType;
+import exiledsector.skills.CsvIdBlocklist;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 final class SplitBeamDroneFactory {
 
@@ -27,6 +29,7 @@ final class SplitBeamDroneFactory {
 
     private static final String INVULNERABLE_MOD_ID = "exiledSector_splitBeamDrone";
     private static final float MOTHERSHIP_FLAG_DURATION = 100000f;
+    private static final Map<String, Boolean> SUPPORT_BY_WEAPON_ID = new ConcurrentHashMap<>();
     private static final Map<WeaponSize, String> SLOT_IDS = Map.of(
             WeaponSize.SMALL, "WS SMALL",
             WeaponSize.MEDIUM, "WS MEDIUM",
@@ -36,12 +39,16 @@ final class SplitBeamDroneFactory {
     }
 
     static boolean supports(WeaponAPI weapon) {
-        if (!(weapon.getSpec() instanceof BeamWeaponSpecAPI spec) || !SLOT_IDS.containsKey(weapon.getSize())) {
+        if (!(weapon.getSpec() instanceof BeamWeaponSpecAPI spec) || spec.getWeaponId() == null) {
             return false;
         }
+        return SUPPORT_BY_WEAPON_ID.computeIfAbsent(spec.getWeaponId(), id -> canMountOnDrone(weapon, spec));
+    }
+
+    private static boolean canMountOnDrone(WeaponAPI weapon, BeamWeaponSpecAPI spec) {
         boolean blocklisted = spec.getBeamEffect() != null
                 && CsvIdBlocklist.SPLIT_BEAM_EFFECTS.contains(spec.getBeamEffect().getClass().getName());
-        return !blocklisted && Global.getSettings().getHullSpec(HULL_ID) != null;
+        return !blocklisted && SLOT_IDS.containsKey(weapon.getSize()) && Global.getSettings().getHullSpec(HULL_ID) != null;
     }
 
     static ShipAPI create(ShipAPI firingShip, WeaponAPI weapon) {
@@ -87,10 +94,16 @@ final class SplitBeamDroneFactory {
 
     static void shareDamageListeners(ShipAPI firingShip, ShipAPI drone) {
         for (DamageDealtModifier listener : firingShip.getListeners(DamageDealtModifier.class)) {
-            boolean ticksEveryFrame = listener instanceof AdvanceableListener;
-            if (!ticksEveryFrame && !drone.hasListenerOfClass(listener.getClass())) {
+            if (isShareable(listener)) {
+                drone.removeListenerOfClass(listener.getClass());
                 drone.addListener(listener);
             }
         }
+    }
+
+    private static boolean isShareable(DamageDealtModifier listener) {
+        boolean splitsBeams = listener instanceof SplitBeamSource;
+        boolean wouldTickTwicePerFrame = listener instanceof AdvanceableListener;
+        return !splitsBeams && !wouldTickTwicePerFrame;
     }
 }

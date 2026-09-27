@@ -7,9 +7,9 @@ import exiledsector.skills.SkillNodeOpCost;
 import exiledsector.skills.UnlockConditionOverrides;
 import lunalib.lunaSettings.LunaSettings;
 
-public final class ExiledSectorSettings {
+import static exiledsector.ExiledSectorModPlugin.MOD_ID;
 
-    private static final String MOD_ID = "exiledSector";
+public final class ExiledSectorSettings {
 
     private ExiledSectorSettings() {
     }

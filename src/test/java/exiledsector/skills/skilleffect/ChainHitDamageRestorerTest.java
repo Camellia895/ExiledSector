@@ -63,6 +63,23 @@ class ChainHitDamageRestorerTest {
     }
 
     @Test
+    void restoresAHitThatWasNeverReportedBeforeReducingTheNextOne() {
+        DamageAPI unreported = mock(DamageAPI.class);
+        when(unreported.getBaseDamage()).thenReturn(100f);
+        DamageAPI next = mock(DamageAPI.class);
+        when(next.getBaseDamage()).thenReturn(60f);
+        ShipAPI target = mock(ShipAPI.class);
+
+        ChainHitDamageRestorer.reduceForThisHit(unreported, 0.5f, target);
+        ChainHitDamageRestorer restorer = (ChainHitDamageRestorer) registeredRestorer();
+        when(listeners.getListeners(ChainHitDamageRestorer.class)).thenReturn(List.of(restorer));
+        ChainHitDamageRestorer.reduceForThisHit(next, 0.5f, target);
+
+        verify(unreported).setDamage(100f);
+        verify(next).setDamage(30f);
+    }
+
+    @Test
     void ignoresDamageReportsForOtherTargets() {
         DamageAPI damage = mock(DamageAPI.class);
         when(damage.getBaseDamage()).thenReturn(100f);

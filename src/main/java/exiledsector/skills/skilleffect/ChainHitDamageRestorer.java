@@ -15,9 +15,18 @@ final class ChainHitDamageRestorer implements DamageListener {
     private final List<PendingRestore> pending = new ArrayList<>();
 
     static void reduceForThisHit(DamageAPI damage, float dealtMult, CombatEntityAPI target) {
+        ChainHitDamageRestorer restorer = instance();
+        restorer.restoreStaleHits();
         float baseDamage = damage.getBaseDamage();
-        instance().pending.add(new PendingRestore(damage, baseDamage, target));
+        restorer.pending.add(new PendingRestore(damage, baseDamage, target));
         damage.setDamage(baseDamage * dealtMult);
+    }
+
+    private void restoreStaleHits() {
+        for (PendingRestore stale : pending) {
+            stale.damage().setDamage(stale.baseDamage());
+        }
+        pending.clear();
     }
 
     private static ChainHitDamageRestorer instance() {

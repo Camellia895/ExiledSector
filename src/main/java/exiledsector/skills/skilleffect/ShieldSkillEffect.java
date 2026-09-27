@@ -1,6 +1,5 @@
 package exiledsector.skills.skilleffect;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.BeamAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
@@ -14,9 +13,7 @@ import org.lwjgl.util.vector.Vector2f;
 
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 import static exiledsector.skills.skilleffect.SkillEffectText.pct;
 import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
@@ -332,18 +329,16 @@ public enum ShieldSkillEffect implements SkillEffect {
             this.ship = ship;
         }
 
-        // return value is an unused damage-modifier reason string; this listener never needs to supply one
         @Override
-        @SuppressWarnings("java:S3516")
         public String modifyDamageTaken(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
             if (!shieldHit) return null;
 
             float percent = ship.getMutableStats().getDynamic().getValue(SHIELD_DAMAGE_SHARED_KEY, 0f);
             if (percent <= 0f) return null;
 
-            List<ShipAPI> allies = shipsMatching(other -> other != ship && other.getOwner() == ship.getOwner()
+            List<ShipAPI> allies = CombatQueries.shipsMatching(other -> other != ship && other.getOwner() == ship.getOwner()
                     && other.isAlive() && !other.isHulk()
-                    && withinRadius(other.getLocation(), ship.getLocation(), SHARED_SHIELD_DAMAGE_RANGE));
+                    && CombatQueries.withinRadius(other.getLocation(), ship.getLocation(), SHARED_SHIELD_DAMAGE_RANGE));
             if (allies.isEmpty()) return null;
 
             float rawDamage = damage.getDamage();
@@ -356,20 +351,6 @@ public enum ShieldSkillEffect implements SkillEffect {
                 ally.getFluxTracker().increaseFlux(hardFluxPerAlly, true);
             }
             return null;
-        }
-
-        private static boolean withinRadius(Vector2f a, Vector2f b, float radius) {
-            return Vector2f.sub(a, b, null).lengthSquared() <= radius * radius;
-        }
-
-        private static List<ShipAPI> shipsMatching(Predicate<ShipAPI> filter) {
-            List<ShipAPI> result = new ArrayList<>();
-            for (ShipAPI ship : Global.getCombatEngine().getShips()) {
-                if (filter.test(ship)) {
-                    result.add(ship);
-                }
-            }
-            return result;
         }
     }
 }

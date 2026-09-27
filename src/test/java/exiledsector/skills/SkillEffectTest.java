@@ -23,7 +23,6 @@ import com.fs.starfarer.api.combat.listeners.HullDamageAboutToBeTakenListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.fleet.RepairTrackerAPI;
 import exiledsector.skills.skilleffect.CombatSkillEffect;
-import exiledsector.skills.skilleffect.CsvIdBlocklist;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.FighterSkillEffect;
 import exiledsector.skills.skilleffect.FluxSkillEffect;

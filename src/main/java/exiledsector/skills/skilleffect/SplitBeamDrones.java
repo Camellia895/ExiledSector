@@ -23,6 +23,7 @@ final class SplitBeamDrones {
     private static final float SPLIT_TIMEOUT_SECONDS = 0.3f;
     private static final float EXIT_MARGIN = 10f;
     private static final float CONNECTOR_OVERLAP = 20f;
+    private static final float STAT_MIRROR_INTERVAL_SECONDS = 0.25f;
     private static final String SHARE_MOD_ID = "exiledSector_splitBeamDroneShare";
 
     private final ShipAPI firingShip;
@@ -88,6 +89,7 @@ final class SplitBeamDrones {
         private final Vector2f impactPoint = new Vector2f();
         private final Vector2f origin = new Vector2f();
         private float secondsSinceRefresh;
+        private float secondsSinceMirror;
 
         private SplitDrone(ShipAPI drone, ShipAPI splitTarget) {
             this.drone = drone;
@@ -109,8 +111,10 @@ final class SplitBeamDrones {
             if (!firing && !droneWeapon.isFiring()) {
                 return true;
             }
-            if (!firingShipGone) {
+            secondsSinceMirror += amount;
+            if (!firingShipGone && secondsSinceMirror >= STAT_MIRROR_INTERVAL_SECONDS) {
                 SplitBeamDroneStats.mirror(firingShip.getMutableStats(), drone.getMutableStats());
+                secondsSinceMirror = 0f;
             }
             float angle = VectorUtils.getAngle(origin, splitTarget.getLocation());
             drone.getLocation().set(origin);

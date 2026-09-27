@@ -2,9 +2,9 @@ package exiledsector.skills;
 
 import lunalib.lunaSettings.LunaSettings;
 
-public final class MaxChainCountConfig {
+import static exiledsector.ExiledSectorModPlugin.MOD_ID;
 
-    private static final String MOD_ID = "exiledSector";
+public final class MaxChainCountConfig {
 
     public static final String FIELD_ID = "exiledSector_maxChainCount";
 

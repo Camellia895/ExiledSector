@@ -1,4 +1,4 @@
-package exiledsector.skills.skilleffect;
+package exiledsector.skills;
 
 import com.fs.starfarer.api.Global;
 import org.apache.log4j.Logger;
@@ -6,18 +6,22 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static exiledsector.ExiledSectorModPlugin.MOD_ID;
+
 public final class CsvIdBlocklist {
 
-    public static final CsvIdBlocklist SPLIT_BEAM_EFFECTS =
-            new CsvIdBlocklist("data/config/exiledSector/split_beam_effect_blocklist.csv", "plugin");
-    public static final CsvIdBlocklist ENERGY_CHAIN_WEAPONS =
-            new CsvIdBlocklist("data/config/exiledSector/energy_chain_blocklist.csv", "weapon");
+    private static final List<CsvIdBlocklist> ALL = new ArrayList<>();
 
-    private static final String MOD_ID = "exiledSector";
+    public static final CsvIdBlocklist SPLIT_BEAM_EFFECTS =
+            register("data/config/exiledSector/split_beam_effect_blocklist.csv", "plugin");
+    public static final CsvIdBlocklist ENERGY_CHAIN_WEAPONS =
+            register("data/config/exiledSector/energy_chain_blocklist.csv", "weapon");
 
     private final String path;
     private final String idColumn;
@@ -28,12 +32,19 @@ public final class CsvIdBlocklist {
         this.idColumn = idColumn;
     }
 
-    public static void loadAll() {
-        SPLIT_BEAM_EFFECTS.load();
-        ENERGY_CHAIN_WEAPONS.load();
+    private static CsvIdBlocklist register(String path, String idColumn) {
+        CsvIdBlocklist blocklist = new CsvIdBlocklist(path, idColumn);
+        ALL.add(blocklist);
+        return blocklist;
     }
 
-    void load() {
+    public static void loadAll() {
+        for (CsvIdBlocklist blocklist : ALL) {
+            blocklist.load();
+        }
+    }
+
+    private void load() {
         try {
             JSONArray rows = Global.getSettings().getMergedSpreadsheetDataForMod(idColumn, path, MOD_ID);
             Set<String> loaded = new HashSet<>();
@@ -49,7 +60,7 @@ public final class CsvIdBlocklist {
         }
     }
 
-    boolean contains(String id) {
+    public boolean contains(String id) {
         return id != null && ids.get().contains(id);
     }
 }

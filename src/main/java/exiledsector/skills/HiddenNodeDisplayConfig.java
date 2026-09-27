@@ -2,9 +2,9 @@ package exiledsector.skills;
 
 import lunalib.lunaSettings.LunaSettings;
 
-public final class HiddenNodeDisplayConfig {
+import static exiledsector.ExiledSectorModPlugin.MOD_ID;
 
-    private static final String MOD_ID = "exiledSector";
+public final class HiddenNodeDisplayConfig {
 
     public static final String SHOW_HIDDEN_NODES_FIELD_ID = "exiledSector_showHiddenNodesByDefault";
 

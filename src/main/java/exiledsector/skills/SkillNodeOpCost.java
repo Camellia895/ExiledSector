@@ -4,9 +4,9 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import lunalib.lunaSettings.LunaSettings;
 
-public final class SkillNodeOpCost {
+import static exiledsector.ExiledSectorModPlugin.MOD_ID;
 
-    private static final String MOD_ID = "exiledSector";
+public final class SkillNodeOpCost {
 
     public static final String FRIGATE_FIELD_ID = "exiledSector_opCostFrigate";
     public static final String DESTROYER_FIELD_ID = "exiledSector_opCostDestroyer";

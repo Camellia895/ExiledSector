@@ -2,9 +2,9 @@ package exiledsector.skills;
 
 import lunalib.lunaSettings.LunaSettings;
 
-public final class UnlockConditionOverrides {
+import static exiledsector.ExiledSectorModPlugin.MOD_ID;
 
-    private static final String MOD_ID = "exiledSector";
+public final class UnlockConditionOverrides {
 
     public static final String DISABLE_BLUEPRINT_FIELD_ID = "exiledSector_disableBlueprintUnlock";
     public static final String DISABLE_CHARACTER_STAT_FIELD_ID = "exiledSector_disableCharacterStatUnlock";

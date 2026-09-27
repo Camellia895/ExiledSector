@@ -33,6 +33,13 @@ import static org.mockito.Mockito.when;
 
 class SplitBeamDronesTest {
 
+    private static final class FakeSplitter implements DamageDealtModifier, SplitBeamSource {
+        @Override
+        public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
+            return null;
+        }
+    }
+
     private static ShipAPI shieldedShipAtOrigin(float shieldRadius) {
         ShipAPI ship = mock(ShipAPI.class);
         ShieldAPI shield = mock(ShieldAPI.class);
@@ -147,12 +154,25 @@ class SplitBeamDronesTest {
     }
 
     @Test
-    void doesNotShareAListenerClassTheOfficerCopyAlreadyInstalled() {
+    void replacesTheOfficerCopysOwnInstanceOfAListenerWithTheFiringShipsSoItReadsTheRealShip() {
         ShipAPI firingShip = mock(ShipAPI.class);
         ShipAPI drone = mock(ShipAPI.class);
         DamageDealtModifier listener = mock(DamageDealtModifier.class);
         when(firingShip.getListeners(DamageDealtModifier.class)).thenReturn(List.of(listener));
-        when(drone.hasListenerOfClass(listener.getClass())).thenReturn(true);
+
+        SplitBeamDroneFactory.shareDamageListeners(firingShip, drone);
+
+        org.mockito.InOrder order = Mockito.inOrder(drone);
+        order.verify(drone).removeListenerOfClass(listener.getClass());
+        order.verify(drone).addListener(listener);
+    }
+
+    @Test
+    void neverSharesABeamSplitterSoDronesCannotSplitAgain() {
+        ShipAPI firingShip = mock(ShipAPI.class);
+        ShipAPI drone = mock(ShipAPI.class);
+        DamageDealtModifier splitter = new FakeSplitter();
+        when(firingShip.getListeners(DamageDealtModifier.class)).thenReturn(List.of(splitter));
 
         SplitBeamDroneFactory.shareDamageListeners(firingShip, drone);
 

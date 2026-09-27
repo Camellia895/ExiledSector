@@ -2,9 +2,9 @@ package exiledsector.skills;
 
 import lunalib.lunaSettings.LunaSettings;
 
-public final class ShipLevelConfig {
+import static exiledsector.ExiledSectorModPlugin.MOD_ID;
 
-    private static final String MOD_ID = "exiledSector";
+public final class ShipLevelConfig {
 
     public static final String MAX_LEVEL_FIELD_ID = "exiledSector_levelMax";
     public static final String XP_BASE_FIELD_ID = "exiledSector_levelXpBase";
