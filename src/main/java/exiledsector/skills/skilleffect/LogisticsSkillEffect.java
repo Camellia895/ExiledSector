@@ -348,6 +348,17 @@ public enum LogisticsSkillEffect implements SkillEffect {
             return flatChange(magnitude, "supplies required to perform surveys (fleet-wide)");
         }
     },
+    GROUND_SUPPORT_FLAT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(Stats.FLEET_GROUND_SUPPORT).modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return flatChange(magnitude, "effective strength of planetary raids, up to the total number of marines in the fleet");
+        }
+    },
     CORONA_RESISTANCE_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {

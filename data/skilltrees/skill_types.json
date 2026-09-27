@@ -142,6 +142,25 @@
 			]
 		},
 		{
+			"id": "ground_support",
+			"name": "Ground Support",
+			"icon": "graphics/icons/ground_support_shifted.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "GROUND_SUPPORT_FLAT",
+					"magnitude": 100
+				}
+			],
+			"exclusiveHullMods": [
+				"ground_support",
+				"advanced_ground_support"
+			],
+			"tags": [
+				"logistics"
+			]
+		},
+		{
 			"id": "torpedo_specialisation",
 			"name": "Torpedo Specialisation",
 			"icon": "graphics/icons/engine_circular.png",
@@ -941,25 +960,17 @@
 		},
 		{
 			"id": "hoarded_arms",
-			"name": "Hoarded Arms",
-			"icon": "",
+			"name": "Co-ordinated Reload",
+			"icon": "graphics/icons/heavyweapons_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "BALLISTIC_AMMO_PERCENT",
-					"magnitude": 20
-				},
-				{
-					"effect": "ENERGY_AMMO_PERCENT",
-					"magnitude": 20
+					"effect": "ENERGY_AMMO_REGEN_PERCENT",
+					"magnitude": 50
 				},
 				{
 					"effect": "BALLISTIC_AMMO_REGEN_PERCENT",
-					"magnitude": 20
-				},
-				{
-					"effect": "ENERGY_AMMO_REGEN_PERCENT",
-					"magnitude": 20
+					"magnitude": 50
 				}
 			],
 			"tags": [
@@ -1177,12 +1188,8 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "PEAK_CR_DURATION_PERCENT",
-					"magnitude": 50
-				},
-				{
 					"effect": "CR_LOSS_PER_SECOND_MULT",
-					"magnitude": -25
+					"magnitude": -30
 				}
 			],
 			"exclusiveHullMods": [
@@ -2075,7 +2082,7 @@
 				},
 				{
 					"effect": "ALL_WEAPON_DAMAGE_PERCENT",
-					"magnitude": -10
+					"magnitude": -20
 				}
 			],
 			"tags": [
@@ -2175,7 +2182,7 @@
 		},
 		{
 			"id": "violence_of_action",
-			"name": "Violence of Action",
+			"name": "Dramatic Entrance",
 			"icon": "graphics/icons/engine4_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -2185,7 +2192,7 @@
 				},
 				{
 					"effect": "TOP_SPEED_PERCENT",
-					"magnitude": 20
+					"magnitude": 25
 				}
 			],
 			"temporaryAfterDeploymentSeconds": 60,
@@ -2196,7 +2203,7 @@
 		{
 			"id": "restriction_breeds_creativity",
 			"name": "Restriction Breeds Creativity",
-			"icon": "",
+			"icon": "graphics/icons/damage_control2.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2786,6 +2793,50 @@
 					"effect": "ENERGY_DAMAGE_TAKEN_PERCENT",
 					"magnitude": -5
 				}
+			]
+		},
+		{
+			"id": "ammo_capacity",
+			"name": "Ammo Capacity",
+			"icon": "graphics/icons/expanded_magazines_shifted.png",
+			"effects": [
+				{
+					"effect": "BALLISTIC_AMMO_PERCENT",
+					"magnitude": 20
+				},
+				{
+					"effect": "ENERGY_AMMO_PERCENT",
+					"magnitude": 20
+				}
+			],
+			"tags": [
+				"ammo"
+			]
+		},
+		{
+			"id": "peak_cr_duration",
+			"name": "Peak CR Duration",
+			"icon": "graphics/icons/field_repairs_shifted_shifted.png",
+			"effects": [
+				{
+					"effect": "PEAK_CR_DURATION_PERCENT",
+					"magnitude": 25
+				}
+			]
+		},
+		{
+			"id": "temporary_acceleration",
+			"name": "Temporary Acceleration",
+			"icon": "graphics/icons/engine_fighter_shifted.png",
+			"effects": [
+				{
+					"effect": "ACCELERATION_PERCENT",
+					"magnitude": 50
+				}
+			],
+			"temporaryAfterDeploymentSeconds": 90,
+			"tags": [
+				"speed"
 			]
 		}
 	]
