@@ -63,6 +63,43 @@ class SplitBeamDronesTest {
     }
 
     @Test
+    void drawsTheVisibleBeamFromThePrimaryImpactPointWhileTheDroneFiresFromBeyondThePrimary() {
+        ShipAPI firingShip = mock(ShipAPI.class, Answers.RETURNS_DEEP_STUBS);
+        when(firingShip.isAlive()).thenReturn(true);
+        ShipAPI primary = shieldedShipAtOrigin(100f);
+        ShipAPI splitTarget = mock(ShipAPI.class);
+        when(splitTarget.isAlive()).thenReturn(true);
+        when(splitTarget.getLocation()).thenReturn(new Vector2f(-500f, 0f));
+        ShipAPI drone = mock(ShipAPI.class, Answers.RETURNS_DEEP_STUBS);
+        Vector2f droneLocation = new Vector2f();
+        when(drone.getLocation()).thenReturn(droneLocation);
+        com.fs.starfarer.api.combat.WeaponAPI droneWeapon = mock(com.fs.starfarer.api.combat.WeaponAPI.class);
+        com.fs.starfarer.api.combat.BeamAPI droneBeam = mock(com.fs.starfarer.api.combat.BeamAPI.class);
+        when(drone.getAllWeapons()).thenReturn(List.of(droneWeapon));
+        when(droneWeapon.getBeams()).thenReturn(List.of(droneBeam));
+        when(droneBeam.getBrightness()).thenReturn(1f);
+        when(droneBeam.getWidth()).thenReturn(12f);
+        when(droneBeam.getCoreColor()).thenReturn(java.awt.Color.WHITE);
+        when(droneBeam.getFringeColor()).thenReturn(java.awt.Color.CYAN);
+        com.fs.starfarer.api.combat.WeaponAPI primaryWeapon = mock(com.fs.starfarer.api.combat.WeaponAPI.class);
+        Vector2f impactPoint = new Vector2f(100f, 0f);
+
+        try (MockedStatic<SplitBeamDroneFactory> factory = Mockito.mockStatic(SplitBeamDroneFactory.class);
+             MockedStatic<org.magiclib.plugins.MagicFakeBeamPlugin> fakeBeams = Mockito.mockStatic(org.magiclib.plugins.MagicFakeBeamPlugin.class)) {
+            factory.when(() -> SplitBeamDroneFactory.create(firingShip, primaryWeapon)).thenReturn(drone);
+            SplitBeamDrones drones = new SplitBeamDrones(firingShip);
+
+            drones.refresh(primaryWeapon, primary, splitTarget, impactPoint, 0.5f);
+            drones.advance(0.016f);
+
+            assertEquals(-110f, droneLocation.x, 0.01f);
+            fakeBeams.verify(() -> org.magiclib.plugins.MagicFakeBeamPlugin.addBeam(
+                    Mockito.eq(0f), Mockito.eq(0f), Mockito.eq(12f), Mockito.eq(new Vector2f(100f, 0f)),
+                    Mockito.anyFloat(), Mockito.anyFloat(), any(), any()));
+        }
+    }
+
+    @Test
     void officerCopyCarriesTheCaptainsIdentityPersonalityAndEverySkillLevel() {
         PersonAPI captain = mock(PersonAPI.class, Answers.RETURNS_DEEP_STUBS);
         FullName name = mock(FullName.class);

@@ -8,9 +8,12 @@ import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
+import org.lazywizard.lazylib.MathUtils;
 import org.lazywizard.lazylib.VectorUtils;
 import org.lwjgl.util.vector.Vector2f;
+import org.magiclib.plugins.MagicFakeBeamPlugin;
 
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -19,6 +22,7 @@ final class SplitBeamDrones {
 
     private static final float SPLIT_TIMEOUT_SECONDS = 0.3f;
     private static final float EXIT_MARGIN = 10f;
+    private static final float CONNECTOR_OVERLAP = 20f;
     private static final String SHARE_MOD_ID = "exiledSector_splitBeamDroneShare";
 
     private final ShipAPI firingShip;
@@ -31,7 +35,7 @@ final class SplitBeamDrones {
     void refresh(WeaponAPI weapon, ShipAPI primaryTarget, ShipAPI splitTarget, Vector2f impactPoint, float share) {
         SplitDrone split = drones.computeIfAbsent(new SplitKey(weapon, splitTarget),
                 key -> new SplitDrone(SplitBeamDroneFactory.create(firingShip, weapon), splitTarget));
-        split.retarget(refractionOrigin(primaryTarget, impactPoint, splitTarget.getLocation()), share);
+        split.retarget(impactPoint, refractionOrigin(primaryTarget, impactPoint, splitTarget.getLocation()), share);
     }
 
     void advance(float amount) {
@@ -81,6 +85,7 @@ final class SplitBeamDrones {
         private final WeaponAPI droneWeapon;
         private final ShipAPI splitTarget;
         private final ShareListener shareListener = new ShareListener();
+        private final Vector2f impactPoint = new Vector2f();
         private final Vector2f origin = new Vector2f();
         private float secondsSinceRefresh;
 
@@ -91,7 +96,8 @@ final class SplitBeamDrones {
             drone.addListener(shareListener);
         }
 
-        private void retarget(Vector2f newOrigin, float share) {
+        private void retarget(Vector2f newImpactPoint, Vector2f newOrigin, float share) {
+            impactPoint.set(newImpactPoint);
             origin.set(newOrigin);
             shareListener.share = share;
             secondsSinceRefresh = 0f;
@@ -112,7 +118,26 @@ final class SplitBeamDrones {
             droneWeapon.setForceFireOneFrame(firing);
             droneWeapon.setFacing(angle);
             droneWeapon.updateBeamFromPoints();
+            drawRefractionConnector(amount, angle);
             return false;
+        }
+
+        private void drawRefractionConnector(float amount, float angle) {
+            float gap = MathUtils.getDistance(impactPoint, origin);
+            if (amount <= 0f || gap < 1f || droneWeapon.getBeams().isEmpty()) {
+                return;
+            }
+            BeamAPI beam = droneWeapon.getBeams().get(0);
+            float brightness = beam.getBrightness();
+            if (brightness <= 0f) {
+                return;
+            }
+            MagicFakeBeamPlugin.addBeam(0f, 0f, beam.getWidth(), new Vector2f(impactPoint), angle,
+                    gap + CONNECTOR_OVERLAP, dimmed(beam.getCoreColor(), brightness), dimmed(beam.getFringeColor(), brightness));
+        }
+
+        private static Color dimmed(Color color, float brightness) {
+            return new Color(color.getRed(), color.getGreen(), color.getBlue(), Math.round(color.getAlpha() * brightness));
         }
     }
 
