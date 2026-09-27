@@ -46,7 +46,7 @@ class RemnantNotableEffectsTest {
         MutableStat accuracy = mock(MutableStat.class);
         when(stats.getAutofireAimAccuracy()).thenReturn(accuracy);
 
-        WeaponSkillEffect.AUTOFIRE_AIM_ACCURACY_PERCENT.apply(stats, "mod_id", 50f);
+        SkillEffect.byName("WEAPON_AUTOFIRE_ACCURACY_PERCENT").apply(stats, "mod_id", 50f);
 
         verify(accuracy).modifyFlat("mod_id", 0.5f);
     }
@@ -54,13 +54,13 @@ class RemnantNotableEffectsTest {
     @Test
     void missileGuidanceDescribesTheImprovedAlgorithmInsteadOfARawNumber() {
         assertEquals("Significantly improved missile guidance algorithm.",
-                WeaponSkillEffect.MISSILE_GUIDANCE_FLAT.describe(1f));
+                SkillEffect.byName("MISSILE_WEAPON_GUIDANCE_FLAT").describe(1f));
     }
 
     @Test
-    void weaponTurnRateDescriptionsSayTheyOnlyAffectNonBeamWeapons() {
-        assertEquals("Increases non-beam weapon turn rate by 50%.", WeaponSkillEffect.WEAPON_TURN_RATE_PERCENT.describe(50f));
-        assertEquals("25% less non-beam weapon turn rate.", WeaponSkillEffect.WEAPON_TURN_RATE_MULT.describe(-25f));
+    void weaponTurnRateDescriptionsCoverAllWeapons() {
+        assertEquals("Increases weapon turn rate by 50%.", SkillEffect.byName("WEAPON_TURN_RATE_PERCENT").describe(50f));
+        assertEquals("25% less weapon turn rate.", SkillEffect.byName("WEAPON_TURN_RATE_MULT").describe(-25f));
     }
 
     @Test

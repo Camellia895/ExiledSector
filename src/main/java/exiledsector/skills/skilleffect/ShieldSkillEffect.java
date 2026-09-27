@@ -22,7 +22,7 @@ import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
 
 public enum ShieldSkillEffect implements SkillEffect {
 
-    BEAM_DAMAGE_HARD_FLUX_PERCENT {
+    BEAM_WEAPON_HARD_FLUX_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getDynamic().getMod(BEAM_DAMAGE_HARD_FLUX_KEY).modifyFlat(modId, magnitude);

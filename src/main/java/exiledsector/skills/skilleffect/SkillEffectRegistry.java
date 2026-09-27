@@ -1,7 +1,9 @@
 package exiledsector.skills.skilleffect;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 final class SkillEffectRegistry {
 
@@ -35,12 +37,23 @@ final class SkillEffectRegistry {
         };
         for (SkillEffect[] group : groups) {
             for (SkillEffect effect : group) {
-                SkillEffect existing = registry.put(effect.name(), effect);
-                if (existing != null) {
-                    throw new IllegalStateException("Duplicate SkillEffect name: " + effect.name());
-                }
+                register(registry, effect);
             }
         }
+        for (SkillEffect effect : ScopedWeaponEffect.all()) {
+            register(registry, effect);
+        }
         return registry;
+    }
+
+    private static void register(Map<String, SkillEffect> registry, SkillEffect effect) {
+        SkillEffect existing = registry.put(effect.name(), effect);
+        if (existing != null) {
+            throw new IllegalStateException("Duplicate SkillEffect name: " + effect.name());
+        }
+    }
+
+    static Set<String> names() {
+        return Collections.unmodifiableSet(BY_NAME.keySet());
     }
 }

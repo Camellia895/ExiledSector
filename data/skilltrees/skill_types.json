@@ -73,7 +73,7 @@
 			"icon": "graphics/icons/ballistic_damage.png",
 			"effects": [
 				{
-					"effect": "BALLISTIC_DAMAGE_PERCENT",
+					"effect": "BALLISTIC_WEAPON_DAMAGE_PERCENT",
 					"magnitude": 5
 				}
 			],
@@ -87,7 +87,7 @@
 			"icon": "graphics/icons/target_analysis_circular.png",
 			"effects": [
 				{
-					"effect": "BALLISTIC_PROJECTILE_SPEED_PERCENT",
+					"effect": "BALLISTIC_WEAPON_PROJECTILE_SPEED_PERCENT",
 					"magnitude": 10
 				}
 			],
@@ -101,7 +101,7 @@
 			"icon": "graphics/icons/missile_speed_circular.png",
 			"effects": [
 				{
-					"effect": "MISSILE_SPEED_PERCENT",
+					"effect": "MISSILE_WEAPON_PROJECTILE_SPEED_PERCENT",
 					"magnitude": 5
 				}
 			],
@@ -130,7 +130,7 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "LARGE_BALLISTIC_OP_COST_FLAT",
+					"effect": "BALLISTIC_WEAPON_LARGE_OP_COST_FLAT",
 					"magnitude": -5
 				}
 			],
@@ -241,7 +241,7 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "AUTOFIRE_AIM_ACCURACY_PERCENT",
+					"effect": "WEAPON_AUTOFIRE_ACCURACY_PERCENT",
 					"magnitude": 20
 				},
 				{
@@ -277,11 +277,11 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "MISSILE_SPEED_PERCENT",
+					"effect": "MISSILE_WEAPON_PROJECTILE_SPEED_PERCENT",
 					"magnitude": 30
 				},
 				{
-					"effect": "MISSILE_TURN_RATE_PERCENT",
+					"effect": "MISSILE_WEAPON_FLIGHT_TURN_RATE_PERCENT",
 					"magnitude": -30
 				}
 			],
@@ -295,7 +295,7 @@
 			"icon": "graphics/icons/missile_damage.png",
 			"effects": [
 				{
-					"effect": "MISSILE_DAMAGE_PERCENT",
+					"effect": "MISSILE_WEAPON_DAMAGE_PERCENT",
 					"magnitude": 5
 				}
 			],
@@ -309,7 +309,7 @@
 			"icon": "graphics/icons/non_beam_energy_damage.png",
 			"effects": [
 				{
-					"effect": "NON_BEAM_ENERGY_DAMAGE_PERCENT",
+					"effect": "NON_BEAM_ENERGY_WEAPON_DAMAGE_PERCENT",
 					"magnitude": 10
 				}
 			]
@@ -320,7 +320,7 @@
 			"icon": "graphics/icons/beam_damage.png",
 			"effects": [
 				{
-					"effect": "BEAM_DAMAGE_PERCENT",
+					"effect": "BEAM_WEAPON_DAMAGE_PERCENT",
 					"magnitude": 5
 				}
 			]
@@ -357,10 +357,6 @@
 				{
 					"effect": "WEAPON_TURN_RATE_PERCENT",
 					"magnitude": 20
-				},
-				{
-					"effect": "BEAM_WEAPON_TURN_RATE_PERCENT",
-					"magnitude": 20
 				}
 			]
 		},
@@ -385,7 +381,7 @@
 			"tier": "KEYSTONE",
 			"effects": [
 				{
-					"effect": "BEAM_SPLIT_TARGETS_FLAT",
+					"effect": "BEAM_WEAPON_SPLIT_TARGETS_FLAT",
 					"magnitude": 1
 				}
 			],
@@ -437,7 +433,7 @@
 					"magnitude": -100
 				},
 				{
-					"effect": "WEAPON_RANGE_THRESHOLD",
+					"effect": "WEAPON_RANGE_THRESHOLD_FLAT",
 					"magnitude": 450
 				},
 				{
@@ -509,11 +505,11 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "NON_BEAM_ENERGY_CHAIN_CHANCE_PERCENT",
+					"effect": "NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT",
 					"magnitude": 20
 				},
 				{
-					"effect": "NON_BEAM_ENERGY_CHAIN_FALLOFF_PERCENT",
+					"effect": "NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT",
 					"magnitude": 20
 				}
 			],
@@ -528,7 +524,7 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "BALLISTIC_DAMAGE_PER_BURN_LEVEL_PERCENT",
+					"effect": "BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_PERCENT",
 					"magnitude": 10
 				}
 			],
@@ -654,10 +650,6 @@
 			"effects": [
 				{
 					"effect": "WEAPON_TURN_RATE_PERCENT",
-					"magnitude": 40
-				},
-				{
-					"effect": "BEAM_WEAPON_TURN_RATE_PERCENT",
 					"magnitude": 40
 				}
 			],
@@ -925,27 +917,27 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "ECCM_CHANCE",
-					"magnitude": 0.5
-				},
-				{
-					"effect": "MISSILE_GUIDANCE_FLAT",
-					"magnitude": 1
-				},
-				{
-					"effect": "MISSILE_SPEED_PERCENT",
-					"magnitude": 25
-				},
-				{
-					"effect": "MISSILE_ACCELERATION_PERCENT",
-					"magnitude": 150
-				},
-				{
-					"effect": "MISSILE_TURN_RATE_PERCENT",
+					"effect": "MISSILE_WEAPON_ECCM_CHANCE_PERCENT",
 					"magnitude": 50
 				},
 				{
-					"effect": "MISSILE_TURN_ACCELERATION_PERCENT",
+					"effect": "MISSILE_WEAPON_GUIDANCE_FLAT",
+					"magnitude": 1
+				},
+				{
+					"effect": "MISSILE_WEAPON_PROJECTILE_SPEED_PERCENT",
+					"magnitude": 25
+				},
+				{
+					"effect": "MISSILE_WEAPON_FLIGHT_ACCELERATION_PERCENT",
+					"magnitude": 150
+				},
+				{
+					"effect": "MISSILE_WEAPON_FLIGHT_TURN_RATE_PERCENT",
+					"magnitude": 50
+				},
+				{
+					"effect": "MISSILE_WEAPON_FLIGHT_TURN_ACCELERATION_PERCENT",
 					"magnitude": 150
 				},
 				{
@@ -1085,11 +1077,11 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "ENERGY_AMMO_REGEN_PERCENT",
+					"effect": "ENERGY_WEAPON_AMMO_REGEN_PERCENT",
 					"magnitude": 50
 				},
 				{
-					"effect": "BALLISTIC_AMMO_REGEN_PERCENT",
+					"effect": "BALLISTIC_WEAPON_AMMO_REGEN_PERCENT",
 					"magnitude": 50
 				}
 			],
@@ -1106,7 +1098,7 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "BALLISTIC_AMMO_PERCENT",
+					"effect": "BALLISTIC_WEAPON_AMMO_PERCENT",
 					"magnitude": 50
 				}
 			],
@@ -1128,7 +1120,7 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "MISSILE_AMMO_PERCENT",
+					"effect": "MISSILE_WEAPON_AMMO_PERCENT",
 					"magnitude": 100
 				},
 				{
@@ -1376,7 +1368,7 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "BEAM_DAMAGE_HARD_FLUX_PERCENT",
+					"effect": "BEAM_WEAPON_HARD_FLUX_PERCENT",
 					"magnitude": 50
 				},
 				{
@@ -2008,10 +2000,10 @@
 			"hullSizeEffects": [
 				{
 					"effect": "SURVEY_COST_REDUCTION_HEAVY_MACHINERY",
-					"frigate": 3,
-					"destroyer": 5,
-					"cruiser": 10,
-					"capitalShip": 20
+					"frigate": 5,
+					"destroyer": 7,
+					"cruiser": 12,
+					"capitalShip": 22
 				},
 				{
 					"effect": "SURVEY_COST_REDUCTION_SUPPLIES",
@@ -2222,7 +2214,7 @@
 					"magnitude": 20
 				},
 				{
-					"effect": "ALL_WEAPON_DAMAGE_PERCENT",
+					"effect": "WEAPON_DAMAGE_PERCENT",
 					"magnitude": -20
 				}
 			],
@@ -2363,7 +2355,7 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "ALL_WEAPON_DAMAGE_MULT_PER_DMOD",
+					"effect": "WEAPON_DAMAGE_MULT_PER_DMOD",
 					"magnitude": 2
 				}
 			],
@@ -2705,7 +2697,7 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "ENERGY_AMMO_PERCENT",
+					"effect": "ENERGY_WEAPON_AMMO_PERCENT",
 					"magnitude": 50
 				}
 			],
@@ -2893,11 +2885,11 @@
 			"icon": "graphics/icons/weapon_drills_circular_shifted.png",
 			"effects": [
 				{
-					"effect": "BEAM_SPLIT_TARGETS_FLAT",
+					"effect": "BEAM_WEAPON_SPLIT_TARGETS_FLAT",
 					"magnitude": 1
 				},
 				{
-					"effect": "BEAM_DAMAGE_PERCENT",
+					"effect": "BEAM_WEAPON_DAMAGE_PERCENT",
 					"magnitude": -7
 				}
 			],
@@ -2942,11 +2934,11 @@
 			"icon": "graphics/icons/expanded_magazines_shifted.png",
 			"effects": [
 				{
-					"effect": "BALLISTIC_AMMO_PERCENT",
+					"effect": "BALLISTIC_WEAPON_AMMO_PERCENT",
 					"magnitude": 20
 				},
 				{
-					"effect": "ENERGY_AMMO_PERCENT",
+					"effect": "ENERGY_WEAPON_AMMO_PERCENT",
 					"magnitude": 20
 				}
 			],
@@ -2991,7 +2983,7 @@
 					"magnitude": -50
 				},
 				{
-					"effect": "ALL_WEAPON_DAMAGE_PERCENT",
+					"effect": "WEAPON_DAMAGE_PERCENT",
 					"magnitude": 30
 				},
 				{

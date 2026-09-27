@@ -3,6 +3,7 @@ package exiledsector.skills;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
+import exiledsector.skills.skilleffect.WeaponEffectTooltipAggregator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,18 +65,19 @@ public class SkillNode extends SkillTreeObject {
     public static String describeType(SkillType type, HullSize hullSize) {
         List<String> lines = new ArrayList<>();
         addIfPresent(lines, type.getDescriptionOverride());
-        List<String> effectLines = new ArrayList<>();
-        List<String> warnings = new ArrayList<>();
-        for (SkillTypeEffect effect : type.getEffects()) {
-            addIfPresent(effectLines, effect.effect().describe(effect.magnitude()));
-            addIfPresent(warnings, effect.effect().deallocationWarning(effect.magnitude()));
-        }
+        List<SkillTypeEffect> described = new ArrayList<>(type.getEffects());
         if (hullSize != null) {
             for (HullSizeSkillEffect effect : type.getHullSizeEffects()) {
-                float magnitude = effect.valueFor(hullSize);
-                addIfPresent(effectLines, effect.effect().describe(magnitude));
-                addIfPresent(warnings, effect.effect().deallocationWarning(magnitude));
+                described.add(new SkillTypeEffect(effect.effect(), effect.valueFor(hullSize)));
             }
+        }
+        List<String> effectLines = new ArrayList<>();
+        List<String> warnings = new ArrayList<>();
+        for (SkillTypeEffect effect : WeaponEffectTooltipAggregator.collapse(described)) {
+            addIfPresent(effectLines, effect.effect().describe(effect.magnitude()));
+        }
+        for (SkillTypeEffect effect : described) {
+            addIfPresent(warnings, effect.effect().deallocationWarning(effect.magnitude()));
         }
         for (String hullModId : type.getInstalledHullModIds()) {
             HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);

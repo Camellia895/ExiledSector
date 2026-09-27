@@ -52,26 +52,6 @@ class SkillEffectSupportTest {
     }
 
     @Test
-    void applyAllWeaponDamagePercentModifiesAllFourWeaponDamageStats() {
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        MutableStat ballistic = mock(MutableStat.class);
-        MutableStat missile = mock(MutableStat.class);
-        MutableStat energy = mock(MutableStat.class);
-        MutableStat beam = mock(MutableStat.class);
-        when(stats.getBallisticWeaponDamageMult()).thenReturn(ballistic);
-        when(stats.getMissileWeaponDamageMult()).thenReturn(missile);
-        when(stats.getEnergyWeaponDamageMult()).thenReturn(energy);
-        when(stats.getBeamWeaponDamageMult()).thenReturn(beam);
-
-        SkillEffectSupport.applyAllWeaponDamagePercent(stats, "mod_id", 15f);
-
-        verify(ballistic).modifyPercent("mod_id", 15f);
-        verify(missile).modifyPercent("mod_id", 15f);
-        verify(energy).modifyPercent("mod_id", 15f);
-        verify(beam).modifyPercent("mod_id", 15f);
-    }
-
-    @Test
     void applyDModEffectMultSetsTheVanillaStatAndReappliesOnlyDMods() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);

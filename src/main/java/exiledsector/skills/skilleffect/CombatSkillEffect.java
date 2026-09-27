@@ -32,7 +32,7 @@ import static exiledsector.skills.skilleffect.SkillEffectText.pct;
 
 public enum CombatSkillEffect implements SkillEffect {
 
-    BEAM_SPLIT_TARGETS_FLAT {
+    BEAM_WEAPON_SPLIT_TARGETS_FLAT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getDynamic().getMod(BeamSplitListener.TARGETS_KEY).modifyFlat(modId, magnitude);
@@ -92,7 +92,7 @@ public enum CombatSkillEffect implements SkillEffect {
             return "Any collision, however slight, is instantly fatal to this ship.";
         }
     },
-    NON_BEAM_ENERGY_CHAIN_CHANCE_PERCENT {
+    NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getDynamic().getMod(NON_BEAM_ENERGY_CHAIN_CHANCE_KEY).modifyFlat(modId, magnitude);
@@ -112,7 +112,7 @@ public enum CombatSkillEffect implements SkillEffect {
                     "chance to chain again, as long as it hits a shield.";
         }
     },
-    NON_BEAM_ENERGY_CHAIN_FALLOFF_PERCENT {
+    NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getDynamic().getMod(NON_BEAM_ENERGY_CHAIN_FALLOFF_KEY).modifyFlat(modId, magnitude);

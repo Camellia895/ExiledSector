@@ -62,11 +62,4 @@ final class SkillEffectSupport {
         }
         return specs;
     }
-
-    static void applyAllWeaponDamagePercent(MutableShipStatsAPI stats, String modId, float magnitude) {
-        stats.getBallisticWeaponDamageMult().modifyPercent(modId, magnitude);
-        stats.getMissileWeaponDamageMult().modifyPercent(modId, magnitude);
-        stats.getEnergyWeaponDamageMult().modifyPercent(modId, magnitude);
-        stats.getBeamWeaponDamageMult().modifyPercent(modId, magnitude);
-    }
 }

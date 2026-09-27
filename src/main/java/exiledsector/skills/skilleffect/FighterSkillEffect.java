@@ -321,7 +321,7 @@ public enum FighterSkillEffect implements SkillEffect {
     }
 
     private static void applyRoleDamage(ShipAPI fighter, String modId, float magnitude) {
-        SkillEffectSupport.applyAllWeaponDamagePercent(fighter.getMutableStats(), modId, magnitude);
+        WeaponStatFamily.DAMAGE.target(WeaponScope.ALL).apply(fighter.getMutableStats(), modId, StatMode.PERCENT, magnitude);
     }
 
     private static void applyRoleTopSpeed(ShipAPI fighter, String modId, float magnitude) {

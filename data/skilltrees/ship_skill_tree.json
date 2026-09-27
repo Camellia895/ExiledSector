@@ -570,10 +570,10 @@
 			"connectedTo": [
 				"fuel_flat_1"
 			],
-			"x": 414,
-			"y": 904,
+			"x": 162,
+			"y": 768,
 			"orbitAnchorId": "flat_fuel_anchor",
-			"orbitAngle": 90
+			"orbitAngle": 180
 		},
 		{
 			"id": "efficiency_overhaul_1",
@@ -592,8 +592,8 @@
 			"connectedTo": [
 				"cargo_capacity_flat_1"
 			],
-			"x": 753,
-			"y": -431,
+			"x": 871,
+			"y": -454,
 			"orbitAnchorId": "flat_cargo_anchor",
 			"orbitAngle": 270
 		},
@@ -615,8 +615,8 @@
 			"connectedTo": [
 				"engine_durability_1"
 			],
-			"x": -245,
-			"y": 723,
+			"x": -162,
+			"y": 763,
 			"orbitAnchorId": "insulated_engine_assembly_anchor",
 			"orbitAngle": 0
 		},
@@ -647,9 +647,9 @@
 			"connectedTo": [
 				"survey_generic_cost_reduction_2"
 			],
-			"x": 494,
-			"y": -537,
-			"orbitAnchorId": "survey_anchor",
+			"x": 558,
+			"y": -483,
+			"orbitAnchorId": "anchor_47",
 			"orbitAngle": 0
 		},
 		{
@@ -1012,8 +1012,7 @@
 			"connectedTo": [
 				"root_midline_1",
 				"small_logistics_optional_2",
-				"small_logistics_optional_15",
-				"engine_durability_2"
+				"small_logistics_optional_15"
 			],
 			"x": -779,
 			"y": 453
@@ -1024,7 +1023,8 @@
 			"connectedTo": [
 				"small_logistics_optional_1",
 				"small_logistics_optional_4",
-				"crew_capacity_flat_1"
+				"crew_capacity_flat_1",
+				"engine_durability_2"
 			],
 			"x": -507,
 			"y": 294
@@ -1126,9 +1126,9 @@
 				"small_logistics_optional_7",
 				"survey_generic_cost_reduction_2"
 			],
-			"x": 198,
-			"y": -537,
-			"orbitAnchorId": "survey_anchor",
+			"x": 258,
+			"y": -483,
+			"orbitAnchorId": "anchor_47",
 			"orbitAngle": 180
 		},
 		{
@@ -1138,9 +1138,9 @@
 				"surveying_equipment_1",
 				"survey_generic_cost_reduction_1"
 			],
-			"x": 346,
-			"y": -389,
-			"orbitAnchorId": "survey_anchor",
+			"x": 408,
+			"y": -333,
+			"orbitAnchorId": "anchor_47",
 			"orbitAngle": 90
 		},
 		{
@@ -1246,8 +1246,8 @@
 				"engine_durability_2",
 				"insulatedengine_1"
 			],
-			"x": -394,
-			"y": 872,
+			"x": -335,
+			"y": 936,
 			"orbitAnchorId": "insulated_engine_assembly_anchor",
 			"orbitAngle": 90
 		},
@@ -1255,11 +1255,11 @@
 			"id": "engine_durability_2",
 			"type": "engine_durability",
 			"connectedTo": [
-				"small_logistics_optional_1",
-				"engine_durability_1"
+				"engine_durability_1",
+				"small_logistics_optional_2"
 			],
-			"x": -543,
-			"y": 723,
+			"x": -508,
+			"y": 763,
 			"orbitAnchorId": "insulated_engine_assembly_anchor",
 			"orbitAngle": 180
 		},
@@ -1270,8 +1270,8 @@
 				"cargo_capacity_flat_2",
 				"expanded_cargo_holds_1"
 			],
-			"x": 583,
-			"y": -261,
+			"x": 701,
+			"y": -284,
 			"orbitAnchorId": "flat_cargo_anchor",
 			"orbitAngle": 180
 		},
@@ -1282,8 +1282,8 @@
 				"cargo_capacity_flat_1",
 				"small_logistics_optional_13"
 			],
-			"x": 753,
-			"y": -91,
+			"x": 871,
+			"y": -114,
 			"orbitAnchorId": "flat_cargo_anchor",
 			"orbitAngle": 90
 		},
@@ -1327,25 +1327,25 @@
 			"id": "fuel_flat_1",
 			"type": "fuel_flat",
 			"connectedTo": [
-				"fuel_flat_2",
-				"auxiliary_fuel_tanks_1"
+				"auxiliary_fuel_tanks_1",
+				"fuel_flat_2"
 			],
-			"x": 241,
-			"y": 731,
+			"x": 335,
+			"y": 941,
 			"orbitAnchorId": "flat_fuel_anchor",
-			"orbitAngle": 180
+			"orbitAngle": 90
 		},
 		{
 			"id": "fuel_flat_2",
 			"type": "fuel_flat",
 			"connectedTo": [
-				"fuel_flat_1",
-				"small_logistics_optional_13"
+				"small_logistics_optional_13",
+				"fuel_flat_1"
 			],
-			"x": 414,
-			"y": 558,
+			"x": 508,
+			"y": 768,
 			"orbitAnchorId": "flat_fuel_anchor",
-			"orbitAngle": 270
+			"orbitAngle": 0
 		},
 		{
 			"id": "small_flux_optional_2",
@@ -4170,14 +4170,14 @@
 		{
 			"a": "cargo_capacity_flat_1",
 			"b": "expanded_cargo_holds_1",
-			"controlX": 633,
-			"controlY": -381
+			"controlX": 751,
+			"controlY": -404
 		},
 		{
 			"a": "cargo_capacity_flat_1",
 			"b": "cargo_capacity_flat_2",
-			"controlX": 633,
-			"controlY": -141
+			"controlX": 751,
+			"controlY": -164
 		},
 		{
 			"a": "augmentedengines_2",
@@ -4192,28 +4192,22 @@
 			"controlY": 166
 		},
 		{
-			"a": "fuel_flat_1",
-			"b": "fuel_flat_2",
-			"controlX": 292,
-			"controlY": 609
-		},
-		{
 			"a": "auxiliary_fuel_tanks_1",
 			"b": "fuel_flat_1",
-			"controlX": 292,
-			"controlY": 853
+			"controlX": 213,
+			"controlY": 890
 		},
 		{
 			"a": "engine_durability_1",
 			"b": "engine_durability_2",
-			"controlX": -499,
-			"controlY": 828
+			"controlX": -457,
+			"controlY": 885
 		},
 		{
 			"a": "engine_durability_1",
 			"b": "insulatedengine_1",
-			"controlX": -289,
-			"controlY": 828
+			"controlX": -213,
+			"controlY": 885
 		},
 		{
 			"a": "small_logistics_optional_11",
@@ -5340,14 +5334,8 @@
 		{
 			"a": "survey_generic_cost_reduction_2",
 			"b": "surveying_equipment_1",
-			"controlX": 421,
-			"controlY": -462
-		},
-		{
-			"a": "survey_generic_cost_reduction_1",
-			"b": "survey_generic_cost_reduction_2",
-			"controlX": 271,
-			"controlY": -462
+			"controlX": 514,
+			"controlY": -377
 		},
 		{
 			"a": "ballistic_damage_2",
@@ -5528,6 +5516,18 @@
 			"b": "tactical_superiority_1",
 			"controlX": 115,
 			"controlY": -7976
+		},
+		{
+			"a": "survey_generic_cost_reduction_1",
+			"b": "survey_generic_cost_reduction_2",
+			"controlX": 302,
+			"controlY": -377
+		},
+		{
+			"a": "fuel_flat_1",
+			"b": "fuel_flat_2",
+			"controlX": 457,
+			"controlY": 890
 		}
 	],
 	"hiddenConnectors": [
@@ -5610,14 +5610,6 @@
 			"radius": 1245
 		},
 		{
-			"id": "survey_anchor",
-			"x": 346,
-			"y": -537,
-			"radius": 150,
-			"shape": "square",
-			"rotation": 44.3
-		},
-		{
 			"id": "high_res_sensors_anchor",
 			"x": -328,
 			"y": -874,
@@ -5637,14 +5629,14 @@
 		},
 		{
 			"id": "insulated_engine_assembly_anchor",
-			"x": -394,
-			"y": 723,
-			"radius": 149
+			"x": -335,
+			"y": 763,
+			"radius": 173
 		},
 		{
 			"id": "flat_cargo_anchor",
-			"x": 753,
-			"y": -261,
+			"x": 871,
+			"y": -284,
 			"radius": 170
 		},
 		{
@@ -5655,8 +5647,8 @@
 		},
 		{
 			"id": "flat_fuel_anchor",
-			"x": 414,
-			"y": 731,
+			"x": 335,
+			"y": 768,
 			"radius": 173
 		},
 		{
@@ -6054,6 +6046,12 @@
 			"x": -841,
 			"y": -7167,
 			"radius": 187
+		},
+		{
+			"id": "anchor_47",
+			"x": 408,
+			"y": -483,
+			"radius": 150
 		}
 	],
 	"ringBelts": [
@@ -6123,8 +6121,8 @@
 		},
 		{
 			"id": "image_2",
-			"x": 1700,
-			"y": 456,
+			"x": 1397,
+			"y": 594,
 			"width": 526,
 			"height": 602,
 			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_04_lowtech.png",
@@ -6168,12 +6166,12 @@
 		},
 		{
 			"id": "image_14",
-			"x": -411,
-			"y": -1689,
+			"x": -414,
+			"y": -1411,
 			"width": 561,
 			"height": 549,
 			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_04.png",
-			"rotation": 133
+			"rotation": 179
 		},
 		{
 			"id": "image_15",

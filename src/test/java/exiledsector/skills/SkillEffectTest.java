@@ -31,7 +31,7 @@ import exiledsector.skills.skilleffect.MiscSkillEffect;
 import exiledsector.skills.skilleffect.MovementSkillEffect;
 import exiledsector.skills.skilleffect.PhaseSkillEffect;
 import exiledsector.skills.skilleffect.ShieldSkillEffect;
-import exiledsector.skills.skilleffect.WeaponSkillEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 import org.magiclib.plugins.MagicFakeBeamPlugin;
@@ -147,7 +147,7 @@ class SkillEffectTest {
         MutableStat ballistic = mock(MutableStat.class);
         when(stats.getBallisticWeaponDamageMult()).thenReturn(ballistic);
 
-        WeaponSkillEffect.BALLISTIC_DAMAGE_PERCENT.apply(stats, "mod_id", 5f);
+        SkillEffect.byName("BALLISTIC_WEAPON_DAMAGE_PERCENT").apply(stats, "mod_id", 5f);
 
         verify(ballistic).modifyPercent("mod_id", 5f);
     }
@@ -158,20 +158,23 @@ class SkillEffectTest {
         MutableStat missile = mock(MutableStat.class);
         when(stats.getMissileWeaponDamageMult()).thenReturn(missile);
 
-        WeaponSkillEffect.MISSILE_DAMAGE_PERCENT.apply(stats, "mod_id", 5f);
+        SkillEffect.byName("MISSILE_WEAPON_DAMAGE_PERCENT").apply(stats, "mod_id", 5f);
 
         verify(missile).modifyPercent("mod_id", 5f);
     }
 
     @Test
-    void nonBeamEnergyDamageModifiesOnlyTheEnergyDamageStat() {
+    void nonBeamEnergyDamageRaisesEnergyDamageAndCancelsItForBeams() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         MutableStat energy = mock(MutableStat.class);
+        MutableStat beam = mock(MutableStat.class);
         when(stats.getEnergyWeaponDamageMult()).thenReturn(energy);
+        when(stats.getBeamWeaponDamageMult()).thenReturn(beam);
 
-        WeaponSkillEffect.NON_BEAM_ENERGY_DAMAGE_PERCENT.apply(stats, "mod_id", 5f);
+        SkillEffect.byName("NON_BEAM_ENERGY_WEAPON_DAMAGE_PERCENT").apply(stats, "mod_id", 5f);
 
         verify(energy).modifyPercent("mod_id", 5f);
+        verify(beam).modifyPercent("mod_id_nonBeamOffset", -5f);
     }
 
     @Test
@@ -180,27 +183,27 @@ class SkillEffectTest {
         MutableStat beam = mock(MutableStat.class);
         when(stats.getBeamWeaponDamageMult()).thenReturn(beam);
 
-        WeaponSkillEffect.BEAM_DAMAGE_PERCENT.apply(stats, "mod_id", 5f);
+        SkillEffect.byName("BEAM_WEAPON_DAMAGE_PERCENT").apply(stats, "mod_id", 5f);
 
         verify(beam).modifyPercent("mod_id", 5f);
     }
 
     @Test
-    void energyDamageModifiesBothEnergyAndBeamDamageStats() {
+    void energyDamageModifiesOnlyTheEnergyStatBecauseItAlreadyReachesBeams() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         MutableStat energy = mock(MutableStat.class);
         MutableStat beam = mock(MutableStat.class);
         when(stats.getEnergyWeaponDamageMult()).thenReturn(energy);
         when(stats.getBeamWeaponDamageMult()).thenReturn(beam);
 
-        WeaponSkillEffect.ENERGY_DAMAGE_PERCENT.apply(stats, "mod_id", 5f);
+        SkillEffect.byName("ENERGY_WEAPON_DAMAGE_PERCENT").apply(stats, "mod_id", 5f);
 
         verify(energy).modifyPercent("mod_id", 5f);
-        verify(beam).modifyPercent("mod_id", 5f);
+        verifyNoInteractions(beam);
     }
 
     @Test
-    void allWeaponDamageModifiesEveryWeaponDamageStat() {
+    void allWeaponDamageModifiesEachTypeStatButNotTheBeamStat() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         MutableStat ballistic = mock(MutableStat.class);
         MutableStat missile = mock(MutableStat.class);
@@ -211,12 +214,12 @@ class SkillEffectTest {
         when(stats.getEnergyWeaponDamageMult()).thenReturn(energy);
         when(stats.getBeamWeaponDamageMult()).thenReturn(beam);
 
-        WeaponSkillEffect.ALL_WEAPON_DAMAGE_PERCENT.apply(stats, "mod_id", 5f);
+        SkillEffect.byName("WEAPON_DAMAGE_PERCENT").apply(stats, "mod_id", 5f);
 
         verify(ballistic).modifyPercent("mod_id", 5f);
         verify(missile).modifyPercent("mod_id", 5f);
         verify(energy).modifyPercent("mod_id", 5f);
-        verify(beam).modifyPercent("mod_id", 5f);
+        verifyNoInteractions(beam);
     }
 
     @Test
@@ -230,8 +233,8 @@ class SkillEffectTest {
     }
 
     @Test
-    void describeMentionsBothStatsForTheAllWeaponDamageHybrid() {
-        assertEquals("Increases damage of all weapon types by 5%.", WeaponSkillEffect.ALL_WEAPON_DAMAGE_PERCENT.describe(5f));
+    void describeUsesTheUnqualifiedNameForTheAllWeaponsScope() {
+        assertEquals("Increases weapon damage by 5%.", SkillEffect.byName("WEAPON_DAMAGE_PERCENT").describe(5f));
     }
 
     @Test
@@ -317,7 +320,7 @@ class SkillEffectTest {
         StatBonus rangeBonus = mock(StatBonus.class);
         when(stats.getBallisticWeaponRangeBonus()).thenReturn(rangeBonus);
 
-        WeaponSkillEffect.BALLISTIC_WEAPON_RANGE_PERCENT.apply(stats, "mod_id", 15f);
+        SkillEffect.byName("BALLISTIC_WEAPON_RANGE_PERCENT").apply(stats, "mod_id", 15f);
 
         verify(rangeBonus).modifyPercent("mod_id", 15f);
     }
@@ -328,7 +331,7 @@ class SkillEffectTest {
         StatBonus rangeBonus = mock(StatBonus.class);
         when(stats.getEnergyWeaponRangeBonus()).thenReturn(rangeBonus);
 
-        WeaponSkillEffect.ENERGY_WEAPON_RANGE_PERCENT.apply(stats, "mod_id", 15f);
+        SkillEffect.byName("ENERGY_WEAPON_RANGE_PERCENT").apply(stats, "mod_id", 15f);
 
         verify(rangeBonus).modifyPercent("mod_id", 15f);
     }
@@ -339,7 +342,7 @@ class SkillEffectTest {
         StatBonus rangeBonus = mock(StatBonus.class);
         when(stats.getBeamWeaponRangeBonus()).thenReturn(rangeBonus);
 
-        WeaponSkillEffect.BEAM_WEAPON_RANGE_PERCENT.apply(stats, "mod_id", 15f);
+        SkillEffect.byName("BEAM_WEAPON_RANGE_PERCENT").apply(stats, "mod_id", 15f);
 
         verify(rangeBonus).modifyPercent("mod_id", 15f);
     }
@@ -350,7 +353,7 @@ class SkillEffectTest {
         StatBonus ammoBonus = mock(StatBonus.class);
         when(stats.getBallisticAmmoBonus()).thenReturn(ammoBonus);
 
-        WeaponSkillEffect.BALLISTIC_AMMO_PERCENT.apply(stats, "mod_id", 20f);
+        SkillEffect.byName("BALLISTIC_WEAPON_AMMO_PERCENT").apply(stats, "mod_id", 20f);
 
         verify(ammoBonus).modifyPercent("mod_id", 20f);
     }
@@ -361,7 +364,7 @@ class SkillEffectTest {
         StatBonus ammoBonus = mock(StatBonus.class);
         when(stats.getEnergyAmmoBonus()).thenReturn(ammoBonus);
 
-        WeaponSkillEffect.ENERGY_AMMO_PERCENT.apply(stats, "mod_id", 20f);
+        SkillEffect.byName("ENERGY_WEAPON_AMMO_PERCENT").apply(stats, "mod_id", 20f);
 
         verify(ammoBonus).modifyPercent("mod_id", 20f);
     }
@@ -372,20 +375,23 @@ class SkillEffectTest {
         StatBonus ammoBonus = mock(StatBonus.class);
         when(stats.getMissileAmmoBonus()).thenReturn(ammoBonus);
 
-        WeaponSkillEffect.MISSILE_AMMO_PERCENT.apply(stats, "mod_id", 25f);
+        SkillEffect.byName("MISSILE_WEAPON_AMMO_PERCENT").apply(stats, "mod_id", 25f);
 
         verify(ammoBonus).modifyPercent("mod_id", 25f);
     }
 
     @Test
-    void weaponTurnRateModifiesTheWeaponTurnRateBonusStat() {
+    void weaponTurnRateModifiesBothTheNonBeamAndBeamTurnRateStats() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         StatBonus turnRateBonus = mock(StatBonus.class);
+        StatBonus beamTurnRateBonus = mock(StatBonus.class);
         when(stats.getWeaponTurnRateBonus()).thenReturn(turnRateBonus);
+        when(stats.getBeamWeaponTurnRateBonus()).thenReturn(beamTurnRateBonus);
 
-        WeaponSkillEffect.WEAPON_TURN_RATE_PERCENT.apply(stats, "mod_id", 20f);
+        SkillEffect.byName("WEAPON_TURN_RATE_PERCENT").apply(stats, "mod_id", 20f);
 
         verify(turnRateBonus).modifyPercent("mod_id", 20f);
+        verify(beamTurnRateBonus).modifyPercent("mod_id", 20f);
     }
 
     @Test
@@ -449,7 +455,7 @@ class SkillEffectTest {
         StatBonus healthBonus = mock(StatBonus.class);
         when(stats.getWeaponHealthBonus()).thenReturn(healthBonus);
 
-        WeaponSkillEffect.WEAPON_DURABILITY_PERCENT.apply(stats, "mod_id", 20f);
+        SkillEffect.byName("WEAPON_DURABILITY_PERCENT").apply(stats, "mod_id", 20f);
 
         verify(healthBonus).modifyPercent("mod_id", 20f);
     }
@@ -493,7 +499,7 @@ class SkillEffectTest {
         MutableStat rangeMultPastThreshold = mock(MutableStat.class);
         when(stats.getWeaponRangeMultPastThreshold()).thenReturn(rangeMultPastThreshold);
 
-        WeaponSkillEffect.WEAPON_RANGE_FALLOFF_PERCENT.apply(stats, "mod_id", -15f);
+        SkillEffect.byName("WEAPON_RANGE_FALLOFF_PERCENT").apply(stats, "mod_id", -15f);
 
         verify(rangeMultPastThreshold).modifyPercent("mod_id", -15f);
     }
@@ -518,7 +524,7 @@ class SkillEffectTest {
         MutableStat missileGuidance = mock(MutableStat.class);
         when(stats.getMissileGuidance()).thenReturn(missileGuidance);
 
-        WeaponSkillEffect.MISSILE_GUIDANCE_PERCENT.apply(stats, "mod_id", 20f);
+        SkillEffect.byName("MISSILE_WEAPON_GUIDANCE_PERCENT").apply(stats, "mod_id", 20f);
 
         verify(missileGuidance).modifyPercent("mod_id", 20f);
     }
@@ -664,7 +670,7 @@ class SkillEffectTest {
         verify(ballistic).modifyPercent("mod_id", 15f);
         verify(missile).modifyPercent("mod_id", 15f);
         verify(energy).modifyPercent("mod_id", 15f);
-        verify(beam).modifyPercent("mod_id", 15f);
+        verifyNoInteractions(beam);
     }
 
     @Test
@@ -1015,7 +1021,7 @@ class SkillEffectTest {
         StatBonus hardFluxPercent = mock(StatBonus.class);
         when(dynamic.getMod("exiledSector_beamDamageHardFluxPercent")).thenReturn(hardFluxPercent);
 
-        ShieldSkillEffect.BEAM_DAMAGE_HARD_FLUX_PERCENT.apply(stats, "mod_id", 50f);
+        ShieldSkillEffect.BEAM_WEAPON_HARD_FLUX_PERCENT.apply(stats, "mod_id", 50f);
 
         verify(hardFluxPercent).modifyFlat("mod_id", 50f);
     }
@@ -1025,7 +1031,7 @@ class SkillEffectTest {
         ShipAPI ship = mock(ShipAPI.class);
         when(ship.hasListenerOfClass(any())).thenReturn(false);
 
-        ShieldSkillEffect.BEAM_DAMAGE_HARD_FLUX_PERCENT.applyAfterShipCreation(ship, "mod_id", 50f);
+        ShieldSkillEffect.BEAM_WEAPON_HARD_FLUX_PERCENT.applyAfterShipCreation(ship, "mod_id", 50f);
 
         verify(ship).addListener(any(DamageDealtModifier.class));
     }
@@ -1035,7 +1041,7 @@ class SkillEffectTest {
         ShipAPI ship = mock(ShipAPI.class);
         when(ship.hasListenerOfClass(any())).thenReturn(true);
 
-        ShieldSkillEffect.BEAM_DAMAGE_HARD_FLUX_PERCENT.applyAfterShipCreation(ship, "mod_id", 50f);
+        ShieldSkillEffect.BEAM_WEAPON_HARD_FLUX_PERCENT.applyAfterShipCreation(ship, "mod_id", 50f);
 
         verify(ship, never()).addListener(any());
     }
@@ -1048,7 +1054,7 @@ class SkillEffectTest {
         when(stats.getDynamic()).thenReturn(dynamic);
         when(dynamic.getValue("exiledSector_beamDamageHardFluxPercent", 0f)).thenReturn(magnitude);
         when(ship.hasListenerOfClass(any())).thenReturn(false);
-        ShieldSkillEffect.BEAM_DAMAGE_HARD_FLUX_PERCENT.applyAfterShipCreation(ship, "mod_id", magnitude);
+        ShieldSkillEffect.BEAM_WEAPON_HARD_FLUX_PERCENT.applyAfterShipCreation(ship, "mod_id", magnitude);
         ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
         verify(ship).addListener(captor.capture());
         return (DamageDealtModifier) captor.getValue();
@@ -1277,7 +1283,7 @@ class SkillEffectTest {
         StatBonus splitTargets = mock(StatBonus.class);
         when(dynamic.getMod("exiledSector_beamSplitTargets")).thenReturn(splitTargets);
 
-        CombatSkillEffect.BEAM_SPLIT_TARGETS_FLAT.apply(stats, "mod_id", 1f);
+        CombatSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.apply(stats, "mod_id", 1f);
 
         verify(splitTargets).modifyFlat("mod_id", 1f);
     }
@@ -1287,11 +1293,11 @@ class SkillEffectTest {
         assertEquals("Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy. "
                         + "The target acquisition range is half the beam weapon's range. "
                         + "Split beams also carry the weapon's special beam effects.",
-                CombatSkillEffect.BEAM_SPLIT_TARGETS_FLAT.describe(1f));
+                CombatSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.describe(1f));
         assertEquals("Beam weapon hits split their damage evenly across the target and up to 3 additional nearby enemies. "
                         + "The target acquisition range is half the beam weapon's range. "
                         + "Split beams also carry the weapon's special beam effects.",
-                CombatSkillEffect.BEAM_SPLIT_TARGETS_FLAT.describe(3f));
+                CombatSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.describe(3f));
     }
 
     @Test
@@ -1299,7 +1305,7 @@ class SkillEffectTest {
         ShipAPI ship = mock(ShipAPI.class);
         when(ship.hasListenerOfClass(any())).thenReturn(false);
 
-        CombatSkillEffect.BEAM_SPLIT_TARGETS_FLAT.applyAfterShipCreation(ship, "mod_id", 1f);
+        CombatSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.applyAfterShipCreation(ship, "mod_id", 1f);
 
         verify(ship).addListener(any(DamageDealtModifier.class));
     }
@@ -1309,14 +1315,14 @@ class SkillEffectTest {
         ShipAPI ship = mock(ShipAPI.class);
         when(ship.hasListenerOfClass(any())).thenReturn(true);
 
-        CombatSkillEffect.BEAM_SPLIT_TARGETS_FLAT.applyAfterShipCreation(ship, "mod_id", 1f);
+        CombatSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.applyAfterShipCreation(ship, "mod_id", 1f);
 
         verify(ship, never()).addListener(any());
     }
 
     private DamageDealtModifier captureBeamSplitListener(ShipAPI ship) {
         when(ship.hasListenerOfClass(any())).thenReturn(false);
-        CombatSkillEffect.BEAM_SPLIT_TARGETS_FLAT.applyAfterShipCreation(ship, "mod_id", 1f);
+        CombatSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.applyAfterShipCreation(ship, "mod_id", 1f);
         ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
         verify(ship).addListener(captor.capture());
         return (DamageDealtModifier) captor.getValue();
@@ -1496,7 +1502,7 @@ class SkillEffectTest {
 
     private DamageDealtModifier captureEnergyChainListener(ShipAPI ship) {
         when(ship.hasListenerOfClass(any())).thenReturn(false);
-        CombatSkillEffect.NON_BEAM_ENERGY_CHAIN_CHANCE_PERCENT.applyAfterShipCreation(ship, "mod_id", 100f);
+        CombatSkillEffect.NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT.applyAfterShipCreation(ship, "mod_id", 100f);
         ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
         verify(ship).addListener(captor.capture());
         return (DamageDealtModifier) captor.getValue();
