@@ -190,6 +190,73 @@
 			]
 		},
 		{
+			"id": "nanoforge_mending",
+			"name": "Nanoforge Mending",
+			"icon": "graphics/icons/computer_systems_circular.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "NANOFORGE_HULL_REGEN_PERCENT",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"hull"
+			]
+		},
+		{
+			"id": "disintegration",
+			"name": "Disintegration",
+			"icon": "graphics/icons/beam_engine_shifted.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "DISINTEGRATION_ARMOR_DAMAGE_PERCENT",
+					"magnitude": 20
+				}
+			],
+			"tags": [
+				"energy",
+				"armour"
+			]
+		},
+		{
+			"id": "machine_precision",
+			"name": "Machine Precision",
+			"icon": "graphics/icons/gunnery_implants_circular.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "AUTOFIRE_AIM_ACCURACY_PERCENT",
+					"magnitude": 20
+				},
+				{
+					"effect": "ENERGY_WEAPON_RANGE_PERCENT",
+					"magnitude": 5
+				},
+				{
+					"effect": "BALLISTIC_WEAPON_RANGE_PERCENT",
+					"magnitude": 5
+				},
+				{
+					"effect": "BEAM_WEAPON_RANGE_PERCENT",
+					"magnitude": 5
+				}
+			]
+		},
+		{
+			"id": "terrifying_presence",
+			"name": "Terrifying Presence",
+			"icon": "graphics/icons/hypercognition.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT",
+					"magnitude": 25
+				}
+			]
+		},
+		{
 			"id": "torpedo_specialisation",
 			"name": "Torpedo Specialisation",
 			"icon": "graphics/icons/engine_circular.png",
@@ -2317,7 +2384,7 @@
 				"itemId": "lobster",
 				"quantity": 1000
 			},
-			"description": "Costs 1000 Volturnian Lobsters to allocate.\n\nDe-allocating this node refunds the lobsters to your inventory.\n\nYou control the speed at which these lobsters die.",
+			"description": "You control the speed at which these lobsters die.",
 			"tags": [
 				"logistics"
 			]
@@ -2478,15 +2545,15 @@
 					"effect": "BALLISTIC_WEAPON_RANGE_PERCENT",
 					"frigate": 3,
 					"destroyer": 5,
-					"cruiser": 10,
-					"capitalShip": 15
+					"cruiser": 7,
+					"capitalShip": 9
 				},
 				{
 					"effect": "ENERGY_WEAPON_RANGE_PERCENT",
 					"frigate": 3,
 					"destroyer": 5,
-					"cruiser": 10,
-					"capitalShip": 15
+					"cruiser": 7,
+					"capitalShip": 9
 				}
 			],
 			"tags": [

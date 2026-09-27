@@ -3497,14 +3497,14 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_66",
-				"small_flux_optional_68"
+				"machine_precision_1"
 			],
 			"x": 6899,
 			"y": -6450
 		},
 		{
-			"id": "small_flux_optional_68",
-			"type": "small_flux_optional",
+			"id": "machine_precision_1",
+			"type": "machine_precision",
 			"connectedTo": [
 				"small_flux_optional_67"
 			],
@@ -3526,14 +3526,14 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_69",
-				"small_flux_optional_71"
+				"terrifying_presence_1"
 			],
 			"x": 5962,
 			"y": -6211
 		},
 		{
-			"id": "small_flux_optional_71",
-			"type": "small_flux_optional",
+			"id": "terrifying_presence_1",
+			"type": "terrifying_presence",
 			"connectedTo": [
 				"small_flux_optional_70"
 			],
@@ -3555,14 +3555,14 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_72",
-				"small_flux_optional_74"
+				"nanoforge_mending_1"
 			],
 			"x": 6200,
 			"y": -5411
 		},
 		{
-			"id": "small_flux_optional_74",
-			"type": "small_flux_optional",
+			"id": "nanoforge_mending_1",
+			"type": "nanoforge_mending",
 			"connectedTo": [
 				"small_flux_optional_73"
 			],
@@ -3584,14 +3584,14 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_75",
-				"small_flux_optional_77"
+				"disintegration_1"
 			],
 			"x": 7045,
 			"y": -5554
 		},
 		{
-			"id": "small_flux_optional_77",
-			"type": "small_flux_optional",
+			"id": "disintegration_1",
+			"type": "disintegration",
 			"connectedTo": [
 				"small_flux_optional_76"
 			],
@@ -5159,7 +5159,7 @@
 		},
 		{
 			"a": "small_flux_optional_67",
-			"b": "small_flux_optional_68",
+			"b": "machine_precision_1",
 			"controlX": 6671,
 			"controlY": -6306
 		},
@@ -5171,7 +5171,7 @@
 		},
 		{
 			"a": "small_flux_optional_73",
-			"b": "small_flux_optional_74",
+			"b": "nanoforge_mending_1",
 			"controlX": 6390,
 			"controlY": -5535
 		},
@@ -5189,7 +5189,7 @@
 		},
 		{
 			"a": "small_flux_optional_70",
-			"b": "small_flux_optional_71",
+			"b": "terrifying_presence_1",
 			"controlX": 6079,
 			"controlY": -6020
 		},
@@ -5201,7 +5201,7 @@
 		},
 		{
 			"a": "small_flux_optional_76",
-			"b": "small_flux_optional_77",
+			"b": "disintegration_1",
 			"controlX": 6949,
 			"controlY": -5791
 		},

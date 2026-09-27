@@ -209,6 +209,63 @@ public enum CombatSkillEffect implements SkillEffect {
             return "The escort bonuses above apply at full strength within " + pct(magnitude)
                     + " su of the larger friendly ship, fading out over an additional 500 su beyond that.";
         }
+    },
+    NANOFORGE_HULL_REGEN_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(NanoforgeMendingListener.REGEN_PERCENT_KEY).modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
+            if (!ship.hasListenerOfClass(NanoforgeMendingListener.class)) {
+                ship.addListener(new NanoforgeMendingListener(ship));
+            }
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return "After " + pct(NanoforgeMendingListener.UNDAMAGED_SECONDS) + " seconds without taking hull damage, "
+                    + "repairs " + pct(magnitude) + "% of maximum hull per second in combat.";
+        }
+    },
+    DISINTEGRATION_ARMOR_DAMAGE_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(DisintegrationListener.ARMOR_DAMAGE_PERCENT_KEY).modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
+            if (!ship.hasListenerOfClass(DisintegrationListener.class)) {
+                ship.addListener(new DisintegrationListener(ship));
+            }
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return "Energy weapon hits on armor strip an additional " + pct(magnitude)
+                    + "% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.";
+        }
+    },
+    TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(TerrifyingPresenceListener.ACCURACY_PENALTY_PERCENT_KEY).modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
+            if (!ship.hasListenerOfClass(TerrifyingPresenceListener.class)) {
+                ship.addListener(new TerrifyingPresenceListener(ship));
+            }
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return "Enemy ships within " + pct(TerrifyingPresenceListener.RANGE) + " su have the target leading "
+                    + "accuracy of their autofiring weapons reduced by " + pct(magnitude) + "%.";
+        }
     };
 
     @Override

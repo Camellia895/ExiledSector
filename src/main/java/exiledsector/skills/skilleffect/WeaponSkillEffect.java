@@ -484,6 +484,17 @@ public enum WeaponSkillEffect implements SkillEffect {
             return pctChange(magnitude, "missile turn acceleration");
         }
     },
+    AUTOFIRE_AIM_ACCURACY_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getAutofireAimAccuracy().modifyFlat(modId, magnitude / 100f);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctChange(magnitude, "target leading accuracy of autofiring weapons");
+        }
+    },
     ECCM_CHANCE {
         // magnitude is a fraction (0-1) matching getEccmChance()'s own units; describe() only scales by 100 for display
         @Override
