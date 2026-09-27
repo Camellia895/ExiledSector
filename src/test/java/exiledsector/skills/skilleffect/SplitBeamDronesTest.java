@@ -107,6 +107,37 @@ class SplitBeamDronesTest {
     }
 
     @Test
+    void keepsFiringForAtLeastOneSecondAfterTheSplitStartsEvenWithoutFurtherHits() {
+        ShipAPI firingShip = mock(ShipAPI.class, Answers.RETURNS_DEEP_STUBS);
+        when(firingShip.isAlive()).thenReturn(true);
+        ShipAPI primary = shieldedShipAtOrigin(100f);
+        ShipAPI splitTarget = mock(ShipAPI.class);
+        when(splitTarget.isAlive()).thenReturn(true);
+        when(splitTarget.getLocation()).thenReturn(new Vector2f(500f, 0f));
+        ShipAPI drone = mock(ShipAPI.class, Answers.RETURNS_DEEP_STUBS);
+        when(drone.getLocation()).thenReturn(new Vector2f());
+        com.fs.starfarer.api.combat.WeaponAPI droneWeapon = mock(com.fs.starfarer.api.combat.WeaponAPI.class);
+        when(drone.getAllWeapons()).thenReturn(List.of(droneWeapon));
+        com.fs.starfarer.api.combat.WeaponAPI primaryWeapon = mock(com.fs.starfarer.api.combat.WeaponAPI.class);
+        com.fs.starfarer.api.combat.CombatEngineAPI engine = mock(com.fs.starfarer.api.combat.CombatEngineAPI.class);
+
+        try (MockedStatic<SplitBeamDroneFactory> factory = Mockito.mockStatic(SplitBeamDroneFactory.class);
+             MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
+            factory.when(() -> SplitBeamDroneFactory.create(firingShip, primaryWeapon)).thenReturn(drone);
+            global.when(Global::getCombatEngine).thenReturn(engine);
+            SplitBeamDrones drones = new SplitBeamDrones(firingShip);
+
+            drones.refresh(primaryWeapon, primary, splitTarget, new Vector2f(100f, 0f), 0.5f);
+            drones.advance(0.8f);
+            verify(droneWeapon, Mockito.atLeastOnce()).setForceFireOneFrame(true);
+            verify(engine, never()).removeEntity(drone);
+
+            drones.advance(0.3f);
+            verify(engine).removeEntity(drone);
+        }
+    }
+
+    @Test
     void officerCopyCarriesTheCaptainsIdentityPersonalityAndEverySkillLevel() {
         PersonAPI captain = mock(PersonAPI.class, Answers.RETURNS_DEEP_STUBS);
         FullName name = mock(FullName.class);

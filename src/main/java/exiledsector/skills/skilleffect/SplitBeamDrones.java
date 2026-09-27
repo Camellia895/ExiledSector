@@ -21,6 +21,7 @@ import java.util.Map;
 final class SplitBeamDrones {
 
     private static final float SPLIT_TIMEOUT_SECONDS = 0.3f;
+    private static final float MIN_FIRING_SECONDS = 1f;
     private static final float EXIT_MARGIN = 10f;
     private static final float CONNECTOR_OVERLAP = 20f;
     private static final float STAT_MIRROR_INTERVAL_SECONDS = 0.25f;
@@ -89,6 +90,7 @@ final class SplitBeamDrones {
         private final Vector2f impactPoint = new Vector2f();
         private final Vector2f origin = new Vector2f();
         private float secondsSinceRefresh;
+        private float secondsSinceStart;
         private float secondsSinceMirror;
 
         private SplitDrone(ShipAPI drone, ShipAPI splitTarget) {
@@ -107,7 +109,9 @@ final class SplitBeamDrones {
 
         private boolean advance(float amount, boolean firingShipGone) {
             secondsSinceRefresh += amount;
-            boolean firing = !firingShipGone && secondsSinceRefresh <= SPLIT_TIMEOUT_SECONDS && splitTarget.isAlive();
+            secondsSinceStart += amount;
+            boolean withinSplitWindow = secondsSinceStart <= MIN_FIRING_SECONDS || secondsSinceRefresh <= SPLIT_TIMEOUT_SECONDS;
+            boolean firing = !firingShipGone && withinSplitWindow && splitTarget.isAlive();
             if (!firing && !droneWeapon.isFiring()) {
                 return true;
             }
