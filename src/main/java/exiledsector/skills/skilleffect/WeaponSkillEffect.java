@@ -344,7 +344,7 @@ public enum WeaponSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return flatChange(magnitude, "missile guidance");
+            return "Significantly improved missile guidance algorithm.";
         }
     },
     BEAM_WEAPON_RANGE_FLAT {

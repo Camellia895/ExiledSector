@@ -27,29 +27,32 @@ Navigate to the outfit screen and click the skill tree button on any of your shi
   
 - **Unique passive effects**
 - **Beam splitting** 
-  - Your Tachyon Lance can now disappoint three enemies at once.
-  <img src="\graphics\description\lions_gaze.png" alt="Lion's Gaze">
+  - Your Tachyon Lance can now disappoint multiple enemies at once.
+  
+<img src="\graphics\description\lions_gaze.png" alt="Lion's Gaze">
 
 - **Faction themed**
-  - Your main goal can be to blow up, and act like you don't know nobody
+  - Your ship's main goal can be to blow up, and act like you don't know nobody
+
 <img src="\graphics\description\ludds_light.png" alt="Ludd's Light">
 <img src="\graphics\description\at_any_cost.png" alt="At Any Cost">
 
 ## Requirements
 
 - Starsector 0.98a-RC8
-- LazyLib
-- MagicLib
-- LunaLib
-- Optional: a healthy disregard for vanilla balance.
+- [LazyLib](https://fractalsoftworks.com/forum/index.php?topic=5444.225)
+- [MagicLib](https://fractalsoftworks.com/forum/index.php?topic=25868.0)
+- [LunaLib](https://fractalsoftworks.com/forum/index.php?topic=25658.0)
+
 
 Optional:
 
-- **Console Commands** adds `ExiledSectorGrantFleetXp [amount]`, which grants XP to every ship in your fleet.
+- Console Commands adds `ExiledSectorGrantFleetXp [amount]`.
+- a healthy disregard for vanilla balance.
 
 ## Configuration
 
-Play your own way! All settings are in the LunaLib mod settings menu:
+Play your own way – all settings are in the LunaLib mod settings menu:
 
 - OP cost per node, by hull size
 - Leveling curve: max level, XP per level, XP growth, and XP gained from a lost battle

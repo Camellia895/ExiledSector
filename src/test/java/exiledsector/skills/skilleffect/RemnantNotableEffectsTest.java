@@ -52,6 +52,12 @@ class RemnantNotableEffectsTest {
     }
 
     @Test
+    void missileGuidanceDescribesTheImprovedAlgorithmInsteadOfARawNumber() {
+        assertEquals("Significantly improved missile guidance algorithm.",
+                WeaponSkillEffect.MISSILE_GUIDANCE_FLAT.describe(1f));
+    }
+
+    @Test
     void maxCombatReadinessAddsTheMagnitudeAsAFlatFraction() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         MutableStat maxCr = mock(MutableStat.class);
