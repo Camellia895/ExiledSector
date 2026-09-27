@@ -2292,7 +2292,7 @@ function refreshInspector(){
       '</div>' +
       '<input type="checkbox" data-toggle-hidden-connector="' + pid + '"' + (isConnectorHidden(n.id, pid) ? ' checked' : '') + ' title="Hide this connector\u0027s line in-game (the connection still counts for unlocking)">' +
     '</div>';
-  }).join('') || '<div class="hint">None - renders with no connector line until you add one (e.g. a root node).</div>';
+  }).join('') || '<div class="hint">None.</div>';
   var otherNodeOptions = state.nodes.filter(function(o){ return o.id !== n.id; }).map(function(o){
     return '<option value="' + o.id + '">' + o.id + '</option>';
   }).join('');
@@ -2304,14 +2304,13 @@ function refreshInspector(){
 
   var statsHtml = '';
   if (t) {
-    var statRows = renderEffectRows('insp', t.effects || [], '<div class="hint">No effects yet.' + (t.vanillaHullMod ? ' Still on vanillaHullMod passthrough ("' + t.vanillaHullMod + '") - adding effects here does not switch that off, use "Edit type" for that.' : '') + '</div>');
+    var statRows = renderEffectRows('insp', t.effects || [], '<div class="hint">No effects yet.</div>');
     if (!t.effects) t.effects = [];
     if (!t.hullSizeEffects) t.hullSizeEffects = [];
     statsHtml =
       '<div class="field"><label>Description override (optional, shared by type "' + t.id + '")</label>' +
         '<textarea id="inspDescription" rows="3" style="width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12.5px;padding:7px 9px;resize:vertical;">' + (t.description||'') + '</textarea>' +
       '</div>' +
-      '<div class="hint">Leave blank to auto-generate one line per effect. If set, it shows above the effect lines rather than replacing them.</div>' +
       '<div class="field"><label>Stats granted by type "' + t.id + '"</label>' + statRows + '</div>' +
       '<div class="btnRow"><button class="smallBtn" id="addStatRowBtn">+ Add effect</button></div>' +
       '<div class="field"><label>Hull-size-dependent stats</label>' + renderHullSizeEffectRows('insp', t.hullSizeEffects) + '</div>' +
@@ -2320,10 +2319,7 @@ function refreshInspector(){
         '<input id="inspItemCostId" placeholder="commodity id, e.g. lobster" value="' + ((t.itemCost && t.itemCost.itemId) || '') + '" style="flex:2">' +
         '<input id="inspItemCostQuantity" type="number" placeholder="quantity" value="' + ((t.itemCost && t.itemCost.quantity) || '') + '" style="flex:1">' +
       '</div></div>' +
-      '<div class="hint">Commodity cost paid from fleet cargo on top of the usual OP cost, refunded on deallocation. Leave the item id blank for no cargo cost.</div>' +
       '<div class="field"><label>Temporary after deployment (seconds)</label><input id="inspTemporaryAfterDeploymentSeconds" type="number" min="0" placeholder="leave blank for always-on" value="' + (t.temporaryAfterDeploymentSeconds || '') + '"></div>' +
-      '<div class="hint">If set, every effect above only applies for this many seconds after this ship deploys into combat, then turns off - requires every effect on this type to support temporary gating (checked on load).</div>' +
-      '<div class="hint">Shared by every node using this type - editing here affects them all, not just "' + n.id + '".</div>' +
       '<hr class="sep">';
   }
 
@@ -2342,7 +2338,6 @@ function refreshInspector(){
         '<input value="' + (n.ringBeltPath || '') + '" placeholder="graphics/planets/ring_band_asteroids.png" data-field="ringBeltPath" style="flex:1">' +
         '<button class="smallBtn" type="button" id="selectRingBeltBtn">Select Image</button>' +
       '</div></div>' +
-      '<div class="hint">Every Keystone gets a thin rotating ring belt beyond its rings automatically. Leave blank for the default asteroid band, pick a graphics/planets/ring_band_*.png (or any similarly-shaped band texture), or use graphics/planets/aurorae.png for a moving, colour-tinted aurora instead of a static band.</div>' +
       (isAuroraBelt(n) ?
         '<div class="field"><label>Aurora colour</label><input type="color" value="' + (n.ringBeltColor || '#8c78ff') + '" data-field="ringBeltColor"></div>'
       : '') +
@@ -2350,13 +2345,11 @@ function refreshInspector(){
     : '') +
     (tier === 'WORMHOLE' ?
       '<div class="field"><label>Wormhole colour</label><input type="color" value="' + (n.wormholeColor || '#ffffff') + '" data-field="wormholeColor"></div>' +
-      '<div class="field"><label>Paired wormhole node</label><select data-field="pairedWith"><option value="">None (invalid)</option>' + otherWormholeOptions + '</select></div>' +
-      '<div class="hint">Every wormhole node must be paired with exactly one other wormhole node. Allocating either one automatically allocates the other for free, and deallocating either one deallocates both. Setting this here also sets the pair back on the other node.</div>'
+      '<div class="field"><label>Paired wormhole node</label><select data-field="pairedWith"><option value="">None (invalid)</option>' + otherWormholeOptions + '</select></div>'
     : '') +
     '<hr class="sep">' +
     statsHtml +
     '<div class="field"><label>Connected to</label><div class="prereqList">' + prereqHtml + '</div></div>' +
-    '<div class="hint">Check a connection\u0027s box to hide its line in-game (dashed/faint on the canvas here) - it still counts for unlocking either way.</div>' +
     '<div class="fieldRow">' +
       '<select id="addPrereqSelect" style="flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12px;padding:6px;"><option value="">Connect to...</option>' + otherNodeOptions + '</select>' +
     '</div>' +
@@ -2633,11 +2626,9 @@ function refreshAnchorInspector(body){
         '<div class="field"><label>Band width</label><input type="number" min="10" value="' + beltBandWidthVal + '" data-anchor-field="beltBandWidth"></div>' +
         '<div class="field"><label>Ring style</label><select data-anchor-field="beltStyle">' + beltStyleOptions + '</select></div>' +
       '</div>' +
-      '<div class="field"><label>Rotation speed (degrees/sec)</label><input type="number" step="0.1" value="' + (a.beltRotationSpeed || 0) + '" data-anchor-field="beltRotationSpeed"></div>' +
-      '<div class="hint" id="ringBeltHint">Rendered live in-game (the same vanilla planet-ring technique used for Keystone ring belts), centered on this anchor\u0027s radius - no generate step needed, it just ships with whatever band width/style are set here.</div>'
+      '<div class="field"><label>Rotation speed (degrees/sec)</label><input type="number" step="0.1" value="' + (a.beltRotationSpeed || 0) + '" data-anchor-field="beltRotationSpeed"></div>'
     : '') +
     '<hr class="sep">' +
-    '<div class="hint">Nodes attached to this anchor (orbitAnchorId) re-snap to its boundary as you edit these fields.</div>' +
     '<button class="smallBtn danger" id="deleteAnchorBtn">Delete this anchor <span class="key">Q</span></button>';
 
   body.querySelectorAll('[data-anchor-field]').forEach(function(inp){
@@ -2701,8 +2692,7 @@ function refreshImageInspector(body){
         '<img src="' + path + '" alt="' + path + '" loading="lazy"></div>';
     }).join('') + '</div>';
   } else {
-    pickerHtml = '<div class="hint">No images found under graphics/backgrounds/static_images/ - ' +
-      'is the editor running through skill_tree_server.ps1? Drop a .png in that folder and it will show up here.</div>';
+    pickerHtml = '<div class="hint">No images found under graphics/backgrounds/static_images/.</div>';
   }
 
   body.innerHTML =
@@ -2722,7 +2712,6 @@ function refreshImageInspector(body){
     '</div>' +
     '<div class="field"><label>Image</label>' + pickerHtml + '</div>' +
     '<hr class="sep">' +
-    '<div class="hint">A static PNG rendered behind the whole tree in game, at this position/size. Drag its edge handle in Select mode to resize, or its top handle to rotate.</div>' +
     '<button class="smallBtn danger" id="deleteImageBtn">Delete this image <span class="key">Q</span></button>';
 
   body.querySelectorAll('[data-image-field]').forEach(function(inp){
@@ -2790,7 +2779,6 @@ function refreshStarInspector(body){
       '<button class="smallBtn" type="button" id="clearStarColorBtn">Use vanilla colour</button>' +
     '</div></div>' +
     '<hr class="sep">' +
-    '<div class="hint">Rendered live in-game as an actual vanilla star (real texture, corona glow, slow spin) at this position and radius - no generate step needed. The colour override tints both the disc and the corona; leave it unset to use the star type\'s own vanilla colours.</div>' +
     '<button class="smallBtn danger" id="deleteStarBtn">Delete this star <span class="key">Q</span></button>';
 
   body.querySelectorAll('[data-star-field]').forEach(function(inp){
@@ -2843,7 +2831,6 @@ function refreshMultiInspector(body){
   var total = selectionCount();
   body.innerHTML =
     '<h2>' + total + ' objects selected</h2>' +
-    '<div class="hint">Drag any selected node to move the whole group of nodes together. Shift-click/shift-drag to add or remove from this selection. Click an item below to select only it.</div>' +
     '<div class="prereqList">' + rows.join('') + '</div>' +
     '<div class="btnRow"><button class="smallBtn" id="clearSelectionBtn">Clear selection</button></div>' +
     '<button class="smallBtn danger" id="deleteAllSelectedBtn">Delete ' + total + ' selected <span class="key">Q</span></button>';
@@ -2892,7 +2879,6 @@ function openAddNodeModal(x, y){
       '<option value="ROOT">Root</option>' +
     '</select></div>' +
     '<div class="field"><label>Type</label><select id="mAddType">' + addNodeTypeOptionsHtml('ALL') + '</select></div>' +
-    '<div class="hint">Placed with no connections - link it afterward in Link mode.</div>' +
     '<div class="modalBtns">' +
       '<button class="smallBtn" id="mAddNewType">Define new type instead</button>' +
       '<button class="smallBtn" id="mCancel">Cancel</button>' +
@@ -3076,7 +3062,7 @@ function renderUnlockConditionRows(idPrefix, conditionsDraft){
       '<button class="smallBtn danger" type="button" data-' + idPrefix + '-remove-unlock-row="' + i + '">X</button>' +
     '</div>';
   }).join('');
-  return rows || '<div class="hint">No unlock conditions - node is always visible and allocatable.</div>';
+  return rows || '<div class="hint">No unlock conditions.</div>';
 }
 
 function syncUnlockConditionRowsFromInputs(idPrefix, conditionsDraft){
@@ -3358,7 +3344,7 @@ function openImageEditorModal(){
   function updateDetail(){
     var detail = document.getElementById('imgEditDetail');
     if (!selectedPath) {
-      detail.innerHTML = '<div class="hint">Select an image from the grid to preview it, make a colour-shifted or circular copy, or delete it.</div>';
+      detail.innerHTML = '';
       return;
     }
     detail.innerHTML =
@@ -3366,8 +3352,6 @@ function openImageEditorModal(){
       '<div class="imageBrowserPath">' + selectedPath + '</div>' +
       '<div class="field"><label>Hue shift (degrees)</label><input type="number" id="imgEditHue" value="240" step="1"></div>' +
       '<div class="field"><label>New file suffix</label><input id="imgEditSuffix" value="shifted" placeholder="e.g. shifted"></div>' +
-      '<div class="hint">Colour-shifted copy saves as "' + imageBaseName(selectedPath) + '_&lt;suffix&gt;.png" next to the original. ' +
-        'Circular copy always saves to graphics/unused/circular/. Preview is an approximation - the saved file is computed exactly.</div>' +
       '<div class="btnRow">' +
         '<button class="smallBtn primary" id="imgEditCreate">Create colour-shifted copy</button>' +
         '<button class="smallBtn" id="imgEditCircular">Make circular copy</button>' +
@@ -3454,7 +3438,7 @@ function openTypeModal(existingType, onSave, onClose){
 
   function renderModal(){
     var tierOptions = ['SMALL','NOTABLE','KEYSTONE','WORMHOLE','ROOT'].map(function(tr){ return '<option value="'+tr+'"'+(tr===tierOf(t)?' selected':'')+'>'+tr+'</option>'; }).join('');
-    var effectRows = renderEffectRows('t', effectsDraft, '<div class="hint">No effects yet - click "+ Add effect" below, or set a vanillaHullMod id instead.</div>');
+    var effectRows = renderEffectRows('t', effectsDraft, '<div class="hint">No effects yet.</div>');
 
     root.innerHTML =
       '<div class="modalOverlay"><div class="modal">' +
@@ -3465,33 +3449,25 @@ function openTypeModal(existingType, onSave, onClose){
       '<div class="field"><label>Tier</label><select id="tTier">' + tierOptions + '</select></div>' +
       '<div class="field"><label>Tags</label>' + renderTagChips('modal', tagsDraft) + '</div>' +
       '<hr class="sep">' +
-      '<div class="hint">One or more Effect + Magnitude rows, each independently tunable - this mod\'s own stat code, not vanilla\'s. Or set a vanillaHullMod id below to delegate to that hull mod\'s real effect for now instead (pair it with a Todo note).</div>' +
       '<div class="field"><label>Effects</label>' + effectRows + '</div>' +
       '<div class="btnRow"><button class="smallBtn" type="button" id="addEffectRowBtn">+ Add effect</button></div>' +
       '<hr class="sep">' +
-      '<div class="hint">Hull-size-dependent effects - four explicit dials per effect (frigate/destroyer/cruiser/capital), no shared fallback value. Use this for notables converted from hullmods whose real vanilla effect differs by hull size.</div>' +
       '<div class="field"><label>Hull-size effects</label>' + renderHullSizeEffectRows('t', hullSizeEffectsDraft) + '</div>' +
       '<div class="btnRow"><button class="smallBtn" type="button" id="addHsEffectRowBtn">+ Add hull-size effect</button></div>' +
       '<hr class="sep">' +
       '<div class="field"><label>vanillaHullMod id</label><input id="tVanilla" value="' + (t.vanillaHullMod||'') + '"></div>' +
       '<hr class="sep">' +
-      '<div class="hint">Unlock conditions - if set, this node renders as blinking sensor ghosts and blocks allocation until at least one of them is satisfied (any one is enough, not all required). Leave empty for a normal, always-visible node.</div>' +
       '<div class="field"><label>Unlock conditions</label>' + renderUnlockConditionRows('t', unlockConditionsDraft) + '</div>' +
       '<div class="btnRow"><button class="smallBtn" type="button" id="addUnlockConditionRowBtn">+ Add condition</button></div>' +
       '<div class="field"><label>Exclusive with hullmod ids (comma-separated)</label><input id="tExclusiveHullMods" value="' + ((t.exclusiveHullMods||[]).join(', ')) + '"></div>' +
-      '<div class="hint">If the ship already has any of these vanilla hullmods installed, this node cannot be allocated. vanillaHullMod above is always implicitly included here too, no need to repeat it.</div>' +
       '<hr class="sep">' +
-      '<div class="hint">Item cost (optional) - a commodity cost paid from fleet cargo on top of the usual OP cost, refunded to cargo on deallocation. Leave the item id blank for a normal node with no cargo cost.</div>' +
       '<div class="field"><label>Item cost</label><div class="fieldRow"><input id="tItemCostId" placeholder="commodity id, e.g. lobster" value="' + (itemCostDraft.itemId||'') + '" style="flex:2"><input id="tItemCostQuantity" type="number" placeholder="quantity" value="' + (itemCostDraft.quantity||0) + '" style="flex:1"></div></div>' +
       '<hr class="sep">' +
-      '<div class="hint">Temporary after deployment (optional) - if set, every effect above only applies for this many seconds after a ship deploys into combat, then turns off. Requires every effect on this type to support temporary gating (checked on load; the flag is dropped with a log error if any effect doesn't).</div>' +
       '<div class="field"><label>Temporary after deployment (seconds)</label><input id="tTemporaryAfterDeploymentSeconds" type="number" min="0" placeholder="leave blank for always-on" value="' + (t.temporaryAfterDeploymentSeconds || '') + '"></div>' +
       '<hr class="sep">' +
-      '<div class="hint">Optional slot options - pick other types this node can resolve to (ctrl/cmd-click to select several; any tier is allowed, so a notable or keystone can offer small effects). Non-empty means this node renders as a dropdown picker instead of a fixed effect: clicking it while unallocated opens the dropdown, picking an option allocates and applies that option\\u0027s cost/effects, and deallocating it reverts it to this unselected placeholder.</div>' +
       '<div class="field"><label>Optional slot options</label>' + renderOptionalOptionsSelect(t.optionalOptions||[], t.id) + '</div>' +
       '<div class="field"><label>Edit each option\u0027s type</label><div class="prereqList">' + renderOptionEditRows(t.optionalOptions||[]) + '</div></div>' +
       '<div class="field"><label>Description override (optional)</label><input id="tDescription" value="' + (t.description||'') + '"></div>' +
-      '<div class="hint">Leave the description blank to auto-generate one line per effect from its magnitude. Only set it for custom flavor text.</div>' +
       '<div class="field"><label>Todo (optional)</label><input id="tTodo" value="' + (t.todo||'') + '"></div>' +
       '<div class="modalBtns">' +
         '<button class="smallBtn" id="mCancel2">Cancel</button>' +
@@ -3773,7 +3749,6 @@ document.getElementById('importBtn').addEventListener('click', function(){
   var html =
     '<div class="modalOverlay"><div class="modal" style="width:min(560px,92vw)">' +
     '<h3>Import JSON</h3>' +
-    '<div class="hint">Paste the contents of your actual skill_types.json and/or ship_skill_tree.json. Leave either blank to keep what is currently loaded.</div>' +
     '<div class="field"><label>skill_types.json contents</label><textarea id="impTypes" style="height:100px;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:11px;padding:8px;"></textarea></div>' +
     '<div class="field"><label>ship_skill_tree.json contents</label><textarea id="impNodes" style="height:100px;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:11px;padding:8px;"></textarea></div>' +
     '<div class="modalBtns"><button class="smallBtn" id="mCancel3">Cancel</button><button class="smallBtn primary" id="mLoad3">Load</button></div>' +
