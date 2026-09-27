@@ -104,6 +104,11 @@ public enum FluxSkillEffect implements SkillEffect {
         }
 
         @Override
+        public boolean supportsTemporaryGating() {
+            return false;
+        }
+
+        @Override
         public String describe(float magnitude) {
             return "Allows the zero-flux speed boost to take effect regardless of flux level.";
         }
@@ -116,6 +121,11 @@ public enum FluxSkillEffect implements SkillEffect {
         @Override
         public boolean isConditional() {
             return true;
+        }
+
+        @Override
+        public boolean supportsTemporaryGating() {
+            return false;
         }
 
         @Override

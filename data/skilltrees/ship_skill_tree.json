@@ -578,8 +578,8 @@
 			"connectedTo": [
 				"small_logistics_optional_4"
 			],
-			"x": -470,
-			"y": -7,
+			"x": -502,
+			"y": -25,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#d2bcdc"
 		},
@@ -636,7 +636,7 @@
 				"small_logistics_optional_4"
 			],
 			"x": -246,
-			"y": 349
+			"y": 414
 		},
 		{
 			"id": "surveying_equipment_1",
@@ -666,8 +666,8 @@
 			"connectedTo": [
 				"small_logistics_optional_9"
 			],
-			"x": 466,
-			"y": -12,
+			"x": 498,
+			"y": -35,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#ffca80"
 		},
@@ -699,8 +699,8 @@
 			"connectedTo": [
 				"small_logistics_optional_9"
 			],
-			"x": 249,
-			"y": 353,
+			"x": 263,
+			"y": 411,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#7d67fe"
 		},
@@ -2796,6 +2796,13 @@
 			"orbitAngle": 180
 		},
 		{
+			"id": "phase_sensor_upgrades_1",
+			"type": "phase_sensor_upgrades",
+			"connectedTo": [],
+			"x": -843,
+			"y": -7180
+		},
+		{
 			"id": "small_flux_optional_47",
 			"type": "small_flux_optional",
 			"connectedTo": [
@@ -3012,6 +3019,15 @@
 			"orbitAngle": 90
 		},
 		{
+			"id": "violence_of_action_1",
+			"type": "violence_of_action",
+			"connectedTo": [
+				"small_flux_optional_55"
+			],
+			"x": 3700,
+			"y": 8977
+		},
+		{
 			"id": "small_flux_optional_56",
 			"type": "small_flux_optional",
 			"connectedTo": [
@@ -3022,6 +3038,15 @@
 			"y": 6867,
 			"orbitAnchorId": "luddic_inner",
 			"orbitAngle": 0
+		},
+		{
+			"id": "perseverence_through_faith_1",
+			"type": "perseverence_through_faith",
+			"connectedTo": [
+				"small_flux_optional_56"
+			],
+			"x": 5810,
+			"y": 6867
 		},
 		{
 			"id": "fuel_core_overload_1",
@@ -3260,6 +3285,15 @@
 			"y": 1242,
 			"orbitAnchorId": "pirate_inner",
 			"orbitAngle": 90
+		},
+		{
+			"id": "restriction_breeds_creativity_1",
+			"type": "restriction_breeds_creativity",
+			"connectedTo": [
+				"small_flux_optional_62"
+			],
+			"x": 7697,
+			"y": 2042
 		},
 		{
 			"id": "pirate_wormhole_1",
@@ -4746,9 +4780,21 @@
 		},
 		{
 			"a": "small_flux_optional_55",
+			"b": "violence_of_action_1",
+			"controlX": 3700,
+			"controlY": 8577
+		},
+		{
+			"a": "small_flux_optional_55",
 			"b": "small_flux_optional_56",
 			"controlX": 4633,
 			"controlY": 7786
+		},
+		{
+			"a": "small_flux_optional_56",
+			"b": "perseverence_through_faith_1",
+			"controlX": 5410,
+			"controlY": 6867
 		},
 		{
 			"a": "pirate_wormhole_2",
@@ -4785,6 +4831,12 @@
 			"b": "small_flux_optional_62",
 			"controlX": 8558,
 			"controlY": 885
+		},
+		{
+			"a": "small_flux_optional_62",
+			"b": "restriction_breeds_creativity_1",
+			"controlX": 7697,
+			"controlY": 1642
 		},
 		{
 			"a": "league_wormhole_2",

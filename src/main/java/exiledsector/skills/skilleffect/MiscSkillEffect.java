@@ -25,6 +25,11 @@ public enum MiscSkillEffect implements SkillEffect {
         }
 
         @Override
+        public boolean supportsTemporaryGating() {
+            return false;
+        }
+
+        @Override
         public String describe(float magnitude) {
             return "Point-defense weapons can identify and ignore decoy flares.";
         }
@@ -33,6 +38,11 @@ public enum MiscSkillEffect implements SkillEffect {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getDynamic().getMod(Stats.PD_BEST_TARGET_LEADING).modifyFlat(modId, 1f);
+        }
+
+        @Override
+        public boolean supportsTemporaryGating() {
+            return false;
         }
 
         @Override
@@ -64,6 +74,11 @@ public enum MiscSkillEffect implements SkillEffect {
                     weapon.setPD(true);
                 }
             }
+        }
+
+        @Override
+        public boolean supportsTemporaryGating() {
+            return false;
         }
 
         @Override
@@ -146,6 +161,11 @@ public enum MiscSkillEffect implements SkillEffect {
         @Override
         public boolean isConditional() {
             return true;
+        }
+
+        @Override
+        public boolean supportsTemporaryGating() {
+            return false;
         }
 
         @Override

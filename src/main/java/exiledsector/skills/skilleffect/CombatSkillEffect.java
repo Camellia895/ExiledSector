@@ -216,6 +216,11 @@ public enum CombatSkillEffect implements SkillEffect {
         }
     };
 
+    @Override
+    public boolean supportsTemporaryGating() {
+        return false;
+    }
+
     private static final String EXPLODE_ON_DEATH_FUEL_DAMAGE_KEY = "exiledSector_explodeOnDeathFuelDamagePercent";
 
     private static final String BEAM_SPLIT_TARGETS_KEY = "exiledSector_beamSplitTargets";
@@ -242,9 +247,7 @@ public enum CombatSkillEffect implements SkillEffect {
             this.ship = ship;
         }
 
-        // return value is an unused damage-modifier reason string; this listener never needs to supply one
         @Override
-        @SuppressWarnings("java:S3516")
         public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
             if (processingSplit) return null;
             if (!(param instanceof BeamAPI beam)) return null;
@@ -299,9 +302,6 @@ public enum CombatSkillEffect implements SkillEffect {
                 impactPoint = splitTarget.getLocation();
             }
 
-            // Pass sourceBeam as the dealer (not just ship) so other beam-gated listeners
-            // (e.g. BEAM_DAMAGE_HARD_FLUX_PERCENT's DamageDealtModifier, which checks
-            // `param instanceof BeamAPI`) correctly recognize and apply to split hits too.
             engine.applyDamage(sourceBeam, splitTarget, impactPoint, damageAmount, damageType, empAmount, false, true, ship, false);
 
             float impactSize = sourceBeam.getWidth() * 2f;
@@ -340,9 +340,8 @@ public enum CombatSkillEffect implements SkillEffect {
         }
 
         // unchecked: storedHits is only ever written by this class as List<ShipAPI>
-        // S3516: return value is an unused damage-modifier reason string; this listener never needs to supply one
         @Override
-        @SuppressWarnings({"unchecked", "java:S3516"})
+        @SuppressWarnings("unchecked")
         public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
             if (!shieldHit) return null;
             if (!(param instanceof DamagingProjectileAPI proj)) return null;
@@ -421,9 +420,7 @@ public enum CombatSkillEffect implements SkillEffect {
             this.ship = ship;
         }
 
-        // this listener never cancels hull damage, only reacts to it, so it always returns false
         @Override
-        @SuppressWarnings("java:S3516")
         public boolean notifyAboutToTakeHullDamage(Object param, ShipAPI ship, Vector2f point, float damageAmount) {
             if (exploded || damageAmount < ship.getHitpoints()) {
                 return false;
@@ -559,8 +556,6 @@ public enum CombatSkillEffect implements SkillEffect {
         private static final float SHIELD_RADIUS_OVERLAP_MULT = 0.75f;
         private static final float DESTROYER_ESCORTING_CAPITAL_MULT = 2f;
         private static final float TURN_ACCELERATION_MULT = 2f;
-        // AdvanceableListener.advance has no modId parameter, so the four escort effects can't
-        // pass their own node id in here - one fixed id is used for this listener's own stat mods.
         private static final String ESCORT_BONUS_MOD_ID = "exiledSector_escortBonus";
 
         private final ShipAPI ship;

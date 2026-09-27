@@ -2321,6 +2321,8 @@ function refreshInspector(){
         '<input id="inspItemCostQuantity" type="number" placeholder="quantity" value="' + ((t.itemCost && t.itemCost.quantity) || '') + '" style="flex:1">' +
       '</div></div>' +
       '<div class="hint">Commodity cost paid from fleet cargo on top of the usual OP cost, refunded on deallocation. Leave the item id blank for no cargo cost.</div>' +
+      '<div class="field"><label>Temporary after deployment (seconds)</label><input id="inspTemporaryAfterDeploymentSeconds" type="number" min="0" placeholder="leave blank for always-on" value="' + (t.temporaryAfterDeploymentSeconds || '') + '"></div>' +
+      '<div class="hint">If set, every effect above only applies for this many seconds after this ship deploys into combat, then turns off - requires every effect on this type to support temporary gating (checked on load).</div>' +
       '<div class="hint">Shared by every node using this type - editing here affects them all, not just "' + n.id + '".</div>' +
       '<hr class="sep">';
   }
@@ -2525,6 +2527,13 @@ function refreshInspector(){
     };
     inspItemCostId.addEventListener('change', function(){ syncInspItemCost(); refreshInspector(); });
     inspItemCostQuantity.addEventListener('change', function(){ syncInspItemCost(); refreshInspector(); });
+    var inspTemporaryAfterDeploymentSeconds = document.getElementById('inspTemporaryAfterDeploymentSeconds');
+    inspTemporaryAfterDeploymentSeconds.addEventListener('change', function(){
+      var seconds = parseFloat(inspTemporaryAfterDeploymentSeconds.value);
+      if (!isNaN(seconds) && seconds > 0) t.temporaryAfterDeploymentSeconds = seconds;
+      else delete t.temporaryAfterDeploymentSeconds;
+      saveLocal(); refreshInspector();
+    });
   }
   document.getElementById('deleteNodeBtn').addEventListener('click', deleteSelectedNodes);
   document.getElementById('duplicateBtn').addEventListener('click', function(){ duplicateNode(n); });
@@ -2917,8 +2926,8 @@ function addNodeOfType(typeId, x, y){
   selectNode(node.id);
 }
 
-var EFFECT_NAMES = ['HULL_PERCENT','HULL_FLAT','HULL_MULT','ARMOR_PERCENT','ARMOR_FLAT','FLUX_CAPACITY_PERCENT','FLUX_CAPACITY_FLAT','FLUX_CAPACITY_MULT','FLUX_DISSIPATION_PERCENT','FLUX_DISSIPATION_FLAT','BALLISTIC_DAMAGE_PERCENT','MISSILE_DAMAGE_PERCENT',
-  'NON_BEAM_ENERGY_DAMAGE_PERCENT','BEAM_DAMAGE_PERCENT','ENERGY_DAMAGE_PERCENT','ALL_WEAPON_DAMAGE_PERCENT','MANEUVERABILITY_PERCENT','FUEL_CAPACITY_PERCENT','FUEL_CAPACITY_FLAT',
+var EFFECT_NAMES = ['HULL_PERCENT','HULL_FLAT','HULL_MULT','ARMOR_PERCENT','ARMOR_FLAT','ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD','FLUX_CAPACITY_PERCENT','FLUX_CAPACITY_FLAT','FLUX_CAPACITY_MULT','FLUX_DISSIPATION_PERCENT','FLUX_DISSIPATION_FLAT','BALLISTIC_DAMAGE_PERCENT','MISSILE_DAMAGE_PERCENT',
+  'NON_BEAM_ENERGY_DAMAGE_PERCENT','BEAM_DAMAGE_PERCENT','ENERGY_DAMAGE_PERCENT','ALL_WEAPON_DAMAGE_PERCENT','ALL_WEAPON_DAMAGE_MULT_PER_DMOD','MANEUVERABILITY_PERCENT','FUEL_CAPACITY_PERCENT','FUEL_CAPACITY_FLAT',
   'CARGO_CAPACITY_PERCENT','CARGO_CAPACITY_FLAT','CREW_CAPACITY_PERCENT','CREW_CAPACITY_FLAT','BURN_LEVEL_FLAT','SENSOR_PROFILE_PERCENT','SENSOR_STRENGTH_PERCENT','SENSOR_STRENGTH_FLAT','COMBAT_VISION','ELECTRONIC_WARFARE','NAV_RATING','BALLISTIC_WEAPON_RANGE_PERCENT',
   'ENERGY_WEAPON_RANGE_PERCENT','NON_BEAM_ENERGY_WEAPON_RANGE_FLAT','BEAM_WEAPON_RANGE_PERCENT','BALLISTIC_AMMO_PERCENT','ENERGY_AMMO_PERCENT','MISSILE_AMMO_PERCENT','BALLISTIC_AMMO_REGEN_PERCENT','ENERGY_AMMO_REGEN_PERCENT','BALLISTIC_WEAPON_FIRE_RATE_PERCENT','ENERGY_WEAPON_FIRE_RATE_PERCENT','MISSILE_WEAPON_FIRE_RATE_PERCENT','WEAPON_TURN_RATE_PERCENT',
   'SHIELD_ARC_PERCENT','SHIELD_UPKEEP_PERCENT','SHIELD_ABSORPTION_PERCENT','SHIELD_TURN_RATE_PERCENT','SHIELD_RAISE_RATE_PERCENT','WEAPON_DURABILITY_PERCENT',
@@ -2951,7 +2960,7 @@ var EFFECT_NAMES = ['HULL_PERCENT','HULL_FLAT','HULL_MULT','ARMOR_PERCENT','ARMO
   'NON_BEAM_ENERGY_CHAIN_CHANCE_PERCENT','NON_BEAM_ENERGY_CHAIN_FALLOFF_PERCENT',
   'BALLISTIC_DAMAGE_PER_BURN_LEVEL_PERCENT','ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT',
   'ESCORT_MANEUVER_BONUS_PERCENT','ESCORT_SPEED_BONUS_PERCENT','ESCORT_WEAPON_RANGE_BONUS_PERCENT','ESCORT_PROXIMITY_RANGE_FLAT',
-  'CORONA_RESISTANCE_MULT','LARGE_BALLISTIC_OP_COST_FLAT','BALLISTIC_PROJECTILE_SPEED_PERCENT','POST_BATTLE_SALVAGE_PERCENT'];
+  'CORONA_RESISTANCE_MULT','LARGE_BALLISTIC_OP_COST_FLAT','BALLISTIC_PROJECTILE_SPEED_PERCENT','POST_BATTLE_SALVAGE_PERCENT','PHASE_FIELD_CONTRIBUTION_PERCENT'];
 
 var EFFECT_NAMES_SORTED = EFFECT_NAMES.slice().sort();
 function sortedEffectOptionsHtml(selected){
@@ -3436,6 +3445,8 @@ function openTypeModal(existingType, onSave, onClose){
     t.todo = document.getElementById('tTodo').value;
     itemCostDraft.itemId = document.getElementById('tItemCostId').value.trim();
     itemCostDraft.quantity = parseFloat(document.getElementById('tItemCostQuantity').value) || 0;
+    var temporarySeconds = parseFloat(document.getElementById('tTemporaryAfterDeploymentSeconds').value);
+    t.temporaryAfterDeploymentSeconds = (!isNaN(temporarySeconds) && temporarySeconds > 0) ? temporarySeconds : null;
     syncEffectRowsFromInputs('t', effectsDraft);
     syncHullSizeEffectsFromInputs('t', hullSizeEffectsDraft);
     syncUnlockConditionRowsFromInputs('t', unlockConditionsDraft);
@@ -3472,6 +3483,9 @@ function openTypeModal(existingType, onSave, onClose){
       '<hr class="sep">' +
       '<div class="hint">Item cost (optional) - a commodity cost paid from fleet cargo on top of the usual OP cost, refunded to cargo on deallocation. Leave the item id blank for a normal node with no cargo cost.</div>' +
       '<div class="field"><label>Item cost</label><div class="fieldRow"><input id="tItemCostId" placeholder="commodity id, e.g. lobster" value="' + (itemCostDraft.itemId||'') + '" style="flex:2"><input id="tItemCostQuantity" type="number" placeholder="quantity" value="' + (itemCostDraft.quantity||0) + '" style="flex:1"></div></div>' +
+      '<hr class="sep">' +
+      '<div class="hint">Temporary after deployment (optional) - if set, every effect above only applies for this many seconds after a ship deploys into combat, then turns off. Requires every effect on this type to support temporary gating (checked on load; the flag is dropped with a log error if any effect doesn't).</div>' +
+      '<div class="field"><label>Temporary after deployment (seconds)</label><input id="tTemporaryAfterDeploymentSeconds" type="number" min="0" placeholder="leave blank for always-on" value="' + (t.temporaryAfterDeploymentSeconds || '') + '"></div>' +
       '<hr class="sep">' +
       '<div class="hint">Optional slot options - pick other types this node can resolve to (ctrl/cmd-click to select several; any tier is allowed, so a notable or keystone can offer small effects). Non-empty means this node renders as a dropdown picker instead of a fixed effect: clicking it while unallocated opens the dropdown, picking an option allocates and applies that option\\u0027s cost/effects, and deallocating it reverts it to this unselected placeholder.</div>' +
       '<div class="field"><label>Optional slot options</label>' + renderOptionalOptionsSelect(t.optionalOptions||[], t.id) + '</div>' +
@@ -3570,6 +3584,7 @@ function openTypeModal(existingType, onSave, onClose){
         hullSizeEffects: hullSizeEffectsDraft,
         vanillaHullMod: (t.vanillaHullMod||'').trim(),
         itemCost: itemCostDraft.itemId ? { itemId: itemCostDraft.itemId, quantity: itemCostDraft.quantity || 0 } : null,
+        temporaryAfterDeploymentSeconds: t.temporaryAfterDeploymentSeconds || null,
         unlockConditions: unlockConditionsDraft,
         exclusiveHullMods: t.exclusiveHullMods || [],
         optionalOptions: t.optionalOptions || [],
@@ -3618,6 +3633,7 @@ function serializeType(t){
   if (t.hullSizeEffects && t.hullSizeEffects.length) out.hullSizeEffects = t.hullSizeEffects.map(function(e){ return { effect: e.effect, frigate: e.frigate, destroyer: e.destroyer, cruiser: e.cruiser, capitalShip: e.capitalShip }; });
   if (t.vanillaHullMod) out.vanillaHullMod = t.vanillaHullMod;
   if (t.itemCost && t.itemCost.itemId) out.itemCost = { itemId: t.itemCost.itemId, quantity: t.itemCost.quantity || 0 };
+  if (t.temporaryAfterDeploymentSeconds) out.temporaryAfterDeploymentSeconds = t.temporaryAfterDeploymentSeconds;
   var unlockConditionsOut = serializeUnlockConditions(t.unlockConditions);
   if (unlockConditionsOut.length) out.unlockConditions = unlockConditionsOut;
   if (t.exclusiveHullMods && t.exclusiveHullMods.length) out.exclusiveHullMods = t.exclusiveHullMods;

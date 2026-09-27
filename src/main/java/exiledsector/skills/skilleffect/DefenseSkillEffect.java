@@ -3,6 +3,7 @@ package exiledsector.skills.skilleffect;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 
+import static exiledsector.skills.skilleffect.SkillEffectText.pct;
 import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
 import static exiledsector.skills.skilleffect.SkillEffectText.pctMore;
 import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
@@ -84,6 +85,19 @@ public enum DefenseSkillEffect implements SkillEffect {
         @Override
         public String describe(float magnitude) {
             return pctChange(magnitude, "armor");
+        }
+    },
+    ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getArmorDamageTakenMult().modifyMult(modId, SkillEffectSupport.compoundMultPerDMod(stats, magnitude));
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            String verb = magnitude >= 0 ? "more" : "less";
+            return pct(Math.abs(magnitude)) + "% " + verb + " armor damage taken per D-mod this ship has, "
+                    + "compounding multiplicatively.";
         }
     },
     SHIELD_ABSORPTION_PERCENT {

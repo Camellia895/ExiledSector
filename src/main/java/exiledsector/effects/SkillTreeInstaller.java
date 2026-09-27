@@ -4,6 +4,7 @@ import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.skills.skilleffect.LogisticsSkillEffect;
 
 public class SkillTreeInstaller implements EveryFrameScript {
 
@@ -36,5 +37,7 @@ public class SkillTreeInstaller implements EveryFrameScript {
             }
             new SkillTreeHullMod().applyEffectsBeforeShipCreation(member.getHullSpec().getHullSize(), member.getStats(), SkillTreeHullMod.ID);
         }
+
+        LogisticsSkillEffect.recomputeExtendedPhaseField();
     }
 }

@@ -60,12 +60,16 @@ public final class SkillTypeLoader {
         List<String> exclusiveSkillTypeIds = parseStringArray(json.optJSONArray("exclusiveSkillTypes"));
         List<UnlockCondition> unlockConditions = parseUnlockConditions(json.optJSONArray("unlockConditions"));
         SkillItemCost itemCost = parseItemCost(json.optJSONObject("itemCost"));
+        String id = json.getString("id");
+        Float temporaryAfterDeploymentSeconds = validateTemporaryGating(id,
+                parseTemporaryAfterDeploymentSeconds(json), effects, hullSizeEffects);
 
-        return new SkillType.Builder(json.getString("id"), json.getString("name"), json.getString("icon"), tier)
+        return new SkillType.Builder(id, json.getString("name"), json.getString("icon"), tier)
                 .effects(effects)
                 .hullSizeEffects(hullSizeEffects)
                 .vanillaHullModId(json.optString("vanillaHullMod", null))
                 .itemCost(itemCost)
+                .temporaryAfterDeploymentSeconds(temporaryAfterDeploymentSeconds)
                 .descriptionOverride(json.optString("description", null))
                 .todo(json.optString("todo", null))
                 .optionalOptionIds(optionalOptionIds)
@@ -80,6 +84,39 @@ public final class SkillTypeLoader {
             return null;
         }
         return new SkillItemCost(itemCostJson.getString("itemId"), (float) itemCostJson.getDouble("quantity"));
+    }
+
+    private static Float parseTemporaryAfterDeploymentSeconds(JSONObject json) throws JSONException {
+        if (!json.has("temporaryAfterDeploymentSeconds")) {
+            return null;
+        }
+        return (float) json.getDouble("temporaryAfterDeploymentSeconds");
+    }
+
+    private static Float validateTemporaryGating(String id, Float temporaryAfterDeploymentSeconds,
+                                                   List<SkillTypeEffect> effects, List<HullSizeSkillEffect> hullSizeEffects) {
+        if (temporaryAfterDeploymentSeconds == null) {
+            return null;
+        }
+        for (SkillTypeEffect effect : effects) {
+            if (!effect.effect().supportsTemporaryGating()) {
+                logUnsupportedTemporaryGating(id, effect.effect());
+                return null;
+            }
+        }
+        for (HullSizeSkillEffect effect : hullSizeEffects) {
+            if (!effect.effect().supportsTemporaryGating()) {
+                logUnsupportedTemporaryGating(id, effect.effect());
+                return null;
+            }
+        }
+        return temporaryAfterDeploymentSeconds;
+    }
+
+    private static void logUnsupportedTemporaryGating(String id, SkillEffect effect) {
+        Logger.getLogger(SkillTypeLoader.class).error("Skill type \"" + id + "\" sets temporaryAfterDeploymentSeconds "
+                + "but includes effect \"" + effect.name() + "\", which doesn't support temporary gating - "
+                + "ignoring the temporaryAfterDeploymentSeconds field.");
     }
 
     private static List<UnlockCondition> parseUnlockConditions(JSONArray conditionsArray) throws JSONException {

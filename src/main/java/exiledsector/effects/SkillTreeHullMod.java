@@ -43,8 +43,6 @@ public class SkillTreeHullMod extends BaseHullMod {
                 (effect, modId, magnitude) -> effect.applyAfterShipCreation(ship, modId, magnitude));
     }
 
-    // some allocated effects (e.g. LARGE_BALLISTIC_OP_COST_FLAT) change weapon OP costs, so the
-    // refit screen needs to recompute them when this hull mod's effects change
     @Override
     public boolean affectsOPCosts() {
         return true;
@@ -66,6 +64,26 @@ public class SkillTreeHullMod extends BaseHullMod {
                         effect.advanceInCombat(ship, modId, magnitude);
                     }
                 });
+        reapplyTemporaryNodes(ship);
+    }
+
+    private void reapplyTemporaryNodes(ShipAPI ship) {
+        FleetMemberAPI member = ship.getMutableStats().getFleetMember();
+        if (member == null) return;
+
+        ShipSkillData data = ShipSkillDataManager.get(member.getId());
+        MutableShipStatsAPI stats = ship.getMutableStats();
+        HullSize hullSize = ship.getHullSize();
+        for (String nodeId : data.getAllocatedNodeIds()) {
+            SkillNode node = SkillTree.get(nodeId);
+            SkillType type = node == null ? null : node.resolveEffectiveType(data);
+            Float durationSeconds = type == null ? null : type.getTemporaryAfterDeploymentSeconds();
+            if (durationSeconds == null) continue;
+
+            boolean active = ship.getFullTimeDeployed() < durationSeconds;
+            String modId = MOD_ID_PREFIX + node.getId();
+            type.forEachEffect(hullSize, (effect, magnitude) -> effect.apply(stats, modId, active ? magnitude : 0f));
+        }
     }
 
     private void forEachAllocatedEffect(FleetMemberAPI member, HullSize hullSize,
