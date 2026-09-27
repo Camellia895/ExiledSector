@@ -1016,7 +1016,7 @@
 					"id": "escort_package"
 				}
 			]
-			},
+		},
 		{
 			"id": "expanded_deck_crew",
 			"name": "Expanded Deck Crew",
@@ -1269,7 +1269,7 @@
 				}
 			],
 			"description": "Links this ship with the flagship, allowing the player to instantly switch which ship they are piloting without using a shuttle pod. Transferring resets the destination ship's system cooldown and adds a charge. The transfer is instant if the combined deployment points of both ships are low enough; otherwise a short transfer time applies. The destination ship must not be under the command of an officer or an AI core."
-			},
+		},
 		{
 			"id": "hardenedshieldemitter",
 			"name": "Hardened Shields",

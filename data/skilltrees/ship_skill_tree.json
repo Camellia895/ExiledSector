@@ -6224,8 +6224,7 @@
 			"x": 6533,
 			"y": -5902,
 			"radius": 300,
-			"starType": "black_hole",
-			"color": "#60f1fb"
+			"starType": "black_hole"
 		},
 		{
 			"id": "pirate_star",

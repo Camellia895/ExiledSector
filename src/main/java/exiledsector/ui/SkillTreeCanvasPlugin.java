@@ -55,6 +55,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private SkillNode pendingClickNode;
     private boolean pendingClickCtrlDown;
     private SkillType pendingDropdownOption;
+    private CameraPanAnimation cameraPan;
 
     public SkillTreeCanvasPlugin(FleetMemberAPI member, ShipVariantAPI variant, float shipCardHeight, BaseRefitButton refitButton) {
         SkillTreeHullMod.syncOpSpentHullMod(member, variant);
@@ -85,6 +86,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     @Override
     public void advance(float amount) {
+        advanceCameraPan(amount);
         starfieldRenderer.advance(amount);
         staticImageRenderer.advance(amount);
         ringBeltRenderer.advance(amount);
@@ -92,6 +94,18 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         nodeRenderer.advance(amount);
         ordnancePointsBar.advance(amount, position, mouseX, mouseY, mouseKnown);
         levelBar.advance(amount, position, mouseX, mouseY, mouseKnown);
+    }
+
+    private void advanceCameraPan(float amount) {
+        if (cameraPan == null) {
+            return;
+        }
+        cameraPan.advance(amount);
+        panX = cameraPan.x() * zoom;
+        panY = cameraPan.y() * zoom;
+        if (cameraPan.isFinished()) {
+            cameraPan = null;
+        }
     }
 
     @Override
@@ -137,6 +151,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                 pendingClickCtrlDown = event.isCtrlDown();
             } else {
                 dragging = true;
+                cameraPan = null;
             }
         }
         event.consume();
@@ -151,8 +166,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         } else if (pendingClickNode != null) {
             SkillNode jumpTarget = nodeRenderer.wormholeJumpTarget(pendingClickNode, pendingClickCtrlDown);
             if (jumpTarget != null) {
-                panX = -jumpTarget.getOffsetX() * zoom;
-                panY = jumpTarget.getOffsetY() * zoom;
+                cameraPan = new CameraPanAnimation(panX / zoom, panY / zoom,
+                        -jumpTarget.getOffsetX(), jumpTarget.getOffsetY());
+                nodeRenderer.launchWormholeGhosts(pendingClickNode, jumpTarget);
             } else {
                 nodeRenderer.toggleAllocation(pendingClickNode, pendingClickCtrlDown);
             }

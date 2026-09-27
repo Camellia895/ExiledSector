@@ -27,6 +27,7 @@ import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
 import java.util.List;
+import java.util.Random;
 
 import static exiledsector.ui.node.SkillTreeNodeGeometry.ICON_INSET_RATIO;
 import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_SIZE;
@@ -44,6 +45,7 @@ public final class SkillTreeNodeRenderer {
     private final SkillTreeNodeRingRenderer ringRenderer;
     private final SkillTreeNodeIconRenderer iconRenderer;
     private final SkillTreeNodeGhostRenderer ghostRenderer;
+    private final SkillTreeWormholeGhostFlights wormholeGhostFlights;
     private final SkillTreeNodeConnectorRenderer connectorRenderer;
     private final SkillTreeNodeTooltipRenderer tooltipRenderer;
     private final SkillTreeNodeDropdownRenderer dropdownRenderer;
@@ -59,6 +61,7 @@ public final class SkillTreeNodeRenderer {
         this.ringRenderer = new SkillTreeNodeRingRenderer(style);
         this.iconRenderer = new SkillTreeNodeIconRenderer();
         this.ghostRenderer = new SkillTreeNodeGhostRenderer();
+        this.wormholeGhostFlights = new SkillTreeWormholeGhostFlights(ghostRenderer, new Random());
         this.connectorRenderer = new SkillTreeNodeConnectorRenderer(style);
         this.tooltipRenderer = new SkillTreeNodeTooltipRenderer(member, style);
         this.dropdownRenderer = new SkillTreeNodeDropdownRenderer(style);
@@ -93,7 +96,9 @@ public final class SkillTreeNodeRenderer {
     public void advance(float amount) {
         ringRenderer.advance(amount);
         ghostRenderer.advance(amount);
-        connectorRenderer.advance(amount, ShipSkillDataManager.get(member.getId()), satisfiedRootId());
+        ShipSkillData data = ShipSkillDataManager.get(member.getId());
+        wormholeGhostFlights.advance(amount, data);
+        connectorRenderer.advance(amount, data, satisfiedRootId());
     }
 
     public void render(float centerX, float centerY, float zoom, float alphaMult, float mouseX, float mouseY, boolean mouseKnown) {
@@ -109,6 +114,7 @@ public final class SkillTreeNodeRenderer {
         }
 
         connectorRenderer.draw(centerX, centerY, zoom, data, satisfiedRootId, alphaMult);
+        wormholeGhostFlights.draw(centerX, centerY, zoom, alphaMult);
 
         for (SkillNode node : SkillTree.getAllNodes().values()) {
             if (node.getType().getTier() == SkillTier.ROOT) {
@@ -211,6 +217,10 @@ public final class SkillTreeNodeRenderer {
         String pairedId = node.getPairedNodeId();
         if (pairedId == null) return null;
         return SkillTree.get(pairedId);
+    }
+
+    public void launchWormholeGhosts(SkillNode from, SkillNode to) {
+        wormholeGhostFlights.launchFrom(from, to);
     }
 
     public void toggleAllocation(SkillNode node, boolean ctrlDown) {

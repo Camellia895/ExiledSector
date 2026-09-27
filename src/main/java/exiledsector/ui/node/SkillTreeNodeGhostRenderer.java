@@ -17,7 +17,7 @@ import java.util.Random;
 
 final class SkillTreeNodeGhostRenderer {
 
-    private static final String GHOST_TEXTURE_PATH = "graphics/icons/fleet_triangle.png";
+    static final String GHOST_TEXTURE_PATH = "graphics/icons/fleet_triangle.png";
     private static final Color FALLBACK_GHOST_COLOR = new Color(155, 155, 155);
 
     private static final int GHOST_COUNT = 3;
@@ -41,7 +41,7 @@ final class SkillTreeNodeGhostRenderer {
         if (!spriteCache.ensureLoaded(GHOST_TEXTURE_PATH)) return;
 
         List<GhostInstance> ghosts = ghostsByNode.computeIfAbsent(nodeId, id -> generateGhosts(id));
-        Color color = resolveGhostColor();
+        Color color = ghostColor();
         SpriteAPI sprite = Global.getSettings().getSprite(GHOST_TEXTURE_PATH);
         float size = footprintSize * GHOST_SIZE_RATIO;
 
@@ -63,7 +63,7 @@ final class SkillTreeNodeGhostRenderer {
         GL11.glDisable(GL11.GL_BLEND);
     }
 
-    private Color resolveGhostColor() {
+    Color ghostColor() {
         if (cachedGhostColor != null) return cachedGhostColor;
         cachedGhostColor = FallbackSupport.getOrFallback(
                 () -> Global.getSector().getFaction(Factions.NEUTRAL).getBaseUIColor(), FALLBACK_GHOST_COLOR,
