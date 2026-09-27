@@ -278,7 +278,7 @@ public enum WeaponSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctChange(magnitude, "turret turn rate");
+            return pctChange(magnitude, "non-beam weapon turn rate");
         }
     },
     WEAPON_TURN_RATE_MULT {
@@ -289,7 +289,7 @@ public enum WeaponSkillEffect implements SkillEffect {
 
         @Override
         public String describe(float magnitude) {
-            return pctMore(magnitude, "turret turn rate");
+            return pctMore(magnitude, "non-beam weapon turn rate");
         }
     },
     WEAPON_DURABILITY_PERCENT {

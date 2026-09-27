@@ -58,6 +58,12 @@ class RemnantNotableEffectsTest {
     }
 
     @Test
+    void weaponTurnRateDescriptionsSayTheyOnlyAffectNonBeamWeapons() {
+        assertEquals("Increases non-beam weapon turn rate by 50%.", WeaponSkillEffect.WEAPON_TURN_RATE_PERCENT.describe(50f));
+        assertEquals("25% less non-beam weapon turn rate.", WeaponSkillEffect.WEAPON_TURN_RATE_MULT.describe(-25f));
+    }
+
+    @Test
     void maxCombatReadinessAddsTheMagnitudeAsAFlatFraction() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         MutableStat maxCr = mock(MutableStat.class);
