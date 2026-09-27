@@ -388,8 +388,8 @@
 			"connectedTo": [
 				"small_flux_optional_36"
 			],
-			"x": -959,
-			"y": 2369,
+			"x": -842,
+			"y": 2419,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#99ffb3"
 		},
@@ -2793,7 +2793,8 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_47",
-				"tritach_2"
+				"tritach_2",
+				"engine_durability_3"
 			],
 			"x": -1304,
 			"y": -7175,
@@ -2803,9 +2804,13 @@
 		{
 			"id": "phase_sensor_upgrades_1",
 			"type": "phase_sensor_upgrades",
-			"connectedTo": [],
-			"x": -839,
-			"y": -7179
+			"connectedTo": [
+				"engine_durability_4"
+			],
+			"x": -654,
+			"y": -7167,
+			"orbitAnchorId": "anchor_46",
+			"orbitAngle": 0
 		},
 		{
 			"id": "small_flux_optional_47",
@@ -2824,7 +2829,8 @@
 			"id": "tactical_superiority_1",
 			"type": "tactical_superiority",
 			"connectedTo": [
-				"small_flux_optional_47"
+				"small_flux_optional_47",
+				"objective_capture_range_3"
 			],
 			"x": 9,
 			"y": -7932,
@@ -3964,7 +3970,8 @@
 			"type": "objective_capture_range",
 			"connectedTo": [
 				"objective_capture_range_1",
-				"small_flux_optional_47"
+				"small_flux_optional_47",
+				"objective_capture_range_3"
 			],
 			"x": 9,
 			"y": -8232,
@@ -4019,6 +4026,42 @@
 			"y": -805,
 			"orbitAnchorId": "anchor_45",
 			"orbitAngle": 180
+		},
+		{
+			"id": "engine_durability_3",
+			"type": "engine_durability",
+			"connectedTo": [
+				"engine_durability_4",
+				"small_flux_optional_46"
+			],
+			"x": -1028,
+			"y": -7167,
+			"orbitAnchorId": "anchor_46",
+			"orbitAngle": 180
+		},
+		{
+			"id": "engine_durability_4",
+			"type": "engine_durability",
+			"connectedTo": [
+				"engine_durability_3",
+				"phase_sensor_upgrades_1"
+			],
+			"x": -841,
+			"y": -7354,
+			"orbitAnchorId": "anchor_46",
+			"orbitAngle": 270
+		},
+		{
+			"id": "objective_capture_range_3",
+			"type": "objective_capture_range",
+			"connectedTo": [
+				"objective_capture_range_2",
+				"tactical_superiority_1"
+			],
+			"x": 159,
+			"y": -8082,
+			"orbitAnchorId": "anchor_44",
+			"orbitAngle": 0
 		}
 	],
 	"connectorCurves": [
@@ -5461,6 +5504,30 @@
 			"b": "reckless_assault_1",
 			"controlX": 7826,
 			"controlY": -678
+		},
+		{
+			"a": "engine_durability_3",
+			"b": "engine_durability_4",
+			"controlX": -973,
+			"controlY": -7299
+		},
+		{
+			"a": "engine_durability_4",
+			"b": "phase_sensor_upgrades_1",
+			"controlX": -709,
+			"controlY": -7299
+		},
+		{
+			"a": "objective_capture_range_2",
+			"b": "objective_capture_range_3",
+			"controlX": 115,
+			"controlY": -8188
+		},
+		{
+			"a": "objective_capture_range_3",
+			"b": "tactical_superiority_1",
+			"controlX": 115,
+			"controlY": -7976
 		}
 	],
 	"hiddenConnectors": [
@@ -5981,6 +6048,12 @@
 			"x": 7699,
 			"y": -805,
 			"radius": 180
+		},
+		{
+			"id": "anchor_46",
+			"x": -841,
+			"y": -7167,
+			"radius": 187
 		}
 	],
 	"ringBelts": [

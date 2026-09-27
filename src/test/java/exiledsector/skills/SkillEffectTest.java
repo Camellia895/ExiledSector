@@ -1,13 +1,14 @@
 package exiledsector.skills;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.combat.BeamAPI;
-import com.fs.starfarer.api.combat.BeamEffectPlugin;
 import com.fs.starfarer.api.loading.BeamWeaponSpecAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
+import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.FluxTrackerAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
@@ -22,6 +23,7 @@ import com.fs.starfarer.api.combat.listeners.HullDamageAboutToBeTakenListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.fleet.RepairTrackerAPI;
 import exiledsector.skills.skilleffect.CombatSkillEffect;
+import exiledsector.skills.skilleffect.CsvIdBlocklist;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.FighterSkillEffect;
 import exiledsector.skills.skilleffect.FluxSkillEffect;
@@ -37,11 +39,11 @@ import org.magiclib.plugins.MagicFakeBeamPlugin;
 import org.magiclib.util.MagicFakeBeam;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
+import org.mockito.Answers;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -53,6 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyFloat;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -1335,11 +1338,11 @@ class SkillEffectTest {
         DamageDealtModifier listener = captureBeamSplitListener(ship);
 
         ShipAPI target = mock(ShipAPI.class);
-        DamageAPI damage = mock(DamageAPI.class);
+        DamageAPI damage = mock(DamageAPI.class, Answers.RETURNS_DEEP_STUBS);
 
         listener.modifyDamageDealt(new Object(), target, damage, new Vector2f(0f, 0f), false);
 
-        verify(damage, never()).setDamage(anyFloat());
+        verify(damage.getModifier(), never()).modifyMult(anyString(), anyFloat());
     }
 
     @Test
@@ -1349,11 +1352,11 @@ class SkillEffectTest {
 
         BeamAPI beam = mock(BeamAPI.class);
         CombatEntityAPI target = mock(CombatEntityAPI.class);
-        DamageAPI damage = mock(DamageAPI.class);
+        DamageAPI damage = mock(DamageAPI.class, Answers.RETURNS_DEEP_STUBS);
 
         listener.modifyDamageDealt(beam, target, damage, new Vector2f(0f, 0f), false);
 
-        verify(damage, never()).setDamage(anyFloat());
+        verify(damage.getModifier(), never()).modifyMult(anyString(), anyFloat());
     }
 
     @Test
@@ -1369,11 +1372,11 @@ class SkillEffectTest {
 
         BeamAPI beam = mock(BeamAPI.class);
         ShipAPI target = mock(ShipAPI.class);
-        DamageAPI damage = mock(DamageAPI.class);
+        DamageAPI damage = mock(DamageAPI.class, Answers.RETURNS_DEEP_STUBS);
 
         listener.modifyDamageDealt(beam, target, damage, new Vector2f(0f, 0f), false);
 
-        verify(damage, never()).setDamage(anyFloat());
+        verify(damage.getModifier(), never()).modifyMult(anyString(), anyFloat());
     }
 
     private WeaponAPI mockBeamSplitWeapon(BeamAPI beam, float range) {
@@ -1416,7 +1419,7 @@ class SkillEffectTest {
         ShipAPI enemy1 = mockBeamSplitEnemy(1, new Vector2f(100f, 0f));
         ShipAPI enemy2 = mockBeamSplitEnemy(1, new Vector2f(0f, 100f));
 
-        DamageAPI damage = mock(DamageAPI.class);
+        DamageAPI damage = mock(DamageAPI.class, Answers.RETURNS_DEEP_STUBS);
         when(damage.getDamage()).thenReturn(90f);
         when(damage.getType()).thenReturn(DamageType.ENERGY);
 
@@ -1431,7 +1434,7 @@ class SkillEffectTest {
 
             listener.modifyDamageDealt(beam, primaryTarget, damage, point, false);
 
-            verify(damage).setDamage(30f);
+            verify(damage.getModifier()).modifyMult("exiledSector_beamSplitShare", 1f / 3);
             verify(engine).applyDamage(eq(beam), eq(enemy1), any(Vector2f.class), eq(30f), eq(DamageType.ENERGY),
                     eq(0f), eq(false), eq(true), eq(ship), eq(false));
             verify(engine).applyDamage(eq(beam), eq(enemy2), any(Vector2f.class), eq(30f), eq(DamageType.ENERGY),
@@ -1439,17 +1442,8 @@ class SkillEffectTest {
         }
     }
 
-    public static class SplitTargetRecordingBeamEffect implements BeamEffectPlugin {
-        static final List<CombatEntityAPI> targetsSeen = new ArrayList<>();
-
-        @Override
-        public void advance(float amount, CombatEngineAPI engine, BeamAPI beam) {
-            targetsSeen.add(beam.getDamageTarget());
-        }
-    }
-
     @Test
-    void beamSplitListenerRunsTheWeaponsBeamEffectAgainstEachSplitTargetEveryFrame() {
+    void beamSplitListenerKeepsHardFluxOnSplitHitsFromBeamsThatForceIt() {
         ShipAPI ship = mock(ShipAPI.class);
         when(ship.getOwner()).thenReturn(0);
         MutableShipStatsAPI shipStats = mock(MutableShipStatsAPI.class);
@@ -1463,18 +1457,15 @@ class SkillEffectTest {
         BeamAPI beam = mock(BeamAPI.class);
         when(beam.getCoreColor()).thenReturn(java.awt.Color.WHITE);
         when(beam.getFringeColor()).thenReturn(java.awt.Color.RED);
-        WeaponAPI weapon = mockBeamSplitWeapon(beam, 2000f);
-        BeamWeaponSpecAPI spec = mock(BeamWeaponSpecAPI.class);
-        when(weapon.getSpec()).thenReturn(spec);
-        when(spec.getBeamEffect()).thenReturn(new SplitTargetRecordingBeamEffect());
-        SplitTargetRecordingBeamEffect.targetsSeen.clear();
+        mockBeamSplitWeapon(beam, 2000f);
 
         ShipAPI primaryTarget = mock(ShipAPI.class);
         when(primaryTarget.getOwner()).thenReturn(1);
         ShipAPI enemy = mockBeamSplitEnemy(1, new Vector2f(100f, 0f));
-        DamageAPI damage = mock(DamageAPI.class);
+        DamageAPI damage = mock(DamageAPI.class, Answers.RETURNS_DEEP_STUBS);
         when(damage.getDamage()).thenReturn(90f);
         when(damage.getType()).thenReturn(DamageType.ENERGY);
+        when(damage.isForceHardFlux()).thenReturn(true);
 
         try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class);
              MockedStatic<MagicFakeBeam> fakeBeamMock = Mockito.mockStatic(MagicFakeBeam.class);
@@ -1486,12 +1477,223 @@ class SkillEffectTest {
                     .thenAnswer(invocation -> ((ShipAPI) invocation.getArgument(2)).getLocation());
 
             listener.modifyDamageDealt(beam, primaryTarget, damage, new Vector2f(0f, 0f), false);
-            ((AdvanceableListener) listener).advance(0.016f);
-            ((AdvanceableListener) listener).advance(0.016f);
-        }
 
-        List<CombatEntityAPI> targetsSeen = SplitTargetRecordingBeamEffect.targetsSeen;
-        assertEquals(List.of(enemy, enemy), targetsSeen);
+            verify(engine).applyDamage(eq(beam), eq(enemy), any(Vector2f.class), eq(45f), eq(DamageType.ENERGY),
+                    eq(0f), eq(false), eq(false), eq(ship), eq(false));
+        }
+    }
+
+    private ShipAPI mockEnergyChainShip(float falloffPercent) {
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.getOwner()).thenReturn(0);
+        MutableShipStatsAPI shipStats = mock(MutableShipStatsAPI.class);
+        com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
+        when(ship.getMutableStats()).thenReturn(shipStats);
+        when(shipStats.getDynamic()).thenReturn(dynamic);
+        when(dynamic.getValue("exiledSector_energyChainChance", 0f)).thenReturn(100f);
+        when(dynamic.getValue("exiledSector_energyChainFalloff", 0f)).thenReturn(falloffPercent);
+        return ship;
+    }
+
+    private DamageDealtModifier captureEnergyChainListener(ShipAPI ship) {
+        when(ship.hasListenerOfClass(any())).thenReturn(false);
+        CombatSkillEffect.NON_BEAM_ENERGY_CHAIN_CHANCE_PERCENT.applyAfterShipCreation(ship, "mod_id", 100f);
+        ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
+        verify(ship).addListener(captor.capture());
+        return (DamageDealtModifier) captor.getValue();
+    }
+
+    private DamagingProjectileAPI mockEnergyProjectile(WeaponAPI weapon) {
+        DamagingProjectileAPI projectile = mock(DamagingProjectileAPI.class);
+        when(projectile.getWeapon()).thenReturn(weapon);
+        when(projectile.getCustomData()).thenReturn(new java.util.HashMap<>());
+        when(projectile.getProjectileSpecId()).thenReturn("energy_gun_overcharged_shot");
+        return projectile;
+    }
+
+    private WeaponAPI mockEnergyWeapon(String id, boolean isBeam) {
+        WeaponAPI weapon = mock(WeaponAPI.class);
+        when(weapon.getType()).thenReturn(WeaponAPI.WeaponType.ENERGY);
+        when(weapon.isBeam()).thenReturn(isBeam);
+        when(weapon.getRange()).thenReturn(1000f);
+        when(weapon.getId()).thenReturn(id);
+        return weapon;
+    }
+
+    private void runEnergyChainHit(ShipAPI ship, DamagingProjectileAPI projectile, CombatEngineAPI engine) {
+        DamageDealtModifier listener = captureEnergyChainListener(ship);
+        ShipAPI shieldedTarget = mockBeamSplitEnemy(1, new Vector2f(0f, 0f));
+        ShipAPI nextTarget = mockBeamSplitEnemy(1, new Vector2f(100f, 0f));
+        DamageAPI damage = mock(DamageAPI.class);
+        when(damage.getDamage()).thenReturn(100f);
+        when(engine.getShips()).thenReturn(Arrays.asList(ship, shieldedTarget, nextTarget));
+
+        try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class);
+             MockedStatic<lunalib.lunaSettings.LunaSettings> lunaMock = Mockito.mockStatic(lunalib.lunaSettings.LunaSettings.class)) {
+            globalMock.when(Global::getCombatEngine).thenReturn(engine);
+            lunaMock.when(() -> lunalib.lunaSettings.LunaSettings.getInt(anyString(), anyString())).thenReturn(MaxChainCountConfig.DEFAULT);
+
+            listener.modifyDamageDealt(projectile, shieldedTarget, damage, new Vector2f(0f, 0f), true);
+        }
+    }
+
+    @Test
+    void energyChainSpawnsTheProjectileThatHitAtFullDamageAndCarriesTheFalloffSeparately() {
+        ShipAPI ship = mockEnergyChainShip(20f);
+        WeaponAPI weapon = mockEnergyWeapon("energy_gun", false);
+        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+        DamagingProjectileAPI chainShot = mock(DamagingProjectileAPI.class, Answers.RETURNS_DEEP_STUBS);
+        when(chainShot.getDamage().getModifier().getModifiedValue()).thenReturn(2f);
+        when(chainShot.getDamage().getMultiplier()).thenReturn(1f);
+        when(engine.spawnProjectile(any(), any(), anyString(), anyString(), any(Vector2f.class), anyFloat(), any(Vector2f.class)))
+                .thenReturn(chainShot);
+
+        runEnergyChainHit(ship, mockEnergyProjectile(weapon), engine);
+
+        verify(engine).spawnProjectile(eq(ship), eq(weapon), eq("energy_gun"), eq("energy_gun_overcharged_shot"),
+                any(Vector2f.class), anyFloat(), any(Vector2f.class));
+        verify(chainShot.getDamage()).setDamage(50f);
+        verify(chainShot).setCustomData("exiledSector_energyChainDealtMult", 0.8f);
+        verify(chainShot).setCustomData("exiledSector_energyChainCount", 1);
+    }
+
+    @Test
+    void energyChainNeverChainsAProjectileWhoseParentWeaponIsABeam() {
+        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+
+        runEnergyChainHit(mockEnergyChainShip(0f), mockEnergyProjectile(mockEnergyWeapon("energy_gun", true)), engine);
+
+        verify(engine, never()).spawnProjectile(any(), any(), anyString(), any(), any(Vector2f.class), anyFloat(), any(Vector2f.class));
+    }
+
+    @Test
+    void energyChainNeverChainsBlocklistedWeapons() throws Exception {
+        SettingsAPI settings = mock(SettingsAPI.class);
+        org.json.JSONArray rows = new org.json.JSONArray().put(new org.json.JSONObject().put("weapon", "blocklisted_gun"));
+        when(settings.getMergedSpreadsheetDataForMod("weapon", "data/config/exiledSector/energy_chain_blocklist.csv", "exiledSector"))
+                .thenReturn(rows);
+        when(settings.getMergedSpreadsheetDataForMod("plugin", "data/config/exiledSector/split_beam_effect_blocklist.csv", "exiledSector"))
+                .thenReturn(new org.json.JSONArray());
+        try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
+            globalMock.when(Global::getSettings).thenReturn(settings);
+            CsvIdBlocklist.loadAll();
+        }
+        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+
+        runEnergyChainHit(mockEnergyChainShip(0f), mockEnergyProjectile(mockEnergyWeapon("blocklisted_gun", false)), engine);
+
+        verify(engine, never()).spawnProjectile(any(), any(), anyString(), any(), any(Vector2f.class), anyFloat(), any(Vector2f.class));
+    }
+
+    @Test
+    void beamSplitAppliesOnlyThisTicksShareOfPerSecondBeamDamageToSplitTargets() {
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.getOwner()).thenReturn(0);
+        MutableShipStatsAPI shipStats = mock(MutableShipStatsAPI.class);
+        com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
+        when(ship.getMutableStats()).thenReturn(shipStats);
+        when(shipStats.getDynamic()).thenReturn(dynamic);
+        when(dynamic.getValue("exiledSector_beamSplitTargets", 0f)).thenReturn(2f);
+
+        DamageDealtModifier listener = captureBeamSplitListener(ship);
+
+        BeamAPI beam = mock(BeamAPI.class);
+        when(beam.getCoreColor()).thenReturn(java.awt.Color.WHITE);
+        when(beam.getFringeColor()).thenReturn(java.awt.Color.RED);
+        mockBeamSplitWeapon(beam, 2000f);
+
+        ShipAPI primaryTarget = mock(ShipAPI.class);
+        when(primaryTarget.getOwner()).thenReturn(1);
+        ShipAPI enemy1 = mockBeamSplitEnemy(1, new Vector2f(100f, 0f));
+        ShipAPI enemy2 = mockBeamSplitEnemy(1, new Vector2f(0f, 100f));
+        DamageAPI damage = mock(DamageAPI.class, Answers.RETURNS_DEEP_STUBS);
+        when(damage.isDps()).thenReturn(true);
+        when(damage.getDamage()).thenReturn(90f);
+        when(damage.getDpsDuration()).thenReturn(0.1f);
+        when(damage.getType()).thenReturn(DamageType.ENERGY);
+
+        String returnedModifierId;
+        try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class);
+             MockedStatic<MagicFakeBeam> fakeBeamMock = Mockito.mockStatic(MagicFakeBeam.class);
+             MockedStatic<MagicFakeBeamPlugin> fakeBeamPluginMock = Mockito.mockStatic(MagicFakeBeamPlugin.class)) {
+            CombatEngineAPI engine = mock(CombatEngineAPI.class);
+            globalMock.when(Global::getCombatEngine).thenReturn(engine);
+            when(engine.getShips()).thenReturn(Arrays.asList(ship, primaryTarget, enemy1, enemy2));
+            fakeBeamMock.when(() -> MagicFakeBeam.getShipCollisionPoint(any(), any(), any(), anyFloat()))
+                    .thenAnswer(invocation -> ((ShipAPI) invocation.getArgument(2)).getLocation());
+
+            returnedModifierId = listener.modifyDamageDealt(beam, primaryTarget, damage, new Vector2f(0f, 0f), false);
+
+            verify(engine).applyDamage(eq(beam), eq(enemy1), any(Vector2f.class), org.mockito.AdditionalMatchers.eq(3f, 0.0001f), eq(DamageType.ENERGY),
+                    anyFloat(), eq(false), eq(true), eq(ship), eq(false));
+        }
+        verify(damage.getModifier()).modifyMult("exiledSector_beamSplitShare", 1f / 3);
+        assertEquals("exiledSector_beamSplitShare", returnedModifierId);
+    }
+
+    @Test
+    void beamSplitListenerFiresARealBeamFromADroneAtEachSplitTargetAndRemovesItWhenTheSplitEnds() {
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.getOwner()).thenReturn(0);
+        when(ship.isAlive()).thenReturn(true);
+        MutableShipStatsAPI shipStats = mock(MutableShipStatsAPI.class);
+        com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
+        when(ship.getMutableStats()).thenReturn(shipStats);
+        when(shipStats.getDynamic()).thenReturn(dynamic);
+        when(dynamic.getValue("exiledSector_beamSplitTargets", 0f)).thenReturn(1f);
+
+        DamageDealtModifier listener = captureBeamSplitListener(ship);
+
+        BeamAPI beam = mock(BeamAPI.class);
+        WeaponAPI weapon = mockBeamSplitWeapon(beam, 2000f);
+        BeamWeaponSpecAPI spec = mock(BeamWeaponSpecAPI.class);
+        when(weapon.getSpec()).thenReturn(spec);
+        when(weapon.getSize()).thenReturn(WeaponAPI.WeaponSize.MEDIUM);
+        when(spec.getWeaponId()).thenReturn("tachyonlance");
+
+        ShipAPI primaryTarget = mock(ShipAPI.class);
+        when(primaryTarget.getOwner()).thenReturn(1);
+        when(primaryTarget.getShieldCenterEvenIfNoShield()).thenReturn(new Vector2f(0f, 0f));
+        ShipAPI enemy = mockBeamSplitEnemy(1, new Vector2f(100f, 0f));
+        DamageAPI damage = mock(DamageAPI.class, Answers.RETURNS_DEEP_STUBS);
+        when(damage.getDamage()).thenReturn(90f);
+
+        SettingsAPI settings = mock(SettingsAPI.class);
+        com.fs.starfarer.api.combat.ShipHullSpecAPI hull = mock(com.fs.starfarer.api.combat.ShipHullSpecAPI.class);
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(settings.getHullSpec("exiledSector_split_beam_drone")).thenReturn(hull);
+        when(settings.createEmptyVariant("exiledSector_split_beam_drone", hull)).thenReturn(variant);
+        com.fs.starfarer.api.FactoryAPI factory = mock(com.fs.starfarer.api.FactoryAPI.class);
+        com.fs.starfarer.api.characters.PersonAPI officerCopy = mock(com.fs.starfarer.api.characters.PersonAPI.class);
+        when(factory.createPerson()).thenReturn(officerCopy);
+        ShipAPI drone = mock(ShipAPI.class, Answers.RETURNS_DEEP_STUBS);
+        WeaponAPI droneWeapon = mock(WeaponAPI.class);
+        when(drone.getAllWeapons()).thenReturn(List.of(droneWeapon));
+        when(drone.getLocation()).thenReturn(new Vector2f());
+        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+        when(engine.getShips()).thenReturn(Arrays.asList(ship, primaryTarget, enemy));
+        when(engine.createFXDrone(variant)).thenReturn(drone);
+
+        String returnedModifierId;
+        try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
+            globalMock.when(Global::getCombatEngine).thenReturn(engine);
+            globalMock.when(Global::getSettings).thenReturn(settings);
+            globalMock.when(Global::getFactory).thenReturn(factory);
+
+            returnedModifierId = listener.modifyDamageDealt(beam, primaryTarget, damage, new Vector2f(0f, 0f), true);
+            ((AdvanceableListener) listener).advance(0.016f);
+
+            verify(variant).addWeapon("WS MEDIUM", "tachyonlance");
+            verify(engine).addEntity(drone);
+            verify(drone).setCaptain(officerCopy);
+            verify(droneWeapon).setForceFireOneFrame(true);
+            verify(engine, never()).applyDamage(any(), any(), any(), anyFloat(), any(), anyFloat(), anyBoolean(), anyBoolean(), any(), anyBoolean());
+
+            ((AdvanceableListener) listener).advance(1f);
+            verify(engine).removeEntity(drone);
+        }
+        verify(damage.getModifier()).modifyMult("exiledSector_beamSplitShare", 1f / 2);
+        assertEquals("exiledSector_beamSplitShare", returnedModifierId);
     }
 
     @Test
@@ -1519,7 +1721,7 @@ class SkillEffectTest {
         ShipAPI enemy1 = mockBeamSplitEnemy(1, new Vector2f(100f, 0f));
         ShipAPI enemy2 = mockBeamSplitEnemy(1, new Vector2f(0f, 100f));
 
-        DamageAPI damage = mock(DamageAPI.class);
+        DamageAPI damage = mock(DamageAPI.class, Answers.RETURNS_DEEP_STUBS);
         when(damage.getDamage()).thenReturn(90f);
         when(damage.getType()).thenReturn(DamageType.ENERGY);
 
@@ -1574,7 +1776,7 @@ class SkillEffectTest {
         ShipAPI enemyInRange = mockBeamSplitEnemy(1, new Vector2f(100f, 0f));
         ShipAPI enemyOutOfRange = mockBeamSplitEnemy(1, new Vector2f(5000f, 0f));
 
-        DamageAPI damage = mock(DamageAPI.class);
+        DamageAPI damage = mock(DamageAPI.class, Answers.RETURNS_DEEP_STUBS);
         when(damage.getDamage()).thenReturn(90f);
         when(damage.getType()).thenReturn(DamageType.ENERGY);
 
@@ -1589,7 +1791,7 @@ class SkillEffectTest {
 
             listener.modifyDamageDealt(beam, primaryTarget, damage, point, false);
 
-            verify(damage).setDamage(45f);
+            verify(damage.getModifier()).modifyMult("exiledSector_beamSplitShare", 1f / 2);
             verify(engine).applyDamage(eq(beam), eq(enemyInRange), any(Vector2f.class), eq(45f), eq(DamageType.ENERGY),
                     eq(0f), eq(false), eq(true), eq(ship), eq(false));
             verify(engine, never()).applyDamage(eq(beam), eq(enemyOutOfRange), any(Vector2f.class), anyFloat(), any(),
@@ -1622,7 +1824,7 @@ class SkillEffectTest {
         Vector2f point = new Vector2f(0f, 0f);
         ShipAPI enemyJustOutOfHalfRange = mockBeamSplitEnemy(1, new Vector2f(600f, 0f));
 
-        DamageAPI damage = mock(DamageAPI.class);
+        DamageAPI damage = mock(DamageAPI.class, Answers.RETURNS_DEEP_STUBS);
         when(damage.getDamage()).thenReturn(90f);
         when(damage.getType()).thenReturn(DamageType.ENERGY);
 
@@ -1636,11 +1838,11 @@ class SkillEffectTest {
                     .thenAnswer(invocation -> ((ShipAPI) invocation.getArgument(2)).getLocation());
 
             listener.modifyDamageDealt(beam, primaryTarget, damage, point, false);
-            verify(damage, never()).setDamage(anyFloat());
+            verify(damage.getModifier(), never()).modifyMult(anyString(), anyFloat());
 
             when(beam.getWeapon().getRange()).thenReturn(1400f);
             listener.modifyDamageDealt(beam, primaryTarget, damage, point, false);
-            verify(damage).setDamage(45f);
+            verify(damage.getModifier()).modifyMult("exiledSector_beamSplitShare", 1f / 2);
         }
     }
 
@@ -1670,7 +1872,7 @@ class SkillEffectTest {
         Vector2f point = new Vector2f(0f, 0f);
         ShipAPI enemy = mockBeamSplitEnemy(1, new Vector2f(100f, 0f));
 
-        DamageAPI damage = mock(DamageAPI.class);
+        DamageAPI damage = mock(DamageAPI.class, Answers.RETURNS_DEEP_STUBS);
         when(damage.getDamage()).thenReturn(80f);
         when(damage.getType()).thenReturn(DamageType.ENERGY);
 
@@ -1685,7 +1887,7 @@ class SkillEffectTest {
 
             listener.modifyDamageDealt(beam, primaryTarget, damage, point, false);
 
-            verify(damage).setDamage(40f);
+            verify(damage.getModifier()).modifyMult("exiledSector_beamSplitShare", 1f / 2);
             verify(engine).applyDamage(eq(beam), eq(enemy), any(Vector2f.class), eq(40f), eq(DamageType.ENERGY),
                     eq(8f), eq(false), eq(true), eq(ship), eq(false));
         }
@@ -1717,7 +1919,7 @@ class SkillEffectTest {
         // a bystander in a 3+ side battle should never be dragged into a split.
         ShipAPI neutralBystander = mockBeamSplitEnemy(100, new Vector2f(100f, 0f));
 
-        DamageAPI damage = mock(DamageAPI.class);
+        DamageAPI damage = mock(DamageAPI.class, Answers.RETURNS_DEEP_STUBS);
         when(damage.getDamage()).thenReturn(90f);
         when(damage.getType()).thenReturn(DamageType.ENERGY);
 
@@ -1730,7 +1932,7 @@ class SkillEffectTest {
 
             listener.modifyDamageDealt(beam, primaryTarget, damage, point, false);
 
-            verify(damage, never()).setDamage(anyFloat());
+            verify(damage.getModifier(), never()).modifyMult(anyString(), anyFloat());
             verify(engine, never()).applyDamage(eq(beam), eq(neutralBystander), any(Vector2f.class), anyFloat(),
                     any(), anyFloat(), anyBoolean(), anyBoolean(), any(), anyBoolean());
         }

@@ -1,0 +1,14 @@
+plugin,mod,reason
+data.scripts.weapons.BlackHoleBeamEffect,Superweapons,Spawns a full singularity per split and can leave the firing ship immobile
+data.scripts.weapons.AnnihilatorBeamEffect,Superweapons,Spawns a full end-of-shot detonation and arc storm per split
+data.scripts.weapons.DevastatorBeamEffect,Superweapons,Repeats the self-feedback arc on the firing ship per split
+data.scripts.weapons.ass_WhiplashBeamEffect,ArthrsShipsNShit,Pulls the firing ship and turns the weapon once per split
+data.scripts.sbe.EWAROnFire,ET-IX,Repeats the EMP burst on the firing ship's nearest enemy per split and shares a static timer
+data.scripts.sbe.SBEOnFire,ET-IX,Repeats the feedback-error self-explosion per split
+data.scripts.asm.weapons.FermionDecouplerEffect,Emergent Threats,Repeats the feedback-error self-arc per split
+data.scripts.vice.weapons.ElectrolaserPulse,Emergent Threats,Repeats the feedback-error self-arc per split
+unthemedweapons.combat.scripts.LimitedAmmoBeamEffect,Unthemed Weapons,Drains weapon ammo once per split every frame
+data.weapons.onhit.PlasmaAcceleratorEffect7s,Rumours of Neoteric,Fires a free extra bolt from the primary target per split
+data.kaysaar.aotd.vok.weapons.AoTDShadowLanceBeamEffect,AotD VoK,Repeats the area flux spike including allies and the firing ship per split
+data.scripts.weapons.gr_SadalmelikLaser_BeamEffect,Galactic Constellate,Vents the firing ship's hard flux once per split and races on the shared damage modifier
+data.scripts.weapons.gr_Destiny_Spear_BeamEffect,Galactic Constellate,Writes the real beam's shared damage modifier so the bonus follows the split target

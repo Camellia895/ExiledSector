@@ -225,6 +225,7 @@ public enum CombatSkillEffect implements SkillEffect {
     private static final String EXPLODE_ON_DEATH_FUEL_DAMAGE_KEY = "exiledSector_explodeOnDeathFuelDamagePercent";
 
     private static final String BEAM_SPLIT_TARGETS_KEY = "exiledSector_beamSplitTargets";
+    private static final String BEAM_SPLIT_DAMAGE_MOD_ID = "exiledSector_beamSplitShare";
     private static final float SPLIT_RADIUS_MULT_OF_BEAM_RANGE = 0.5f;
     private static final float SPLIT_BEAM_FULL_DURATION = 0.05f;
     private static final float SPLIT_BEAM_FADE_DURATION = 0.15f;
@@ -233,6 +234,7 @@ public enum CombatSkillEffect implements SkillEffect {
     private static final String NON_BEAM_ENERGY_CHAIN_FALLOFF_KEY = "exiledSector_energyChainFalloff";
     private static final String NON_BEAM_ENERGY_CHAIN_HIT_LIST_KEY = "exiledSector_energyChainHitList";
     private static final String NON_BEAM_ENERGY_CHAIN_COUNT_KEY = "exiledSector_energyChainCount";
+    private static final String NON_BEAM_ENERGY_CHAIN_DEALT_MULT_KEY = "exiledSector_energyChainDealtMult";
 
     private static final String ESCORT_MANEUVER_BONUS_KEY = "exiledSector_escortManeuverBonusPercent";
     private static final String ESCORT_SPEED_BONUS_KEY = "exiledSector_escortSpeedBonusPercent";
@@ -242,46 +244,57 @@ public enum CombatSkillEffect implements SkillEffect {
     private static final class BeamSplitListener implements DamageDealtModifier, AdvanceableListener {
 
         private final ShipAPI ship;
-        private final SplitBeamEffects splitBeamEffects = new SplitBeamEffects();
+        private final SplitBeamDrones drones;
         private boolean processingSplit;
 
         private BeamSplitListener(ShipAPI ship) {
             this.ship = ship;
+            this.drones = new SplitBeamDrones(ship);
         }
 
         @Override
         public void advance(float amount) {
-            splitBeamEffects.advance(amount);
+            drones.advance(amount);
         }
 
         @Override
         public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
-            if (processingSplit) return null;
-            if (!(param instanceof BeamAPI beam)) return null;
-            if (!(target instanceof ShipAPI)) return null;
-
+            if (processingSplit || !(param instanceof BeamAPI beam) || !(target instanceof ShipAPI primaryTarget)) {
+                return null;
+            }
             int splitCount = Math.round(ship.getMutableStats().getDynamic().getValue(BEAM_SPLIT_TARGETS_KEY, 0f));
-            if (splitCount <= 0) return null;
-
             WeaponAPI weapon = beam.getWeapon();
-            float splitRadius = weapon.getRange() * SPLIT_RADIUS_MULT_OF_BEAM_RANGE;
-            List<ShipAPI> splitTargets = findNearbyEnemies((ShipAPI) target, point, splitRadius, splitCount);
-            if (splitTargets.isEmpty()) return null;
+            List<ShipAPI> splitTargets = splitCount <= 0 ? List.of()
+                    : findNearbyEnemies(primaryTarget, point, weapon.getRange() * SPLIT_RADIUS_MULT_OF_BEAM_RANGE, splitCount);
+            if (splitTargets.isEmpty()) {
+                return null;
+            }
 
-            float perTargetDamage = damage.getDamage() / (1 + splitTargets.size());
-            damage.setDamage(perTargetDamage);
-            float perTargetEmp = perTargetDamage * empToDamageRatio(weapon);
+            float share = 1f / (1 + splitTargets.size());
+            if (SplitBeamDroneFactory.supports(weapon)) {
+                for (ShipAPI splitTarget : splitTargets) {
+                    drones.refresh(weapon, primaryTarget, splitTarget, point, share);
+                }
+            } else {
+                simulateSplit(beam, damage, point, splitTargets, share);
+            }
+            damage.getModifier().modifyMult(BEAM_SPLIT_DAMAGE_MOD_ID, share);
+            return BEAM_SPLIT_DAMAGE_MOD_ID;
+        }
 
+        private void simulateSplit(BeamAPI beam, DamageAPI damage, Vector2f point, List<ShipAPI> splitTargets, float share) {
+            float tickDamage = damage.isDps() ? damage.getDamage() * damage.getDpsDuration() : damage.getDamage();
+            float perTargetDamage = tickDamage * share;
+            float perTargetEmp = perTargetDamage * empToDamageRatio(beam.getWeapon());
             CombatEngineAPI engine = Global.getCombatEngine();
             processingSplit = true;
             try {
                 for (ShipAPI splitTarget : splitTargets) {
-                    spawnSplitBeam(engine, point, splitTarget, beam, perTargetDamage, perTargetEmp, damage.getType());
+                    spawnSplitBeam(engine, point, splitTarget, beam, perTargetDamage, perTargetEmp, damage);
                 }
             } finally {
                 processingSplit = false;
             }
-            return null;
         }
 
         private float empToDamageRatio(WeaponAPI weapon) {
@@ -300,7 +313,7 @@ public enum CombatSkillEffect implements SkillEffect {
 
         private void spawnSplitBeam(CombatEngineAPI engine, Vector2f from, ShipAPI splitTarget,
                                      BeamAPI sourceBeam, float damageAmount, float empAmount,
-                                     DamageType damageType) {
+                                     DamageAPI hitDamage) {
             float angle = VectorUtils.getAngle(from, splitTarget.getLocation());
             float range = MathUtils.getDistance(from, splitTarget.getLocation()) + 50f;
             Vector2f segEnd = MathUtils.getPoint(from, range, angle);
@@ -309,8 +322,8 @@ public enum CombatSkillEffect implements SkillEffect {
                 impactPoint = splitTarget.getLocation();
             }
 
-            engine.applyDamage(sourceBeam, splitTarget, impactPoint, damageAmount, damageType, empAmount, false, true, ship, false);
-            splitBeamEffects.refresh(sourceBeam, splitTarget, from, impactPoint);
+            engine.applyDamage(sourceBeam, splitTarget, impactPoint, damageAmount, hitDamage.getType(), empAmount,
+                    false, !hitDamage.isForceHardFlux(), ship, false);
 
             float impactSize = sourceBeam.getWidth() * 2f;
             engine.addHitParticle(impactPoint, new Vector2f(), impactSize, 1f,
@@ -347,44 +360,68 @@ public enum CombatSkillEffect implements SkillEffect {
             this.ship = ship;
         }
 
-        // unchecked: storedHits is only ever written by this class as List<ShipAPI>
         @Override
-        @SuppressWarnings("unchecked")
         public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
-            if (!shieldHit) return null;
-            if (!(param instanceof DamagingProjectileAPI proj)) return null;
-            if (!(target instanceof ShipAPI)) return null;
-
+            if (!(param instanceof DamagingProjectileAPI proj) || !(target instanceof ShipAPI targetShip)
+                    || !canChainFrom(proj.getWeapon())) {
+                return null;
+            }
             WeaponAPI weapon = proj.getWeapon();
-            if (weapon == null || weapon.getType() != WeaponAPI.WeaponType.ENERGY) return null;
 
+            float fullDamage = damage.getDamage();
+            float dealtMult = dealtMultOf(proj);
+            if (dealtMult < 1f) {
+                ChainHitDamageRestorer.reduceForThisHit(damage, dealtMult, targetShip);
+            }
+            if (shieldHit) {
+                tryChain(proj, weapon, targetShip, point, fullDamage, dealtMult);
+            }
+            return null;
+        }
+
+        private static boolean canChainFrom(WeaponAPI weapon) {
+            return weapon != null && !weapon.isBeam() && weapon.getType() == WeaponAPI.WeaponType.ENERGY
+                    && !CsvIdBlocklist.ENERGY_CHAIN_WEAPONS.contains(weapon.getId());
+        }
+
+        private static float dealtMultOf(DamagingProjectileAPI proj) {
+            return proj.getCustomData().get(NON_BEAM_ENERGY_CHAIN_DEALT_MULT_KEY) instanceof Float mult ? mult : 1f;
+        }
+
+        private void tryChain(DamagingProjectileAPI proj, WeaponAPI weapon, ShipAPI target, Vector2f point,
+                              float fullDamage, float dealtMult) {
             Map<String, Object> customData = proj.getCustomData();
-            int chainCount = customData.get(NON_BEAM_ENERGY_CHAIN_COUNT_KEY) instanceof Integer integer
-                    ? integer : 0;
-            if (chainCount >= MaxChainCountConfig.get()) return null;
-
+            int chainCount = customData.get(NON_BEAM_ENERGY_CHAIN_COUNT_KEY) instanceof Integer integer ? integer : 0;
             float chancePercent = ship.getMutableStats().getDynamic().getValue(NON_BEAM_ENERGY_CHAIN_CHANCE_KEY, 0f);
-            if (chancePercent <= 0f) return null;
-            if (Math.random() >= chancePercent / 100.0) return null;
+            boolean chains = chainCount < MaxChainCountConfig.get() && chancePercent > 0f
+                    && Math.random() < chancePercent / 100.0;
+            if (!chains) {
+                return;
+            }
 
+            List<ShipAPI> hitSoFar = hitList(customData);
+            hitSoFar.add(target);
+            ShipAPI nextTarget = findNearestChainTarget(point, weapon.getRange(), hitSoFar);
+            float falloffPercent = ship.getMutableStats().getDynamic().getValue(NON_BEAM_ENERGY_CHAIN_FALLOFF_KEY, 0f);
+            float nextDealtMult = dealtMult * (1f - falloffPercent / 100f);
+            if (nextTarget == null || nextDealtMult <= 0f) {
+                return;
+            }
+
+            ChainShot shot = new ChainShot(fullDamage, nextDealtMult, hitSoFar, chainCount + 1);
+            spawnChainProjectile(weapon, proj, point, nextTarget, shot);
+        }
+
+        // unchecked: the hit list is only ever written by this class as List<ShipAPI>
+        @SuppressWarnings("unchecked")
+        private List<ShipAPI> hitList(Map<String, Object> customData) {
             List<ShipAPI> hitSoFar = new ArrayList<>();
-            Object storedHits = customData.get(NON_BEAM_ENERGY_CHAIN_HIT_LIST_KEY);
-            if (storedHits instanceof List) {
+            if (customData.get(NON_BEAM_ENERGY_CHAIN_HIT_LIST_KEY) instanceof List<?> storedHits) {
                 hitSoFar.addAll((List<ShipAPI>) storedHits);
             } else {
                 hitSoFar.add(ship);
             }
-            hitSoFar.add((ShipAPI) target);
-
-            ShipAPI nextTarget = findNearestChainTarget(point, weapon.getRange(), hitSoFar);
-            if (nextTarget == null) return null;
-
-            float falloffPercent = ship.getMutableStats().getDynamic().getValue(NON_BEAM_ENERGY_CHAIN_FALLOFF_KEY, 0f);
-            float nextDamage = damage.getDamage() * (1f - falloffPercent / 100f);
-            if (nextDamage <= 0f) return null;
-
-            spawnChainProjectile(weapon, point, nextTarget, nextDamage, hitSoFar, chainCount + 1);
-            return null;
+            return hitSoFar;
         }
 
         private ShipAPI findNearestChainTarget(Vector2f point, float range, List<ShipAPI> excluded) {
@@ -401,16 +438,25 @@ public enum CombatSkillEffect implements SkillEffect {
             return nearest;
         }
 
-        private void spawnChainProjectile(WeaponAPI weapon, Vector2f from, ShipAPI target,
-                                           float damageAmount, List<ShipAPI> hitSoFar, int chainCount) {
+        private void spawnChainProjectile(WeaponAPI weapon, DamagingProjectileAPI source, Vector2f from,
+                                          ShipAPI target, ChainShot shot) {
             CombatEngineAPI engine = Global.getCombatEngine();
             float facing = VectorUtils.getAngle(from, target.getLocation());
-            CombatEntityAPI spawned = engine.spawnProjectile(ship, weapon, weapon.getId(), from, facing, new Vector2f());
+            CombatEntityAPI spawned = engine.spawnProjectile(ship, weapon, weapon.getId(), source.getProjectileSpecId(),
+                    from, facing, new Vector2f());
             if (spawned instanceof DamagingProjectileAPI chainProj) {
-                chainProj.getDamage().setDamage(damageAmount);
-                chainProj.setCustomData(NON_BEAM_ENERGY_CHAIN_HIT_LIST_KEY, hitSoFar);
-                chainProj.setCustomData(NON_BEAM_ENERGY_CHAIN_COUNT_KEY, chainCount);
+                DamageAPI chainDamage = chainProj.getDamage();
+                float existingScaling = chainDamage.getModifier().getModifiedValue() * chainDamage.getMultiplier();
+                if (existingScaling > 0f) {
+                    chainDamage.setDamage(shot.fullDamage() / existingScaling);
+                }
+                chainProj.setCustomData(NON_BEAM_ENERGY_CHAIN_HIT_LIST_KEY, shot.hitSoFar());
+                chainProj.setCustomData(NON_BEAM_ENERGY_CHAIN_COUNT_KEY, shot.chainCount());
+                chainProj.setCustomData(NON_BEAM_ENERGY_CHAIN_DEALT_MULT_KEY, shot.dealtMult());
             }
+        }
+
+        private record ChainShot(float fullDamage, float dealtMult, List<ShipAPI> hitSoFar, int chainCount) {
         }
     }
 

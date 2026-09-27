@@ -8,6 +8,7 @@ import exiledsector.ui.SkillTreeRefitButton;
 import lunalib.lunaRefit.BaseRefitButton;
 import lunalib.lunaRefit.LunaRefitManager;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +39,10 @@ class ExiledSectorModPluginTest {
         SettingsAPI settings = mock(SettingsAPI.class);
         when(settings.loadJSON("data/skilltrees/skill_types.json")).thenReturn(new JSONObject("{ \"skillTypes\": [] }"));
         when(settings.loadJSON("data/skilltrees/ship_skill_tree.json")).thenReturn(new JSONObject("{ \"nodes\": [] }"));
+        when(settings.getMergedSpreadsheetDataForMod("plugin", "data/config/exiledSector/split_beam_effect_blocklist.csv", "exiledSector"))
+                .thenReturn(new JSONArray());
+        when(settings.getMergedSpreadsheetDataForMod("weapon", "data/config/exiledSector/energy_chain_blocklist.csv", "exiledSector"))
+                .thenReturn(new JSONArray());
 
         Logger logger = mock(Logger.class);
 
@@ -61,6 +66,14 @@ class ExiledSectorModPluginTest {
         new ExiledSectorModPlugin().onApplicationLoad();
 
         assertTrue(LunaRefitManager.hasButtonOfClass(SkillTreeRefitButton.class));
+    }
+
+    @Test
+    void onApplicationLoadLoadsBothCombatBlocklistsMergedAcrossMods() throws Exception {
+        new ExiledSectorModPlugin().onApplicationLoad();
+
+        verify(Global.getSettings()).getMergedSpreadsheetDataForMod("plugin", "data/config/exiledSector/split_beam_effect_blocklist.csv", "exiledSector");
+        verify(Global.getSettings()).getMergedSpreadsheetDataForMod("weapon", "data/config/exiledSector/energy_chain_blocklist.csv", "exiledSector");
     }
 
     @Test

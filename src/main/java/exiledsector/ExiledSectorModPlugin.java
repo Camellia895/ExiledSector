@@ -5,6 +5,7 @@ import com.fs.starfarer.api.Global;
 import exiledsector.effects.ShipLevelScript;
 import exiledsector.effects.SkillTreeInstaller;
 import exiledsector.skills.SkillTree;
+import exiledsector.skills.skilleffect.CsvIdBlocklist;
 import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.SkillTreeRefitButton;
 
@@ -18,6 +19,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         SkillTreeRefitButton.addButton();
         ExiledSectorSettings.register();
         SkillTree.load();
+        CsvIdBlocklist.loadAll();
     }
 
     @Override

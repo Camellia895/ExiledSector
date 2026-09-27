@@ -182,7 +182,7 @@
 			"effects": [
 				{
 					"effect": "OBJECTIVE_CAPTURE_RANGE_FLAT",
-					"magnitude": 100
+					"magnitude": 35
 				}
 			],
 			"tags": [
@@ -1859,7 +1859,7 @@
 			"effects": [
 				{
 					"effect": "ENGINE_DURABILITY_PERCENT",
-					"magnitude": 50
+					"magnitude": 60
 				},
 				{
 					"effect": "HULL_PERCENT",
