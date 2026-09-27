@@ -2125,6 +2125,36 @@
 			]
 		},
 		{
+			"id": "restriction_breeds_creativity",
+			"name": "Restriction Breeds Creativity",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD",
+					"magnitude": -2
+				}
+			],
+			"tags": [
+				"logistics"
+			]
+		},
+		{
+			"id": "perseverence_through_faith",
+			"name": "Perseverence Through Faith",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "ALL_WEAPON_DAMAGE_MULT_PER_DMOD",
+					"magnitude": 2
+				}
+			],
+			"tags": [
+				"logistics"
+			]
+		},
+		{
 			"id": "crustacean_integration",
 			"name": "Crustacean Integration",
 			"icon": "graphics/icons/lobster.png",

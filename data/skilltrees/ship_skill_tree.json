@@ -3031,6 +3031,15 @@
 			"orbitAngle": 0
 		},
 		{
+			"id": "perseverence_through_faith_1",
+			"type": "perseverence_through_faith",
+			"connectedTo": [
+				"small_flux_optional_56"
+			],
+			"x": 5810,
+			"y": 6867
+		},
+		{
 			"id": "fuel_core_overload_1",
 			"type": "fuel_core_overload",
 			"connectedTo": [
@@ -3267,6 +3276,15 @@
 			"y": 1242,
 			"orbitAnchorId": "pirate_inner",
 			"orbitAngle": 90
+		},
+		{
+			"id": "restriction_breeds_creativity_1",
+			"type": "restriction_breeds_creativity",
+			"connectedTo": [
+				"small_flux_optional_62"
+			],
+			"x": 7697,
+			"y": 2042
 		},
 		{
 			"id": "pirate_wormhole_1",
@@ -4738,6 +4756,12 @@
 			"controlY": 7786
 		},
 		{
+			"a": "small_flux_optional_56",
+			"b": "perseverence_through_faith_1",
+			"controlX": 5410,
+			"controlY": 6867
+		},
+		{
 			"a": "pirate_wormhole_2",
 			"b": "small_flux_optional_60",
 			"controlX": 6836,
@@ -4772,6 +4796,12 @@
 			"b": "small_flux_optional_62",
 			"controlX": 8558,
 			"controlY": 885
+		},
+		{
+			"a": "small_flux_optional_62",
+			"b": "restriction_breeds_creativity_1",
+			"controlX": 7697,
+			"controlY": 1642
 		},
 		{
 			"a": "league_wormhole_2",

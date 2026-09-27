@@ -89,6 +89,23 @@ public enum WeaponSkillEffect implements SkillEffect {
             return pctChange(magnitude, "damage of all weapon types");
         }
     },
+    ALL_WEAPON_DAMAGE_MULT_PER_DMOD {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            float mult = SkillEffectSupport.compoundMultPerDMod(stats, magnitude);
+            stats.getBallisticWeaponDamageMult().modifyMult(modId, mult);
+            stats.getMissileWeaponDamageMult().modifyMult(modId, mult);
+            stats.getEnergyWeaponDamageMult().modifyMult(modId, mult);
+            stats.getBeamWeaponDamageMult().modifyMult(modId, mult);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            String verb = magnitude >= 0 ? "more" : "less";
+            return pct(Math.abs(magnitude)) + "% " + verb + " damage of all weapon types per D-mod this ship "
+                    + "has, compounding multiplicatively.";
+        }
+    },
     BALLISTIC_WEAPON_RANGE_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
