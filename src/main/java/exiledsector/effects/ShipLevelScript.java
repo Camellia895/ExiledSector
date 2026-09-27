@@ -1,23 +1,17 @@
 package exiledsector.effects;
 
 import com.fs.starfarer.api.EveryFrameScript;
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.BattleAPI;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.combat.CombatEngineAPI;
-import com.fs.starfarer.api.combat.CombatFleetManagerAPI;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.mission.FleetSide;
-import exiledsector.skills.ShipLevelConfig;
-import exiledsector.skills.ShipLevelSystem;
 
+// TODO: delete once saves that still contain this script no longer need to load - XP is awarded by CombatXpListener
 public class ShipLevelScript implements EveryFrameScript {
 
-    private boolean xpAwarded = false;
+    // kept so saves that serialized this field still deserialize
+    @SuppressWarnings("java:S1068")
+    private boolean xpAwarded;
 
     @Override
     public boolean isDone() {
-        return false;
+        return true;
     }
 
     @Override
@@ -25,40 +19,9 @@ public class ShipLevelScript implements EveryFrameScript {
         return false;
     }
 
+    // a retired script has nothing to do; isDone() lets the sector drop it
     @Override
+    @SuppressWarnings("java:S1186")
     public void advance(float amount) {
-        CombatEngineAPI engine = Global.getCombatEngine();
-        if (engine == null || engine.isSimulation()) {
-            xpAwarded = false;
-            return;
-        }
-
-        if (xpAwarded || !engine.isCombatOver()) return;
-        xpAwarded = true;
-        awardCombatXp(engine);
-    }
-
-    private void awardCombatXp(CombatEngineAPI engine) {
-        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
-        if (playerFleet == null) return;
-
-        float xp = enemyDeploymentPointsDestroyed(engine) * ShipLevelConfig.xpPerDeploymentPoint();
-        BattleAPI battle = playerFleet.getBattle();
-        if (battle != null && battle.wasFleetDefeated(playerFleet, battle.getNonPlayerCombined())) {
-            xp *= ShipLevelConfig.xpLossMultiplier();
-        }
-
-        ShipLevelSystem.awardXpToFleet(playerFleet, xp);
-    }
-
-    private float enemyDeploymentPointsDestroyed(CombatEngineAPI engine) {
-        CombatFleetManagerAPI enemyManager = engine.getFleetManager(FleetSide.ENEMY);
-        if (enemyManager == null) return 0f;
-
-        float total = 0f;
-        for (FleetMemberAPI destroyed : enemyManager.getDestroyedCopy()) {
-            total += destroyed.getDeploymentPointsCost();
-        }
-        return total;
     }
 }
