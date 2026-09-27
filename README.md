@@ -1,20 +1,37 @@
 # Exiled Sector
 
-A [Starsector](https://fractalsoftworks.com/) mod that gives every ship in your fleet its own skill tree.
+Ever wish you had _even_ more customization options? Still sane exile?
 
-Open any ship's refit screen and press **Skill Tree** to spend points on a large, branching passive tree. Each ship keeps its own allocations, so two ships of the same hull can be built in completely different directions.
+Designed to be an overhaul of the simple hullmod system based on the infamous Path of Exile skill tree, ExiledSector is a [Starsector](https://fractalsoftworks.com/) mod that gives every ship in your fleet its own skill tree.
+
+Navigate to the outfit screen and click the skill tree button on any of your ships to explore an entirely new sector:
+
+<img src="\graphics\description\teaser.gif" alt="The skill tree">
 
 ## Features
 
-- **A tree per ship.** 432 nodes built from 185 node types, spread across small nodes, notables and keystones.
-- **Tech-level starting points.** Low Tech, Midline and High Tech roots. The root a ship starts from is chosen by its manufacturer.
-- **Wormholes.** Paired nodes that link distant regions of the tree.
-- **Choice nodes.** Nodes that let you pick one of several options, such as flux capacity, flux dissipation or hull.
-- **Paid for in ordnance points.** Every allocated node costs OP: 1 for frigates, 2 for destroyers, 3 for cruisers and 4 for capitals (all configurable).
-- **Ships level up.** Ships earn XP in combat, scaled by the deployment points of enemy ships they destroy or disable. Each level turns the ship's most recently OP-bought node into a free one, so veteran ships get their ordnance points back.
-- **Hull-mod nodes.** Some nodes grant or install hull mods, and conflicts with hull mods already installed are handled automatically.
-- **Hidden nodes.** Some nodes appear as unidentified sensor ghosts until you learn the matching blueprint.
-- **New combat mechanics.** Beams that split across nearby enemies, energy shots that chain between targets, shield damage shared across nearby allies, escort bonuses near larger friendly ships, and more.
+- **A tree per ship.** 
+  - 400+ nodes built from 180+ node types, spread across small nodes, notables and keystones.
+- **Tech-level starting points.** 
+  - Low Tech, Midline and High Tech roots. The root a ship starts from is chosen by its manufacturer.
+- **Multi-choice travel nodes.** 
+
+<img src="\graphics\description\teaser_choice.gif" alt="Choice Node">
+
+- **Synergistic allocation** 
+  - Every allocated node costs OP: 1 for frigates, 2 for destroyers, 3 for cruisers and 4 for capitals (configurable).
+  - Ships also earn XP in combat. Each level turns the ship's most recently OP-bought node into a free one, so veteran ships get their ordnance points back (to be spent on more nodes!).
+- **Hidden nodes.** Some nodes appear as unidentified until you learn the matching blueprint.
+
+<img src="\graphics\description\Unidentified_node.png" alt="Hidden Node">
+  
+- **Unique passive effects**
+
+<img src="\graphics\description\lions_gaze.png" alt="Lion's Gaze">
+
+<img src="\graphics\description\ludds_light.png" alt="Ludd's Light">
+
+<img src="\graphics\description\at_any_cost.png" alt="At Any Cost">
 
 ## Requirements
 
@@ -26,7 +43,6 @@ Open any ship's refit screen and press **Skill Tree** to spend points on a large
 Optional:
 
 - **Console Commands** adds `ExiledSectorGrantFleetXp [amount]`, which grants XP to every ship in your fleet.
-- **Second-in-Command** is supported. Some nodes count as the matching hull mods for its skills.
 
 ## Installation
 
@@ -44,40 +60,23 @@ All settings are in the LunaLib mod settings menu:
 - Maximum number of allocated nodes per ship
 - Whether hidden nodes are revealed, and which unlock conditions are enforced
 
-### Compatibility blocklists
+Play your own way!
+
+## Disclaimer
+
+This mod is in (very) early development. It is my first mod, and first foray into UI design/game development.
+
+I am seeking any feedback, bug reports and node suggestions. Please
+
+### Compatibility
+
+I have done what I can for some mods, but there is a long way to go for complete mod compatibility.
+
+**Second-in-Command** is (theoretically) supported.
 
 Some weapons from other mods misbehave when their beams are split or their shots are chained. These are listed in:
 
 - `data/config/exiledSector/split_beam_effect_blocklist.csv`
 - `data/config/exiledSector/energy_chain_blocklist.csv`
 
-Both files are merged across mods, so another mod can opt its own weapons out by shipping a file at the same path.
-
-## Building from source
-
-You need JDK 17, Maven, and a Starsector install with LazyLib, MagicLib, LunaLib and Console Commands in its `mods` folder.
-
-1. Edit the paths at the top of `setup-libs.ps1` and `deploy.ps1` to point at your Starsector install.
-2. Copy the compile-time jars into `libs/`:
-
-   ```powershell
-   .\setup-libs.ps1
-   ```
-
-3. Build, run the tests and install into your mods folder:
-
-   ```powershell
-   .\deploy.ps1
-   ```
-
-   To only build, run `mvn package`. The jar is written to `jars/ExiledSector.jar`.
-
-## Editing the skill tree
-
-The tree lives in `data/skilltrees/ship_skill_tree.json` (node layout) and `data/skilltrees/skill_types.json` (what each node does). There's a visual editor for both:
-
-```powershell
-.\tools\skill_tree_server.ps1
-```
-
-Then open <http://localhost:8791/>. Saving in the editor writes straight to the two JSON files.
+Both files are merged across mods, so other mods can opt their own weapons out.

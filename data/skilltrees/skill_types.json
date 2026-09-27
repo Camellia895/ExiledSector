@@ -525,7 +525,7 @@
 			"id": "ballistic_momentum",
 			"name": "Ballistic Momentum",
 			"icon": "graphics/icons/engine_circular_alt1.png",
-			"tier": "KEYSTONE",
+			"tier": "NOTABLE",
 			"effects": [
 				{
 					"effect": "BALLISTIC_DAMAGE_PER_BURN_LEVEL_PERCENT",
