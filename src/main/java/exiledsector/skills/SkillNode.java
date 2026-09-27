@@ -55,6 +55,12 @@ public class SkillNode extends SkillTreeObject {
         return describeType(type, hullSize);
     }
 
+    private static void addIfPresent(List<String> lines, String line) {
+        if (line != null) {
+            lines.add(line);
+        }
+    }
+
     public static String describeType(SkillType type, HullSize hullSize) {
         List<String> lines = new ArrayList<>();
         if (type.getDescriptionOverride() != null) {
@@ -63,17 +69,22 @@ public class SkillNode extends SkillTreeObject {
         List<String> effectLines = new ArrayList<>();
         List<String> warnings = new ArrayList<>();
         for (SkillTypeEffect effect : type.getEffects()) {
-            effectLines.add(effect.effect().describe(effect.magnitude()));
+            addIfPresent(effectLines, effect.effect().describe(effect.magnitude()));
             String warning = effect.effect().deallocationWarning(effect.magnitude());
             if (warning != null) warnings.add(warning);
         }
         if (hullSize != null) {
             for (HullSizeSkillEffect effect : type.getHullSizeEffects()) {
                 float magnitude = effect.valueFor(hullSize);
-                effectLines.add(effect.effect().describe(magnitude));
+                addIfPresent(effectLines, effect.effect().describe(magnitude));
                 String warning = effect.effect().deallocationWarning(magnitude);
                 if (warning != null) warnings.add(warning);
             }
+        }
+        for (String hullModId : type.getInstalledHullModIds()) {
+            HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
+            String name = spec != null ? spec.getDisplayName() : hullModId;
+            effectLines.add("Installs the " + name + " hull mod at no OP cost.");
         }
         lines.addAll(effectLines);
         lines.addAll(warnings);
@@ -94,6 +105,9 @@ public class SkillNode extends SkillTreeObject {
 
         List<String> hullModNames = new ArrayList<>();
         for (String hullModId : type.getExclusiveHullModIds()) {
+            if (type.getInstalledHullModIds().contains(hullModId)) {
+                continue;
+            }
             HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
             String name = spec != null ? spec.getDisplayName() : hullModId;
             if (namesAlreadyShown.add(name)) {

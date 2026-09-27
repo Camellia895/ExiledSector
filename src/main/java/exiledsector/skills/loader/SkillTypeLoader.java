@@ -57,12 +57,13 @@ public final class SkillTypeLoader {
         List<HullSizeSkillEffect> hullSizeEffects = parseHullSizeEffects(json.optJSONArray("hullSizeEffects"));
         List<String> optionalOptionIds = parseStringArray(json.optJSONArray("optionalOptions"));
         List<String> exclusiveHullModIds = parseStringArray(json.optJSONArray("exclusiveHullMods"));
+        List<String> installedHullModIds = parseStringArray(json.optJSONArray("installedHullMods"));
         List<String> exclusiveSkillTypeIds = parseStringArray(json.optJSONArray("exclusiveSkillTypes"));
         List<UnlockCondition> unlockConditions = parseUnlockConditions(json.optJSONArray("unlockConditions"));
         SkillItemCost itemCost = parseItemCost(json.optJSONObject("itemCost"));
         String id = json.getString("id");
         Float temporaryAfterDeploymentSeconds = validateTemporaryGating(id,
-                parseTemporaryAfterDeploymentSeconds(json), effects, hullSizeEffects);
+                parseTemporaryAfterDeploymentSeconds(json), effects, hullSizeEffects, installedHullModIds);
 
         return new SkillType.Builder(id, json.getString("name"), json.getString("icon"), tier)
                 .effects(effects)
@@ -74,6 +75,7 @@ public final class SkillTypeLoader {
                 .todo(json.optString("todo", null))
                 .optionalOptionIds(optionalOptionIds)
                 .exclusiveHullModIds(exclusiveHullModIds)
+                .installedHullModIds(installedHullModIds)
                 .exclusiveSkillTypeIds(exclusiveSkillTypeIds)
                 .unlockConditions(unlockConditions)
                 .build();
@@ -94,8 +96,15 @@ public final class SkillTypeLoader {
     }
 
     private static Float validateTemporaryGating(String id, Float temporaryAfterDeploymentSeconds,
-                                                   List<SkillTypeEffect> effects, List<HullSizeSkillEffect> hullSizeEffects) {
+                                                   List<SkillTypeEffect> effects, List<HullSizeSkillEffect> hullSizeEffects,
+                                                   List<String> installedHullModIds) {
         if (temporaryAfterDeploymentSeconds == null) {
+            return null;
+        }
+        if (!installedHullModIds.isEmpty()) {
+            Logger.getLogger(SkillTypeLoader.class).error("Skill type \"" + id + "\" sets temporaryAfterDeploymentSeconds "
+                    + "but also installs hull mods, which can't be removed mid-combat - ignoring the "
+                    + "temporaryAfterDeploymentSeconds field.");
             return null;
         }
         for (SkillTypeEffect effect : effects) {

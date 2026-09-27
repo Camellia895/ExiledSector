@@ -61,6 +61,17 @@ class SkillTypeTest {
     }
 
     @Test
+    void installedHullModsAreAlsoExclusiveWithoutBeingListedTwice() {
+        SkillType type = new SkillType.Builder("t", "T", "a.png", SkillTier.NOTABLE)
+                .exclusiveHullModIds(List.of("frontshield", "militarized_subsystems"))
+                .installedHullModIds(List.of("militarized_subsystems"))
+                .build();
+
+        assertEquals(List.of("frontshield", "militarized_subsystems"), type.getExclusiveHullModIds());
+        assertEquals(List.of("militarized_subsystems"), type.getInstalledHullModIds());
+    }
+
+    @Test
     void doesNothingWhenBothListsAreEmpty() {
         SkillType type = type(List.of(), List.of());
 

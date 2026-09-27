@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.impl.hullmods.PhaseField;
 
@@ -302,6 +303,21 @@ public enum LogisticsSkillEffect implements SkillEffect {
         @Override
         public String describe(float magnitude) {
             return "Removes the penalties of a civilian-grade hull.";
+        }
+    },
+    REQUIRES_CIVILIAN_GRADE_HULL {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public String blockAllocationReason(FleetMemberAPI member, float magnitude, List<SkillEffect> currentlyAllocatedEffects) {
+            return member.getVariant().hasHullMod(HullMods.CIVGRADE) ? null : "Requires a civilian-grade hull.";
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return "Can only be allocated on civilian-grade hulls.";
         }
     },
     CREW_LOSS_PERCENT {

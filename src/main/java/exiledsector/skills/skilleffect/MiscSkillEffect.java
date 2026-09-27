@@ -13,6 +13,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 
 import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
+import static exiledsector.skills.skilleffect.SkillEffectText.pct;
 import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
 import static exiledsector.skills.skilleffect.SkillEffectText.pctMore;
 
@@ -129,6 +130,29 @@ public enum MiscSkillEffect implements SkillEffect {
         @Override
         public String describe(float magnitude) {
             return flatChange(magnitude, "fleet nav rating");
+        }
+    },
+    OBJECTIVE_CAPTURE_RATE_MULT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            SkillEffectSupport.applyMult(stats.getDynamic().getStat(Stats.SHIP_OBJECTIVE_CAP_RATE_MULT), modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            String verb = magnitude >= 0 ? "faster" : "slower";
+            return "Captures combat objectives " + pct(Math.abs(magnitude)) + "% " + verb + ".";
+        }
+    },
+    OBJECTIVE_CAPTURE_RANGE_FLAT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(Stats.SHIP_OBJECTIVE_CAP_RANGE_MOD).modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return flatChange(magnitude, "range from which combat objectives can be captured");
         }
     },
     PEAK_CR_DURATION_PERCENT {

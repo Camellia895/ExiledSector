@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
+import exiledsector.compat.SecondInCommandCompat;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedSkillEffects;
@@ -373,12 +374,18 @@ public final class SkillTreeNodeRenderer {
         SkillTreeHullMod.syncOpSpentHullMod(member, variant);
         for (String hullModId : exclusiveHullModIds) {
             if (variant.hasHullMod(hullModId)) {
-                HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
-                String name = spec != null ? spec.getDisplayName() : hullModId;
-                return "Ship already has " + name + " installed.";
+                return "Ship already has " + hullModName(hullModId) + " installed.";
+            }
+            if (SecondInCommandCompat.hasDeactivatedSMod(variant, hullModId)) {
+                return "Ship has a deactivated " + hullModName(hullModId) + " S-mod that Best of the Best will restore.";
             }
         }
         return null;
+    }
+
+    private static String hullModName(String hullModId) {
+        HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
+        return spec != null ? spec.getDisplayName() : hullModId;
     }
 
     private String skillTypeConflictReason(SkillType type, ShipSkillData data) {

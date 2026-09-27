@@ -30,7 +30,8 @@ final class SkillEffectRegistry {
                 PhaseSkillEffect.values(),
                 MiscSkillEffect.values(),
                 DefenseSkillEffect.values(),
-                CombatSkillEffect.values()
+                CombatSkillEffect.values(),
+                CompatSkillEffect.values()
         };
         for (SkillEffect[] group : groups) {
             for (SkillEffect effect : group) {

@@ -338,6 +338,59 @@ class SkillTreeHullModTest {
         assertNull(SkillConflictWarnings.get(variant));
     }
 
+    private static SkillNode registerMilitarizedNode() {
+        SkillType militarizedType = new SkillType.Builder("militarized_subsystems", "Militarized Subsystems", "a.png", SkillTier.NOTABLE)
+                .installedHullModIds(List.of("militarized_subsystems"))
+                .build();
+        SkillNode militarizedNode = new SkillNode("militarized_subsystems_1", militarizedType, List.of(), 0f, 0f);
+        SkillTree.register(militarizedNode);
+        return militarizedNode;
+    }
+
+    private static FleetMemberAPI memberWithId(String id) {
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn(id);
+        return member;
+    }
+
+    @Test
+    void syncInstalledHullModsInstallsTheHullModAsATaggedPermaModWhileTheNodeIsAllocated() {
+        ShipSkillDataManager.get("ship-a").allocate(registerMilitarizedNode(), 1);
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(variant.getTags()).thenReturn(List.of());
+
+        SkillTreeHullMod.syncInstalledHullMods(memberWithId("ship-a"), variant);
+
+        verify(variant).addPermaMod("militarized_subsystems");
+        verify(variant).addTag("exiledSector_installed_militarized_subsystems");
+    }
+
+    @Test
+    void syncInstalledHullModsRemovesOnlyHullModsItInstalledOnceTheNodeIsNoLongerAllocated() {
+        registerMilitarizedNode();
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(variant.getTags()).thenReturn(List.of("exiledSector_installed_militarized_subsystems", "some_other_tag"));
+
+        SkillTreeHullMod.syncInstalledHullMods(memberWithId("ship-a"), variant);
+
+        verify(variant).removePermaMod("militarized_subsystems");
+        verify(variant).removeTag("exiledSector_installed_militarized_subsystems");
+        verify(variant, never()).removeTag("some_other_tag");
+    }
+
+    @Test
+    void removeHullModsConflictingWithAllocatedSkillsLeavesAHullModTheSkillTreeInstalledItself() {
+        ShipSkillDataManager.get("ship-a").allocate(registerMilitarizedNode(), 1);
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(variant.hasHullMod("militarized_subsystems")).thenReturn(true);
+        when(variant.hasTag("exiledSector_installed_militarized_subsystems")).thenReturn(true);
+
+        SkillTreeHullMod.removeHullModsConflictingWithAllocatedSkills(memberWithId("ship-a"), variant);
+
+        verify(variant, never()).removeMod("militarized_subsystems");
+        verify(variant, never()).addMod("exiledSector_conflictWarning");
+    }
+
     @Test
     void removeHullModsConflictingWithAllocatedSkillsDoesNothingWhenNoConflictWasEverPresent() {
         FleetMemberAPI member = mock(FleetMemberAPI.class);

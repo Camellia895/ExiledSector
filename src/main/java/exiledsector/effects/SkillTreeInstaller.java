@@ -3,7 +3,10 @@ package exiledsector.effects;
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.loading.VariantSource;
+import exiledsector.compat.SecondInCommandCompat;
 import exiledsector.skills.skilleffect.LogisticsSkillEffect;
 
 public class SkillTreeInstaller implements EveryFrameScript {
@@ -32,12 +35,29 @@ public class SkillTreeInstaller implements EveryFrameScript {
         if (playerFleet == null) return;
 
         for (FleetMemberAPI member : playerFleet.getFleetData().getMembersListCopy()) {
-            if (!member.getVariant().hasHullMod(SkillTreeHullMod.ID)) {
-                member.getVariant().addPermaMod(SkillTreeHullMod.ID);
+            ShipVariantAPI variant = member.getVariant();
+            if (!variant.hasHullMod(SkillTreeHullMod.ID)) {
+                variant = ownedVariant(member);
+                variant.addPermaMod(SkillTreeHullMod.ID);
+            } else if (SecondInCommandCompat.isAppliedBeforeController(variant, SkillTreeHullMod.ID)) {
+                variant.removePermaMod(SkillTreeHullMod.ID);
+                variant.addPermaMod(SkillTreeHullMod.ID);
+                member.setStatUpdateNeeded(true);
             }
             new SkillTreeHullMod().applyEffectsBeforeShipCreation(member.getHullSpec().getHullSize(), member.getStats(), SkillTreeHullMod.ID);
         }
 
         LogisticsSkillEffect.recomputeExtendedPhaseField();
+    }
+
+    private static ShipVariantAPI ownedVariant(FleetMemberAPI member) {
+        ShipVariantAPI variant = member.getVariant();
+        if (variant.getSource() == VariantSource.REFIT) {
+            return variant;
+        }
+        ShipVariantAPI copy = variant.clone();
+        copy.setSource(VariantSource.REFIT);
+        member.setVariant(copy, false, true);
+        return copy;
     }
 }

@@ -161,6 +161,35 @@
 			]
 		},
 		{
+			"id": "tactical_superiority",
+			"name": "Tactical Superiority",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "OBJECTIVE_CAPTURE_RATE_MULT",
+					"magnitude": 100
+				}
+			],
+			"tags": [
+				"hull"
+			]
+		},
+		{
+			"id": "objective_capture_range",
+			"name": "Objective Capture Range",
+			"icon": "",
+			"effects": [
+				{
+					"effect": "OBJECTIVE_CAPTURE_RANGE_FLAT",
+					"magnitude": 100
+				}
+			],
+			"tags": [
+				"hull"
+			]
+		},
+		{
 			"id": "torpedo_specialisation",
 			"name": "Torpedo Specialisation",
 			"icon": "graphics/icons/engine_circular.png",
@@ -312,6 +341,9 @@
 					"effect": "ZERO_FLUX_ALWAYS_ON"
 				},
 				{
+					"effect": "COUNTS_AS_SAFETY_OVERRIDES"
+				},
+				{
 					"effect": "FLUX_DISSIPATION_MULT",
 					"magnitude": 100
 				},
@@ -354,6 +386,9 @@
 					"cruiser": 40,
 					"capitalShip": 20
 				}
+			],
+			"exclusiveHullMods": [
+				"safetyoverrides"
 			]
 		},
 		{
@@ -488,6 +523,9 @@
 			"exclusiveHullMods": [
 				"adaptive_coils"
 			],
+			"exclusiveSkillTypes": [
+				"phase_anchor"
+			],
 			"description": "Phase coils are less able to maintain a connection with normal space as the ship's hard flux levels rise, resulting in a greatly reduced top speed as the coils struggle to gain traction.\n\nThis modification allows the coils to handle higher levels of hard flux, increasing the threshold at which speed bottoms out.",
 			"tags": [
 				"flux",
@@ -518,6 +556,9 @@
 			],
 			"exclusiveHullMods": [
 				"advancedoptics"
+			],
+			"exclusiveSkillTypes": [
+				"high_scatter_amp"
 			],
 			"tags": [
 				"energy",
@@ -682,19 +723,19 @@
 					"magnitude": 1
 				},
 				{
-					"effect": "FIGHTER_REFIT_TIME_MULT",
+					"effect": "CONVERTED_HANGAR_REFIT_TIME_MULT",
 					"magnitude": 50
 				},
 				{
-					"effect": "FIGHTER_REPLACEMENT_RATE_MULT",
+					"effect": "CONVERTED_HANGAR_REPLACEMENT_RATE_MULT",
 					"magnitude": 50
 				},
 				{
-					"effect": "FIGHTER_RELAUNCH_TIME_FLAT",
+					"effect": "CONVERTED_HANGAR_RELAUNCH_TIME_FLAT",
 					"magnitude": 40
 				},
 				{
-					"effect": "MIN_CREW_FLAT",
+					"effect": "CONVERTED_HANGAR_MIN_CREW_FLAT",
 					"magnitude": 20
 				}
 			],
@@ -769,6 +810,9 @@
 			],
 			"exclusiveHullMods": [
 				"dedicated_targeting_core"
+			],
+			"exclusiveSkillTypes": [
+				"targetingunit"
 			],
 			"tags": [
 				"range"
@@ -1063,6 +1107,9 @@
 				},
 				{
 					"effect": "REMOVE_SHIELD"
+				},
+				{
+					"effect": "COUNTS_AS_SHIELD_SHUNT"
 				}
 			],
 			"unlockConditions": [
@@ -1074,6 +1121,11 @@
 			],
 			"exclusiveHullMods": [
 				"shield_shunt",
+				"frontemitter",
+				"adaptiveshields",
+				"frontshield"
+			],
+			"exclusiveSkillTypes": [
 				"frontemitter",
 				"adaptiveshields",
 				"frontshield"
@@ -1106,6 +1158,9 @@
 			],
 			"exclusiveHullMods": [
 				"frontshield",
+				"shield_shunt"
+			],
+			"exclusiveSkillTypes": [
 				"shield_shunt"
 			],
 			"description": "Installs a makeshift, inefficient shield generator on the ship. The shield emitter is locked in a forward-facing position and has a 90 degree arc.\n\nThe shield generator draws much of its power from engines and reduces the ship's top speed by 20%.",
@@ -1262,6 +1317,9 @@
 			"exclusiveHullMods": [
 				"high_scatter_amp"
 			],
+			"exclusiveSkillTypes": [
+				"advancedoptics"
+			],
 			"todo": "Placeholder magnitudes (50% hard flux, -25% range) pending real balance numbers. Reimplemented as a scalable percentage instead of vanilla's all-or-nothing forced-hard-flux-on-every-beam-hit, and the range reduction is a flat percentage instead of vanilla's reduce-only-the-portion-past-200-units logic - deliberate simplifications, not oversights. The +10% beam damage part (vanilla BEAM_DAMAGE_PERCENT) is not yet added; can reuse the existing BEAM_DAMAGE_PERCENT effect for that later.",
 			"tags": [
 				"energy",
@@ -1326,6 +1384,9 @@
 			"exclusiveHullMods": [
 				"targetingunit"
 			],
+			"exclusiveSkillTypes": [
+				"dedicated_targeting_core"
+			],
 			"tags": [
 				"range"
 			]
@@ -1385,6 +1446,10 @@
 				"adaptiveshields",
 				"shield_shunt"
 			],
+			"exclusiveSkillTypes": [
+				"adaptiveshields",
+				"shield_shunt"
+			],
 			"description": "Locks the ship's omni-directional shield emitter to a front-facing position and extends its arc. As with all frontal emitters, the shield will also deploy twice as quickly.",
 			"tags": [
 				"shield"
@@ -1414,6 +1479,10 @@
 			],
 			"exclusiveHullMods": [
 				"adaptiveshields",
+				"frontemitter",
+				"shield_shunt"
+			],
+			"exclusiveSkillTypes": [
 				"frontemitter",
 				"shield_shunt"
 			],
@@ -1475,6 +1544,9 @@
 			],
 			"exclusiveHullMods": [
 				"phase_anchor"
+			],
+			"exclusiveSkillTypes": [
+				"adaptive_coils"
 			],
 			"tags": [
 				"flux",
@@ -1819,18 +1891,10 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "BURN_LEVEL_FLAT",
-					"magnitude": 1
-				},
-				{
-					"effect": "MIN_CREW_PERCENT",
-					"magnitude": 100
-				},
-				{
-					"effect": "REMOVE_CIVILIAN_HULL_PENALTY"
+					"effect": "REQUIRES_CIVILIAN_GRADE_HULL"
 				}
 			],
-			"exclusiveHullMods": [
+			"installedHullMods": [
 				"militarized_subsystems"
 			],
 			"tags": [

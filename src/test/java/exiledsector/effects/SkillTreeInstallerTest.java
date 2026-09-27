@@ -11,6 +11,8 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
+import com.fs.starfarer.api.loading.VariantSource;
+import exiledsector.compat.SecondInCommandCompat;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.skills.SkillNode;
@@ -21,6 +23,7 @@ import exiledsector.skills.SkillTypeEffect;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -29,6 +32,9 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -82,7 +88,37 @@ class SkillTreeInstallerTest {
         when(stats.getFleetMember()).thenReturn(member);
         when(hullSpec.getHullSize()).thenReturn(HullSize.FRIGATE);
         when(variant.hasHullMod(SkillTreeHullMod.ID)).thenReturn(hasHullMod);
+        when(variant.getSource()).thenReturn(VariantSource.REFIT);
         return member;
+    }
+
+    @Test
+    void installsIntoAShipSpecificCopyWhenTheVariantIsNotAlreadyARefitVariant() {
+        FleetMemberAPI member = mockMember("stock-ship", false);
+        ShipVariantAPI shared = member.getVariant();
+        ShipVariantAPI copy = mock(ShipVariantAPI.class);
+        when(shared.getSource()).thenReturn(VariantSource.STOCK);
+        when(shared.clone()).thenReturn(copy);
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
+
+        new SkillTreeInstaller().advance(0.01f);
+
+        verify(copy).setSource(VariantSource.REFIT);
+        verify(member).setVariant(copy, false, true);
+        verify(copy).addPermaMod(SkillTreeHullMod.ID);
+        verify(shared, never()).addPermaMod(SkillTreeHullMod.ID);
+    }
+
+    @Test
+    void installsDirectlyIntoAnAlreadyShipSpecificRefitVariant() {
+        FleetMemberAPI member = mockMember("refit-ship", false);
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
+
+        new SkillTreeInstaller().advance(0.01f);
+
+        verify(member.getVariant(), never()).clone();
+        verify(member, never()).setVariant(any(), anyBoolean(), anyBoolean());
+        verify(member.getVariant()).addPermaMod(SkillTreeHullMod.ID);
     }
 
     @Test
@@ -137,6 +173,35 @@ class SkillTreeInstallerTest {
 
         verify(hasIt.getVariant(), never()).addPermaMod(SkillTreeHullMod.ID);
         verify(missingIt.getVariant()).addPermaMod(SkillTreeHullMod.ID);
+    }
+
+    @Test
+    void movesItsHullModBehindTheSecondInCommandControllerSoItAppliesAfterIt() {
+        FleetMemberAPI member = mockMember("ship", true);
+        ShipVariantAPI variant = member.getVariant();
+        when(variant.hasHullMod(SecondInCommandCompat.CONTROLLER_HULLMOD_ID)).thenReturn(true);
+        when(variant.getHullMods()).thenReturn(List.of(SkillTreeHullMod.ID, SecondInCommandCompat.CONTROLLER_HULLMOD_ID));
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
+
+        new SkillTreeInstaller().advance(0.01f);
+
+        InOrder order = inOrder(variant);
+        order.verify(variant).removePermaMod(SkillTreeHullMod.ID);
+        order.verify(variant).addPermaMod(SkillTreeHullMod.ID);
+    }
+
+    @Test
+    void leavesItsHullModInPlaceWhenItAlreadyAppliesAfterTheSecondInCommandController() {
+        FleetMemberAPI member = mockMember("ship", true);
+        ShipVariantAPI variant = member.getVariant();
+        when(variant.hasHullMod(SecondInCommandCompat.CONTROLLER_HULLMOD_ID)).thenReturn(true);
+        when(variant.getHullMods()).thenReturn(List.of(SecondInCommandCompat.CONTROLLER_HULLMOD_ID, SkillTreeHullMod.ID));
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
+
+        new SkillTreeInstaller().advance(0.01f);
+
+        verify(variant, never()).removePermaMod(SkillTreeHullMod.ID);
+        verify(variant, never()).addPermaMod(SkillTreeHullMod.ID);
     }
 
     @Test

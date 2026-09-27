@@ -2922,13 +2922,14 @@ var EFFECT_NAMES = ['HULL_PERCENT','HULL_FLAT','HULL_MULT','ARMOR_PERCENT','ARMO
   'PHASE_CLOAK_ACTIVATION_COST_MULT','PHASE_CLOAK_FLUX_THRESHOLD_PERCENT','PHASE_ANCHOR_EMERGENCY_DIVE','REMOVE_CIVILIAN_HULL_PENALTY',
   'CREW_LOSS_PERCENT','ENERGY_DAMAGE_TAKEN_PERCENT','EMP_DAMAGE_TAKEN_PERCENT','FLUX_DISSIPATION_WHILE_VENTING_PERCENT',
   'COMBAT_BOOST_WHILE_PHASED','COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP',
-  'SURVEY_COST_REDUCTION_HEAVY_MACHINERY','SURVEY_COST_REDUCTION_SUPPLIES','GROUND_SUPPORT_FLAT',
+  'SURVEY_COST_REDUCTION_HEAVY_MACHINERY','SURVEY_COST_REDUCTION_SUPPLIES','GROUND_SUPPORT_FLAT','OBJECTIVE_CAPTURE_RATE_MULT','OBJECTIVE_CAPTURE_RANGE_FLAT',
   'MIN_CREW_FLAT','FIGHTER_REFIT_TIME_MULT','FIGHTER_REPLACEMENT_RATE_MULT','FIGHTER_RELAUNCH_TIME_FLAT','FIGHTER_BAYS_FLAT',
   'PD_IGNORES_DECOY_FLARES','PD_BEST_TARGET_LEADING','PD_DAMAGE_TO_MISSILES_PERCENT','PD_RECLASSIFY_SMALL_WEAPONS',
   'ACCELERATION_FLAT','ACCELERATION_PERCENT','DECELERATION_FLAT','DECELERATION_PERCENT','TURN_ACCELERATION_PERCENT','TOP_SPEED_FLAT',
   'BEAM_DAMAGE_HARD_FLUX_PERCENT','BEAM_WEAPON_RANGE_FLAT','BEAM_WEAPON_RANGE_MULT','BEAM_WEAPON_TURN_RATE_PERCENT','WEAPON_RANGE_THRESHOLD','WEAPON_RECOIL_PERCENT',
   'MISSILE_ACCELERATION_PERCENT','MISSILE_GUIDANCE_FLAT','MISSILE_RANGE_PERCENT','MISSILE_SPEED_PERCENT','MISSILE_TURN_ACCELERATION_PERCENT','MISSILE_TURN_RATE_PERCENT',
-  'CONVERT_SHIELD_TO_OMNI','CONVERT_SHIELD_TO_FRONT','CREATE_FRONT_SHIELD_IF_NONE','REMOVE_SHIELD','SHIELD_PIERCE_CHANCE_PERCENT','SHIELD_ARC_MULT','TOP_SPEED_MULT',
+  'CONVERT_SHIELD_TO_OMNI','CONVERT_SHIELD_TO_FRONT','CREATE_FRONT_SHIELD_IF_NONE','REMOVE_SHIELD','COUNTS_AS_SHIELD_SHUNT','COUNTS_AS_SAFETY_OVERRIDES','REQUIRES_CIVILIAN_GRADE_HULL',
+  'CONVERTED_HANGAR_REFIT_TIME_MULT','CONVERTED_HANGAR_REPLACEMENT_RATE_MULT','CONVERTED_HANGAR_RELAUNCH_TIME_FLAT','CONVERTED_HANGAR_MIN_CREW_FLAT','SHIELD_PIERCE_CHANCE_PERCENT','SHIELD_ARC_MULT','TOP_SPEED_MULT',
   'CARGO_CAPACITY_PER_FIGHTER_BAY','MIN_CREW_PER_FIGHTER_BAY','MIN_CREW_PERCENT_PER_FIGHTER_BAY','REMOVE_ALL_FIGHTER_BAYS',
   'FIGHTER_CREW_LOSS_PERCENT','FIGHTER_REPLACEMENT_DECAY_PERCENT','FIGHTER_REPLACEMENT_RECOVERY_PERCENT','FIGHTER_TOP_SPEED_PERCENT','FIGHTER_WEAPON_DAMAGE_PERCENT',
   'CR_LOSS_PER_SECOND_PERCENT','ECCM_CHANCE','ELECTRONIC_WARFARE_PENALTY_PERCENT','VENT_RATE_PERCENT','ZERO_FLUX_ALWAYS_ON',
@@ -3405,7 +3406,7 @@ function openImageEditorModal(){
 
 function openTypeModal(existingType, onSave, onClose){
   var isNew = !existingType;
-  var t = existingType ? deepCopy(existingType) : { id: '', name: '', icon: '', tier: 'NOTABLE', vanillaHullMod: '', description: '', todo: '', tags: [], optionalOptions: [], exclusiveHullMods: [], unlockConditions: [] };
+  var t = existingType ? deepCopy(existingType) : { id: '', name: '', icon: '', tier: 'NOTABLE', vanillaHullMod: '', description: '', todo: '', tags: [], optionalOptions: [], exclusiveHullMods: [], exclusiveSkillTypes: [], unlockConditions: [] };
   var effectsDraft = deepCopy(t.effects || []);
   var hullSizeEffectsDraft = deepCopy(t.hullSizeEffects || []);
   var unlockConditionsDraft = deepCopy(t.unlockConditions || []);
@@ -3421,6 +3422,8 @@ function openTypeModal(existingType, onSave, onClose){
     t.tier = document.getElementById('tTier').value;
     t.vanillaHullMod = document.getElementById('tVanilla').value;
     t.exclusiveHullMods = document.getElementById('tExclusiveHullMods').value.split(',').map(function(s){ return s.trim(); }).filter(function(s){ return s; });
+    t.installedHullMods = document.getElementById('tInstalledHullMods').value.split(',').map(function(s){ return s.trim(); }).filter(function(s){ return s; });
+    t.exclusiveSkillTypes = document.getElementById('tExclusiveSkillTypes').value.split(',').map(function(s){ return s.trim(); }).filter(function(s){ return s; });
     var optSelect = document.getElementById('tOptionalOptions');
     if (optSelect) {
       t.optionalOptions = Array.from(optSelect.selectedOptions).map(function(o){ return o.value; }).filter(function(v){ return v; });
@@ -3460,6 +3463,8 @@ function openTypeModal(existingType, onSave, onClose){
       '<div class="field"><label>Unlock conditions</label>' + renderUnlockConditionRows('t', unlockConditionsDraft) + '</div>' +
       '<div class="btnRow"><button class="smallBtn" type="button" id="addUnlockConditionRowBtn">+ Add condition</button></div>' +
       '<div class="field"><label>Exclusive with hullmod ids (comma-separated)</label><input id="tExclusiveHullMods" value="' + ((t.exclusiveHullMods||[]).join(', ')) + '"></div>' +
+      '<div class="field"><label>Installs hullmod ids (comma-separated)</label><input id="tInstalledHullMods" value="' + ((t.installedHullMods||[]).join(', ')) + '"></div>' +
+      '<div class="field"><label>Exclusive with skill type ids (comma-separated)</label><input id="tExclusiveSkillTypes" value="' + ((t.exclusiveSkillTypes||[]).join(', ')) + '"></div>' +
       '<hr class="sep">' +
       '<div class="field"><label>Item cost</label><div class="fieldRow"><input id="tItemCostId" placeholder="commodity id, e.g. lobster" value="' + (itemCostDraft.itemId||'') + '" style="flex:2"><input id="tItemCostQuantity" type="number" placeholder="quantity" value="' + (itemCostDraft.quantity||0) + '" style="flex:1"></div></div>' +
       '<hr class="sep">' +
@@ -3563,6 +3568,8 @@ function openTypeModal(existingType, onSave, onClose){
         temporaryAfterDeploymentSeconds: t.temporaryAfterDeploymentSeconds || null,
         unlockConditions: unlockConditionsDraft,
         exclusiveHullMods: t.exclusiveHullMods || [],
+        installedHullMods: t.installedHullMods || [],
+        exclusiveSkillTypes: t.exclusiveSkillTypes || [],
         optionalOptions: t.optionalOptions || [],
         description: (t.description||'').trim(),
         todo: (t.todo||'').trim(),
@@ -3613,6 +3620,8 @@ function serializeType(t){
   var unlockConditionsOut = serializeUnlockConditions(t.unlockConditions);
   if (unlockConditionsOut.length) out.unlockConditions = unlockConditionsOut;
   if (t.exclusiveHullMods && t.exclusiveHullMods.length) out.exclusiveHullMods = t.exclusiveHullMods;
+  if (t.installedHullMods && t.installedHullMods.length) out.installedHullMods = t.installedHullMods;
+  if (t.exclusiveSkillTypes && t.exclusiveSkillTypes.length) out.exclusiveSkillTypes = t.exclusiveSkillTypes;
   if (t.optionalOptions && t.optionalOptions.length) out.optionalOptions = t.optionalOptions;
   if (t.description) out.description = t.description;
   if (t.todo) out.todo = t.todo;
