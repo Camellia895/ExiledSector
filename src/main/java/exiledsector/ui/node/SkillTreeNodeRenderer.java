@@ -49,20 +49,23 @@ public final class SkillTreeNodeRenderer {
     private final SkillTreeNodeConnectorRenderer connectorRenderer;
     private final SkillTreeNodeTooltipRenderer tooltipRenderer;
     private final SkillTreeNodeDropdownRenderer dropdownRenderer;
+    private final NodeSearch search;
 
     private SkillType lastChosenOptionalOption;
 
-    public SkillTreeNodeRenderer(FleetMemberAPI member, ShipVariantAPI variant, SkillTreePanelStyle style, BaseRefitButton refitButton) {
+    public SkillTreeNodeRenderer(FleetMemberAPI member, ShipVariantAPI variant, SkillTreePanelStyle style, BaseRefitButton refitButton,
+                                 NodeSearch search) {
         this.member = member;
         this.variant = variant;
         this.refitButton = refitButton;
+        this.search = search;
         this.activeRoot = findRootNode(ShipTechLevel.of(member).rootTypeId());
 
         this.ringRenderer = new SkillTreeNodeRingRenderer(style);
         this.iconRenderer = new SkillTreeNodeIconRenderer();
         this.ghostRenderer = new SkillTreeNodeGhostRenderer();
         this.wormholeGhostFlights = new SkillTreeWormholeGhostFlights(ghostRenderer, new Random());
-        this.connectorRenderer = new SkillTreeNodeConnectorRenderer(style);
+        this.connectorRenderer = new SkillTreeNodeConnectorRenderer(style, search);
         this.tooltipRenderer = new SkillTreeNodeTooltipRenderer(member, style);
         this.dropdownRenderer = new SkillTreeNodeDropdownRenderer(style);
 
@@ -114,7 +117,7 @@ public final class SkillTreeNodeRenderer {
         }
 
         connectorRenderer.draw(centerX, centerY, zoom, data, satisfiedRootId, alphaMult);
-        wormholeGhostFlights.draw(centerX, centerY, zoom, alphaMult);
+        wormholeGhostFlights.draw(centerX, centerY, zoom, alphaMult * search.backgroundAlpha());
 
         for (SkillNode node : SkillTree.getAllNodes().values()) {
             if (node.getType().getTier() == SkillTier.ROOT) {
@@ -133,7 +136,7 @@ public final class SkillTreeNodeRenderer {
         float footprintSize = NODE_SIZE * zoom * tier.getSizeMultiplier();
 
         if (SkillTypeUnlockStatus.isHidden(node.getType(), data)) {
-            ghostRenderer.draw(nodeX, nodeY, footprintSize, alphaMult, node.getId());
+            ghostRenderer.draw(nodeX, nodeY, footprintSize, alphaMult * search.backgroundAlpha(), node.getId());
             return;
         }
 
@@ -142,14 +145,15 @@ public final class SkillTreeNodeRenderer {
         SkillType effectiveType = node.resolveEffectiveType(data);
         float iconSize = footprintSize * ICON_INSET_RATIO;
 
-        ringRenderer.draw(new Vector2f(nodeX, nodeY), footprintSize, alphaMult, allocated, breathing, zoom, node);
+        float nodeAlpha = alphaMult * search.nodeAlpha(node, data);
+        ringRenderer.draw(new Vector2f(nodeX, nodeY), footprintSize, nodeAlpha, allocated, breathing, zoom, node);
 
         if (tier != SkillTier.WORMHOLE) {
-            Color tint = allocated ? ALLOCATED_TINT : UNALLOCATED_TINT;
+            Color tint = iconTint(node, data, allocated);
             if (effectiveType.isOptional()) {
-                iconRenderer.drawSplitIcon(effectiveType, nodeX, nodeY, iconSize, alphaMult, tint);
+                iconRenderer.drawSplitIcon(effectiveType, nodeX, nodeY, iconSize, nodeAlpha, tint);
             } else {
-                iconRenderer.drawIcon(effectiveType.getIconPath(), nodeX, nodeY, iconSize, alphaMult, tint);
+                iconRenderer.drawIcon(effectiveType.getIconPath(), nodeX, nodeY, iconSize, nodeAlpha, tint);
             }
         }
     }
@@ -162,11 +166,16 @@ public final class SkillTreeNodeRenderer {
         boolean allocated = data.isAllocated(node.getId());
         boolean breathing = !allocated && data.canAllocate(node, satisfiedRootId, totalOpBudget, opCostFor(node), ShipLevelConfig.maxAllocatedNodes());
         float footprintSize = NODE_SIZE * zoom * SkillTier.ROOT.getSizeMultiplier();
-        ringRenderer.draw(new Vector2f(nodeX, nodeY), footprintSize, alphaMult, allocated, breathing, zoom, node);
+        float nodeAlpha = alphaMult * search.nodeAlpha(node, data);
+        ringRenderer.draw(new Vector2f(nodeX, nodeY), footprintSize, nodeAlpha, allocated, breathing, zoom, node);
 
-        Color tint = allocated ? ALLOCATED_TINT : UNALLOCATED_TINT;
+        Color tint = iconTint(node, data, allocated);
         String iconPath = isActiveRoot ? RootCrestResolver.resolve(member) : node.getType().getIconPath();
-        iconRenderer.drawIcon(iconPath, nodeX, nodeY, footprintSize, alphaMult, tint);
+        iconRenderer.drawIcon(iconPath, nodeX, nodeY, footprintSize, nodeAlpha, tint);
+    }
+
+    private Color iconTint(SkillNode node, ShipSkillData data, boolean allocated) {
+        return allocated || search.matches(node, data) ? ALLOCATED_TINT : UNALLOCATED_TINT;
     }
 
     public SkillNode getActiveRoot() {

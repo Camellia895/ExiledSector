@@ -36,14 +36,16 @@ final class SkillTreeNodeConnectorRenderer {
     private static final float WORMHOLE_OPEN_FADE_SECONDS = 2f;
 
     private final SkillTreePanelStyle style;
+    private final NodeSearch search;
 
     private final List<LineVertex> dullLineVertices = new ArrayList<>();
     private final List<LineVertex> glowLineVertices = new ArrayList<>();
     private final List<LineVertex> glowHaloVertices = new ArrayList<>();
     private final Map<String, FaderUtil> wormholeOpenFaders = new HashMap<>();
 
-    SkillTreeNodeConnectorRenderer(SkillTreePanelStyle style) {
+    SkillTreeNodeConnectorRenderer(SkillTreePanelStyle style, NodeSearch search) {
         this.style = style;
+        this.search = search;
     }
 
     void advance(float amount, ShipSkillData data, String satisfiedRootId) {
@@ -109,13 +111,14 @@ final class SkillTreeNodeConnectorRenderer {
                     isOpenWormhole(other, data, satisfiedRootId),
                     isOpenWormhole(node, data, satisfiedRootId));
 
+            float edgeAlpha = alphaMult * search.connectorAlpha(node, other, data);
             ConnectorCurve curve = SkillTree.getCurve(node.getId(), other.getId());
             if (curve == null) {
-                drawStraightNodeConnectorLine(otherEndpoint, nodeEndpoint, fade, zoom, alphaMult);
+                drawStraightNodeConnectorLine(otherEndpoint, nodeEndpoint, fade, zoom, edgeAlpha);
             } else {
                 float throughX = center.x + curve.getControlOffsetX() * zoom;
                 float throughY = center.y - curve.getControlOffsetY() * zoom;
-                drawCurvedNodeConnectorLine(otherEndpoint, new Vector2f(throughX, throughY), nodeEndpoint, fade, zoom, alphaMult);
+                drawCurvedNodeConnectorLine(otherEndpoint, new Vector2f(throughX, throughY), nodeEndpoint, fade, zoom, edgeAlpha);
             }
         }
     }

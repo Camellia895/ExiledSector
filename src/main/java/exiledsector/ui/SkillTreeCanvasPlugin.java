@@ -14,6 +14,7 @@ import exiledsector.ui.decoration.SkillTreeRingBeltRenderer;
 import exiledsector.ui.decoration.SkillTreeStarRenderer;
 import exiledsector.ui.decoration.SkillTreeStarfieldRenderer;
 import exiledsector.ui.decoration.SkillTreeStaticImageRenderer;
+import exiledsector.ui.node.NodeSearch;
 import exiledsector.ui.node.RootCrestResolver;
 import exiledsector.ui.node.SkillTreeNodeRenderer;
 import exiledsector.ui.util.BorderedPanel;
@@ -41,6 +42,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final SkillTreeOrdnancePointsBar ordnancePointsBar;
     private final SkillTreeLevelBar levelBar;
     private final SkillTreeInfoTooltipRenderer readoutTooltipRenderer;
+    private final NodeSearch search = new NodeSearch();
+    private final SkillTreeSearchBar searchBar;
     private final BorderedPanel shipCardPanel = new BorderedPanel(SkillTreeCanvasPlugin.class);
     private final float shipCardHeight;
 
@@ -64,7 +67,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.staticImageRenderer = new SkillTreeStaticImageRenderer();
         this.ringBeltRenderer = new SkillTreeRingBeltRenderer();
         this.starRenderer = new SkillTreeStarRenderer();
-        this.nodeRenderer = new SkillTreeNodeRenderer(member, variant, style, refitButton);
+        this.nodeRenderer = new SkillTreeNodeRenderer(member, variant, style, refitButton, search);
+        this.searchBar = new SkillTreeSearchBar(search, style);
         this.statPanel = new SkillTreeStatPanel(member, variant);
         this.ordnancePointsBar = new SkillTreeOrdnancePointsBar(member, variant);
         this.levelBar = new SkillTreeLevelBar(member);
@@ -87,6 +91,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     @Override
     public void advance(float amount) {
         advanceCameraPan(amount);
+        searchBar.advance(amount);
         starfieldRenderer.advance(amount);
         staticImageRenderer.advance(amount);
         ringBeltRenderer.advance(amount);
@@ -128,10 +133,16 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             handleMouseMove(event);
         } else if (event.isMouseScrollEvent() && position.containsEvent(event)) {
             handleMouseScroll(event);
+        } else if (event.isKeyboardEvent() && searchBar.handleKey(event)) {
+            event.consume();
         }
     }
 
     private void handleLmbDown(InputEventAPI event) {
+        if (searchBar.handleClick(position, event.getX(), event.getY())) {
+            event.consume();
+            return;
+        }
         if (statPanel.isCollapseButtonHit(position, event.getX(), event.getY())) {
             statPanel.toggleCollapsed();
             event.consume();
@@ -210,17 +221,19 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         float centerX = centerX();
         float centerY = centerY();
 
-        starfieldRenderer.render(position, panX, panY, alphaMult);
-        starRenderer.renderDisc(centerX, centerY, zoom, alphaMult, position);
-        starRenderer.renderAtmosphere(centerX, centerY, zoom, alphaMult, position);
-        starRenderer.renderAurora(centerX, centerY, zoom, alphaMult, position);
-        ringBeltRenderer.render(centerX, centerY, zoom, alphaMult, position);
-        staticImageRenderer.render(centerX, centerY, zoom, alphaMult, position);
+        float backgroundAlpha = alphaMult * search.backgroundAlpha();
+        starfieldRenderer.render(position, panX, panY, backgroundAlpha);
+        starRenderer.renderDisc(centerX, centerY, zoom, backgroundAlpha, position);
+        starRenderer.renderAtmosphere(centerX, centerY, zoom, backgroundAlpha, position);
+        starRenderer.renderAurora(centerX, centerY, zoom, backgroundAlpha, position);
+        ringBeltRenderer.render(centerX, centerY, zoom, backgroundAlpha, position);
+        staticImageRenderer.render(centerX, centerY, zoom, backgroundAlpha, position);
         nodeRenderer.render(centerX, centerY, zoom, alphaMult, mouseX, mouseY, mouseKnown);
-        starRenderer.renderGlow(centerX, centerY, zoom, alphaMult, position);
+        starRenderer.renderGlow(centerX, centerY, zoom, backgroundAlpha, position);
         statPanel.render(position, alphaMult);
         ordnancePointsBar.render(position, alphaMult);
         levelBar.render(position, alphaMult);
+        searchBar.render(position, alphaMult);
         drawShipCardFrame(alphaMult);
 
         if (!dragging && mouseKnown) {
