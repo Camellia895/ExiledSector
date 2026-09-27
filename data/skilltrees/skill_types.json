@@ -937,10 +937,6 @@
 					"magnitude": 25
 				},
 				{
-					"effect": "MISSILE_RANGE_MULT",
-					"magnitude": -20
-				},
-				{
 					"effect": "MISSILE_ACCELERATION_PERCENT",
 					"magnitude": 150
 				},
@@ -967,6 +963,7 @@
 			"exclusiveHullMods": [
 				"eccm"
 			],
+			"description": "Reduces the chance for missiles launched by the ship to be affected by electronic counter-measures and flares by 50%.\nA CPU core adjunct in each missile increases missile top speed by 25% and missile maneuverability by 50%, as well as significantly improving the guidance algorithm.\n\nAlso reduces the weapon range reduction due to enemy ECM by 50%.",
 			"tags": [
 				"missile"
 			]
@@ -1134,6 +1131,10 @@
 				{
 					"effect": "MISSILE_AMMO_PERCENT",
 					"magnitude": 100
+				},
+				{
+					"effect": "MISSILE_WEAPON_FIRE_RATE_PERCENT",
+					"magnitude": -15
 				}
 			],
 			"unlockConditions": [

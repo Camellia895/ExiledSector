@@ -147,7 +147,7 @@ public enum CombatSkillEffect implements SkillEffect {
         @Override
         public String describe(float magnitude) {
             return "While within range of a larger friendly ship, increases maneuverability (acceleration, "
-                    + "deceleration, and turn rate) by up to " + pct(magnitude) + "%, fading out with distance. "
+                    + "deceleration, and turn rate) by up to " + pct(magnitude) + "%, fading with distance. "
                     + "Doubled for a destroyer escorting a capital ship.";
         }
     },
@@ -167,7 +167,7 @@ public enum CombatSkillEffect implements SkillEffect {
         @Override
         public String describe(float magnitude) {
             return "While within range of a larger friendly ship, increases top speed by up to "
-                    + pct(magnitude) + "%, fading out with distance. Doubled for a destroyer escorting a "
+                    + pct(magnitude) + "%, fading with distance. Doubled for a destroyer escorting a "
                     + "capital ship.";
         }
     },
@@ -187,7 +187,7 @@ public enum CombatSkillEffect implements SkillEffect {
         @Override
         public String describe(float magnitude) {
             return "While within range of a larger friendly ship, increases ballistic and energy weapon range "
-                    + "by up to " + pct(magnitude) + "%, fading out with distance. Doubled for a destroyer "
+                    + "by up to " + pct(magnitude) + "%, fading with distance. Doubled for a destroyer "
                     + "escorting a capital ship.";
         }
     },

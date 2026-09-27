@@ -38,6 +38,8 @@ public final class SkillTreePanelStyle {
     private static final float TOOLTIP_TITLE_BODY_GAP = 6f;
     private static final float TOOLTIP_CURSOR_OFFSET = 18f;
     private static final float TOOLTIP_TITLE_BOLD_OFFSET = 1f;
+    private static final float TOOLTIP_TABLE_GAP = 14f;
+    private static final float TOOLTIP_SCREEN_MARGIN = 4f;
 
     private final String accentIconPath;
     private LazyFont tooltipFont;
@@ -71,10 +73,21 @@ public final class SkillTreePanelStyle {
     }
 
     public void drawTitleBodyTooltip(TooltipText title, TooltipText body, float mouseX, float mouseY, float alphaMult) {
-        float boxWidth = Math.max(title.width, body.width) + TOOLTIP_PADDING * 2f + TOOLTIP_WIDTH_SAFETY_MARGIN;
-        float boxHeight = title.height + TOOLTIP_TITLE_BODY_GAP + body.height + TOOLTIP_PADDING * 2f;
+        drawTitleBodyTooltip(title, body, List.of(), mouseX, mouseY, alphaMult);
+    }
+
+    public void drawTitleBodyTooltip(TooltipText title, TooltipText body, List<SkillTreeTooltipTable> tables,
+                                     float mouseX, float mouseY, float alphaMult) {
+        float contentWidth = Math.max(title.width, body.width);
+        float tablesHeight = 0f;
+        for (SkillTreeTooltipTable table : tables) {
+            contentWidth = Math.max(contentWidth, table.width());
+            tablesHeight += TOOLTIP_TABLE_GAP + table.height();
+        }
+        float boxWidth = contentWidth + TOOLTIP_PADDING * 2f + TOOLTIP_WIDTH_SAFETY_MARGIN;
+        float boxHeight = title.height + TOOLTIP_TITLE_BODY_GAP + body.height + tablesHeight + TOOLTIP_PADDING * 2f;
         float boxX = mouseX + TOOLTIP_CURSOR_OFFSET;
-        float boxY = mouseY - boxHeight - TOOLTIP_CURSOR_OFFSET;
+        float boxY = Math.max(TOOLTIP_SCREEN_MARGIN, mouseY - boxHeight - TOOLTIP_CURSOR_OFFSET);
 
         drawTooltipBackground(boxX, boxY, boxWidth, boxHeight, alphaMult, getAccentColor());
 
@@ -84,6 +97,14 @@ public final class SkillTreePanelStyle {
         title.drawable.draw(titleX, titleY);
         title.drawable.draw(titleX + TOOLTIP_TITLE_BOLD_OFFSET, titleY);
         body.drawable.draw(boxX + TOOLTIP_PADDING, bodyY);
+
+        float tableTop = bodyY - body.height;
+        float tableWidth = boxWidth - TOOLTIP_PADDING * 2f;
+        for (SkillTreeTooltipTable table : tables) {
+            tableTop -= TOOLTIP_TABLE_GAP;
+            table.draw(boxX + TOOLTIP_PADDING, tableTop, tableWidth, alphaMult);
+            tableTop -= table.height();
+        }
     }
 
     public Color getAccentColor() {

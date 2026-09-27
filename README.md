@@ -1,8 +1,8 @@
 # Exiled Sector
 
-Ever wish you had _even_ more customization options? Still sane exile?
+Because your Hound deserves a character arc.
 
-Designed to be an overhaul of the simple hullmod system based on the infamous Path of Exile skill tree, ExiledSector is a [Starsector](https://fractalsoftworks.com/) mod that gives every ship in your fleet its own skill tree.
+Designed to be an overhaul of the simple hullmod system based on the infamous Path of Exile skill tree, ExiledSector is a [Starsector](https://fractalsoftworks.com/) mod that gives every ship in your fleet its own skill tree. Still sane exile?
 
 Navigate to the outfit screen and click the skill tree button on any of your ships to explore an entirely new sector:
 
@@ -20,17 +20,19 @@ Navigate to the outfit screen and click the skill tree button on any of your shi
 
 - **Synergistic allocation** 
   - Every allocated node costs OP: 1 for frigates, 2 for destroyers, 3 for cruisers and 4 for capitals (configurable).
-  - Ships also earn XP in combat. Each level turns the ship's most recently OP-bought node into a free one, so veteran ships get their ordnance points back (to be spent on more nodes!).
+  - Ships also earn XP in combat. Each level turns the ship's most recently OP-bought node into a free one, so veteran ships get their ordnance points back. The crew gets nothing, as is tradition.
 - **Hidden, unlockable nodes.**
 
 <img src="\graphics\description\Unidentified_node.png" alt="Hidden Node">
   
 - **Unique passive effects**
+- **Beam splitting** 
+  - Your Tachyon Lance can now disappoint three enemies at once.
+  <img src="\graphics\description\lions_gaze.png" alt="Lion's Gaze">
 
-<img src="\graphics\description\lions_gaze.png" alt="Lion's Gaze">
-
+- **Faction themed**
+  - Your main goal can be to blow up, and act like you don't know nobody
 <img src="\graphics\description\ludds_light.png" alt="Ludd's Light">
-
 <img src="\graphics\description\at_any_cost.png" alt="At Any Cost">
 
 ## Requirements
@@ -39,6 +41,7 @@ Navigate to the outfit screen and click the skill tree button on any of your shi
 - LazyLib
 - MagicLib
 - LunaLib
+- Optional: a healthy disregard for vanilla balance.
 
 Optional:
 

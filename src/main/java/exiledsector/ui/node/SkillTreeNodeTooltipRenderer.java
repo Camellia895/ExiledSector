@@ -7,10 +7,16 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeUnlockStatus;
 import exiledsector.ui.SkillTreePanelStyle;
+import exiledsector.ui.SkillTreeTooltipTable;
+import exiledsector.ui.TooltipTable;
 import exiledsector.ui.util.CachedText;
 import org.lazywizard.lazylib.ui.LazyFont;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_BODY_COLOR;
 import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE;
@@ -33,6 +39,7 @@ final class SkillTreeNodeTooltipRenderer {
     private final CachedText<String, SkillTreePanelStyle.TooltipText> tooltipBodies = new CachedText<>();
     private final CachedText<String, SkillTreePanelStyle.TooltipText> typeTooltipTitles = new CachedText<>();
     private final CachedText<String, SkillTreePanelStyle.TooltipText> typeTooltipBodies = new CachedText<>();
+    private final Map<String, List<SkillTreeTooltipTable>> tablesByType = new HashMap<>();
 
     SkillTreeNodeTooltipRenderer(FleetMemberAPI member, SkillTreePanelStyle style) {
         this.member = member;
@@ -56,7 +63,9 @@ final class SkillTreeNodeTooltipRenderer {
         SkillTreePanelStyle.TooltipText body = tooltipBodies.get(node.getId(), bodyText,
                 id -> buildTooltipText(font, bodyText, TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR));
 
-        style.drawTitleBodyTooltip(title, body, mouseX, mouseY, alphaMult);
+        boolean showTables = !showOptionalHint && !SkillTypeUnlockStatus.isHidden(node.getType(), data);
+        List<SkillTreeTooltipTable> tables = showTables ? tablesFor(font, effectiveType) : List.of();
+        style.drawTitleBodyTooltip(title, body, tables, mouseX, mouseY, alphaMult);
     }
 
     void renderTooltipForType(SkillType type, float mouseX, float mouseY, float alphaMult) {
@@ -71,7 +80,17 @@ final class SkillTreeNodeTooltipRenderer {
         SkillTreePanelStyle.TooltipText body = typeTooltipBodies.get(type.getId(), bodyText,
                 id -> buildTooltipText(font, bodyText, TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR));
 
-        style.drawTitleBodyTooltip(title, body, mouseX, mouseY, alphaMult);
+        style.drawTitleBodyTooltip(title, body, tablesFor(font, type), mouseX, mouseY, alphaMult);
+    }
+
+    private List<SkillTreeTooltipTable> tablesFor(LazyFont font, SkillType type) {
+        return tablesByType.computeIfAbsent(type.getId(), id -> {
+            List<SkillTreeTooltipTable> measured = new ArrayList<>();
+            for (TooltipTable table : HullModTooltipTables.forType(type, member.getHullSpec())) {
+                measured.add(SkillTreeTooltipTable.measure(font, table, style.getAccentColor()));
+            }
+            return measured;
+        });
     }
 
     private String titleText(SkillNode node, SkillType effectiveType, ShipSkillData data) {
