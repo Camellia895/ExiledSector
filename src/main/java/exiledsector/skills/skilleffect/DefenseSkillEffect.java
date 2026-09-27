@@ -96,8 +96,18 @@ public enum DefenseSkillEffect implements SkillEffect {
         @Override
         public String describe(float magnitude) {
             String verb = magnitude >= 0 ? "more" : "less";
-            return pct(Math.abs(magnitude)) + "% " + verb + " armor damage taken per D-mod this ship has, "
-                    + "compounding multiplicatively.";
+            return pct(Math.abs(magnitude)) + "% " + verb + " armor damage taken per D-mod ";
+        }
+    },
+    DMOD_EFFECT_MULT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            SkillEffectSupport.applyDModEffectMult(stats, modId, magnitude);
+        }
+
+        @Override
+        public String describe(float magnitude) {
+            return pctMore(magnitude, "negative effects from D-mods");
         }
     },
     SHIELD_ABSORPTION_PERCENT {

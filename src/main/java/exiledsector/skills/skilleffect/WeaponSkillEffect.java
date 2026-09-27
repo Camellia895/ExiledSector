@@ -102,8 +102,7 @@ public enum WeaponSkillEffect implements SkillEffect {
         @Override
         public String describe(float magnitude) {
             String verb = magnitude >= 0 ? "more" : "less";
-            return pct(Math.abs(magnitude)) + "% " + verb + " damage of all weapon types per D-mod this ship "
-                    + "has, compounding multiplicatively.";
+            return pct(Math.abs(magnitude)) + "% " + verb + " damage of all weapon types per D-mod";
         }
     },
     BALLISTIC_WEAPON_RANGE_PERCENT {

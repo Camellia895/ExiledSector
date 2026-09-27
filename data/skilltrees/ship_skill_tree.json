@@ -3025,7 +3025,7 @@
 				"small_flux_optional_55"
 			],
 			"x": 3700,
-			"y": 8977
+			"y": 7800
 		},
 		{
 			"id": "small_flux_optional_56",
@@ -3043,10 +3043,24 @@
 			"id": "perseverence_through_faith_1",
 			"type": "perseverence_through_faith",
 			"connectedTo": [
-				"small_flux_optional_56"
+				"reduced_D_mod_effect_2"
 			],
-			"x": 5810,
-			"y": 6867
+			"x": 4387,
+			"y": 6874,
+			"orbitAnchorId": "anchor_40",
+			"orbitAngle": 180
+		},
+		{
+			"id": "reduced_D_mod_effect_1",
+			"type": "reduced_D_mod_effect",
+			"connectedTo": [
+				"small_flux_optional_56",
+				"reduced_D_mod_effect_2"
+			],
+			"x": 4731,
+			"y": 6874,
+			"orbitAnchorId": "anchor_40",
+			"orbitAngle": 0
 		},
 		{
 			"id": "fuel_core_overload_1",
@@ -3279,7 +3293,8 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_61",
-				"pirate_wormhole_2"
+				"pirate_wormhole_2",
+				"reduced_D_mod_effect_3"
 			],
 			"x": 7697,
 			"y": 1242,
@@ -3290,10 +3305,12 @@
 			"id": "restriction_breeds_creativity_1",
 			"type": "restriction_breeds_creativity",
 			"connectedTo": [
-				"small_flux_optional_62"
+				"reduced_D_mod_effect_4"
 			],
-			"x": 7697,
-			"y": 2042
+			"x": 7700,
+			"y": 698,
+			"orbitAnchorId": "anchor_41",
+			"orbitAngle": 270
 		},
 		{
 			"id": "pirate_wormhole_1",
@@ -3346,7 +3363,8 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"league_wormhole_2",
-				"small_flux_optional_64"
+				"small_flux_optional_64",
+				"increased_sensor_strength_4"
 			],
 			"x": -7564,
 			"y": 381,
@@ -3359,7 +3377,7 @@
 			"connectedTo": [
 				"small_flux_optional_63",
 				"small_flux_optional_65",
-				"increased_sensor_strength_4"
+				"shared_damage_taken_1"
 			],
 			"x": -8768,
 			"y": 1585,
@@ -3372,19 +3390,17 @@
 			"connectedTo": [
 				"increased_sensor_strength_3"
 			],
-			"x": -8397,
-			"y": 1434,
+			"x": -7558,
+			"y": 868,
 			"orbitAnchorId": "anchor_34",
-			"orbitAngle": 270
+			"orbitAngle": 90
 		},
 		{
 			"id": "small_flux_optional_65",
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_64",
-				"league_wormhole_2",
-				"shared_fate",
-				"shared_damage_taken"
+				"league_wormhole_2"
 			],
 			"x": -7564,
 			"y": 2789,
@@ -3395,19 +3411,25 @@
 			"id": "shared_fate",
 			"type": "shared_fate",
 			"connectedTo": [
-				"small_flux_optional_65"
+				"shared_damage_taken_2",
+				"shared_damage_taken"
 			],
-			"x": -6360,
-			"y": 2789
+			"x": -8187,
+			"y": 1581,
+			"orbitAnchorId": "anchor_39",
+			"orbitAngle": 0
 		},
 		{
 			"id": "shared_damage_taken",
 			"type": "shared_damage_taken",
 			"connectedTo": [
-				"small_flux_optional_65"
+				"shared_damage_taken_1",
+				"shared_fate"
 			],
-			"x": -7564,
-			"y": 3993
+			"x": -8366,
+			"y": 1760,
+			"orbitAnchorId": "anchor_39",
+			"orbitAngle": 90
 		},
 		{
 			"id": "small_flux_optional_66",
@@ -3636,24 +3658,24 @@
 			"type": "increased_sensor_strength",
 			"connectedTo": [
 				"increased_sensor_strength_3",
-				"small_flux_optional_64"
+				"small_flux_optional_63"
 			],
-			"x": -8547,
-			"y": 1584,
+			"x": -7558,
+			"y": 568,
 			"orbitAnchorId": "anchor_34",
-			"orbitAngle": 180
+			"orbitAngle": 270
 		},
 		{
 			"id": "increased_sensor_strength_3",
 			"type": "increased_sensor_strength",
 			"connectedTo": [
-				"increased_sensor_strength_4",
-				"attuned_sensors_1"
+				"attuned_sensors_1",
+				"increased_sensor_strength_4"
 			],
-			"x": -8293,
-			"y": 1692,
+			"x": -7408,
+			"y": 718,
 			"orbitAnchorId": "anchor_34",
-			"orbitAngle": 45.855500883956424
+			"orbitAngle": 0
 		},
 		{
 			"id": "beam_damage_4",
@@ -3749,6 +3771,67 @@
 			"y": 1775,
 			"orbitAnchorId": "anchor_4",
 			"orbitAngle": 177.29999999999995
+		},
+		{
+			"id": "shared_damage_taken_1",
+			"type": "shared_damage_taken",
+			"connectedTo": [
+				"shared_damage_taken",
+				"shared_damage_taken_2",
+				"small_flux_optional_64"
+			],
+			"x": -8545,
+			"y": 1581,
+			"orbitAnchorId": "anchor_39",
+			"orbitAngle": 180
+		},
+		{
+			"id": "shared_damage_taken_2",
+			"type": "shared_damage_taken",
+			"connectedTo": [
+				"shared_fate",
+				"shared_damage_taken_1"
+			],
+			"x": -8366,
+			"y": 1402,
+			"orbitAnchorId": "anchor_39",
+			"orbitAngle": 270
+		},
+		{
+			"id": "reduced_D_mod_effect_2",
+			"type": "reduced_D_mod_effect",
+			"connectedTo": [
+				"reduced_D_mod_effect_1",
+				"perseverence_through_faith_1"
+			],
+			"x": 4559,
+			"y": 7046,
+			"orbitAnchorId": "anchor_40",
+			"orbitAngle": 90
+		},
+		{
+			"id": "reduced_D_mod_effect_3",
+			"type": "reduced_D_mod_effect",
+			"connectedTo": [
+				"reduced_D_mod_effect_4",
+				"small_flux_optional_62"
+			],
+			"x": 7700,
+			"y": 1042,
+			"orbitAnchorId": "anchor_41",
+			"orbitAngle": 90
+		},
+		{
+			"id": "reduced_D_mod_effect_4",
+			"type": "reduced_D_mod_effect",
+			"connectedTo": [
+				"reduced_D_mod_effect_3",
+				"restriction_breeds_creativity_1"
+			],
+			"x": 7528,
+			"y": 870,
+			"orbitAnchorId": "anchor_41",
+			"orbitAngle": 180
 		}
 	],
 	"connectorCurves": [
@@ -4769,8 +4852,8 @@
 		{
 			"a": "luddic_2",
 			"b": "small_flux_optional_56",
-			"controlX": 4633,
-			"controlY": 5934
+			"controlX": 4626,
+			"controlY": 5944
 		},
 		{
 			"a": "small_flux_optional_54",
@@ -4781,20 +4864,14 @@
 		{
 			"a": "small_flux_optional_55",
 			"b": "violence_of_action_1",
-			"controlX": 3700,
-			"controlY": 8577
+			"controlX": 3704,
+			"controlY": 7400
 		},
 		{
 			"a": "small_flux_optional_55",
 			"b": "small_flux_optional_56",
-			"controlX": 4633,
-			"controlY": 7786
-		},
-		{
-			"a": "small_flux_optional_56",
-			"b": "perseverence_through_faith_1",
-			"controlX": 5410,
-			"controlY": 6867
+			"controlX": 4626,
+			"controlY": 7796
 		},
 		{
 			"a": "pirate_wormhole_2",
@@ -4806,7 +4883,7 @@
 			"a": "pirate_wormhole_2",
 			"b": "small_flux_optional_62",
 			"controlX": 6836,
-			"controlY": 885
+			"controlY": 887
 		},
 		{
 			"a": "small_flux_optional_60",
@@ -4830,13 +4907,7 @@
 			"a": "small_flux_optional_61",
 			"b": "small_flux_optional_62",
 			"controlX": 8558,
-			"controlY": 885
-		},
-		{
-			"a": "small_flux_optional_62",
-			"b": "restriction_breeds_creativity_1",
-			"controlX": 7697,
-			"controlY": 1642
+			"controlY": 887
 		},
 		{
 			"a": "league_wormhole_2",
@@ -4983,16 +5054,10 @@
 			"controlY": -755
 		},
 		{
-			"a": "increased_sensor_strength_3",
-			"b": "increased_sensor_strength_4",
-			"controlX": -8455,
-			"controlY": 1720
-		},
-		{
 			"a": "attuned_sensors_1",
 			"b": "increased_sensor_strength_3",
-			"controlX": -8260,
-			"controlY": 1520
+			"controlX": -7452,
+			"controlY": 825
 		},
 		{
 			"a": "small_logistics_optional_4",
@@ -5089,6 +5154,60 @@
 			"b": "ballistic_rangefinder_1",
 			"controlX": 1704,
 			"controlY": 1846
+		},
+		{
+			"a": "shared_damage_taken",
+			"b": "shared_damage_taken_1",
+			"controlX": -8493,
+			"controlY": 1708
+		},
+		{
+			"a": "shared_damage_taken_2",
+			"b": "shared_fate",
+			"controlX": -8239,
+			"controlY": 1454
+		},
+		{
+			"a": "increased_sensor_strength_3",
+			"b": "increased_sensor_strength_4",
+			"controlX": -7452,
+			"controlY": 612
+		},
+		{
+			"a": "shared_damage_taken_1",
+			"b": "shared_damage_taken_2",
+			"controlX": -8493,
+			"controlY": 1454
+		},
+		{
+			"a": "shared_damage_taken",
+			"b": "shared_fate",
+			"controlX": -8239,
+			"controlY": 1708
+		},
+		{
+			"a": "reduced_D_mod_effect_1",
+			"b": "reduced_D_mod_effect_2",
+			"controlX": 4681,
+			"controlY": 6996
+		},
+		{
+			"a": "perseverence_through_faith_1",
+			"b": "reduced_D_mod_effect_2",
+			"controlX": 4437,
+			"controlY": 6996
+		},
+		{
+			"a": "reduced_D_mod_effect_3",
+			"b": "reduced_D_mod_effect_4",
+			"controlX": 7578,
+			"controlY": 992
+		},
+		{
+			"a": "reduced_D_mod_effect_4",
+			"b": "restriction_breeds_creativity_1",
+			"controlX": 7578,
+			"controlY": 748
 		}
 	],
 	"hiddenConnectors": [
@@ -5540,8 +5659,8 @@
 		},
 		{
 			"id": "anchor_34",
-			"x": -8397,
-			"y": 1584,
+			"x": -7558,
+			"y": 718,
 			"radius": 150
 		},
 		{
@@ -5567,6 +5686,24 @@
 			"x": -6817,
 			"y": -4256,
 			"radius": 180
+		},
+		{
+			"id": "anchor_39",
+			"x": -8366,
+			"y": 1581,
+			"radius": 179
+		},
+		{
+			"id": "anchor_40",
+			"x": 4559,
+			"y": 6874,
+			"radius": 172
+		},
+		{
+			"id": "anchor_41",
+			"x": 7700,
+			"y": 870,
+			"radius": 172
 		}
 	],
 	"ringBelts": [

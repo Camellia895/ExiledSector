@@ -110,6 +110,20 @@
 			]
 		},
 		{
+			"id": "reduced_D_mod_effect",
+			"name": "Reduced D-Mod Effect",
+			"icon": "graphics/icons/rugged_construction_shifted.png",
+			"effects": [
+				{
+					"effect": "DMOD_EFFECT_MULT",
+					"magnitude": -5
+				}
+			],
+			"tags": [
+				"hull"
+			]
+		},
+		{
 			"id": "heavy_ballistics_integration",
 			"name": "Heavy Ballistics Integration",
 			"icon": "graphics/icons/ballistics_integration_circular.png",
@@ -2052,12 +2066,16 @@
 		{
 			"id": "shared_fate",
 			"name": "Shared Fate",
-			"icon": "graphics/icons/shield_damage_taken_multi.png",
+			"icon": "graphics/icons/colony_management_circular.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
 					"effect": "SHIELD_DAMAGE_SHARED_PERCENT",
 					"magnitude": 20
+				},
+				{
+					"effect": "ALL_WEAPON_DAMAGE_PERCENT",
+					"magnitude": -10
 				}
 			],
 			"tags": [
@@ -2068,7 +2086,7 @@
 		{
 			"id": "shared_damage_taken",
 			"name": "Shared Damage Taken",
-			"icon": "graphics/icons/shield_damage_taken_multi.png",
+			"icon": "graphics/icons/colony_management_circular_shifted2.png",
 			"effects": [
 				{
 					"effect": "SHIELD_DAMAGE_SHARED_PERCENT",
@@ -2140,7 +2158,7 @@
 		},
 		{
 			"id": "increased_sensor_strength",
-			"name": "Increased Sensor Strength",
+			"name": "Sensor Strength",
 			"icon": "graphics/icons/increased_sensor_range.png",
 			"hullSizeEffects": [
 				{
@@ -2158,7 +2176,7 @@
 		{
 			"id": "violence_of_action",
 			"name": "Violence of Action",
-			"icon": "",
+			"icon": "graphics/icons/engine4_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2193,7 +2211,7 @@
 		{
 			"id": "perseverence_through_faith",
 			"name": "Perseverence Through Faith",
-			"icon": "",
+			"icon": "graphics/icons/engine_gun_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{

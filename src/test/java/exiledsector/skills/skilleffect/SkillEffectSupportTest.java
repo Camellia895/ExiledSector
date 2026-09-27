@@ -1,13 +1,27 @@
 package exiledsector.skills.skilleffect;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.SettingsAPI;
+import com.fs.starfarer.api.combat.HullModEffect;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
+import com.fs.starfarer.api.impl.campaign.ids.Stats;
+import com.fs.starfarer.api.impl.campaign.ids.Tags;
+import com.fs.starfarer.api.loading.HullModSpecAPI;
+import com.fs.starfarer.api.util.DynamicStatsAPI;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 class SkillEffectSupportTest {
@@ -55,6 +69,40 @@ class SkillEffectSupportTest {
         verify(missile).modifyPercent("mod_id", 15f);
         verify(energy).modifyPercent("mod_id", 15f);
         verify(beam).modifyPercent("mod_id", 15f);
+    }
+
+    @Test
+    void applyDModEffectMultSetsTheVanillaStatAndReappliesOnlyDMods() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
+        MutableStat dmodEffectMult = mock(MutableStat.class);
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        SettingsAPI settings = mock(SettingsAPI.class);
+        HullModSpecAPI dmodSpec = mock(HullModSpecAPI.class);
+        HullModSpecAPI otherSpec = mock(HullModSpecAPI.class);
+        HullModEffect dmodEffect = mock(HullModEffect.class);
+        HullModEffect otherEffect = mock(HullModEffect.class);
+        when(stats.getDynamic()).thenReturn(dynamic);
+        when(dynamic.getStat(Stats.DMOD_EFFECT_MULT)).thenReturn(dmodEffectMult);
+        when(stats.getVariant()).thenReturn(variant);
+        when(variant.getHullMods()).thenReturn(List.of("degraded_engines", "heavyarmor"));
+        when(variant.getHullSize()).thenReturn(HullSize.CRUISER);
+        when(settings.getHullModSpec("degraded_engines")).thenReturn(dmodSpec);
+        when(settings.getHullModSpec("heavyarmor")).thenReturn(otherSpec);
+        when(dmodSpec.hasTag(Tags.HULLMOD_DMOD)).thenReturn(true);
+        when(dmodSpec.getEffect()).thenReturn(dmodEffect);
+        when(dmodSpec.getId()).thenReturn("degraded_engines");
+        when(otherSpec.getEffect()).thenReturn(otherEffect);
+
+        try (MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
+            global.when(Global::getSettings).thenReturn(settings);
+
+            SkillEffectSupport.applyDModEffectMult(stats, "mod_id", -5f);
+        }
+
+        verify(dmodEffectMult).modifyMult("mod_id", 0.95f);
+        verify(dmodEffect).applyEffectsBeforeShipCreation(HullSize.CRUISER, stats, "degraded_engines");
+        verifyNoInteractions(otherEffect);
     }
 
     @Test

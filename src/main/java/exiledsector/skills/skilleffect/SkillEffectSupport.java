@@ -5,8 +5,12 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
+import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
+
+import java.util.ArrayList;
+import java.util.List;
 
 final class SkillEffectSupport {
 
@@ -32,18 +36,31 @@ final class SkillEffectSupport {
     }
 
     private static int countDMods(MutableShipStatsAPI stats) {
+        return dModSpecs(stats.getVariant()).size();
+    }
+
+    static void applyDModEffectMult(MutableShipStatsAPI stats, String modId, float magnitude) {
+        applyMult(stats.getDynamic().getStat(Stats.DMOD_EFFECT_MULT), modId, magnitude);
         ShipVariantAPI variant = stats.getVariant();
-        if (variant == null) {
-            return 0;
+        for (HullModSpecAPI spec : dModSpecs(variant)) {
+            if (spec.getEffect() != null) {
+                spec.getEffect().applyEffectsBeforeShipCreation(variant.getHullSize(), stats, spec.getId());
+            }
         }
-        int count = 0;
+    }
+
+    private static List<HullModSpecAPI> dModSpecs(ShipVariantAPI variant) {
+        List<HullModSpecAPI> specs = new ArrayList<>();
+        if (variant == null) {
+            return specs;
+        }
         for (String hullModId : variant.getHullMods()) {
             HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
             if (spec != null && spec.hasTag(Tags.HULLMOD_DMOD)) {
-                count++;
+                specs.add(spec);
             }
         }
-        return count;
+        return specs;
     }
 
     static void applyAllWeaponDamagePercent(MutableShipStatsAPI stats, String modId, float magnitude) {
