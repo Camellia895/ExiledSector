@@ -2,9 +2,7 @@ package exiledsector.skills.progression;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
-import lunalib.lunaSettings.LunaSettings;
-
-import static exiledsector.ExiledSectorModPlugin.MOD_ID;
+import exiledsector.ModSettings;
 
 public final class SkillNodeOpCost {
 
@@ -36,7 +34,6 @@ public final class SkillNodeOpCost {
     }
 
     private static int settingOrDefault(String fieldId, int defaultValue) {
-        Integer value = LunaSettings.getInt(MOD_ID, fieldId);
-        return value != null ? value : defaultValue;
+        return ModSettings.intOr(fieldId, defaultValue);
     }
 }

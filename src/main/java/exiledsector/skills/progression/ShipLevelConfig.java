@@ -1,8 +1,6 @@
 package exiledsector.skills.progression;
 
-import lunalib.lunaSettings.LunaSettings;
-
-import static exiledsector.ExiledSectorModPlugin.MOD_ID;
+import exiledsector.ModSettings;
 
 public final class ShipLevelConfig {
 
@@ -26,37 +24,30 @@ public final class ShipLevelConfig {
     }
 
     public static int maxLevel() {
-        Integer value = LunaSettings.getInt(MOD_ID, MAX_LEVEL_FIELD_ID);
-        return value != null ? value : DEFAULT_MAX_LEVEL;
+        return ModSettings.intOr(MAX_LEVEL_FIELD_ID, DEFAULT_MAX_LEVEL);
     }
 
     public static float xpBase() {
-        Integer value = LunaSettings.getInt(MOD_ID, XP_BASE_FIELD_ID);
-        return value != null ? value : DEFAULT_XP_BASE;
+        return ModSettings.intOr(XP_BASE_FIELD_ID, DEFAULT_XP_BASE);
     }
 
     public static float xpGrowth() {
-        Float value = LunaSettings.getFloat(MOD_ID, XP_GROWTH_FIELD_ID);
-        return value != null ? value : DEFAULT_XP_GROWTH;
+        return ModSettings.floatOr(XP_GROWTH_FIELD_ID, DEFAULT_XP_GROWTH);
     }
 
     public static int xpGrowthCutoffLevel() {
-        Integer value = LunaSettings.getInt(MOD_ID, XP_GROWTH_CUTOFF_LEVEL_FIELD_ID);
-        return value != null ? value : DEFAULT_XP_GROWTH_CUTOFF_LEVEL;
+        return ModSettings.intOr(XP_GROWTH_CUTOFF_LEVEL_FIELD_ID, DEFAULT_XP_GROWTH_CUTOFF_LEVEL);
     }
 
     public static float xpPerDeploymentPoint() {
-        Float value = LunaSettings.getFloat(MOD_ID, XP_PER_DEPLOYMENT_POINT_FIELD_ID);
-        return value != null ? value : DEFAULT_XP_PER_DEPLOYMENT_POINT;
+        return ModSettings.floatOr(XP_PER_DEPLOYMENT_POINT_FIELD_ID, DEFAULT_XP_PER_DEPLOYMENT_POINT);
     }
 
     public static float xpLossMultiplier() {
-        Float value = LunaSettings.getFloat(MOD_ID, XP_LOSS_MULTIPLIER_FIELD_ID);
-        return value != null ? value : DEFAULT_XP_LOSS_MULTIPLIER;
+        return ModSettings.floatOr(XP_LOSS_MULTIPLIER_FIELD_ID, DEFAULT_XP_LOSS_MULTIPLIER);
     }
 
     public static int maxAllocatedNodes() {
-        Integer value = LunaSettings.getInt(MOD_ID, MAX_ALLOCATED_NODES_FIELD_ID);
-        return value != null ? value : DEFAULT_MAX_ALLOCATED_NODES;
+        return ModSettings.intOr(MAX_ALLOCATED_NODES_FIELD_ID, DEFAULT_MAX_ALLOCATED_NODES);
     }
 }

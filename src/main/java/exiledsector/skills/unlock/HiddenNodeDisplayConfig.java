@@ -1,8 +1,6 @@
 package exiledsector.skills.unlock;
 
-import lunalib.lunaSettings.LunaSettings;
-
-import static exiledsector.ExiledSectorModPlugin.MOD_ID;
+import exiledsector.ModSettings;
 
 public final class HiddenNodeDisplayConfig {
 
@@ -14,7 +12,6 @@ public final class HiddenNodeDisplayConfig {
     }
 
     public static boolean showHiddenNodesByDefault() {
-        Boolean value = LunaSettings.getBoolean(MOD_ID, SHOW_HIDDEN_NODES_FIELD_ID);
-        return value != null ? value : DEFAULT_SHOW_HIDDEN_NODES;
+        return ModSettings.booleanOr(SHOW_HIDDEN_NODES_FIELD_ID, DEFAULT_SHOW_HIDDEN_NODES);
     }
 }

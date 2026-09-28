@@ -1,10 +1,8 @@
 package exiledsector.skills.npc;
 
-import lunalib.lunaSettings.LunaSettings;
+import exiledsector.ModSettings;
 
 import java.util.Random;
-
-import static exiledsector.ExiledSectorModPlugin.MOD_ID;
 
 public final class NpcLevelTable {
 
@@ -55,8 +53,7 @@ public final class NpcLevelTable {
     }
 
     private static int setting(String fieldId, int defaultValue) {
-        Integer value = LunaSettings.getInt(MOD_ID, fieldId);
-        int nodes = value != null ? value : defaultValue;
+        int nodes = ModSettings.intOr(fieldId, defaultValue);
         return Math.max(MIN_NODES, Math.min(MAX_NODES, nodes));
     }
 }

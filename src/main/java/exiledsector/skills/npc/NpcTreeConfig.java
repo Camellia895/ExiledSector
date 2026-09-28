@@ -1,8 +1,6 @@
 package exiledsector.skills.npc;
 
-import lunalib.lunaSettings.LunaSettings;
-
-import static exiledsector.ExiledSectorModPlugin.MOD_ID;
+import exiledsector.ModSettings;
 
 public final class NpcTreeConfig {
 
@@ -32,13 +30,11 @@ public final class NpcTreeConfig {
     }
 
     public static float otherShipChance() {
-        Integer value = LunaSettings.getInt(MOD_ID, OTHER_SHIP_CHANCE_FIELD_ID);
-        int percent = value != null ? value : DEFAULT_OTHER_SHIP_CHANCE_PERCENT;
+        int percent = ModSettings.intOr(OTHER_SHIP_CHANCE_FIELD_ID, DEFAULT_OTHER_SHIP_CHANCE_PERCENT);
         return Math.max(0, Math.min(100, percent)) / 100f;
     }
 
     private static boolean bool(String fieldId, boolean defaultValue) {
-        Boolean value = LunaSettings.getBoolean(MOD_ID, fieldId);
-        return value != null ? value : defaultValue;
+        return ModSettings.booleanOr(fieldId, defaultValue);
     }
 }

@@ -1,8 +1,6 @@
 package exiledsector.skills.skilleffect;
 
-import lunalib.lunaSettings.LunaSettings;
-
-import static exiledsector.ExiledSectorModPlugin.MOD_ID;
+import exiledsector.ModSettings;
 
 public final class MaxChainCountConfig {
 
@@ -14,7 +12,6 @@ public final class MaxChainCountConfig {
     }
 
     public static int get() {
-        Integer value = LunaSettings.getInt(MOD_ID, FIELD_ID);
-        return value != null ? value : DEFAULT;
+        return ModSettings.intOr(FIELD_ID, DEFAULT);
     }
 }

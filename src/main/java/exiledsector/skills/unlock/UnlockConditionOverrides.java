@@ -1,8 +1,6 @@
 package exiledsector.skills.unlock;
 
-import lunalib.lunaSettings.LunaSettings;
-
-import static exiledsector.ExiledSectorModPlugin.MOD_ID;
+import exiledsector.ModSettings;
 
 public final class UnlockConditionOverrides {
 
@@ -20,8 +18,7 @@ public final class UnlockConditionOverrides {
         String fieldId = fieldIdFor(type);
         if (fieldId == null) return false;
 
-        Boolean value = LunaSettings.getBoolean(MOD_ID, fieldId);
-        return value != null ? value : DEFAULT_DISABLED;
+        return ModSettings.booleanOr(fieldId, DEFAULT_DISABLED);
     }
 
     private static String fieldIdFor(UnlockConditionType type) {
