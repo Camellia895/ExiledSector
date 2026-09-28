@@ -5,11 +5,15 @@ import exiledsector.skills.MaxChainCountConfig;
 import exiledsector.skills.ShipLevelConfig;
 import exiledsector.skills.SkillNodeOpCost;
 import exiledsector.skills.UnlockConditionOverrides;
+import exiledsector.skills.enemy.EnemyLevelTable;
+import exiledsector.skills.enemy.EnemyTreeConfig;
 import lunalib.lunaSettings.LunaSettings;
 
 import static exiledsector.ExiledSectorModPlugin.MOD_ID;
 
 public final class ExiledSectorSettings {
+
+    static final String ENEMY_SCALING_TAB = "Enemy Scaling";
 
     private ExiledSectorSettings() {
     }
@@ -90,6 +94,47 @@ public final class ExiledSectorSettings {
                         + "independent of chance rolls succeeding. Not intended as a balance knob.",
                 MaxChainCountConfig.DEFAULT, 1, 20, "");
 
+        registerEnemyScaling();
+
         LunaSettings.SettingsCreator.refresh(MOD_ID);
+    }
+
+    private static void registerEnemyScaling() {
+        LunaSettings.SettingsCreator.addHeader(MOD_ID, "exiledSector_enemyTreesHeader", "Enemy Skill Trees", ENEMY_SCALING_TAB);
+        LunaSettings.SettingsCreator.addText(MOD_ID, "exiledSector_enemyTreesAbout",
+                "Some enemy ships get their own skill tree so NPC fleets keep up with your fleet. A chosen ship "
+                        + "follows one of the enemy build layouts and gets the free root node plus a number of "
+                        + "nodes rolled from the table below for your character level.", ENEMY_SCALING_TAB);
+        LunaSettings.SettingsCreator.addBoolean(MOD_ID, EnemyTreeConfig.ENABLED_FIELD_ID,
+                "Enable Enemy Skill Trees", "When off, no enemy ship gets a skill tree.",
+                EnemyTreeConfig.DEFAULT_ENABLED, ENEMY_SCALING_TAB);
+        LunaSettings.SettingsCreator.addBoolean(MOD_ID, EnemyTreeConfig.OFFICERED_SHIPS_FIELD_ID,
+                "Always Level Officered Ships", "Every enemy ship captained by an officer gets a skill tree.",
+                EnemyTreeConfig.DEFAULT_OFFICERED_SHIPS, ENEMY_SCALING_TAB);
+        LunaSettings.SettingsCreator.addBoolean(MOD_ID, EnemyTreeConfig.FLAGSHIP_FIELD_ID,
+                "Always Level the Flagship", "Every enemy fleet's flagship gets a skill tree.",
+                EnemyTreeConfig.DEFAULT_FLAGSHIP, ENEMY_SCALING_TAB);
+        LunaSettings.SettingsCreator.addInt(MOD_ID, EnemyTreeConfig.OTHER_SHIP_CHANCE_FIELD_ID,
+                "Chance for Other Ships (%)", "Chance that each remaining combat ship in an enemy fleet gets a skill tree.",
+                EnemyTreeConfig.DEFAULT_OTHER_SHIP_CHANCE_PERCENT, 0, 100, ENEMY_SCALING_TAB);
+
+        LunaSettings.SettingsCreator.addHeader(MOD_ID, "exiledSector_enemyNodesHeader", "Nodes per Player Level", ENEMY_SCALING_TAB);
+        LunaSettings.SettingsCreator.addText(MOD_ID, "exiledSector_enemyNodesAbout",
+                "Each levelled enemy ship rolls its node count between the minimum and maximum for your current "
+                        + "character level, on top of its free root node. Levels above "
+                        + EnemyLevelTable.MAX_PLAYER_LEVEL + " use the level " + EnemyLevelTable.MAX_PLAYER_LEVEL
+                        + " row. If a minimum is set above its maximum, the two are swapped.", ENEMY_SCALING_TAB);
+        for (int level = EnemyLevelTable.MIN_PLAYER_LEVEL; level <= EnemyLevelTable.MAX_PLAYER_LEVEL; level++) {
+            LunaSettings.SettingsCreator.addHeader(MOD_ID, "exiledSector_enemyLevel" + level + "Header",
+                    "Player Level " + level, ENEMY_SCALING_TAB);
+            LunaSettings.SettingsCreator.addInt(MOD_ID, EnemyLevelTable.minNodesFieldId(level),
+                    "Minimum Nodes", "Fewest nodes a levelled enemy ship gets at player level " + level + ".",
+                    EnemyLevelTable.defaultMinNodes(level), EnemyLevelTable.MIN_NODES, EnemyLevelTable.MAX_NODES,
+                    ENEMY_SCALING_TAB);
+            LunaSettings.SettingsCreator.addInt(MOD_ID, EnemyLevelTable.maxNodesFieldId(level),
+                    "Maximum Nodes", "Most nodes a levelled enemy ship gets at player level " + level + ".",
+                    EnemyLevelTable.defaultMaxNodes(level), EnemyLevelTable.MIN_NODES, EnemyLevelTable.MAX_NODES,
+                    ENEMY_SCALING_TAB);
+        }
     }
 }
