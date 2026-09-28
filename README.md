@@ -35,7 +35,7 @@ Navigate to the outfit screen and click the skill tree button on any of your shi
 - **Faction themed**
   - Your ship's main goal can be to blow up, and act like you don't know nobody
 
-<img src="\graphics\description\ludds_light.png" alt="Ludd's Light">
+<img src="\graphics\description\ludds_light.png" alt="Ludds Light">
 <img src="\graphics\description\at_any_cost.png" alt="At Any Cost">
 
 ## Requirements
