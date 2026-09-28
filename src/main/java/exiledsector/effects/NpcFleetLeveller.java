@@ -4,11 +4,10 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.ShipLevelConfig;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
-import exiledsector.skills.SkillNode;
-import exiledsector.skills.SkillTree;
 import exiledsector.skills.npc.NpcHullMods;
 import exiledsector.skills.npc.NpcLayout;
 import exiledsector.skills.npc.NpcLayouts;
@@ -89,12 +88,8 @@ public final class NpcFleetLeveller {
 
     private static void stripConflictingHullMods(ShipVariantAPI variant, ShipSkillData data) {
         Set<String> removable = NpcHullMods.of(variant).removable();
-        for (String nodeId : data.getAllocatedNodeIds()) {
-            SkillNode node = SkillTree.get(nodeId);
-            if (node == null) {
-                continue;
-            }
-            for (String hullModId : node.resolveEffectiveType(data).getExclusiveHullModIds()) {
+        for (AllocatedNode allocated : AllocatedNode.of(data)) {
+            for (String hullModId : allocated.effectiveType().getExclusiveHullModIds()) {
                 if (removable.contains(hullModId)) {
                     variant.removeMod(hullModId);
                 }

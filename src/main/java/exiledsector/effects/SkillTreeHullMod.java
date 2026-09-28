@@ -11,11 +11,11 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.persistence.OpSpentSlotManager;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
-import exiledsector.skills.SkillNode;
-import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
+import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
 import org.magiclib.util.MagicIncompatibleHullmods;
 
@@ -88,19 +88,18 @@ public class SkillTreeHullMod extends BaseHullMod {
 
         MutableShipStatsAPI stats = ship.getMutableStats();
         HullSize hullSize = ship.getHullSize();
-        for (String nodeId : data.getAllocatedNodeIds()) {
-            SkillNode node = SkillTree.get(nodeId);
-            SkillType type = node == null ? null : node.resolveEffectiveType(data);
-            Float durationSeconds = type == null ? null : type.getTemporaryAfterDeploymentSeconds();
+        for (AllocatedNode allocated : AllocatedNode.of(data)) {
+            SkillType type = allocated.effectiveType();
+            Float durationSeconds = type.getTemporaryAfterDeploymentSeconds();
             if (durationSeconds == null) continue;
 
             boolean active = ship.getFullTimeDeployed() < durationSeconds;
-            String modId = MOD_ID_PREFIX + node.getId();
-            type.forEachEffect(hullSize, (effect, magnitude) -> {
-                if (appliesTo(data, effect)) {
-                    effect.apply(stats, modId, active ? magnitude : 0f);
+            String modId = MOD_ID_PREFIX + allocated.node().getId();
+            for (SkillTypeEffect effect : type.effectsFor(hullSize)) {
+                if (appliesTo(data, effect.effect())) {
+                    effect.effect().apply(stats, modId, active ? effect.magnitude() : 0f);
                 }
-            });
+            }
         }
     }
 
@@ -112,13 +111,8 @@ public class SkillTreeHullMod extends BaseHullMod {
                                          VanillaDelegate vanillaDelegate, EffectAction action) {
         if (data == null) return;
 
-        for (String nodeId : data.getAllocatedNodeIds()) {
-            SkillNode node = SkillTree.get(nodeId);
-            if (node == null) {
-                continue;
-            }
-
-            SkillType type = node.resolveEffectiveType(data);
+        for (AllocatedNode allocated : AllocatedNode.of(data)) {
+            SkillType type = allocated.effectiveType();
             String vanillaHullModId = type.getVanillaHullModId();
             if (vanillaHullModId != null) {
                 if (vanillaDelegate != null) {
@@ -128,12 +122,12 @@ public class SkillTreeHullMod extends BaseHullMod {
                     }
                 }
             } else {
-                String modId = MOD_ID_PREFIX + node.getId();
-                type.forEachEffect(hullSize, (effect, magnitude) -> {
-                    if (appliesTo(data, effect)) {
-                        action.apply(effect, modId, magnitude);
+                String modId = MOD_ID_PREFIX + allocated.node().getId();
+                for (SkillTypeEffect effect : type.effectsFor(hullSize)) {
+                    if (appliesTo(data, effect.effect())) {
+                        action.apply(effect.effect(), modId, effect.magnitude());
                     }
-                });
+                }
             }
         }
     }
@@ -198,11 +192,8 @@ public class SkillTreeHullMod extends BaseHullMod {
 
     private static Set<String> installedHullModIds(ShipSkillData data) {
         Set<String> ids = new LinkedHashSet<>();
-        for (String nodeId : data.getAllocatedNodeIds()) {
-            SkillNode node = SkillTree.get(nodeId);
-            if (node != null) {
-                ids.addAll(node.resolveEffectiveType(data).getInstalledHullModIds());
-            }
+        for (AllocatedNode allocated : AllocatedNode.of(data)) {
+            ids.addAll(allocated.effectiveType().getInstalledHullModIds());
         }
         return ids;
     }
@@ -217,11 +208,8 @@ public class SkillTreeHullMod extends BaseHullMod {
         if (data == null || variant == null) return;
 
         boolean conflictFound = false;
-        for (String nodeId : data.getAllocatedNodeIds()) {
-            SkillNode node = SkillTree.get(nodeId);
-            if (node == null) continue;
-
-            SkillType type = node.resolveEffectiveType(data);
+        for (AllocatedNode allocated : AllocatedNode.of(data)) {
+            SkillType type = allocated.effectiveType();
             for (String hullModId : type.getExclusiveHullModIds()) {
                 if (isRemovableConflict(variant, hullModId)) {
                     MagicIncompatibleHullmods.removeHullmodWithWarning(variant, hullModId, CONFLICT_WARNING_HULLMOD_ID);

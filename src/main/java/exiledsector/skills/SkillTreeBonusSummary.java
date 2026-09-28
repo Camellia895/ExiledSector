@@ -25,13 +25,9 @@ public final class SkillTreeBonusSummary {
         int nodeCount = 0;
         List<SkillType> notables = new ArrayList<>();
         Map<Group, Map<SkillEffect, Float>> totals = new LinkedHashMap<>();
-        for (String nodeId : data.getAllocatedNodeIds()) {
-            SkillNode node = SkillTree.get(nodeId);
-            if (node == null) {
-                continue;
-            }
-            SkillType type = node.resolveEffectiveType(data);
-            SkillTier tier = node.getType().getTier();
+        for (AllocatedNode allocated : AllocatedNode.of(data)) {
+            SkillType type = allocated.effectiveType();
+            SkillTier tier = allocated.node().getType().getTier();
             if (tier == SkillTier.ROOT && root == null) {
                 root = type;
             } else {
@@ -42,11 +38,12 @@ public final class SkillTreeBonusSummary {
             }
             Map<SkillEffect, Float> group = totals.computeIfAbsent(new Group(type.getTemporaryAfterDeploymentSeconds()),
                     key -> new LinkedHashMap<>());
-            type.forEachEffect(hullSize, (effect, magnitude) -> {
+            for (SkillTypeEffect typeEffect : type.effectsFor(hullSize)) {
+                SkillEffect effect = typeEffect.effect();
                 if (!data.isNpcBuild() || effect.appliesToNpcShips()) {
-                    group.merge(effect, magnitude, (a, b) -> combine(effect, a, b));
+                    group.merge(effect, typeEffect.magnitude(), (a, b) -> combine(effect, a, b));
                 }
-            });
+            }
         }
         return new Summary(root, data.getLevel(), nodeCount, notables, describe(totals));
     }

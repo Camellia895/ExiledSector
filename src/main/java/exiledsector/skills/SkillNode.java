@@ -80,12 +80,7 @@ public class SkillNode extends SkillTreeObject {
     public static List<DescriptionLine> describeTypeLines(SkillType type, HullSize hullSize) {
         List<DescriptionLine> lines = new ArrayList<>();
         addLine(lines, type.getDescriptionOverride(), false);
-        List<SkillTypeEffect> described = new ArrayList<>(type.getEffects());
-        if (hullSize != null) {
-            for (HullSizeSkillEffect effect : type.getHullSizeEffects()) {
-                described.add(new SkillTypeEffect(effect.effect(), effect.valueFor(hullSize)));
-            }
-        }
+        List<SkillTypeEffect> described = hullSize == null ? type.getEffects() : type.effectsFor(hullSize);
         for (SkillTypeEffect effect : WeaponEffectTooltipAggregator.collapse(described)) {
             addLine(lines, effect.effect().describe(effect.magnitude()), effect.effect().lowerIsBetter());
         }

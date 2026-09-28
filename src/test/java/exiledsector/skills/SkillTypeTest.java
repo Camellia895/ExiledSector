@@ -4,7 +4,6 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.skilleffect.SkillEffect;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,43 +21,30 @@ class SkillTypeTest {
     }
 
     @Test
-    void visitsEachRegularEffectWithItsMagnitude() {
+    void listsEachRegularEffectWithItsMagnitude() {
         SkillEffect a = mock(SkillEffect.class);
         SkillEffect b = mock(SkillEffect.class);
         SkillType type = type(List.of(new SkillTypeEffect(a, 1f), new SkillTypeEffect(b, 2f)), List.of());
 
-        List<Object[]> seen = new ArrayList<>();
-        type.forEachEffect(HullSize.FRIGATE, (effect, magnitude) -> seen.add(new Object[]{effect, magnitude}));
-
-        assertEquals(2, seen.size());
-        assertEquals(a, seen.get(0)[0]);
-        assertEquals(1f, seen.get(0)[1]);
-        assertEquals(b, seen.get(1)[0]);
-        assertEquals(2f, seen.get(1)[1]);
+        assertEquals(List.of(new SkillTypeEffect(a, 1f), new SkillTypeEffect(b, 2f)), type.effectsFor(HullSize.FRIGATE));
     }
 
     @Test
-    void visitsEachHullSizeEffectResolvedForTheGivenHullSize() {
+    void listsEachHullSizeEffectResolvedForTheGivenHullSize() {
         SkillEffect effect = mock(SkillEffect.class);
         SkillType type = type(List.of(), List.of(new HullSizeSkillEffect(effect, 1f, 2f, 3f, 4f)));
 
-        List<Float> magnitudes = new ArrayList<>();
-        type.forEachEffect(HullSize.CRUISER, (e, magnitude) -> magnitudes.add(magnitude));
-
-        assertEquals(List.of(3f), magnitudes);
+        assertEquals(List.of(new SkillTypeEffect(effect, 3f)), type.effectsFor(HullSize.CRUISER));
     }
 
     @Test
-    void visitsRegularEffectsBeforeHullSizeEffects() {
+    void listsRegularEffectsBeforeHullSizeEffects() {
         SkillEffect regular = mock(SkillEffect.class);
         SkillEffect sized = mock(SkillEffect.class);
         SkillType type = type(List.of(new SkillTypeEffect(regular, 1f)),
                 List.of(new HullSizeSkillEffect(sized, 1f, 1f, 1f, 1f)));
 
-        List<SkillEffect> order = new ArrayList<>();
-        type.forEachEffect(HullSize.FRIGATE, (effect, magnitude) -> order.add(effect));
-
-        assertEquals(List.of(regular, sized), order);
+        assertEquals(List.of(new SkillTypeEffect(regular, 1f), new SkillTypeEffect(sized, 1f)), type.effectsFor(HullSize.FRIGATE));
     }
 
     @Test
@@ -91,13 +77,8 @@ class SkillTypeTest {
     }
 
     @Test
-    void doesNothingWhenBothListsAreEmpty() {
-        SkillType type = type(List.of(), List.of());
-
-        List<Object> seen = new ArrayList<>();
-        type.forEachEffect(HullSize.FRIGATE, (effect, magnitude) -> seen.add(effect));
-
-        assertTrue(seen.isEmpty());
+    void listsNothingWhenBothListsAreEmpty() {
+        assertTrue(type(List.of(), List.of()).effectsFor(HullSize.FRIGATE).isEmpty());
     }
 
     @Test

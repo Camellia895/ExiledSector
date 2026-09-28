@@ -8,6 +8,7 @@ import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.compat.SecondInCommandCompat;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.AllocatedSkillEffects;
 import exiledsector.skills.ShipLevelConfig;
 import exiledsector.skills.ShipOpBudget;
@@ -18,6 +19,7 @@ import exiledsector.skills.SkillNodeOpCost;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
+import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.SkillTypeUnlockStatus;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.ui.SkillTreePanelStyle;
@@ -484,12 +486,8 @@ public final class SkillTreeNodeRenderer {
             return null;
         }
 
-        for (String nodeId : data.getAllocatedNodeIds()) {
-            SkillNode allocatedNode = SkillTree.get(nodeId);
-            if (allocatedNode == null) {
-                continue;
-            }
-            SkillType allocatedType = allocatedNode.resolveEffectiveType(data);
+        for (AllocatedNode allocated : AllocatedNode.of(data)) {
+            SkillType allocatedType = allocated.effectiveType();
             if (exclusiveSkillTypeIds.contains(allocatedType.getId())) {
                 return "Already have " + allocatedType.getDisplayName() + " allocated.";
             }
@@ -499,22 +497,24 @@ public final class SkillTreeNodeRenderer {
 
     private String effectBlockReason(SkillType type) {
         List<SkillEffect> currentlyAllocatedEffects = AllocatedSkillEffects.forMember(member);
-        String[] blockReason = new String[1];
-        type.forEachEffect(member.getHullSpec().getHullSize(), (effect, magnitude) -> {
-            if (blockReason[0] != null) return;
-            blockReason[0] = effect.blockAllocationReason(member, magnitude, currentlyAllocatedEffects);
-        });
-        return blockReason[0];
+        for (SkillTypeEffect effect : type.effectsFor(member.getHullSpec().getHullSize())) {
+            String blockReason = effect.effect().blockAllocationReason(member, effect.magnitude(), currentlyAllocatedEffects);
+            if (blockReason != null) {
+                return blockReason;
+            }
+        }
+        return null;
     }
 
     private String blockDeallocationReason(SkillNode node) {
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
         SkillType type = node.resolveEffectiveType(data);
-        String[] blockReason = new String[1];
-        type.forEachEffect(member.getHullSpec().getHullSize(), (effect, magnitude) -> {
-            if (blockReason[0] != null) return;
-            blockReason[0] = effect.blockDeallocationReason(member, magnitude);
-        });
-        return blockReason[0];
+        for (SkillTypeEffect effect : type.effectsFor(member.getHullSpec().getHullSize())) {
+            String blockReason = effect.effect().blockDeallocationReason(member, effect.magnitude());
+            if (blockReason != null) {
+                return blockReason;
+            }
+        }
+        return null;
     }
 }

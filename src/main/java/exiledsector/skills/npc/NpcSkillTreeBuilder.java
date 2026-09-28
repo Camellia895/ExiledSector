@@ -1,12 +1,14 @@
 package exiledsector.skills.npc;
 
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
+import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.AllocatedSkillEffects;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
+import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.ShieldSkillEffect;
 import exiledsector.skills.tags.NodeRequirements;
 import exiledsector.skills.tags.ShipProfile;
@@ -311,13 +313,13 @@ public final class NpcSkillTreeBuilder {
     private static String shipStateBlockReason(ShipSkillData data, SkillType effectiveType, ShipProfile profile) {
         ShieldType shieldType = ShieldSkillEffect.resolveDisplayShieldType(profile.shieldType(),
                 AllocatedSkillEffects.forData(data, profile.hullSize()));
-        String[] reason = new String[1];
-        effectiveType.forEachEffect(profile.hullSize(), (effect, magnitude) -> {
-            if (reason[0] == null) {
-                reason[0] = effect.shieldTypeBlockReason(shieldType);
+        for (SkillTypeEffect effect : effectiveType.effectsFor(profile.hullSize())) {
+            String reason = effect.effect().shieldTypeBlockReason(shieldType);
+            if (reason != null) {
+                return reason;
             }
-        });
-        return reason[0];
+        }
+        return null;
     }
 
     private static Set<String> exclusiveHullModIds(SkillType type, SkillType option) {
@@ -329,14 +331,11 @@ public final class NpcSkillTreeBuilder {
     }
 
     private static String conflictingAllocatedTypeId(ShipSkillData data, SkillType type, SkillType option) {
-        for (String allocatedId : data.getAllocatedNodeIds()) {
-            SkillNode allocatedNode = SkillTree.get(allocatedId);
-            if (allocatedNode == null) {
-                continue;
-            }
-            SkillType allocatedEffective = allocatedNode.resolveEffectiveType(data);
-            SkillType allocatedOption = allocatedEffective == allocatedNode.getType() ? null : allocatedEffective;
-            if (areExclusive(type, option, allocatedNode.getType(), allocatedOption)) {
+        for (AllocatedNode allocated : AllocatedNode.of(data)) {
+            SkillType allocatedType = allocated.node().getType();
+            SkillType allocatedEffective = allocated.effectiveType();
+            SkillType allocatedOption = allocatedEffective == allocatedType ? null : allocatedEffective;
+            if (areExclusive(type, option, allocatedType, allocatedOption)) {
                 return allocatedEffective.getId();
             }
         }

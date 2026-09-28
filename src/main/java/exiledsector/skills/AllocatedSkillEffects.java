@@ -19,19 +19,14 @@ public final class AllocatedSkillEffects {
 
     public static List<SkillEffect> forData(ShipSkillData data, HullSize hullSize) {
         List<SkillEffect> effects = new ArrayList<>();
-        for (String nodeId : data.getAllocatedNodeIds()) {
-            collectEffects(nodeId, data, hullSize, effects);
+        for (AllocatedNode allocated : AllocatedNode.of(data)) {
+            SkillType type = allocated.effectiveType();
+            if (type.getVanillaHullModId() == null) {
+                for (SkillTypeEffect effect : type.effectsFor(hullSize)) {
+                    effects.add(effect.effect());
+                }
+            }
         }
         return effects;
-    }
-
-    private static void collectEffects(String nodeId, ShipSkillData data, HullSize hullSize, List<SkillEffect> effects) {
-        SkillNode node = SkillTree.get(nodeId);
-        if (node == null) return;
-
-        SkillType type = node.resolveEffectiveType(data);
-        if (type.getVanillaHullModId() != null) return;
-
-        type.forEachEffect(hullSize, (effect, magnitude) -> effects.add(effect));
     }
 }
