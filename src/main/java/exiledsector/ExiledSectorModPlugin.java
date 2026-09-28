@@ -4,6 +4,7 @@ import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.Global;
 import exiledsector.effects.CombatXpListener;
 import exiledsector.effects.SkillTreeInstaller;
+import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.CsvIdBlocklist;
 import exiledsector.ui.ExiledSectorSettings;
@@ -25,6 +26,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
 
     @Override
     public void onGameLoad(boolean newGame) {
+        SkillDataResolver.clearCache();
         Global.getSector().removeScriptsOfClass(SkillTreeInstaller.class);
         Global.getSector().addTransientScript(new SkillTreeInstaller());
         Global.getSector().addTransientListener(new CombatXpListener());

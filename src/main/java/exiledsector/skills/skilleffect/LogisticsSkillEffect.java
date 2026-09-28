@@ -480,6 +480,11 @@ public enum LogisticsSkillEffect implements SkillEffect {
         }
 
         @Override
+        public boolean appliesToEnemyShips() {
+            return false;
+        }
+
+        @Override
         public boolean supportsTemporaryGating() {
             return false;
         }
@@ -498,6 +503,11 @@ public enum LogisticsSkillEffect implements SkillEffect {
         @Override
         public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
             recomputeExtendedPhaseField();
+        }
+
+        @Override
+        public boolean appliesToEnemyShips() {
+            return false;
         }
 
         @Override

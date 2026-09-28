@@ -3,8 +3,11 @@ package exiledsector;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import exiledsector.effects.CombatXpListener;
 import exiledsector.effects.SkillTreeInstaller;
+import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.SkillDataResolver;
 import exiledsector.ui.SkillTreeRefitButton;
 import lunalib.lunaRefit.BaseRefitButton;
 import lunalib.lunaRefit.LunaRefitManager;
@@ -20,8 +23,10 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.inOrder;
@@ -113,5 +118,16 @@ class ExiledSectorModPluginTest {
         new ExiledSectorModPlugin().onGameLoad(true);
 
         verify(sector).addTransientListener(any(CombatXpListener.class));
+    }
+
+    @Test
+    void onGameLoadClearsTheEnemyTreeCache() {
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(variant.getTags()).thenReturn(List.of("exiledSector_enemyTree|bulwark|0|missing_root"));
+        ShipSkillData before = SkillDataResolver.resolve(null, variant);
+
+        new ExiledSectorModPlugin().onGameLoad(false);
+
+        assertNotSame(before, SkillDataResolver.resolve(null, variant));
     }
 }

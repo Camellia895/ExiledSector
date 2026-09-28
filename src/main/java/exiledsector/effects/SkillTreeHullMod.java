@@ -12,6 +12,7 @@ import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.persistence.OpSpentSlotManager;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
@@ -34,17 +35,25 @@ public class SkillTreeHullMod extends BaseHullMod {
 
     @Override
     public void applyEffectsBeforeShipCreation(HullSize hullSize, MutableShipStatsAPI stats, String id) {
-        forEachAllocatedEffect(stats.getFleetMember(), hullSize,
+        ShipSkillData data = SkillDataResolver.resolve(stats.getFleetMember(), stats.getVariant());
+        if (data == null) return;
+
+        boolean enemyTree = SkillDataResolver.isEnemyTree(stats.getVariant());
+        forEachAllocatedEffect(data, hullSize,
                 (vanillaEffect, vanillaHullModId) -> vanillaEffect.applyEffectsBeforeShipCreation(hullSize, stats, vanillaHullModId),
                 (effect, modId, magnitude) -> effect.apply(stats, modId, magnitude));
-        syncOpSpentHullMod(stats.getFleetMember(), stats.getVariant());
-        syncInstalledHullMods(stats.getFleetMember(), stats.getVariant());
-        removeHullModsConflictingWithAllocatedSkills(stats.getFleetMember(), stats.getVariant());
+        if (!enemyTree) {
+            syncOpSpentHullMod(stats.getFleetMember(), stats.getVariant());
+        }
+        syncInstalledHullMods(data, stats.getVariant());
+        if (!enemyTree) {
+            removeHullModsConflictingWithAllocatedSkills(data, stats.getVariant());
+        }
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship, String id) {
-        forEachAllocatedEffect(ship.getMutableStats().getFleetMember(), ship.getHullSize(),
+        forEachAllocatedEffect(dataFor(ship), ship.getHullSize(),
                 (vanillaEffect, vanillaHullModId) -> vanillaEffect.applyEffectsAfterShipCreation(ship, vanillaHullModId),
                 (effect, modId, magnitude) -> effect.applyAfterShipCreation(ship, modId, magnitude));
     }
@@ -56,14 +65,14 @@ public class SkillTreeHullMod extends BaseHullMod {
 
     @Override
     public void applyEffectsToFighterSpawnedByShip(ShipAPI fighter, ShipAPI ship, String id) {
-        forEachAllocatedEffect(ship.getMutableStats().getFleetMember(), ship.getHullSize(),
+        forEachAllocatedEffect(dataFor(ship), ship.getHullSize(),
                 (vanillaEffect, vanillaHullModId) -> vanillaEffect.applyEffectsToFighterSpawnedByShip(fighter, ship, vanillaHullModId),
                 (effect, modId, magnitude) -> effect.applyToFighterSpawnedByShip(fighter, ship, modId, magnitude));
     }
 
     @Override
     public void advanceInCombat(ShipAPI ship, float amount) {
-        forEachAllocatedEffect(ship.getMutableStats().getFleetMember(), ship.getHullSize(),
+        forEachAllocatedEffect(dataFor(ship), ship.getHullSize(),
                 null,
                 (effect, modId, magnitude) -> {
                     if (effect.isConditional()) {
@@ -74,10 +83,9 @@ public class SkillTreeHullMod extends BaseHullMod {
     }
 
     private void reapplyTemporaryNodes(ShipAPI ship) {
-        FleetMemberAPI member = ship.getMutableStats().getFleetMember();
-        if (member == null) return;
+        ShipSkillData data = dataFor(ship);
+        if (data == null) return;
 
-        ShipSkillData data = ShipSkillDataManager.get(member.getId());
         MutableShipStatsAPI stats = ship.getMutableStats();
         HullSize hullSize = ship.getHullSize();
         for (String nodeId : data.getAllocatedNodeIds()) {
@@ -96,11 +104,14 @@ public class SkillTreeHullMod extends BaseHullMod {
         }
     }
 
-    private void forEachAllocatedEffect(FleetMemberAPI member, HullSize hullSize,
-                                         VanillaDelegate vanillaDelegate, EffectAction action) {
-        if (member == null) return;
+    private static ShipSkillData dataFor(ShipAPI ship) {
+        return SkillDataResolver.resolve(ship.getMutableStats().getFleetMember(), ship.getVariant());
+    }
 
-        ShipSkillData data = ShipSkillDataManager.get(member.getId());
+    private void forEachAllocatedEffect(ShipSkillData data, HullSize hullSize,
+                                         VanillaDelegate vanillaDelegate, EffectAction action) {
+        if (data == null) return;
+
         for (String nodeId : data.getAllocatedNodeIds()) {
             SkillNode node = SkillTree.get(nodeId);
             if (node == null) {
@@ -132,7 +143,7 @@ public class SkillTreeHullMod extends BaseHullMod {
     }
 
     public static void syncOpSpentHullMod(FleetMemberAPI member, ShipVariantAPI variant) {
-        if (member == null || variant == null) return;
+        if (member == null || variant == null || SkillDataResolver.isEnemyTree(variant)) return;
 
         String hullModId = OP_SPENT_HULLMOD_ID_PREFIX + OpSpentSlotManager.slotFor(member.getId());
         HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
@@ -154,9 +165,13 @@ public class SkillTreeHullMod extends BaseHullMod {
     }
 
     public static void syncInstalledHullMods(FleetMemberAPI member, ShipVariantAPI variant) {
-        if (member == null || variant == null) return;
+        syncInstalledHullMods(SkillDataResolver.resolve(member, variant), variant);
+    }
 
-        Set<String> wanted = installedHullModIds(ShipSkillDataManager.get(member.getId()));
+    private static void syncInstalledHullMods(ShipSkillData data, ShipVariantAPI variant) {
+        if (data == null || variant == null) return;
+
+        Set<String> wanted = installedHullModIds(data);
         for (String hullModId : wanted) {
             if (!variant.hasHullMod(hullModId)) {
                 variant.addPermaMod(hullModId);
@@ -193,9 +208,14 @@ public class SkillTreeHullMod extends BaseHullMod {
     }
 
     public static void removeHullModsConflictingWithAllocatedSkills(FleetMemberAPI member, ShipVariantAPI variant) {
-        if (member == null || variant == null) return;
+        if (member == null || SkillDataResolver.isEnemyTree(variant)) return;
 
-        ShipSkillData data = ShipSkillDataManager.get(member.getId());
+        removeHullModsConflictingWithAllocatedSkills(ShipSkillDataManager.get(member.getId()), variant);
+    }
+
+    private static void removeHullModsConflictingWithAllocatedSkills(ShipSkillData data, ShipVariantAPI variant) {
+        if (data == null || variant == null) return;
+
         boolean conflictFound = false;
         for (String nodeId : data.getAllocatedNodeIds()) {
             SkillNode node = SkillTree.get(nodeId);
