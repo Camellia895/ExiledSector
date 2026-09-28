@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public final class SkillTreePanelStyle {
 
@@ -53,15 +54,18 @@ public final class SkillTreePanelStyle {
     private static final float TOOLTIP_TABLE_GAP = 14f;
     private static final float TOOLTIP_SCREEN_MARGIN = 4f;
 
-    private final String accentIconPath;
+    private String accentIconPath;
     private LazyFont tooltipFont;
     private boolean tooltipFontLoadFailed = false;
     private Color accentColor;
     private Color lowTechColor;
     private Color highTechColor;
 
-    public SkillTreePanelStyle(String accentIconPath) {
-        this.accentIconPath = accentIconPath;
+    public void setAccentIconPath(String accentIconPath) {
+        if (!Objects.equals(this.accentIconPath, accentIconPath)) {
+            this.accentIconPath = accentIconPath;
+            this.accentColor = null;
+        }
     }
 
     public LazyFont getFont() {

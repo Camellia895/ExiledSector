@@ -25,7 +25,7 @@ class HighlightedTooltipTextTest {
         LazyFont.DrawableString drawable = mock(LazyFont.DrawableString.class);
         when(font.wrapString(anyString(), anyFloat(), anyFloat(), anyFloat())).thenAnswer(call -> call.getArgument(0));
         when(font.createText(anyString(), any(Color.class), anyFloat())).thenReturn(drawable);
-        new SkillTreePanelStyle("icon.png").buildHighlightedWrappedText(font, List.of(paragraphs), 20f, 480f, 800f, Color.WHITE);
+        new SkillTreePanelStyle().buildHighlightedWrappedText(font, List.of(paragraphs), 20f, 480f, 800f, Color.WHITE);
         return drawable;
     }
 

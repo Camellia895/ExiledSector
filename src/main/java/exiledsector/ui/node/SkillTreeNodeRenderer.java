@@ -13,7 +13,6 @@ import exiledsector.skills.ShipLevelConfig;
 import exiledsector.skills.ShipOpBudget;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillItemCost;
-import exiledsector.skills.ShipTechLevel;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillNodeOpCost;
 import exiledsector.skills.SkillTier;
@@ -23,9 +22,11 @@ import exiledsector.skills.SkillTypeUnlockStatus;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.ui.SkillTreePanelStyle;
 import lunalib.lunaRefit.BaseRefitButton;
+import org.lazywizard.lazylib.ui.LazyFont;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -40,7 +41,8 @@ public final class SkillTreeNodeRenderer {
     private final FleetMemberAPI member;
     private final ShipVariantAPI variant;
     private final BaseRefitButton refitButton;
-    private final SkillNode activeRoot;
+    private final SkillTreePanelStyle style;
+    private final StartingRootChoice rootChoice;
 
     private final SkillTreeNodeRingRenderer ringRenderer;
     private final SkillTreeNodeIconRenderer iconRenderer;
@@ -52,6 +54,7 @@ public final class SkillTreeNodeRenderer {
     private final NodeSearch search;
 
     private SkillType lastChosenOptionalOption;
+    private LazyFont.DrawableString startingRootPrompt;
 
     public SkillTreeNodeRenderer(FleetMemberAPI member, ShipVariantAPI variant, SkillTreePanelStyle style, BaseRefitButton refitButton,
                                  NodeSearch search) {
@@ -59,7 +62,9 @@ public final class SkillTreeNodeRenderer {
         this.variant = variant;
         this.refitButton = refitButton;
         this.search = search;
-        this.activeRoot = findRootNode(ShipTechLevel.of(member).rootTypeId());
+        this.style = style;
+        this.rootChoice = initialRootChoice(ShipSkillDataManager.get(member.getId()));
+        style.setAccentIconPath(RootCrestResolver.resolve(member, rootChoice.chosen()));
 
         this.ringRenderer = new SkillTreeNodeRingRenderer(style);
         this.iconRenderer = new SkillTreeNodeIconRenderer();
@@ -68,17 +73,25 @@ public final class SkillTreeNodeRenderer {
         this.connectorRenderer = new SkillTreeNodeConnectorRenderer(style, search);
         this.tooltipRenderer = new SkillTreeNodeTooltipRenderer(member, style);
         this.dropdownRenderer = new SkillTreeNodeDropdownRenderer(style);
+    }
 
-        if (activeRoot != null) {
-            ShipSkillData data = ShipSkillDataManager.get(member.getId());
-            if (!data.isAllocated(activeRoot.getId())) {
-                data.allocate(activeRoot, 0);
+    private static StartingRootChoice initialRootChoice(ShipSkillData data) {
+        String startingRootId = data.resolveStartingRootId(SkillTree.getAllNodes().values());
+        SkillNode startingRoot = startingRootId == null ? null : SkillTree.get(startingRootId);
+        if (startingRoot != null) {
+            return StartingRootChoice.alreadyChosen(startingRoot);
+        }
+        List<SkillNode> roots = new ArrayList<>();
+        for (SkillNode node : SkillTree.getAllNodes().values()) {
+            if (node.getType().getTier() == SkillTier.ROOT) {
+                roots.add(node);
             }
         }
+        return StartingRootChoice.pending(roots);
     }
 
     private int opCostFor(SkillNode node) {
-        if (node.getType().getTier() == SkillTier.ROOT) return 0;
+        if (isStartingRoot(node)) return 0;
         return SkillNodeOpCost.perNode(member.getHullSpec());
     }
 
@@ -89,14 +102,58 @@ public final class SkillTreeNodeRenderer {
     }
 
     private String satisfiedRootId() {
-        return activeRoot == null ? null : activeRoot.getId();
+        SkillNode startingRoot = rootChoice.chosen();
+        return startingRoot == null ? null : startingRoot.getId();
     }
 
     private boolean isStartingRoot(SkillNode node) {
-        return activeRoot != null && node.getType().getTier() == SkillTier.ROOT && node.getId().equals(activeRoot.getId());
+        SkillNode startingRoot = rootChoice.chosen();
+        return startingRoot != null && node.getId().equals(startingRoot.getId());
+    }
+
+    public SkillNode getStartingRoot() {
+        return rootChoice.phase() == StartingRootChoice.Phase.CHOSEN ? rootChoice.chosen() : null;
+    }
+
+    public boolean isChoosingStartingRoot() {
+        return rootChoice.phase() == StartingRootChoice.Phase.CHOOSING;
+    }
+
+    public boolean isStartingRootFlying() {
+        return rootChoice.phase() == StartingRootChoice.Phase.FLYING;
+    }
+
+    public boolean isStartingRootInputLocked() {
+        return rootChoice.isInputLocked();
+    }
+
+    public float treeAlpha() {
+        return rootChoice.treeAlpha();
+    }
+
+    public float startingRootOffsetX() {
+        return rootChoice.offsetX(rootChoice.chosen());
+    }
+
+    public float startingRootOffsetY() {
+        return rootChoice.offsetY(rootChoice.chosen());
+    }
+
+    public void chooseStartingRoot(SkillNode root) {
+        if (!isChoosingStartingRoot()) {
+            return;
+        }
+        ShipSkillData data = ShipSkillDataManager.get(member.getId());
+        if (!data.chooseStartingRoot(root)) {
+            return;
+        }
+        rootChoice.choose(root);
+        style.setAccentIconPath(RootCrestResolver.resolve(member, root));
+        refreshAfterAllocationChange(root, true);
     }
 
     public void advance(float amount) {
+        rootChoice.advance(amount);
         ringRenderer.advance(amount);
         ghostRenderer.advance(amount);
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
@@ -109,15 +166,16 @@ public final class SkillTreeNodeRenderer {
         String satisfiedRootId = satisfiedRootId();
         int totalOpBudget = totalOpBudgetForNodes();
         Vector2f center = new Vector2f(centerX, centerY);
+        float treeAlphaMult = alphaMult * rootChoice.treeAlpha();
 
         for (SkillNode node : SkillTree.getAllNodes().values()) {
             if (node.getType().getTier() != SkillTier.ROOT) {
-                renderNode(node, center, zoom, alphaMult, data, satisfiedRootId, totalOpBudget);
+                renderNode(node, center, zoom, treeAlphaMult, data, satisfiedRootId, totalOpBudget);
             }
         }
 
-        connectorRenderer.draw(centerX, centerY, zoom, data, satisfiedRootId, alphaMult);
-        wormholeGhostFlights.draw(centerX, centerY, zoom, alphaMult * search.backgroundAlpha());
+        connectorRenderer.draw(centerX, centerY, zoom, data, satisfiedRootId, treeAlphaMult);
+        wormholeGhostFlights.draw(centerX, centerY, zoom, treeAlphaMult * search.backgroundAlpha());
 
         for (SkillNode node : SkillTree.getAllNodes().values()) {
             if (node.getType().getTier() == SkillTier.ROOT) {
@@ -125,7 +183,23 @@ public final class SkillTreeNodeRenderer {
             }
         }
 
+        if (isChoosingStartingRoot()) {
+            renderStartingRootPrompt(centerX, centerY - rootChoice.promptOffsetY() * zoom);
+        }
+
         dropdownRenderer.render(centerX, centerY, zoom, mouseX, mouseY, mouseKnown, alphaMult);
+    }
+
+    private void renderStartingRootPrompt(float x, float y) {
+        LazyFont font = style.getFont();
+        if (font == null) {
+            return;
+        }
+        if (startingRootPrompt == null) {
+            startingRootPrompt = SkillTreePanelStyle.buildSimpleText(font, StartingRootChoice.PROMPT,
+                    SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR, LazyFont.TextAnchor.BOTTOM_CENTER);
+        }
+        startingRootPrompt.draw(x, y);
     }
 
     private void renderNode(SkillNode node, Vector2f center, float zoom, float alphaMult,
@@ -160,35 +234,22 @@ public final class SkillTreeNodeRenderer {
 
     private void renderRootNode(SkillNode node, Vector2f center, float zoom, float alphaMult,
                                  ShipSkillData data, String satisfiedRootId, int totalOpBudget) {
-        float nodeX = center.x + node.getOffsetX() * zoom;
-        float nodeY = center.y - node.getOffsetY() * zoom;
-        boolean isActiveRoot = activeRoot != null && node.getId().equals(activeRoot.getId());
+        float nodeX = center.x + rootChoice.offsetX(node) * zoom;
+        float nodeY = center.y - rootChoice.offsetY(node) * zoom;
+        boolean choosing = isChoosingStartingRoot();
         boolean allocated = data.isAllocated(node.getId());
-        boolean breathing = !allocated && data.canAllocate(node, satisfiedRootId, totalOpBudget, opCostFor(node), ShipLevelConfig.maxAllocatedNodes());
+        boolean breathing = choosing || (!allocated && data.canAllocate(node, satisfiedRootId, totalOpBudget, opCostFor(node), ShipLevelConfig.maxAllocatedNodes()));
         float footprintSize = NODE_SIZE * zoom * SkillTier.ROOT.getSizeMultiplier();
         float nodeAlpha = alphaMult * search.nodeAlpha(node, data);
         ringRenderer.draw(new Vector2f(nodeX, nodeY), footprintSize, nodeAlpha, allocated, breathing, zoom, node);
 
-        Color tint = iconTint(node, data, allocated);
-        String iconPath = isActiveRoot ? RootCrestResolver.resolve(member) : node.getType().getIconPath();
+        Color tint = choosing ? ALLOCATED_TINT : iconTint(node, data, allocated);
+        String iconPath = isStartingRoot(node) ? RootCrestResolver.resolve(member, node) : node.getType().getIconPath();
         iconRenderer.drawIcon(iconPath, nodeX, nodeY, footprintSize, nodeAlpha, tint);
     }
 
     private Color iconTint(SkillNode node, ShipSkillData data, boolean allocated) {
         return allocated || search.matches(node, data) ? ALLOCATED_TINT : UNALLOCATED_TINT;
-    }
-
-    public SkillNode getActiveRoot() {
-        return activeRoot;
-    }
-
-    private static SkillNode findRootNode(String rootTypeId) {
-        for (SkillNode node : SkillTree.getAllNodes().values()) {
-            if (node.getType().getTier() == SkillTier.ROOT && node.getType().getId().equals(rootTypeId)) {
-                return node;
-            }
-        }
-        return null;
     }
 
     public void renderHoverTooltip(float centerX, float centerY, float zoom, float mouseX, float mouseY, float alphaMult) {
@@ -207,9 +268,16 @@ public final class SkillTreeNodeRenderer {
     }
 
     public SkillNode findNodeAt(float centerX, float centerY, float zoom, float x, float y) {
+        if (isStartingRootFlying()) {
+            return null;
+        }
+        boolean choosing = isChoosingStartingRoot();
         for (SkillNode node : SkillTree.getAllNodes().values()) {
-            float nodeX = centerX + node.getOffsetX() * zoom;
-            float nodeY = centerY - node.getOffsetY() * zoom;
+            if (choosing && node.getType().getTier() != SkillTier.ROOT) {
+                continue;
+            }
+            float nodeX = centerX + rootChoice.offsetX(node) * zoom;
+            float nodeY = centerY - rootChoice.offsetY(node) * zoom;
             float halfSize = NODE_SIZE * zoom * node.getType().getTier().getSizeMultiplier() / 2f;
             if (Math.abs(x - nodeX) <= halfSize && Math.abs(y - nodeY) <= halfSize) {
                 return node;
@@ -233,6 +301,9 @@ public final class SkillTreeNodeRenderer {
     }
 
     public void toggleAllocation(SkillNode node, boolean ctrlDown) {
+        if (isStartingRootInputLocked()) {
+            return;
+        }
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
         boolean wasAllocated = data.isAllocated(node.getId());
         boolean isOptional = node.getType().isOptional();

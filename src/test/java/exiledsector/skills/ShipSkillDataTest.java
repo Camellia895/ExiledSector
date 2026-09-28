@@ -663,18 +663,33 @@ class ShipSkillDataTest {
     }
 
     @Test
-    void convertMostRecentAllocationToFreeSkipsRootNodes() {
+    void convertMostRecentAllocationToFreeSkipsTheStartingRoot() {
         ShipSkillData data = new ShipSkillData();
-        SkillNode a = node("a", List.of());
         SkillNode root = rootNode("root_low_tech_1", List.of());
+        SkillNode a = node("a", List.of("root_low_tech_1"));
         data.allocate(a, 3);
-        data.allocate(root, 0);
+        data.chooseStartingRoot(root);
 
         boolean converted = data.convertMostRecentAllocationToFree(List.of(a, root), 3);
 
         assertTrue(converted);
         assertTrue(data.isFreeNode("a"));
         assertFalse(data.isFreeNode("root_low_tech_1"));
+        assertEquals(0, data.getSpentOp());
+    }
+
+    @Test
+    void convertMostRecentAllocationToFreeRefundsAPaidForNonStartingRoot() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode startingRoot = rootNode("root_low_tech_1", List.of());
+        SkillNode otherRoot = rootNode("root_high_tech_1", List.of());
+        data.chooseStartingRoot(startingRoot);
+        data.allocate(otherRoot, 3);
+
+        boolean converted = data.convertMostRecentAllocationToFree(List.of(startingRoot, otherRoot), 3);
+
+        assertTrue(converted);
+        assertTrue(data.isFreeNode("root_high_tech_1"));
         assertEquals(0, data.getSpentOp());
     }
 
@@ -899,5 +914,59 @@ class ShipSkillDataTest {
         data.allocate(a, 1);
 
         assertTrue(data.canDeallocate(a, List.of(a, b), null));
+    }
+
+    @Test
+    void choosingAStartingRootAllocatesItForFree() {
+        SkillNode root = rootNode("root_a", List.of());
+        ShipSkillData data = new ShipSkillData();
+
+        assertTrue(data.chooseStartingRoot(root));
+
+        assertTrue(data.isAllocated("root_a"));
+        assertEquals(0, data.getSpentOp());
+        assertEquals("root_a", data.resolveStartingRootId(List.of(root)));
+    }
+
+    @Test
+    void theStartingRootCannotBeChosenTwice() {
+        SkillNode first = rootNode("root_a", List.of());
+        SkillNode second = rootNode("root_b", List.of());
+        ShipSkillData data = new ShipSkillData();
+        data.chooseStartingRoot(first);
+
+        assertFalse(data.chooseStartingRoot(second));
+
+        assertFalse(data.isAllocated("root_b"));
+        assertEquals("root_a", data.resolveStartingRootId(List.of(first, second)));
+    }
+
+    @Test
+    void onlyARootNodeCanBeTheStartingRoot() {
+        ShipSkillData data = new ShipSkillData();
+
+        assertFalse(data.chooseStartingRoot(node("small", List.of())));
+        assertNull(data.resolveStartingRootId(List.of()));
+    }
+
+    @Test
+    void aShipThatNeverOpenedItsTreeHasNoStartingRoot() {
+        SkillNode root = rootNode("root_a", List.of());
+
+        assertNull(new ShipSkillData().resolveStartingRootId(List.of(root)));
+    }
+
+    @Test
+    void aLegacySaveAdoptsItsFirstAllocatedRootAsTheStartingRoot() {
+        SkillNode autoAllocated = rootNode("root_a", List.of());
+        SkillNode reachedLater = rootNode("root_b", List.of("small"));
+        SkillNode small = node("small", List.of("root_a"));
+        ShipSkillData data = new ShipSkillData();
+        data.allocate(autoAllocated, 0);
+        data.allocate(small, 1);
+        data.allocate(reachedLater, 0);
+
+        assertEquals("root_a", data.resolveStartingRootId(List.of(reachedLater, small, autoAllocated)));
+        assertFalse(data.chooseStartingRoot(reachedLater));
     }
 }

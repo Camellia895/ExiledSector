@@ -15,7 +15,6 @@ import exiledsector.ui.decoration.SkillTreeStarRenderer;
 import exiledsector.ui.decoration.SkillTreeStarfieldRenderer;
 import exiledsector.ui.decoration.SkillTreeStaticImageRenderer;
 import exiledsector.ui.node.NodeSearch;
-import exiledsector.ui.node.RootCrestResolver;
 import exiledsector.ui.node.SkillTreeNodeRenderer;
 import exiledsector.ui.util.BorderedPanel;
 import lunalib.lunaRefit.BaseRefitButton;
@@ -62,7 +61,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     public SkillTreeCanvasPlugin(FleetMemberAPI member, ShipVariantAPI variant, float shipCardHeight, BaseRefitButton refitButton) {
         SkillTreeHullMod.syncOpSpentHullMod(member, variant);
-        SkillTreePanelStyle style = new SkillTreePanelStyle(RootCrestResolver.resolve(member));
+        SkillTreePanelStyle style = new SkillTreePanelStyle();
         this.starfieldRenderer = new SkillTreeStarfieldRenderer(style);
         this.staticImageRenderer = new SkillTreeStaticImageRenderer();
         this.ringBeltRenderer = new SkillTreeRingBeltRenderer();
@@ -76,10 +75,10 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.readoutTooltipBody = buildReadoutTooltipBody(member);
         this.shipCardHeight = shipCardHeight;
 
-        SkillNode activeRoot = nodeRenderer.getActiveRoot();
-        if (activeRoot != null) {
-            this.panX = -activeRoot.getOffsetX();
-            this.panY = activeRoot.getOffsetY();
+        SkillNode startingRoot = nodeRenderer.getStartingRoot();
+        if (startingRoot != null) {
+            this.panX = -startingRoot.getOffsetX();
+            this.panY = startingRoot.getOffsetY();
         }
     }
 
@@ -96,7 +95,12 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         staticImageRenderer.advance(amount);
         ringBeltRenderer.advance(amount);
         starRenderer.advance(amount);
+        boolean followingStartingRoot = nodeRenderer.isStartingRootFlying();
         nodeRenderer.advance(amount);
+        if (followingStartingRoot) {
+            panX = -nodeRenderer.startingRootOffsetX() * zoom;
+            panY = nodeRenderer.startingRootOffsetY() * zoom;
+        }
         ordnancePointsBar.advance(amount, position, mouseX, mouseY, mouseKnown);
         levelBar.advance(amount, position, mouseX, mouseY, mouseKnown);
     }
@@ -125,7 +129,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void handleEvent(InputEventAPI event) {
-        if (event.isLMBDownEvent() && position.containsEvent(event)) {
+        if (nodeRenderer.isStartingRootInputLocked()) {
+            handleStartingRootEvent(event);
+        } else if (event.isLMBDownEvent() && position.containsEvent(event)) {
             handleLmbDown(event);
         } else if (event.isLMBUpEvent()) {
             handleLmbUp(event);
@@ -134,6 +140,21 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         } else if (event.isMouseScrollEvent() && position.containsEvent(event)) {
             handleMouseScroll(event);
         } else if (event.isKeyboardEvent() && searchBar.handleKey(event)) {
+            event.consume();
+        }
+    }
+
+    private void handleStartingRootEvent(InputEventAPI event) {
+        if (event.isMouseMoveEvent()) {
+            handleMouseMove(event);
+        } else if (event.isLMBDownEvent() && position.containsEvent(event)) {
+            pendingClickNode = nodeRenderer.findNodeAt(centerX(), centerY(), zoom, event.getX(), event.getY());
+            event.consume();
+        } else if (event.isLMBUpEvent() && pendingClickNode != null) {
+            nodeRenderer.chooseStartingRoot(pendingClickNode);
+            pendingClickNode = null;
+            event.consume();
+        } else if (event.isMouseScrollEvent() && position.containsEvent(event)) {
             event.consume();
         }
     }
@@ -221,7 +242,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         float centerX = centerX();
         float centerY = centerY();
 
-        float backgroundAlpha = alphaMult * search.backgroundAlpha();
+        float backgroundAlpha = alphaMult * search.backgroundAlpha() * nodeRenderer.treeAlpha();
         starfieldRenderer.render(position, panX, panY, backgroundAlpha);
         starRenderer.renderDisc(centerX, centerY, zoom, backgroundAlpha, position);
         starRenderer.renderAtmosphere(centerX, centerY, zoom, backgroundAlpha, position);
@@ -233,7 +254,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         statPanel.render(position, alphaMult);
         ordnancePointsBar.render(position, alphaMult);
         levelBar.render(position, alphaMult);
-        searchBar.render(position, alphaMult);
+        if (!nodeRenderer.isStartingRootInputLocked()) {
+            searchBar.render(position, alphaMult);
+        }
         drawShipCardFrame(alphaMult);
 
         if (!dragging && mouseKnown) {

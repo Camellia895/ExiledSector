@@ -78,6 +78,7 @@ final class SkillTreeNodeRingRenderer {
     private static final float BREATHING_PERIOD_SECONDS = 2.2f;
     private static final float BREATHING_MIN_ALPHA = 0.35f;
     private static final float BREATHING_MAX_ALPHA = 1f;
+    private static final int BREATHING_BRIGHTNESS_PASSES = 2;
 
     private static final float WORMHOLE_MIN_SCALE = 0.25f;
     private static final float WORMHOLE_FADE_DURATION_SECONDS = 1f;
@@ -202,7 +203,11 @@ final class SkillTreeNodeRingRenderer {
         float breathingT = (float) (0.5 + 0.5 * Math.sin(2 * Math.PI * breathingPhase / BREATHING_PERIOD_SECONDS));
         float breathingAlpha = (BREATHING_MIN_ALPHA + (BREATHING_MAX_ALPHA - BREATHING_MIN_ALPHA) * breathingT) * alphaMult;
         GL11.glLineWidth(NODE_CONNECTOR_GLOW_LINE_THICKNESS * scale * zoom);
-        drawRingOutline(cx, cy, ringRadius, style.getAccentColor(), breathingAlpha);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+        for (int pass = 0; pass < BREATHING_BRIGHTNESS_PASSES; pass++) {
+            drawRingOutline(cx, cy, ringRadius, style.getAccentColor(), breathingAlpha);
+        }
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
     }
 
     private void drawPulseOutline(float cx, float cy, float half, String nodeId, float zoom, float alphaMult) {

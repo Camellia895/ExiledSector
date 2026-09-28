@@ -23,6 +23,7 @@ public class ShipSkillData {
     private int bankedFreeAllocations = 0;
     private Set<String> freeNodeIds = new LinkedHashSet<>();
     private Set<String> pairedFreeNodeIds = new LinkedHashSet<>();
+    private String startingRootId;
 
     private Set<String> freeNodeIds() {
         if (freeNodeIds == null) freeNodeIds = new LinkedHashSet<>();
@@ -55,6 +56,37 @@ public class ShipSkillData {
         allocatedNodeIds.add(node.getId());
         if (optionalSelections == null) optionalSelections = new LinkedHashMap<>();
         optionalSelections.put(node.getId(), chosenOption.getId());
+    }
+
+    public String resolveStartingRootId(Collection<SkillNode> allNodes) {
+        if (startingRootId == null) {
+            startingRootId = firstAllocatedRootId(allNodes);
+        }
+        return startingRootId;
+    }
+
+    private String firstAllocatedRootId(Collection<SkillNode> allNodes) {
+        Set<String> rootIds = new HashSet<>();
+        for (SkillNode candidate : allNodes) {
+            if (candidate.getType().getTier() == SkillTier.ROOT) {
+                rootIds.add(candidate.getId());
+            }
+        }
+        for (String allocatedId : allocatedNodeIds) {
+            if (rootIds.contains(allocatedId)) {
+                return allocatedId;
+            }
+        }
+        return null;
+    }
+
+    public boolean chooseStartingRoot(SkillNode root) {
+        if (startingRootId != null || root.getType().getTier() != SkillTier.ROOT) {
+            return false;
+        }
+        startingRootId = root.getId();
+        allocate(root, 0);
+        return true;
     }
 
     public boolean isSatisfied(String nodeId, String satisfiedRootId) {
@@ -102,17 +134,12 @@ public class ShipSkillData {
     }
 
     public boolean convertMostRecentAllocationToFree(Collection<SkillNode> allNodes, int opCostPerNode) {
-        Map<String, SkillNode> byId = new HashMap<>();
-        for (SkillNode candidate : allNodes) {
-            byId.put(candidate.getId(), candidate);
-        }
+        String startingRoot = resolveStartingRootId(allNodes);
         List<String> order = new ArrayList<>(allocatedNodeIds);
         for (int i = order.size() - 1; i >= 0; i--) {
             String nodeId = order.get(i);
-            SkillNode node = byId.get(nodeId);
             boolean alreadyFree = freeNodeIds().contains(nodeId) || pairedFreeNodeIds().contains(nodeId);
-            boolean isRoot = node != null && node.getType().getTier() == SkillTier.ROOT;
-            if (alreadyFree || isRoot) {
+            if (alreadyFree || nodeId.equals(startingRoot)) {
                 continue;
             }
             freeNodeIds().add(nodeId);

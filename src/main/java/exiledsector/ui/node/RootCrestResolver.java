@@ -3,9 +3,7 @@ package exiledsector.ui.node;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledsector.skills.ShipTechLevel;
-import exiledsector.skills.SkillTree;
-import exiledsector.skills.SkillType;
+import exiledsector.skills.SkillNode;
 
 public final class RootCrestResolver {
 
@@ -15,12 +13,10 @@ public final class RootCrestResolver {
     private RootCrestResolver() {
     }
 
-    public static String resolve(FleetMemberAPI member) {
+    public static String resolve(FleetMemberAPI member, SkillNode startingRoot) {
         if (isPirateFlagged(member)) return PIRATE_CREST_PATH;
         if (isRemnant(member)) return REMNANT_CREST_PATH;
-
-        SkillType rootType = SkillTree.getType(ShipTechLevel.of(member).rootTypeId());
-        return rootType != null ? rootType.getIconPath() : null;
+        return startingRoot != null ? startingRoot.getType().getIconPath() : null;
     }
 
     static boolean isPirateFlagged(FleetMemberAPI member) {
