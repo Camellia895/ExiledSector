@@ -62,8 +62,12 @@ public enum ShieldSkillEffect implements SkillEffect {
 
         @Override
         public String blockAllocationReason(FleetMemberAPI member, float magnitude, List<SkillEffect> currentlyAllocatedEffects) {
-            ShieldAPI.ShieldType current = resolveDisplayShieldType(member.getHullSpec().getShieldType(), currentlyAllocatedEffects);
-            return current == ShieldAPI.ShieldType.NONE ? "Ship has no shields." : null;
+            return shieldTypeBlockReason(resolveDisplayShieldType(member.getHullSpec().getShieldType(), currentlyAllocatedEffects));
+        }
+
+        @Override
+        public String shieldTypeBlockReason(ShieldAPI.ShieldType resolvedShieldType) {
+            return resolvedShieldType == ShieldAPI.ShieldType.NONE ? "Ship has no shields." : null;
         }
 
         @Override
@@ -113,8 +117,12 @@ public enum ShieldSkillEffect implements SkillEffect {
 
         @Override
         public String blockAllocationReason(FleetMemberAPI member, float magnitude, List<SkillEffect> currentlyAllocatedEffects) {
-            ShieldAPI.ShieldType current = resolveDisplayShieldType(member.getHullSpec().getShieldType(), currentlyAllocatedEffects);
-            return current == ShieldAPI.ShieldType.FRONT ? "Ship already has front shields." : null;
+            return shieldTypeBlockReason(resolveDisplayShieldType(member.getHullSpec().getShieldType(), currentlyAllocatedEffects));
+        }
+
+        @Override
+        public String shieldTypeBlockReason(ShieldAPI.ShieldType resolvedShieldType) {
+            return resolvedShieldType == ShieldAPI.ShieldType.FRONT ? "Ship already has front shields." : null;
         }
 
         @Override
@@ -142,8 +150,12 @@ public enum ShieldSkillEffect implements SkillEffect {
 
         @Override
         public String blockAllocationReason(FleetMemberAPI member, float magnitude, List<SkillEffect> currentlyAllocatedEffects) {
-            ShieldAPI.ShieldType current = resolveDisplayShieldType(member.getHullSpec().getShieldType(), currentlyAllocatedEffects);
-            return current == ShieldAPI.ShieldType.OMNI ? "Ship already has omni-directional shields." : null;
+            return shieldTypeBlockReason(resolveDisplayShieldType(member.getHullSpec().getShieldType(), currentlyAllocatedEffects));
+        }
+
+        @Override
+        public String shieldTypeBlockReason(ShieldAPI.ShieldType resolvedShieldType) {
+            return resolvedShieldType == ShieldAPI.ShieldType.OMNI ? "Ship already has omni-directional shields." : null;
         }
 
         @Override

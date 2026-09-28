@@ -14,9 +14,11 @@ public final class AllocatedSkillEffects {
     }
 
     public static List<SkillEffect> forMember(FleetMemberAPI member) {
+        return forData(ShipSkillDataManager.get(member.getId()), member.getHullSpec().getHullSize());
+    }
+
+    public static List<SkillEffect> forData(ShipSkillData data, HullSize hullSize) {
         List<SkillEffect> effects = new ArrayList<>();
-        ShipSkillData data = ShipSkillDataManager.get(member.getId());
-        HullSize hullSize = member.getHullSpec().getHullSize();
         for (String nodeId : data.getAllocatedNodeIds()) {
             collectEffects(nodeId, data, hullSize, effects);
         }

@@ -1,6 +1,7 @@
 package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 
@@ -38,6 +39,10 @@ public interface SkillEffect {
     }
 
     default String blockAllocationReason(FleetMemberAPI member, float magnitude, List<SkillEffect> currentlyAllocatedEffects) {
+        return null;
+    }
+
+    default String shieldTypeBlockReason(ShieldAPI.ShieldType resolvedShieldType) {
         return null;
     }
 

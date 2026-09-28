@@ -948,6 +948,19 @@ class SkillEffectTest {
     }
 
     @Test
+    void shieldTypeBlockReasonsNeedOnlyTheResolvedShieldType() {
+        com.fs.starfarer.api.combat.ShieldAPI.ShieldType front = com.fs.starfarer.api.combat.ShieldAPI.ShieldType.FRONT;
+        com.fs.starfarer.api.combat.ShieldAPI.ShieldType omni = com.fs.starfarer.api.combat.ShieldAPI.ShieldType.OMNI;
+
+        assertEquals("Ship already has front shields.", ShieldSkillEffect.CONVERT_SHIELD_TO_FRONT.shieldTypeBlockReason(front));
+        assertNull(ShieldSkillEffect.CONVERT_SHIELD_TO_FRONT.shieldTypeBlockReason(omni));
+        assertEquals("Ship already has omni-directional shields.", ShieldSkillEffect.CONVERT_SHIELD_TO_OMNI.shieldTypeBlockReason(omni));
+        assertEquals("Ship has no shields.",
+                ShieldSkillEffect.REMOVE_SHIELD.shieldTypeBlockReason(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.NONE));
+        assertNull(ShieldSkillEffect.SHIELD_ARC_PERCENT.shieldTypeBlockReason(front));
+    }
+
+    @Test
     void minCrewPerFighterBayScalesWithTheShipSOwnBayCount() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         MutableStat numFighterBays = mock(MutableStat.class);
