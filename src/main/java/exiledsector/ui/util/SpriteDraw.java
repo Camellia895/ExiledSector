@@ -24,6 +24,21 @@ public final class SpriteDraw {
         sprite.renderAtCenter(center.x, center.y);
     }
 
+    public static void drawAdditiveAtCenter(SpriteCache cache, String path, Vector2f center, Vector2f size, Color tint, float alphaMult) {
+        SpriteAPI sprite = prepare(cache, path, size, tint, alphaMult);
+        if (sprite == null) return;
+        sprite.setAdditiveBlend();
+        sprite.renderAtCenter(center.x, center.y);
+    }
+
+    public static void drawAdditiveAtCenter(SpriteCache cache, String path, Vector2f center, Vector2f size, Color tint, float alphaMult, float angleDeg) {
+        SpriteAPI sprite = prepare(cache, path, size, tint, alphaMult);
+        if (sprite == null) return;
+        sprite.setAdditiveBlend();
+        sprite.setAngle(angleDeg);
+        sprite.renderAtCenter(center.x, center.y);
+    }
+
     private static SpriteAPI prepare(SpriteCache cache, String path, Vector2f size, Color tint, float alphaMult) {
         if (!cache.ensureLoaded(path)) return null;
         SpriteAPI sprite = Global.getSettings().getSprite(path);

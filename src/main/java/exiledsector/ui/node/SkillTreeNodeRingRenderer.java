@@ -186,6 +186,7 @@ final class SkillTreeNodeRingRenderer {
         }
 
         GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         if (tier != SkillTier.WORMHOLE) {
@@ -249,9 +250,6 @@ final class SkillTreeNodeRingRenderer {
         float cy = center.y;
         float alpha = RING_INSTANCE_BASE_ALPHA * stateAlpha * alphaMult;
 
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-
         for (RingInstance instance : instances) {
             String path = RING_STACK_TEXTURES[instance.textureIndex];
 
@@ -264,17 +262,14 @@ final class SkillTreeNodeRingRenderer {
             float jy = (float) Math.sin(wanderRad) * jitterMag;
             float size = radius * 2f * instance.sizeJitter;
 
-            SpriteDraw.drawAtCenter(spriteCache, path, new Vector2f(cx + jx, cy + jy), new Vector2f(size, size), color, alpha, angle);
+            SpriteDraw.drawAdditiveAtCenter(spriteCache, path, new Vector2f(cx + jx, cy + jy), new Vector2f(size, size), color, alpha, angle);
         }
     }
 
     private void drawAmbientGlow(float cx, float cy, float footprintSize, float stateAlpha, float alphaMult) {
         float size = footprintSize * AMBIENT_GLOW_SIZE_RATIO;
 
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-
-        SpriteDraw.drawAtCenter(spriteCache, GLOW_TEXTURE_PATH, new Vector2f(cx, cy), new Vector2f(size, size),
+        SpriteDraw.drawAdditiveAtCenter(spriteCache, GLOW_TEXTURE_PATH, new Vector2f(cx, cy), new Vector2f(size, size),
                 AMBIENT_GLOW_COLOR, AMBIENT_GLOW_ALPHA * stateAlpha * alphaMult);
     }
 
@@ -321,16 +316,13 @@ final class SkillTreeNodeRingRenderer {
         float size = baseRadius * 2f * WORMHOLE_CORONA_SIZE_RATIO;
         float orbit = baseRadius * WORMHOLE_CORONA_ORBIT_RATIO;
 
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-
         for (int i = 0; i < WORMHOLE_CORONA_COUNT; i++) {
             float baseAngle = 360f * i / WORMHOLE_CORONA_COUNT;
             float angle = baseAngle + elapsedSeconds * WORMHOLE_CORONA_ROTATION_SPEED_DEG;
             float rad = (float) Math.toRadians(angle);
             float pulse = 1f + (float) Math.sin(Math.toRadians(elapsedSeconds * WORMHOLE_CORONA_PULSE_SPEED_DEG + baseAngle)) * WORMHOLE_CORONA_PULSE_SIZE_RATIO;
 
-            SpriteDraw.drawAtCenter(spriteCache, WORMHOLE_CORONA_TEXTURE_PATH,
+            SpriteDraw.drawAdditiveAtCenter(spriteCache, WORMHOLE_CORONA_TEXTURE_PATH,
                     new Vector2f(cx + (float) Math.cos(rad) * orbit, cy + (float) Math.sin(rad) * orbit),
                     new Vector2f(size * pulse, size * pulse), color, alphaMult, angle);
         }
@@ -355,10 +347,8 @@ final class SkillTreeNodeRingRenderer {
         float closedness = 1f - openness;
         float alpha = WORMHOLE_GLOW_ALPHA * closedness * closedness * closedness * alphaMult;
 
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-
         SpriteAPI sprite = Global.getSettings().getSprite(WORMHOLE_GLOW_TEXTURE_PATH);
+        sprite.setAdditiveBlend();
         sprite.setColor(color);
         sprite.setSize(size, size);
         sprite.setAlphaMult(alpha);
