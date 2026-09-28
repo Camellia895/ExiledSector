@@ -10,7 +10,7 @@ import exiledsector.compat.SecondInCommandCompat;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.npc.NpcTreeTag;
-import exiledsector.skills.skilleffect.LogisticsSkillEffect;
+import exiledsector.skills.skilleffect.FleetWideEffects;
 
 public class SkillTreeInstaller implements EveryFrameScript {
 
@@ -51,7 +51,7 @@ public class SkillTreeInstaller implements EveryFrameScript {
             new SkillTreeHullMod().applyEffectsBeforeShipCreation(member.getHullSpec().getHullSize(), member.getStats(), SkillTreeHullMod.ID);
         }
 
-        LogisticsSkillEffect.recomputeExtendedPhaseField();
+        FleetWideEffects.recomputeExtendedPhaseField();
     }
 
     static void adoptNpcTree(FleetMemberAPI member) {

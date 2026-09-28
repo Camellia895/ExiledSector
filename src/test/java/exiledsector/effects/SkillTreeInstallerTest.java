@@ -145,7 +145,7 @@ class SkillTreeInstallerTest {
 
         installer.advance(0.01f);
 
-        // once from SkillTreeInstaller.advance itself, once from LogisticsSkillEffect.recomputeExtendedPhaseField
+        // once from SkillTreeInstaller.advance itself, once from FleetWideEffects.recomputeExtendedPhaseField
         globalMock.verify(Global::getSector, times(2));
     }
 
