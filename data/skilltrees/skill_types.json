@@ -2629,9 +2629,9 @@
 			"hullSizeEffects": [
 				{
 					"effect": "TOP_SPEED_FLAT",
-					"frigate": 10,
-					"destroyer": 8,
-					"cruiser": 6,
+					"frigate": 6,
+					"destroyer": 5,
+					"cruiser": 4,
 					"capitalShip": 4
 				}
 			],

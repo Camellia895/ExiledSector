@@ -28,6 +28,8 @@ public final class TooltipHighlighter {
                     Highlight.NEGATIVE),
             new Rule(Pattern.compile(NUMBER + "\\s+more\\b"), Highlight.POSITIVE),
             new Rule(Pattern.compile(NUMBER + "\\s+less\\b"), Highlight.NEGATIVE),
+            new Rule(Pattern.compile(NUMBER + "\\s+faster\\b"), Highlight.POSITIVE),
+            new Rule(Pattern.compile(NUMBER + "\\s+slower\\b"), Highlight.NEGATIVE),
             new Rule(Pattern.compile("Mutually\\s+exclusive\\s+with\\s+(hullmods?):"), Highlight.HULLMOD),
             new Rule(Pattern.compile("Mutually\\s+exclusive\\s+with\\s+(nodes?):"), Highlight.NODE));
 

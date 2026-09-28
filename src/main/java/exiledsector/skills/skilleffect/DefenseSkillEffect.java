@@ -67,6 +67,11 @@ public enum DefenseSkillEffect implements SkillEffect {
     },
     BREAK_PROBABILITY_PERCENT {
         @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getBreakProb().modifyPercent(modId, magnitude);
         }

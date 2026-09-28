@@ -27,6 +27,13 @@ class TooltipHighlighterTest {
     }
 
     @Test
+    void fasterIsGreenAndSlowerIsRed() {
+        assertEquals(List.of("POSITIVE:20%"), highlighted("20% faster fighter replacement rate decay and recovery."));
+        assertEquals(List.of("NEGATIVE:20%"), highlighted("20% slower fighter replacement rate decay and recovery."));
+        assertEquals(List.of("POSITIVE:100%"), highlighted("Captures combat objectives 100% faster."));
+    }
+
+    @Test
     void decreasesAndLessNumbersAreRed() {
         assertEquals(List.of("NEGATIVE:15%"), highlighted("Decreases shield upkeep by 15%."));
         assertEquals(List.of("NEGATIVE:25%"), highlighted("25% less weapon turn rate."));
