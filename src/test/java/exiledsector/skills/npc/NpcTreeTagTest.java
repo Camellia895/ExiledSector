@@ -99,6 +99,25 @@ class NpcTreeTagTest {
     }
 
     @Test
+    void nodesChargedWithFreedOpKeepTheirOpCostThroughTheTag() {
+        ShipSkillData built = NpcSkillTreeBuilder.rootedTree(SkillTree.get("root"), 1);
+        built.allocate(SkillTree.get("a"), 3);
+        built.selectOption(SkillTree.get("optional_1"), SkillTree.getType("hull_option"), 3);
+        built.allocate(SkillTree.get("b"), 3);
+
+        String tag = NpcTreeTag.encode("bulwark", built);
+        ShipSkillData restored = NpcTreeTag.decode(tag);
+
+        assertEquals("exiledSector_npcTree|bulwark|1|root,a,optional_1=hull_option,b|3", tag);
+        assertEquals(6, restored.getSpentOp());
+        assertEquals(0, restored.getBankedFreeAllocations());
+        assertTrue(restored.isFreeNode("a"));
+        assertFalse(restored.isFreeNode("b"));
+        assertEquals(List.copyOf(built.getAllocatedNodeIds()), List.copyOf(restored.getAllocatedNodeIds()));
+        assertEquals("hull_option", restored.getOptionalSelection("optional_1"));
+    }
+
+    @Test
     void findsTheNpcTreeTagAmongAVariantsTags() {
         String tag = NpcTreeTag.encode("bulwark", build(1).data());
 

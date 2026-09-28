@@ -35,21 +35,32 @@ public final class NpcSkillTreeBuilder {
     }
 
     public static NpcTreeBuild build(NpcLayout layout, int nodeCount, ShipProfile profile, NpcHullMods hullMods) {
+        return build(layout, nodeCount, profile, hullMods, NpcFreedOp.NONE);
+    }
+
+    public static NpcTreeBuild build(NpcLayout layout, int nodeCount, ShipProfile profile, NpcHullMods hullMods,
+                                     NpcFreedOp freedOp) {
         int target = Math.max(0, Math.min(nodeCount, MAX_NODE_COUNT));
         NpcHullMods mods = hullMods == null ? NpcHullMods.NONE : hullMods;
+        NpcFreedOp budget = freedOp == null ? NpcFreedOp.NONE : freedOp;
         Set<String> installed = mods.installed();
         List<NpcBuildStep> steps = new ArrayList<>();
         List<String> stripped = new ArrayList<>();
         SkillNode root = SkillTree.get(layout.rootNodeId());
         ShipSkillData data = rootedTree(root, target);
         if (data != null) {
-            BuildContext context = new BuildContext(data, root.getId(), profile, installed, layoutOptions(layout));
+            BuildContext context = new BuildContext(data, root.getId(), profile, installed, layoutOptions(layout),
+                    budget.opCostPerNode());
             int allocated = convertHullMods(context, mods.removable(), target, steps, stripped);
+            int limit = target + budget.extraNodes(stripped, target);
             for (NpcLayoutEntry entry : layout.entries()) {
-                String outcome = allocated >= target
+                String outcome = allocated >= limit
                         ? NpcBuildStep.COUNT_REACHED
                         : tryAllocate(context, entry);
                 if (NpcBuildStep.ALLOCATED.equals(outcome)) {
+                    if (allocated >= target) {
+                        outcome = NpcBuildStep.ALLOCATED_WITH_FREED_OP;
+                    }
                     allocated++;
                 }
                 steps.add(new NpcBuildStep(entry.nodeId(), outcome));
@@ -82,7 +93,7 @@ public final class NpcSkillTreeBuilder {
     }
 
     private record BuildContext(ShipSkillData data, String rootId, ShipProfile profile, Set<String> installed,
-                                Map<String, String> layoutOptions) {
+                                Map<String, String> layoutOptions, int opCostPerNode) {
     }
 
     private record PathStep(SkillNode node, SkillType option) {
@@ -122,7 +133,7 @@ public final class NpcSkillTreeBuilder {
             context.installed().remove(best.hullModId());
             for (int i = 0; i < best.path().size(); i++) {
                 PathStep step = best.path().get(i);
-                allocate(context.data(), step.node(), step.option());
+                allocate(context, step.node(), step.option());
                 boolean isEquivalent = i == best.path().size() - 1;
                 steps.add(new NpcBuildStep(step.node().getId(),
                         (isEquivalent ? NpcBuildStep.CONVERTED_HULLMOD : NpcBuildStep.PATH_TO_CONVERTED_HULLMOD)
@@ -261,15 +272,15 @@ public final class NpcSkillTreeBuilder {
         if (!context.data().canAllocate(node, context.rootId(), Integer.MAX_VALUE, 0, Integer.MAX_VALUE)) {
             return NpcBuildStep.NOT_CONNECTED;
         }
-        allocate(context.data(), node, option);
+        allocate(context, node, option);
         return NpcBuildStep.ALLOCATED;
     }
 
-    private static void allocate(ShipSkillData data, SkillNode node, SkillType option) {
+    private static void allocate(BuildContext context, SkillNode node, SkillType option) {
         if (option != null) {
-            data.selectOption(node, option, 1);
+            context.data().selectOption(node, option, context.opCostPerNode());
         } else {
-            data.allocate(node, 1);
+            context.data().allocate(node, context.opCostPerNode());
         }
     }
 

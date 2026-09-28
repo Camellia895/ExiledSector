@@ -1,6 +1,7 @@
 package exiledsector.effects;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
@@ -16,6 +17,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.loading.VariantSource;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillNode;
@@ -28,6 +30,7 @@ import exiledsector.skills.npc.NpcLayouts;
 import exiledsector.skills.npc.NpcTreeConfig;
 import exiledsector.skills.npc.NpcTreeRecords;
 import exiledsector.skills.npc.NpcTreeTag;
+import exiledsector.skills.progression.SkillNodeOpCost;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -177,6 +180,34 @@ class NpcFleetLevellerTest {
         assertTrue(hullMods.contains(SkillTreeHullMod.ID));
         assertFalse(hullMods.contains("heavyarmor"));
         assertTrue(hullMods.contains("hardenedshieldemitter"));
+    }
+
+    @Test
+    void opFreedByAStrippedHullmodIsSpentOnExtraTreeNodes() {
+        List<NpcLayoutEntry> entries = new ArrayList<>(List.of(new NpcLayoutEntry("a_1", null), new NpcLayoutEntry("armor_1", null)));
+        String previous = "armor_1";
+        for (String id : List.of("b_1", "c_1", "d_1", "e_1", "f_1", "g_1")) {
+            SkillTree.register(new SkillNode(id, type(id, SkillTier.SMALL).build(), List.of(previous), 0f, 0f));
+            entries.add(new NpcLayoutEntry(id, null));
+            previous = id;
+        }
+        NpcLayouts.register(Map.of("bulwark", new NpcLayout("bulwark", "Bulwark", "root_1", List.of(), "", entries)));
+        when(playerStats.getLevel()).thenReturn(2);
+        SettingsAPI settings = mock(SettingsAPI.class);
+        HullModSpecAPI heavyArmor = mock(HullModSpecAPI.class);
+        when(heavyArmor.getCostFor(HullSize.DESTROYER)).thenReturn(10);
+        when(settings.getHullModSpec("heavyarmor")).thenReturn(heavyArmor);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+        Set<String> hullMods = new LinkedHashSet<>(List.of("heavyarmor"));
+        FleetMemberAPI officered = member("m1", statefulVariant(hullMods, new ArrayList<>()), true);
+
+        NpcFleetLeveller.ensure(fleetOf(officered));
+
+        String tag = NpcTreeTag.find(officered.getVariant());
+        int opCostPerNode = SkillNodeOpCost.perNode(HullSize.DESTROYER);
+        assertTrue(tag.endsWith("|" + opCostPerNode));
+        assertEquals(10 / opCostPerNode * opCostPerNode, NpcTreeTag.decode(tag).getSpentOp());
+        assertFalse(hullMods.contains("heavyarmor"));
     }
 
     @Test

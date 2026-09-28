@@ -3,6 +3,7 @@ package exiledsector.skills.npc;
 public record NpcBuildStep(String nodeId, String outcome) {
 
     public static final String ALLOCATED = "allocated";
+    public static final String ALLOCATED_WITH_FREED_OP = "allocated with OP freed by stripped hullmods";
     public static final String UNKNOWN_NODE = "unknown node";
     public static final String ALREADY_ALLOCATED = "already allocated";
     public static final String WORMHOLE = "wormhole";

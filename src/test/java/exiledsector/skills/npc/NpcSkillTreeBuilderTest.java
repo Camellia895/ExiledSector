@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -523,6 +524,54 @@ class NpcSkillTreeBuilderTest {
                 outcomes(build));
         assertTrue(build.strippedHullModIds().isEmpty());
         assertFalse(build.data().isAllocated("armor_1"));
+    }
+
+    private static NpcTreeBuild buildWithFreedOp(NpcLayout layout, int nodeCount, NpcHullMods hullMods, NpcFreedOp freedOp) {
+        return NpcSkillTreeBuilder.build(layout, nodeCount, SHIELDED_BALLISTIC_FRIGATE, hullMods, freedOp);
+    }
+
+    private static NpcLayout armorThenChain() {
+        small("a", ROOT);
+        hullModNode("armor_1", "heavyarmor", "a");
+        small("b", "armor_1");
+        small("c", "b");
+        small("d", "c");
+        return layout(entry("b"), entry("c"), entry("d"));
+    }
+
+    @Test
+    void opFreedByAStrippedHullmodBuysExtraLayoutNodesChargedAtThePerNodeCost() {
+        NpcTreeBuild build = buildWithFreedOp(armorThenChain(), 2, removable("heavyarmor"),
+                new NpcFreedOp(3, Map.of("heavyarmor", 7), 60));
+
+        assertEquals(List.of("allocated: path to converted hullmod heavyarmor", "allocated: converts hullmod heavyarmor",
+                NpcBuildStep.ALLOCATED_WITH_FREED_OP, NpcBuildStep.ALLOCATED_WITH_FREED_OP, "count reached"), outcomes(build));
+        ShipSkillData data = build.data();
+        assertEquals(6, data.getSpentOp());
+        assertEquals(0, data.getBankedFreeAllocations());
+        assertTrue(data.isFreeNode("armor_1"));
+        assertFalse(data.isFreeNode("b"));
+        assertFalse(data.isFreeNode("c"));
+        assertEquals(2, data.getLevel());
+    }
+
+    @Test
+    void extraNodesFromFreedOpStopAtTheMaxNodeCount() {
+        NpcTreeBuild build = buildWithFreedOp(armorThenChain(), 2, removable("heavyarmor"),
+                new NpcFreedOp(1, Map.of("heavyarmor", 10), 3));
+
+        assertEquals(1, build.steps().stream().filter(step -> NpcBuildStep.ALLOCATED_WITH_FREED_OP.equals(step.outcome())).count());
+        assertEquals(1, build.data().getSpentOp());
+    }
+
+    @Test
+    void aHullmodThatIsKeptFreesNoOp() {
+        NpcTreeBuild build = buildWithFreedOp(armorThenChain(), 1, removable("heavyarmor"),
+                new NpcFreedOp(1, Map.of("heavyarmor", 10), 60));
+
+        assertTrue(build.strippedHullModIds().isEmpty());
+        assertEquals(0, build.data().getSpentOp());
+        assertFalse(outcomes(build).contains(NpcBuildStep.ALLOCATED_WITH_FREED_OP));
     }
 
     @Test

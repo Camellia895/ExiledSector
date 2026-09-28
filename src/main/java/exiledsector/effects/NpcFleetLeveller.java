@@ -7,6 +7,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
+import exiledsector.skills.npc.NpcFreedOp;
 import exiledsector.skills.npc.NpcHullMods;
 import exiledsector.skills.npc.NpcLayout;
 import exiledsector.skills.npc.NpcLayouts;
@@ -65,7 +66,8 @@ public final class NpcFleetLeveller {
         }
         NpcLayout layout = eligible.get(random.nextInt(eligible.size()));
         int nodeCount = Math.min(NpcLevelTable.roll(playerLevel, random), ShipLevelConfig.maxAllocatedNodes());
-        NpcTreeBuild build = NpcSkillTreeBuilder.build(layout, nodeCount, profile, NpcHullMods.of(member.getVariant()));
+        NpcHullMods hullMods = NpcHullMods.of(member.getVariant());
+        NpcTreeBuild build = NpcSkillTreeBuilder.build(layout, nodeCount, profile, hullMods, NpcFreedOp.of(member, hullMods));
         return NpcTreeTag.encode(layout.id(), build.data());
     }
 

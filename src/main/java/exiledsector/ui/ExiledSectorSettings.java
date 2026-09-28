@@ -106,7 +106,8 @@ public final class ExiledSectorSettings {
                 "Some ships in NPC fleets get their own skill tree so they keep up with your fleet. This covers "
                         + "every faction, including your own faction's fleets and your allies. A chosen ship follows one "
                         + "of the NPC build layouts and gets the free root node plus a number of nodes rolled from the "
-                        + "table below for your character level.", NPC_SCALING_TAB);
+                        + "table below for your character level. If the ship strips a hullmod to take its matching "
+                        + "node, the OP that hullmod used buys extra nodes at the normal per-node OP cost.", NPC_SCALING_TAB);
         LunaSettings.SettingsCreator.addBoolean(MOD_ID, NpcTreeConfig.ENABLED_FIELD_ID,
                 "Enable NPC Skill Trees", "When off, no NPC ship gets a skill tree.",
                 NpcTreeConfig.DEFAULT_ENABLED, NPC_SCALING_TAB);

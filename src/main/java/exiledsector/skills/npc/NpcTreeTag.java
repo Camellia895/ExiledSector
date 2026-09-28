@@ -23,11 +23,21 @@ public final class NpcTreeTag {
 
     public static String encode(String layoutId, ShipSkillData data) {
         List<String> nodes = new ArrayList<>();
+        int chargedNodes = 0;
         for (String nodeId : data.getAllocatedNodeIds()) {
             String option = data.getOptionalSelection(nodeId);
             nodes.add(option == null ? nodeId : nodeId + OPTION_SEPARATOR + option);
+            if (!data.isFreeNode(nodeId) && !isRoot(nodeId)) {
+                chargedNodes++;
+            }
         }
-        return PREFIX + layoutId + FIELD_SEPARATOR + data.getLevel() + FIELD_SEPARATOR + String.join(NODE_SEPARATOR, nodes);
+        String tag = PREFIX + layoutId + FIELD_SEPARATOR + data.getLevel() + FIELD_SEPARATOR + String.join(NODE_SEPARATOR, nodes);
+        return data.getSpentOp() > 0 && chargedNodes > 0 ? tag + FIELD_SEPARATOR + data.getSpentOp() / chargedNodes : tag;
+    }
+
+    private static boolean isRoot(String nodeId) {
+        SkillNode node = SkillTree.get(nodeId);
+        return node != null && node.getType().getTier() == SkillTier.ROOT;
     }
 
     public static String find(ShipVariantAPI variant) {
@@ -53,8 +63,10 @@ public final class NpcTreeTag {
             return null;
         }
         int level;
+        int opCostPerNode;
         try {
             level = Integer.parseInt(fields[1]);
+            opCostPerNode = fields.length > 3 ? Math.max(1, Integer.parseInt(fields[3])) : 1;
         } catch (NumberFormatException e) {
             return null;
         }
@@ -65,12 +77,12 @@ public final class NpcTreeTag {
             return NpcSkillTreeBuilder.emptyTree();
         }
         for (int i = 1; i < entries.length; i++) {
-            restore(data, entries[i]);
+            restore(data, entries[i], opCostPerNode);
         }
         return data;
     }
 
-    private static void restore(ShipSkillData data, String entry) {
+    private static void restore(ShipSkillData data, String entry, int opCostPerNode) {
         int optionAt = entry.indexOf(OPTION_SEPARATOR);
         String nodeId = optionAt < 0 ? entry : entry.substring(0, optionAt);
         SkillNode node = SkillTree.get(nodeId);
@@ -79,14 +91,14 @@ public final class NpcTreeTag {
         }
         if (optionAt < 0) {
             if (!node.getType().isOptional()) {
-                data.allocate(node, 1);
+                data.allocate(node, opCostPerNode);
             }
             return;
         }
         String optionId = entry.substring(optionAt + 1);
         SkillType option = SkillTree.getType(optionId);
         if (option != null && node.getType().getOptionalOptionIds().contains(optionId)) {
-            data.selectOption(node, option, 1);
+            data.selectOption(node, option, opCostPerNode);
         }
     }
 
@@ -96,7 +108,7 @@ public final class NpcTreeTag {
             return null;
         }
         String[] fields = tag.substring(prefixLength).split("\\" + FIELD_SEPARATOR, -1);
-        return fields.length == 3 && !fields[0].isEmpty() ? fields : null;
+        return (fields.length == 3 || fields.length == 4) && !fields[0].isEmpty() ? fields : null;
     }
 
     private static int prefixLength(String tag) {
