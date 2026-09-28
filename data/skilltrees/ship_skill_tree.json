@@ -3292,7 +3292,8 @@
 			"id": "waste_not_1",
 			"type": "waste_not",
 			"connectedTo": [
-				"small_flux_optional_60"
+				"small_flux_optional_60",
+				"small_flux_optional_61"
 			],
 			"x": 8560,
 			"y": -163
@@ -3302,7 +3303,9 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_60",
-				"small_flux_optional_62"
+				"small_flux_optional_62",
+				"waste_not_1",
+				"ground_support_1"
 			],
 			"x": 8915,
 			"y": 24,
@@ -3323,7 +3326,9 @@
 		{
 			"id": "ground_support_1",
 			"type": "ground_support",
-			"connectedTo": [],
+			"connectedTo": [
+				"small_flux_optional_61"
+			],
 			"x": 8563,
 			"y": 189
 		},
