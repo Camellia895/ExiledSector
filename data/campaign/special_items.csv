@@ -1,2 +1,0 @@
-name,id,tags,tech/manufacturer,rarity,base price,stack size,cargo space,baseRaidDanger,icon,sound id,sound id drop,plugin,plugin params,desc,order
-Base ModSpec,modspec,modspec,,,1,1000,1,,graphics/icons/cargo/modspec2.png,ui_chip_pickup,ui_modspec_drop,exiledsector.ui.BlueprintRevealModSpecItemPlugin,,"A collection of notes, guidelines, and practical examples that enable one to adapt and apply this modification to various hulls.",50

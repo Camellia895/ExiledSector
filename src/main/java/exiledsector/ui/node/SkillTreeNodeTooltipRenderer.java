@@ -33,6 +33,7 @@ final class SkillTreeNodeTooltipRenderer {
     private static final String FREE_NODE_NOTE = "Granted free by a level-up.";
     private static final String LOCKED_NODE_TITLE = "Unidentified";
     private static final String LOCKED_NODE_BODY = "Unidentified - explore the sector to discover this node";
+    private static final String LOCKED_NODE_HINT = "Hullmod blueprints would be a good place to start searching.";
 
     private final FleetMemberAPI member;
     private final SkillTreePanelStyle style;
@@ -102,7 +103,7 @@ final class SkillTreeNodeTooltipRenderer {
 
     private List<DescriptionLine> bodyLines(SkillNode node, SkillType effectiveType, boolean showOptionalHint, ShipSkillData data) {
         if (SkillTypeUnlockStatus.isHidden(node.getType(), data)) {
-            return List.of(new DescriptionLine(LOCKED_NODE_BODY, false));
+            return List.of(new DescriptionLine(LOCKED_NODE_BODY, false), new DescriptionLine(LOCKED_NODE_HINT, false));
         }
         List<DescriptionLine> lines = new ArrayList<>();
         if (showOptionalHint) {
