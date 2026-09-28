@@ -1721,7 +1721,8 @@
 			"tags": [
 				"flux",
 				"phase",
-				"req_phase"
+				"req_phase",
+				"player_only"
 			]
 		},
 		{
