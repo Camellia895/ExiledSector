@@ -46,7 +46,7 @@ public interface SkillEffect {
         return null;
     }
 
-    default boolean appliesToEnemyShips() {
+    default boolean appliesToNpcShips() {
         return true;
     }
 

@@ -961,10 +961,10 @@ class SkillEffectTest {
     }
 
     @Test
-    void theRecoveryBonusIsWithheldFromEnemyShipsWhileOtherEffectsApply() {
-        assertFalse(DefenseSkillEffect.SHIP_RECOVERY_CHANCE_BONUS.appliesToEnemyShips());
-        assertTrue(DefenseSkillEffect.HULL_PERCENT.appliesToEnemyShips());
-        assertTrue(DefenseSkillEffect.BREAK_PROBABILITY_PERCENT.appliesToEnemyShips());
+    void theRecoveryBonusIsWithheldFromNpcShipsWhileOtherEffectsApply() {
+        assertFalse(DefenseSkillEffect.SHIP_RECOVERY_CHANCE_BONUS.appliesToNpcShips());
+        assertTrue(DefenseSkillEffect.HULL_PERCENT.appliesToNpcShips());
+        assertTrue(DefenseSkillEffect.BREAK_PROBABILITY_PERCENT.appliesToNpcShips());
     }
 
     @Test

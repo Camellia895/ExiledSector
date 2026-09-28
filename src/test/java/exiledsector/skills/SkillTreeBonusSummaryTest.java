@@ -126,10 +126,10 @@ class SkillTreeBonusSummaryTest {
     }
 
     @Test
-    void enemyBuildsLeaveOutEffectsThatNeverApplyToEnemyShips() {
+    void npcBuildsLeaveOutEffectsThatNeverApplyToNpcShips() {
         allocate("bulkheads_1", small("reinforcedhull",
                 new SkillTypeEffect(DefenseSkillEffect.SHIP_RECOVERY_CHANCE_BONUS, 1000f)));
-        data.markEnemyBuild();
+        data.markNpcBuild();
 
         Summary summary = SkillTreeBonusSummary.of(data, HullSize.CRUISER);
 

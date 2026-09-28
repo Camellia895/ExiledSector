@@ -971,23 +971,23 @@ class ShipSkillDataTest {
     }
 
     @Test
-    void aShipIsOnlyAnEnemyBuildOnceMarked() {
+    void aShipIsOnlyAnNpcBuildOnceMarked() {
         ShipSkillData data = new ShipSkillData();
-        assertFalse(data.isEnemyBuild());
+        assertFalse(data.isNpcBuild());
 
-        data.markEnemyBuild();
+        data.markNpcBuild();
 
-        assertTrue(data.isEnemyBuild());
+        assertTrue(data.isNpcBuild());
     }
 
     @Test
-    void clearingTheEnemyBuildMarkerMakesItAnOrdinaryTree() {
+    void clearingTheNpcBuildMarkerMakesItAnOrdinaryTree() {
         ShipSkillData data = new ShipSkillData();
-        data.markEnemyBuild();
+        data.markNpcBuild();
 
-        data.clearEnemyBuild();
+        data.clearNpcBuild();
 
-        assertFalse(data.isEnemyBuild());
+        assertFalse(data.isNpcBuild());
     }
 
     @Test

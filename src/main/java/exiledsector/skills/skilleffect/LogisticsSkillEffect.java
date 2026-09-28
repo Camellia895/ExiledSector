@@ -480,7 +480,7 @@ public enum LogisticsSkillEffect implements SkillEffect {
         }
 
         @Override
-        public boolean appliesToEnemyShips() {
+        public boolean appliesToNpcShips() {
             return false;
         }
 
@@ -506,7 +506,7 @@ public enum LogisticsSkillEffect implements SkillEffect {
         }
 
         @Override
-        public boolean appliesToEnemyShips() {
+        public boolean appliesToNpcShips() {
             return false;
         }
 

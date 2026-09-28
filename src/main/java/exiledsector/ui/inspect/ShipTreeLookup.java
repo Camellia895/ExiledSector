@@ -6,9 +6,9 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
-import exiledsector.skills.enemy.EnemyLayout;
-import exiledsector.skills.enemy.EnemyLayouts;
-import exiledsector.skills.enemy.EnemyTreeTag;
+import exiledsector.skills.npc.NpcLayout;
+import exiledsector.skills.npc.NpcLayouts;
+import exiledsector.skills.npc.NpcTreeTag;
 
 public final class ShipTreeLookup {
 
@@ -22,9 +22,9 @@ public final class ShipTreeLookup {
         if (member == null) {
             return null;
         }
-        String tag = EnemyTreeTag.find(member.getVariant());
+        String tag = NpcTreeTag.find(member.getVariant());
         if (tag != null) {
-            return new ShipTree(SkillDataResolver.resolve(member, member.getVariant()), layoutName(EnemyTreeTag.layoutId(tag)));
+            return new ShipTree(SkillDataResolver.resolve(member, member.getVariant()), layoutName(NpcTreeTag.layoutId(tag)));
         }
         if (!isInPlayerFleet(member)) {
             return null;
@@ -33,12 +33,12 @@ public final class ShipTreeLookup {
         return data.isBlank() ? null : new ShipTree(data, null);
     }
 
-    public static boolean isLevelledEnemy(FleetMemberAPI member) {
-        return member != null && EnemyTreeTag.find(member.getVariant()) != null;
+    public static boolean isLevelledNpc(FleetMemberAPI member) {
+        return member != null && NpcTreeTag.find(member.getVariant()) != null;
     }
 
     private static String layoutName(String layoutId) {
-        EnemyLayout layout = layoutId == null ? null : EnemyLayouts.find(layoutId);
+        NpcLayout layout = layoutId == null ? null : NpcLayouts.find(layoutId);
         return layout != null ? layout.name() : layoutId;
     }
 

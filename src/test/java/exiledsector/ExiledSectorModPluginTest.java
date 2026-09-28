@@ -6,16 +6,16 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import exiledsector.effects.CombatXpListener;
-import exiledsector.effects.EnemyFleetDialogListener;
-import exiledsector.effects.EnemyFleetInflationListener;
-import exiledsector.effects.EnemyFleetSweepScript;
+import exiledsector.effects.NpcFleetDialogListener;
+import exiledsector.effects.NpcFleetInflationListener;
+import exiledsector.effects.NpcFleetSweepScript;
 import exiledsector.effects.SkillTreeInstaller;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
-import exiledsector.skills.enemy.EnemyLayout;
-import exiledsector.skills.enemy.EnemyLayouts;
+import exiledsector.skills.npc.NpcLayout;
+import exiledsector.skills.npc.NpcLayouts;
 import exiledsector.ui.SkillTreeRefitButton;
-import exiledsector.ui.inspect.EnemyTreeInspectInput;
+import exiledsector.ui.inspect.NpcTreeInspectInput;
 import exiledsector.ui.inspect.SkillTreeCodexListener;
 import lunalib.lunaRefit.BaseRefitButton;
 import lunalib.lunaRefit.LunaRefitManager;
@@ -68,7 +68,7 @@ class ExiledSectorModPluginTest {
                 .thenReturn(new JSONArray());
         when(settings.getMergedSpreadsheetDataForMod("weapon", "data/config/exiledSector/energy_chain_blocklist.csv", "exiledSector"))
                 .thenReturn(new JSONArray());
-        when(settings.getMergedJSON("data/config/exiledSector/enemy_layouts.json")).thenReturn(new JSONObject(
+        when(settings.getMergedJSON("data/config/exiledSector/npc_layouts.json")).thenReturn(new JSONObject(
                 "{ \"layouts\": { \"bulwark\": { \"root\": \"root_low_tech_1\", \"nodes\": [\"a\"] } } }"));
 
         Logger logger = mock(Logger.class);
@@ -82,7 +82,7 @@ class ExiledSectorModPluginTest {
 
     @AfterEach
     void tearDown() {
-        EnemyLayouts.register(Map.of());
+        NpcLayouts.register(Map.of());
         settingsCreatorMock.close();
         globalMock.close();
         BaseRefitButton registered = LunaRefitManager.getFirstButtonOfClass(SkillTreeRefitButton.class);
@@ -138,9 +138,9 @@ class ExiledSectorModPluginTest {
     }
 
     @Test
-    void onGameLoadClearsTheEnemyTreeCache() {
+    void onGameLoadClearsTheNpcTreeCache() {
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
-        when(variant.getTags()).thenReturn(List.of("exiledSector_enemyTree|bulwark|0|missing_root"));
+        when(variant.getTags()).thenReturn(List.of("exiledSector_npcTree|bulwark|0|missing_root"));
         ShipSkillData before = SkillDataResolver.resolve(null, variant);
 
         new ExiledSectorModPlugin().onGameLoad(false);
@@ -149,21 +149,21 @@ class ExiledSectorModPluginTest {
     }
 
     @Test
-    void onApplicationLoadLoadsTheEnemyLayoutsMergedAcrossMods() throws Exception {
+    void onApplicationLoadLoadsTheNpcLayoutsMergedAcrossMods() throws Exception {
         new ExiledSectorModPlugin().onApplicationLoad();
 
-        assertEquals(List.of("bulwark"), EnemyLayouts.all().stream().map(EnemyLayout::id).toList());
+        assertEquals(List.of("bulwark"), NpcLayouts.all().stream().map(NpcLayout::id).toList());
     }
 
     @Test
-    void onGameLoadRegistersTheEnemyFleetHooksAndInspectionListenersAsTransient() {
+    void onGameLoadRegistersTheNpcFleetHooksAndInspectionListenersAsTransient() {
         new ExiledSectorModPlugin().onGameLoad(false);
 
-        verify(sector).addTransientScript(any(EnemyFleetSweepScript.class));
-        verify(sector, never()).addScript(any(EnemyFleetSweepScript.class));
-        verify(sector).addTransientListener(any(EnemyFleetDialogListener.class));
-        verify(listenerManager).addListener(any(EnemyFleetInflationListener.class), eq(true));
-        verify(listenerManager).addListener(any(EnemyTreeInspectInput.class), eq(true));
+        verify(sector).addTransientScript(any(NpcFleetSweepScript.class));
+        verify(sector, never()).addScript(any(NpcFleetSweepScript.class));
+        verify(sector).addTransientListener(any(NpcFleetDialogListener.class));
+        verify(listenerManager).addListener(any(NpcFleetInflationListener.class), eq(true));
+        verify(listenerManager).addListener(any(NpcTreeInspectInput.class), eq(true));
         verify(listenerManager).addListener(any(SkillTreeCodexListener.class), eq(true));
     }
 }

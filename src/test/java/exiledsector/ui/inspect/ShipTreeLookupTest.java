@@ -12,9 +12,9 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledsector.skills.enemy.EnemyLayout;
-import exiledsector.skills.enemy.EnemyLayoutEntry;
-import exiledsector.skills.enemy.EnemyLayouts;
+import exiledsector.skills.npc.NpcLayout;
+import exiledsector.skills.npc.NpcLayoutEntry;
+import exiledsector.skills.npc.NpcLayouts;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ import static org.mockito.Mockito.when;
 
 class ShipTreeLookupTest {
 
-    private static final String ENEMY_TAG = "exiledSector_enemyTree|bulwark|2|root_1,a_1";
+    private static final String NPC_TAG = "exiledSector_npcTree|bulwark|2|root_1,a_1";
 
     private MockedStatic<Global> globalMock;
     private Map<String, Object> persistentData;
@@ -47,8 +47,8 @@ class ShipTreeLookupTest {
         SkillTree.getAllTypes().clear();
         SkillTree.register(new SkillNode("root_1", new SkillType.Builder("root", "Root", "a.png", SkillTier.ROOT).build(), List.of(), 0f, 0f));
         SkillTree.register(new SkillNode("a_1", new SkillType.Builder("a", "A", "a.png", SkillTier.SMALL).build(), List.of("root_1"), 0f, 0f));
-        EnemyLayouts.register(Map.of("bulwark", new EnemyLayout("bulwark", "Bulwark", "root_1", List.of(), "",
-                List.of(new EnemyLayoutEntry("a_1", null)))));
+        NpcLayouts.register(Map.of("bulwark", new NpcLayout("bulwark", "Bulwark", "root_1", List.of(), "",
+                List.of(new NpcLayoutEntry("a_1", null)))));
         persistentData = new HashMap<>();
         SectorAPI sector = mock(SectorAPI.class);
         when(sector.getPersistentData()).thenReturn(persistentData);
@@ -59,7 +59,7 @@ class ShipTreeLookupTest {
     @AfterEach
     void tearDown() {
         globalMock.close();
-        EnemyLayouts.register(Map.of());
+        NpcLayouts.register(Map.of());
         SkillDataResolver.clearCache();
         SkillTree.getAllNodes().clear();
         SkillTree.getAllTypes().clear();
@@ -80,8 +80,8 @@ class ShipTreeLookupTest {
     }
 
     @Test
-    void aLevelledEnemyShowsItsTaggedTreeAndLayoutName() {
-        ShipTreeLookup.ShipTree tree = ShipTreeLookup.find(member("npc", false, ENEMY_TAG));
+    void aLevelledNpcShowsItsTaggedTreeAndLayoutName() {
+        ShipTreeLookup.ShipTree tree = ShipTreeLookup.find(member("npc", false, NPC_TAG));
 
         assertNotNull(tree);
         assertEquals("Bulwark", tree.layoutName());
@@ -90,7 +90,7 @@ class ShipTreeLookupTest {
     }
 
     @Test
-    void anUnlevelledEnemyHasNothingToShowAndLeavesTheSaveUntouched() {
+    void anUnlevelledNpcHasNothingToShowAndLeavesTheSaveUntouched() {
         assertNull(ShipTreeLookup.find(member("npc", false)));
         assertTrue(persistentData.isEmpty());
     }
@@ -109,9 +109,9 @@ class ShipTreeLookupTest {
     }
 
     @Test
-    void onlyEnemyTaggedShipsCountAsLevelledEnemies() {
-        assertTrue(ShipTreeLookup.isLevelledEnemy(member("npc", false, ENEMY_TAG)));
-        assertFalse(ShipTreeLookup.isLevelledEnemy(member("npc", false)));
-        assertFalse(ShipTreeLookup.isLevelledEnemy(null));
+    void onlyNpcTaggedShipsCountAsLevelledNpcs() {
+        assertTrue(ShipTreeLookup.isLevelledNpc(member("npc", false, NPC_TAG)));
+        assertFalse(ShipTreeLookup.isLevelledNpc(member("npc", false)));
+        assertFalse(ShipTreeLookup.isLevelledNpc(null));
     }
 }

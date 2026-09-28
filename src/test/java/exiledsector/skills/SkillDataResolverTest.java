@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 
 class SkillDataResolverTest {
 
-    private static final String ENEMY_TAG = "exiledSector_enemyTree|bulwark|2|root,a";
+    private static final String NPC_TAG = "exiledSector_npcTree|bulwark|2|root,a";
 
     private MockedStatic<ShipSkillDataManager> dataManagerMock;
 
@@ -59,36 +59,36 @@ class SkillDataResolverTest {
     }
 
     @Test
-    void anEnemyTaggedVariantResolvesToItsTaggedTreeWithoutTouchingTheSave() {
-        ShipSkillData data = SkillDataResolver.resolve(member("npc-1"), variantWithTags(ENEMY_TAG));
+    void anNpcTaggedVariantResolvesToItsTaggedTreeWithoutTouchingTheSave() {
+        ShipSkillData data = SkillDataResolver.resolve(member("npc-1"), variantWithTags(NPC_TAG));
 
         assertEquals(List.of("root", "a"), List.copyOf(data.getAllocatedNodeIds()));
-        assertTrue(data.isEnemyBuild());
+        assertTrue(data.isNpcBuild());
         dataManagerMock.verifyNoInteractions();
     }
 
     @Test
     void theSameTagIsDecodedOnlyOnce() {
-        ShipSkillData first = SkillDataResolver.resolve(member("npc-1"), variantWithTags(ENEMY_TAG));
-        ShipSkillData second = SkillDataResolver.resolve(null, variantWithTags(ENEMY_TAG));
+        ShipSkillData first = SkillDataResolver.resolve(member("npc-1"), variantWithTags(NPC_TAG));
+        ShipSkillData second = SkillDataResolver.resolve(null, variantWithTags(NPC_TAG));
 
         assertSame(first, second);
     }
 
     @Test
     void clearingTheCacheDecodesTagsAfresh() {
-        ShipSkillData before = SkillDataResolver.resolve(null, variantWithTags(ENEMY_TAG));
+        ShipSkillData before = SkillDataResolver.resolve(null, variantWithTags(NPC_TAG));
         SkillDataResolver.clearCache();
 
-        assertNotSame(before, SkillDataResolver.resolve(null, variantWithTags(ENEMY_TAG)));
+        assertNotSame(before, SkillDataResolver.resolve(null, variantWithTags(NPC_TAG)));
     }
 
     @Test
-    void aMalformedEnemyTagGivesAnEmptyEnemyTreeInsteadOfTheSavedOne() {
-        ShipSkillData data = SkillDataResolver.resolve(member("npc-1"), variantWithTags("exiledSector_enemyTree|broken"));
+    void aMalformedNpcTagGivesAnEmptyNpcTreeInsteadOfTheSavedOne() {
+        ShipSkillData data = SkillDataResolver.resolve(member("npc-1"), variantWithTags("exiledSector_npcTree|broken"));
 
         assertTrue(data.getAllocatedNodeIds().isEmpty());
-        assertTrue(data.isEnemyBuild());
+        assertTrue(data.isNpcBuild());
         dataManagerMock.verifyNoInteractions();
     }
 
@@ -108,9 +108,9 @@ class SkillDataResolverTest {
     }
 
     @Test
-    void reportsWhetherAVariantCarriesAnEnemyTree() {
-        assertTrue(SkillDataResolver.isEnemyTree(variantWithTags(ENEMY_TAG)));
-        assertFalse(SkillDataResolver.isEnemyTree(variantWithTags("exiledSector_installed_x")));
-        assertFalse(SkillDataResolver.isEnemyTree(null));
+    void reportsWhetherAVariantCarriesAnNpcTree() {
+        assertTrue(SkillDataResolver.isNpcTree(variantWithTags(NPC_TAG)));
+        assertFalse(SkillDataResolver.isNpcTree(variantWithTags("exiledSector_installed_x")));
+        assertFalse(SkillDataResolver.isNpcTree(null));
     }
 }

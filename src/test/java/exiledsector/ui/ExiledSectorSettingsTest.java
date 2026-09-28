@@ -1,8 +1,8 @@
 package exiledsector.ui;
 
-import exiledsector.skills.enemy.EnemyLevelTable;
-import exiledsector.skills.enemy.EnemyTreeConfig;
-import exiledsector.ui.inspect.EnemyInspectConfig;
+import exiledsector.skills.npc.NpcLevelTable;
+import exiledsector.skills.npc.NpcTreeConfig;
+import exiledsector.ui.inspect.NpcInspectConfig;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,31 +29,31 @@ class ExiledSectorSettingsTest {
     }
 
     @Test
-    void registersAMinAndMaxNodeFieldForEveryPlayerLevelOnTheEnemyScalingTab() {
-        for (int level = EnemyLevelTable.MIN_PLAYER_LEVEL; level <= EnemyLevelTable.MAX_PLAYER_LEVEL; level++) {
+    void registersAMinAndMaxNodeFieldForEveryPlayerLevelOnTheNpcScalingTab() {
+        for (int level = NpcLevelTable.MIN_PLAYER_LEVEL; level <= NpcLevelTable.MAX_PLAYER_LEVEL; level++) {
             int current = level;
             settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addInt(eq("exiledSector"),
-                    eq(EnemyLevelTable.minNodesFieldId(current)), anyString(), anyString(),
-                    eq(EnemyLevelTable.defaultMinNodes(current)), eq(EnemyLevelTable.MIN_NODES), eq(EnemyLevelTable.MAX_NODES),
-                    eq(ExiledSectorSettings.ENEMY_SCALING_TAB)));
+                    eq(NpcLevelTable.minNodesFieldId(current)), anyString(), anyString(),
+                    eq(NpcLevelTable.defaultMinNodes(current)), eq(NpcLevelTable.MIN_NODES), eq(NpcLevelTable.MAX_NODES),
+                    eq(ExiledSectorSettings.NPC_SCALING_TAB)));
             settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addInt(eq("exiledSector"),
-                    eq(EnemyLevelTable.maxNodesFieldId(current)), anyString(), anyString(),
-                    eq(EnemyLevelTable.defaultMaxNodes(current)), eq(EnemyLevelTable.MIN_NODES), eq(EnemyLevelTable.MAX_NODES),
-                    eq(ExiledSectorSettings.ENEMY_SCALING_TAB)));
+                    eq(NpcLevelTable.maxNodesFieldId(current)), anyString(), anyString(),
+                    eq(NpcLevelTable.defaultMaxNodes(current)), eq(NpcLevelTable.MIN_NODES), eq(NpcLevelTable.MAX_NODES),
+                    eq(ExiledSectorSettings.NPC_SCALING_TAB)));
         }
     }
 
     @Test
-    void registersTheEnemyTreeTogglesOnTheEnemyScalingTab() {
+    void registersTheNpcTreeTogglesOnTheNpcScalingTab() {
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addBoolean(eq("exiledSector"),
-                eq(EnemyTreeConfig.ENABLED_FIELD_ID), anyString(), anyString(), eq(true), eq(ExiledSectorSettings.ENEMY_SCALING_TAB)));
+                eq(NpcTreeConfig.ENABLED_FIELD_ID), anyString(), anyString(), eq(true), eq(ExiledSectorSettings.NPC_SCALING_TAB)));
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addBoolean(eq("exiledSector"),
-                eq(EnemyTreeConfig.OFFICERED_SHIPS_FIELD_ID), anyString(), anyString(), eq(true), eq(ExiledSectorSettings.ENEMY_SCALING_TAB)));
+                eq(NpcTreeConfig.OFFICERED_SHIPS_FIELD_ID), anyString(), anyString(), eq(true), eq(ExiledSectorSettings.NPC_SCALING_TAB)));
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addBoolean(eq("exiledSector"),
-                eq(EnemyTreeConfig.FLAGSHIP_FIELD_ID), anyString(), anyString(), eq(true), eq(ExiledSectorSettings.ENEMY_SCALING_TAB)));
+                eq(NpcTreeConfig.FLAGSHIP_FIELD_ID), anyString(), anyString(), eq(true), eq(ExiledSectorSettings.NPC_SCALING_TAB)));
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addInt(eq("exiledSector"),
-                eq(EnemyTreeConfig.OTHER_SHIP_CHANCE_FIELD_ID), anyString(), anyString(), eq(30), eq(0), eq(100),
-                eq(ExiledSectorSettings.ENEMY_SCALING_TAB)));
+                eq(NpcTreeConfig.OTHER_SHIP_CHANCE_FIELD_ID), anyString(), anyString(), eq(30), eq(0), eq(100),
+                eq(ExiledSectorSettings.NPC_SCALING_TAB)));
     }
 
     @Test
@@ -62,9 +62,9 @@ class ExiledSectorSettingsTest {
     }
 
     @Test
-    void registersTheInspectKeybindOnTheEnemyScalingTab() {
+    void registersTheInspectKeybindOnTheNpcScalingTab() {
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addKeybind(eq("exiledSector"),
-                eq(EnemyInspectConfig.KEYBIND_FIELD_ID), anyString(), anyString(), eq(EnemyInspectConfig.DEFAULT_KEY),
-                eq(ExiledSectorSettings.ENEMY_SCALING_TAB)));
+                eq(NpcInspectConfig.KEYBIND_FIELD_ID), anyString(), anyString(), eq(NpcInspectConfig.DEFAULT_KEY),
+                eq(ExiledSectorSettings.NPC_SCALING_TAB)));
     }
 }

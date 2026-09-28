@@ -43,7 +43,7 @@ public final class SkillTreeBonusSummary {
             Map<SkillEffect, Float> group = totals.computeIfAbsent(new Group(type.getTemporaryAfterDeploymentSeconds()),
                     key -> new LinkedHashMap<>());
             type.forEachEffect(hullSize, (effect, magnitude) -> {
-                if (!data.isEnemyBuild() || effect.appliesToEnemyShips()) {
+                if (!data.isNpcBuild() || effect.appliesToNpcShips()) {
                     group.merge(effect, magnitude, (a, b) -> combine(effect, a, b));
                 }
             });

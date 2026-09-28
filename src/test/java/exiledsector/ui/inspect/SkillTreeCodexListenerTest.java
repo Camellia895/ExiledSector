@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 
 class SkillTreeCodexListenerTest {
 
-    private static final String ENEMY_TAG = "exiledSector_enemyTree|bulwark|2|root_1,a_1";
+    private static final String NPC_TAG = "exiledSector_npcTree|bulwark|2|root_1,a_1";
 
     @BeforeEach
     void setUp() {
@@ -44,7 +44,7 @@ class SkillTreeCodexListenerTest {
         SkillTree.getAllTypes().clear();
     }
 
-    private static FleetMemberAPI enemy(String... tags) {
+    private static FleetMemberAPI npc(String... tags) {
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(variant.getTags()).thenReturn(List.of(tags));
@@ -63,8 +63,8 @@ class SkillTreeCodexListenerTest {
     }
 
     @Test
-    void openingTheCodexForALevelledEnemyAddsALinkedSkillTreeEntry() {
-        CodexEntryPlugin shipEntry = memberEntry("temp-1", enemy(ENEMY_TAG));
+    void openingTheCodexForALevelledNpcAddsALinkedSkillTreeEntry() {
+        CodexEntryPlugin shipEntry = memberEntry("temp-1", npc(NPC_TAG));
 
         new SkillTreeCodexListener().reportAboutToOpenCodex();
 
@@ -76,7 +76,7 @@ class SkillTreeCodexListenerTest {
 
     @Test
     void shipsWithoutATreeGetNoExtraEntry() {
-        memberEntry("temp-1", enemy());
+        memberEntry("temp-1", npc());
 
         new SkillTreeCodexListener().reportAboutToOpenCodex();
 
@@ -85,7 +85,7 @@ class SkillTreeCodexListenerTest {
 
     @Test
     void reopeningTheCodexDoesNotDuplicateTheEntry() {
-        memberEntry("temp-1", enemy(ENEMY_TAG));
+        memberEntry("temp-1", npc(NPC_TAG));
         SkillTreeCodexListener listener = new SkillTreeCodexListener();
 
         listener.reportAboutToOpenCodex();
@@ -96,7 +96,7 @@ class SkillTreeCodexListenerTest {
 
     @Test
     void closingTheCodexRemovesAndUnlinksTheAddedEntries() {
-        CodexEntryPlugin shipEntry = memberEntry("temp-1", enemy(ENEMY_TAG));
+        CodexEntryPlugin shipEntry = memberEntry("temp-1", npc(NPC_TAG));
         SkillTreeCodexListener listener = new SkillTreeCodexListener();
         listener.reportAboutToOpenCodex();
 

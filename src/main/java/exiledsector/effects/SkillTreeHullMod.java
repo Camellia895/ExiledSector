@@ -38,15 +38,15 @@ public class SkillTreeHullMod extends BaseHullMod {
         ShipSkillData data = SkillDataResolver.resolve(stats.getFleetMember(), stats.getVariant());
         if (data == null) return;
 
-        boolean enemyTree = SkillDataResolver.isEnemyTree(stats.getVariant());
+        boolean npcTree = SkillDataResolver.isNpcTree(stats.getVariant());
         forEachAllocatedEffect(data, hullSize,
                 (vanillaEffect, vanillaHullModId) -> vanillaEffect.applyEffectsBeforeShipCreation(hullSize, stats, vanillaHullModId),
                 (effect, modId, magnitude) -> effect.apply(stats, modId, magnitude));
-        if (!enemyTree) {
+        if (!npcTree) {
             syncOpSpentHullMod(stats.getFleetMember(), stats.getVariant());
         }
         syncInstalledHullMods(data, stats.getVariant());
-        if (!enemyTree) {
+        if (!npcTree) {
             removeHullModsConflictingWithAllocatedSkills(data, stats.getVariant());
         }
     }
@@ -139,11 +139,11 @@ public class SkillTreeHullMod extends BaseHullMod {
     }
 
     private static boolean appliesTo(ShipSkillData data, SkillEffect effect) {
-        return !data.isEnemyBuild() || effect.appliesToEnemyShips();
+        return !data.isNpcBuild() || effect.appliesToNpcShips();
     }
 
     public static void syncOpSpentHullMod(FleetMemberAPI member, ShipVariantAPI variant) {
-        if (member == null || variant == null || SkillDataResolver.isEnemyTree(variant)) return;
+        if (member == null || variant == null || SkillDataResolver.isNpcTree(variant)) return;
 
         String hullModId = OP_SPENT_HULLMOD_ID_PREFIX + OpSpentSlotManager.slotFor(member.getId());
         HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
@@ -208,7 +208,7 @@ public class SkillTreeHullMod extends BaseHullMod {
     }
 
     public static void removeHullModsConflictingWithAllocatedSkills(FleetMemberAPI member, ShipVariantAPI variant) {
-        if (member == null || SkillDataResolver.isEnemyTree(variant)) return;
+        if (member == null || SkillDataResolver.isNpcTree(variant)) return;
 
         removeHullModsConflictingWithAllocatedSkills(ShipSkillDataManager.get(member.getId()), variant);
     }

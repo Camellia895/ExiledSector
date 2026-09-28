@@ -231,7 +231,7 @@ class SkillTreeInstallerTest {
         verify(hullBonus).modifyPercent("exiledSector_skill_hull_1", 10f);
     }
 
-    private static FleetMemberAPI recoveredEnemy(String id, Set<String> hullMods, List<String> tags) {
+    private static FleetMemberAPI recoveredNpc(String id, Set<String> hullMods, List<String> tags) {
         FleetMemberAPI member = mockMember(id, false);
         ShipVariantAPI variant = member.getVariant();
         when(variant.hasHullMod(anyString())).thenAnswer(invocation -> hullMods.contains((String) invocation.getArgument(0)));
@@ -242,7 +242,7 @@ class SkillTreeInstallerTest {
         return member;
     }
 
-    private static void registerEnemyTreeNodes() {
+    private static void registerNpcTreeNodes() {
         SkillTree.register(new SkillNode("root_1", new SkillType.Builder("root", "Root", "a.png", SkillTier.ROOT).build(),
                 List.of(), 0f, 0f));
         SkillTree.register(new SkillNode("a_1", new SkillType.Builder("a", "A", "a.png", SkillTier.SMALL).build(),
@@ -250,11 +250,11 @@ class SkillTreeInstallerTest {
     }
 
     @Test
-    void aRecoveredEnemyShipKeepsItsTreeAsItsOwnSavedTree() {
-        registerEnemyTreeNodes();
+    void aRecoveredNpcShipKeepsItsTreeAsItsOwnSavedTree() {
+        registerNpcTreeNodes();
         Set<String> hullMods = new HashSet<>(Set.of(SkillTreeHullMod.ID));
-        List<String> tags = new ArrayList<>(List.of("exiledSector_enemyTree|bulwark|3|root_1,a_1"));
-        FleetMemberAPI member = recoveredEnemy("recovered", hullMods, tags);
+        List<String> tags = new ArrayList<>(List.of("exiledSector_npcTree|bulwark|3|root_1,a_1"));
+        FleetMemberAPI member = recoveredNpc("recovered", hullMods, tags);
         when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
 
         new SkillTreeInstaller().advance(0.01f);
@@ -266,18 +266,18 @@ class SkillTreeInstallerTest {
         assertEquals(2, adopted.getBankedFreeAllocations());
         assertTrue(adopted.isFreeNode("a_1"));
         assertEquals(0, adopted.getSpentOp());
-        assertFalse(adopted.isEnemyBuild());
+        assertFalse(adopted.isNpcBuild());
         assertTrue(tags.isEmpty());
         verify(member.getVariant()).removeMod(SkillTreeHullMod.ID);
         verify(member.getVariant()).addPermaMod(SkillTreeHullMod.ID);
     }
 
     @Test
-    void aShipThatAlreadyHasSavedProgressKeepsItAndOnlyLosesTheEnemyTag() {
-        registerEnemyTreeNodes();
+    void aShipThatAlreadyHasSavedProgressKeepsItAndOnlyLosesTheNpcTag() {
+        registerNpcTreeNodes();
         ShipSkillDataManager.get("returning").addXp(40f);
-        List<String> tags = new ArrayList<>(List.of("exiledSector_enemyTree|bulwark|3|root_1,a_1"));
-        FleetMemberAPI member = recoveredEnemy("returning", new HashSet<>(), tags);
+        List<String> tags = new ArrayList<>(List.of("exiledSector_npcTree|bulwark|3|root_1,a_1"));
+        FleetMemberAPI member = recoveredNpc("returning", new HashSet<>(), tags);
         when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
 
         new SkillTreeInstaller().advance(0.01f);
@@ -289,9 +289,9 @@ class SkillTreeInstallerTest {
     }
 
     @Test
-    void aDamagedEnemyTagIsDroppedWithoutTouchingTheSavedTree() {
-        List<String> tags = new ArrayList<>(List.of("exiledSector_enemyTree|broken"));
-        FleetMemberAPI member = recoveredEnemy("damaged", new HashSet<>(), tags);
+    void aDamagedNpcTagIsDroppedWithoutTouchingTheSavedTree() {
+        List<String> tags = new ArrayList<>(List.of("exiledSector_npcTree|broken"));
+        FleetMemberAPI member = recoveredNpc("damaged", new HashSet<>(), tags);
         when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
 
         new SkillTreeInstaller().advance(0.01f);
@@ -301,7 +301,7 @@ class SkillTreeInstallerTest {
     }
 
     @Test
-    void shipsWithoutAnEnemyTagAreNotAdopted() {
+    void shipsWithoutAnNpcTagAreNotAdopted() {
         FleetMemberAPI member = mockMember("own-ship", true);
         when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
 

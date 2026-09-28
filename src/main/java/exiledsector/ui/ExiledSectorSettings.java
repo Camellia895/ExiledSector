@@ -5,16 +5,16 @@ import exiledsector.skills.MaxChainCountConfig;
 import exiledsector.skills.ShipLevelConfig;
 import exiledsector.skills.SkillNodeOpCost;
 import exiledsector.skills.UnlockConditionOverrides;
-import exiledsector.skills.enemy.EnemyLevelTable;
-import exiledsector.skills.enemy.EnemyTreeConfig;
-import exiledsector.ui.inspect.EnemyInspectConfig;
+import exiledsector.skills.npc.NpcLevelTable;
+import exiledsector.skills.npc.NpcTreeConfig;
+import exiledsector.ui.inspect.NpcInspectConfig;
 import lunalib.lunaSettings.LunaSettings;
 
 import static exiledsector.ExiledSectorModPlugin.MOD_ID;
 
 public final class ExiledSectorSettings {
 
-    static final String ENEMY_SCALING_TAB = "Enemy Scaling";
+    static final String NPC_SCALING_TAB = "NPC Scaling";
 
     private ExiledSectorSettings() {
     }
@@ -95,51 +95,52 @@ public final class ExiledSectorSettings {
                         + "independent of chance rolls succeeding. Not intended as a balance knob.",
                 MaxChainCountConfig.DEFAULT, 1, 20, "");
 
-        registerEnemyScaling();
+        registerNpcScaling();
 
         LunaSettings.SettingsCreator.refresh(MOD_ID);
     }
 
-    private static void registerEnemyScaling() {
-        LunaSettings.SettingsCreator.addHeader(MOD_ID, "exiledSector_enemyTreesHeader", "Enemy Skill Trees", ENEMY_SCALING_TAB);
-        LunaSettings.SettingsCreator.addText(MOD_ID, "exiledSector_enemyTreesAbout",
-                "Some enemy ships get their own skill tree so NPC fleets keep up with your fleet. A chosen ship "
-                        + "follows one of the enemy build layouts and gets the free root node plus a number of "
-                        + "nodes rolled from the table below for your character level.", ENEMY_SCALING_TAB);
-        LunaSettings.SettingsCreator.addBoolean(MOD_ID, EnemyTreeConfig.ENABLED_FIELD_ID,
-                "Enable Enemy Skill Trees", "When off, no enemy ship gets a skill tree.",
-                EnemyTreeConfig.DEFAULT_ENABLED, ENEMY_SCALING_TAB);
-        LunaSettings.SettingsCreator.addBoolean(MOD_ID, EnemyTreeConfig.OFFICERED_SHIPS_FIELD_ID,
-                "Always Level Officered Ships", "Every enemy ship captained by an officer gets a skill tree.",
-                EnemyTreeConfig.DEFAULT_OFFICERED_SHIPS, ENEMY_SCALING_TAB);
-        LunaSettings.SettingsCreator.addBoolean(MOD_ID, EnemyTreeConfig.FLAGSHIP_FIELD_ID,
-                "Always Level the Flagship", "Every enemy fleet's flagship gets a skill tree.",
-                EnemyTreeConfig.DEFAULT_FLAGSHIP, ENEMY_SCALING_TAB);
-        LunaSettings.SettingsCreator.addInt(MOD_ID, EnemyTreeConfig.OTHER_SHIP_CHANCE_FIELD_ID,
-                "Chance for Other Ships (%)", "Chance that each remaining combat ship in an enemy fleet gets a skill tree.",
-                EnemyTreeConfig.DEFAULT_OTHER_SHIP_CHANCE_PERCENT, 0, 100, ENEMY_SCALING_TAB);
-        LunaSettings.SettingsCreator.addKeybind(MOD_ID, EnemyInspectConfig.KEYBIND_FIELD_ID,
-                "Inspect Enemy Skill Trees Key", "In a fleet encounter, or while hovering an enemy fleet on the map, "
+    private static void registerNpcScaling() {
+        LunaSettings.SettingsCreator.addHeader(MOD_ID, "exiledSector_npcTreesHeader", "NPC Skill Trees", NPC_SCALING_TAB);
+        LunaSettings.SettingsCreator.addText(MOD_ID, "exiledSector_npcTreesAbout",
+                "Some ships in NPC fleets get their own skill tree so they keep up with your fleet. This covers "
+                        + "every faction, including your own faction's fleets and your allies. A chosen ship follows one "
+                        + "of the NPC build layouts and gets the free root node plus a number of nodes rolled from the "
+                        + "table below for your character level.", NPC_SCALING_TAB);
+        LunaSettings.SettingsCreator.addBoolean(MOD_ID, NpcTreeConfig.ENABLED_FIELD_ID,
+                "Enable NPC Skill Trees", "When off, no NPC ship gets a skill tree.",
+                NpcTreeConfig.DEFAULT_ENABLED, NPC_SCALING_TAB);
+        LunaSettings.SettingsCreator.addBoolean(MOD_ID, NpcTreeConfig.OFFICERED_SHIPS_FIELD_ID,
+                "Always Level Officered Ships", "Every NPC ship captained by an officer gets a skill tree.",
+                NpcTreeConfig.DEFAULT_OFFICERED_SHIPS, NPC_SCALING_TAB);
+        LunaSettings.SettingsCreator.addBoolean(MOD_ID, NpcTreeConfig.FLAGSHIP_FIELD_ID,
+                "Always Level the Flagship", "Every NPC fleet's flagship gets a skill tree.",
+                NpcTreeConfig.DEFAULT_FLAGSHIP, NPC_SCALING_TAB);
+        LunaSettings.SettingsCreator.addInt(MOD_ID, NpcTreeConfig.OTHER_SHIP_CHANCE_FIELD_ID,
+                "Chance for Other Ships (%)", "Chance that each remaining combat ship in an NPC fleet gets a skill tree.",
+                NpcTreeConfig.DEFAULT_OTHER_SHIP_CHANCE_PERCENT, 0, 100, NPC_SCALING_TAB);
+        LunaSettings.SettingsCreator.addKeybind(MOD_ID, NpcInspectConfig.KEYBIND_FIELD_ID,
+                "Inspect NPC Skill Trees Key", "In a fleet encounter, or while hovering another fleet on the map, "
                         + "press this key to list its ships that have skill trees and their bonuses.",
-                EnemyInspectConfig.DEFAULT_KEY, ENEMY_SCALING_TAB);
+                NpcInspectConfig.DEFAULT_KEY, NPC_SCALING_TAB);
 
-        LunaSettings.SettingsCreator.addHeader(MOD_ID, "exiledSector_enemyNodesHeader", "Nodes per Player Level", ENEMY_SCALING_TAB);
-        LunaSettings.SettingsCreator.addText(MOD_ID, "exiledSector_enemyNodesAbout",
-                "Each levelled enemy ship rolls its node count between the minimum and maximum for your current "
+        LunaSettings.SettingsCreator.addHeader(MOD_ID, "exiledSector_npcNodesHeader", "Nodes per Player Level", NPC_SCALING_TAB);
+        LunaSettings.SettingsCreator.addText(MOD_ID, "exiledSector_npcNodesAbout",
+                "Each levelled NPC ship rolls its node count between the minimum and maximum for your current "
                         + "character level, on top of its free root node. Levels above "
-                        + EnemyLevelTable.MAX_PLAYER_LEVEL + " use the level " + EnemyLevelTable.MAX_PLAYER_LEVEL
-                        + " row. If a minimum is set above its maximum, the two are swapped.", ENEMY_SCALING_TAB);
-        for (int level = EnemyLevelTable.MIN_PLAYER_LEVEL; level <= EnemyLevelTable.MAX_PLAYER_LEVEL; level++) {
-            LunaSettings.SettingsCreator.addHeader(MOD_ID, "exiledSector_enemyLevel" + level + "Header",
-                    "Player Level " + level, ENEMY_SCALING_TAB);
-            LunaSettings.SettingsCreator.addInt(MOD_ID, EnemyLevelTable.minNodesFieldId(level),
-                    "Minimum Nodes", "Fewest nodes a levelled enemy ship gets at player level " + level + ".",
-                    EnemyLevelTable.defaultMinNodes(level), EnemyLevelTable.MIN_NODES, EnemyLevelTable.MAX_NODES,
-                    ENEMY_SCALING_TAB);
-            LunaSettings.SettingsCreator.addInt(MOD_ID, EnemyLevelTable.maxNodesFieldId(level),
-                    "Maximum Nodes", "Most nodes a levelled enemy ship gets at player level " + level + ".",
-                    EnemyLevelTable.defaultMaxNodes(level), EnemyLevelTable.MIN_NODES, EnemyLevelTable.MAX_NODES,
-                    ENEMY_SCALING_TAB);
+                        + NpcLevelTable.MAX_PLAYER_LEVEL + " use the level " + NpcLevelTable.MAX_PLAYER_LEVEL
+                        + " row. If a minimum is set above its maximum, the two are swapped.", NPC_SCALING_TAB);
+        for (int level = NpcLevelTable.MIN_PLAYER_LEVEL; level <= NpcLevelTable.MAX_PLAYER_LEVEL; level++) {
+            LunaSettings.SettingsCreator.addHeader(MOD_ID, "exiledSector_npcLevel" + level + "Header",
+                    "Player Level " + level, NPC_SCALING_TAB);
+            LunaSettings.SettingsCreator.addInt(MOD_ID, NpcLevelTable.minNodesFieldId(level),
+                    "Minimum Nodes", "Fewest nodes a levelled NPC ship gets at player level " + level + ".",
+                    NpcLevelTable.defaultMinNodes(level), NpcLevelTable.MIN_NODES, NpcLevelTable.MAX_NODES,
+                    NPC_SCALING_TAB);
+            LunaSettings.SettingsCreator.addInt(MOD_ID, NpcLevelTable.maxNodesFieldId(level),
+                    "Maximum Nodes", "Most nodes a levelled NPC ship gets at player level " + level + ".",
+                    NpcLevelTable.defaultMaxNodes(level), NpcLevelTable.MIN_NODES, NpcLevelTable.MAX_NODES,
+                    NPC_SCALING_TAB);
         }
     }
 }

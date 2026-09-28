@@ -939,54 +939,54 @@ class SkillTreeHullModTest {
     }
 
     @Test
-    void anEnemyBuildSkipsTheRecoveryBonusButKeepsTheNodesOtherEffects() {
+    void anNpcBuildSkipsTheRecoveryBonusButKeepsTheNodesOtherEffects() {
         SkillType bulkheads = new SkillType.Builder("reinforcedhull", "Reinforced Bulkheads", "a.png", SkillTier.NOTABLE)
                 .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 40f),
                         new SkillTypeEffect(DefenseSkillEffect.SHIP_RECOVERY_CHANCE_BONUS, 1000f)))
                 .build();
         SkillNode bulkheadsNode = new SkillNode("reinforcedhull_1", bulkheads, List.of(), 0f, 0f);
         SkillTree.register(bulkheadsNode);
-        ShipSkillDataManager.get("enemy-ship").markEnemyBuild();
-        ShipSkillDataManager.get("enemy-ship").allocate(bulkheadsNode, 1);
+        ShipSkillDataManager.get("npc-ship").markNpcBuild();
+        ShipSkillDataManager.get("npc-ship").allocate(bulkheadsNode, 1);
         ShipSkillDataManager.get("player-ship").allocate(bulkheadsNode, 1);
-        StatBonus enemyHull = mock(StatBonus.class);
-        StatBonus enemyRecovery = mock(StatBonus.class);
+        StatBonus npcHull = mock(StatBonus.class);
+        StatBonus npcRecovery = mock(StatBonus.class);
         StatBonus playerHull = mock(StatBonus.class);
         StatBonus playerRecovery = mock(StatBonus.class);
 
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.CRUISER,
-                statsWithHullAndRecovery("enemy-ship", enemyHull, enemyRecovery), SkillTreeHullMod.ID);
+                statsWithHullAndRecovery("npc-ship", npcHull, npcRecovery), SkillTreeHullMod.ID);
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.CRUISER,
                 statsWithHullAndRecovery("player-ship", playerHull, playerRecovery), SkillTreeHullMod.ID);
 
-        verify(enemyHull).modifyPercent("exiledSector_skill_reinforcedhull_1", 40f);
-        verify(enemyRecovery, never()).modifyFlat(anyString(), anyFloat());
+        verify(npcHull).modifyPercent("exiledSector_skill_reinforcedhull_1", 40f);
+        verify(npcRecovery, never()).modifyFlat(anyString(), anyFloat());
         verify(playerHull).modifyPercent("exiledSector_skill_reinforcedhull_1", 40f);
         verify(playerRecovery).modifyFlat("exiledSector_skill_reinforcedhull_1", 1000f);
     }
 
-    private static SkillNode registerEnemyRoot() {
+    private static SkillNode registerNpcRoot() {
         SkillNode root = new SkillNode("root_1", new SkillType.Builder("root", "Root", "a.png", SkillTier.ROOT).build(), List.of(), 0f, 0f);
         SkillTree.register(root);
         return root;
     }
 
-    private static ShipVariantAPI enemyVariant(String... nodeIds) {
+    private static ShipVariantAPI npcVariant(String... nodeIds) {
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
-        when(variant.getTags()).thenReturn(List.of("exiledSector_enemyTree|bulwark|" + nodeIds.length + "|root_1,"
+        when(variant.getTags()).thenReturn(List.of("exiledSector_npcTree|bulwark|" + nodeIds.length + "|root_1,"
                 + String.join(",", nodeIds)));
         return variant;
     }
 
     @Test
-    void anEnemyTaggedShipGetsItsTaggedNodesEffectsWithoutCreatingASavedTree() {
-        registerEnemyRoot();
+    void anNpcTaggedShipGetsItsTaggedNodesEffectsWithoutCreatingASavedTree() {
+        registerNpcRoot();
         SkillType hullType = new SkillType.Builder("hull", "Hull", "a.png", SkillTier.SMALL)
                 .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)))
                 .build();
         SkillTree.register(new SkillNode("hull_1", hullType, List.of("root_1"), 0f, 0f));
         FleetMemberAPI member = memberWithId("npc-ship");
-        ShipVariantAPI variant = enemyVariant("hull_1");
+        ShipVariantAPI variant = npcVariant("hull_1");
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         when(stats.getFleetMember()).thenReturn(member);
         when(stats.getVariant()).thenReturn(variant);
@@ -1000,13 +1000,13 @@ class SkillTreeHullModTest {
     }
 
     @Test
-    void anEnemyTaggedShipNeverReservesOpOrStripsConflictingHullmods() {
-        registerEnemyRoot();
+    void anNpcTaggedShipNeverReservesOpOrStripsConflictingHullmods() {
+        registerNpcRoot();
         SkillType frontType = new SkillType.Builder("frontemitter", "Shield Conversion - Front", "a.png", SkillTier.NOTABLE)
                 .exclusiveHullModIds(List.of("adaptiveshields"))
                 .build();
         SkillTree.register(new SkillNode("frontemitter_1", frontType, List.of("root_1"), 0f, 0f));
-        ShipVariantAPI variant = enemyVariant("frontemitter_1");
+        ShipVariantAPI variant = npcVariant("frontemitter_1");
         when(variant.hasHullMod("adaptiveshields")).thenReturn(true);
         FleetMemberAPI member = memberWithId("npc-ship");
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
@@ -1024,13 +1024,13 @@ class SkillTreeHullModTest {
     }
 
     @Test
-    void anEnemyTaggedShipStillGetsTheHullmodsItsNodesInstall() {
-        registerEnemyRoot();
+    void anNpcTaggedShipStillGetsTheHullmodsItsNodesInstall() {
+        registerNpcRoot();
         SkillType militarizedType = new SkillType.Builder("militarized_subsystems", "Militarized Subsystems", "a.png", SkillTier.NOTABLE)
                 .installedHullModIds(List.of("militarized_subsystems"))
                 .build();
         SkillTree.register(new SkillNode("militarized_subsystems_1", militarizedType, List.of("root_1"), 0f, 0f));
-        ShipVariantAPI variant = enemyVariant("militarized_subsystems_1");
+        ShipVariantAPI variant = npcVariant("militarized_subsystems_1");
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         when(stats.getVariant()).thenReturn(variant);
 
@@ -1041,9 +1041,9 @@ class SkillTreeHullModTest {
     }
 
     @Test
-    void publicSyncHelpersLeaveEnemyTaggedShipsAlone() {
-        registerEnemyRoot();
-        ShipVariantAPI variant = enemyVariant();
+    void publicSyncHelpersLeaveNpcTaggedShipsAlone() {
+        registerNpcRoot();
+        ShipVariantAPI variant = npcVariant();
         SettingsAPI settings = mock(SettingsAPI.class);
         globalMock.when(Global::getSettings).thenReturn(settings);
 
@@ -1057,16 +1057,16 @@ class SkillTreeHullModTest {
     }
 
     @Test
-    void combatHooksReadTheEnemyTreeFromTheShipsVariant() {
-        registerEnemyRoot();
+    void combatHooksReadTheNpcTreeFromTheShipsVariant() {
+        registerNpcRoot();
         exiledsector.skills.skilleffect.SkillEffect listenerEffect = mock(exiledsector.skills.skilleffect.SkillEffect.class);
-        when(listenerEffect.appliesToEnemyShips()).thenReturn(true);
+        when(listenerEffect.appliesToNpcShips()).thenReturn(true);
         SkillType listenerType = new SkillType.Builder("listener", "Listener", "a.png", SkillTier.NOTABLE)
                 .effects(List.of(new SkillTypeEffect(listenerEffect, 50f)))
                 .build();
         SkillTree.register(new SkillNode("listener_1", listenerType, List.of("root_1"), 0f, 0f));
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        ShipVariantAPI variant = enemyVariant("listener_1");
+        ShipVariantAPI variant = npcVariant("listener_1");
         ShipAPI ship = mockShip(null, stats);
         when(ship.getVariant()).thenReturn(variant);
 
