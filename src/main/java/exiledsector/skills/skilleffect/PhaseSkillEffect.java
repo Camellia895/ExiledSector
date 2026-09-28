@@ -86,9 +86,7 @@ public enum PhaseSkillEffect implements SkillEffect {
 
         @Override
         public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
-            if (!ship.hasListenerOfClass(PhaseAnchorDiveListener.class)) {
-                ship.addListener(new PhaseAnchorDiveListener(ship, modId));
-            }
+            SkillEffectSupport.ensureListener(ship, PhaseAnchorDiveListener.class, s -> new PhaseAnchorDiveListener(s, modId));
         }
 
         @Override

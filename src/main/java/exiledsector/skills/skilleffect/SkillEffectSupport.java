@@ -3,6 +3,7 @@ package exiledsector.skills.skilleffect;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
@@ -11,6 +12,7 @@ import com.fs.starfarer.api.loading.HullModSpecAPI;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 final class SkillEffectSupport {
 
@@ -27,6 +29,12 @@ final class SkillEffectSupport {
 
     static float multFrom(float magnitude) {
         return 1f + magnitude / 100f;
+    }
+
+    static void ensureListener(ShipAPI ship, Class<?> listenerType, Function<ShipAPI, ?> listenerFactory) {
+        if (!ship.hasListenerOfClass(listenerType)) {
+            ship.addListener(listenerFactory.apply(ship));
+        }
     }
 
     // the per-D-mod multiplier compounds (e.g. -2% per D-mod means 0.98^dmodCount, not a flat

@@ -27,24 +27,13 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import static exiledsector.skills.skilleffect.SkillEffectText.pct;
 
 public enum CombatSkillEffect implements SkillEffect {
 
-    BEAM_WEAPON_SPLIT_TARGETS_FLAT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod(BeamSplitListener.TARGETS_KEY).modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
-            if (!ship.hasListenerOfClass(BeamSplitListener.class)) {
-                ship.addListener(new BeamSplitListener(ship));
-            }
-        }
-
+    BEAM_WEAPON_SPLIT_TARGETS_FLAT(BeamSplitListener.TARGETS_KEY, BeamSplitListener.class, BeamSplitListener::new) {
         @Override
         public String describe(float magnitude) {
             int count = Math.round(magnitude);
@@ -54,57 +43,20 @@ public enum CombatSkillEffect implements SkillEffect {
                     "Split beams also carry the weapon's special beam effects.";
         }
     },
-    EXPLODE_ON_DEATH {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod(EXPLODE_ON_DEATH_FUEL_DAMAGE_KEY).modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
-            if (!ship.hasListenerOfClass(DeathExplosionListener.class)) {
-                ship.addListener(new DeathExplosionListener(ship));
-            }
-        }
-
+    EXPLODE_ON_DEATH(DeathExplosionListener.FUEL_DAMAGE_PERCENT_KEY, DeathExplosionListener.class, DeathExplosionListener::new) {
         @Override
         public String describe(float magnitude) {
             return "When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to "
                     + pct(magnitude) + "% of its maximum fuel capacity to nearby ships, tapering off with distance ";
         }
     },
-    DEATH_ON_COLLISION {
-        // this effect has no stat to modify - it only acts via the listener added in applyAfterShipCreation
-        @Override
-        @SuppressWarnings("java:S1186")
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-        }
-
-        @Override
-        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
-            if (!ship.hasListenerOfClass(CollisionDeathListener.class)) {
-                ship.addListener(new CollisionDeathListener(ship));
-            }
-        }
-
+    DEATH_ON_COLLISION(CollisionDeathListener.class, CollisionDeathListener::new) {
         @Override
         public String describe(float magnitude) {
             return "Any collision, however slight, is instantly fatal to this ship.";
         }
     },
-    NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod(NON_BEAM_ENERGY_CHAIN_CHANCE_KEY).modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
-            if (!ship.hasListenerOfClass(EnergyChainListener.class)) {
-                ship.addListener(new EnergyChainListener(ship));
-            }
-        }
-
+    NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT(EnergyChainListener.CHANCE_KEY, EnergyChainListener.class, EnergyChainListener::new) {
         @Override
         public String describe(float magnitude) {
             return "Non-beam energy weapon hits that land on an enemy shield have a " + pct(magnitude)
@@ -112,38 +64,14 @@ public enum CombatSkillEffect implements SkillEffect {
                     "chance to chain again, as long as it hits a shield.";
         }
     },
-    NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod(NON_BEAM_ENERGY_CHAIN_FALLOFF_KEY).modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
-            if (!ship.hasListenerOfClass(EnergyChainListener.class)) {
-                ship.addListener(new EnergyChainListener(ship));
-            }
-        }
-
+    NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT(EnergyChainListener.FALLOFF_KEY, EnergyChainListener.class, EnergyChainListener::new) {
         @Override
         public String describe(float magnitude) {
             return "Each successive hit in a non-beam energy chain deals " + pct(magnitude) + "% less damage "
                     + "than the one before it.";
         }
     },
-    ESCORT_MANEUVER_BONUS_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod(ESCORT_MANEUVER_BONUS_KEY).modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
-            if (!ship.hasListenerOfClass(EscortListener.class)) {
-                ship.addListener(new EscortListener(ship));
-            }
-        }
-
+    ESCORT_MANEUVER_BONUS_PERCENT(EscortListener.MANEUVER_BONUS_KEY, EscortListener.class, EscortListener::new) {
         @Override
         public String describe(float magnitude) {
             return "While within range of a larger friendly ship, increases maneuverability (acceleration, "
@@ -151,19 +79,7 @@ public enum CombatSkillEffect implements SkillEffect {
                     + "Doubled for a destroyer escorting a capital ship.";
         }
     },
-    ESCORT_SPEED_BONUS_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod(ESCORT_SPEED_BONUS_KEY).modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
-            if (!ship.hasListenerOfClass(EscortListener.class)) {
-                ship.addListener(new EscortListener(ship));
-            }
-        }
-
+    ESCORT_SPEED_BONUS_PERCENT(EscortListener.SPEED_BONUS_KEY, EscortListener.class, EscortListener::new) {
         @Override
         public String describe(float magnitude) {
             return "While within range of a larger friendly ship, increases top speed by up to "
@@ -171,19 +87,7 @@ public enum CombatSkillEffect implements SkillEffect {
                     + "capital ship.";
         }
     },
-    ESCORT_WEAPON_RANGE_BONUS_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod(ESCORT_WEAPON_RANGE_BONUS_KEY).modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
-            if (!ship.hasListenerOfClass(EscortListener.class)) {
-                ship.addListener(new EscortListener(ship));
-            }
-        }
-
+    ESCORT_WEAPON_RANGE_BONUS_PERCENT(EscortListener.WEAPON_RANGE_BONUS_KEY, EscortListener.class, EscortListener::new) {
         @Override
         public String describe(float magnitude) {
             return "While within range of a larger friendly ship, increases ballistic and energy weapon range "
@@ -191,76 +95,30 @@ public enum CombatSkillEffect implements SkillEffect {
                     + "escorting a capital ship.";
         }
     },
-    ESCORT_PROXIMITY_RANGE_FLAT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod(ESCORT_PROXIMITY_RANGE_KEY).modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
-            if (!ship.hasListenerOfClass(EscortListener.class)) {
-                ship.addListener(new EscortListener(ship));
-            }
-        }
-
+    ESCORT_PROXIMITY_RANGE_FLAT(EscortListener.PROXIMITY_RANGE_KEY, EscortListener.class, EscortListener::new) {
         @Override
         public String describe(float magnitude) {
             return "The escort bonuses above apply at full strength within " + pct(magnitude)
                     + " su of the larger friendly ship, fading out over an additional 500 su beyond that.";
         }
     },
-    NANOFORGE_HULL_REGEN_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod(NanoforgeMendingListener.REGEN_PERCENT_KEY).modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
-            if (!ship.hasListenerOfClass(NanoforgeMendingListener.class)) {
-                ship.addListener(new NanoforgeMendingListener(ship));
-            }
-        }
-
+    NANOFORGE_HULL_REGEN_PERCENT(NanoforgeMendingListener.REGEN_PERCENT_KEY, NanoforgeMendingListener.class, NanoforgeMendingListener::new) {
         @Override
         public String describe(float magnitude) {
             return "After " + pct(NanoforgeMendingListener.UNDAMAGED_SECONDS) + " seconds without taking hull damage, "
                     + "repairs " + pct(magnitude) + "% of maximum hull per second in combat.";
         }
     },
-    DISINTEGRATION_ARMOR_DAMAGE_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod(DisintegrationListener.ARMOR_DAMAGE_PERCENT_KEY).modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
-            if (!ship.hasListenerOfClass(DisintegrationListener.class)) {
-                ship.addListener(new DisintegrationListener(ship));
-            }
-        }
-
+    DISINTEGRATION_ARMOR_DAMAGE_PERCENT(DisintegrationListener.ARMOR_DAMAGE_PERCENT_KEY,
+            DisintegrationListener.class, DisintegrationListener::new) {
         @Override
         public String describe(float magnitude) {
             return "Energy weapon hits on armor strip an additional " + pct(magnitude)
                     + "% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.";
         }
     },
-    TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod(TerrifyingPresenceListener.ACCURACY_PENALTY_PERCENT_KEY).modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
-            if (!ship.hasListenerOfClass(TerrifyingPresenceListener.class)) {
-                ship.addListener(new TerrifyingPresenceListener(ship));
-            }
-        }
-
+    TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT(TerrifyingPresenceListener.ACCURACY_PENALTY_PERCENT_KEY,
+            TerrifyingPresenceListener.class, TerrifyingPresenceListener::new) {
         @Override
         public String describe(float magnitude) {
             return "Enemy ships within " + pct(TerrifyingPresenceListener.RANGE) + " su have the target leading "
@@ -268,25 +126,39 @@ public enum CombatSkillEffect implements SkillEffect {
         }
     };
 
+    private static final String NON_BEAM_ENERGY_CHAIN_HIT_LIST_KEY = "exiledSector_energyChainHitList";
+    private static final String NON_BEAM_ENERGY_CHAIN_COUNT_KEY = "exiledSector_energyChainCount";
+    private static final String NON_BEAM_ENERGY_CHAIN_DEALT_MULT_KEY = "exiledSector_energyChainDealtMult";
+
+    private final ListenerEffect listener;
+
+    <T> CombatSkillEffect(Class<T> listenerType, Function<ShipAPI, ? extends T> listenerFactory) {
+        this(null, listenerType, listenerFactory);
+    }
+
+    <T> CombatSkillEffect(String magnitudeKey, Class<T> listenerType, Function<ShipAPI, ? extends T> listenerFactory) {
+        this.listener = new ListenerEffect(magnitudeKey, listenerType, listenerFactory);
+    }
+
+    @Override
+    public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        listener.storeMagnitude(stats, modId, magnitude);
+    }
+
+    @Override
+    public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
+        listener.attach(ship);
+    }
+
     @Override
     public boolean supportsTemporaryGating() {
         return false;
     }
 
-    private static final String EXPLODE_ON_DEATH_FUEL_DAMAGE_KEY = "exiledSector_explodeOnDeathFuelDamagePercent";
-
-    private static final String NON_BEAM_ENERGY_CHAIN_CHANCE_KEY = "exiledSector_energyChainChance";
-    private static final String NON_BEAM_ENERGY_CHAIN_FALLOFF_KEY = "exiledSector_energyChainFalloff";
-    private static final String NON_BEAM_ENERGY_CHAIN_HIT_LIST_KEY = "exiledSector_energyChainHitList";
-    private static final String NON_BEAM_ENERGY_CHAIN_COUNT_KEY = "exiledSector_energyChainCount";
-    private static final String NON_BEAM_ENERGY_CHAIN_DEALT_MULT_KEY = "exiledSector_energyChainDealtMult";
-
-    private static final String ESCORT_MANEUVER_BONUS_KEY = "exiledSector_escortManeuverBonusPercent";
-    private static final String ESCORT_SPEED_BONUS_KEY = "exiledSector_escortSpeedBonusPercent";
-    private static final String ESCORT_WEAPON_RANGE_BONUS_KEY = "exiledSector_escortWeaponRangeBonusPercent";
-    private static final String ESCORT_PROXIMITY_RANGE_KEY = "exiledSector_escortProximityRange";
-
     private static final class EnergyChainListener implements DamageDealtModifier {
+
+        private static final String CHANCE_KEY = "exiledSector_energyChainChance";
+        private static final String FALLOFF_KEY = "exiledSector_energyChainFalloff";
 
         private final ShipAPI ship;
 
@@ -326,7 +198,7 @@ public enum CombatSkillEffect implements SkillEffect {
                               float fullDamage, float dealtMult) {
             Map<String, Object> customData = proj.getCustomData();
             int chainCount = customData.get(NON_BEAM_ENERGY_CHAIN_COUNT_KEY) instanceof Integer integer ? integer : 0;
-            float chancePercent = ship.getMutableStats().getDynamic().getValue(NON_BEAM_ENERGY_CHAIN_CHANCE_KEY, 0f);
+            float chancePercent = ship.getMutableStats().getDynamic().getValue(CHANCE_KEY, 0f);
             boolean chains = chainCount < MaxChainCountConfig.get() && chancePercent > 0f
                     && Math.random() < chancePercent / 100.0;
             if (!chains) {
@@ -336,7 +208,7 @@ public enum CombatSkillEffect implements SkillEffect {
             List<ShipAPI> hitSoFar = hitList(customData);
             hitSoFar.add(target);
             ShipAPI nextTarget = findNearestChainTarget(point, weapon.getRange(), hitSoFar);
-            float falloffPercent = ship.getMutableStats().getDynamic().getValue(NON_BEAM_ENERGY_CHAIN_FALLOFF_KEY, 0f);
+            float falloffPercent = ship.getMutableStats().getDynamic().getValue(FALLOFF_KEY, 0f);
             float nextDealtMult = dealtMult * (1f - falloffPercent / 100f);
             if (nextTarget == null || nextDealtMult <= 0f) {
                 return;
@@ -396,6 +268,8 @@ public enum CombatSkillEffect implements SkillEffect {
 
     private static final class DeathExplosionListener implements HullDamageAboutToBeTakenListener {
 
+        private static final String FUEL_DAMAGE_PERCENT_KEY = "exiledSector_explodeOnDeathFuelDamagePercent";
+
         private static final float RADIUS_MULT = 4f;
         private static final float MIN_RADIUS = 300f;
         private static final Color BLAST_COLOR = new Color(255, 200, 120, 40);
@@ -444,7 +318,7 @@ public enum CombatSkillEffect implements SkillEffect {
             if (member == null) {
                 return 0f;
             }
-            float fuelDamagePercent = ship.getMutableStats().getDynamic().getValue(EXPLODE_ON_DEATH_FUEL_DAMAGE_KEY, 0f);
+            float fuelDamagePercent = ship.getMutableStats().getDynamic().getValue(FUEL_DAMAGE_PERCENT_KEY, 0f);
             return member.getFuelCapacity() * fuelDamagePercent / 100f;
         }
     }
@@ -540,6 +414,11 @@ public enum CombatSkillEffect implements SkillEffect {
 
     private static final class EscortListener implements AdvanceableListener {
 
+        private static final String MANEUVER_BONUS_KEY = "exiledSector_escortManeuverBonusPercent";
+        private static final String SPEED_BONUS_KEY = "exiledSector_escortSpeedBonusPercent";
+        private static final String WEAPON_RANGE_BONUS_KEY = "exiledSector_escortWeaponRangeBonusPercent";
+        private static final String PROXIMITY_RANGE_KEY = "exiledSector_escortProximityRange";
+
         private static final float PROXIMITY_FADE_DISTANCE = 500f;
         private static final float SHIELD_RADIUS_OVERLAP_MULT = 0.75f;
         private static final float DESTROYER_ESCORTING_CAPITAL_MULT = 2f;
@@ -571,7 +450,7 @@ public enum CombatSkillEffect implements SkillEffect {
                 return 0f;
             }
 
-            float range = ship.getMutableStats().getDynamic().getValue(ESCORT_PROXIMITY_RANGE_KEY, 0f);
+            float range = ship.getMutableStats().getDynamic().getValue(PROXIMITY_RANGE_KEY, 0f);
             float radiusOverlap = (ship.getShieldRadiusEvenIfNoShield() + escorted.getShieldRadiusEvenIfNoShield())
                     * SHIELD_RADIUS_OVERLAP_MULT;
             float distance = Vector2f.sub(ship.getShieldCenterEvenIfNoShield(),
@@ -624,15 +503,15 @@ public enum CombatSkillEffect implements SkillEffect {
                 return;
             }
 
-            float maneuverPercent = stats.getDynamic().getValue(ESCORT_MANEUVER_BONUS_KEY, 0f) * mag;
+            float maneuverPercent = stats.getDynamic().getValue(MANEUVER_BONUS_KEY, 0f) * mag;
             for (MutableStat stat : maneuverStats) {
                 stat.modifyPercent(ESCORT_BONUS_MOD_ID, maneuverPercent);
             }
             stats.getTurnAcceleration().modifyPercent(ESCORT_BONUS_MOD_ID, maneuverPercent * TURN_ACCELERATION_MULT);
             stats.getMaxSpeed().modifyPercent(ESCORT_BONUS_MOD_ID,
-                    stats.getDynamic().getValue(ESCORT_SPEED_BONUS_KEY, 0f) * mag);
+                    stats.getDynamic().getValue(SPEED_BONUS_KEY, 0f) * mag);
 
-            float rangePercent = stats.getDynamic().getValue(ESCORT_WEAPON_RANGE_BONUS_KEY, 0f) * mag;
+            float rangePercent = stats.getDynamic().getValue(WEAPON_RANGE_BONUS_KEY, 0f) * mag;
             for (StatBonus stat : rangeStats) {
                 stat.modifyPercent(ESCORT_BONUS_MOD_ID, rangePercent);
             }

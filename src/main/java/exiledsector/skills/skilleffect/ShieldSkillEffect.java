@@ -14,6 +14,7 @@ import org.lwjgl.util.vector.Vector2f;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 
 import java.util.List;
+import java.util.function.Function;
 
 import static exiledsector.skills.skilleffect.SkillEffectText.pct;
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
@@ -25,19 +26,7 @@ import static exiledsector.skills.skilleffect.StatTarget.stat;
 
 public enum ShieldSkillEffect implements SkillEffect {
 
-    BEAM_WEAPON_HARD_FLUX_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod(BEAM_DAMAGE_HARD_FLUX_KEY).modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
-            if (!ship.hasListenerOfClass(BeamHardFluxListener.class)) {
-                ship.addListener(new BeamHardFluxListener(ship));
-            }
-        }
-
+    BEAM_WEAPON_HARD_FLUX_PERCENT(BeamHardFluxListener.HARD_FLUX_PERCENT_KEY, BeamHardFluxListener.class, BeamHardFluxListener::new) {
         @Override
         public boolean supportsTemporaryGating() {
             return false;
@@ -175,19 +164,8 @@ public enum ShieldSkillEffect implements SkillEffect {
     SHIELD_UPKEEP_MULT(MULT, stat(MutableShipStatsAPI::getShieldUpkeepMult), "shield flux upkeep", true),
     SHIELD_TURN_RATE_PERCENT(PERCENT, stat(MutableShipStatsAPI::getShieldTurnRateMult), "shield turn rate", false),
     SHIELD_RAISE_RATE_PERCENT(PERCENT, stat(MutableShipStatsAPI::getShieldUnfoldRateMult), "shield raise rate", false),
-    SHIELD_DAMAGE_SHARED_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod(SHIELD_DAMAGE_SHARED_KEY).modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
-            if (!ship.hasListenerOfClass(SharedShieldDamageListener.class)) {
-                ship.addListener(new SharedShieldDamageListener(ship));
-            }
-        }
-
+    SHIELD_DAMAGE_SHARED_PERCENT(SharedShieldDamageListener.SHARED_PERCENT_KEY,
+            SharedShieldDamageListener.class, SharedShieldDamageListener::new) {
         @Override
         public String describe(float magnitude) {
             return "Disperses " + pct(magnitude) + "% of shield damage taken to nearby allied ships within "
@@ -195,9 +173,6 @@ public enum ShieldSkillEffect implements SkillEffect {
         }
     };
 
-    private static final String BEAM_DAMAGE_HARD_FLUX_KEY = "exiledSector_beamDamageHardFluxPercent";
-
-    private static final String SHIELD_DAMAGE_SHARED_KEY = "exiledSector_shieldDamageSharedPercent";
     private static final float SHARED_SHIELD_DAMAGE_RANGE = 1000f;
 
     public static final float MAKESHIFT_SHIELD_EFFICIENCY = 0.5f;
@@ -205,18 +180,39 @@ public enum ShieldSkillEffect implements SkillEffect {
     public static final float MAKESHIFT_SHIELD_ARC = 90f;
 
     private final SimpleStatEffect simpleStat;
+    private final ListenerEffect listener;
 
     ShieldSkillEffect() {
-        this.simpleStat = null;
+        this(null, null);
     }
 
     ShieldSkillEffect(StatMode mode, StatTarget target, String statName, boolean lowerIsBetter) {
-        this.simpleStat = new SimpleStatEffect(mode, target, statName, lowerIsBetter);
+        this(new SimpleStatEffect(mode, target, statName, lowerIsBetter), null);
+    }
+
+    <T> ShieldSkillEffect(String magnitudeKey, Class<T> listenerType, Function<ShipAPI, ? extends T> listenerFactory) {
+        this(null, new ListenerEffect(magnitudeKey, listenerType, listenerFactory));
+    }
+
+    ShieldSkillEffect(SimpleStatEffect simpleStat, ListenerEffect listener) {
+        this.simpleStat = simpleStat;
+        this.listener = listener;
     }
 
     @Override
     public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-        simpleStat.apply(stats, modId, magnitude);
+        if (listener != null) {
+            listener.storeMagnitude(stats, modId, magnitude);
+        } else {
+            simpleStat.apply(stats, modId, magnitude);
+        }
+    }
+
+    @Override
+    public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
+        if (listener != null) {
+            listener.attach(ship);
+        }
     }
 
     @Override
@@ -247,6 +243,8 @@ public enum ShieldSkillEffect implements SkillEffect {
 
     private static final class BeamHardFluxListener implements DamageDealtModifier {
 
+        private static final String HARD_FLUX_PERCENT_KEY = "exiledSector_beamDamageHardFluxPercent";
+
         private final ShipAPI ship;
 
         private BeamHardFluxListener(ShipAPI ship) {
@@ -259,7 +257,7 @@ public enum ShieldSkillEffect implements SkillEffect {
             if (!(param instanceof BeamAPI)) return null;
             if (!(target instanceof ShipAPI)) return null;
 
-            float percent = ship.getMutableStats().getDynamic().getValue(BEAM_DAMAGE_HARD_FLUX_KEY, 0f);
+            float percent = ship.getMutableStats().getDynamic().getValue(HARD_FLUX_PERCENT_KEY, 0f);
             float hardPortion = damage.getDamage() * (percent / 100f);
             if (hardPortion <= 0f) return null;
 
@@ -272,6 +270,8 @@ public enum ShieldSkillEffect implements SkillEffect {
 
     private static final class SharedShieldDamageListener implements DamageTakenModifier {
 
+        private static final String SHARED_PERCENT_KEY = "exiledSector_shieldDamageSharedPercent";
+
         private final ShipAPI ship;
 
         private SharedShieldDamageListener(ShipAPI ship) {
@@ -282,7 +282,7 @@ public enum ShieldSkillEffect implements SkillEffect {
         public String modifyDamageTaken(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
             if (!shieldHit) return null;
 
-            float percent = ship.getMutableStats().getDynamic().getValue(SHIELD_DAMAGE_SHARED_KEY, 0f);
+            float percent = ship.getMutableStats().getDynamic().getValue(SHARED_PERCENT_KEY, 0f);
             if (percent <= 0f) return null;
 
             List<ShipAPI> allies = CombatQueries.shipsMatching(other -> other != ship && other.getOwner() == ship.getOwner()
