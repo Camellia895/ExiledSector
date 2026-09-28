@@ -6,7 +6,7 @@ Designed to be an overhaul of the simple hullmod system based on the infamous Pa
 
 Navigate to the outfit screen and click the skill tree button on any of your ships to explore an entirely new sector:
 
-<img src="\graphics\description\teaser.gif" alt="The skill tree">
+<img src="graphics/description/teaser.gif" alt="The skill tree">
 
 ## Features
 
@@ -16,27 +16,27 @@ Navigate to the outfit screen and click the skill tree button on any of your shi
   - Low Tech, Midline and High Tech roots. The root a ship starts from is chosen by its manufacturer.
 - **Multi-choice travel nodes.** 
 
-<img src="\graphics\description\teaser_choice.gif" alt="Choice Node">
+<img src="graphics/description/teaser_choice.gif" alt="Choice Node">
 
 - **Synergistic allocation** 
   - Every allocated node costs OP: 1 for frigates, 2 for destroyers, 3 for cruisers and 4 for capitals (configurable).
   - Ships also earn XP in combat. Each level turns the ship's most recently OP-bought node into a free one, so veteran ships get their ordnance points back. The crew gets nothing, as is tradition.
 - **Hidden, unlockable nodes.**
 
-<img src="\graphics\description\Unidentified_node.png" alt="Hidden Node">
+<img src="graphics/description/Unidentified_node.png" alt="Hidden Node">
   
 - **Unique passive effects**
 - **Beam splitting** 
   - Your Tachyon Lance can now disappoint multiple enemies at once.
   
-<img src="\graphics\description\lions_gaze.png" alt="Lion's Gaze">
-<img src="\graphics\description\lions_gaze2.png" alt="Lion's Gaze2">
+<img src="graphics/description/lions_gaze.png" alt="Lion's Gaze">
+<img src="graphics/description/lions_gaze2.png" alt="Lion's Gaze2">
 
 - **Faction themed**
   - Your ship's main goal can be to blow up, and act like you don't know nobody
 
-<img src="\graphics\description\ludds_light.png" alt="Ludds Light">
-<img src="\graphics\description\at_any_cost.png" alt="At Any Cost">
+<img src="graphics/description/Ludds_Light.png" alt="Ludds Light">
+<img src="graphics/description/at_any_cost.png" alt="At Any Cost">
 
 ## Requirements
 
