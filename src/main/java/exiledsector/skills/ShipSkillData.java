@@ -126,6 +126,14 @@ public class ShipSkillData {
         enemyBuild = true;
     }
 
+    public void clearEnemyBuild() {
+        enemyBuild = false;
+    }
+
+    public boolean isBlank() {
+        return allocatedNodeIds.isEmpty() && level == 0 && xp == 0f && bankedFreeAllocations == 0 && spentOp == 0;
+    }
+
     public void addXp(float amount) {
         xp += amount;
     }

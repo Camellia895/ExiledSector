@@ -24,4 +24,8 @@ public class ShipSkillDataManager {
     public static ShipSkillData get(String shipId) {
         return getStore().computeIfAbsent(shipId, key -> new ShipSkillData());
     }
+
+    public static void put(String shipId, ShipSkillData data) {
+        getStore().put(shipId, data);
+    }
 }

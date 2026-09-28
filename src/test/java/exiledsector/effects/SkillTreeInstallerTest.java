@@ -14,6 +14,7 @@ import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import com.fs.starfarer.api.loading.VariantSource;
 import exiledsector.compat.SecondInCommandCompat;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -27,13 +28,20 @@ import org.mockito.InOrder;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -221,5 +229,85 @@ class SkillTreeInstallerTest {
         new SkillTreeInstaller().advance(0.01f);
 
         verify(hullBonus).modifyPercent("exiledSector_skill_hull_1", 10f);
+    }
+
+    private static FleetMemberAPI recoveredEnemy(String id, Set<String> hullMods, List<String> tags) {
+        FleetMemberAPI member = mockMember(id, false);
+        ShipVariantAPI variant = member.getVariant();
+        when(variant.hasHullMod(anyString())).thenAnswer(invocation -> hullMods.contains((String) invocation.getArgument(0)));
+        doAnswer(invocation -> hullMods.add(invocation.getArgument(0))).when(variant).addPermaMod(anyString());
+        doAnswer(invocation -> hullMods.remove((String) invocation.getArgument(0))).when(variant).removeMod(anyString());
+        when(variant.getTags()).thenAnswer(invocation -> new ArrayList<>(tags));
+        doAnswer(invocation -> tags.remove((String) invocation.getArgument(0))).when(variant).removeTag(anyString());
+        return member;
+    }
+
+    private static void registerEnemyTreeNodes() {
+        SkillTree.register(new SkillNode("root_1", new SkillType.Builder("root", "Root", "a.png", SkillTier.ROOT).build(),
+                List.of(), 0f, 0f));
+        SkillTree.register(new SkillNode("a_1", new SkillType.Builder("a", "A", "a.png", SkillTier.SMALL).build(),
+                List.of("root_1"), 0f, 0f));
+    }
+
+    @Test
+    void aRecoveredEnemyShipKeepsItsTreeAsItsOwnSavedTree() {
+        registerEnemyTreeNodes();
+        Set<String> hullMods = new HashSet<>(Set.of(SkillTreeHullMod.ID));
+        List<String> tags = new ArrayList<>(List.of("exiledSector_enemyTree|bulwark|3|root_1,a_1"));
+        FleetMemberAPI member = recoveredEnemy("recovered", hullMods, tags);
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
+
+        new SkillTreeInstaller().advance(0.01f);
+
+        ShipSkillData adopted = ShipSkillDataManager.get("recovered");
+        assertEquals(List.of("root_1", "a_1"), List.copyOf(adopted.getAllocatedNodeIds()));
+        assertEquals("root_1", adopted.resolveStartingRootId(SkillTree.getAllNodes().values()));
+        assertEquals(3, adopted.getLevel());
+        assertEquals(2, adopted.getBankedFreeAllocations());
+        assertTrue(adopted.isFreeNode("a_1"));
+        assertEquals(0, adopted.getSpentOp());
+        assertFalse(adopted.isEnemyBuild());
+        assertTrue(tags.isEmpty());
+        verify(member.getVariant()).removeMod(SkillTreeHullMod.ID);
+        verify(member.getVariant()).addPermaMod(SkillTreeHullMod.ID);
+    }
+
+    @Test
+    void aShipThatAlreadyHasSavedProgressKeepsItAndOnlyLosesTheEnemyTag() {
+        registerEnemyTreeNodes();
+        ShipSkillDataManager.get("returning").addXp(40f);
+        List<String> tags = new ArrayList<>(List.of("exiledSector_enemyTree|bulwark|3|root_1,a_1"));
+        FleetMemberAPI member = recoveredEnemy("returning", new HashSet<>(), tags);
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
+
+        new SkillTreeInstaller().advance(0.01f);
+
+        ShipSkillData saved = ShipSkillDataManager.get("returning");
+        assertTrue(saved.getAllocatedNodeIds().isEmpty());
+        assertEquals(40f, saved.getXp());
+        assertTrue(tags.isEmpty());
+    }
+
+    @Test
+    void aDamagedEnemyTagIsDroppedWithoutTouchingTheSavedTree() {
+        List<String> tags = new ArrayList<>(List.of("exiledSector_enemyTree|broken"));
+        FleetMemberAPI member = recoveredEnemy("damaged", new HashSet<>(), tags);
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
+
+        new SkillTreeInstaller().advance(0.01f);
+
+        assertTrue(ShipSkillDataManager.get("damaged").isBlank());
+        assertTrue(tags.isEmpty());
+    }
+
+    @Test
+    void shipsWithoutAnEnemyTagAreNotAdopted() {
+        FleetMemberAPI member = mockMember("own-ship", true);
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
+
+        new SkillTreeInstaller().advance(0.01f);
+
+        verify(member.getVariant(), never()).removeMod(SkillTreeHullMod.ID);
+        verify(member.getVariant(), never()).removeTag(anyString());
     }
 }

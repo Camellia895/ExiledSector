@@ -979,4 +979,33 @@ class ShipSkillDataTest {
 
         assertTrue(data.isEnemyBuild());
     }
+
+    @Test
+    void clearingTheEnemyBuildMarkerMakesItAnOrdinaryTree() {
+        ShipSkillData data = new ShipSkillData();
+        data.markEnemyBuild();
+
+        data.clearEnemyBuild();
+
+        assertFalse(data.isEnemyBuild());
+    }
+
+    @Test
+    void aTreeIsBlankUntilAnythingIsRecordedOnIt() {
+        assertTrue(new ShipSkillData().isBlank());
+
+        ShipSkillData allocated = new ShipSkillData();
+        allocated.allocate(node("a", List.of()), 0);
+        ShipSkillData levelled = new ShipSkillData();
+        levelled.incrementLevel();
+        ShipSkillData experienced = new ShipSkillData();
+        experienced.addXp(1f);
+        ShipSkillData credited = new ShipSkillData();
+        credited.addFreeAllocationCredit();
+
+        assertFalse(allocated.isBlank());
+        assertFalse(levelled.isBlank());
+        assertFalse(experienced.isBlank());
+        assertFalse(credited.isBlank());
+    }
 }

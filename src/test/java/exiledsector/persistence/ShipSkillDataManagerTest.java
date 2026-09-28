@@ -85,4 +85,14 @@ class ShipSkillDataManagerTest {
                 .build();
         return new SkillNode(id, type, List.of(), 0f, 0f);
     }
+
+    @Test
+    void putReplacesTheStoredTreeForAShip() {
+        ShipSkillData replacement = new ShipSkillData();
+        ShipSkillDataManager.get("ship-a");
+
+        ShipSkillDataManager.put("ship-a", replacement);
+
+        assertSame(replacement, ShipSkillDataManager.get("ship-a"));
+    }
 }
