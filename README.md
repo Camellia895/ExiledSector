@@ -10,10 +10,7 @@ Navigate to the outfit screen and click the skill tree button on any of your shi
 
 ## Features
 
-- **A tree per ship.** 
-  - 400+ nodes built from 180+ node types, spread across small nodes, notables and keystones.
-- **Tech-level starting points.** 
-  - Low Tech, Midline and High Tech roots. The root a ship starts from is chosen by its manufacturer.
+- **A 400+ node tree per ship.** 
 - **Multi-choice travel nodes.** 
 
 <img src="graphics/description/teaser_choice.gif" alt="Choice Node">

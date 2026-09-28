@@ -1,7 +1,7 @@
 {
   "id": "exiledSector",
   "name": "Exiled Sector",
-  "author": "ExiledPortals",
+  "author": "Portals",
   "utility": false,
   "version": {"major":0, "minor":1, "patch":0},
   "description": "Gives each ship its own skill tree.",

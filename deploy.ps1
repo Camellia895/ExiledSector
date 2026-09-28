@@ -56,6 +56,7 @@ try {
 New-Item -ItemType Directory -Force -Path $modTarget | Out-Null
 
 Copy-Item -Path (Join-Path $projectRoot "mod_info.json") -Destination $modTarget -Force
+Copy-Item -Path (Join-Path $projectRoot "ExiledSector.version") -Destination $modTarget -Force
 Copy-Item -Path (Join-Path $projectRoot "jars") -Destination $modTarget -Recurse -Force
 
 $dataDir = Join-Path $projectRoot "data"
