@@ -7,6 +7,7 @@ import exiledsector.skills.SkillNodeOpCost;
 import exiledsector.skills.UnlockConditionOverrides;
 import exiledsector.skills.enemy.EnemyLevelTable;
 import exiledsector.skills.enemy.EnemyTreeConfig;
+import exiledsector.ui.inspect.EnemyInspectConfig;
 import lunalib.lunaSettings.LunaSettings;
 
 import static exiledsector.ExiledSectorModPlugin.MOD_ID;
@@ -117,6 +118,10 @@ public final class ExiledSectorSettings {
         LunaSettings.SettingsCreator.addInt(MOD_ID, EnemyTreeConfig.OTHER_SHIP_CHANCE_FIELD_ID,
                 "Chance for Other Ships (%)", "Chance that each remaining combat ship in an enemy fleet gets a skill tree.",
                 EnemyTreeConfig.DEFAULT_OTHER_SHIP_CHANCE_PERCENT, 0, 100, ENEMY_SCALING_TAB);
+        LunaSettings.SettingsCreator.addKeybind(MOD_ID, EnemyInspectConfig.KEYBIND_FIELD_ID,
+                "Inspect Enemy Skill Trees Key", "In a fleet encounter, or while hovering an enemy fleet on the map, "
+                        + "press this key to list its ships that have skill trees and their bonuses.",
+                EnemyInspectConfig.DEFAULT_KEY, ENEMY_SCALING_TAB);
 
         LunaSettings.SettingsCreator.addHeader(MOD_ID, "exiledSector_enemyNodesHeader", "Nodes per Player Level", ENEMY_SCALING_TAB);
         LunaSettings.SettingsCreator.addText(MOD_ID, "exiledSector_enemyNodesAbout",

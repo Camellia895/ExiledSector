@@ -15,6 +15,8 @@ import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.enemy.EnemyLayout;
 import exiledsector.skills.enemy.EnemyLayouts;
 import exiledsector.ui.SkillTreeRefitButton;
+import exiledsector.ui.inspect.EnemyTreeInspectInput;
+import exiledsector.ui.inspect.SkillTreeCodexListener;
 import lunalib.lunaRefit.BaseRefitButton;
 import lunalib.lunaRefit.LunaRefitManager;
 import lunalib.lunaSettings.LunaSettings;
@@ -154,12 +156,14 @@ class ExiledSectorModPluginTest {
     }
 
     @Test
-    void onGameLoadRegistersTheEnemyFleetHooksAsTransient() {
+    void onGameLoadRegistersTheEnemyFleetHooksAndInspectionListenersAsTransient() {
         new ExiledSectorModPlugin().onGameLoad(false);
 
         verify(sector).addTransientScript(any(EnemyFleetSweepScript.class));
         verify(sector, never()).addScript(any(EnemyFleetSweepScript.class));
         verify(sector).addTransientListener(any(EnemyFleetDialogListener.class));
         verify(listenerManager).addListener(any(EnemyFleetInflationListener.class), eq(true));
+        verify(listenerManager).addListener(any(EnemyTreeInspectInput.class), eq(true));
+        verify(listenerManager).addListener(any(SkillTreeCodexListener.class), eq(true));
     }
 }

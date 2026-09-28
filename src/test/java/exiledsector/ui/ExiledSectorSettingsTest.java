@@ -2,6 +2,7 @@ package exiledsector.ui;
 
 import exiledsector.skills.enemy.EnemyLevelTable;
 import exiledsector.skills.enemy.EnemyTreeConfig;
+import exiledsector.ui.inspect.EnemyInspectConfig;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,5 +59,12 @@ class ExiledSectorSettingsTest {
     @Test
     void refreshesAfterRegisteringEverything() {
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.refresh("exiledSector"));
+    }
+
+    @Test
+    void registersTheInspectKeybindOnTheEnemyScalingTab() {
+        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addKeybind(eq("exiledSector"),
+                eq(EnemyInspectConfig.KEYBIND_FIELD_ID), anyString(), anyString(), eq(EnemyInspectConfig.DEFAULT_KEY),
+                eq(ExiledSectorSettings.ENEMY_SCALING_TAB)));
     }
 }

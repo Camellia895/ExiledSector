@@ -24,6 +24,15 @@ public final class EnemyLayouts {
         LAYOUTS.sort(Comparator.comparing(EnemyLayout::id));
     }
 
+    public static EnemyLayout find(String id) {
+        for (EnemyLayout layout : LAYOUTS) {
+            if (layout.id().equals(id)) {
+                return layout;
+            }
+        }
+        return null;
+    }
+
     public static List<EnemyLayout> all() {
         return List.copyOf(LAYOUTS);
     }

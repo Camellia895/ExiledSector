@@ -13,6 +13,8 @@ import exiledsector.skills.CsvIdBlocklist;
 import exiledsector.skills.enemy.EnemyLayouts;
 import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.SkillTreeRefitButton;
+import exiledsector.ui.inspect.EnemyTreeInspectInput;
+import exiledsector.ui.inspect.SkillTreeCodexListener;
 
 public class ExiledSectorModPlugin extends BaseModPlugin {
 
@@ -38,5 +40,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         Global.getSector().addTransientScript(new EnemyFleetSweepScript());
         Global.getSector().addTransientListener(new EnemyFleetDialogListener());
         Global.getSector().getListenerManager().addListener(new EnemyFleetInflationListener(), true);
+        Global.getSector().getListenerManager().addListener(new EnemyTreeInspectInput(), true);
+        Global.getSector().getListenerManager().addListener(new SkillTreeCodexListener(), true);
     }
 }
