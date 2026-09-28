@@ -413,6 +413,11 @@ public enum FighterSkillEffect implements SkillEffect {
     }
 
     @Override
+    public boolean lowerIsBetter() {
+        return roleStat != null && roleStat.lowerIsBetter;
+    }
+
+    @Override
     public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
         if (roleStat != null && matchesRole(fighter, role)) {
             roleStat.applier.apply(fighter, modId, magnitude);
@@ -433,16 +438,22 @@ public enum FighterSkillEffect implements SkillEffect {
         WEAPON_DAMAGE("weapon damage", FighterSkillEffect::applyRoleDamage),
         TOP_SPEED("top speed", FighterSkillEffect::applyRoleTopSpeed),
         ARMOR("armor", FighterSkillEffect::applyRoleArmor),
-        SHIELD_DAMAGE_TAKEN("damage taken by shields", FighterSkillEffect::applyRoleShieldDamageTaken),
+        SHIELD_DAMAGE_TAKEN("damage taken by shields", FighterSkillEffect::applyRoleShieldDamageTaken, true),
         RATE_OF_FIRE("weapon rate of fire", FighterSkillEffect::applyRoleRateOfFire),
         ENGAGEMENT_RANGE("engagement range", FighterSkillEffect::applyRoleEngagementRange);
 
         private final String description;
         private final RoleStatApplier applier;
+        private final boolean lowerIsBetter;
 
         RoleStat(String description, RoleStatApplier applier) {
+            this(description, applier, false);
+        }
+
+        RoleStat(String description, RoleStatApplier applier, boolean lowerIsBetter) {
             this.description = description;
             this.applier = applier;
+            this.lowerIsBetter = lowerIsBetter;
         }
     }
 }

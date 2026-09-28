@@ -697,6 +697,17 @@ class SkillEffectTest {
     }
 
     @Test
+    void shieldDamageTakenIsLowerIsBetterForEveryFighterRoleLikeTheAllFighterVersion() {
+        assertTrue(FighterSkillEffect.FIGHTER_SHIELD_DAMAGE_TAKEN_PERCENT.lowerIsBetter());
+        assertTrue(FighterSkillEffect.FIGHTER_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT.lowerIsBetter());
+        assertTrue(FighterSkillEffect.INTERCEPTOR_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT.lowerIsBetter());
+        assertTrue(FighterSkillEffect.BOMBER_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT.lowerIsBetter());
+        assertTrue(FighterSkillEffect.SUPPORT_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT.lowerIsBetter());
+        assertFalse(FighterSkillEffect.BOMBER_ROLE_ARMOR_PERCENT.lowerIsBetter());
+        assertFalse(FighterSkillEffect.FIGHTER_TOP_SPEED_PERCENT.lowerIsBetter());
+    }
+
+    @Test
     void removeAllFighterBaysZeroesOutTheFinalBayCountRegardlessOfOtherModifiers() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         MutableStat numFighterBays = mock(MutableStat.class);
