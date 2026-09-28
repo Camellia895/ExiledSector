@@ -4,7 +4,9 @@ Because your Hound deserves a character arc.
 
 Designed to be an overhaul of the simple hullmod system based on the infamous Path of Exile skill tree, ExiledSector is a [Starsector](https://fractalsoftworks.com/) mod that gives every ship in your fleet its own skill tree. Still sane exile?
 
-[TriOS](https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/ExiledSector.version) | [Manual download](https://github.com/ExiledPortals/ExiledSector/releases/latest/download/ExiledSector.zip)
+[![Install with TriOS](https://trilink.wispborne.com/badges/install-badge.svg)](https://trilink.wispborne.com/open.html?mod=%7B%22url%22%3A%22https%3A%2F%2Fraw.githubusercontent.com%2FExiledPortals%2FExiledSector%2Fmain%2FExiledSector.version%22%2C%22id%22%3A%22exiledSector%22%2C%22version%22%3A%220.1.0%22%7D&dep=%7B%22url%22%3A%22https%3A%2F%2Fraw.githubusercontent.com%2FLazyWizard%2Flazylib%2Fmaster%2Fmod%2Flazylib.version%22%2C%22id%22%3A%22lw_lazylib%22%2C%22version%22%3A%223.0.0%22%7D&dep=%7B%22url%22%3A%22https%3A%2F%2Fraw.githubusercontent.com%2FMagicLibStarsector%2FMagicLib%2Fmaster%2Fmagiclib.version%22%2C%22id%22%3A%22MagicLib%22%2C%22version%22%3A%221.5.6%22%7D&dep=%7B%22url%22%3A%22https%3A%2F%2Fraw.githubusercontent.com%2FLukas22041%2FLunaLib%2Fmain%2FLunaLib.version%22%2C%22id%22%3A%22lunalib%22%2C%22version%22%3A%222.0.5%22%7D) 
+
+[Manual download](https://github.com/ExiledPortals/ExiledSector/releases/latest/download/ExiledSector.zip)
 
 ## Features
 
