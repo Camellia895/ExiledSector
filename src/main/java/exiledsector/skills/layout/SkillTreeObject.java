@@ -1,4 +1,4 @@
-package exiledsector.skills;
+package exiledsector.skills.layout;
 
 public abstract class SkillTreeObject {
 

@@ -1,4 +1,5 @@
-package exiledsector.skills;
+package exiledsector.skills.unlock;
+
 
 public final class UnlockCondition {
 

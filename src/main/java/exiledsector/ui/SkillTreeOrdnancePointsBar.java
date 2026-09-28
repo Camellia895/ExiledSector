@@ -3,7 +3,7 @@ package exiledsector.ui;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledsector.skills.ShipOpBudget;
+import exiledsector.skills.progression.ShipOpBudget;
 import org.apache.log4j.Logger;
 
 final class SkillTreeOrdnancePointsBar {

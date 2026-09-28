@@ -1,15 +1,15 @@
 package exiledsector.skills.loader;
 
 import com.fs.starfarer.api.Global;
-import exiledsector.skills.Rotation;
 import exiledsector.skills.SkillNode;
-import exiledsector.skills.SkillNodeDecoration;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledsector.ui.decoration.RingBelt;
-import exiledsector.ui.decoration.Star;
-import exiledsector.ui.decoration.StaticImage;
-import exiledsector.ui.node.ConnectorCurve;
+import exiledsector.skills.layout.ConnectorCurve;
+import exiledsector.skills.layout.RingBelt;
+import exiledsector.skills.layout.Rotation;
+import exiledsector.skills.layout.SkillNodeDecoration;
+import exiledsector.skills.layout.Star;
+import exiledsector.skills.layout.StaticImage;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;

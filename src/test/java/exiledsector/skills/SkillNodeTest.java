@@ -3,6 +3,7 @@ package exiledsector.skills;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
+import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.FighterSkillEffect;
 import org.junit.jupiter.api.AfterEach;

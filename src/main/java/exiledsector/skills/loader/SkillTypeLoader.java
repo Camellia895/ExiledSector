@@ -1,15 +1,15 @@
 package exiledsector.skills.loader;
 
 import com.fs.starfarer.api.Global;
-import exiledsector.skills.BlueprintCategory;
 import exiledsector.skills.HullSizeSkillEffect;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
-import exiledsector.skills.UnlockCondition;
-import exiledsector.skills.UnlockConditionType;
 import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.skills.unlock.BlueprintCategory;
+import exiledsector.skills.unlock.UnlockCondition;
+import exiledsector.skills.unlock.UnlockConditionType;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;

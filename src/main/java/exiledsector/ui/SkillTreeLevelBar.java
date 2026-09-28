@@ -3,9 +3,9 @@ package exiledsector.ui;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.persistence.ShipSkillDataManager;
-import exiledsector.skills.ShipLevelConfig;
-import exiledsector.skills.ShipLevelSystem;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.progression.ShipLevelConfig;
+import exiledsector.skills.progression.ShipLevelSystem;
 
 final class SkillTreeLevelBar {
 

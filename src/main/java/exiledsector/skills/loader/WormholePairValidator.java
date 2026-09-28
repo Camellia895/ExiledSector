@@ -1,5 +1,7 @@
-package exiledsector.skills;
+package exiledsector.skills.loader;
 
+import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillTier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

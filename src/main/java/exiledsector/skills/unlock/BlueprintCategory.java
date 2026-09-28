@@ -1,4 +1,4 @@
-package exiledsector.skills;
+package exiledsector.skills.unlock;
 
 public enum BlueprintCategory {
     HULLMOD

@@ -1,10 +1,10 @@
 package exiledsector.skills.npc;
 
 import exiledsector.skills.SkillNode;
-import exiledsector.skills.SkillNodeDecoration;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
+import exiledsector.skills.layout.SkillNodeDecoration;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

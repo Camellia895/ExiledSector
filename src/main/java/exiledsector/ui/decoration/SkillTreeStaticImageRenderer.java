@@ -2,6 +2,7 @@ package exiledsector.ui.decoration;
 
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.skills.SkillTree;
+import exiledsector.skills.layout.StaticImage;
 import exiledsector.ui.util.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
 import org.lwjgl.opengl.GL11;

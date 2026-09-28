@@ -1,8 +1,10 @@
-package exiledsector.skills;
+package exiledsector.skills.unlock;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CharacterDataAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
+import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.SkillType;
 import org.apache.log4j.Logger;
 
 import java.util.List;

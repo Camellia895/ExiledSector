@@ -1,4 +1,4 @@
-package exiledsector.skills;
+package exiledsector.skills.unlock;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CharacterDataAPI;
@@ -8,6 +8,9 @@ import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.SkillTier;
+import exiledsector.skills.SkillType;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,4 +1,4 @@
-package exiledsector.skills;
+package exiledsector.skills.layout;
 
 public record SkillNodeDecoration(String ringBeltPath, String ringBeltColor, Float ringBeltWidth,
                                    String wormholeColor, String pairedNodeId) {

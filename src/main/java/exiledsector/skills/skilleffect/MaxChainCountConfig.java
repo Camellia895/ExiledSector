@@ -1,4 +1,4 @@
-package exiledsector.skills;
+package exiledsector.skills.skilleffect;
 
 import lunalib.lunaSettings.LunaSettings;
 

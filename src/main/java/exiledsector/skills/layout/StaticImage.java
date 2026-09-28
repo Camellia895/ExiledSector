@@ -1,7 +1,4 @@
-package exiledsector.ui.decoration;
-
-import exiledsector.skills.Rotation;
-import exiledsector.skills.SkillTreeObject;
+package exiledsector.skills.layout;
 
 public class StaticImage extends SkillTreeObject {
 

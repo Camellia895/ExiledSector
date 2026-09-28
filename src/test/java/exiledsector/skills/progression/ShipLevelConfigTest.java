@@ -1,4 +1,4 @@
-package exiledsector.skills;
+package exiledsector.skills.progression;
 
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;

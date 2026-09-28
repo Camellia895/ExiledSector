@@ -1,4 +1,4 @@
-package exiledsector.skills;
+package exiledsector.skills.progression;
 
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;

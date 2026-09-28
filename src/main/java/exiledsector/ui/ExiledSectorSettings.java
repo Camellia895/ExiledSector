@@ -1,12 +1,12 @@
 package exiledsector.ui;
 
-import exiledsector.skills.HiddenNodeDisplayConfig;
-import exiledsector.skills.MaxChainCountConfig;
-import exiledsector.skills.ShipLevelConfig;
-import exiledsector.skills.SkillNodeOpCost;
-import exiledsector.skills.UnlockConditionOverrides;
 import exiledsector.skills.npc.NpcLevelTable;
 import exiledsector.skills.npc.NpcTreeConfig;
+import exiledsector.skills.progression.ShipLevelConfig;
+import exiledsector.skills.progression.SkillNodeOpCost;
+import exiledsector.skills.skilleffect.MaxChainCountConfig;
+import exiledsector.skills.unlock.HiddenNodeDisplayConfig;
+import exiledsector.skills.unlock.UnlockConditionOverrides;
 import exiledsector.ui.inspect.NpcInspectConfig;
 import lunalib.lunaSettings.LunaSettings;
 

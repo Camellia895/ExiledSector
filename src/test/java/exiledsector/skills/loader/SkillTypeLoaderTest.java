@@ -1,11 +1,11 @@
 package exiledsector.skills.loader;
 
-import exiledsector.skills.BlueprintCategory;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
-import exiledsector.skills.UnlockCondition;
-import exiledsector.skills.UnlockConditionType;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
+import exiledsector.skills.unlock.BlueprintCategory;
+import exiledsector.skills.unlock.UnlockCondition;
+import exiledsector.skills.unlock.UnlockConditionType;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 

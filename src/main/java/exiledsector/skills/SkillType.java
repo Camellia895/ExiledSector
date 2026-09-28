@@ -2,6 +2,7 @@ package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 
+import exiledsector.skills.unlock.UnlockCondition;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

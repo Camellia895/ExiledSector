@@ -1,9 +1,12 @@
-package exiledsector.skills;
+package exiledsector.skills.progression;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 
+import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillTree;
 import java.util.Collection;
 
 public final class ShipLevelSystem {

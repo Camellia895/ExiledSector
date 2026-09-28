@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
 public class ShipSkillData {
 
     private final Set<String> allocatedNodeIds = new LinkedHashSet<>();

@@ -1,6 +1,4 @@
-package exiledsector.ui.decoration;
-
-import exiledsector.skills.SkillTreeObject;
+package exiledsector.skills.layout;
 
 public class Star extends SkillTreeObject {
 

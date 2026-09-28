@@ -1,11 +1,12 @@
 package exiledsector.skills;
 
+import exiledsector.skills.layout.ConnectorCurve;
+import exiledsector.skills.layout.RingBelt;
+import exiledsector.skills.layout.Star;
+import exiledsector.skills.layout.StaticImage;
 import exiledsector.skills.loader.SkillTreeLoader;
 import exiledsector.skills.loader.SkillTypeLoader;
-import exiledsector.ui.decoration.RingBelt;
-import exiledsector.ui.decoration.Star;
-import exiledsector.ui.decoration.StaticImage;
-import exiledsector.ui.node.ConnectorCurve;
+import exiledsector.skills.loader.WormholePairValidator;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;

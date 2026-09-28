@@ -8,6 +8,7 @@ import com.fs.starfarer.api.impl.campaign.terrain.RangeBlockerUtil;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.SkillTree;
+import exiledsector.skills.layout.Star;
 import exiledsector.ui.util.ColorUtil;
 import exiledsector.ui.util.SpriteCache;
 import org.lwjgl.opengl.GL11;

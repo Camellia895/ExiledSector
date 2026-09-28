@@ -1,5 +1,9 @@
-package exiledsector.skills;
+package exiledsector.skills.loader;
 
+import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillTier;
+import exiledsector.skills.SkillType;
+import exiledsector.skills.layout.SkillNodeDecoration;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

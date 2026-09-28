@@ -6,7 +6,6 @@ import java.util.Map;
 import com.fs.starfarer.api.Global;
 import exiledsector.skills.ShipSkillData;
 
-
 public class ShipSkillDataManager {
 
     private static final String DATA_KEY = "exiledSector_shipSkillData";

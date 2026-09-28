@@ -10,8 +10,8 @@ import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.persistence.ShipSkillDataManager;
-import exiledsector.skills.ShipLevelConfig;
-import exiledsector.skills.ShipLevelSystem;
+import exiledsector.skills.progression.ShipLevelConfig;
+import exiledsector.skills.progression.ShipLevelSystem;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

@@ -1,4 +1,4 @@
-package exiledsector.skills;
+package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.Global;
 import org.apache.log4j.Logger;

@@ -4,7 +4,7 @@ import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledsector.skills.SkillTypeUnlockStatus;
+import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 
 import java.util.Locale;
 
