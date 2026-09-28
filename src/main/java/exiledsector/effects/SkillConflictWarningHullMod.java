@@ -3,9 +3,9 @@ package exiledsector.effects;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.BaseHullMod;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import exiledsector.skills.HullModNames;
 
 import java.awt.Color;
 
@@ -21,8 +21,7 @@ public class SkillConflictWarningHullMod extends BaseHullMod {
         SkillConflictWarnings.Removal removal = SkillConflictWarnings.get(ship.getVariant());
         if (removal == null) return;
 
-        HullModSpecAPI removedSpec = Global.getSettings().getHullModSpec(removal.removedHullModId);
-        String removedName = removedSpec != null ? removedSpec.getDisplayName() : removal.removedHullModId;
+        String removedName = HullModNames.displayName(removal.removedHullModId);
 
         Color highlight = Global.getSettings().getColor("hColor");
         tooltip.addSectionHeading(TITLE, Alignment.MID, 15);

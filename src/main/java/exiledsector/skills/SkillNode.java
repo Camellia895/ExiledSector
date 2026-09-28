@@ -1,8 +1,6 @@
 package exiledsector.skills;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.layout.SkillTreeObject;
 import exiledsector.skills.skilleffect.WeaponEffectTooltipAggregator;
@@ -87,9 +85,7 @@ public class SkillNode extends SkillTreeObject {
             addLine(lines, effect.effect().describe(effect.magnitude()), effect.effect().lowerIsBetter());
         }
         for (String hullModId : type.getInstalledHullModIds()) {
-            HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
-            String name = spec != null ? spec.getDisplayName() : hullModId;
-            lines.add(new DescriptionLine("Installs the " + name + " hull mod at no OP cost.", false));
+            lines.add(new DescriptionLine("Installs the " + HullModNames.displayName(hullModId) + " hull mod at no OP cost.", false));
         }
         addLine(lines, describeTemporaryDuration(type), false);
         for (SkillTypeEffect effect : described) {
@@ -127,8 +123,7 @@ public class SkillNode extends SkillTreeObject {
         Set<String> hullModNames = new LinkedHashSet<>();
         for (String hullModId : type.getExclusiveHullModIds()) {
             if (!type.getInstalledHullModIds().contains(hullModId)) {
-                HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
-                hullModNames.add(spec != null ? spec.getDisplayName() : hullModId);
+                hullModNames.add(HullModNames.displayName(hullModId));
             }
         }
         Set<String> nodeNames = new LinkedHashSet<>();

@@ -4,12 +4,12 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.compat.SecondInCommandCompat;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.AllocatedSkillEffects;
+import exiledsector.skills.HullModNames;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillNode;
@@ -187,18 +187,13 @@ final class NodeAllocator {
         SkillTreeHullMod.syncOpSpentHullMod(member, variant);
         for (String hullModId : exclusiveHullModIds) {
             if (variant.hasHullMod(hullModId)) {
-                return "Ship already has " + hullModName(hullModId) + " installed.";
+                return "Ship already has " + HullModNames.displayName(hullModId) + " installed.";
             }
             if (SecondInCommandCompat.hasDeactivatedSMod(variant, hullModId)) {
-                return "Ship has a deactivated " + hullModName(hullModId) + " S-mod that Best of the Best will restore.";
+                return "Ship has a deactivated " + HullModNames.displayName(hullModId) + " S-mod that Best of the Best will restore.";
             }
         }
         return null;
-    }
-
-    private static String hullModName(String hullModId) {
-        HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
-        return spec != null ? spec.getDisplayName() : hullModId;
     }
 
     private static String skillTypeConflictReason(SkillType type, ShipSkillData data) {
