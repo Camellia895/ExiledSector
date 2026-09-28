@@ -22,7 +22,7 @@ Designed to be an overhaul of the simple hullmod system based on the infamous Pa
 - **Synergistic allocation** 
   - Every allocated node initially costs OP: 1 for frigates, 2 for destroyers, 3 for cruisers and 4 for capitals.
   - Ships also earn XP in combat, and can level up. 
-  - Each level allows you to allocate one node on the tree for free, up to a maximum.
+  - Each level allows you to allocate one node on the tree for free, so veteran ships get their ordnance points back. The crew gets nothing, as is tradition.
 - Hidden, unlockable nodes.
 
 <img src="graphics/description/Unidentified_node.png" alt="Hidden Node">
