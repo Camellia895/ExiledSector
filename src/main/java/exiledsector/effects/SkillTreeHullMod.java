@@ -164,6 +164,11 @@ public class SkillTreeHullMod extends BaseHullMod {
         return variant.hasTag(INSTALLED_HULLMOD_TAG_PREFIX + hullModId);
     }
 
+    private static boolean isRemovableConflict(ShipVariantAPI variant, String hullModId) {
+        boolean builtIn = variant.getHullSpec() != null && variant.getHullSpec().isBuiltInMod(hullModId);
+        return variant.hasHullMod(hullModId) && !builtIn && !isInstalledBySkillTree(variant, hullModId);
+    }
+
     private static Set<String> installedHullModIds(ShipSkillData data) {
         Set<String> ids = new LinkedHashSet<>();
         for (String nodeId : data.getAllocatedNodeIds()) {
@@ -186,7 +191,7 @@ public class SkillTreeHullMod extends BaseHullMod {
 
             SkillType type = node.resolveEffectiveType(data);
             for (String hullModId : type.getExclusiveHullModIds()) {
-                if (variant.hasHullMod(hullModId) && !isInstalledBySkillTree(variant, hullModId)) {
+                if (isRemovableConflict(variant, hullModId)) {
                     MagicIncompatibleHullmods.removeHullmodWithWarning(variant, hullModId, CONFLICT_WARNING_HULLMOD_ID);
                     variant.removeMod(MAGICLIB_WARNING_HULLMOD_ID);
                     variant.addMod(CONFLICT_WARNING_HULLMOD_ID);

@@ -598,7 +598,8 @@
 				}
 			],
 			"exclusiveHullMods": [
-				"adaptive_coils"
+				"adaptive_coils",
+				"phase_anchor"
 			],
 			"exclusiveSkillTypes": [
 				"phase_anchor"
@@ -632,7 +633,8 @@
 				}
 			],
 			"exclusiveHullMods": [
-				"advancedoptics"
+				"advancedoptics",
+				"high_scatter_amp"
 			],
 			"exclusiveSkillTypes": [
 				"high_scatter_amp"
@@ -882,7 +884,10 @@
 				}
 			],
 			"exclusiveHullMods": [
-				"dedicated_targeting_core"
+				"dedicated_targeting_core",
+				"targetingunit",
+				"advancedcore",
+				"distributed_fire_control"
 			],
 			"exclusiveSkillTypes": [
 				"targetingunit"
@@ -1384,7 +1389,8 @@
 				}
 			],
 			"exclusiveHullMods": [
-				"high_scatter_amp"
+				"high_scatter_amp",
+				"advancedoptics"
 			],
 			"exclusiveSkillTypes": [
 				"advancedoptics"
@@ -1451,7 +1457,10 @@
 				}
 			],
 			"exclusiveHullMods": [
-				"targetingunit"
+				"targetingunit",
+				"dedicated_targeting_core",
+				"advancedcore",
+				"distributed_fire_control"
 			],
 			"exclusiveSkillTypes": [
 				"dedicated_targeting_core"
@@ -1612,7 +1621,8 @@
 				}
 			],
 			"exclusiveHullMods": [
-				"phase_anchor"
+				"phase_anchor",
+				"adaptive_coils"
 			],
 			"exclusiveSkillTypes": [
 				"adaptive_coils"

@@ -151,6 +151,20 @@ class WeaponScopeHierarchyTest {
         assertFalse(SkillEffect.byName("BALLISTIC_WEAPON_FIRE_RATE_PERCENT").describe(10f).contains("Burst beams"));
     }
 
+    @Test
+    void beamAndNonBeamAmmoDescriptionsWarnThatRefitTooltipsWontShowThem() {
+        String note = " This is set directly on each weapon: it's correct in combat, "
+                + "but the refit screen's weapon tooltips won't show it.";
+        for (String name : List.of("BEAM_WEAPON_AMMO_PERCENT", "BEAM_WEAPON_AMMO_FLAT", "BEAM_WEAPON_AMMO_REGEN_PERCENT",
+                "NON_BEAM_ENERGY_WEAPON_AMMO_MULT", "NON_BEAM_ENERGY_WEAPON_AMMO_REGEN_MULT")) {
+            assertTrue(SkillEffect.byName(name).describe(10f).endsWith(note), name);
+        }
+        assertEquals("Increases beam weapon ammo capacity by 10%." + note,
+                SkillEffect.byName("BEAM_WEAPON_AMMO_PERCENT").describe(10f));
+        assertFalse(SkillEffect.byName("ENERGY_WEAPON_AMMO_PERCENT").describe(10f).contains("refit"));
+        assertFalse(SkillEffect.byName("WEAPON_AMMO_REGEN_PERCENT").describe(10f).contains("refit"));
+    }
+
     private static WeaponAPI weapon(boolean beam, int specMaxAmmo) {
         WeaponAPI weapon = mock(WeaponAPI.class);
         WeaponSpecAPI spec = mock(WeaponSpecAPI.class);

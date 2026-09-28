@@ -108,6 +108,8 @@ public enum WeaponStatFamily {
 
     private static final String BURST_BEAM_FIRE_RATE_NOTE = " Burst beams instead recharge faster between bursts.";
     private static final String IMPROVED_GUIDANCE_TEXT = "Significantly improved missile guidance algorithm.";
+    private static final String PER_WEAPON_NOTE = " This is set directly on each weapon: it's correct in combat, "
+            + "but the refit screen's weapon tooltips won't show it.";
 
     private final String statName;
     private final boolean qualifiedByScope;
@@ -131,7 +133,8 @@ public enum WeaponStatFamily {
     }
 
     public String describe(WeaponScope scope, StatMode mode, float magnitude) {
-        return mode.describe(magnitude, qualifiedByScope ? scope.qualify(statName) : statName);
+        String text = mode.describe(magnitude, qualifiedByScope ? scope.qualify(statName) : statName);
+        return targets.get(scope) instanceof StatTarget.PerWeaponAmmo ? text + PER_WEAPON_NOTE : text;
     }
 
     private static StatTarget stat(Function<MutableShipStatsAPI, MutableStat> getter) {

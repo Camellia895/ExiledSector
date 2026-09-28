@@ -1,0 +1,80 @@
+package exiledsector.skills;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.junit.jupiter.api.Test;
+
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+class SkillTypesDataConsistencyTest {
+
+    private static Map<String, JSONObject> loadTypes() throws Exception {
+        String json = Files.readString(Path.of("data/skilltrees/skill_types.json"), StandardCharsets.UTF_8);
+        JSONArray array = new JSONObject(json).getJSONArray("skillTypes");
+        Map<String, JSONObject> types = new HashMap<>();
+        for (int i = 0; i < array.length(); i++) {
+            JSONObject type = array.getJSONObject(i);
+            types.put(type.getString("id"), type);
+        }
+        return types;
+    }
+
+    private static Set<String> strings(JSONObject type, String key) throws Exception {
+        Set<String> values = new LinkedHashSet<>();
+        JSONArray array = type.optJSONArray(key);
+        for (int i = 0; array != null && i < array.length(); i++) {
+            values.add(array.getString(i));
+        }
+        return values;
+    }
+
+    private static Set<String> ownHullMods(JSONObject type) throws Exception {
+        Set<String> own = new LinkedHashSet<>(strings(type, "installedHullMods"));
+        if (type.has("vanillaHullMod")) {
+            own.add(type.getString("vanillaHullMod"));
+        }
+        JSONArray unlocks = type.optJSONArray("unlockConditions");
+        for (int i = 0; unlocks != null && i < unlocks.length(); i++) {
+            JSONObject unlock = unlocks.getJSONObject(i);
+            if ("blueprint".equals(unlock.optString("type")) && "hullmod".equals(unlock.optString("category"))) {
+                own.add(unlock.getString("id"));
+            }
+        }
+        if (strings(type, "exclusiveHullMods").contains(type.getString("id"))) {
+            own.add(type.getString("id"));
+        }
+        return own;
+    }
+
+    @Test
+    void aNodeExclusiveWithAnotherNodeIsAlsoExclusiveWithThatNodesOwnHullMod() throws Exception {
+        Map<String, JSONObject> types = loadTypes();
+        List<String> gaps = new ArrayList<>();
+        for (JSONObject type : types.values()) {
+            Set<String> exclusiveHullMods = strings(type, "exclusiveHullMods");
+            for (String otherId : strings(type, "exclusiveSkillTypes")) {
+                JSONObject other = types.get(otherId);
+                if (other == null) {
+                    gaps.add(type.getString("id") + " excludes unknown node " + otherId);
+                    continue;
+                }
+                for (String hullMod : ownHullMods(other)) {
+                    if (!exclusiveHullMods.contains(hullMod)) {
+                        gaps.add(type.getString("id") + " excludes node " + otherId + " but not its hull mod " + hullMod);
+                    }
+                }
+            }
+        }
+        assertTrue(gaps.isEmpty(), String.join("\n", gaps));
+    }
+}

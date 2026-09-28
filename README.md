@@ -30,6 +30,7 @@ Navigate to the outfit screen and click the skill tree button on any of your shi
   - Your Tachyon Lance can now disappoint multiple enemies at once.
   
 <img src="\graphics\description\lions_gaze.png" alt="Lion's Gaze">
+<img src="\graphics\description\lions_gaze2.png" alt="Lion's Gaze2">
 
 - **Faction themed**
   - Your ship's main goal can be to blow up, and act like you don't know nobody

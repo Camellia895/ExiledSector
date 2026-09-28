@@ -11,6 +11,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -388,6 +389,26 @@ class SkillTreeHullModTest {
         SkillTreeHullMod.removeHullModsConflictingWithAllocatedSkills(memberWithId("ship-a"), variant);
 
         verify(variant, never()).removeMod("militarized_subsystems");
+        verify(variant, never()).addMod("exiledSector_conflictWarning");
+    }
+
+    @Test
+    void removeHullModsConflictingWithAllocatedSkillsNeverStripsABuiltInHullMod() {
+        SkillType targetingType = new SkillType.Builder("targetingunit", "Integrated Targeting Unit", "a.png", SkillTier.NOTABLE)
+                .exclusiveHullModIds(List.of("advancedcore"))
+                .build();
+        SkillNode targetingNode = new SkillNode("targetingunit_1", targetingType, List.of(), 0f, 0f);
+        SkillTree.register(targetingNode);
+        ShipSkillDataManager.get("ship-a").allocate(targetingNode, 1);
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        ShipHullSpecAPI hullSpec = mock(ShipHullSpecAPI.class);
+        when(variant.getHullSpec()).thenReturn(hullSpec);
+        when(hullSpec.isBuiltInMod("advancedcore")).thenReturn(true);
+        when(variant.hasHullMod("advancedcore")).thenReturn(true);
+
+        SkillTreeHullMod.removeHullModsConflictingWithAllocatedSkills(memberWithId("ship-a"), variant);
+
+        verify(variant, never()).removeMod("advancedcore");
         verify(variant, never()).addMod("exiledSector_conflictWarning");
     }
 
