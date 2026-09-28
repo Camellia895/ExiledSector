@@ -12,9 +12,11 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -339,5 +341,73 @@ class SkillNodeTest {
         data.selectOption(node, hullOption, 1);
 
         assertSame(hullOption, node.resolveEffectiveType(data));
+    }
+
+    private static SkillType taggedType(String id, List<String> optionIds, List<String> tags) {
+        return new SkillType.Builder(id, id, "a.png", SkillTier.SMALL)
+                .optionalOptionIds(optionIds)
+                .tags(tags)
+                .build();
+    }
+
+    private static SkillNode taggedNode(SkillType type, List<String> tags) {
+        return new SkillNode(type.getId() + "_1", type, List.of(), 0f, 0f, SkillNodeDecoration.NONE, tags);
+    }
+
+    @Test
+    void nodeTagsDefaultToEmptyWhenNotGivenOrNull() {
+        SkillType type = taggedType("hull", List.of(), List.of());
+
+        assertEquals(List.of(), new SkillNode("hull_1", type, List.of(), 0f, 0f).getTags());
+        assertEquals(List.of(), taggedNode(type, null).getTags());
+    }
+
+    @Test
+    void effectiveTagsListNodeTagsThenTypeTagsWithoutDuplicates() {
+        SkillType type = taggedType("hull", List.of(), List.of("hull", "req_destroyer_plus"));
+        SkillNode node = taggedNode(type, List.of("hegemony", "hull"));
+
+        assertEquals(List.of("hegemony", "hull", "req_destroyer_plus"), List.copyOf(node.effectiveTags(new ShipSkillData())));
+    }
+
+    @Test
+    void effectiveTagsIncludeTheChosenOptionsTagsOnceSelected() {
+        SkillType hullOption = taggedType("hull", List.of(), List.of("hull", "req_cruiser_plus"));
+        SkillTree.registerType(hullOption);
+        SkillType placeholder = taggedType("slot", List.of("hull"), List.of("hull"));
+        SkillNode node = taggedNode(placeholder, List.of("pirate"));
+        ShipSkillData data = new ShipSkillData();
+        data.selectOption(node, hullOption, 1);
+
+        assertEquals(List.of("pirate", "hull", "req_cruiser_plus"), List.copyOf(node.effectiveTags(data)));
+    }
+
+    @Test
+    void effectiveTagsOfAnUnselectedOptionalNodeAreJustTheNodeAndPlaceholderTags() {
+        SkillType hullOption = taggedType("hull", List.of(), List.of("req_cruiser_plus"));
+        SkillTree.registerType(hullOption);
+        SkillType placeholder = taggedType("slot", List.of("hull"), List.of("hull"));
+        SkillNode node = taggedNode(placeholder, List.of("pirate"));
+
+        assertEquals(List.of("pirate", "hull"), List.copyOf(node.effectiveTags(new ShipSkillData())));
+        assertEquals(List.of("pirate", "hull"), List.copyOf(node.effectiveTags((ShipSkillData) null)));
+    }
+
+    @Test
+    void effectiveTagsForAKnownOptionIncludeThatOptionsTags() {
+        SkillType hullOption = taggedType("hull", List.of(), List.of("req_cruiser_plus"));
+        SkillType placeholder = taggedType("slot", List.of("hull"), List.of("hull"));
+        SkillNode node = taggedNode(placeholder, List.of("pirate"));
+
+        assertEquals(List.of("pirate", "hull", "req_cruiser_plus"), List.copyOf(node.effectiveTags(hullOption)));
+        assertEquals(List.of("pirate", "hull"), List.copyOf(node.effectiveTags((SkillType) null)));
+    }
+
+    @Test
+    void effectiveTagsCannotBeModified() {
+        SkillNode node = taggedNode(taggedType("hull", List.of(), List.of("hull")), List.of("inner"));
+        Set<String> tags = node.effectiveTags((SkillType) null);
+
+        assertThrows(UnsupportedOperationException.class, () -> tags.add("shield"));
     }
 }

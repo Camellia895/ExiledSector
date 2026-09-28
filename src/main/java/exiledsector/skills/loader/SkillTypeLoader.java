@@ -60,6 +60,7 @@ public final class SkillTypeLoader {
         List<String> installedHullModIds = parseStringArray(json.optJSONArray("installedHullMods"));
         List<String> exclusiveSkillTypeIds = parseStringArray(json.optJSONArray("exclusiveSkillTypes"));
         List<UnlockCondition> unlockConditions = parseUnlockConditions(json.optJSONArray("unlockConditions"));
+        List<String> tags = parseStringArray(json.optJSONArray("tags"));
         SkillItemCost itemCost = parseItemCost(json.optJSONObject("itemCost"));
         String id = json.getString("id");
         Float temporaryAfterDeploymentSeconds = validateTemporaryGating(id,
@@ -78,6 +79,7 @@ public final class SkillTypeLoader {
                 .installedHullModIds(installedHullModIds)
                 .exclusiveSkillTypeIds(exclusiveSkillTypeIds)
                 .unlockConditions(unlockConditions)
+                .tags(tags)
                 .build();
     }
 
@@ -165,7 +167,7 @@ public final class SkillTypeLoader {
         return result.toString();
     }
 
-    private static List<String> parseStringArray(JSONArray array) throws JSONException {
+    static List<String> parseStringArray(JSONArray array) throws JSONException {
         List<String> values = new ArrayList<>();
         if (array == null) {
             return values;

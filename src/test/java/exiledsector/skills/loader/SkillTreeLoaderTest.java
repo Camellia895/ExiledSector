@@ -90,6 +90,20 @@ class SkillTreeLoaderTest {
         assertNull(node.getRingBeltWidth());
         assertNull(node.getWormholeColor());
         assertNull(node.getPairedNodeId());
+        assertTrue(node.getTags().isEmpty());
+    }
+
+    @Test
+    void parsesNodeTagsIntoAnOrderedList() throws Exception {
+        JSONObject root = new JSONObject("{ \"nodes\": [ {"
+                + "\"id\": \"capacitors_1\","
+                + "\"type\": \"capacitors\","
+                + "\"tags\": [\"luddic\", \"req_flagship\"]"
+                + "} ] }");
+
+        SkillNode node = SkillTreeLoader.parseNodes(root, SKILL_TYPES).get(0);
+
+        assertEquals(List.of("luddic", "req_flagship"), node.getTags());
     }
 
     @Test

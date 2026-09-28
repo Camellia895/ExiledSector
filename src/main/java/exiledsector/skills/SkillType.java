@@ -26,6 +26,7 @@ public class SkillType {
     private final List<String> installedHullModIds;
     private final List<String> exclusiveSkillTypeIds;
     private final List<UnlockCondition> unlockConditions;
+    private final List<String> tags;
 
     private SkillType(Builder builder) {
         this.id = builder.id;
@@ -44,6 +45,7 @@ public class SkillType {
         this.installedHullModIds = builder.installedHullModIds == null ? Collections.emptyList() : builder.installedHullModIds;
         this.exclusiveSkillTypeIds = builder.exclusiveSkillTypeIds == null ? Collections.emptyList() : builder.exclusiveSkillTypeIds;
         this.unlockConditions = builder.unlockConditions == null ? Collections.emptyList() : builder.unlockConditions;
+        this.tags = builder.tags == null ? Collections.emptyList() : builder.tags;
     }
 
     public static final class Builder {
@@ -63,6 +65,7 @@ public class SkillType {
         private List<String> installedHullModIds = Collections.emptyList();
         private List<String> exclusiveSkillTypeIds = Collections.emptyList();
         private List<UnlockCondition> unlockConditions = Collections.emptyList();
+        private List<String> tags = Collections.emptyList();
 
         public Builder(String id, String displayName, String iconPath, SkillTier tier) {
             this.id = id;
@@ -128,6 +131,11 @@ public class SkillType {
 
         public Builder unlockConditions(List<UnlockCondition> unlockConditions) {
             this.unlockConditions = unlockConditions;
+            return this;
+        }
+
+        public Builder tags(List<String> tags) {
+            this.tags = tags;
             return this;
         }
 
@@ -211,6 +219,10 @@ public class SkillType {
 
     public List<UnlockCondition> getUnlockConditions() {
         return unlockConditions;
+    }
+
+    public List<String> getTags() {
+        return tags;
     }
 
     public void forEachEffect(HullSize hullSize, BiConsumer<SkillEffect, Float> consumer) {

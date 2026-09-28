@@ -72,6 +72,24 @@ class SkillTypeTest {
     }
 
     @Test
+    void tagsDefaultToAnEmptyListWhenNotSetOrSetToNull() {
+        SkillType unset = new SkillType.Builder("t", "T", "a.png", SkillTier.SMALL).build();
+        SkillType nulled = new SkillType.Builder("t", "T", "a.png", SkillTier.SMALL).tags(null).build();
+
+        assertEquals(List.of(), unset.getTags());
+        assertEquals(List.of(), nulled.getTags());
+    }
+
+    @Test
+    void keepsTagsInTheGivenOrder() {
+        SkillType type = new SkillType.Builder("t", "T", "a.png", SkillTier.SMALL)
+                .tags(List.of("shield", "req_shields"))
+                .build();
+
+        assertEquals(List.of("shield", "req_shields"), type.getTags());
+    }
+
+    @Test
     void doesNothingWhenBothListsAreEmpty() {
         SkillType type = type(List.of(), List.of());
 
@@ -80,4 +98,5 @@ class SkillTypeTest {
 
         assertTrue(seen.isEmpty());
     }
+
 }

@@ -20,12 +20,18 @@ public class SkillNode extends SkillTreeObject {
     private final Float ringBeltWidth;
     private final String wormholeColor;
     private final String pairedNodeId;
+    private final List<String> tags;
 
     public SkillNode(String id, SkillType type, List<String> connectedNodeIds, float offsetX, float offsetY) {
         this(id, type, connectedNodeIds, offsetX, offsetY, SkillNodeDecoration.NONE);
     }
 
     public SkillNode(String id, SkillType type, List<String> connectedNodeIds, float offsetX, float offsetY, SkillNodeDecoration decoration) {
+        this(id, type, connectedNodeIds, offsetX, offsetY, decoration, Collections.emptyList());
+    }
+
+    public SkillNode(String id, SkillType type, List<String> connectedNodeIds, float offsetX, float offsetY,
+                     SkillNodeDecoration decoration, List<String> tags) {
         super(id, offsetX, offsetY);
         this.type = type;
         this.connectedNodeIds = connectedNodeIds == null ? Collections.emptyList() : connectedNodeIds;
@@ -34,6 +40,7 @@ public class SkillNode extends SkillTreeObject {
         this.ringBeltWidth = decoration.ringBeltWidth();
         this.wormholeColor = decoration.wormholeColor();
         this.pairedNodeId = decoration.pairedNodeId();
+        this.tags = tags == null ? Collections.emptyList() : tags;
     }
 
     public SkillType getType() {
@@ -153,6 +160,23 @@ public class SkillNode extends SkillTreeObject {
         if (selectedId == null) return type;
         SkillType chosen = SkillTree.getType(selectedId);
         return chosen != null ? chosen : type;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public Set<String> effectiveTags(ShipSkillData data) {
+        return effectiveTags(data == null ? null : resolveEffectiveType(data));
+    }
+
+    public Set<String> effectiveTags(SkillType chosenOption) {
+        Set<String> combined = new LinkedHashSet<>(tags);
+        combined.addAll(type.getTags());
+        if (chosenOption != null) {
+            combined.addAll(chosenOption.getTags());
+        }
+        return Collections.unmodifiableSet(combined);
     }
 
     public List<String> getConnectedNodeIds() {

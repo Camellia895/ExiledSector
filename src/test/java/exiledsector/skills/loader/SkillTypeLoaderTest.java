@@ -319,6 +319,33 @@ class SkillTypeLoaderTest {
     }
 
     @Test
+    void missingTagsFieldMeansNoTags() throws Exception {
+        JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
+                + "\"id\": \"hull\","
+                + "\"name\": \"Hull\","
+                + "\"icon\": \"a.png\""
+                + "} ] }");
+
+        SkillType hull = SkillTypeLoader.parseSkillTypes(root).get("hull");
+
+        assertTrue(hull.getTags().isEmpty());
+    }
+
+    @Test
+    void parsesTagsIntoAnOrderedList() throws Exception {
+        JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
+                + "\"id\": \"frontemitter\","
+                + "\"name\": \"Shield Conversion - Front\","
+                + "\"icon\": \"a.png\","
+                + "\"tags\": [\"shield\", \"req_shields\"]"
+                + "} ] }");
+
+        SkillType frontEmitter = SkillTypeLoader.parseSkillTypes(root).get("frontemitter");
+
+        assertEquals(List.of("shield", "req_shields"), frontEmitter.getTags());
+    }
+
+    @Test
     void parsesMultipleTypesKeyedById() throws Exception {
         JSONObject root = new JSONObject("{ \"skillTypes\": ["
                 + "{\"id\": \"a\", \"name\": \"A\", \"icon\": \"a.png\"},"

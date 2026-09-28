@@ -175,13 +175,8 @@ public final class SkillTreeLoader {
     }
 
     private static SkillNode parseNode(JSONObject json, Map<String, SkillType> skillTypes) throws JSONException {
-        List<String> connectedTo = new ArrayList<>();
-        JSONArray connectedArray = json.optJSONArray("connectedTo");
-        if (connectedArray != null) {
-            for (int i = 0; i < connectedArray.length(); i++) {
-                connectedTo.add(connectedArray.getString(i));
-            }
-        }
+        List<String> connectedTo = SkillTypeLoader.parseStringArray(json.optJSONArray("connectedTo"));
+        List<String> tags = SkillTypeLoader.parseStringArray(json.optJSONArray("tags"));
 
         String typeId = json.getString("type");
         SkillType type = skillTypes.get(typeId);
@@ -200,6 +195,7 @@ public final class SkillTreeLoader {
                         json.optString("ringBeltColor", null),
                         json.has("ringBeltWidth") ? (float) json.getDouble("ringBeltWidth") : null,
                         json.optString("wormholeColor", null),
-                        json.optString("pairedWith", null)));
+                        json.optString("pairedWith", null)),
+                tags);
     }
 }
