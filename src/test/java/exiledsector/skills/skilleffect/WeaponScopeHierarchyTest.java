@@ -46,6 +46,13 @@ class WeaponScopeHierarchyTest {
     }
 
     @Test
+    void childrenAreTheScopesThatNameItAsTheirParentInDeclarationOrder() {
+        assertEquals(List.of(WeaponScope.BALLISTIC, WeaponScope.MISSILE, WeaponScope.ENERGY), WeaponScope.ALL.children());
+        assertEquals(List.of(WeaponScope.NON_BEAM_ENERGY, WeaponScope.BEAM), WeaponScope.ENERGY.children());
+        assertTrue(WeaponScope.BEAM.children().isEmpty());
+    }
+
+    @Test
     void theRequestedParentAndChildDamageEffectsExist() {
         assertSame(ScopedWeaponEffect.find(WeaponStatFamily.DAMAGE, WeaponScope.ALL, StatMode.PERCENT),
                 SkillEffect.byName("WEAPON_DAMAGE_PERCENT"));

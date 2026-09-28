@@ -2,6 +2,7 @@ package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.WeaponAPI;
 
+import java.util.Arrays;
 import java.util.List;
 
 public enum WeaponScope {
@@ -28,11 +29,7 @@ public enum WeaponScope {
     }
 
     public List<WeaponScope> children() {
-        return switch (this) {
-            case ALL -> List.of(BALLISTIC, MISSILE, ENERGY);
-            case ENERGY -> List.of(NON_BEAM_ENERGY, BEAM);
-            default -> List.of();
-        };
+        return Arrays.stream(values()).filter(scope -> scope.parent == this).toList();
     }
 
     String namePrefix() {
