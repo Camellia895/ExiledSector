@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
@@ -99,4 +100,31 @@ class SkillTypeTest {
         assertTrue(seen.isEmpty());
     }
 
+    @Test
+    void theEquivalentHullmodIsTheVanillaHullmodWhenSet() {
+        SkillType type = new SkillType.Builder("t", "T", "a.png", SkillTier.KEYSTONE)
+                .vanillaHullModId("ballistic_rangefinder")
+                .exclusiveHullModIds(List.of("other"))
+                .build();
+
+        assertEquals("ballistic_rangefinder", type.getEquivalentHullModId());
+    }
+
+    @Test
+    void theEquivalentHullmodIsOtherwiseTheFirstExclusiveHullmod() {
+        SkillType type = new SkillType.Builder("t", "T", "a.png", SkillTier.NOTABLE)
+                .exclusiveHullModIds(List.of("dedicated_targeting_core", "targetingunit"))
+                .build();
+
+        assertEquals("dedicated_targeting_core", type.getEquivalentHullModId());
+    }
+
+    @Test
+    void aTypeWithoutHullmodLinksHasNoEquivalentHullmod() {
+        SkillType type = new SkillType.Builder("t", "T", "a.png", SkillTier.SMALL)
+                .installedHullModIds(List.of("militarized_subsystems"))
+                .build();
+
+        assertNull(type.getEquivalentHullModId());
+    }
 }

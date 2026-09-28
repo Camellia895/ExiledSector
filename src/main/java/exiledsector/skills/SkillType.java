@@ -209,6 +209,13 @@ public class SkillType {
         return combined;
     }
 
+    public String getEquivalentHullModId() {
+        if (vanillaHullModId != null) {
+            return vanillaHullModId;
+        }
+        return exclusiveHullModIds.isEmpty() ? null : exclusiveHullModIds.get(0);
+    }
+
     public List<String> getInstalledHullModIds() {
         return installedHullModIds;
     }
