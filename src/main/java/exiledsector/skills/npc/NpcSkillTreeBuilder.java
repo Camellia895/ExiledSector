@@ -224,7 +224,7 @@ public final class NpcSkillTreeBuilder {
             for (int j = i + 1; j < path.size(); j++) {
                 PathStep a = path.get(i);
                 PathStep b = path.get(j);
-                if (areExclusive(a.node().getType(), a.option(), b.node().getType(), b.option())) {
+                if (AllocatedNode.planned(a.node(), a.option()).isExclusiveWith(AllocatedNode.planned(b.node(), b.option()))) {
                     return true;
                 }
             }
@@ -298,7 +298,7 @@ public final class NpcSkillTreeBuilder {
                 return NpcBuildStep.INSTALLED_HULLMOD_CONFLICT + hullModId;
             }
         }
-        String conflictingType = conflictingAllocatedTypeId(context.data(), node.getType(), option);
+        String conflictingType = conflictingAllocatedTypeId(context.data(), AllocatedNode.planned(node, option));
         if (conflictingType != null) {
             return NpcBuildStep.EXCLUSIVE_TYPE_CONFLICT + conflictingType;
         }
@@ -330,37 +330,12 @@ public final class NpcSkillTreeBuilder {
         return ids;
     }
 
-    private static String conflictingAllocatedTypeId(ShipSkillData data, SkillType type, SkillType option) {
+    private static String conflictingAllocatedTypeId(ShipSkillData data, AllocatedNode candidate) {
         for (AllocatedNode allocated : AllocatedNode.of(data)) {
-            SkillType allocatedType = allocated.node().getType();
-            SkillType allocatedEffective = allocated.effectiveType();
-            SkillType allocatedOption = allocatedEffective == allocatedType ? null : allocatedEffective;
-            if (areExclusive(type, option, allocatedType, allocatedOption)) {
-                return allocatedEffective.getId();
+            if (allocated.isExclusiveWith(candidate)) {
+                return allocated.effectiveType().getId();
             }
         }
         return null;
-    }
-
-    private static boolean areExclusive(SkillType typeA, SkillType optionA, SkillType typeB, SkillType optionB) {
-        return !Collections.disjoint(exclusiveSkillTypeIds(typeA, optionA), typeIds(typeB, optionB))
-                || !Collections.disjoint(exclusiveSkillTypeIds(typeB, optionB), typeIds(typeA, optionA));
-    }
-
-    private static Set<String> typeIds(SkillType type, SkillType option) {
-        Set<String> ids = new LinkedHashSet<>();
-        ids.add(type.getId());
-        if (option != null) {
-            ids.add(option.getId());
-        }
-        return ids;
-    }
-
-    private static Set<String> exclusiveSkillTypeIds(SkillType type, SkillType option) {
-        Set<String> ids = new LinkedHashSet<>(type.getExclusiveSkillTypeIds());
-        if (option != null) {
-            ids.addAll(option.getExclusiveSkillTypeIds());
-        }
-        return ids;
     }
 }

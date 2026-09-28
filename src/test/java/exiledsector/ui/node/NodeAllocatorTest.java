@@ -155,6 +155,17 @@ class NodeAllocatorTest {
     }
 
     @Test
+    void anExclusivityDeclaredOnlyByTheAllocatedTypeStillBlocksAllocation() {
+        SkillNode lister = register("lister_1", type("lister", "Lister", SkillTier.NOTABLE)
+                .exclusiveSkillTypeIds(List.of("listed")).build(), "root_1");
+        SkillType listed = type("listed", "Listed", SkillTier.NOTABLE).build();
+        data().chooseStartingRoot(root);
+        data().allocate(lister, 0);
+
+        assertEquals("Already have Lister allocated.", allocatorStartingAt(root).blockAllocationReason(listed));
+    }
+
+    @Test
     void anInstalledExclusiveHullmodBlocksAllocation() {
         HullModSpecAPI spec = mock(HullModSpecAPI.class);
         when(spec.getDisplayName()).thenReturn("Heavy Armor");

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -45,6 +46,17 @@ class SkillTypeTest {
                 List.of(new HullSizeSkillEffect(sized, 1f, 1f, 1f, 1f)));
 
         assertEquals(List.of(new SkillTypeEffect(regular, 1f), new SkillTypeEffect(sized, 1f)), type.effectsFor(HullSize.FRIGATE));
+    }
+
+    @Test
+    void anExclusivityListedOnEitherSideCountsBothWays() {
+        SkillType lister = new SkillType.Builder("a", "A", "a.png", SkillTier.NOTABLE).exclusiveSkillTypeIds(List.of("b")).build();
+        SkillType listed = new SkillType.Builder("b", "B", "a.png", SkillTier.NOTABLE).build();
+        SkillType unrelated = new SkillType.Builder("c", "C", "a.png", SkillTier.NOTABLE).build();
+
+        assertTrue(lister.isExclusiveWith(listed));
+        assertTrue(listed.isExclusiveWith(lister));
+        assertFalse(listed.isExclusiveWith(unrelated));
     }
 
     @Test

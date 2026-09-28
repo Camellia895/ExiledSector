@@ -223,6 +223,10 @@ public class SkillType {
         return exclusiveSkillTypeIds;
     }
 
+    public boolean isExclusiveWith(SkillType other) {
+        return exclusiveSkillTypeIds.contains(other.getId()) || other.getExclusiveSkillTypeIds().contains(id);
+    }
+
     public List<UnlockCondition> getUnlockConditions() {
         return unlockConditions;
     }

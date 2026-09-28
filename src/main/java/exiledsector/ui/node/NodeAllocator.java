@@ -202,15 +202,9 @@ final class NodeAllocator {
     }
 
     private static String skillTypeConflictReason(SkillType type, ShipSkillData data) {
-        List<String> exclusiveSkillTypeIds = type.getExclusiveSkillTypeIds();
-        if (exclusiveSkillTypeIds.isEmpty()) {
-            return null;
-        }
-
         for (AllocatedNode allocated : AllocatedNode.of(data)) {
-            SkillType allocatedType = allocated.effectiveType();
-            if (exclusiveSkillTypeIds.contains(allocatedType.getId())) {
-                return "Already have " + allocatedType.getDisplayName() + " allocated.";
+            if (allocated.isExclusiveWith(type)) {
+                return "Already have " + allocated.effectiveType().getDisplayName() + " allocated.";
             }
         }
         return null;

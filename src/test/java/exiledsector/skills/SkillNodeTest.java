@@ -202,6 +202,17 @@ class SkillNodeTest {
     }
 
     @Test
+    void descriptionListsANodeThatDeclaresTheExclusivityOnlyOnItsOwnSide() {
+        SkillTree.registerType(new SkillType.Builder("adaptiveshields", "Shield Conversion - Omni", "a.png", SkillTier.NOTABLE)
+                .exclusiveSkillTypeIds(List.of("frontemitter"))
+                .build());
+        SkillType type = new SkillType.Builder("frontemitter", "Shield Conversion - Front", "a.png", SkillTier.NOTABLE).build();
+        SkillNode node = new SkillNode("frontemitter_1", type, List.of(), 0f, 0f);
+
+        assertEquals("Mutually exclusive with node: Shield Conversion - Omni.", node.getDescription());
+    }
+
+    @Test
     void descriptionFallsBackToRawIdWhenExclusiveSkillTypeIsUnknown() {
         SkillType type = new SkillType.Builder("frontemitter", "Shield Conversion - Front", "a.png", SkillTier.NOTABLE)
                 .effects(List.of())

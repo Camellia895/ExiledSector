@@ -15,4 +15,16 @@ public record AllocatedNode(SkillNode node, SkillType effectiveType) {
         }
         return allocated;
     }
+
+    public static AllocatedNode planned(SkillNode node, SkillType option) {
+        return new AllocatedNode(node, option != null ? option : node.getType());
+    }
+
+    public boolean isExclusiveWith(SkillType other) {
+        return node.getType().isExclusiveWith(other) || effectiveType.isExclusiveWith(other);
+    }
+
+    public boolean isExclusiveWith(AllocatedNode other) {
+        return isExclusiveWith(other.node().getType()) || isExclusiveWith(other.effectiveType());
+    }
 }

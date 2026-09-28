@@ -136,6 +136,11 @@ public class SkillNode extends SkillTreeObject {
             SkillType other = SkillTree.getType(skillTypeId);
             nodeNames.add(other != null ? other.getDisplayName() : skillTypeId);
         }
+        for (SkillType other : SkillTree.getAllTypes().values()) {
+            if (other != type && type.isExclusiveWith(other)) {
+                nodeNames.add(other.getDisplayName());
+            }
+        }
 
         List<String> lines = new ArrayList<>();
         addIfPresent(lines, exclusivityLine("hullmod", hullModNames));
