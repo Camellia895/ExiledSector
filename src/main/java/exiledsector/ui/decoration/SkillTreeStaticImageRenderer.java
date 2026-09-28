@@ -5,7 +5,6 @@ import exiledsector.skills.layout.StaticImage;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.List;
@@ -24,10 +23,6 @@ public class SkillTreeStaticImageRenderer {
         List<StaticImage> images = SkillTree.getStaticImages();
         if (images.isEmpty()) return;
 
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
         for (StaticImage image : images) {
             String path = image.getImagePath();
             if (path == null || path.isEmpty()) continue;
@@ -38,7 +33,5 @@ public class SkillTreeStaticImageRenderer {
             SpriteDraw.drawAtCenter(spriteCache, path, new Vector2f(screenX, screenY),
                     new Vector2f(image.getWidth() * zoom, image.getHeight() * zoom), null, alphaMult, angleDeg);
         }
-
-        GL11.glDisable(GL11.GL_BLEND);
     }
 }
