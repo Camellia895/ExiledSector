@@ -16,9 +16,12 @@ import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import java.util.List;
 
 import static exiledsector.skills.skilleffect.SkillEffectText.pct;
-import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
-import static exiledsector.skills.skilleffect.SkillEffectText.pctMore;
-import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
+import static exiledsector.skills.skilleffect.StatMode.FLAT;
+import static exiledsector.skills.skilleffect.StatMode.MULT;
+import static exiledsector.skills.skilleffect.StatMode.PERCENT;
+import static exiledsector.skills.skilleffect.StatTarget.bonus;
+import static exiledsector.skills.skilleffect.StatTarget.dynamicStat;
+import static exiledsector.skills.skilleffect.StatTarget.stat;
 
 public enum ShieldSkillEffect implements SkillEffect {
 
@@ -163,115 +166,15 @@ public enum ShieldSkillEffect implements SkillEffect {
             return "Converts this ship's shield to omni-directional.";
         }
     },
-    SHIELD_ARC_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getShieldArcBonus().modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, STAT_SHIELD_ARC);
-        }
-    },
-    SHIELD_ARC_FLAT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getShieldArcBonus().modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return flatChange(magnitude, STAT_SHIELD_ARC);
-        }
-    },
-    SHIELD_ARC_MULT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            SkillEffectSupport.applyMult(stats.getShieldArcBonus(), modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctMore(magnitude, STAT_SHIELD_ARC);
-        }
-    },
-    SHIELD_PIERCE_CHANCE_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getStat(Stats.SHIELD_PIERCED_MULT).modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "chance for shields to be pierced by EMP arcs");
-        }
-    },
-    SHIELD_PIERCE_CHANCE_MULT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            SkillEffectSupport.applyMult(stats.getDynamic().getStat(Stats.SHIELD_PIERCED_MULT), modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctMore(magnitude, "chance for shields to be pierced by EMP arcs");
-        }
-    },
-    SHIELD_UPKEEP_PERCENT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getShieldUpkeepMult().modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "shield flux upkeep");
-        }
-    },
-    SHIELD_UPKEEP_MULT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            SkillEffectSupport.applyMult(stats.getShieldUpkeepMult(), modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctMore(magnitude, "shield flux upkeep");
-        }
-    },
-    SHIELD_TURN_RATE_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getShieldTurnRateMult().modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "shield turn rate");
-        }
-    },
-    SHIELD_RAISE_RATE_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getShieldUnfoldRateMult().modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "shield raise rate");
-        }
-    },
+    SHIELD_ARC_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getShieldArcBonus), StatNames.SHIELD_ARC, false),
+    SHIELD_ARC_FLAT(FLAT, bonus(MutableShipStatsAPI::getShieldArcBonus), StatNames.SHIELD_ARC, false),
+    SHIELD_ARC_MULT(MULT, bonus(MutableShipStatsAPI::getShieldArcBonus), StatNames.SHIELD_ARC, false),
+    SHIELD_PIERCE_CHANCE_PERCENT(PERCENT, dynamicStat(Stats.SHIELD_PIERCED_MULT), "chance for shields to be pierced by EMP arcs", false),
+    SHIELD_PIERCE_CHANCE_MULT(MULT, dynamicStat(Stats.SHIELD_PIERCED_MULT), "chance for shields to be pierced by EMP arcs", false),
+    SHIELD_UPKEEP_PERCENT(PERCENT, stat(MutableShipStatsAPI::getShieldUpkeepMult), "shield flux upkeep", true),
+    SHIELD_UPKEEP_MULT(MULT, stat(MutableShipStatsAPI::getShieldUpkeepMult), "shield flux upkeep", true),
+    SHIELD_TURN_RATE_PERCENT(PERCENT, stat(MutableShipStatsAPI::getShieldTurnRateMult), "shield turn rate", false),
+    SHIELD_RAISE_RATE_PERCENT(PERCENT, stat(MutableShipStatsAPI::getShieldUnfoldRateMult), "shield raise rate", false),
     SHIELD_DAMAGE_SHARED_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -293,7 +196,6 @@ public enum ShieldSkillEffect implements SkillEffect {
     };
 
     private static final String BEAM_DAMAGE_HARD_FLUX_KEY = "exiledSector_beamDamageHardFluxPercent";
-    private static final String STAT_SHIELD_ARC = "shield arc";
 
     private static final String SHIELD_DAMAGE_SHARED_KEY = "exiledSector_shieldDamageSharedPercent";
     private static final float SHARED_SHIELD_DAMAGE_RANGE = 1000f;
@@ -301,6 +203,31 @@ public enum ShieldSkillEffect implements SkillEffect {
     public static final float MAKESHIFT_SHIELD_EFFICIENCY = 0.5f;
     public static final float MAKESHIFT_SHIELD_TURN_RATE_MULT = 1.2f;
     public static final float MAKESHIFT_SHIELD_ARC = 90f;
+
+    private final SimpleStatEffect simpleStat;
+
+    ShieldSkillEffect() {
+        this.simpleStat = null;
+    }
+
+    ShieldSkillEffect(StatMode mode, StatTarget target, String statName, boolean lowerIsBetter) {
+        this.simpleStat = new SimpleStatEffect(mode, target, statName, lowerIsBetter);
+    }
+
+    @Override
+    public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        simpleStat.apply(stats, modId, magnitude);
+    }
+
+    @Override
+    public String describe(float magnitude) {
+        return simpleStat.describe(magnitude);
+    }
+
+    @Override
+    public boolean lowerIsBetter() {
+        return simpleStat != null && simpleStat.lowerIsBetter();
+    }
 
     public static ShieldAPI.ShieldType resolveDisplayShieldType(ShieldAPI.ShieldType baseType, List<SkillEffect> effectsInAllocationOrder) {
         ShieldAPI.ShieldType type = baseType;
@@ -373,6 +300,13 @@ public enum ShieldSkillEffect implements SkillEffect {
                 ally.getFluxTracker().increaseFlux(hardFluxPerAlly, true);
             }
             return null;
+        }
+    }
+
+    private static final class StatNames {
+        static final String SHIELD_ARC = "shield arc";
+
+        private StatNames() {
         }
     }
 }

@@ -13,57 +13,23 @@ import com.fs.starfarer.api.impl.hullmods.PhaseField;
 import java.util.ArrayList;
 import java.util.List;
 
+import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
 import static exiledsector.skills.skilleffect.SkillEffectText.pct;
 import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
-import static exiledsector.skills.skilleffect.SkillEffectText.pctMore;
-import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
+import static exiledsector.skills.skilleffect.StatMode.FLAT;
+import static exiledsector.skills.skilleffect.StatMode.MULT;
+import static exiledsector.skills.skilleffect.StatMode.PERCENT;
+import static exiledsector.skills.skilleffect.StatTarget.bonus;
+import static exiledsector.skills.skilleffect.StatTarget.dynamicMod;
+import static exiledsector.skills.skilleffect.StatTarget.dynamicStat;
+import static exiledsector.skills.skilleffect.StatTarget.stat;
 
 public enum LogisticsSkillEffect implements SkillEffect {
 
-    FUEL_CAPACITY_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getFuelMod().modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "fuel capacity");
-        }
-    },
-    FUEL_CAPACITY_FLAT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getFuelMod().modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return flatChange(magnitude, "fuel capacity");
-        }
-    },
-    CARGO_CAPACITY_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getCargoMod().modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "cargo capacity");
-        }
-    },
-    CARGO_CAPACITY_FLAT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getCargoMod().modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return flatChange(magnitude, "cargo capacity");
-        }
-    },
+    FUEL_CAPACITY_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getFuelMod), "fuel capacity", false),
+    FUEL_CAPACITY_FLAT(FLAT, bonus(MutableShipStatsAPI::getFuelMod), "fuel capacity", false),
+    CARGO_CAPACITY_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getCargoMod), "cargo capacity", false),
+    CARGO_CAPACITY_FLAT(FLAT, bonus(MutableShipStatsAPI::getCargoMod), "cargo capacity", false),
     CARGO_CAPACITY_PER_FIGHTER_BAY {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -76,115 +42,16 @@ public enum LogisticsSkillEffect implements SkillEffect {
             return flatChange(magnitude, "cargo capacity per fighter bay");
         }
     },
-    CREW_CAPACITY_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getMaxCrewMod().modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "crew capacity");
-        }
-    },
-    CREW_CAPACITY_FLAT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getMaxCrewMod().modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return flatChange(magnitude, "crew capacity");
-        }
-    },
-    BURN_LEVEL_FLAT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getMaxBurnLevel().modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return flatChange(magnitude, "max burn level");
-        }
-    },
-    SENSOR_PROFILE_PERCENT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getSensorProfile().modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "sensor profile");
-        }
-    },
-    SENSOR_PROFILE_MULT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            SkillEffectSupport.applyMult(stats.getSensorProfile(), modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctMore(magnitude, "sensor profile");
-        }
-    },
-    SENSOR_STRENGTH_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getSensorStrength().modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "sensor strength");
-        }
-    },
-    SENSOR_STRENGTH_FLAT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getSensorStrength().modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return flatChange(magnitude, "sensor strength");
-        }
-    },
-    COMBAT_VISION {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getSightRadiusMod().modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return flatChange(magnitude, "in-combat sensor/vision range");
-        }
-    },
-    CR_RECOVERY_RATE_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getBaseCRRecoveryRatePercentPerDay().modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "combat readiness recovery rate");
-        }
-    },
+    CREW_CAPACITY_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getMaxCrewMod), "crew capacity", false),
+    CREW_CAPACITY_FLAT(FLAT, bonus(MutableShipStatsAPI::getMaxCrewMod), "crew capacity", false),
+    BURN_LEVEL_FLAT(FLAT, stat(MutableShipStatsAPI::getMaxBurnLevel), "max burn level", false),
+    SENSOR_PROFILE_PERCENT(PERCENT, stat(MutableShipStatsAPI::getSensorProfile), "sensor profile", true),
+    SENSOR_PROFILE_MULT(MULT, stat(MutableShipStatsAPI::getSensorProfile), "sensor profile", true),
+    SENSOR_STRENGTH_PERCENT(PERCENT, stat(MutableShipStatsAPI::getSensorStrength), "sensor strength", false),
+    SENSOR_STRENGTH_FLAT(FLAT, stat(MutableShipStatsAPI::getSensorStrength), "sensor strength", false),
+    COMBAT_VISION(FLAT, bonus(MutableShipStatsAPI::getSightRadiusMod), "in-combat sensor/vision range", false),
+    CR_RECOVERY_RATE_PERCENT(PERCENT, stat(MutableShipStatsAPI::getBaseCRRecoveryRatePercentPerDay),
+            "combat readiness recovery rate", false),
     MAX_COMBAT_READINESS_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -196,97 +63,14 @@ public enum LogisticsSkillEffect implements SkillEffect {
             return pctChange(magnitude, "maximum combat readiness");
         }
     },
-    REPAIR_RATE_PER_DAY_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getRepairRatePercentPerDay().modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "repair rate per day");
-        }
-    },
-    CR_LOSS_PER_SECOND_PERCENT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getCRLossPerSecondPercent().modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "rate of combat readiness loss from extended deployment");
-        }
-    },
-    CR_LOSS_PER_SECOND_MULT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            SkillEffectSupport.applyMult(stats.getCRLossPerSecondPercent(), modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctMore(magnitude, "rate of combat readiness loss from extended deployment");
-        }
-    },
-    MIN_CREW_MULT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            SkillEffectSupport.applyMult(stats.getMinCrewMod(), modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctMore(magnitude, STAT_MIN_CREW_REQUIRED);
-        }
-    },
-    MIN_CREW_PERCENT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getMinCrewMod().modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, STAT_MIN_CREW_REQUIRED);
-        }
-    },
-    MIN_CREW_FLAT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getMinCrewMod().modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return flatChange(magnitude, STAT_MIN_CREW_REQUIRED);
-        }
-    },
+    REPAIR_RATE_PER_DAY_PERCENT(PERCENT, stat(MutableShipStatsAPI::getRepairRatePercentPerDay), "repair rate per day", false),
+    CR_LOSS_PER_SECOND_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getCRLossPerSecondPercent),
+            "rate of combat readiness loss from extended deployment", true),
+    CR_LOSS_PER_SECOND_MULT(MULT, bonus(MutableShipStatsAPI::getCRLossPerSecondPercent),
+            "rate of combat readiness loss from extended deployment", true),
+    MIN_CREW_MULT(MULT, bonus(MutableShipStatsAPI::getMinCrewMod), StatNames.MIN_CREW_REQUIRED, true),
+    MIN_CREW_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getMinCrewMod), StatNames.MIN_CREW_REQUIRED, true),
+    MIN_CREW_FLAT(FLAT, bonus(MutableShipStatsAPI::getMinCrewMod), StatNames.MIN_CREW_REQUIRED, true),
     MIN_CREW_PER_FIGHTER_BAY {
         @Override
         public boolean lowerIsBetter() {
@@ -322,38 +106,8 @@ public enum LogisticsSkillEffect implements SkillEffect {
             return pctChange(magnitude, "minimum crew required per fighter bay (capped at -80% total)");
         }
     },
-    SUPPLIES_PER_MONTH_MULT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            SkillEffectSupport.applyMult(stats.getSuppliesPerMonth(), modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctMore(magnitude, "supply use for maintenance");
-        }
-    },
-    FUEL_USE_MULT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            SkillEffectSupport.applyMult(stats.getFuelUseMod(), modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctMore(magnitude, "fuel consumption rate");
-        }
-    },
+    SUPPLIES_PER_MONTH_MULT(MULT, stat(MutableShipStatsAPI::getSuppliesPerMonth), "supply use for maintenance", true),
+    FUEL_USE_MULT(MULT, bonus(MutableShipStatsAPI::getFuelUseMod), "fuel consumption rate", true),
     REMOVE_CIVILIAN_HULL_PENALTY {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -386,88 +140,16 @@ public enum LogisticsSkillEffect implements SkillEffect {
             return "Can only be allocated on civilian-grade hulls.";
         }
     },
-    CREW_LOSS_PERCENT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getCrewLossMult().modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "crew casualties");
-        }
-    },
-    CREW_LOSS_MULT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            SkillEffectSupport.applyMult(stats.getCrewLossMult(), modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctMore(magnitude, "crew casualties");
-        }
-    },
-    SURVEY_COST_REDUCTION_HEAVY_MACHINERY {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod("survey_cost_reduction_heavy_machinery").modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return flatChange(magnitude, "heavy machinery required to perform surveys (fleet-wide)");
-        }
-    },
-    SURVEY_COST_REDUCTION_SUPPLIES {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod("survey_cost_reduction_supplies").modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return flatChange(magnitude, "supplies required to perform surveys (fleet-wide)");
-        }
-    },
-    GROUND_SUPPORT_FLAT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod(Stats.FLEET_GROUND_SUPPORT).modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return flatChange(magnitude, "effective strength of planetary raids, up to the total number of marines in the fleet");
-        }
-    },
-    CORONA_RESISTANCE_MULT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            SkillEffectSupport.applyMult(stats.getDynamic().getStat(Stats.CORONA_EFFECT_MULT), modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "combat readiness loss from being in a solar corona or a deep "
-                    + "hyperspace storm");
-        }
-    },
+    CREW_LOSS_PERCENT(PERCENT, stat(MutableShipStatsAPI::getCrewLossMult), "crew casualties", true),
+    CREW_LOSS_MULT(MULT, stat(MutableShipStatsAPI::getCrewLossMult), "crew casualties", true),
+    SURVEY_COST_REDUCTION_HEAVY_MACHINERY(FLAT, dynamicMod("survey_cost_reduction_heavy_machinery"),
+            "heavy machinery required to perform surveys (fleet-wide)", false),
+    SURVEY_COST_REDUCTION_SUPPLIES(FLAT, dynamicMod("survey_cost_reduction_supplies"),
+            "supplies required to perform surveys (fleet-wide)", false),
+    GROUND_SUPPORT_FLAT(FLAT, dynamicMod(Stats.FLEET_GROUND_SUPPORT),
+            "effective strength of planetary raids, up to the total number of marines in the fleet", false),
+    CORONA_RESISTANCE_MULT(MULT, dynamicStat(Stats.CORONA_EFFECT_MULT),
+            "combat readiness loss from being in a solar corona or a deep hyperspace storm", true),
     POST_BATTLE_SALVAGE_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -525,11 +207,35 @@ public enum LogisticsSkillEffect implements SkillEffect {
         }
     };
 
-    private static final String STAT_MIN_CREW_REQUIRED = "minimum crew required";
     private static final String POST_BATTLE_SALVAGE_CONTRIBUTION_KEY = "exiledSector_postBattleSalvageContribution";
     private static final String POST_BATTLE_SALVAGE_FLEET_MOD_ID = "exiledSector_postBattleSalvage";
     private static final String PHASE_FIELD_CONTRIBUTION_KEY = "exiledSector_phaseFieldContributionPercent";
     private static final String EXTENDED_PHASE_FIELD_MOD_ID = "exiledSector_extendedPhaseField";
+
+    private final SimpleStatEffect simpleStat;
+
+    LogisticsSkillEffect() {
+        this.simpleStat = null;
+    }
+
+    LogisticsSkillEffect(StatMode mode, StatTarget target, String statName, boolean lowerIsBetter) {
+        this.simpleStat = new SimpleStatEffect(mode, target, statName, lowerIsBetter);
+    }
+
+    @Override
+    public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        simpleStat.apply(stats, modId, magnitude);
+    }
+
+    @Override
+    public String describe(float magnitude) {
+        return simpleStat.describe(magnitude);
+    }
+
+    @Override
+    public boolean lowerIsBetter() {
+        return simpleStat != null && simpleStat.lowerIsBetter();
+    }
 
     private static CampaignFleetAPI getPlayerFleet() {
         SectorAPI sector = Global.getSector();
@@ -610,5 +316,12 @@ public enum LogisticsSkillEffect implements SkillEffect {
             return null;
         }
         return member.getStats().getSensorStrength().getModifiedValue() * contributionPercent / 100f;
+    }
+
+    private static final class StatNames {
+        static final String MIN_CREW_REQUIRED = "minimum crew required";
+
+        private StatNames() {
+        }
     }
 }

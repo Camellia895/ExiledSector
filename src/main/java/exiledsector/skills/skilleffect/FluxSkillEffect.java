@@ -4,99 +4,21 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 
 import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
-import static exiledsector.skills.skilleffect.SkillEffectText.pctMore;
-import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
+import static exiledsector.skills.skilleffect.StatMode.FLAT;
+import static exiledsector.skills.skilleffect.StatMode.MULT;
+import static exiledsector.skills.skilleffect.StatMode.PERCENT;
+import static exiledsector.skills.skilleffect.StatTarget.stat;
 
 public enum FluxSkillEffect implements SkillEffect {
 
-    FLUX_CAPACITY_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getFluxCapacity().modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, STAT_FLUX_CAPACITY);
-        }
-    },
-    FLUX_CAPACITY_FLAT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getFluxCapacity().modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return flatChange(magnitude, STAT_FLUX_CAPACITY);
-        }
-    },
-    FLUX_CAPACITY_MULT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            SkillEffectSupport.applyMult(stats.getFluxCapacity(), modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctMore(magnitude, STAT_FLUX_CAPACITY);
-        }
-    },
-    FLUX_DISSIPATION_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getFluxDissipation().modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, STAT_FLUX_DISSIPATION);
-        }
-    },
-    FLUX_DISSIPATION_FLAT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getFluxDissipation().modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return flatChange(magnitude, STAT_FLUX_DISSIPATION);
-        }
-    },
-    FLUX_DISSIPATION_MULT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            SkillEffectSupport.applyMult(stats.getFluxDissipation(), modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctMore(magnitude, STAT_FLUX_DISSIPATION);
-        }
-    },
-    VENT_RATE_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getVentRateMult().modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "venting speed");
-        }
-    },
-    VENT_RATE_MULT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            SkillEffectSupport.applyMult(stats.getVentRateMult(), modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctMore(magnitude, "venting speed");
-        }
-    },
+    FLUX_CAPACITY_PERCENT(PERCENT, stat(MutableShipStatsAPI::getFluxCapacity), StatNames.FLUX_CAPACITY, false),
+    FLUX_CAPACITY_FLAT(FLAT, stat(MutableShipStatsAPI::getFluxCapacity), StatNames.FLUX_CAPACITY, false),
+    FLUX_CAPACITY_MULT(MULT, stat(MutableShipStatsAPI::getFluxCapacity), StatNames.FLUX_CAPACITY, false),
+    FLUX_DISSIPATION_PERCENT(PERCENT, stat(MutableShipStatsAPI::getFluxDissipation), StatNames.FLUX_DISSIPATION, false),
+    FLUX_DISSIPATION_FLAT(FLAT, stat(MutableShipStatsAPI::getFluxDissipation), StatNames.FLUX_DISSIPATION, false),
+    FLUX_DISSIPATION_MULT(MULT, stat(MutableShipStatsAPI::getFluxDissipation), StatNames.FLUX_DISSIPATION, false),
+    VENT_RATE_PERCENT(PERCENT, stat(MutableShipStatsAPI::getVentRateMult), "venting speed", false),
+    VENT_RATE_MULT(MULT, stat(MutableShipStatsAPI::getVentRateMult), "venting speed", false),
     ZERO_FLUX_ALWAYS_ON {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -143,6 +65,36 @@ public enum FluxSkillEffect implements SkillEffect {
         }
     };
 
-    private static final String STAT_FLUX_CAPACITY = "flux capacity";
-    private static final String STAT_FLUX_DISSIPATION = "flux dissipation";
+    private final SimpleStatEffect simpleStat;
+
+    FluxSkillEffect() {
+        this.simpleStat = null;
+    }
+
+    FluxSkillEffect(StatMode mode, StatTarget target, String statName, boolean lowerIsBetter) {
+        this.simpleStat = new SimpleStatEffect(mode, target, statName, lowerIsBetter);
+    }
+
+    @Override
+    public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        simpleStat.apply(stats, modId, magnitude);
+    }
+
+    @Override
+    public String describe(float magnitude) {
+        return simpleStat.describe(magnitude);
+    }
+
+    @Override
+    public boolean lowerIsBetter() {
+        return simpleStat != null && simpleStat.lowerIsBetter();
+    }
+
+    private static final class StatNames {
+        static final String FLUX_CAPACITY = "flux capacity";
+        static final String FLUX_DISSIPATION = "flux dissipation";
+
+        private StatNames() {
+        }
+    }
 }

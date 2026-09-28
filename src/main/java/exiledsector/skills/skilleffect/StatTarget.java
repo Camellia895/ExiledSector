@@ -25,6 +25,26 @@ sealed interface StatTarget {
         return true;
     }
 
+    static StatTarget stat(Function<MutableShipStatsAPI, MutableStat> getter) {
+        return new OfStat(getter);
+    }
+
+    static StatTarget bonus(Function<MutableShipStatsAPI, StatBonus> getter) {
+        return new OfBonus(getter);
+    }
+
+    static StatTarget dynamicStat(String key) {
+        return stat(stats -> stats.getDynamic().getStat(key));
+    }
+
+    static StatTarget dynamicMod(String key) {
+        return bonus(stats -> stats.getDynamic().getMod(key));
+    }
+
+    static StatTarget all(StatTarget... parts) {
+        return new Composite(List.of(parts));
+    }
+
     record OfStat(Function<MutableShipStatsAPI, MutableStat> stat) implements StatTarget {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, StatMode mode, float magnitude) {

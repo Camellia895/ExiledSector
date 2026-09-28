@@ -18,38 +18,18 @@ import java.awt.Color;
 import java.util.Map;
 
 import static exiledsector.skills.skilleffect.SkillEffectText.pct;
-import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
 import static exiledsector.skills.skilleffect.SkillEffectText.pctMore;
+import static exiledsector.skills.skilleffect.StatMode.MULT;
+import static exiledsector.skills.skilleffect.StatMode.PERCENT;
+import static exiledsector.skills.skilleffect.StatTarget.bonus;
+import static exiledsector.skills.skilleffect.StatTarget.dynamicMod;
 
 public enum PhaseSkillEffect implements SkillEffect {
 
-    PHASE_CLOAK_ACTIVATION_COST_MULT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            SkillEffectSupport.applyMult(stats.getPhaseCloakActivationCostBonus(), modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctMore(magnitude, "phase cloak activation cost");
-        }
-    },
-    PHASE_CLOAK_FLUX_THRESHOLD_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod("phase_cloak_flux_level_for_min_speed_mod").modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "hard flux threshold before phase speed penalty kicks in");
-        }
-    },
+    PHASE_CLOAK_ACTIVATION_COST_MULT(MULT, bonus(MutableShipStatsAPI::getPhaseCloakActivationCostBonus),
+            "phase cloak activation cost", true),
+    PHASE_CLOAK_FLUX_THRESHOLD_PERCENT(PERCENT, dynamicMod("phase_cloak_flux_level_for_min_speed_mod"),
+            "hard flux threshold before phase speed penalty kicks in", false),
     COMBAT_BOOST_WHILE_PHASED {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -127,6 +107,31 @@ public enum PhaseSkillEffect implements SkillEffect {
     };
 
     private static final String PHASE_ANCHOR_CR_PENALTY_KEY = "exiledSector_phaseAnchorCrPenaltyPercent";
+
+    private final SimpleStatEffect simpleStat;
+
+    PhaseSkillEffect() {
+        this.simpleStat = null;
+    }
+
+    PhaseSkillEffect(StatMode mode, StatTarget target, String statName, boolean lowerIsBetter) {
+        this.simpleStat = new SimpleStatEffect(mode, target, statName, lowerIsBetter);
+    }
+
+    @Override
+    public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        simpleStat.apply(stats, modId, magnitude);
+    }
+
+    @Override
+    public String describe(float magnitude) {
+        return simpleStat.describe(magnitude);
+    }
+
+    @Override
+    public boolean lowerIsBetter() {
+        return simpleStat != null && simpleStat.lowerIsBetter();
+    }
 
     private static final class PhaseAnchorDiveListener implements HullDamageAboutToBeTakenListener, AdvanceableListener {
 

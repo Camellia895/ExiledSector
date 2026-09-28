@@ -4,56 +4,20 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 
 import static exiledsector.skills.skilleffect.SkillEffectText.pct;
-import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
 import static exiledsector.skills.skilleffect.SkillEffectText.pctMore;
-import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
+import static exiledsector.skills.skilleffect.StatMode.FLAT;
+import static exiledsector.skills.skilleffect.StatMode.MULT;
+import static exiledsector.skills.skilleffect.StatMode.PERCENT;
+import static exiledsector.skills.skilleffect.StatTarget.all;
+import static exiledsector.skills.skilleffect.StatTarget.bonus;
+import static exiledsector.skills.skilleffect.StatTarget.stat;
 
 public enum DefenseSkillEffect implements SkillEffect {
 
-    HULL_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getHullBonus().modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, STAT_HULL_POINTS);
-        }
-    },
-    HULL_FLAT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getHullBonus().modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return flatChange(magnitude, STAT_HULL_POINTS);
-        }
-    },
-    HULL_MULT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            SkillEffectSupport.applyMult(stats.getHullBonus(), modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctMore(magnitude, STAT_HULL_POINTS);
-        }
-    },
-    ARMOR_FLAT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getArmorBonus().modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return flatChange(magnitude, "armor");
-        }
-    },
+    HULL_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getHullBonus), StatNames.HULL_POINTS, false),
+    HULL_FLAT(FLAT, bonus(MutableShipStatsAPI::getHullBonus), StatNames.HULL_POINTS, false),
+    HULL_MULT(MULT, bonus(MutableShipStatsAPI::getHullBonus), StatNames.HULL_POINTS, false),
+    ARMOR_FLAT(FLAT, bonus(MutableShipStatsAPI::getArmorBonus), "armor", false),
     SHIP_RECOVERY_CHANCE_BONUS {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -70,33 +34,8 @@ public enum DefenseSkillEffect implements SkillEffect {
             return "If disabled, this ship is almost always recoverable after the battle.";
         }
     },
-    BREAK_PROBABILITY_PERCENT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getBreakProb().modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "chance of this ship breaking apart when destroyed");
-        }
-    },
-    ARMOR_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getArmorBonus().modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "armor");
-        }
-    },
+    BREAK_PROBABILITY_PERCENT(PERCENT, stat(MutableShipStatsAPI::getBreakProb), "chance of this ship breaking apart when destroyed", true),
+    ARMOR_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getArmorBonus), "armor", false),
     ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD {
         @Override
         public boolean lowerIsBetter() {
@@ -130,133 +69,50 @@ public enum DefenseSkillEffect implements SkillEffect {
             return pctMore(magnitude, "negative effects from D-mods");
         }
     },
-    SHIELD_ABSORPTION_PERCENT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
+    SHIELD_ABSORPTION_PERCENT(PERCENT, stat(MutableShipStatsAPI::getShieldAbsorptionMult), "damage taken by shields", true),
+    SHIELD_DAMAGE_TAKEN_MULT(MULT, stat(MutableShipStatsAPI::getShieldDamageTakenMult), "damage taken by shields", true),
+    ENGINE_DURABILITY_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getEngineHealthBonus), "engine durability", false),
+    REPAIR_TIME_PERCENT(PERCENT, all(stat(MutableShipStatsAPI::getCombatWeaponRepairTimeMult),
+            stat(MutableShipStatsAPI::getCombatEngineRepairTimeMult)),
+            "weapon and engine repair time", true),
+    REPAIR_TIME_MULT(MULT, all(stat(MutableShipStatsAPI::getCombatWeaponRepairTimeMult),
+            stat(MutableShipStatsAPI::getCombatEngineRepairTimeMult)),
+            "weapon and engine repair time", true),
+    EMP_DAMAGE_TAKEN_PERCENT(PERCENT, stat(MutableShipStatsAPI::getEmpDamageTakenMult), "EMP damage taken", true),
+    EMP_DAMAGE_TAKEN_MULT(MULT, stat(MutableShipStatsAPI::getEmpDamageTakenMult), "EMP damage taken", true),
+    ENERGY_DAMAGE_TAKEN_PERCENT(PERCENT, all(stat(MutableShipStatsAPI::getEnergyDamageTakenMult),
+            stat(MutableShipStatsAPI::getEnergyShieldDamageTakenMult)),
+            "energy damage taken, including hits on shields, armor, and hull", true);
 
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getShieldAbsorptionMult().modifyPercent(modId, magnitude);
-        }
+    private final SimpleStatEffect simpleStat;
 
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "damage taken by shields");
-        }
-    },
-    SHIELD_DAMAGE_TAKEN_MULT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
+    DefenseSkillEffect() {
+        this.simpleStat = null;
+    }
 
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            SkillEffectSupport.applyMult(stats.getShieldDamageTakenMult(), modId, magnitude);
-        }
+    DefenseSkillEffect(StatMode mode, StatTarget target, String statName, boolean lowerIsBetter) {
+        this.simpleStat = new SimpleStatEffect(mode, target, statName, lowerIsBetter);
+    }
 
-        @Override
-        public String describe(float magnitude) {
-            return pctMore(magnitude, "damage taken by shields");
-        }
-    },
-    ENGINE_DURABILITY_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getEngineHealthBonus().modifyPercent(modId, magnitude);
-        }
+    @Override
+    public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        simpleStat.apply(stats, modId, magnitude);
+    }
 
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "engine durability");
-        }
-    },
-    REPAIR_TIME_PERCENT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
+    @Override
+    public String describe(float magnitude) {
+        return simpleStat.describe(magnitude);
+    }
 
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getCombatWeaponRepairTimeMult().modifyPercent(modId, magnitude);
-            stats.getCombatEngineRepairTimeMult().modifyPercent(modId, magnitude);
-        }
+    @Override
+    public boolean lowerIsBetter() {
+        return simpleStat != null && simpleStat.lowerIsBetter();
+    }
 
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "weapon and engine repair time");
-        }
-    },
-    REPAIR_TIME_MULT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
+    private static final class StatNames {
+        static final String HULL_POINTS = "hull points";
 
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            float mult = SkillEffectSupport.multFrom(magnitude);
-            stats.getCombatWeaponRepairTimeMult().modifyMult(modId, mult);
-            stats.getCombatEngineRepairTimeMult().modifyMult(modId, mult);
+        private StatNames() {
         }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctMore(magnitude, "weapon and engine repair time");
-        }
-    },
-    EMP_DAMAGE_TAKEN_PERCENT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getEmpDamageTakenMult().modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "EMP damage taken");
-        }
-    },
-    EMP_DAMAGE_TAKEN_MULT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            SkillEffectSupport.applyMult(stats.getEmpDamageTakenMult(), modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctMore(magnitude, "EMP damage taken");
-        }
-    },
-    ENERGY_DAMAGE_TAKEN_PERCENT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getEnergyDamageTakenMult().modifyPercent(modId, magnitude);
-            stats.getEnergyShieldDamageTakenMult().modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "energy damage taken, including hits on shields, armor, and hull");
-        }
-    };
-
-    private static final String STAT_HULL_POINTS = "hull points";
+    }
 }

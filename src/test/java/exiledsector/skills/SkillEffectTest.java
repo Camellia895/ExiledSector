@@ -315,6 +315,22 @@ class SkillEffectTest {
     }
 
     @Test
+    void coronaResistanceDescribesItsMultiplierTheWayItAppliesIt() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
+        MutableStat corona = mock(MutableStat.class);
+        when(stats.getDynamic()).thenReturn(dynamic);
+        when(dynamic.getStat(com.fs.starfarer.api.impl.campaign.ids.Stats.CORONA_EFFECT_MULT)).thenReturn(corona);
+
+        LogisticsSkillEffect.CORONA_RESISTANCE_MULT.apply(stats, "mod_id", -25f);
+
+        verify(corona).modifyMult("mod_id", 0.75f);
+        assertEquals("25% less combat readiness loss from being in a solar corona or a deep hyperspace storm.",
+                LogisticsSkillEffect.CORONA_RESISTANCE_MULT.describe(-25f));
+        assertTrue(LogisticsSkillEffect.CORONA_RESISTANCE_MULT.lowerIsBetter());
+    }
+
+    @Test
     void ballisticWeaponRangeModifiesTheBallisticRangeBonusStat() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         StatBonus rangeBonus = mock(StatBonus.class);

@@ -8,8 +8,11 @@ import com.fs.starfarer.api.loading.WingRole;
 
 import static exiledsector.skills.skilleffect.SkillEffectText.pct;
 import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
-import static exiledsector.skills.skilleffect.SkillEffectText.pctMore;
 import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
+import static exiledsector.skills.skilleffect.StatMode.MULT;
+import static exiledsector.skills.skilleffect.StatMode.PERCENT;
+import static exiledsector.skills.skilleffect.StatTarget.dynamicStat;
+import static exiledsector.skills.skilleffect.StatTarget.stat;
 
 public enum FighterSkillEffect implements SkillEffect {
 
@@ -35,90 +38,12 @@ public enum FighterSkillEffect implements SkillEffect {
             return pctChange(magnitude, "top speed of fighters launched from this ship");
         }
     },
-    FIGHTER_CREW_LOSS_PERCENT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getStat("fighter_crew_loss_mult").modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public boolean supportsTemporaryGating() {
-            return true;
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "casualties suffered by fighter pilots launched from this ship");
-        }
-    },
-    FIGHTER_CREW_LOSS_MULT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            SkillEffectSupport.applyMult(stats.getDynamic().getStat("fighter_crew_loss_mult"), modId, magnitude);
-        }
-
-        @Override
-        public boolean supportsTemporaryGating() {
-            return true;
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctMore(magnitude, "casualties suffered by fighter pilots launched from this ship");
-        }
-    },
-    FIGHTER_REFIT_TIME_MULT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            SkillEffectSupport.applyMult(stats.getFighterRefitTimeMult(), modId, magnitude);
-        }
-
-        @Override
-        public boolean supportsTemporaryGating() {
-            return true;
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctMore(magnitude, "fighter refit time");
-        }
-    },
-    FIGHTER_REFIT_TIME_PERCENT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getFighterRefitTimeMult().modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public boolean supportsTemporaryGating() {
-            return true;
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "fighter refit time");
-        }
-    },
+    FIGHTER_CREW_LOSS_PERCENT(PERCENT, dynamicStat("fighter_crew_loss_mult"),
+            "casualties suffered by fighter pilots launched from this ship", true),
+    FIGHTER_CREW_LOSS_MULT(MULT, dynamicStat("fighter_crew_loss_mult"),
+            "casualties suffered by fighter pilots launched from this ship", true),
+    FIGHTER_REFIT_TIME_MULT(MULT, stat(MutableShipStatsAPI::getFighterRefitTimeMult), "fighter refit time", true),
+    FIGHTER_REFIT_TIME_PERCENT(PERCENT, stat(MutableShipStatsAPI::getFighterRefitTimeMult), "fighter refit time", true),
     FIGHTER_REPLACEMENT_RATE_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -138,43 +63,10 @@ public enum FighterSkillEffect implements SkillEffect {
             return pct(Math.abs(magnitude)) + "% " + verb + " fighter replacement rate decay and recovery.";
         }
     },
-    FIGHTER_REPLACEMENT_DECAY_PERCENT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getStat("replacement_rate_decrease_mult").modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public boolean supportsTemporaryGating() {
-            return true;
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "rate at which fighter replacement capability decays from losses");
-        }
-    },
-    FIGHTER_REPLACEMENT_RECOVERY_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getStat("replacement_rate_increase_mult").modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public boolean supportsTemporaryGating() {
-            return true;
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "rate at which fighter replacement capability recovers");
-        }
-    },
+    FIGHTER_REPLACEMENT_DECAY_PERCENT(PERCENT, dynamicStat("replacement_rate_decrease_mult"),
+            "rate at which fighter replacement capability decays from losses", true),
+    FIGHTER_REPLACEMENT_RECOVERY_PERCENT(PERCENT, dynamicStat("replacement_rate_increase_mult"),
+            "rate at which fighter replacement capability recovers", false),
     FIGHTER_PD_DAMAGE_BONUS_PERCENT {
         @Override
         public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
@@ -393,27 +285,43 @@ public enum FighterSkillEffect implements SkillEffect {
 
     private final WingRole role;
     private final RoleStat roleStat;
+    private final SimpleStatEffect simpleStat;
 
     FighterSkillEffect() {
-        this(null, null);
+        this(null, null, null);
     }
 
     FighterSkillEffect(WingRole role, RoleStat roleStat) {
+        this(role, roleStat, null);
+    }
+
+    FighterSkillEffect(StatMode mode, StatTarget target, String statName, boolean lowerIsBetter) {
+        this(null, null, new SimpleStatEffect(mode, target, statName, lowerIsBetter));
+    }
+
+    FighterSkillEffect(WingRole role, RoleStat roleStat, SimpleStatEffect simpleStat) {
         this.role = role;
         this.roleStat = roleStat;
+        this.simpleStat = simpleStat;
     }
 
     @Override
     public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        if (simpleStat != null) {
+            simpleStat.apply(stats, modId, magnitude);
+        }
     }
 
     @Override
     public boolean supportsTemporaryGating() {
-        return false;
+        return simpleStat != null && simpleStat.supportsTemporaryGating();
     }
 
     @Override
     public boolean lowerIsBetter() {
+        if (simpleStat != null) {
+            return simpleStat.lowerIsBetter();
+        }
         return roleStat != null && roleStat.lowerIsBetter;
     }
 
@@ -426,6 +334,9 @@ public enum FighterSkillEffect implements SkillEffect {
 
     @Override
     public String describe(float magnitude) {
+        if (simpleStat != null) {
+            return simpleStat.describe(magnitude);
+        }
         return pctChange(magnitude, roleStat.description + " of " + roleDisplayName(role) + " launched from this ship");
     }
 

@@ -1,8 +1,6 @@
 package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
-import com.fs.starfarer.api.combat.MutableStat;
-import com.fs.starfarer.api.combat.StatBonus;
 
 import java.util.Collections;
 import java.util.EnumMap;
@@ -10,11 +8,12 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
+import static exiledsector.skills.skilleffect.StatTarget.bonus;
+import static exiledsector.skills.skilleffect.StatTarget.stat;
 import static exiledsector.skills.skilleffect.WeaponScope.ALL;
 import static exiledsector.skills.skilleffect.WeaponScope.BEAM;
 import static exiledsector.skills.skilleffect.WeaponScope.MISSILE;
@@ -139,14 +138,6 @@ public enum WeaponStatFamily {
     public String describe(WeaponScope scope, StatMode mode, float magnitude) {
         String text = mode.describe(magnitude, qualifiedByScope ? scope.qualify(statName) : statName);
         return targets.get(scope) instanceof StatTarget.PerWeaponAmmo ? text + PER_WEAPON_NOTE : text;
-    }
-
-    private static StatTarget stat(Function<MutableShipStatsAPI, MutableStat> getter) {
-        return new StatTarget.OfStat(getter);
-    }
-
-    private static StatTarget bonus(Function<MutableShipStatsAPI, StatBonus> getter) {
-        return new StatTarget.OfBonus(getter);
     }
 
     private static final class Targets {

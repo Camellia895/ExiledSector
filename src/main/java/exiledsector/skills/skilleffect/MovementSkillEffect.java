@@ -2,111 +2,48 @@ package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 
-import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
-import static exiledsector.skills.skilleffect.SkillEffectText.pctMore;
-import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
+import static exiledsector.skills.skilleffect.StatMode.FLAT;
+import static exiledsector.skills.skilleffect.StatMode.MULT;
+import static exiledsector.skills.skilleffect.StatMode.PERCENT;
+import static exiledsector.skills.skilleffect.StatTarget.stat;
 
 public enum MovementSkillEffect implements SkillEffect {
 
-    MANEUVERABILITY_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getMaxTurnRate().modifyPercent(modId, magnitude);
-        }
+    MANEUVERABILITY_PERCENT(PERCENT, stat(MutableShipStatsAPI::getMaxTurnRate), "maneuverability", false),
+    TOP_SPEED_PERCENT(PERCENT, stat(MutableShipStatsAPI::getMaxSpeed), StatNames.TOP_SPEED, false),
+    TOP_SPEED_FLAT(FLAT, stat(MutableShipStatsAPI::getMaxSpeed), StatNames.TOP_SPEED, false),
+    TOP_SPEED_MULT(MULT, stat(MutableShipStatsAPI::getMaxSpeed), StatNames.TOP_SPEED, false),
+    ACCELERATION_PERCENT(PERCENT, stat(MutableShipStatsAPI::getAcceleration), "acceleration", false),
+    ACCELERATION_FLAT(FLAT, stat(MutableShipStatsAPI::getAcceleration), "acceleration", false),
+    DECELERATION_PERCENT(PERCENT, stat(MutableShipStatsAPI::getDeceleration), "deceleration", false),
+    DECELERATION_FLAT(FLAT, stat(MutableShipStatsAPI::getDeceleration), "deceleration", false),
+    TURN_ACCELERATION_PERCENT(PERCENT, stat(MutableShipStatsAPI::getTurnAcceleration), "turn acceleration", false);
 
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "maneuverability");
-        }
-    },
-    TOP_SPEED_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getMaxSpeed().modifyPercent(modId, magnitude);
-        }
+    private final SimpleStatEffect simpleStat;
 
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, STAT_TOP_SPEED);
-        }
-    },
-    TOP_SPEED_FLAT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getMaxSpeed().modifyFlat(modId, magnitude);
-        }
+    MovementSkillEffect(StatMode mode, StatTarget target, String statName, boolean lowerIsBetter) {
+        this.simpleStat = new SimpleStatEffect(mode, target, statName, lowerIsBetter);
+    }
 
-        @Override
-        public String describe(float magnitude) {
-            return flatChange(magnitude, STAT_TOP_SPEED);
-        }
-    },
-    TOP_SPEED_MULT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            SkillEffectSupport.applyMult(stats.getMaxSpeed(), modId, magnitude);
-        }
+    @Override
+    public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        simpleStat.apply(stats, modId, magnitude);
+    }
 
-        @Override
-        public String describe(float magnitude) {
-            return pctMore(magnitude, STAT_TOP_SPEED);
-        }
-    },
-    ACCELERATION_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getAcceleration().modifyPercent(modId, magnitude);
-        }
+    @Override
+    public String describe(float magnitude) {
+        return simpleStat.describe(magnitude);
+    }
 
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "acceleration");
-        }
-    },
-    ACCELERATION_FLAT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getAcceleration().modifyFlat(modId, magnitude);
-        }
+    @Override
+    public boolean lowerIsBetter() {
+        return simpleStat.lowerIsBetter();
+    }
 
-        @Override
-        public String describe(float magnitude) {
-            return flatChange(magnitude, "acceleration");
-        }
-    },
-    DECELERATION_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDeceleration().modifyPercent(modId, magnitude);
-        }
+    private static final class StatNames {
+        static final String TOP_SPEED = "top speed";
 
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "deceleration");
+        private StatNames() {
         }
-    },
-    DECELERATION_FLAT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDeceleration().modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return flatChange(magnitude, "deceleration");
-        }
-    },
-    TURN_ACCELERATION_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getTurnAcceleration().modifyPercent(modId, magnitude);
-        }
-
-        @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "turn acceleration");
-        }
-    };
-
-    private static final String STAT_TOP_SPEED = "top speed";
+    }
 }
