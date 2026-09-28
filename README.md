@@ -20,8 +20,9 @@ Designed to be an overhaul of the simple hullmod system based on the infamous Pa
 <img src="graphics/description/teaser_choice.gif" alt="Choice Node">
 
 - **Synergistic allocation** 
-  - Every allocated node costs OP: 1 for frigates, 2 for destroyers, 3 for cruisers and 4 for capitals (configurable).
-  - Ships also earn XP in combat. Each level turns the ship's most recently OP-bought node into a free one, so veteran ships get their ordnance points back. The crew gets nothing, as is tradition.
+  - Every allocated node initially costs OP: 1 for frigates, 2 for destroyers, 3 for cruisers and 4 for capitals.
+  - Ships also earn XP in combat, and can level up. 
+  - Each level allows you to allocate one node on the tree for free, up to a maximum.
 - Hidden, unlockable nodes.
 
 <img src="graphics/description/Unidentified_node.png" alt="Hidden Node">
@@ -71,7 +72,7 @@ I have used starsector-core graphics and royalty-free art assets for all art in 
 
 I am seeking any feedback, bug reports, node suggestions, or faction designs. 
 
-You can find me on the [Unofficial Starsector Discord](https://fractalsoftworks.com/forum/index.php?topic=11488.0) or by direct message @portals_ 
+You can find me on the [Unofficial Starsector Discord](https://fractalsoftworks.com/forum/index.php?topic=11488.0) or by direct message: @portals_ 
 
 ### Compatibility
 
