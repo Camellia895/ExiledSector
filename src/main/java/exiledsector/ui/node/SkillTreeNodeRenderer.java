@@ -10,6 +10,7 @@ import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.ui.SkillTreePanelStyle;
+import exiledsector.ui.TreeViewport;
 import lunalib.lunaRefit.BaseRefitButton;
 import org.lazywizard.lazylib.ui.LazyFont;
 import org.lwjgl.util.vector.Vector2f;
@@ -125,31 +126,30 @@ public final class SkillTreeNodeRenderer {
         connectorRenderer.advance(amount, data, allocator.satisfiedRootId());
     }
 
-    public void render(float centerX, float centerY, float zoom, float alphaMult, float mouseX, float mouseY, boolean mouseKnown) {
+    public void render(TreeViewport viewport, float alphaMult, float mouseX, float mouseY, boolean mouseKnown) {
         NodeAllocator.Snapshot allocation = allocator.snapshot();
-        Vector2f center = new Vector2f(centerX, centerY);
         float treeAlphaMult = alphaMult * rootChoice.treeAlpha();
 
         for (SkillNode node : SkillTree.getAllNodes().values()) {
             if (node.getType().getTier() != SkillTier.ROOT) {
-                renderNode(node, center, zoom, treeAlphaMult, allocation);
+                renderNode(node, viewport, treeAlphaMult, allocation);
             }
         }
 
-        connectorRenderer.draw(centerX, centerY, zoom, allocation.data(), allocation.satisfiedRootId(), treeAlphaMult);
-        wormholeGhostFlights.draw(centerX, centerY, zoom, treeAlphaMult * search.backgroundAlpha());
+        connectorRenderer.draw(viewport, allocation.data(), allocation.satisfiedRootId(), treeAlphaMult);
+        wormholeGhostFlights.draw(viewport, treeAlphaMult * search.backgroundAlpha());
 
         for (SkillNode node : SkillTree.getAllNodes().values()) {
             if (node.getType().getTier() == SkillTier.ROOT) {
-                renderRootNode(node, center, zoom, alphaMult, allocation);
+                renderRootNode(node, viewport, alphaMult, allocation);
             }
         }
 
         if (isChoosingStartingRoot()) {
-            renderStartingRootPrompt(centerX, centerY - rootChoice.promptOffsetY() * zoom);
+            renderStartingRootPrompt(viewport.centerX(), viewport.screenY(rootChoice.promptOffsetY()));
         }
 
-        dropdownRenderer.render(centerX, centerY, zoom, mouseX, mouseY, mouseKnown, alphaMult);
+        dropdownRenderer.render(viewport, mouseX, mouseY, mouseKnown, alphaMult);
     }
 
     private void renderStartingRootPrompt(float x, float y) {
@@ -164,11 +164,12 @@ public final class SkillTreeNodeRenderer {
         startingRootPrompt.draw(x, y);
     }
 
-    private void renderNode(SkillNode node, Vector2f center, float zoom, float alphaMult, NodeAllocator.Snapshot allocation) {
+    private void renderNode(SkillNode node, TreeViewport viewport, float alphaMult, NodeAllocator.Snapshot allocation) {
         ShipSkillData data = allocation.data();
         SkillTier tier = node.getType().getTier();
-        float nodeX = center.x + node.getOffsetX() * zoom;
-        float nodeY = center.y - node.getOffsetY() * zoom;
+        float zoom = viewport.zoom();
+        float nodeX = viewport.screenX(node.getOffsetX());
+        float nodeY = viewport.screenY(node.getOffsetY());
         float footprintSize = NODE_SIZE * zoom * tier.getSizeMultiplier();
 
         if (SkillTypeUnlockStatus.isHidden(node.getType(), data)) {
@@ -194,10 +195,11 @@ public final class SkillTreeNodeRenderer {
         }
     }
 
-    private void renderRootNode(SkillNode node, Vector2f center, float zoom, float alphaMult, NodeAllocator.Snapshot allocation) {
+    private void renderRootNode(SkillNode node, TreeViewport viewport, float alphaMult, NodeAllocator.Snapshot allocation) {
         ShipSkillData data = allocation.data();
-        float nodeX = center.x + rootChoice.offsetX(node) * zoom;
-        float nodeY = center.y - rootChoice.offsetY(node) * zoom;
+        float zoom = viewport.zoom();
+        float nodeX = viewport.screenX(rootChoice.offsetX(node));
+        float nodeY = viewport.screenY(rootChoice.offsetY(node));
         boolean choosing = isChoosingStartingRoot();
         boolean allocated = data.isAllocated(node.getId());
         boolean breathing = choosing || (!allocated && allocation.canAllocate(node));
@@ -214,22 +216,22 @@ public final class SkillTreeNodeRenderer {
         return allocated || search.matches(node, data) ? ALLOCATED_TINT : UNALLOCATED_TINT;
     }
 
-    public void renderHoverTooltip(float centerX, float centerY, float zoom, float mouseX, float mouseY, float alphaMult) {
+    public void renderHoverTooltip(TreeViewport viewport, float mouseX, float mouseY, float alphaMult) {
         if (dropdownRenderer.isOpen()) {
-            SkillType hovered = dropdownRenderer.findOptionAt(centerX, centerY, zoom, mouseX, mouseY);
+            SkillType hovered = dropdownRenderer.findOptionAt(viewport, mouseX, mouseY);
             if (hovered != null) {
                 tooltipRenderer.renderTooltipForType(hovered, mouseX, mouseY, alphaMult);
             }
             return;
         }
 
-        SkillNode hovered = findNodeAt(centerX, centerY, zoom, mouseX, mouseY);
+        SkillNode hovered = findNodeAt(viewport, mouseX, mouseY);
         if (hovered != null) {
             tooltipRenderer.renderTooltip(hovered, mouseX, mouseY, alphaMult);
         }
     }
 
-    public SkillNode findNodeAt(float centerX, float centerY, float zoom, float x, float y) {
+    public SkillNode findNodeAt(TreeViewport viewport, float x, float y) {
         if (isStartingRootFlying()) {
             return null;
         }
@@ -238,9 +240,9 @@ public final class SkillTreeNodeRenderer {
             if (choosing && node.getType().getTier() != SkillTier.ROOT) {
                 continue;
             }
-            float nodeX = centerX + rootChoice.offsetX(node) * zoom;
-            float nodeY = centerY - rootChoice.offsetY(node) * zoom;
-            float halfSize = NODE_SIZE * zoom * node.getType().getTier().getSizeMultiplier() / 2f;
+            float nodeX = viewport.screenX(rootChoice.offsetX(node));
+            float nodeY = viewport.screenY(rootChoice.offsetY(node));
+            float halfSize = NODE_SIZE * viewport.zoom() * node.getType().getTier().getSizeMultiplier() / 2f;
             if (Math.abs(x - nodeX) <= halfSize && Math.abs(y - nodeY) <= halfSize) {
                 return node;
             }
@@ -314,8 +316,8 @@ public final class SkillTreeNodeRenderer {
         dropdownRenderer.close();
     }
 
-    public SkillType findDropdownOptionAt(float centerX, float centerY, float zoom, float x, float y) {
-        return dropdownRenderer.findOptionAt(centerX, centerY, zoom, x, y);
+    public SkillType findDropdownOptionAt(TreeViewport viewport, float x, float y) {
+        return dropdownRenderer.findOptionAt(viewport, x, y);
     }
 
     public void commitDropdownSelection(SkillType chosenOption) {

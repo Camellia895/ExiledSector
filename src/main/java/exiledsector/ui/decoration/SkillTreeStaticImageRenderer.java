@@ -1,8 +1,8 @@
 package exiledsector.ui.decoration;
 
-import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.layout.StaticImage;
+import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
 import org.lwjgl.opengl.GL11;
@@ -19,9 +19,8 @@ public class SkillTreeStaticImageRenderer {
         elapsedSeconds += amount;
     }
 
-    public void render(float centerX, float centerY, float zoom, float alphaMult, PositionAPI position) {
-        if (position == null) return;
-
+    public void render(TreeViewport viewport, float alphaMult) {
+        float zoom = viewport.zoom();
         List<StaticImage> images = SkillTree.getStaticImages();
         if (images.isEmpty()) return;
 
@@ -33,8 +32,8 @@ public class SkillTreeStaticImageRenderer {
             String path = image.getImagePath();
             if (path == null || path.isEmpty()) continue;
 
-            float screenX = centerX + image.getX() * zoom;
-            float screenY = centerY - image.getY() * zoom;
+            float screenX = viewport.screenX(image.getX());
+            float screenY = viewport.screenY(image.getY());
             float angleDeg = -(image.getRotation() + image.getRotationSpeed() * elapsedSeconds);
             SpriteDraw.drawAtCenter(spriteCache, path, new Vector2f(screenX, screenY),
                     new Vector2f(image.getWidth() * zoom, image.getHeight() * zoom), null, alphaMult, angleDeg);

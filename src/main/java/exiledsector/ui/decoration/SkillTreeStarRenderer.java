@@ -5,10 +5,10 @@ import com.fs.starfarer.api.campaign.PlanetSpecAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.impl.campaign.terrain.AuroraRenderer;
 import com.fs.starfarer.api.impl.campaign.terrain.RangeBlockerUtil;
-import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.layout.Star;
+import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.ColorUtil;
 import exiledsector.ui.util.SpriteCache;
 import org.lwjgl.opengl.GL11;
@@ -61,8 +61,8 @@ public class SkillTreeStarRenderer {
         }
     }
 
-    public void renderDisc(float centerX, float centerY, float zoom, float alphaMult, PositionAPI position) {
-        if (position == null) return;
+    public void renderDisc(TreeViewport viewport, float alphaMult) {
+        float zoom = viewport.zoom();
         List<Star> stars = SkillTree.getStars();
         if (stars.isEmpty()) return;
 
@@ -74,8 +74,8 @@ public class SkillTreeStarRenderer {
             }
 
             SpriteAPI texture = Global.getSettings().getSprite(texturePath);
-            float screenX = centerX + star.getX() * zoom;
-            float screenY = centerY - star.getY() * zoom;
+            float screenX = viewport.screenX(star.getX());
+            float screenY = viewport.screenY(star.getY());
             float radius = star.getRadius() * zoom;
             float angle = angleById.getOrDefault(star.getId(), 0f);
             Color discColor = resolveColor(star, spec.getPlanetColor());
@@ -111,8 +111,8 @@ public class SkillTreeStarRenderer {
         }
     }
 
-    public void renderAtmosphere(float centerX, float centerY, float zoom, float alphaMult, PositionAPI position) {
-        if (position == null) return;
+    public void renderAtmosphere(TreeViewport viewport, float alphaMult) {
+        float zoom = viewport.zoom();
         List<Star> stars = SkillTree.getStars();
         if (stars.isEmpty()) return;
 
@@ -131,8 +131,8 @@ public class SkillTreeStarRenderer {
                 float innerRadius = radius - thickness * ATMOSPHERE_INNER_INSET_MULT;
                 float outerRadius = innerRadius + thickness;
 
-                float screenX = centerX + star.getX() * zoom;
-                float screenY = centerY - star.getY() * zoom;
+                float screenX = viewport.screenX(star.getX());
+                float screenY = viewport.screenY(star.getY());
                 Color color = resolveColor(star, spec.getAtmosphereColor());
 
                 drawAtmosphereRing(texture, screenX, screenY, innerRadius, outerRadius, color, alphaMult);
@@ -168,8 +168,8 @@ public class SkillTreeStarRenderer {
         GL11.glPopMatrix();
     }
 
-    public void renderAurora(float centerX, float centerY, float zoom, float alphaMult, PositionAPI position) {
-        if (position == null) return;
+    public void renderAurora(TreeViewport viewport, float alphaMult) {
+        float zoom = viewport.zoom();
         List<Star> stars = SkillTree.getStars();
         if (stars.isEmpty()) return;
 
@@ -182,8 +182,8 @@ public class SkillTreeStarRenderer {
 
             float radius = star.getRadius() * zoom;
 
-            float screenX = centerX + star.getX() * zoom;
-            float screenY = centerY - star.getY() * zoom;
+            float screenX = viewport.screenX(star.getX());
+            float screenY = viewport.screenY(star.getY());
             Color coronaColor = resolveColor(star, spec.getCoronaColor());
 
             AuroraRenderer renderer = getOrCreateAurora(star);
@@ -212,8 +212,8 @@ public class SkillTreeStarRenderer {
         return renderer;
     }
 
-    public void renderGlow(float centerX, float centerY, float zoom, float alphaMult, PositionAPI position) {
-        if (position == null) return;
+    public void renderGlow(TreeViewport viewport, float alphaMult) {
+        float zoom = viewport.zoom();
         List<Star> stars = SkillTree.getStars();
         if (stars.isEmpty()) return;
 
@@ -228,8 +228,8 @@ public class SkillTreeStarRenderer {
             float haloRadius = star.getRadius() * spec.getCoronaSize() * zoom;
             if (haloRadius > radius) {
                 SpriteAPI corona = Global.getSettings().getSprite(coronaPath);
-                float screenX = centerX + star.getX() * zoom;
-                float screenY = centerY - star.getY() * zoom;
+                float screenX = viewport.screenX(star.getX());
+                float screenY = viewport.screenY(star.getY());
                 Color coronaColor = resolveColor(star, spec.getCoronaColor());
 
                 corona.setBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);

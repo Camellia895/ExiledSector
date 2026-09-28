@@ -9,6 +9,7 @@ import exiledsector.skills.SkillTree;
 import exiledsector.skills.layout.ConnectorCurve;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.ui.SkillTreePanelStyle;
+import exiledsector.ui.TreeViewport;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -70,27 +71,28 @@ final class SkillTreeNodeConnectorRenderer {
         return fader == null ? 0f : fader.getBrightness();
     }
 
-    void draw(float centerX, float centerY, float zoom, ShipSkillData data, String satisfiedRootId, float alphaMult) {
+    void draw(TreeViewport viewport, ShipSkillData data, String satisfiedRootId, float alphaMult) {
+        float zoom = viewport.zoom();
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        Vector2f center = new Vector2f(centerX, centerY);
         for (SkillNode node : SkillTree.getAllNodes().values()) {
             if (node.getType().getTier() == SkillTier.ROOT) continue;
 
-            float nodeX = centerX + node.getOffsetX() * zoom;
-            float nodeY = centerY - node.getOffsetY() * zoom;
+            float nodeX = viewport.screenX(node.getOffsetX());
+            float nodeY = viewport.screenY(node.getOffsetY());
             ConnectorEndpoint nodeEndpoint = new ConnectorEndpoint(new Vector2f(nodeX, nodeY), endpointRadius(node, zoom));
 
-            drawConnectorsFrom(node, nodeEndpoint, center, zoom, data, satisfiedRootId, alphaMult);
+            drawConnectorsFrom(node, nodeEndpoint, viewport, data, satisfiedRootId, alphaMult);
         }
 
         GL11.glDisable(GL11.GL_BLEND);
     }
 
-    private void drawConnectorsFrom(SkillNode node, ConnectorEndpoint nodeEndpoint, Vector2f center, float zoom,
+    private void drawConnectorsFrom(SkillNode node, ConnectorEndpoint nodeEndpoint, TreeViewport viewport,
                                      ShipSkillData data, String satisfiedRootId, float alphaMult) {
+        float zoom = viewport.zoom();
         for (String connectedId : node.getConnectedNodeIds()) {
             SkillNode other = SkillTree.get(connectedId);
             boolean skip = other == null
@@ -100,8 +102,8 @@ final class SkillTreeNodeConnectorRenderer {
                 continue;
             }
 
-            float otherX = center.x + other.getOffsetX() * zoom;
-            float otherY = center.y - other.getOffsetY() * zoom;
+            float otherX = viewport.screenX(other.getOffsetX());
+            float otherY = viewport.screenY(other.getOffsetY());
             ConnectorEndpoint otherEndpoint = new ConnectorEndpoint(new Vector2f(otherX, otherY), endpointRadius(other, zoom));
             boolean bothSatisfied = data.isSatisfied(node.getId(), satisfiedRootId) && data.isSatisfied(other.getId(), satisfiedRootId);
 
@@ -117,8 +119,8 @@ final class SkillTreeNodeConnectorRenderer {
             if (curve == null) {
                 drawStraightNodeConnectorLine(otherEndpoint, nodeEndpoint, fade, zoom, edgeAlpha);
             } else {
-                float throughX = center.x + curve.getControlOffsetX() * zoom;
-                float throughY = center.y - curve.getControlOffsetY() * zoom;
+                float throughX = viewport.screenX(curve.getControlOffsetX());
+                float throughY = viewport.screenY(curve.getControlOffsetY());
                 drawCurvedNodeConnectorLine(otherEndpoint, new Vector2f(throughX, throughY), nodeEndpoint, fade, zoom, edgeAlpha);
             }
         }

@@ -4,6 +4,7 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.ui.SkillTreePanelStyle;
+import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.GLDraw;
 import org.lazywizard.lazylib.ui.LazyFont;
 
@@ -49,10 +50,10 @@ final class SkillTreeNodeDropdownRenderer {
         openNode = null;
     }
 
-    SkillType findOptionAt(float centerX, float centerY, float zoom, float x, float y) {
+    SkillType findOptionAt(TreeViewport viewport, float x, float y) {
         LazyFont font = style.getFont();
         if (font == null) return null;
-        for (DropdownRow row : computeRows(centerX, centerY, zoom, font)) {
+        for (DropdownRow row : computeRows(viewport, font)) {
             if (row.contains(x, y)) {
                 return row.option;
             }
@@ -60,12 +61,12 @@ final class SkillTreeNodeDropdownRenderer {
         return null;
     }
 
-    void render(float centerX, float centerY, float zoom, float mouseX, float mouseY, boolean mouseKnown, float alphaMult) {
+    void render(TreeViewport viewport, float mouseX, float mouseY, boolean mouseKnown, float alphaMult) {
         if (openNode == null) return;
         LazyFont font = style.getFont();
         if (font == null) return;
 
-        List<DropdownRow> rows = computeRows(centerX, centerY, zoom, font);
+        List<DropdownRow> rows = computeRows(viewport, font);
         if (rows.isEmpty()) return;
 
         float minX = Float.MAX_VALUE;
@@ -90,7 +91,7 @@ final class SkillTreeNodeDropdownRenderer {
         }
     }
 
-    private List<DropdownRow> computeRows(float centerX, float centerY, float zoom, LazyFont font) {
+    private List<DropdownRow> computeRows(TreeViewport viewport, LazyFont font) {
         List<DropdownRow> rows = new ArrayList<>();
         if (openNode == null) return rows;
 
@@ -101,8 +102,8 @@ final class SkillTreeNodeDropdownRenderer {
         }
         if (options.isEmpty()) return rows;
 
-        float nodeX = centerX + openNode.getOffsetX() * zoom;
-        float nodeY = centerY - openNode.getOffsetY() * zoom;
+        float nodeX = viewport.screenX(openNode.getOffsetX());
+        float nodeY = viewport.screenY(openNode.getOffsetY());
 
         float width = 0f;
         for (SkillType option : options) {

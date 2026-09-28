@@ -148,7 +148,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         if (event.isMouseMoveEvent()) {
             handleMouseMove(event);
         } else if (event.isLMBDownEvent() && position.containsEvent(event)) {
-            pendingClickNode = nodeRenderer.findNodeAt(centerX(), centerY(), zoom, event.getX(), event.getY());
+            pendingClickNode = nodeRenderer.findNodeAt(viewport(), event.getX(), event.getY());
             event.consume();
         } else if (event.isLMBUpEvent() && pendingClickNode != null) {
             nodeRenderer.chooseStartingRoot(pendingClickNode);
@@ -170,14 +170,14 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             return;
         }
         if (nodeRenderer.isDropdownOpen()) {
-            SkillType option = nodeRenderer.findDropdownOptionAt(centerX(), centerY(), zoom, event.getX(), event.getY());
+            SkillType option = nodeRenderer.findDropdownOptionAt(viewport(), event.getX(), event.getY());
             if (option != null) {
                 pendingDropdownOption = option;
             } else {
                 nodeRenderer.closeDropdown();
             }
         } else {
-            SkillNode clicked = nodeRenderer.findNodeAt(centerX(), centerY(), zoom, event.getX(), event.getY());
+            SkillNode clicked = nodeRenderer.findNodeAt(viewport(), event.getX(), event.getY());
             if (clicked != null) {
                 pendingClickNode = clicked;
                 pendingClickCtrlDown = event.isCtrlDown();
@@ -239,18 +239,17 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     public void render(float alphaMult) {
         if (position == null) return;
 
-        float centerX = centerX();
-        float centerY = centerY();
+        TreeViewport viewport = viewport();
 
         float backgroundAlpha = alphaMult * search.backgroundAlpha() * nodeRenderer.treeAlpha();
         starfieldRenderer.render(position, panX, panY, backgroundAlpha);
-        starRenderer.renderDisc(centerX, centerY, zoom, backgroundAlpha, position);
-        starRenderer.renderAtmosphere(centerX, centerY, zoom, backgroundAlpha, position);
-        starRenderer.renderAurora(centerX, centerY, zoom, backgroundAlpha, position);
-        ringBeltRenderer.render(centerX, centerY, zoom, backgroundAlpha, position);
-        staticImageRenderer.render(centerX, centerY, zoom, backgroundAlpha, position);
-        nodeRenderer.render(centerX, centerY, zoom, alphaMult, mouseX, mouseY, mouseKnown);
-        starRenderer.renderGlow(centerX, centerY, zoom, backgroundAlpha, position);
+        starRenderer.renderDisc(viewport, backgroundAlpha);
+        starRenderer.renderAtmosphere(viewport, backgroundAlpha);
+        starRenderer.renderAurora(viewport, backgroundAlpha);
+        ringBeltRenderer.render(viewport, backgroundAlpha);
+        staticImageRenderer.render(viewport, backgroundAlpha);
+        nodeRenderer.render(viewport, alphaMult, mouseX, mouseY, mouseKnown);
+        starRenderer.renderGlow(viewport, backgroundAlpha);
         statPanel.render(position, alphaMult);
         ordnancePointsBar.render(position, alphaMult);
         levelBar.render(position, alphaMult);
@@ -260,7 +259,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         drawShipCardFrame(alphaMult);
 
         if (!dragging && mouseKnown) {
-            nodeRenderer.renderHoverTooltip(centerX, centerY, zoom, mouseX, mouseY, alphaMult);
+            nodeRenderer.renderHoverTooltip(viewport, mouseX, mouseY, alphaMult);
             if (ordnancePointsBar.isHovered(position, mouseX, mouseY) || levelBar.isHovered(position, mouseX, mouseY)) {
                 readoutTooltipRenderer.render(READOUT_TOOLTIP_TITLE, readoutTooltipBody, mouseX, mouseY, alphaMult);
             }
@@ -285,11 +284,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         shipCardPanel.draw(boxX, boxY, boxWidth, boxHeight, alphaMult);
     }
 
-    private float centerX() {
-        return position.getX() + position.getWidth() / 2f + panX;
-    }
-
-    private float centerY() {
-        return position.getY() + position.getHeight() / 2f + panY;
+    private TreeViewport viewport() {
+        return new TreeViewport(position.getX() + position.getWidth() / 2f + panX,
+                position.getY() + position.getHeight() / 2f + panY, zoom);
     }
 }

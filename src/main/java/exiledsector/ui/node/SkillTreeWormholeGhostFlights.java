@@ -6,6 +6,7 @@ import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
+import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.SpriteCache;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
@@ -114,25 +115,24 @@ final class SkillTreeWormholeGhostFlights {
         return pairs;
     }
 
-    void draw(float centerX, float centerY, float zoom, float alphaMult) {
+    void draw(TreeViewport viewport, float alphaMult) {
         if (flights.isEmpty() || !spriteCache.ensureLoaded(SkillTreeNodeGhostRenderer.GHOST_TEXTURE_PATH)) {
             return;
         }
         SpriteAPI sprite = Global.getSettings().getSprite(SkillTreeNodeGhostRenderer.GHOST_TEXTURE_PATH);
         Color color = ghostRenderer.ghostColor();
-        float size = SkillTreeNodeGeometry.NODE_SIZE * GHOST_SIZE_RATIO * zoom;
+        float size = SkillTreeNodeGeometry.NODE_SIZE * GHOST_SIZE_RATIO * viewport.zoom();
 
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         for (Flight flight : flights) {
-            drawFlight(flight, sprite, color, size, new Vector2f(centerX, centerY), zoom, alphaMult);
+            drawFlight(flight, sprite, color, size, viewport, alphaMult);
         }
         GL11.glDisable(GL11.GL_BLEND);
     }
 
-    private void drawFlight(Flight flight, SpriteAPI sprite, Color color, float size, Vector2f center, float zoom,
-                            float alphaMult) {
+    private void drawFlight(Flight flight, SpriteAPI sprite, Color color, float size, TreeViewport viewport, float alphaMult) {
         float t = flight.elapsed / flight.duration;
         Vector2f position = flight.pointAt(t);
         Vector2f heading = flight.headingAt(t);
@@ -140,13 +140,13 @@ final class SkillTreeWormholeGhostFlights {
         float screenAngle = (float) Math.toDegrees(Math.atan2(-heading.y, heading.x));
 
         for (int i = 0; i < GHOSTS_PER_FLIGHT; i++) {
-            Vector2f offset = formationOffset(i, flight, heading, size / zoom);
+            Vector2f offset = formationOffset(i, flight, heading, size / viewport.zoom());
             float flicker = (float) (0.5 + 0.5 * Math.sin(FLICKER_FREQUENCY * flight.elapsed + flight.phase + i * 2.1));
             sprite.setSize(size, size);
             sprite.setAngle(screenAngle - 90f);
             sprite.setColor(color);
             sprite.setAlphaMult((MIN_ALPHA + (MAX_ALPHA - MIN_ALPHA) * flicker) * fade * alphaMult);
-            sprite.renderAtCenter(center.x + (position.x + offset.x) * zoom, center.y - (position.y + offset.y) * zoom);
+            sprite.renderAtCenter(viewport.screenX(position.x + offset.x), viewport.screenY(position.y + offset.y));
         }
     }
 

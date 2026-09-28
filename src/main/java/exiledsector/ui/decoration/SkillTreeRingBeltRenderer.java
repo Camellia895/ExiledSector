@@ -2,9 +2,9 @@ package exiledsector.ui.decoration;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.graphics.SpriteAPI;
-import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.layout.RingBelt;
+import exiledsector.ui.TreeViewport;
 import exiledsector.ui.belt.RadialBand;
 import exiledsector.ui.belt.RingBeltRenderer;
 import exiledsector.ui.util.SpriteCache;
@@ -22,9 +22,8 @@ public class SkillTreeRingBeltRenderer {
         elapsedSeconds += amount;
     }
 
-    public void render(float centerX, float centerY, float zoom, float alphaMult, PositionAPI position) {
-        if (position == null) return;
-
+    public void render(TreeViewport viewport, float alphaMult) {
+        float zoom = viewport.zoom();
         List<RingBelt> ringBelts = SkillTree.getRingBelts();
         if (ringBelts.isEmpty()) return;
 
@@ -33,8 +32,8 @@ public class SkillTreeRingBeltRenderer {
             if (path == null || path.isEmpty() || !spriteCache.ensureLoaded(path)) continue;
 
             SpriteAPI sprite = Global.getSettings().getSprite(path);
-            float screenX = centerX + belt.getX() * zoom;
-            float screenY = centerY - belt.getY() * zoom;
+            float screenX = viewport.screenX(belt.getX());
+            float screenY = viewport.screenY(belt.getY());
             float rotationDeg = belt.getRotation() + belt.getRotationSpeed() * elapsedSeconds;
             RadialBand band = new RadialBand(new Vector2f(screenX, screenY), belt.getInnerRadius() * zoom, belt.getOuterRadius() * zoom);
             RingBeltRenderer.render(sprite, band, Color.WHITE, alphaMult, rotationDeg);
