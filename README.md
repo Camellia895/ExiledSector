@@ -4,25 +4,27 @@ Because your Hound deserves a character arc.
 
 Designed to be an overhaul of the simple hullmod system based on the infamous Path of Exile skill tree, ExiledSector is a [Starsector](https://fractalsoftworks.com/) mod that gives every ship in your fleet its own skill tree. Still sane exile?
 
-Navigate to the outfit screen and click the skill tree button on any of your ships to explore an entirely new sector:
-
-<img src="graphics/description/teaser.gif" alt="The skill tree">
+[TriOS](https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/ExiledSector.version) | [Manual download](https://github.com/ExiledPortals/ExiledSector/releases/latest/download/ExiledSector.zip)
 
 ## Features
 
-- **A 400+ node tree per ship.** 
-- **Multi-choice travel nodes.** 
+- Navigate to the outfit screen and click the skill tree button on any of your ships to explore an entirely new sector:
+
+<img src="graphics/description/teaser.gif" alt="The skill tree">
+
+- A 400+ node tree per ship.
+- Multi-choice travel nodes.
 
 <img src="graphics/description/teaser_choice.gif" alt="Choice Node">
 
 - **Synergistic allocation** 
   - Every allocated node costs OP: 1 for frigates, 2 for destroyers, 3 for cruisers and 4 for capitals (configurable).
   - Ships also earn XP in combat. Each level turns the ship's most recently OP-bought node into a free one, so veteran ships get their ordnance points back. The crew gets nothing, as is tradition.
-- **Hidden, unlockable nodes.**
+- Hidden, unlockable nodes.
 
 <img src="graphics/description/Unidentified_node.png" alt="Hidden Node">
   
-- **Unique passive effects**
+- Unique passive effects
 - **Beam splitting** 
   - Your Tachyon Lance can now disappoint multiple enemies at once.
   
