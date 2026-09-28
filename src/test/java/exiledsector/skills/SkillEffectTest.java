@@ -1553,8 +1553,8 @@ class SkillEffectTest {
         when(damage.getDamage()).thenReturn(100f);
         when(engine.getShips()).thenReturn(Arrays.asList(ship, shieldedTarget, nextTarget));
 
-        try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class);
-             MockedStatic<lunalib.lunaSettings.LunaSettings> lunaMock = Mockito.mockStatic(lunalib.lunaSettings.LunaSettings.class)) {
+        try (MockedStatic<lunalib.lunaSettings.LunaSettings> lunaMock = Mockito.mockStatic(lunalib.lunaSettings.LunaSettings.class);
+             MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
             globalMock.when(Global::getCombatEngine).thenReturn(engine);
             lunaMock.when(() -> lunalib.lunaSettings.LunaSettings.getInt(anyString(), anyString())).thenReturn(MaxChainCountConfig.DEFAULT);
 
