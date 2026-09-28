@@ -46,12 +46,7 @@ public class ShipSkillData {
 
     public void selectOption(SkillNode node, SkillType chosenOption, int opCost) {
         if (!isAllocated(node.getId())) {
-            if (opCost > 0 && bankedFreeAllocations > 0) {
-                bankedFreeAllocations--;
-                freeNodeIds().add(node.getId());
-            } else {
-                spentOp += opCost;
-            }
+            charge(node.getId(), opCost);
         }
         allocatedNodeIds.add(node.getId());
         if (optionalSelections == null) optionalSelections = new LinkedHashMap<>();
@@ -167,12 +162,7 @@ public class ShipSkillData {
 
     public void allocate(SkillNode node, int opCost) {
         allocatedNodeIds.add(node.getId());
-        if (opCost > 0 && bankedFreeAllocations > 0) {
-            bankedFreeAllocations--;
-            freeNodeIds().add(node.getId());
-        } else {
-            spentOp += opCost;
-        }
+        charge(node.getId(), opCost);
 
         String pairedId = node.getPairedNodeId();
         if (pairedId != null && !isAllocated(pairedId)) {
@@ -183,25 +173,31 @@ public class ShipSkillData {
 
     public void deallocate(SkillNode node, int opCost) {
         allocatedNodeIds.remove(node.getId());
-        if (optionalSelections != null) {
-            optionalSelections.remove(node.getId());
-        }
-        if (freeNodeIds().remove(node.getId())) {
-            bankedFreeAllocations++;
-        } else if (!pairedFreeNodeIds().remove(node.getId())) {
-            spentOp -= opCost;
-        }
+        release(node.getId(), opCost);
 
         String pairedId = node.getPairedNodeId();
         if (pairedId != null && allocatedNodeIds.remove(pairedId)) {
-            if (optionalSelections != null) {
-                optionalSelections.remove(pairedId);
-            }
-            if (freeNodeIds().remove(pairedId)) {
-                bankedFreeAllocations++;
-            } else if (!pairedFreeNodeIds().remove(pairedId)) {
-                spentOp -= opCost;
-            }
+            release(pairedId, opCost);
+        }
+    }
+
+    private void charge(String nodeId, int opCost) {
+        if (opCost > 0 && bankedFreeAllocations > 0) {
+            bankedFreeAllocations--;
+            freeNodeIds().add(nodeId);
+        } else {
+            spentOp += opCost;
+        }
+    }
+
+    private void release(String nodeId, int opCost) {
+        if (optionalSelections != null) {
+            optionalSelections.remove(nodeId);
+        }
+        if (freeNodeIds().remove(nodeId)) {
+            bankedFreeAllocations++;
+        } else if (!pairedFreeNodeIds().remove(nodeId)) {
+            spentOp -= opCost;
         }
     }
 
