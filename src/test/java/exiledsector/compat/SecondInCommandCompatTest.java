@@ -35,11 +35,12 @@ class SecondInCommandCompatTest {
 
     private MockedStatic<Global> globalMock;
     private ModManagerAPI modManager;
+    private SettingsAPI settings;
     private FleetMemberAPI member;
 
     @BeforeEach
     void setUp() {
-        SettingsAPI settings = mock(SettingsAPI.class);
+        settings = mock(SettingsAPI.class);
         modManager = mock(ModManagerAPI.class);
         when(settings.getModManager()).thenReturn(modManager);
         when(settings.getScriptClassLoader()).thenReturn(getClass().getClassLoader());
@@ -58,12 +59,16 @@ class SecondInCommandCompatTest {
         globalMock.when(Global::getSettings).thenReturn(settings);
         globalMock.when(Global::getSector).thenReturn(sector);
         SCUtils.ACTIVE_SKILLS.clear();
+        SCUtils.failure = null;
+        SecondInCommandCompat.clearCachedLookups();
     }
 
     @AfterEach
     void tearDown() {
         globalMock.close();
         SCUtils.ACTIVE_SKILLS.clear();
+        SCUtils.failure = null;
+        SecondInCommandCompat.clearCachedLookups();
     }
 
     private void enableSecondInCommandWith(String... activeSkillIds) {
@@ -215,5 +220,28 @@ class SecondInCommandCompatTest {
     void convertedHangarPenaltiesSupportTemporaryGatingButSynergiesDoNot() {
         assertTrue(CompatSkillEffect.CONVERTED_HANGAR_REFIT_TIME_MULT.supportsTemporaryGating());
         assertFalse(CompatSkillEffect.COUNTS_AS_SAFETY_OVERRIDES.supportsTemporaryGating());
+    }
+
+    @Test
+    void missingSecondInCommandClassesDisableTheChecksInsteadOfThrowing() {
+        enableSecondInCommandWith(SecondInCommandCompat.REDISTRIBUTION_SKILL_ID);
+        when(settings.getScriptClassLoader()).thenReturn(new ClassLoader(null) {
+        });
+
+        assertFalse(SecondInCommandCompat.isSkillActive(member, SecondInCommandCompat.REDISTRIBUTION_SKILL_ID));
+
+        when(settings.getScriptClassLoader()).thenReturn(getClass().getClassLoader());
+        assertFalse(SecondInCommandCompat.isSkillActive(member, SecondInCommandCompat.REDISTRIBUTION_SKILL_ID));
+    }
+
+    @Test
+    void anExceptionInsideSecondInCommandDisablesTheChecksInsteadOfCrashing() {
+        enableSecondInCommandWith(SecondInCommandCompat.REDISTRIBUTION_SKILL_ID);
+        SCUtils.failure = new SecurityException("File access and reflection are not allowed to scripts.");
+
+        assertFalse(SecondInCommandCompat.isSkillActive(member, SecondInCommandCompat.REDISTRIBUTION_SKILL_ID));
+
+        SCUtils.failure = null;
+        assertFalse(SecondInCommandCompat.isSkillActive(member, SecondInCommandCompat.REDISTRIBUTION_SKILL_ID));
     }
 }

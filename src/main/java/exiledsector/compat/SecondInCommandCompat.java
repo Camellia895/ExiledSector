@@ -9,7 +9,9 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import org.apache.log4j.Logger;
 
-import java.lang.reflect.Method;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 
 public final class SecondInCommandCompat {
 
@@ -20,8 +22,11 @@ public final class SecondInCommandCompat {
     public static final String RECONFIGURATION_SKILL_ID = "sc_strikecraft_reconfiguration";
     private static final String INACTIVE_SMOD_TAG_PREFIX = "sc_inactive_smods_";
 
-    private static Method getFleetData;
-    private static Method isSkillActive;
+    private static final String SC_UTILS_CLASS = "second_in_command.SCUtils";
+    private static final String SC_DATA_CLASS = "second_in_command.SCData";
+
+    private static MethodHandle getFleetData;
+    private static MethodHandle isSkillActive;
     private static boolean unavailable;
 
     private SecondInCommandCompat() {
@@ -32,6 +37,8 @@ public final class SecondInCommandCompat {
         return settings != null && settings.getModManager().isModEnabled(MOD_ID);
     }
 
+    // java:S1181: MethodHandle.invoke declares Throwable, and any failure inside Second-in-Command must disable the checks rather than crash the game
+    @SuppressWarnings("java:S1181")
     public static boolean isSkillActive(FleetMemberAPI member, String skillId) {
         if (member == null || unavailable || !isModEnabled()) {
             return false;
@@ -42,13 +49,19 @@ public final class SecondInCommandCompat {
         }
         try {
             resolveMethods();
-            Object data = getFleetData.invoke(null, fleet);
-            return data != null && Boolean.TRUE.equals(isSkillActive.invoke(data, skillId));
-        } catch (ReflectiveOperationException | LinkageError | ClassCastException e) {
+            Object data = getFleetData.invoke(fleet);
+            return data != null && (boolean) isSkillActive.invoke(data, skillId);
+        } catch (Throwable e) {
             unavailable = true;
             Logger.getLogger(SecondInCommandCompat.class).error("Second-in-Command skill lookup failed; disabling compatibility checks", e);
             return false;
         }
+    }
+
+    static void clearCachedLookups() {
+        getFleetData = null;
+        isSkillActive = null;
+        unavailable = false;
     }
 
     public static boolean hasDeactivatedSMod(ShipVariantAPI variant, String hullModId) {
@@ -74,10 +87,12 @@ public final class SecondInCommandCompat {
         if (getFleetData != null) {
             return;
         }
-        Class<?> utils = Class.forName("second_in_command.SCUtils", true, Global.getSettings().getScriptClassLoader());
-        Method fleetDataMethod = utils.getMethod("getFleetData", CampaignFleetAPI.class);
-        isSkillActive = fleetDataMethod.getReturnType().getMethod("isSkillActive", String.class);
-        getFleetData = fleetDataMethod;
+        ClassLoader loader = Global.getSettings().getScriptClassLoader();
+        Class<?> utils = Class.forName(SC_UTILS_CLASS, true, loader);
+        Class<?> data = Class.forName(SC_DATA_CLASS, true, loader);
+        MethodHandles.Lookup lookup = MethodHandles.publicLookup();
+        isSkillActive = lookup.findVirtual(data, "isSkillActive", MethodType.methodType(boolean.class, String.class));
+        getFleetData = lookup.findStatic(utils, "getFleetData", MethodType.methodType(data, CampaignFleetAPI.class));
     }
 
     private static CampaignFleetAPI fleetFor(FleetMemberAPI member) {
