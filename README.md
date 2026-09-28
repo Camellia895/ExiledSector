@@ -35,7 +35,7 @@ Designed to be an overhaul of the simple hullmod system based on the infamous Pa
 <img src="graphics/description/lions_gaze2.png" alt="Lion's Gaze2">
 
 - **Faction themed**
-  - Your ship's main goal can be to blow up, and act like you don't know nobody
+  - Your ship's main goal can be to blow up, and act like it don't know nobody
 
 <img src="graphics/description/Ludds_Light.png" alt="Ludds Light">
 <img src="graphics/description/at_any_cost.png" alt="At Any Cost">
