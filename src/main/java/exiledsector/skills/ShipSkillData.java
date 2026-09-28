@@ -24,6 +24,7 @@ public class ShipSkillData {
     private Set<String> freeNodeIds = new LinkedHashSet<>();
     private Set<String> pairedFreeNodeIds = new LinkedHashSet<>();
     private String startingRootId;
+    private boolean enemyBuild;
 
     private Set<String> freeNodeIds() {
         if (freeNodeIds == null) freeNodeIds = new LinkedHashSet<>();
@@ -115,6 +116,14 @@ public class ShipSkillData {
 
     public boolean isFreeNode(String nodeId) {
         return freeNodeIds().contains(nodeId) || pairedFreeNodeIds().contains(nodeId);
+    }
+
+    public boolean isEnemyBuild() {
+        return enemyBuild;
+    }
+
+    public void markEnemyBuild() {
+        enemyBuild = true;
     }
 
     public void addXp(float amount) {

@@ -969,4 +969,14 @@ class ShipSkillDataTest {
         assertEquals("root_a", data.resolveStartingRootId(List.of(reachedLater, small, autoAllocated)));
         assertFalse(data.chooseStartingRoot(reachedLater));
     }
+
+    @Test
+    void aShipIsOnlyAnEnemyBuildOnceMarked() {
+        ShipSkillData data = new ShipSkillData();
+        assertFalse(data.isEnemyBuild());
+
+        data.markEnemyBuild();
+
+        assertTrue(data.isEnemyBuild());
+    }
 }

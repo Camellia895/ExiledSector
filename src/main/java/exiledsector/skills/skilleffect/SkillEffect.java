@@ -46,6 +46,10 @@ public interface SkillEffect {
         return null;
     }
 
+    default boolean appliesToEnemyShips() {
+        return true;
+    }
+
     default String deallocationWarning(float magnitude) {
         return null;
     }

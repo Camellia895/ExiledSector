@@ -961,6 +961,13 @@ class SkillEffectTest {
     }
 
     @Test
+    void theRecoveryBonusIsWithheldFromEnemyShipsWhileOtherEffectsApply() {
+        assertFalse(DefenseSkillEffect.SHIP_RECOVERY_CHANCE_BONUS.appliesToEnemyShips());
+        assertTrue(DefenseSkillEffect.HULL_PERCENT.appliesToEnemyShips());
+        assertTrue(DefenseSkillEffect.BREAK_PROBABILITY_PERCENT.appliesToEnemyShips());
+    }
+
+    @Test
     void minCrewPerFighterBayScalesWithTheShipSOwnBayCount() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         MutableStat numFighterBays = mock(MutableStat.class);

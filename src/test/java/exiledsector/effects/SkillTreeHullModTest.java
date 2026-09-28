@@ -15,6 +15,7 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
 import exiledsector.persistence.ShipSkillDataManager;
@@ -919,5 +920,44 @@ class SkillTreeHullModTest {
 
         verify(commandPointRate).unmodify("exiledSector_skill_operations_center_1");
         verify(commandPointRate, never()).modifyFlat(anyString(), anyFloat());
+    }
+
+    private static MutableShipStatsAPI statsWithHullAndRecovery(String memberId, StatBonus hull, StatBonus recovery) {
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn(memberId);
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        when(stats.getFleetMember()).thenReturn(member);
+        when(stats.getHullBonus()).thenReturn(hull);
+        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
+        when(stats.getDynamic()).thenReturn(dynamic);
+        when(dynamic.getMod(Stats.INDIVIDUAL_SHIP_RECOVERY_MOD)).thenReturn(recovery);
+        return stats;
+    }
+
+    @Test
+    void anEnemyBuildSkipsTheRecoveryBonusButKeepsTheNodesOtherEffects() {
+        SkillType bulkheads = new SkillType.Builder("reinforcedhull", "Reinforced Bulkheads", "a.png", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 40f),
+                        new SkillTypeEffect(DefenseSkillEffect.SHIP_RECOVERY_CHANCE_BONUS, 1000f)))
+                .build();
+        SkillNode bulkheadsNode = new SkillNode("reinforcedhull_1", bulkheads, List.of(), 0f, 0f);
+        SkillTree.register(bulkheadsNode);
+        ShipSkillDataManager.get("enemy-ship").markEnemyBuild();
+        ShipSkillDataManager.get("enemy-ship").allocate(bulkheadsNode, 1);
+        ShipSkillDataManager.get("player-ship").allocate(bulkheadsNode, 1);
+        StatBonus enemyHull = mock(StatBonus.class);
+        StatBonus enemyRecovery = mock(StatBonus.class);
+        StatBonus playerHull = mock(StatBonus.class);
+        StatBonus playerRecovery = mock(StatBonus.class);
+
+        new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.CRUISER,
+                statsWithHullAndRecovery("enemy-ship", enemyHull, enemyRecovery), SkillTreeHullMod.ID);
+        new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.CRUISER,
+                statsWithHullAndRecovery("player-ship", playerHull, playerRecovery), SkillTreeHullMod.ID);
+
+        verify(enemyHull).modifyPercent("exiledSector_skill_reinforcedhull_1", 40f);
+        verify(enemyRecovery, never()).modifyFlat(anyString(), anyFloat());
+        verify(playerHull).modifyPercent("exiledSector_skill_reinforcedhull_1", 40f);
+        verify(playerRecovery).modifyFlat("exiledSector_skill_reinforcedhull_1", 1000f);
     }
 }

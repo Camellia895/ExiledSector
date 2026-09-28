@@ -88,7 +88,11 @@ public class SkillTreeHullMod extends BaseHullMod {
 
             boolean active = ship.getFullTimeDeployed() < durationSeconds;
             String modId = MOD_ID_PREFIX + node.getId();
-            type.forEachEffect(hullSize, (effect, magnitude) -> effect.apply(stats, modId, active ? magnitude : 0f));
+            type.forEachEffect(hullSize, (effect, magnitude) -> {
+                if (appliesTo(data, effect)) {
+                    effect.apply(stats, modId, active ? magnitude : 0f);
+                }
+            });
         }
     }
 
@@ -114,9 +118,17 @@ public class SkillTreeHullMod extends BaseHullMod {
                 }
             } else {
                 String modId = MOD_ID_PREFIX + node.getId();
-                type.forEachEffect(hullSize, (effect, magnitude) -> action.apply(effect, modId, magnitude));
+                type.forEachEffect(hullSize, (effect, magnitude) -> {
+                    if (appliesTo(data, effect)) {
+                        action.apply(effect, modId, magnitude);
+                    }
+                });
             }
         }
+    }
+
+    private static boolean appliesTo(ShipSkillData data, SkillEffect effect) {
+        return !data.isEnemyBuild() || effect.appliesToEnemyShips();
     }
 
     public static void syncOpSpentHullMod(FleetMemberAPI member, ShipVariantAPI variant) {

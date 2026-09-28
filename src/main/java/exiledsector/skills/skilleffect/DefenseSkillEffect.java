@@ -61,6 +61,11 @@ public enum DefenseSkillEffect implements SkillEffect {
         }
 
         @Override
+        public boolean appliesToEnemyShips() {
+            return false;
+        }
+
+        @Override
         public String describe(float magnitude) {
             return "If disabled, this ship is almost always recoverable after the battle.";
         }
