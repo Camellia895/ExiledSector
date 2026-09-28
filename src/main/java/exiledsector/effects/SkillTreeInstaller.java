@@ -50,7 +50,7 @@ public class SkillTreeInstaller implements EveryFrameScript {
         LogisticsSkillEffect.recomputeExtendedPhaseField();
     }
 
-    private static ShipVariantAPI ownedVariant(FleetMemberAPI member) {
+    static ShipVariantAPI ownedVariant(FleetMemberAPI member) {
         ShipVariantAPI variant = member.getVariant();
         if (variant.getSource() == VariantSource.REFIT) {
             return variant;

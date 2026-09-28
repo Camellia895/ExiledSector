@@ -3,11 +3,17 @@ package exiledsector;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import exiledsector.effects.CombatXpListener;
+import exiledsector.effects.EnemyFleetDialogListener;
+import exiledsector.effects.EnemyFleetInflationListener;
+import exiledsector.effects.EnemyFleetSweepScript;
 import exiledsector.effects.SkillTreeInstaller;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
+import exiledsector.skills.enemy.EnemyLayout;
+import exiledsector.skills.enemy.EnemyLayouts;
 import exiledsector.ui.SkillTreeRefitButton;
 import lunalib.lunaRefit.BaseRefitButton;
 import lunalib.lunaRefit.LunaRefitManager;
@@ -26,9 +32,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -40,20 +48,26 @@ class ExiledSectorModPluginTest {
     private MockedStatic<Global> globalMock;
     private MockedStatic<LunaSettings.SettingsCreator> settingsCreatorMock;
     private SectorAPI sector;
+    private ListenerManagerAPI listenerManager;
+    private SettingsAPI settings;
 
     @BeforeEach
     void setUp() throws Exception {
         Map<String, Object> persistentData = new HashMap<>();
         sector = mock(SectorAPI.class);
         when(sector.getPersistentData()).thenReturn(persistentData);
+        listenerManager = mock(ListenerManagerAPI.class);
+        when(sector.getListenerManager()).thenReturn(listenerManager);
 
-        SettingsAPI settings = mock(SettingsAPI.class);
+        settings = mock(SettingsAPI.class);
         when(settings.loadJSON("data/skilltrees/skill_types.json")).thenReturn(new JSONObject("{ \"skillTypes\": [] }"));
         when(settings.loadJSON("data/skilltrees/ship_skill_tree.json")).thenReturn(new JSONObject("{ \"nodes\": [] }"));
         when(settings.getMergedSpreadsheetDataForMod("plugin", "data/config/exiledSector/split_beam_effect_blocklist.csv", "exiledSector"))
                 .thenReturn(new JSONArray());
         when(settings.getMergedSpreadsheetDataForMod("weapon", "data/config/exiledSector/energy_chain_blocklist.csv", "exiledSector"))
                 .thenReturn(new JSONArray());
+        when(settings.getMergedJSON("data/config/exiledSector/enemy_layouts.json")).thenReturn(new JSONObject(
+                "{ \"layouts\": { \"bulwark\": { \"root\": \"root_low_tech_1\", \"nodes\": [\"a\"] } } }"));
 
         Logger logger = mock(Logger.class);
 
@@ -66,6 +80,7 @@ class ExiledSectorModPluginTest {
 
     @AfterEach
     void tearDown() {
+        EnemyLayouts.register(Map.of());
         settingsCreatorMock.close();
         globalMock.close();
         BaseRefitButton registered = LunaRefitManager.getFirstButtonOfClass(SkillTreeRefitButton.class);
@@ -129,5 +144,22 @@ class ExiledSectorModPluginTest {
         new ExiledSectorModPlugin().onGameLoad(false);
 
         assertNotSame(before, SkillDataResolver.resolve(null, variant));
+    }
+
+    @Test
+    void onApplicationLoadLoadsTheEnemyLayoutsMergedAcrossMods() throws Exception {
+        new ExiledSectorModPlugin().onApplicationLoad();
+
+        assertEquals(List.of("bulwark"), EnemyLayouts.all().stream().map(EnemyLayout::id).toList());
+    }
+
+    @Test
+    void onGameLoadRegistersTheEnemyFleetHooksAsTransient() {
+        new ExiledSectorModPlugin().onGameLoad(false);
+
+        verify(sector).addTransientScript(any(EnemyFleetSweepScript.class));
+        verify(sector, never()).addScript(any(EnemyFleetSweepScript.class));
+        verify(sector).addTransientListener(any(EnemyFleetDialogListener.class));
+        verify(listenerManager).addListener(any(EnemyFleetInflationListener.class), eq(true));
     }
 }
