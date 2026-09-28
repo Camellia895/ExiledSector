@@ -38,15 +38,11 @@ public final class NpcSkillTreeBuilder {
         int target = Math.max(0, Math.min(nodeCount, MAX_NODE_COUNT));
         NpcHullMods mods = hullMods == null ? NpcHullMods.NONE : hullMods;
         Set<String> installed = mods.installed();
-        ShipSkillData data = new ShipSkillData();
-        data.markNpcBuild();
         List<NpcBuildStep> steps = new ArrayList<>();
         List<String> stripped = new ArrayList<>();
         SkillNode root = SkillTree.get(layout.rootNodeId());
-        if (root != null && data.chooseStartingRoot(root)) {
-            for (int i = 0; i < target; i++) {
-                data.addFreeAllocationCredit();
-            }
+        ShipSkillData data = rootedTree(root, target);
+        if (data != null) {
             BuildContext context = new BuildContext(data, root.getId(), profile, installed, layoutOptions(layout));
             int allocated = convertHullMods(context, mods.removable(), target, steps, stripped);
             for (NpcLayoutEntry entry : layout.entries()) {
@@ -59,14 +55,30 @@ public final class NpcSkillTreeBuilder {
                 steps.add(new NpcBuildStep(entry.nodeId(), outcome));
             }
         } else {
+            data = emptyTree();
             for (NpcLayoutEntry entry : layout.entries()) {
                 steps.add(new NpcBuildStep(entry.nodeId(), NpcBuildStep.INVALID_ROOT + layout.rootNodeId()));
             }
         }
-        for (int i = 0; i < target; i++) {
+        return new NpcTreeBuild(data, steps, stripped);
+    }
+
+    public static ShipSkillData emptyTree() {
+        ShipSkillData data = new ShipSkillData();
+        data.markNpcBuild();
+        return data;
+    }
+
+    public static ShipSkillData rootedTree(SkillNode root, int level) {
+        ShipSkillData data = emptyTree();
+        if (root == null || !data.chooseStartingRoot(root)) {
+            return null;
+        }
+        for (int i = 0; i < level; i++) {
+            data.addFreeAllocationCredit();
             data.incrementLevel();
         }
-        return new NpcTreeBuild(data, steps, stripped);
+        return data;
     }
 
     private record BuildContext(ShipSkillData data, String rootId, ShipProfile profile, Set<String> installed,

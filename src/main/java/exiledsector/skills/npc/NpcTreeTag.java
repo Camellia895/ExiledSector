@@ -59,20 +59,13 @@ public final class NpcTreeTag {
             return null;
         }
         String[] entries = fields[2].isEmpty() ? new String[0] : fields[2].split(NODE_SEPARATOR, -1);
-        ShipSkillData data = new ShipSkillData();
-        data.markNpcBuild();
         SkillNode root = entries.length == 0 ? null : SkillTree.get(entries[0]);
-        if (root == null || !data.chooseStartingRoot(root)) {
-            return data;
-        }
-        for (int i = 0; i < level; i++) {
-            data.addFreeAllocationCredit();
+        ShipSkillData data = NpcSkillTreeBuilder.rootedTree(root, level);
+        if (data == null) {
+            return NpcSkillTreeBuilder.emptyTree();
         }
         for (int i = 1; i < entries.length; i++) {
             restore(data, entries[i]);
-        }
-        for (int i = 0; i < level; i++) {
-            data.incrementLevel();
         }
         return data;
     }

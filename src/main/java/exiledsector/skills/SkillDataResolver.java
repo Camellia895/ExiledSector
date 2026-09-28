@@ -3,6 +3,7 @@ package exiledsector.skills;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.npc.NpcSkillTreeBuilder;
 import exiledsector.skills.npc.NpcTreeTag;
 
 import java.util.HashMap;
@@ -33,10 +34,6 @@ public final class SkillDataResolver {
 
     private static ShipSkillData decodeOrEmpty(String tag) {
         ShipSkillData data = NpcTreeTag.decode(tag);
-        if (data == null) {
-            data = new ShipSkillData();
-            data.markNpcBuild();
-        }
-        return data;
+        return data != null ? data : NpcSkillTreeBuilder.emptyTree();
     }
 }

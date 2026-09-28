@@ -399,6 +399,20 @@ class NpcSkillTreeBuilderTest {
     }
 
     @Test
+    void anInvalidRootBuildsTheSameEmptyTreeItsTagDecodesTo() {
+        small("a", ROOT);
+
+        ShipSkillData built = build(layoutWithRoot("ghost", entry("a")), 5).data();
+        ShipSkillData decoded = NpcTreeTag.decode(NpcTreeTag.encode("layout", built));
+
+        assertEquals(0, built.getLevel());
+        assertEquals(built.getLevel(), decoded.getLevel());
+        assertEquals(built.getBankedFreeAllocations(), decoded.getBankedFreeAllocations());
+        assertTrue(built.isNpcBuild());
+        assertTrue(decoded.isNpcBuild());
+    }
+
+    @Test
     void recordsEveryEntryInOrder() {
         chain(2);
 
