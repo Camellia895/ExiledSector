@@ -19,7 +19,7 @@ public final class TooltipHighlighter {
     }
 
     private static final String NUMBER = "(\\d+(?:\\.\\d+)?%?)";
-    private static final String SAME_SENTENCE = "[^.]*?\\s";
+    private static final String SAME_SENTENCE = "(?:[^.]*?\\s)?";
 
     private static final List<Rule> RULES = List.of(
             new Rule(Pattern.compile("\\b(?:Increases|increases|Increased|increased)\\s" + SAME_SENTENCE + "by\\s+" + NUMBER),

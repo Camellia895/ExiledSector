@@ -46,8 +46,8 @@ final class SkillTreeStatPanel {
     private static final Color STAT_PANEL_LABEL_COLOR = new Color(0xCB, 0xF5, 0xFF);
     private static final Color STAT_PANEL_VALUE_COLOR = new Color(0xFF, 0xD2, 0x00);
     private static final Color STAT_PANEL_HEADER_TEXT_COLOR = new Color(0xCB, 0xF5, 0xFF);
-    private static final Color STAT_DECREASED_COLOR = new Color(0xFC, 0x63, 0x00);
-    private static final Color STAT_INCREASED_COLOR = new Color(0x98, 0xFB, 0x00);
+    private static final Color STAT_DECREASED_COLOR = SkillTreePanelStyle.NEGATIVE_STAT_COLOR;
+    private static final Color STAT_INCREASED_COLOR = SkillTreePanelStyle.POSITIVE_STAT_COLOR;
     private static final float STAT_COMPARISON_EPSILON = 0.001f;
 
     private static final String COLLAPSE_ICON_PATH = "graphics/icons/ship_store.png";

@@ -61,7 +61,7 @@ final class SkillTreeNodeTooltipRenderer {
         SkillTreePanelStyle.TooltipText title = tooltipTitles.get(node.getId(), titleText,
                 id -> buildTooltipText(font, titleText, TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR));
         SkillTreePanelStyle.TooltipText body = tooltipBodies.get(node.getId(), bodyText,
-                id -> buildTooltipText(font, bodyText, TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR));
+                id -> buildBodyText(font, bodyText));
 
         boolean showTables = !showOptionalHint && !SkillTypeUnlockStatus.isHidden(node.getType(), data);
         List<SkillTreeTooltipTable> tables = showTables ? tablesFor(font, effectiveType) : List.of();
@@ -78,7 +78,7 @@ final class SkillTreeNodeTooltipRenderer {
         SkillTreePanelStyle.TooltipText title = typeTooltipTitles.get(type.getId(), titleText,
                 id -> buildTooltipText(font, titleText, TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR));
         SkillTreePanelStyle.TooltipText body = typeTooltipBodies.get(type.getId(), bodyText,
-                id -> buildTooltipText(font, bodyText, TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR));
+                id -> buildBodyText(font, bodyText));
 
         style.drawTitleBodyTooltip(title, body, tablesFor(font, type), mouseX, mouseY, alphaMult);
     }
@@ -105,6 +105,11 @@ final class SkillTreeNodeTooltipRenderer {
             text = text.isEmpty() ? FREE_NODE_NOTE : text + "\n\n" + FREE_NODE_NOTE;
         }
         return text;
+    }
+
+    private SkillTreePanelStyle.TooltipText buildBodyText(LazyFont font, String rawText) {
+        return style.buildHighlightedWrappedText(font, rawText, TOOLTIP_BODY_FONT_SIZE, TOOLTIP_MAX_TEXT_WIDTH,
+                TOOLTIP_MAX_TEXT_HEIGHT, TOOLTIP_BODY_COLOR);
     }
 
     private SkillTreePanelStyle.TooltipText buildTooltipText(LazyFont font, String rawText, float fontSize, Color color) {

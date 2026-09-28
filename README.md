@@ -66,7 +66,7 @@ This mod is in (very) early development.
 
 It is my first mod, and first foray into OpenGL/game development, and is by no means feature complete or bug free.
 
-I have used starsector-core graphics and royalty-free art assets for all art in the mod. I will not use LLM-generated art.
+I have used starsector-core graphics and royalty-free art assets for all art in the mod. I have not and will not use LLM-generated art.
 
 I am seeking any feedback, bug reports, node suggestions, or faction designs. 
 
