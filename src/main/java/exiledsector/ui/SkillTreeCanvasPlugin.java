@@ -23,7 +23,7 @@ import java.util.List;
 
 public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
-    private static final float MIN_ZOOM = 0.4f;
+    private static final float MIN_ZOOM = 0.2f;
     private static final float MAX_ZOOM = 2.5f;
     private static final float ZOOM_STEP = 1.1f;
     private static final float SHIP_CARD_FRAME_OUTSET = 8f;
