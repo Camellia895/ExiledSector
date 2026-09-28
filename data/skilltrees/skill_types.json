@@ -78,7 +78,8 @@
 				}
 			],
 			"tags": [
-				"ballistic"
+				"ballistic",
+				"req_ballistic"
 			]
 		},
 		{
@@ -92,7 +93,8 @@
 				}
 			],
 			"tags": [
-				"ballistic"
+				"ballistic",
+				"req_ballistic"
 			]
 		},
 		{
@@ -106,7 +108,8 @@
 				}
 			],
 			"tags": [
-				"missile"
+				"missile",
+				"req_missile"
 			]
 		},
 		{
@@ -120,7 +123,7 @@
 				}
 			],
 			"tags": [
-				"hull"
+				"d_mods"
 			]
 		},
 		{
@@ -138,7 +141,8 @@
 				"hbi"
 			],
 			"tags": [
-				"ballistic"
+				"ballistic",
+				"req_ballistic"
 			]
 		},
 		{
@@ -157,7 +161,8 @@
 				"advanced_ground_support"
 			],
 			"tags": [
-				"logistics"
+				"logistics",
+				"campaign_only"
 			]
 		},
 		{
@@ -172,7 +177,7 @@
 				}
 			],
 			"tags": [
-				"hull"
+				"fleet_support"
 			]
 		},
 		{
@@ -186,7 +191,7 @@
 				}
 			],
 			"tags": [
-				"hull"
+				"fleet_support"
 			]
 		},
 		{
@@ -200,7 +205,7 @@
 				}
 			],
 			"tags": [
-				"logistics"
+				"combat_readiness"
 			]
 		},
 		{
@@ -215,7 +220,8 @@
 				}
 			],
 			"tags": [
-				"hull"
+				"hull",
+				"repair"
 			]
 		},
 		{
@@ -231,7 +237,8 @@
 			],
 			"tags": [
 				"energy",
-				"armour"
+				"armour",
+				"req_energy"
 			]
 		},
 		{
@@ -256,6 +263,10 @@
 					"effect": "BEAM_WEAPON_RANGE_PERCENT",
 					"magnitude": 5
 				}
+			],
+			"tags": [
+				"weapons",
+				"range"
 			]
 		},
 		{
@@ -268,6 +279,9 @@
 					"effect": "TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT",
 					"magnitude": 25
 				}
+			],
+			"tags": [
+				"fleet_support"
 			]
 		},
 		{
@@ -286,7 +300,8 @@
 				}
 			],
 			"tags": [
-				"missile"
+				"missile",
+				"req_missile"
 			]
 		},
 		{
@@ -300,7 +315,8 @@
 				}
 			],
 			"tags": [
-				"missile"
+				"missile",
+				"req_missile"
 			]
 		},
 		{
@@ -312,6 +328,10 @@
 					"effect": "NON_BEAM_ENERGY_WEAPON_DAMAGE_PERCENT",
 					"magnitude": 10
 				}
+			],
+			"tags": [
+				"energy",
+				"req_non_beam_energy"
 			]
 		},
 		{
@@ -323,17 +343,28 @@
 					"effect": "BEAM_WEAPON_DAMAGE_PERCENT",
 					"magnitude": 5
 				}
+			],
+			"tags": [
+				"energy",
+				"beam",
+				"req_beam"
 			]
 		},
 		{
 			"id": "energy_damage",
 			"name": "Energy Weapon Damage",
-			"icon": "graphics/icons/energy_damage.png"
+			"icon": "graphics/icons/energy_damage.png",
+			"tags": [
+				"energy"
+			]
 		},
 		{
 			"id": "weapon_damage",
 			"name": "All Weapon Damage",
-			"icon": "graphics/icons/weapon_damage.png"
+			"icon": "graphics/icons/weapon_damage.png",
+			"tags": [
+				"weapons"
+			]
 		},
 		{
 			"id": "repair_time",
@@ -346,7 +377,7 @@
 				}
 			],
 			"tags": [
-				"logistics"
+				"repair"
 			]
 		},
 		{
@@ -358,6 +389,9 @@
 					"effect": "WEAPON_TURN_RATE_PERCENT",
 					"magnitude": 20
 				}
+			],
+			"tags": [
+				"weapons"
 			]
 		},
 		{
@@ -386,7 +420,9 @@
 				}
 			],
 			"tags": [
-				"beam"
+				"energy",
+				"beam",
+				"req_beam"
 			]
 		},
 		{
@@ -466,6 +502,11 @@
 			],
 			"exclusiveHullMods": [
 				"safetyoverrides"
+			],
+			"tags": [
+				"flux",
+				"speed",
+				"req_no_capital"
 			]
 		},
 		{
@@ -478,9 +519,6 @@
 					"effect": "EXPLODE_ON_DEATH",
 					"magnitude": 2000
 				}
-			],
-			"tags": [
-				"luddic_path"
 			]
 		},
 		{
@@ -493,9 +531,6 @@
 					"effect": "DEATH_ON_COLLISION",
 					"magnitude": 0
 				}
-			],
-			"tags": [
-				"luddic_path"
 			]
 		},
 		{
@@ -514,7 +549,8 @@
 				}
 			],
 			"tags": [
-				"energy"
+				"energy",
+				"req_non_beam_energy"
 			]
 		},
 		{
@@ -530,7 +566,8 @@
 			],
 			"tags": [
 				"ballistic",
-				"speed"
+				"speed",
+				"req_ballistic"
 			]
 		},
 		{
@@ -546,8 +583,8 @@
 			],
 			"tags": [
 				"energy",
-				"beam",
-				"range"
+				"range",
+				"req_energy"
 			]
 		},
 		{
@@ -576,7 +613,8 @@
 				"advancedshieldemitter"
 			],
 			"tags": [
-				"shield"
+				"shield",
+				"req_shields"
 			]
 		},
 		{
@@ -607,7 +645,8 @@
 			"description": "Phase coils are less able to maintain a connection with normal space as the ship's hard flux levels rise, resulting in a greatly reduced top speed as the coils struggle to gain traction.\n\nThis modification allows the coils to handle higher levels of hard flux, increasing the threshold at which speed bottoms out.",
 			"tags": [
 				"flux",
-				"phase"
+				"phase",
+				"req_phase"
 			]
 		},
 		{
@@ -641,7 +680,8 @@
 			],
 			"tags": [
 				"energy",
-				"beam"
+				"beam",
+				"req_beam"
 			]
 		},
 		{
@@ -664,6 +704,9 @@
 			],
 			"exclusiveHullMods": [
 				"turretgyros"
+			],
+			"tags": [
+				"weapons"
 			]
 		},
 		{
@@ -693,7 +736,8 @@
 				"armoredweapons"
 			],
 			"tags": [
-				"armour"
+				"armour",
+				"weapons"
 			]
 		},
 		{
@@ -716,6 +760,9 @@
 			],
 			"exclusiveHullMods": [
 				"autorepair"
+			],
+			"tags": [
+				"repair"
 			]
 		},
 		{
@@ -743,6 +790,9 @@
 			],
 			"exclusiveHullMods": [
 				"auxiliarythrusters"
+			],
+			"tags": [
+				"speed"
 			]
 		},
 		{
@@ -762,7 +812,8 @@
 			"todo": "Real vanilla effect is a per-weapon-slot range bonus (WeaponBaseRangeModifier) that varies by the ship's largest ballistic slot size and is capped per weapon, with a separate larger bonus for hybrid mounts - not a fixed magnitude on a single MutableShipStatsAPI stat. Deliberately left on vanillaHullMod passthrough rather than approximate it with a flat/percent BALLISTIC_WEAPON_RANGE_PERCENT effect, since that would only be correct for one specific loadout.",
 			"tags": [
 				"ballistic",
-				"range"
+				"range",
+				"req_ballistic"
 			]
 		},
 		{
@@ -784,7 +835,7 @@
 				"blast_doors"
 			],
 			"tags": [
-				"logistics"
+				"hull"
 			]
 		},
 		{
@@ -826,7 +877,9 @@
 			],
 			"todo": "Real vanilla effect also increases deployment points and supply cost to recover by 1 per 5 OP spent on fighters (min 1), with a proportional increase in CR lost per deployment - deliberately not implemented yet, so right now this node is a buff with no real downside beyond the 4 modifiers above. This node may need other balance considerations once that's added.",
 			"tags": [
-				"fighter"
+				"fighter",
+				"req_no_fighter_bays",
+				"req_destroyer_plus"
 			]
 		},
 		{
@@ -859,7 +912,9 @@
 			],
 			"description": "Converts this ship's built-in fighter bays into cargo capacity.",
 			"tags": [
-				"logistics"
+				"logistics",
+				"req_fighter_bays",
+				"campaign_only"
 			]
 		},
 		{
@@ -893,7 +948,8 @@
 				"targetingunit"
 			],
 			"tags": [
-				"range"
+				"range",
+				"req_cruiser_plus"
 			]
 		},
 		{
@@ -912,7 +968,9 @@
 			"description": "Increases the damage fighters launched from this ship deal to other fighters and missiles. Also locks launched fighters to stay near the ship instead of patrolling freely.",
 			"todo": "Deliberately kept on vanillaHullMod passthrough as a design choice, not a technical limitation - the fighter-spawn hook needed to convert this now exists (see FIGHTER_PD_DAMAGE_BONUS_PERCENT, reused by other nodes). Real vanilla effect also zeroes the launched fighters' patrol range (locking them near the ship) and tags certain fighter types to stay in front of the ship; neither of those is implemented as a reusable effect yet.",
 			"tags": [
-				"range"
+				"fighter",
+				"point_defense",
+				"req_fighter_bays"
 			]
 		},
 		{
@@ -990,7 +1048,7 @@
 			],
 			"description": "Electronic countermeasures (ECM) represents the effects of electronic warfare as fleets with superior capability imposing range penalties upon their opponents.",
 			"tags": [
-				"range"
+				"fleet_support"
 			]
 		},
 		{
@@ -1022,6 +1080,11 @@
 					"category": "hullmod",
 					"id": "escort_package"
 				}
+			],
+			"tags": [
+				"fleet_support",
+				"speed",
+				"req_no_capital"
 			]
 		},
 		{
@@ -1054,7 +1117,8 @@
 				"expanded_deck_crew"
 			],
 			"tags": [
-				"fighter"
+				"fighter",
+				"req_fighter_bays"
 			]
 		},
 		{
@@ -1072,7 +1136,9 @@
 				"phasefield"
 			],
 			"tags": [
-				"logistics"
+				"phase",
+				"req_phase",
+				"player_only"
 			]
 		},
 		{
@@ -1116,6 +1182,11 @@
 			],
 			"exclusiveHullMods": [
 				"magazines"
+			],
+			"tags": [
+				"ballistic",
+				"ammo",
+				"req_ballistic"
 			]
 		},
 		{
@@ -1144,7 +1215,8 @@
 				"missleracks"
 			],
 			"tags": [
-				"missile"
+				"missile",
+				"req_missile"
 			]
 		},
 		{
@@ -1169,7 +1241,8 @@
 				"extendedshieldemitter"
 			],
 			"tags": [
-				"shield"
+				"shield",
+				"req_shields"
 			]
 		},
 		{
@@ -1208,7 +1281,8 @@
 				"frontshield"
 			],
 			"tags": [
-				"armour"
+				"armour",
+				"req_shields"
 			]
 		},
 		{
@@ -1240,7 +1314,8 @@
 				"shield_shunt"
 			],
 			"tags": [
-				"shield"
+				"shield",
+				"req_no_shields"
 			]
 		},
 		{
@@ -1259,7 +1334,8 @@
 			"description": "Grants a limited number of automatic reloads to missile weapons in small missile mounts, drawn from a shared capacity pool that depends on hull size and mount count.",
 			"todo": "Real vanilla effect is a stateful per-weapon reload simulation (advanceInCombat tracks a shared reload-capacity pool by hull size/small-missile-mount count, per-weapon cooldowns, partial reloads) - not a stat modifier at all, and not expressible as a SkillEffect magnitude. Deliberately left on vanillaHullMod passthrough.",
 			"tags": [
-				"missile"
+				"missile",
+				"req_missile"
 			]
 		},
 		{
@@ -1279,7 +1355,10 @@
 					"statId": "has_neural_link"
 				}
 			],
-			"description": "Links this ship with the flagship, allowing the player to instantly switch which ship they are piloting without using a shuttle pod. Transferring resets the destination ship's system cooldown and adds a charge. The transfer is instant if the combined deployment points of both ships are low enough; otherwise a short transfer time applies. The destination ship must not be under the command of an officer or an AI core."
+			"description": "Links this ship with the flagship, allowing the player to instantly switch which ship they are piloting without using a shuttle pod. Transferring resets the destination ship's system cooldown and adds a charge. The transfer is instant if the combined deployment points of both ships are low enough; otherwise a short transfer time applies. The destination ship must not be under the command of an officer or an AI core.",
+			"tags": [
+				"player_only"
+			]
 		},
 		{
 			"id": "hardenedshieldemitter",
@@ -1307,7 +1386,8 @@
 				"hardenedshieldemitter"
 			],
 			"tags": [
-				"shield"
+				"shield",
+				"req_shields"
 			]
 		},
 		{
@@ -1323,6 +1403,9 @@
 			],
 			"exclusiveHullMods": [
 				"hardened_subsystems"
+			],
+			"tags": [
+				"combat_readiness"
 			]
 		},
 		{
@@ -1398,7 +1481,8 @@
 			"todo": "Placeholder magnitudes (50% hard flux, -25% range) pending real balance numbers. Reimplemented as a scalable percentage instead of vanilla's all-or-nothing forced-hard-flux-on-every-beam-hit, and the range reduction is a flat percentage instead of vanilla's reduce-only-the-portion-past-200-units logic - deliberate simplifications, not oversights. The +10% beam damage part (vanilla BEAM_DAMAGE_PERCENT) is not yet added; can reuse the existing BEAM_DAMAGE_PERCENT effect for that later.",
 			"tags": [
 				"energy",
-				"beam"
+				"beam",
+				"req_beam"
 			]
 		},
 		{
@@ -1426,6 +1510,9 @@
 			],
 			"exclusiveHullMods": [
 				"pointdefenseai"
+			],
+			"tags": [
+				"point_defense"
 			]
 		},
 		{
@@ -1494,7 +1581,8 @@
 				"nav_relay"
 			],
 			"tags": [
-				"speed"
+				"speed",
+				"fleet_support"
 			]
 		},
 		{
@@ -1530,7 +1618,8 @@
 			],
 			"description": "Locks the ship's omni-directional shield emitter to a front-facing position and extends its arc. As with all frontal emitters, the shield will also deploy twice as quickly.",
 			"tags": [
-				"shield"
+				"shield",
+				"req_shields"
 			]
 		},
 		{
@@ -1566,7 +1655,8 @@
 			],
 			"description": "Converts this ship's shield to omni-directional.",
 			"tags": [
-				"shield"
+				"shield",
+				"req_shields"
 			]
 		},
 		{
@@ -1591,7 +1681,8 @@
 				"operations_center"
 			],
 			"tags": [
-				"logistics"
+				"fleet_support",
+				"req_flagship"
 			]
 		},
 		{
@@ -1629,7 +1720,8 @@
 			],
 			"tags": [
 				"flux",
-				"phase"
+				"phase",
+				"req_phase"
 			]
 		},
 		{
@@ -1654,7 +1746,9 @@
 				"recovery_shuttles"
 			],
 			"tags": [
-				"fighter"
+				"fighter",
+				"req_fighter_bays",
+				"campaign_only"
 			]
 		},
 		{
@@ -1709,8 +1803,7 @@
 				"fluxbreakers"
 			],
 			"tags": [
-				"flux",
-				"shield"
+				"flux"
 			]
 		},
 		{
@@ -1735,7 +1828,8 @@
 				"stabilizedshieldemitter"
 			],
 			"tags": [
-				"shield"
+				"shield",
+				"req_shields"
 			]
 		},
 		{
@@ -1770,6 +1864,7 @@
 				"unstable_injector"
 			],
 			"tags": [
+				"speed",
 				"range"
 			]
 		},
@@ -1791,7 +1886,8 @@
 				"additional_berthing"
 			],
 			"tags": [
-				"logistics"
+				"logistics",
+				"campaign_only"
 			]
 		},
 		{
@@ -1878,7 +1974,8 @@
 				"efficiency_overhaul"
 			],
 			"tags": [
-				"logistics"
+				"logistics",
+				"campaign_only"
 			]
 		},
 		{
@@ -1899,7 +1996,8 @@
 				"expanded_cargo_holds"
 			],
 			"tags": [
-				"logistics"
+				"logistics",
+				"campaign_only"
 			]
 		},
 		{
@@ -1960,7 +2058,7 @@
 				"insulatedengine"
 			],
 			"tags": [
-				"logistics"
+				"hull"
 			]
 		},
 		{
@@ -1977,7 +2075,8 @@
 				"militarized_subsystems"
 			],
 			"tags": [
-				"logistics"
+				"logistics",
+				"campaign_only"
 			]
 		},
 		{
@@ -1999,7 +2098,8 @@
 				}
 			],
 			"tags": [
-				"logistics"
+				"logistics",
+				"campaign_only"
 			]
 		},
 		{
@@ -2034,7 +2134,8 @@
 				"surveying_equipment"
 			],
 			"tags": [
-				"logistics"
+				"logistics",
+				"campaign_only"
 			]
 		},
 		{
@@ -2120,7 +2221,8 @@
 				}
 			],
 			"tags": [
-				"logistics"
+				"logistics",
+				"campaign_only"
 			]
 		},
 		{
@@ -2134,7 +2236,8 @@
 				}
 			],
 			"tags": [
-				"logistics"
+				"logistics",
+				"campaign_only"
 			]
 		},
 		{
@@ -2149,7 +2252,8 @@
 			],
 			"todo": "Placeholder magnitude (15%) pending real balance numbers.",
 			"tags": [
-				"fighter"
+				"fighter",
+				"req_fighter_bays"
 			]
 		},
 		{
@@ -2164,7 +2268,8 @@
 			],
 			"todo": "Placeholder magnitude (15%) pending real balance numbers.",
 			"tags": [
-				"fighter"
+				"fighter",
+				"req_fighter_bays"
 			]
 		},
 		{
@@ -2230,7 +2335,7 @@
 			],
 			"tags": [
 				"shield",
-				"flux"
+				"req_shields"
 			]
 		},
 		{
@@ -2245,7 +2350,7 @@
 			],
 			"tags": [
 				"shield",
-				"flux"
+				"req_shields"
 			]
 		},
 		{
@@ -2262,7 +2367,8 @@
 				}
 			],
 			"tags": [
-				"logistics"
+				"logistics",
+				"campaign_only"
 			]
 		},
 		{
@@ -2279,7 +2385,8 @@
 				}
 			],
 			"tags": [
-				"logistics"
+				"logistics",
+				"campaign_only"
 			]
 		},
 		{
@@ -2303,7 +2410,8 @@
 				}
 			],
 			"tags": [
-				"logistics"
+				"logistics",
+				"campaign_only"
 			]
 		},
 		{
@@ -2340,7 +2448,7 @@
 			],
 			"temporaryAfterDeploymentSeconds": 60,
 			"tags": [
-				"hull"
+				"speed"
 			]
 		},
 		{
@@ -2355,7 +2463,8 @@
 				}
 			],
 			"tags": [
-				"logistics"
+				"d_mods",
+				"armour"
 			]
 		},
 		{
@@ -2370,7 +2479,8 @@
 				}
 			],
 			"tags": [
-				"logistics"
+				"d_mods",
+				"weapons"
 			]
 		},
 		{
@@ -2398,7 +2508,9 @@
 			},
 			"description": "You control the speed at which these lobsters die.",
 			"tags": [
-				"logistics"
+				"combat_readiness",
+				"speed",
+				"player_only"
 			]
 		},
 		{
@@ -2422,7 +2534,8 @@
 				}
 			],
 			"tags": [
-				"logistics"
+				"combat_readiness",
+				"player_only"
 			]
 		},
 		{
@@ -2439,7 +2552,8 @@
 				}
 			],
 			"tags": [
-				"logistics"
+				"logistics",
+				"campaign_only"
 			]
 		},
 		{
@@ -2457,7 +2571,7 @@
 				}
 			],
 			"tags": [
-				"logistics"
+				"hull"
 			]
 		},
 		{
@@ -2474,7 +2588,8 @@
 				}
 			],
 			"tags": [
-				"logistics"
+				"logistics",
+				"campaign_only"
 			]
 		},
 		{
@@ -2505,7 +2620,8 @@
 				}
 			],
 			"tags": [
-				"shield"
+				"shield",
+				"req_shields"
 			]
 		},
 		{
@@ -2519,7 +2635,8 @@
 				}
 			],
 			"tags": [
-				"shield"
+				"shield",
+				"req_shields"
 			]
 		},
 		{
@@ -2533,7 +2650,8 @@
 				}
 			],
 			"tags": [
-				"shield"
+				"shield",
+				"req_shields"
 			]
 		},
 		{
@@ -2545,7 +2663,8 @@
 				"shield_turn_rate"
 			],
 			"tags": [
-				"shield"
+				"shield",
+				"req_shields"
 			]
 		},
 		{
@@ -2591,7 +2710,8 @@
 				}
 			],
 			"tags": [
-				"shield"
+				"shield",
+				"req_shields"
 			]
 		},
 		{
@@ -2605,7 +2725,8 @@
 				}
 			],
 			"tags": [
-				"shield"
+				"shield",
+				"req_shields"
 			]
 		},
 		{
@@ -2619,7 +2740,8 @@
 				}
 			],
 			"tags": [
-				"shield"
+				"shield",
+				"req_shields"
 			]
 		},
 		{
@@ -2650,7 +2772,8 @@
 				}
 			],
 			"tags": [
-				"phase"
+				"phase",
+				"req_phase"
 			]
 		},
 		{
@@ -2664,7 +2787,7 @@
 				}
 			],
 			"tags": [
-				"shield"
+				"hull"
 			]
 		},
 		{
@@ -2696,8 +2819,7 @@
 				}
 			],
 			"tags": [
-				"flux",
-				"shield"
+				"flux"
 			]
 		},
 		{
@@ -2720,7 +2842,8 @@
 			],
 			"tags": [
 				"energy",
-				"ammo"
+				"ammo",
+				"req_energy"
 			]
 		},
 		{
@@ -2732,6 +2855,9 @@
 					"effect": "WEAPON_DURABILITY_PERCENT",
 					"magnitude": 15
 				}
+			],
+			"tags": [
+				"weapons"
 			]
 		},
 		{
@@ -2756,6 +2882,9 @@
 					"effect": "PD_DAMAGE_TO_MISSILES_PERCENT",
 					"magnitude": 25
 				}
+			],
+			"tags": [
+				"point_defense"
 			]
 		},
 		{
@@ -2815,7 +2944,8 @@
 				}
 			],
 			"tags": [
-				"fighter"
+				"fighter",
+				"req_fighter_bays"
 			]
 		},
 		{
@@ -2829,7 +2959,8 @@
 				}
 			],
 			"tags": [
-				"logistics"
+				"logistics",
+				"campaign_only"
 			]
 		},
 		{
@@ -2848,7 +2979,8 @@
 				}
 			],
 			"tags": [
-				"logistics"
+				"logistics",
+				"campaign_only"
 			]
 		},
 		{
@@ -2863,6 +2995,9 @@
 					"cruiser": 700,
 					"capitalShip": 900
 				}
+			],
+			"tags": [
+				"range"
 			]
 		},
 		{
@@ -2886,7 +3021,9 @@
 				}
 			],
 			"tags": [
-				"range"
+				"energy",
+				"range",
+				"req_non_beam_energy"
 			]
 		},
 		{
@@ -2904,7 +3041,9 @@
 				}
 			],
 			"tags": [
-				"beam"
+				"energy",
+				"beam",
+				"req_beam"
 			]
 		},
 		{
@@ -2923,8 +3062,8 @@
 				}
 			],
 			"tags": [
-				"logistics",
-				"shield"
+				"shield",
+				"req_shields"
 			]
 		},
 		{
@@ -2936,6 +3075,9 @@
 					"effect": "ENERGY_DAMAGE_TAKEN_PERCENT",
 					"magnitude": -5
 				}
+			],
+			"tags": [
+				"dmgtypeenergy"
 			]
 		},
 		{
@@ -2965,6 +3107,9 @@
 					"effect": "PEAK_CR_DURATION_PERCENT",
 					"magnitude": 25
 				}
+			],
+			"tags": [
+				"combat_readiness"
 			]
 		},
 		{
@@ -3000,6 +3145,9 @@
 					"effect": "SHIELD_DAMAGE_TAKEN_MULT",
 					"magnitude": -10
 				}
+			],
+			"tags": [
+				"weapons"
 			]
 		}
 	]
