@@ -19,14 +19,6 @@ public final class CachedText<K, V> {
         return getInternal(SINGLE_KEY, signature, builder);
     }
 
-    public void invalidate(K key) {
-        entries.remove(key);
-    }
-
-    public void clear() {
-        entries.clear();
-    }
-
     private V getInternal(Object key, Object signature, Supplier<V> builder) {
         Entry<V> entry = entries.get(key);
         if (entry != null && signature.equals(entry.signature)) {

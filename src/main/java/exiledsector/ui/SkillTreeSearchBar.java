@@ -37,10 +37,6 @@ final class SkillTreeSearchBar {
         this.style = style;
     }
 
-    boolean isFocused() {
-        return focused;
-    }
-
     boolean handleClick(PositionAPI position, float x, float y) {
         focused = contains(position, x, y);
         caretSeconds = 0f;
