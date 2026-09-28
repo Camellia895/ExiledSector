@@ -21,7 +21,6 @@ import java.util.Objects;
 
 public final class SkillTreePanelStyle {
 
-    public static final String TOOLTIP_FONT_PATH = "graphics/fonts/orbitron20aabold.fnt";
     public static final float TOOLTIP_TITLE_FONT_SIZE = 24f;
     public static final float TOOLTIP_BODY_FONT_SIZE = 20f;
     public static final Color TOOLTIP_TITLE_COLOR = Color.WHITE;
@@ -54,9 +53,11 @@ public final class SkillTreePanelStyle {
     private static final float TOOLTIP_TABLE_GAP = 14f;
     private static final float TOOLTIP_SCREEN_MARGIN = 4f;
 
+    private static final String FONT_PATH = "graphics/fonts/orbitron20aabold.fnt";
+    private static LazyFont font;
+    private static boolean fontLoadFailed;
+
     private String accentIconPath;
-    private LazyFont tooltipFont;
-    private boolean tooltipFontLoadFailed = false;
     private Color accentColor;
     private Color lowTechColor;
     private Color highTechColor;
@@ -69,14 +70,18 @@ public final class SkillTreePanelStyle {
     }
 
     public LazyFont getFont() {
-        if (tooltipFont == null && !tooltipFontLoadFailed) {
-            tooltipFont = loadFontOrNull(TOOLTIP_FONT_PATH);
-            tooltipFontLoadFailed = tooltipFont == null;
-        }
-        return tooltipFont;
+        return font();
     }
 
-    public static LazyFont loadFontOrNull(String path) {
+    public static LazyFont font() {
+        if (font == null && !fontLoadFailed) {
+            font = loadFontOrNull(FONT_PATH);
+            fontLoadFailed = font == null;
+        }
+        return font;
+    }
+
+    private static LazyFont loadFontOrNull(String path) {
         try {
             return LazyFont.loadFont(path);
         } catch (FontException e) {

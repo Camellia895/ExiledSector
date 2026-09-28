@@ -33,8 +33,6 @@ import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE;
 
 final class SkillTreeStatPanel {
 
-    private static final String FONT_PATH = "graphics/fonts/orbitron20aabold.fnt";
-
     private static final float STAT_PANEL_FONT_SIZE = TOOLTIP_BODY_FONT_SIZE;
     private static final float STAT_PANEL_PADDING = 26f;
     private static final float STAT_PANEL_MARGIN = 16f;
@@ -62,8 +60,6 @@ final class SkillTreeStatPanel {
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeStatPanel.class);
     private final CachedText<String, GroupTexts> groupTextCache = new CachedText<>();
     private final Map<String, LazyFont.DrawableString> statGroupHeaderText = new HashMap<>();
-    private LazyFont statFont;
-    private boolean fontLoadFailed = false;
 
     private PanelLayout cachedLayout;
     private List<StatGroup> cachedLayoutGroups;
@@ -84,7 +80,7 @@ final class SkillTreeStatPanel {
     }
 
     boolean isCollapseButtonHit(PositionAPI position, float x, float y) {
-        LazyFont font = getFont();
+        LazyFont font = SkillTreePanelStyle.font();
         if (font == null) return false;
         PanelLayout layout = layoutPanel(position, font);
         if (layout == null) return false;
@@ -93,7 +89,7 @@ final class SkillTreeStatPanel {
     }
 
     void render(PositionAPI position, float alphaMult) {
-        LazyFont font = getFont();
+        LazyFont font = SkillTreePanelStyle.font();
         if (font == null) return;
 
         PanelLayout layout = layoutPanel(position, font);
@@ -143,14 +139,6 @@ final class SkillTreeStatPanel {
         float half = buttonSize / 2f;
         return x >= buttonCenterX - half && x <= buttonCenterX + half
                 && y >= buttonCenterY - half && y <= buttonCenterY + half;
-    }
-
-    private LazyFont getFont() {
-        if (statFont == null && !fontLoadFailed) {
-            statFont = SkillTreePanelStyle.loadFontOrNull(FONT_PATH);
-            fontLoadFailed = statFont == null;
-        }
-        return statFont;
     }
 
     private PanelLayout layoutPanel(PositionAPI position, LazyFont font) {

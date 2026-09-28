@@ -17,8 +17,6 @@ import java.awt.Color;
 final class SkillTreeReadoutBar {
 
     private static final String GLOW_LINE_TEXTURE = "graphics/hud/line4x4.png";
-    private static final String FONT_PATH = "graphics/fonts/orbitron20aabold.fnt";
-
     private static final String STANDARD_COLOR_KEY = "progressBarStandardColor";
     private static final String OVERFLOW_COLOR_KEY = "progressBarOverflowColor";
     private static final Color FALLBACK_FILL_COLOR = new Color(0, 121, 216);
@@ -49,8 +47,6 @@ final class SkillTreeReadoutBar {
     private final SpriteCache spriteCache;
     private final FaderUtil hoverFader = new FaderUtil(HOVER_FADE_IN, HOVER_FADE_OUT);
 
-    private LazyFont cachedFont;
-    private boolean fontLoadFailed = false;
     private final CachedText<Void, LabelTexts> labelCache = new CachedText<>();
 
     private Color fillColor;
@@ -92,7 +88,7 @@ final class SkillTreeReadoutBar {
     }
 
     void render(float left, float bottom, int spent, int total, float alphaMult, String labelOverride) {
-        LazyFont font = getFont();
+        LazyFont font = SkillTreePanelStyle.font();
         if (font == null) return;
         if (!initialized) {
             displayedSpent = spent;
@@ -257,14 +253,6 @@ final class SkillTreeReadoutBar {
     private Color colorOrFallback(String settingsKey, Color fallback) {
         return FallbackSupport.getOrFallback(() -> Global.getSettings().getColor(settingsKey), fallback,
                 Logger.getLogger(SkillTreeReadoutBar.class), "Failed to read settings colour " + settingsKey);
-    }
-
-    private LazyFont getFont() {
-        if (cachedFont == null && !fontLoadFailed) {
-            cachedFont = SkillTreePanelStyle.loadFontOrNull(FONT_PATH);
-            fontLoadFailed = cachedFont == null;
-        }
-        return cachedFont;
     }
 
     private static final class LabelTexts {
