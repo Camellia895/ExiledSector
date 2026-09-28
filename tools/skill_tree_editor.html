@@ -432,6 +432,8 @@
     border: 1px solid var(--line); background: var(--panel-2); color: var(--text-dim);
   }
   .tagChip.active { background: var(--accent-dim); border-color: var(--accent); color: var(--text); }
+  .tagChip.invalid { border-color: var(--danger); color: var(--danger); }
+  .tagGroupLabel { font-size: 10px; color: var(--text-faint); font-family: var(--font-mono); margin-top: 2px; }
   .prereqList { display: flex; flex-direction: column; gap: 5px; }
   .prereqRow { display: flex; align-items: center; gap: 6px; }
   .prereqItem {
@@ -562,7 +564,7 @@
     <h1>Skill Tree Layout Editor</h1>
     <div class="stats" id="statsLine"></div>
     <div class="spacer"></div>
-    <input id="searchBox" placeholder="Search node or type name..." aria-label="Search node or type name">
+    <input id="searchBox" placeholder="Search node, type name or tag..." aria-label="Search node, type name or tag">
     <button class="themeToggle" id="themeToggle" title="Toggle theme">Theme</button>
   </div>
 
@@ -1338,6 +1340,26 @@ function validate(){
     if (tierOf(typeById(paired.type)) !== 'WORMHOLE') { issues.push('Wormhole node "' + n.id + '" is paired with "' + n.pairedWith + '", which is not a wormhole-tier node'); return; }
     if (paired.pairedWith !== n.id) { issues.push('Wormhole node "' + n.id + '" is paired with "' + n.pairedWith + '", but that node is paired with "' + (paired.pairedWith || 'nothing') + '" instead'); }
   });
+  return issues.concat(validateTags());
+}
+
+function validateTags(){
+  var issues = [];
+  state.nodes.forEach(function(n){
+    var nodeTags = n.tags || [];
+    var regionCount = nodeTags.filter(isRegionTag).length;
+    if (regionCount === 0) issues.push('Node "' + n.id + '" has no region tag');
+    else if (regionCount > 1) issues.push('Node "' + n.id + '" has ' + regionCount + ' region tags (' + nodeTags.filter(isRegionTag).join(', ') + '), needs exactly one');
+    nodeTags.forEach(function(tag){
+      if (ALL_TAGS.indexOf(tag) === -1) issues.push('Node "' + n.id + '" has unknown tag "' + tag + '"');
+    });
+  });
+  state.types.forEach(function(t){
+    (t.tags || []).forEach(function(tag){
+      if (ALL_TAGS.indexOf(tag) === -1) issues.push('Type "' + t.id + '" has unknown tag "' + tag + '"');
+      else if (isRegionTag(tag)) issues.push('Type "' + t.id + '" carries region tag "' + tag + '", region tags belong on nodes');
+    });
+  });
   return issues;
 }
 
@@ -1511,7 +1533,8 @@ function render(){
     state.nodes.forEach(function(n){
       var t = typeById(n.type);
       var name = t ? t.name : n.type;
-      if (n.id.toLowerCase().indexOf(q) !== -1 || (name||'').toLowerCase().indexOf(q) !== -1) matchIds[n.id] = true;
+      var tagText = (n.tags || []).concat(t && t.tags ? t.tags : []).join(' ').toLowerCase();
+      if (n.id.toLowerCase().indexOf(q) !== -1 || (name||'').toLowerCase().indexOf(q) !== -1 || tagText.indexOf(q) !== -1) matchIds[n.id] = true;
     });
   }
 
@@ -2326,7 +2349,8 @@ function refreshInspector(){
   body.innerHTML =
     '<h2>' + (t ? t.name : n.type) + '</h2>' +
     '<span class="tierPill" style="color:var(' + colorVarFor(tier) + ');border-color:var(' + colorVarFor(tier) + ')">' + tier + '</span>' +
-    (t ? '<div class="field"><label>Tags (shared by type "' + t.id + '")</label>' + renderTagChips('insp', t.tags || []) + '</div>' : '') +
+    (t ? '<div class="field"><label>Type tags (shared by every "' + t.id + '" node)</label>' + renderTagChips('insp', t.tags || [], TYPE_TAG_GROUPS) + '</div>' : '') +
+    '<div class="field"><label>Node tags (this node only)</label>' + renderTagChips('insp-node', n.tags || [], NODE_TAG_GROUPS) + '</div>' +
     '<div class="field"><label>Node id</label><input value="' + n.id + '" data-field="id"></div>' +
     '<div class="field"><label>Type</label><select data-field="type">' + typeOptions + '</select></div>' +
     '<div class="fieldRow">' +
@@ -2449,6 +2473,20 @@ function refreshInspector(){
       saveLocal(); render(); refreshInspector();
     });
   });
+  body.querySelectorAll('[data-insp-node-toggle-tag]').forEach(function(chip){
+    chip.addEventListener('click', function(){
+      var tag = chip.dataset.inspNodeToggleTag;
+      var nodeTags = (n.tags || []).slice();
+      var idx = nodeTags.indexOf(tag);
+      if (idx !== -1) nodeTags.splice(idx, 1);
+      else {
+        if (isRegionTag(tag)) nodeTags = nodeTags.filter(function(other){ return !isRegionTag(other); });
+        nodeTags.push(tag);
+      }
+      if (nodeTags.length) n.tags = nodeTags; else delete n.tags;
+      saveLocal(); render(); refreshInspector();
+    });
+  });
   if (t) {
     var inspDescInput = document.getElementById('inspDescription');
     if (inspDescInput) {
@@ -2463,7 +2501,7 @@ function refreshInspector(){
         var tag = chip.dataset.inspToggleTag;
         var idx = t.tags.indexOf(tag);
         if (idx === -1) t.tags.push(tag); else t.tags.splice(idx, 1);
-        saveLocal(); refreshInspector();
+        saveLocal(); render(); refreshInspector();
       });
     });
     body.querySelectorAll('[id^="inspEffect"], [id^="inspMag"]').forEach(function(el){
@@ -2904,8 +2942,18 @@ function openAddNodeModal(x, y){
     addNodeOfType(typeId, x, y);
   });
 }
+function nearestRegionTag(x, y){
+  var best = REGION_TAGS[0], bestDistance = Infinity;
+  state.nodes.forEach(function(o){
+    var regions = (o.tags || []).filter(isRegionTag);
+    if (regions.length !== 1) return;
+    var distance = (o.x - x) * (o.x - x) + (o.y - y) * (o.y - y);
+    if (distance < bestDistance) { bestDistance = distance; best = regions[0]; }
+  });
+  return best;
+}
 function addNodeOfType(typeId, x, y){
-  var node = { id: uniqueNodeId(typeId), type: typeId, connectedTo: [], x: x, y: y };
+  var node = { id: uniqueNodeId(typeId), type: typeId, connectedTo: [], x: x, y: y, tags: [nearestRegionTag(x, y)] };
   state.nodes.push(node);
   saveLocal();
   setMode('select');
@@ -2975,13 +3023,51 @@ function wireEffectFilters(root){
 }
 
 var ALL_TAGS = ['flux','shield','armour','hull','speed','logistics','missile','fighter','energy','ballistic','phase','beam','range','ammo','dmgtypekinetic','dmgtypehighexplosive','dmgtypefragmentation','dmgtypeenergy',
-  'luddic_path','tritachyon','hegemony','sindrian_dictat','pirate','REDACTED'];
+  'weapons','point_defense','combat_readiness','repair','fleet_support','d_mods',
+  'inner','luddic','tritachyon','hegemony','sindrian_dictat','pirate','REDACTED','persean_league',
+  'req_shields','req_no_shields','req_phase','req_fighter_bays','req_no_fighter_bays','req_ballistic','req_missile','req_energy','req_beam','req_offensive_beam','req_non_beam_energy',
+  'req_destroyer_plus','req_cruiser_plus','req_no_capital','req_flagship','campaign_only','player_only'];
 
-function renderTagChips(idPrefix, activeTags){
-  return '<div class="tagChipRow">' + ALL_TAGS.map(function(tag){
-    var isActive = activeTags.indexOf(tag) !== -1;
-    return '<span class="tagChip' + (isActive ? ' active' : '') + '" data-' + idPrefix + '-toggle-tag="' + tag + '">' + tag + '</span>';
-  }).join('') + '</div>';
+var REGION_TAGS = ['inner','luddic','tritachyon','hegemony','sindrian_dictat','pirate','REDACTED','persean_league'];
+var TAG_GROUPS = [
+  { key: 'theme', label: 'Theme' },
+  { key: 'region', label: 'Region' },
+  { key: 'requirement', label: 'Requirement' }
+];
+var TYPE_TAG_GROUPS = ['theme', 'requirement'];
+var NODE_TAG_GROUPS = ['region', 'requirement'];
+
+function isRegionTag(tag){ return REGION_TAGS.indexOf(tag) !== -1; }
+function tagGroupOf(tag){
+  if (isRegionTag(tag)) return 'region';
+  if (tag.indexOf('req_') === 0 || tag === 'campaign_only' || tag === 'player_only') return 'requirement';
+  return 'theme';
+}
+
+function renderTagChip(idPrefix, tag, isActive, isInvalid){
+  return '<span class="tagChip' + (isActive ? ' active' : '') + (isInvalid ? ' invalid' : '') + '" data-' + idPrefix + '-toggle-tag="' + tag + '">' + tag + '</span>';
+}
+
+function renderTagChips(idPrefix, activeTags, groupKeys){
+  var rows = [];
+  TAG_GROUPS.forEach(function(g){
+    var inScope = !groupKeys || groupKeys.indexOf(g.key) !== -1;
+    var groupTags = ALL_TAGS.filter(function(tag){ return tagGroupOf(tag) === g.key; });
+    if (!inScope) groupTags = groupTags.filter(function(tag){ return activeTags.indexOf(tag) !== -1; });
+    if (!groupTags.length) return;
+    rows.push('<div class="tagGroupLabel">' + g.label + (inScope ? '' : ' (not expected here - click to remove)') + '</div>' +
+      '<div class="tagChipRow">' + groupTags.map(function(tag){
+        return renderTagChip(idPrefix, tag, activeTags.indexOf(tag) !== -1, !inScope);
+      }).join('') + '</div>');
+  });
+  var unknownTags = activeTags.filter(function(tag){ return ALL_TAGS.indexOf(tag) === -1; });
+  if (unknownTags.length) {
+    rows.push('<div class="tagGroupLabel">Unknown (click to remove)</div>' +
+      '<div class="tagChipRow">' + unknownTags.map(function(tag){
+        return renderTagChip(idPrefix, tag, true, true);
+      }).join('') + '</div>');
+  }
+  return rows.join('');
 }
 
 function renderOptionalOptionsSelect(selectedIds, selfId){
@@ -3453,7 +3539,7 @@ function openTypeModal(existingType, onSave, onClose){
       '<div class="field"><label>Display name</label><input id="tName" value="' + (t.name||'') + '"></div>' +
       '<div class="field"><label>Icon path</label><div class="fieldRow"><input id="tIcon" value="' + (t.icon||'') + '" style="flex:1"><button class="smallBtn" type="button" id="tSelectImageBtn">Select Image</button></div></div>' +
       '<div class="field"><label>Tier</label><select id="tTier">' + tierOptions + '</select></div>' +
-      '<div class="field"><label>Tags</label>' + renderTagChips('modal', tagsDraft) + '</div>' +
+      '<div class="field"><label>Type tags (region tags go on nodes)</label>' + renderTagChips('modal', tagsDraft, TYPE_TAG_GROUPS) + '</div>' +
       '<hr class="sep">' +
       '<div class="field"><label>Effects</label>' + effectRows + '</div>' +
       '<div class="btnRow"><button class="smallBtn" type="button" id="addEffectRowBtn">+ Add effect</button></div>' +
@@ -3644,6 +3730,7 @@ function buildTreeExportObject(){
     if (n.ringBeltWidth) out.ringBeltWidth = n.ringBeltWidth;
     if (n.wormholeColor) out.wormholeColor = n.wormholeColor;
     if (n.pairedWith) out.pairedWith = n.pairedWith;
+    if (n.tags && n.tags.length) out.tags = n.tags;
     return out;
   });
   var out = { nodes: nodesOut };
@@ -3726,6 +3813,12 @@ document.querySelectorAll('.exportTab').forEach(function(tab){
 });
 document.getElementById('refreshExportBtn').addEventListener('click', refreshExport);
 function saveToProject(reason){
+  var tagIssues = validateTags();
+  if (tagIssues.length && !confirm(tagIssues.length + ' tag issue' + (tagIssues.length > 1 ? 's' : '') + ' will fail the build:\n' +
+      tagIssues.slice(0, 8).join('\n') + (tagIssues.length > 8 ? '\n...' : '') +
+      '\n\nIf this browser loaded an old copy of the tree, cancel and use "Reload from disk" instead. Save anyway?')) {
+    return Promise.resolve(null);
+  }
   var treeText = JSON.stringify(buildTreeExportObject(), null, '\t');
   var typesOut = state.types.map(serializeType);
   var typesText = toTabbedJson(typesOut, 'skillTypes');
