@@ -61,6 +61,11 @@ public enum WeaponSkillEffect implements SkillEffect {
     },
     BALLISTIC_WEAPON_LARGE_OP_COST_FLAT {
         @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             // "large_ballistic_mod" is the same dynamic stat key vanilla's own Heavy Ballistics
             // Integration hull mod reads to reduce the ordnance point cost of large ballistic weapons

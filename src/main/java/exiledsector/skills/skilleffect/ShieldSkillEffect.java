@@ -208,6 +208,11 @@ public enum ShieldSkillEffect implements SkillEffect {
     },
     SHIELD_UPKEEP_PERCENT {
         @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getShieldUpkeepMult().modifyPercent(modId, magnitude);
         }
@@ -218,6 +223,11 @@ public enum ShieldSkillEffect implements SkillEffect {
         }
     },
     SHIELD_UPKEEP_MULT {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             SkillEffectSupport.applyMult(stats.getShieldUpkeepMult(), modId, magnitude);

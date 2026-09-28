@@ -37,6 +37,11 @@ public enum FighterSkillEffect implements SkillEffect {
     },
     FIGHTER_CREW_LOSS_PERCENT {
         @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getDynamic().getStat("fighter_crew_loss_mult").modifyPercent(modId, magnitude);
         }
@@ -52,6 +57,11 @@ public enum FighterSkillEffect implements SkillEffect {
         }
     },
     FIGHTER_CREW_LOSS_MULT {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             SkillEffectSupport.applyMult(stats.getDynamic().getStat("fighter_crew_loss_mult"), modId, magnitude);
@@ -69,6 +79,11 @@ public enum FighterSkillEffect implements SkillEffect {
     },
     FIGHTER_REFIT_TIME_MULT {
         @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             SkillEffectSupport.applyMult(stats.getFighterRefitTimeMult(), modId, magnitude);
         }
@@ -84,6 +99,11 @@ public enum FighterSkillEffect implements SkillEffect {
         }
     },
     FIGHTER_REFIT_TIME_PERCENT {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getFighterRefitTimeMult().modifyPercent(modId, magnitude);
@@ -119,6 +139,11 @@ public enum FighterSkillEffect implements SkillEffect {
         }
     },
     FIGHTER_REPLACEMENT_DECAY_PERCENT {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getDynamic().getStat("replacement_rate_decrease_mult").modifyPercent(modId, magnitude);
@@ -165,6 +190,11 @@ public enum FighterSkillEffect implements SkillEffect {
     },
     FIGHTER_RELAUNCH_TIME_FLAT {
         @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getDynamic().getMod("fighter_rearm_time_extra_fraction_of_base_refit_time_mod").modifyFlat(modId, magnitude / 100f);
         }
@@ -191,6 +221,11 @@ public enum FighterSkillEffect implements SkillEffect {
         }
     },
     FIGHTER_SHIELD_DAMAGE_TAKEN_PERCENT {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
         @Override
         public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
             applyRoleShieldDamageTaken(fighter, modId, magnitude);

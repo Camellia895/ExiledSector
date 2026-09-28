@@ -123,6 +123,10 @@ public enum WeaponStatFamily {
         this.targets = targets.build();
     }
 
+    public boolean lowerIsBetter() {
+        return this == FLUX_COST || this == RECOIL;
+    }
+
     StatTarget target(WeaponScope scope) {
         return targets.get(scope);
     }

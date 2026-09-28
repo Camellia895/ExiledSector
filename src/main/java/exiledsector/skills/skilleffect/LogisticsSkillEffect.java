@@ -111,6 +111,11 @@ public enum LogisticsSkillEffect implements SkillEffect {
     },
     SENSOR_PROFILE_PERCENT {
         @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getSensorProfile().modifyPercent(modId, magnitude);
         }
@@ -121,6 +126,11 @@ public enum LogisticsSkillEffect implements SkillEffect {
         }
     },
     SENSOR_PROFILE_MULT {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             SkillEffectSupport.applyMult(stats.getSensorProfile(), modId, magnitude);
@@ -199,6 +209,11 @@ public enum LogisticsSkillEffect implements SkillEffect {
     },
     CR_LOSS_PER_SECOND_PERCENT {
         @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getCRLossPerSecondPercent().modifyPercent(modId, magnitude);
         }
@@ -209,6 +224,11 @@ public enum LogisticsSkillEffect implements SkillEffect {
         }
     },
     CR_LOSS_PER_SECOND_MULT {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             SkillEffectSupport.applyMult(stats.getCRLossPerSecondPercent(), modId, magnitude);
@@ -221,6 +241,11 @@ public enum LogisticsSkillEffect implements SkillEffect {
     },
     MIN_CREW_MULT {
         @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             SkillEffectSupport.applyMult(stats.getMinCrewMod(), modId, magnitude);
         }
@@ -231,6 +256,11 @@ public enum LogisticsSkillEffect implements SkillEffect {
         }
     },
     MIN_CREW_PERCENT {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getMinCrewMod().modifyPercent(modId, magnitude);
@@ -243,6 +273,11 @@ public enum LogisticsSkillEffect implements SkillEffect {
     },
     MIN_CREW_FLAT {
         @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getMinCrewMod().modifyFlat(modId, magnitude);
         }
@@ -253,6 +288,11 @@ public enum LogisticsSkillEffect implements SkillEffect {
         }
     },
     MIN_CREW_PER_FIGHTER_BAY {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             float bays = stats.getNumFighterBays().getBaseValue();
@@ -265,6 +305,11 @@ public enum LogisticsSkillEffect implements SkillEffect {
         }
     },
     MIN_CREW_PERCENT_PER_FIGHTER_BAY {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             float bays = stats.getNumFighterBays().getBaseValue();
@@ -279,6 +324,11 @@ public enum LogisticsSkillEffect implements SkillEffect {
     },
     SUPPLIES_PER_MONTH_MULT {
         @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             SkillEffectSupport.applyMult(stats.getSuppliesPerMonth(), modId, magnitude);
         }
@@ -289,6 +339,11 @@ public enum LogisticsSkillEffect implements SkillEffect {
         }
     },
     FUEL_USE_MULT {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             SkillEffectSupport.applyMult(stats.getFuelUseMod(), modId, magnitude);
@@ -333,6 +388,11 @@ public enum LogisticsSkillEffect implements SkillEffect {
     },
     CREW_LOSS_PERCENT {
         @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getCrewLossMult().modifyPercent(modId, magnitude);
         }
@@ -343,6 +403,11 @@ public enum LogisticsSkillEffect implements SkillEffect {
         }
     },
     CREW_LOSS_MULT {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             SkillEffectSupport.applyMult(stats.getCrewLossMult(), modId, magnitude);
@@ -387,6 +452,11 @@ public enum LogisticsSkillEffect implements SkillEffect {
         }
     },
     CORONA_RESISTANCE_MULT {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             SkillEffectSupport.applyMult(stats.getDynamic().getStat(Stats.CORONA_EFFECT_MULT), modId, magnitude);

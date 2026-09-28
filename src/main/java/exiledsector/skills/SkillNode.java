@@ -63,33 +63,43 @@ public class SkillNode extends SkillTreeObject {
     }
 
     public static String describeType(SkillType type, HullSize hullSize) {
-        List<String> lines = new ArrayList<>();
-        addIfPresent(lines, type.getDescriptionOverride());
+        List<String> texts = new ArrayList<>();
+        for (DescriptionLine line : describeTypeLines(type, hullSize)) {
+            texts.add(line.text());
+        }
+        return String.join("\n\n", texts);
+    }
+
+    public static List<DescriptionLine> describeTypeLines(SkillType type, HullSize hullSize) {
+        List<DescriptionLine> lines = new ArrayList<>();
+        addLine(lines, type.getDescriptionOverride(), false);
         List<SkillTypeEffect> described = new ArrayList<>(type.getEffects());
         if (hullSize != null) {
             for (HullSizeSkillEffect effect : type.getHullSizeEffects()) {
                 described.add(new SkillTypeEffect(effect.effect(), effect.valueFor(hullSize)));
             }
         }
-        List<String> effectLines = new ArrayList<>();
-        List<String> warnings = new ArrayList<>();
         for (SkillTypeEffect effect : WeaponEffectTooltipAggregator.collapse(described)) {
-            addIfPresent(effectLines, effect.effect().describe(effect.magnitude()));
-        }
-        for (SkillTypeEffect effect : described) {
-            addIfPresent(warnings, effect.effect().deallocationWarning(effect.magnitude()));
+            addLine(lines, effect.effect().describe(effect.magnitude()), effect.effect().lowerIsBetter());
         }
         for (String hullModId : type.getInstalledHullModIds()) {
             HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
             String name = spec != null ? spec.getDisplayName() : hullModId;
-            effectLines.add("Installs the " + name + " hull mod at no OP cost.");
+            lines.add(new DescriptionLine("Installs the " + name + " hull mod at no OP cost.", false));
         }
-        lines.addAll(effectLines);
-        addIfPresent(lines, describeTemporaryDuration(type));
-        lines.addAll(warnings);
-        addIfPresent(lines, describeItemCost(type));
-        addIfPresent(lines, describeExclusivity(type));
-        return String.join("\n\n", lines);
+        addLine(lines, describeTemporaryDuration(type), false);
+        for (SkillTypeEffect effect : described) {
+            addLine(lines, effect.effect().deallocationWarning(effect.magnitude()), false);
+        }
+        addLine(lines, describeItemCost(type), false);
+        addLine(lines, describeExclusivity(type), false);
+        return lines;
+    }
+
+    private static void addLine(List<DescriptionLine> lines, String text, boolean lowerIsBetter) {
+        if (text != null) {
+            lines.add(new DescriptionLine(text, lowerIsBetter));
+        }
     }
 
     private static String describeTemporaryDuration(SkillType type) {

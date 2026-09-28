@@ -81,7 +81,7 @@ I have done what I can for some mods, but there is a long way to go for complete
 
 **[Second-in-Command](https://fractalsoftworks.com/forum/index.php?topic=30407.0)** is (theoretically) supported.
 
-Some weapons from other mods misbehave when their beams are split or their shots are chained. These are listed in:
+Some weapons from other mods misbehave (sometimes hilariously) when their beams are split or their shots are chained. These are listed in:
 
 - `data/config/exiledSector/split_beam_effect_blocklist.csv`
 - `data/config/exiledSector/energy_chain_blocklist.csv`

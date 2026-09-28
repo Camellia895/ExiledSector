@@ -89,6 +89,11 @@ public enum MiscSkillEffect implements SkillEffect {
     },
     ELECTRONIC_WARFARE_PENALTY_PERCENT {
         @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getDynamic().getMod(Stats.ELECTRONIC_WARFARE_PENALTY_MOD).modifyPercent(modId, magnitude);
         }
@@ -99,6 +104,11 @@ public enum MiscSkillEffect implements SkillEffect {
         }
     },
     ELECTRONIC_WARFARE_PENALTY_MULT {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             SkillEffectSupport.applyMult(stats.getDynamic().getMod(Stats.ELECTRONIC_WARFARE_PENALTY_MOD), modId, magnitude);

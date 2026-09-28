@@ -82,6 +82,11 @@ public final class ScopedWeaponEffect implements SkillEffect {
     }
 
     @Override
+    public boolean lowerIsBetter() {
+        return family.lowerIsBetter();
+    }
+
+    @Override
     public String describe(float magnitude) {
         return family.describe(scope, mode, magnitude);
     }

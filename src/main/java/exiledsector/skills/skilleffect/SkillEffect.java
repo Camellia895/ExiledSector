@@ -20,6 +20,10 @@ public interface SkillEffect {
         return true;
     }
 
+    default boolean lowerIsBetter() {
+        return false;
+    }
+
     default void advanceInCombat(ShipAPI ship, String modId, float magnitude) {
     }
 

@@ -2,6 +2,7 @@ package exiledsector.ui.node;
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;
@@ -56,12 +57,13 @@ final class SkillTreeNodeTooltipRenderer {
                 && effectiveType.getDescriptionOverride() == null;
 
         String titleText = titleText(node, effectiveType, data);
-        String bodyText = bodyText(node, effectiveType, showOptionalHint, data);
+        List<DescriptionLine> bodyLines = bodyLines(node, effectiveType, showOptionalHint, data);
+        String bodyText = joined(bodyLines);
 
         SkillTreePanelStyle.TooltipText title = tooltipTitles.get(node.getId(), titleText,
                 id -> buildTooltipText(font, titleText, TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR));
         SkillTreePanelStyle.TooltipText body = tooltipBodies.get(node.getId(), bodyText,
-                id -> buildBodyText(font, bodyText));
+                id -> buildBodyText(font, bodyLines));
 
         boolean showTables = !showOptionalHint && !SkillTypeUnlockStatus.isHidden(node.getType(), data);
         List<SkillTreeTooltipTable> tables = showTables ? tablesFor(font, effectiveType) : List.of();
@@ -73,12 +75,13 @@ final class SkillTreeNodeTooltipRenderer {
         if (font == null) return;
 
         String titleText = type.getDisplayName();
-        String bodyText = SkillNode.describeType(type, member.getHullSpec().getHullSize());
+        List<DescriptionLine> bodyLines = SkillNode.describeTypeLines(type, member.getHullSpec().getHullSize());
+        String bodyText = joined(bodyLines);
 
         SkillTreePanelStyle.TooltipText title = typeTooltipTitles.get(type.getId(), titleText,
                 id -> buildTooltipText(font, titleText, TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR));
         SkillTreePanelStyle.TooltipText body = typeTooltipBodies.get(type.getId(), bodyText,
-                id -> buildBodyText(font, bodyText));
+                id -> buildBodyText(font, bodyLines));
 
         style.drawTitleBodyTooltip(title, body, tablesFor(font, type), mouseX, mouseY, alphaMult);
     }
@@ -97,18 +100,32 @@ final class SkillTreeNodeTooltipRenderer {
         return SkillTypeUnlockStatus.isHidden(node.getType(), data) ? LOCKED_NODE_TITLE : effectiveType.getDisplayName();
     }
 
-    private String bodyText(SkillNode node, SkillType effectiveType, boolean showOptionalHint, ShipSkillData data) {
-        if (SkillTypeUnlockStatus.isHidden(node.getType(), data)) return LOCKED_NODE_BODY;
-
-        String text = showOptionalHint ? OPTIONAL_NODE_HINT : SkillNode.describeType(effectiveType, member.getHullSpec().getHullSize());
-        if (data.isFreeNode(node.getId())) {
-            text = text.isEmpty() ? FREE_NODE_NOTE : text + "\n\n" + FREE_NODE_NOTE;
+    private List<DescriptionLine> bodyLines(SkillNode node, SkillType effectiveType, boolean showOptionalHint, ShipSkillData data) {
+        if (SkillTypeUnlockStatus.isHidden(node.getType(), data)) {
+            return List.of(new DescriptionLine(LOCKED_NODE_BODY, false));
         }
-        return text;
+        List<DescriptionLine> lines = new ArrayList<>();
+        if (showOptionalHint) {
+            lines.add(new DescriptionLine(OPTIONAL_NODE_HINT, false));
+        } else {
+            lines.addAll(SkillNode.describeTypeLines(effectiveType, member.getHullSpec().getHullSize()));
+        }
+        if (data.isFreeNode(node.getId())) {
+            lines.add(new DescriptionLine(FREE_NODE_NOTE, false));
+        }
+        return lines;
     }
 
-    private SkillTreePanelStyle.TooltipText buildBodyText(LazyFont font, String rawText) {
-        return style.buildHighlightedWrappedText(font, rawText, TOOLTIP_BODY_FONT_SIZE, TOOLTIP_MAX_TEXT_WIDTH,
+    private static String joined(List<DescriptionLine> lines) {
+        List<String> texts = new ArrayList<>();
+        for (DescriptionLine line : lines) {
+            texts.add(line.text());
+        }
+        return String.join("\n\n", texts);
+    }
+
+    private SkillTreePanelStyle.TooltipText buildBodyText(LazyFont font, List<DescriptionLine> lines) {
+        return style.buildHighlightedWrappedText(font, lines, TOOLTIP_BODY_FONT_SIZE, TOOLTIP_MAX_TEXT_WIDTH,
                 TOOLTIP_MAX_TEXT_HEIGHT, TOOLTIP_BODY_COLOR);
     }
 

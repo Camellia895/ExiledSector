@@ -35,15 +35,28 @@ public final class TooltipHighlighter {
     }
 
     public static List<Span> find(String text) {
+        return find(text, false);
+    }
+
+    public static List<Span> find(String text, boolean lowerIsBetter) {
         List<Span> spans = new ArrayList<>();
         for (Rule rule : RULES) {
             Matcher matcher = rule.pattern().matcher(text);
             while (matcher.find()) {
-                addIfFree(spans, new Span(matcher.start(1), matcher.end(1), rule.highlight()));
+                Highlight highlight = lowerIsBetter ? inverted(rule.highlight()) : rule.highlight();
+                addIfFree(spans, new Span(matcher.start(1), matcher.end(1), highlight));
             }
         }
         spans.sort(Comparator.comparingInt(Span::start));
         return spans;
+    }
+
+    private static Highlight inverted(Highlight highlight) {
+        return switch (highlight) {
+            case POSITIVE -> Highlight.NEGATIVE;
+            case NEGATIVE -> Highlight.POSITIVE;
+            default -> highlight;
+        };
     }
 
     private static void addIfFree(List<Span> spans, Span candidate) {

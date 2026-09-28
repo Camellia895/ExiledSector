@@ -89,6 +89,11 @@ public enum DefenseSkillEffect implements SkillEffect {
     },
     ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD {
         @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getArmorDamageTakenMult().modifyMult(modId, SkillEffectSupport.compoundMultPerDMod(stats, magnitude));
         }
@@ -101,6 +106,11 @@ public enum DefenseSkillEffect implements SkillEffect {
     },
     DMOD_EFFECT_MULT {
         @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             SkillEffectSupport.applyDModEffectMult(stats, modId, magnitude);
         }
@@ -112,6 +122,11 @@ public enum DefenseSkillEffect implements SkillEffect {
     },
     SHIELD_ABSORPTION_PERCENT {
         @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getShieldAbsorptionMult().modifyPercent(modId, magnitude);
         }
@@ -122,6 +137,11 @@ public enum DefenseSkillEffect implements SkillEffect {
         }
     },
     SHIELD_DAMAGE_TAKEN_MULT {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             SkillEffectSupport.applyMult(stats.getShieldDamageTakenMult(), modId, magnitude);
@@ -145,6 +165,11 @@ public enum DefenseSkillEffect implements SkillEffect {
     },
     REPAIR_TIME_PERCENT {
         @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getCombatWeaponRepairTimeMult().modifyPercent(modId, magnitude);
             stats.getCombatEngineRepairTimeMult().modifyPercent(modId, magnitude);
@@ -156,6 +181,11 @@ public enum DefenseSkillEffect implements SkillEffect {
         }
     },
     REPAIR_TIME_MULT {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             float mult = SkillEffectSupport.multFrom(magnitude);
@@ -170,6 +200,11 @@ public enum DefenseSkillEffect implements SkillEffect {
     },
     EMP_DAMAGE_TAKEN_PERCENT {
         @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getEmpDamageTakenMult().modifyPercent(modId, magnitude);
         }
@@ -181,6 +216,11 @@ public enum DefenseSkillEffect implements SkillEffect {
     },
     EMP_DAMAGE_TAKEN_MULT {
         @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             SkillEffectSupport.applyMult(stats.getEmpDamageTakenMult(), modId, magnitude);
         }
@@ -191,6 +231,11 @@ public enum DefenseSkillEffect implements SkillEffect {
         }
     },
     ENERGY_DAMAGE_TAKEN_PERCENT {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getEnergyDamageTakenMult().modifyPercent(modId, magnitude);

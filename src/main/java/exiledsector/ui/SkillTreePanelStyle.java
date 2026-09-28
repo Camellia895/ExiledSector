@@ -1,6 +1,7 @@
 package exiledsector.ui;
 
 import com.fs.starfarer.api.Global;
+import exiledsector.skills.DescriptionLine;
 import exiledsector.ui.util.FallbackSupport;
 import exiledsector.ui.util.GLDraw;
 import org.apache.log4j.Logger;
@@ -12,6 +13,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +37,9 @@ public final class SkillTreePanelStyle {
     private static final Color FALLBACK_HIGH_TECH_COLOR = new Color(90, 190, 255);
     private static final String LOW_TECH_DESIGN_TYPE = "Low Tech";
     private static final String HIGH_TECH_DESIGN_TYPE = "High Tech";
+    // TODO: drop this if LazyLib stops applying DrawableString colour changes one character early
+    private static final int LAZYFONT_COLOR_INDEX_OFFSET = 1;
+    private static final String PARAGRAPH_SEPARATOR = "\n\n";
 
     private static final Color DEFAULT_ACCENT_COLOR = GLOW_COLOR;
     private static final int COLOR_QUANTIZE_STEP = 24;
@@ -203,21 +208,46 @@ public final class SkillTreePanelStyle {
                 Logger.getLogger(SkillTreePanelStyle.class), "Failed to read the " + designType + " design type colour");
     }
 
-    public TooltipText buildHighlightedWrappedText(LazyFont font, String rawText, float fontSize, float maxWidth,
-                                                   float maxHeight, Color color) {
-        String wrapped = font.wrapString(rawText, fontSize, maxWidth, maxHeight);
-        TooltipText measured = buildMeasuredText(font, wrapped, fontSize, color,
+    public TooltipText buildHighlightedWrappedText(LazyFont font, List<DescriptionLine> paragraphs, float fontSize,
+                                                   float maxWidth, float maxHeight, Color color) {
+        StringBuilder wrapped = new StringBuilder();
+        List<TooltipHighlighter.Span> spans = new ArrayList<>();
+        for (DescriptionLine paragraph : paragraphs) {
+            if (!wrapped.isEmpty()) {
+                wrapped.append(PARAGRAPH_SEPARATOR);
+            }
+            String wrappedParagraph = font.wrapString(paragraph.text(), fontSize, maxWidth, maxHeight);
+            int offset = wrapped.length();
+            for (TooltipHighlighter.Span span : TooltipHighlighter.find(wrappedParagraph, paragraph.lowerIsBetter())) {
+                spans.add(new TooltipHighlighter.Span(span.start() + offset, span.end() + offset, span.highlight()));
+            }
+            wrapped.append(wrappedParagraph);
+        }
+        TooltipText measured = buildMeasuredText(font, wrapped.toString(), fontSize, color,
                 LazyFont.TextAlignment.LEFT, LazyFont.TextAnchor.TOP_LEFT);
-        LazyFont.DrawableString drawable = measured.drawable;
+        appendHighlighted(measured.drawable, wrapped + " ", spans);
+        return measured;
+    }
+
+    private void appendHighlighted(LazyFont.DrawableString drawable, String text, List<TooltipHighlighter.Span> spans) {
         drawable.setText("");
         int cursor = 0;
-        for (TooltipHighlighter.Span span : TooltipHighlighter.find(wrapped)) {
-            drawable.append(wrapped.substring(cursor, span.start()), color);
-            drawable.append(wrapped.substring(span.start(), span.end()), highlightColor(span.highlight()));
-            cursor = span.end();
+        for (TooltipHighlighter.Span span : spans) {
+            int start = colourChangeIndex(text, span.start());
+            int end = colourChangeIndex(text, span.end());
+            drawable.append(text.substring(cursor, start));
+            drawable.append(text.substring(start, end), highlightColor(span.highlight()));
+            cursor = end;
         }
-        drawable.append(wrapped.substring(cursor), color);
-        return measured;
+        drawable.append(text.substring(cursor));
+    }
+
+    private static int colourChangeIndex(String text, int boundary) {
+        int drawnBoundary = boundary;
+        while (drawnBoundary < text.length() && text.charAt(drawnBoundary) == '\n') {
+            drawnBoundary++;
+        }
+        return Math.min(text.length(), drawnBoundary + LAZYFONT_COLOR_INDEX_OFFSET);
     }
 
     public static TooltipText buildWrappedText(LazyFont font, String rawText, float fontSize, float maxWidth, float maxHeight, Color color) {
