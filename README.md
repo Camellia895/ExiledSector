@@ -69,7 +69,7 @@ Exiled Sector is available in English and Simplified Chinese (简体中文). By 
 
 The skill tree screen always shows the chosen language, using a bundled Noto Sans SC font. Text the game draws itself (settings, dialogs, the codex) stays in English unless the game can display Chinese characters.
 
-The Chinese translation is a first draft awaiting review by a native speaker; corrections are welcome. To add another language, see [docs/i18n/README.md](docs/i18n/README.md).
+The Chinese translation is a first draft awaiting review by a native speaker. To add another language, see [docs/i18n/README.md](docs/i18n/README.md).
 
 ## FAQ
 
