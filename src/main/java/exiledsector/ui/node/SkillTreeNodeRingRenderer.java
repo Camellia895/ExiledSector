@@ -112,6 +112,7 @@ final class SkillTreeNodeRingRenderer {
     private final Map<String, List<RingInstance>> pinkRingStacks = new HashMap<>();
     private final Map<String, Boolean> wormholeAllocated = new HashMap<>();
     private final Map<String, Float> wormholeOpenness = new HashMap<>();
+    private final Map<String, Color> parsedColors = new HashMap<>();
     private float breathingPhase = 0f;
     private float elapsedSeconds = 0f;
 
@@ -357,13 +358,13 @@ final class SkillTreeNodeRingRenderer {
         sprite.renderAtCenter(cx, cy);
     }
 
-    private static Color resolveWormholeColor(SkillNode node) {
-        return parseHexColor(node.getWormholeColor(), Color.WHITE, node.getId(), "wormholeColor");
+    private Color resolveWormholeColor(SkillNode node) {
+        return parsedColor(node, "wormholeColor", node.getWormholeColor(), Color.WHITE);
     }
 
-    private static Color parseHexColor(String hex, Color fallback, String nodeId, String fieldName) {
-        return ColorUtil.parseHexColor(hex, fallback, Logger.getLogger(SkillTreeNodeRingRenderer.class),
-                fieldName + " on node \"" + nodeId + "\"");
+    private Color parsedColor(SkillNode node, String fieldName, String hex, Color fallback) {
+        return parsedColors.computeIfAbsent(fieldName + ":" + node.getId(), key -> ColorUtil.parseHexColor(hex, fallback,
+                Logger.getLogger(SkillTreeNodeRingRenderer.class), fieldName + " on node \"" + node.getId() + "\""));
     }
 
     private static String resolveRingBeltPath(SkillNode node) {
@@ -371,8 +372,8 @@ final class SkillTreeNodeRingRenderer {
         return path != null && !path.isEmpty() ? path : DEFAULT_KEYSTONE_RING_BELT_PATH;
     }
 
-    private static Color resolveRingBeltColor(SkillNode node) {
-        return parseHexColor(node.getRingBeltColor(), DEFAULT_AURORA_COLOR, node.getId(), "ringBeltColor");
+    private Color resolveRingBeltColor(SkillNode node) {
+        return parsedColor(node, "ringBeltColor", node.getRingBeltColor(), DEFAULT_AURORA_COLOR);
     }
 
     private static float resolveRingBeltWidth(SkillNode node) {

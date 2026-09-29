@@ -31,7 +31,7 @@ public record NpcFreedOp(int opCostPerNode, Map<String, Integer> hullModOpCosts,
                 costs.put(hullModId, spec.getCostFor(hullSize));
             }
         }
-        return new NpcFreedOp(SkillNodeOpCost.perNode(member.getHullSpec()), costs, ShipLevelConfig.maxAllocatedNodes());
+        return new NpcFreedOp(SkillNodeOpCost.perNode(member.getHullSpec()), costs, ShipLevelConfig.maxAllocatedNodesBesidesRoot());
     }
 
     int extraNodes(Collection<String> strippedHullModIds, int rolledNodes) {

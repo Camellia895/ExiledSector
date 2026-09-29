@@ -1074,6 +1074,10 @@
 					"magnitude": 700
 				}
 			],
+			"requiredHullSizes": [
+				"DESTROYER",
+				"CRUISER"
+			],
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1083,8 +1087,7 @@
 			],
 			"tags": [
 				"fleet_support",
-				"speed",
-				"req_no_capital"
+				"speed"
 			]
 		},
 		{

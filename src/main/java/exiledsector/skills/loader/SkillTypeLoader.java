@@ -1,6 +1,7 @@
 package exiledsector.skills.loader;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.HullSizeSkillEffect;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillTier;
@@ -17,13 +18,16 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public final class SkillTypeLoader {
 
     private static final String DATA_PATH = "data/skilltrees/skill_types.json";
+    private static final Set<HullSize> SHIP_HULL_SIZES = EnumSet.of(HullSize.FRIGATE, HullSize.DESTROYER, HullSize.CRUISER, HullSize.CAPITAL_SHIP);
 
     private SkillTypeLoader() {
     }
@@ -65,6 +69,7 @@ public final class SkillTypeLoader {
         String id = json.getString("id");
         Float temporaryAfterDeploymentSeconds = validateTemporaryGating(id,
                 parseTemporaryAfterDeploymentSeconds(json), effects, hullSizeEffects, installedHullModIds);
+        Set<HullSize> requiredHullSizes = parseRequiredHullSizes(id, json.optJSONArray("requiredHullSizes"));
 
         return new SkillType.Builder(id, json.getString("name"), json.getString("icon"), tier)
                 .effects(effects)
@@ -72,6 +77,7 @@ public final class SkillTypeLoader {
                 .vanillaHullModId(json.optString("vanillaHullMod", null))
                 .itemCost(itemCost)
                 .temporaryAfterDeploymentSeconds(temporaryAfterDeploymentSeconds)
+                .requiredHullSizes(requiredHullSizes)
                 .descriptionOverride(json.optString("description", null))
                 .todo(json.optString("todo", null))
                 .optionalOptionIds(optionalOptionIds)
@@ -88,6 +94,20 @@ public final class SkillTypeLoader {
             return null;
         }
         return new SkillItemCost(itemCostJson.getString("itemId"), (float) itemCostJson.getDouble("quantity"));
+    }
+
+    private static Set<HullSize> parseRequiredHullSizes(String id, JSONArray array) throws JSONException {
+        Set<HullSize> hullSizes = EnumSet.noneOf(HullSize.class);
+        for (String name : parseStringArray(array)) {
+            HullSize hullSize = SHIP_HULL_SIZES.stream().filter(size -> size.name().equals(name)).findFirst().orElse(null);
+            if (hullSize == null) {
+                Logger.getLogger(SkillTypeLoader.class).error("Skill type \"" + id + "\" lists unknown hull size \"" + name
+                        + "\" in requiredHullSizes - ignoring it.");
+            } else {
+                hullSizes.add(hullSize);
+            }
+        }
+        return hullSizes;
     }
 
     private static Float parseTemporaryAfterDeploymentSeconds(JSONObject json) throws JSONException {

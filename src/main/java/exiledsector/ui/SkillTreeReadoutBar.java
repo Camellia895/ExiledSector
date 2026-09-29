@@ -40,6 +40,7 @@ final class SkillTreeReadoutBar {
     private static final float INNER_GLOW_WASH_WHITE_BLEND_HOVER_BOOST = 0.35f;
     private static final float INNER_GLOW_PEAK_ALPHA_MULT = 0.75f;
     private static final float INNER_GLOW_PEAK_HOVER_BOOST = 0.25f;
+    private static final float EDGE_BEVEL_HOVER_WHITE_BLEND = 0.5f;
 
     private static final float HOVER_FADE_IN = 0.05f;
     private static final float HOVER_FADE_OUT = 0.25f;
@@ -186,7 +187,7 @@ final class SkillTreeReadoutBar {
         GL11.glEnd();
 
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-        Misc.setColor(color, Math.min(1f, 1f + glowBoost) * alphaMult);
+        Misc.setColor(Misc.interpolateColor(color, Color.WHITE, EDGE_BEVEL_HOVER_WHITE_BLEND * glowBoost), alphaMult);
         GL11.glBegin(GL11.GL_LINES);
         GL11.glVertex2f(x + 1f, bottom);
         GL11.glVertex2f(x + 1f, top);

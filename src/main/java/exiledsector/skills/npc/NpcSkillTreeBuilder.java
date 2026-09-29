@@ -1,6 +1,7 @@
 package exiledsector.skills.npc;
 
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.AllocatedSkillEffects;
 import exiledsector.skills.ShipSkillData;
@@ -223,7 +224,8 @@ public final class NpcSkillTreeBuilder {
         }
         for (String optionId : node.getType().getOptionalOptionIds()) {
             SkillType option = SkillTree.getType(optionId);
-            if (option != null && NodeRequirements.isSatisfiedBy(node.effectiveTags(option), context.profile())) {
+            if (option != null && option.allowsHullSize(context.profile().hullSize())
+                    && NodeRequirements.isSatisfiedBy(node.effectiveTags(option), context.profile())) {
                 return option;
             }
         }
@@ -312,6 +314,10 @@ public final class NpcSkillTreeBuilder {
     }
 
     private static String fitSkipReason(BuildContext context, SkillNode node, SkillType option, Set<String> installed) {
+        HullSize hullSize = context.profile().hullSize();
+        if (!node.getType().allowsHullSize(hullSize) || option != null && !option.allowsHullSize(hullSize)) {
+            return NpcBuildStep.WRONG_HULL_SIZE;
+        }
         String unmet = NodeRequirements.firstUnmet(node.effectiveTags(option), context.profile());
         if (unmet != null) {
             return NpcBuildStep.UNMET_REQUIREMENT + unmet;

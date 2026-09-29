@@ -34,6 +34,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -163,6 +164,16 @@ class NodeAllocatorTest {
         data().allocate(lister, 0);
 
         assertEquals("Already have Lister allocated.", allocatorStartingAt(root).blockAllocationReason(listed));
+    }
+
+    @Test
+    void aNodeRestrictedToOtherHullSizesIsBlocked() {
+        SkillType frigateOnly = type("frigate_only", "Frigate Only", SkillTier.SMALL).requiredHullSizes(List.of(HullSize.FRIGATE)).build();
+        SkillType cruiserOrCapital = type("large_only", "Large Only", SkillTier.SMALL)
+                .requiredHullSizes(List.of(HullSize.CRUISER, HullSize.CAPITAL_SHIP)).build();
+
+        assertNotNull(allocatorStartingAt(root).blockAllocationReason(frigateOnly));
+        assertNull(allocatorStartingAt(root).blockAllocationReason(cruiserOrCapital));
     }
 
     @Test

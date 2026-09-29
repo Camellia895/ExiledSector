@@ -71,6 +71,7 @@ public class SkillNode extends SkillTreeObject {
         for (SkillTypeEffect effect : described) {
             addLine(lines, effect.effect().deallocationWarning(effect.magnitude()), false);
         }
+        addLine(lines, describeHullSizes(type), false);
         addLine(lines, describeItemCost(type), false);
         addLine(lines, describeExclusivity(type), false);
         return lines;
@@ -88,6 +89,18 @@ public class SkillNode extends SkillTreeObject {
             return null;
         }
         return Translation.msg("node.temporary").arg("seconds", seconds).styled();
+    }
+
+    private static StyledText describeHullSizes(SkillType type) {
+        Set<HullSize> hullSizes = type.getRequiredHullSizes();
+        if (hullSizes.isEmpty()) {
+            return null;
+        }
+        List<StyledText> names = new ArrayList<>();
+        for (HullSize hullSize : hullSizes) {
+            names.add(StyledText.of(Translation.text("hullSize." + hullSize.name())));
+        }
+        return Translation.msg("node.hullSizes").count(hullSizes.size()).arg("hullSizes", Translation.list(names)).styled();
     }
 
     private static StyledText describeItemCost(SkillType type) {

@@ -2,6 +2,7 @@ package exiledsector.skills;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
@@ -40,6 +41,17 @@ class SkillNodeTest {
     void tearDown() {
         globalMock.close();
         SkillTree.getAllTypes().clear();
+    }
+
+    @Test
+    void descriptionListsTheHullSizesANodeIsRestrictedTo() {
+        SkillType escort = new SkillType.Builder("escort", "Escort", "a.png", SkillTier.SMALL)
+                .requiredHullSizes(List.of(HullSize.CRUISER, HullSize.DESTROYER)).build();
+        SkillType frigateOnly = new SkillType.Builder("frigate_only", "Frigate Only", "a.png", SkillTier.SMALL)
+                .requiredHullSizes(List.of(HullSize.FRIGATE)).build();
+
+        assertEquals("Restricted to hull sizes: Destroyer, Cruiser.", description(escort));
+        assertEquals("Restricted to hull size: Frigate.", description(frigateOnly));
     }
 
     @Test

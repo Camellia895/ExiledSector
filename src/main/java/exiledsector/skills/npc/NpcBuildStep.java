@@ -12,6 +12,7 @@ public record NpcBuildStep(String nodeId, String outcome) {
     public static final String INVALID_OPTION = "invalid option: ";
     public static final String UNEXPECTED_OPTION = "unexpected option: ";
     public static final String UNMET_REQUIREMENT = "unmet requirement: ";
+    public static final String WRONG_HULL_SIZE = "not allowed on this hull size";
     public static final String INSTALLED_HULLMOD_CONFLICT = "conflicts with installed hullmod: ";
     public static final String EXCLUSIVE_TYPE_CONFLICT = "exclusive with allocated type: ";
     public static final String BLOCKED_BY_SHIP_STATE = "blocked by ship state: ";

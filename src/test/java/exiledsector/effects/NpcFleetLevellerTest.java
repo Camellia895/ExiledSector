@@ -19,6 +19,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.loading.VariantSource;
+import exiledsector.ExiledSectorModPlugin;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -30,6 +31,7 @@ import exiledsector.skills.npc.NpcLayouts;
 import exiledsector.skills.npc.NpcTreeConfig;
 import exiledsector.skills.npc.NpcTreeRecords;
 import exiledsector.skills.npc.NpcTreeTag;
+import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.SkillNodeOpCost;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
@@ -180,6 +182,17 @@ class NpcFleetLevellerTest {
         assertTrue(hullMods.contains(SkillTreeHullMod.ID));
         assertFalse(hullMods.contains("heavyarmor"));
         assertTrue(hullMods.contains("hardenedshieldemitter"));
+    }
+
+    @Test
+    void anNpcTreeHoldsNoMoreNodesThanAPlayersCountingTheRoot() {
+        lunaSettingsMock.when(() -> LunaSettings.getInt(ExiledSectorModPlugin.MOD_ID, ShipLevelConfig.MAX_ALLOCATED_NODES_FIELD_ID))
+                .thenReturn(2);
+        FleetMemberAPI officered = member("m1", statefulVariant(new LinkedHashSet<>(), new ArrayList<>()), true);
+
+        NpcFleetLeveller.ensure(fleetOf(officered));
+
+        assertTrue(NpcTreeTag.find(officered.getVariant()).endsWith("|root_1,a_1"));
     }
 
     @Test

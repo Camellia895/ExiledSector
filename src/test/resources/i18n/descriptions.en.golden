@@ -2248,22 +2248,27 @@ type|escort_package|null|0	0	While within range of a larger friendly ship, incre
 type|escort_package|null|1	0	While within range of a larger friendly ship, increases top speed by up to 10%, fading with distance. Doubled for a destroyer escorting a capital ship.
 type|escort_package|null|2	0	While within range of a larger friendly ship, increases ballistic and energy weapon range by up to 20%, fading with distance. Doubled for a destroyer escorting a capital ship.
 type|escort_package|null|3	0	The escort bonuses above apply at full strength within 700 su of the larger friendly ship, fading out over an additional 500 su beyond that.
+type|escort_package|null|4	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser.
 type|escort_package|FRIGATE|0	0	While within range of a larger friendly ship, increases maneuverability (acceleration, deceleration, and turn rate) by up to 25%, fading with distance. Doubled for a destroyer escorting a capital ship.
 type|escort_package|FRIGATE|1	0	While within range of a larger friendly ship, increases top speed by up to 10%, fading with distance. Doubled for a destroyer escorting a capital ship.
 type|escort_package|FRIGATE|2	0	While within range of a larger friendly ship, increases ballistic and energy weapon range by up to 20%, fading with distance. Doubled for a destroyer escorting a capital ship.
 type|escort_package|FRIGATE|3	0	The escort bonuses above apply at full strength within 700 su of the larger friendly ship, fading out over an additional 500 su beyond that.
+type|escort_package|FRIGATE|4	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser.
 type|escort_package|DESTROYER|0	0	While within range of a larger friendly ship, increases maneuverability (acceleration, deceleration, and turn rate) by up to 25%, fading with distance. Doubled for a destroyer escorting a capital ship.
 type|escort_package|DESTROYER|1	0	While within range of a larger friendly ship, increases top speed by up to 10%, fading with distance. Doubled for a destroyer escorting a capital ship.
 type|escort_package|DESTROYER|2	0	While within range of a larger friendly ship, increases ballistic and energy weapon range by up to 20%, fading with distance. Doubled for a destroyer escorting a capital ship.
 type|escort_package|DESTROYER|3	0	The escort bonuses above apply at full strength within 700 su of the larger friendly ship, fading out over an additional 500 su beyond that.
+type|escort_package|DESTROYER|4	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser.
 type|escort_package|CRUISER|0	0	While within range of a larger friendly ship, increases maneuverability (acceleration, deceleration, and turn rate) by up to 25%, fading with distance. Doubled for a destroyer escorting a capital ship.
 type|escort_package|CRUISER|1	0	While within range of a larger friendly ship, increases top speed by up to 10%, fading with distance. Doubled for a destroyer escorting a capital ship.
 type|escort_package|CRUISER|2	0	While within range of a larger friendly ship, increases ballistic and energy weapon range by up to 20%, fading with distance. Doubled for a destroyer escorting a capital ship.
 type|escort_package|CRUISER|3	0	The escort bonuses above apply at full strength within 700 su of the larger friendly ship, fading out over an additional 500 su beyond that.
+type|escort_package|CRUISER|4	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser.
 type|escort_package|CAPITAL_SHIP|0	0	While within range of a larger friendly ship, increases maneuverability (acceleration, deceleration, and turn rate) by up to 25%, fading with distance. Doubled for a destroyer escorting a capital ship.
 type|escort_package|CAPITAL_SHIP|1	0	While within range of a larger friendly ship, increases top speed by up to 10%, fading with distance. Doubled for a destroyer escorting a capital ship.
 type|escort_package|CAPITAL_SHIP|2	0	While within range of a larger friendly ship, increases ballistic and energy weapon range by up to 20%, fading with distance. Doubled for a destroyer escorting a capital ship.
 type|escort_package|CAPITAL_SHIP|3	0	The escort bonuses above apply at full strength within 700 su of the larger friendly ship, fading out over an additional 500 su beyond that.
+type|escort_package|CAPITAL_SHIP|4	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser.
 type|expanded_cargo_holds|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Cargo Holds.
 type|expanded_cargo_holds|FRIGATE|0	0	Increases cargo capacity by <good>25</good>.
 type|expanded_cargo_holds|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Cargo Holds.

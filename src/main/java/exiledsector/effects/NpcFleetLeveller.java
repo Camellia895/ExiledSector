@@ -65,7 +65,7 @@ public final class NpcFleetLeveller {
             return NpcTreeRecords.NOT_LEVELLED;
         }
         NpcLayout layout = eligible.get(random.nextInt(eligible.size()));
-        int nodeCount = Math.min(NpcLevelTable.roll(playerLevel, random), ShipLevelConfig.maxAllocatedNodes());
+        int nodeCount = Math.min(NpcLevelTable.roll(playerLevel, random), ShipLevelConfig.maxAllocatedNodesBesidesRoot());
         NpcHullMods hullMods = NpcHullMods.of(member.getVariant());
         NpcTreeBuild build = NpcSkillTreeBuilder.build(layout, nodeCount, profile, hullMods, NpcFreedOp.of(member, hullMods));
         return NpcTreeTag.encode(layout.id(), build.data());

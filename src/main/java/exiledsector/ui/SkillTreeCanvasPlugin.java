@@ -277,7 +277,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private static String buildReadoutTooltipBody(FleetMemberAPI member) {
         int opCost = SkillNodeOpCost.perNode(member.getHullSpec());
         int maxNodes = ShipLevelConfig.maxAllocatedNodes();
-        return Translation.msg("ui.readout.body").arg("opCost", opCost).arg("maxNodes", maxNodes).text();
+        int lossPercent = Math.round(ShipLevelConfig.xpLossMultiplier() * 100f);
+        return Translation.msg("ui.readout.body").arg("opCost", opCost).arg("maxNodes", maxNodes)
+                .arg("lossPercent", lossPercent).text();
     }
 
     private void drawShipCardFrame(float alphaMult) {

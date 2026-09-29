@@ -258,6 +258,26 @@ class NpcSkillTreeBuilderTest {
     }
 
     @Test
+    void skipsNodesRestrictedToOtherHullSizes() {
+        node("escort_1", registerType(builder("escort", SkillTier.SMALL)
+                .requiredHullSizes(List.of(HullSize.DESTROYER, HullSize.CRUISER)).build()), ROOT);
+        node("frigate_1", registerType(builder("frigate_only", SkillTier.SMALL)
+                .requiredHullSizes(List.of(HullSize.FRIGATE)).build()), ROOT);
+
+        assertEquals(List.of(NpcBuildStep.WRONG_HULL_SIZE, NpcBuildStep.ALLOCATED),
+                outcomes(build(layout(entry("escort_1"), entry("frigate_1")), 5)));
+    }
+
+    @Test
+    void skipsOptionalNodesWhoseChosenOptionIsRestrictedToOtherHullSizes() {
+        registerType(builder("capital_option", SkillTier.SMALL).requiredHullSizes(List.of(HullSize.CAPITAL_SHIP)).build());
+        node("optional_1", registerType(builder("optional", SkillTier.SMALL)
+                .optionalOptionIds(List.of("capital_option")).build()), ROOT);
+
+        assertEquals(List.of(NpcBuildStep.WRONG_HULL_SIZE), outcomes(build(layout(entry("optional_1", "capital_option")), 5)));
+    }
+
+    @Test
     void skipsNodesThatConflictWithAPermanentHullmod() {
         node("so_1", registerType(builder("so", SkillTier.SMALL).exclusiveHullModIds(List.of("safetyoverrides")).build()), ROOT);
         node("armor_1", registerType(builder("armor", SkillTier.SMALL).vanillaHullModId("heavyarmor").build()), ROOT);

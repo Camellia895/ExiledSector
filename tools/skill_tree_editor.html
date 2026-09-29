@@ -3523,6 +3523,7 @@ function openTypeModal(existingType, onSave, onClose){
     itemCostDraft.quantity = parseFloat(document.getElementById('tItemCostQuantity').value) || 0;
     var temporarySeconds = parseFloat(document.getElementById('tTemporaryAfterDeploymentSeconds').value);
     t.temporaryAfterDeploymentSeconds = (!isNaN(temporarySeconds) && temporarySeconds > 0) ? temporarySeconds : null;
+    t.requiredHullSizes = Array.from(document.querySelectorAll('.tRequiredHullSize')).filter(function(box){ return box.checked; }).map(function(box){ return box.value; });
     syncEffectRowsFromInputs('t', effectsDraft);
     syncHullSizeEffectsFromInputs('t', hullSizeEffectsDraft);
     syncUnlockConditionRowsFromInputs('t', unlockConditionsDraft);
@@ -3558,6 +3559,7 @@ function openTypeModal(existingType, onSave, onClose){
       '<div class="field"><label>Item cost</label><div class="fieldRow"><input id="tItemCostId" placeholder="commodity id, e.g. lobster" value="' + (itemCostDraft.itemId||'') + '" style="flex:2"><input id="tItemCostQuantity" type="number" placeholder="quantity" value="' + (itemCostDraft.quantity||0) + '" style="flex:1"></div></div>' +
       '<hr class="sep">' +
       '<div class="field"><label>Temporary after deployment (seconds)</label><input id="tTemporaryAfterDeploymentSeconds" type="number" min="0" placeholder="leave blank for always-on" value="' + (t.temporaryAfterDeploymentSeconds || '') + '"></div>' +
+      '<div class="field"><label>Required hull sizes (none = any)</label><div class="fieldRow">' + renderRequiredHullSizeChecks(t.requiredHullSizes || []) + '</div></div>' +
       '<hr class="sep">' +
       '<div class="field"><label>Optional slot options</label>' + renderOptionalOptionsSelect(t.optionalOptions||[], t.id) + '</div>' +
       '<div class="field"><label>Edit each option\u0027s type</label><div class="prereqList">' + renderOptionEditRows(t.optionalOptions||[]) + '</div></div>' +
@@ -3655,6 +3657,7 @@ function openTypeModal(existingType, onSave, onClose){
         vanillaHullMod: (t.vanillaHullMod||'').trim(),
         itemCost: itemCostDraft.itemId ? { itemId: itemCostDraft.itemId, quantity: itemCostDraft.quantity || 0 } : null,
         temporaryAfterDeploymentSeconds: t.temporaryAfterDeploymentSeconds || null,
+        requiredHullSizes: t.requiredHullSizes || [],
         unlockConditions: unlockConditionsDraft,
         exclusiveHullMods: t.exclusiveHullMods || [],
         installedHullMods: t.installedHullMods || [],
@@ -3698,6 +3701,11 @@ function showToast(msg){
   toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 1800);
 }
 
+function renderRequiredHullSizeChecks(selected){
+  return [['FRIGATE', 'Frigate'], ['DESTROYER', 'Destroyer'], ['CRUISER', 'Cruiser'], ['CAPITAL_SHIP', 'Capital']].map(function(size){
+    return '<label><input type="checkbox" class="tRequiredHullSize" value="' + size[0] + '"' + (selected.indexOf(size[0]) >= 0 ? ' checked' : '') + '> ' + size[1] + '</label>';
+  }).join('');
+}
 function serializeType(t){
   var out = { id: t.id, name: t.name, icon: t.icon };
   if (tierOf(t) !== 'SMALL') out.tier = tierOf(t);
@@ -3706,6 +3714,7 @@ function serializeType(t){
   if (t.vanillaHullMod) out.vanillaHullMod = t.vanillaHullMod;
   if (t.itemCost && t.itemCost.itemId) out.itemCost = { itemId: t.itemCost.itemId, quantity: t.itemCost.quantity || 0 };
   if (t.temporaryAfterDeploymentSeconds) out.temporaryAfterDeploymentSeconds = t.temporaryAfterDeploymentSeconds;
+  if (t.requiredHullSizes && t.requiredHullSizes.length) out.requiredHullSizes = t.requiredHullSizes;
   var unlockConditionsOut = serializeUnlockConditions(t.unlockConditions);
   if (unlockConditionsOut.length) out.unlockConditions = unlockConditionsOut;
   if (t.exclusiveHullMods && t.exclusiveHullMods.length) out.exclusiveHullMods = t.exclusiveHullMods;

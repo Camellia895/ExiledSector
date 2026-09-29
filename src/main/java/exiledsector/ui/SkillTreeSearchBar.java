@@ -9,6 +9,7 @@ import org.lazywizard.lazylib.ui.LazyFont;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.Color;
+import java.util.function.ToDoubleFunction;
 
 final class SkillTreeSearchBar {
 
@@ -17,6 +18,7 @@ final class SkillTreeSearchBar {
     private static final float HEIGHT = 40f;
     private static final float TOP_MARGIN = 16f;
     private static final float TEXT_PADDING = 22f;
+    private static final float TEXT_WIDTH = WIDTH - TEXT_PADDING * 2f;
     private static final float FONT_SIZE = SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE;
     private static final float CARET_BLINK_SECONDS = 0.5f;
     private static final String CARET = "|";
@@ -78,10 +80,11 @@ final class SkillTreeSearchBar {
         float x = left(position);
         float y = bottom(position);
         panel.draw(x, y, WIDTH, HEIGHT, alphaMult);
-        LazyFont.DrawableString drawable = textFor(displayText());
-        if (drawable == null) {
+        LazyFont font = SkillTreePanelStyle.font();
+        if (font == null) {
             return;
         }
+        LazyFont.DrawableString drawable = textFor(font, displayText(value -> font.calcWidth(value, FONT_SIZE)));
         Color color = search.getQuery().isEmpty() && !focused ? PLACEHOLDER_COLOR : TEXT_COLOR;
         if (!color.equals(renderedColor)) {
             drawable.setBaseColor(color);
@@ -90,23 +93,35 @@ final class SkillTreeSearchBar {
         drawable.draw(x + TEXT_PADDING, y + HEIGHT / 2f + FONT_SIZE / 2f);
     }
 
-    private String displayText() {
+    private String displayText(ToDoubleFunction<String> widthOf) {
         String query = search.getQuery();
         if (!focused) {
-            return query.isEmpty() ? Translation.text("ui.search.placeholder") : query;
+            return query.isEmpty() ? fitStart(Translation.text("ui.search.placeholder"), widthOf) : fitEnd(query, widthOf);
         }
+        String withCaret = fitEnd(query + CARET, widthOf);
         boolean caretVisible = ((int) (caretSeconds / CARET_BLINK_SECONDS)) % 2 == 0;
-        return caretVisible ? query + CARET : query;
+        return caretVisible || !withCaret.endsWith(CARET) ? withCaret : withCaret.substring(0, withCaret.length() - CARET.length());
     }
 
-    private LazyFont.DrawableString textFor(String value) {
-        LazyFont font = SkillTreePanelStyle.font();
-        if (font == null) {
-            return null;
+    static String fitEnd(String value, ToDoubleFunction<String> widthOf) {
+        String fitted = value;
+        while (!fitted.isEmpty() && widthOf.applyAsDouble(fitted) > TEXT_WIDTH) {
+            fitted = fitted.substring(fitted.offsetByCodePoints(0, 1));
         }
+        return fitted;
+    }
+
+    static String fitStart(String value, ToDoubleFunction<String> widthOf) {
+        String fitted = value;
+        while (!fitted.isEmpty() && widthOf.applyAsDouble(fitted) > TEXT_WIDTH) {
+            fitted = fitted.substring(0, fitted.offsetByCodePoints(fitted.length(), -1));
+        }
+        return fitted;
+    }
+
+    private LazyFont.DrawableString textFor(LazyFont font, String value) {
         if (text == null) {
             text = SkillTreePanelStyle.buildSimpleText(font, value, FONT_SIZE, TEXT_COLOR);
-            text.setMaxWidth(WIDTH - TEXT_PADDING * 2f);
         } else if (!value.equals(renderedText)) {
             text.setText(value);
         }

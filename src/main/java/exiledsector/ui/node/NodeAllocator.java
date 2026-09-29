@@ -28,6 +28,7 @@ import java.util.function.Supplier;
 final class NodeAllocator {
 
     static final String LOCKED_REASON = "Unidentified - explore the sector to discover this node.";
+    private static final String WRONG_HULL_SIZE_REASON = "This node can't be allocated on this hull size.";
 
     record Snapshot(ShipSkillData data, String satisfiedRootId, int totalOpBudget, int opCostPerNode, int maxAllocatedNodes) {
 
@@ -113,6 +114,10 @@ final class NodeAllocator {
         ShipSkillData data = data();
         if (SkillTypeUnlockStatus.isLocked(type, data)) {
             return LOCKED_REASON;
+        }
+
+        if (!type.allowsHullSize(member.getHullSpec().getHullSize())) {
+            return WRONG_HULL_SIZE_REASON;
         }
 
         String hullModReason = hullModConflictReason(type);

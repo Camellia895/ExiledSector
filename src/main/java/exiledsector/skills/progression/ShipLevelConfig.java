@@ -50,4 +50,8 @@ public final class ShipLevelConfig {
     public static int maxAllocatedNodes() {
         return ModSettings.intOr(MAX_ALLOCATED_NODES_FIELD_ID, DEFAULT_MAX_ALLOCATED_NODES);
     }
+
+    public static int maxAllocatedNodesBesidesRoot() {
+        return Math.max(0, maxAllocatedNodes() - 1);
+    }
 }

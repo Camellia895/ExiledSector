@@ -6,8 +6,11 @@ import exiledsector.i18n.Translation;
 import exiledsector.skills.unlock.UnlockCondition;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 public class SkillType {
 
@@ -20,6 +23,7 @@ public class SkillType {
     private final String vanillaHullModId;
     private final SkillItemCost itemCost;
     private final Float temporaryAfterDeploymentSeconds;
+    private final Set<HullSize> requiredHullSizes;
     private final String descriptionOverride;
     private final String todo;
     private final List<String> optionalOptionIds;
@@ -39,6 +43,8 @@ public class SkillType {
         this.vanillaHullModId = builder.vanillaHullModId;
         this.itemCost = builder.itemCost;
         this.temporaryAfterDeploymentSeconds = builder.temporaryAfterDeploymentSeconds;
+        this.requiredHullSizes = builder.requiredHullSizes == null || builder.requiredHullSizes.isEmpty()
+                ? Collections.emptySet() : Collections.unmodifiableSet(EnumSet.copyOf(builder.requiredHullSizes));
         this.descriptionOverride = builder.descriptionOverride;
         this.todo = builder.todo;
         this.optionalOptionIds = builder.optionalOptionIds == null ? Collections.emptyList() : builder.optionalOptionIds;
@@ -59,6 +65,7 @@ public class SkillType {
         private String vanillaHullModId;
         private SkillItemCost itemCost;
         private Float temporaryAfterDeploymentSeconds;
+        private Collection<HullSize> requiredHullSizes;
         private String descriptionOverride;
         private String todo;
         private List<String> optionalOptionIds = Collections.emptyList();
@@ -97,6 +104,11 @@ public class SkillType {
 
         public Builder temporaryAfterDeploymentSeconds(Float temporaryAfterDeploymentSeconds) {
             this.temporaryAfterDeploymentSeconds = temporaryAfterDeploymentSeconds;
+            return this;
+        }
+
+        public Builder requiredHullSizes(Collection<HullSize> requiredHullSizes) {
+            this.requiredHullSizes = requiredHullSizes;
             return this;
         }
 
@@ -187,6 +199,14 @@ public class SkillType {
 
     public Float getTemporaryAfterDeploymentSeconds() {
         return temporaryAfterDeploymentSeconds;
+    }
+
+    public Set<HullSize> getRequiredHullSizes() {
+        return requiredHullSizes;
+    }
+
+    public boolean allowsHullSize(HullSize hullSize) {
+        return requiredHullSizes.isEmpty() || requiredHullSizes.contains(hullSize);
     }
 
     public String getDescriptionOverride() {

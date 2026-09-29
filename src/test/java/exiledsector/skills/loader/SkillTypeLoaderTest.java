@@ -1,5 +1,6 @@
 package exiledsector.skills.loader;
 
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
@@ -10,6 +11,7 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Set;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -172,6 +174,35 @@ class SkillTypeLoaderTest {
         assertEquals(2, heavyArmor.getExclusiveHullModIds().size());
         assertEquals("armoredcladding", heavyArmor.getExclusiveHullModIds().get(0));
         assertEquals("heavyarmor", heavyArmor.getExclusiveHullModIds().get(1));
+    }
+
+    @Test
+    void parsesRequiredHullSizesAndIgnoresNamesThatAreNotShipHullSizes() throws Exception {
+        JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
+                + "\"id\": \"escort\","
+                + "\"name\": \"Escort\","
+                + "\"icon\": \"a.png\","
+                + "\"requiredHullSizes\": [\"CRUISER\", \"DESTROYER\", \"FIGHTER\", \"BATTLESHIP\"]"
+                + "} ] }");
+
+        SkillType escort = SkillTypeLoader.parseSkillTypes(root).get("escort");
+
+        assertEquals(Set.of(HullSize.DESTROYER, HullSize.CRUISER), escort.getRequiredHullSizes());
+        assertTrue(escort.allowsHullSize(HullSize.DESTROYER));
+        assertFalse(escort.allowsHullSize(HullSize.FRIGATE));
+        assertFalse(escort.allowsHullSize(HullSize.CAPITAL_SHIP));
+    }
+
+    @Test
+    void aTypeWithoutRequiredHullSizesAllowsEveryHullSize() throws Exception {
+        JSONObject root = new JSONObject("{ \"skillTypes\": [ { \"id\": \"hull\", \"name\": \"Hull\", \"icon\": \"a.png\" } ] }");
+
+        SkillType hull = SkillTypeLoader.parseSkillTypes(root).get("hull");
+
+        assertTrue(hull.getRequiredHullSizes().isEmpty());
+        for (HullSize hullSize : List.of(HullSize.FRIGATE, HullSize.DESTROYER, HullSize.CRUISER, HullSize.CAPITAL_SHIP)) {
+            assertTrue(hull.allowsHullSize(hullSize));
+        }
     }
 
     @Test
