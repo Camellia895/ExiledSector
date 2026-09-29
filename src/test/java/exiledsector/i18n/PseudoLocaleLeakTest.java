@@ -13,6 +13,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,6 +69,24 @@ class PseudoLocaleLeakTest {
             }
         }
         assertEquals(List.of(), leaks);
+    }
+
+    @Test
+    void everyDescriptionRendersInChineseWithNoMissingKeysOrUnfilledPlaceholders() throws IOException {
+        I18n.install(RealCatalogue.of(LocaleChain.SIMPLIFIED_CHINESE));
+        List<String> problems = new ArrayList<>();
+        for (String line : DescriptionGoldenTest.generate()) {
+            String[] columns = line.split("\t", 3);
+            String text = columns[2];
+            boolean translated = text.codePoints().anyMatch(Character::isIdeographic);
+            if (!translated || text.contains("[[") || text.matches("(?s).*\\{[A-Za-z]+}.*")) {
+                problems.add(columns[0] + ": " + text);
+            }
+        }
+        Path review = RealSkillData.projectRoot().resolve("target/i18n/descriptions.zh_CN.txt");
+        Files.createDirectories(review.getParent());
+        Files.writeString(review, String.join("\n", DescriptionGoldenTest.generate()) + "\n", StandardCharsets.UTF_8);
+        assertEquals(List.of(), problems);
     }
 
     @Test
