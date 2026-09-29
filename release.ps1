@@ -37,6 +37,7 @@ New-Item -ItemType Directory -Force -Path $stageDir | Out-Null
 
 Copy-Item -Path (Join-Path $projectRoot "mod_info.json") -Destination $stageDir
 Copy-Item -Path (Join-Path $projectRoot "ExiledSector.version") -Destination $stageDir
+Copy-Item -Path (Join-Path $projectRoot "LICENSE") -Destination $stageDir
 Copy-Item -Path (Join-Path $projectRoot "jars") -Destination $stageDir -Recurse
 Copy-Item -Path (Join-Path $projectRoot "data") -Destination $stageDir -Recurse
 
@@ -64,7 +65,7 @@ try {
 } finally {
     $archive.Dispose()
 }
-$required = @("mod_info.json", "ExiledSector.version", "jars/ExiledSector.jar", "data/config/version/version_files.csv")
+$required = @("mod_info.json", "ExiledSector.version", "LICENSE","jars/ExiledSector.jar", "data/config/version/version_files.csv")
 foreach ($path in $required) {
     if ($entries -notcontains "$modFolderName/$path") {
         throw "Release zip is missing $modFolderName/$path"
