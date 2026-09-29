@@ -219,6 +219,8 @@ You can find me on the [Unofficial Starsector Discord](https://fractalsoftworks.
 > [!WARNING]
 > Exiled Sector adds permanent hull mods to the ships in your fleet. Don't remove it from a save that has used it.
 
+It should be safe to add to an existing save.
+
 I have done what I can for some mods, but there is a long way to go for complete mod compatibility.
 
 **[Second-in-Command](https://fractalsoftworks.com/forum/index.php?topic=30407.0)** is (theoretically) supported.
