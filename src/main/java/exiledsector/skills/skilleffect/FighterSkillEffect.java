@@ -8,6 +8,7 @@ import com.fs.starfarer.api.loading.WingRole;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 
+import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
 import static exiledsector.skills.skilleffect.StatTarget.dynamicStat;
@@ -15,28 +16,8 @@ import static exiledsector.skills.skilleffect.StatTarget.stat;
 
 public enum FighterSkillEffect implements SkillEffect {
 
-    FIGHTER_WEAPON_DAMAGE_PERCENT {
-        @Override
-        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
-            applyRoleDamage(fighter, modId, magnitude);
-        }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return StatMode.PERCENT.describeStat(magnitude, "stat.weaponDamageOfFightersLaunchedFromThisShip");
-        }
-    },
-    FIGHTER_TOP_SPEED_PERCENT {
-        @Override
-        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
-            applyRoleTopSpeed(fighter, modId, magnitude);
-        }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return StatMode.PERCENT.describeStat(magnitude, "stat.topSpeedOfFightersLaunchedFromThisShip");
-        }
-    },
+    FIGHTER_WEAPON_DAMAGE_PERCENT(RoleStat.WEAPON_DAMAGE),
+    FIGHTER_TOP_SPEED_PERCENT(RoleStat.TOP_SPEED),
     FIGHTER_CREW_LOSS_PERCENT(PERCENT, dynamicStat("fighter_crew_loss_mult"),
             "stat.casualtiesSufferedByFighterPilotsLaunchedFromThisShip", true),
     FIGHTER_CREW_LOSS_MULT(MULT, dynamicStat("fighter_crew_loss_mult"),
@@ -99,68 +80,11 @@ public enum FighterSkillEffect implements SkillEffect {
             return StatMode.FLAT.describeStat(magnitude, "stat.fighterRelaunchTimeAsAOfBaseRefitTime");
         }
     },
-    FIGHTER_ARMOR_PERCENT {
-        @Override
-        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
-            applyRoleArmor(fighter, modId, magnitude);
-        }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return StatMode.PERCENT.describeStat(magnitude, "stat.armorOfFightersLaunchedFromThisShip");
-        }
-    },
-    FIGHTER_SHIELD_DAMAGE_TAKEN_PERCENT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
-            applyRoleShieldDamageTaken(fighter, modId, magnitude);
-        }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return StatMode.PERCENT.describeStat(magnitude, "stat.damageTakenByShieldsOfFightersLaunchedFromThisShip");
-        }
-    },
-    FIGHTER_RATE_OF_FIRE_PERCENT {
-        @Override
-        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
-            applyRoleRateOfFire(fighter, modId, magnitude);
-        }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return StatMode.PERCENT.describeStat(magnitude, "stat.weaponRateOfFireOfFightersLaunchedFromThisShip");
-        }
-    },
-    FIGHTER_ENGAGEMENT_RANGE_PERCENT {
-        @Override
-        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
-            applyRoleEngagementRange(fighter, modId, magnitude);
-        }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return StatMode.PERCENT.describeStat(magnitude, "stat.engagementRangeOfFightersLaunchedFromThisShip");
-        }
-    },
-    FIGHTER_WEAPON_RANGE_FLAT {
-        @Override
-        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
-            MutableShipStatsAPI fighterStats = fighter.getMutableStats();
-            fighterStats.getBallisticWeaponRangeBonus().modifyFlat(modId, magnitude);
-            fighterStats.getEnergyWeaponRangeBonus().modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return StatMode.FLAT.describeStat(magnitude, "stat.weaponRangeOfFightersLaunchedFromThisShip");
-        }
-    },
+    FIGHTER_ARMOR_PERCENT(RoleStat.ARMOR),
+    FIGHTER_SHIELD_DAMAGE_TAKEN_PERCENT(RoleStat.SHIELD_DAMAGE_TAKEN),
+    FIGHTER_RATE_OF_FIRE_PERCENT(RoleStat.RATE_OF_FIRE),
+    FIGHTER_ENGAGEMENT_RANGE_PERCENT(RoleStat.ENGAGEMENT_RANGE),
+    FIGHTER_WEAPON_RANGE_FLAT(RoleStat.WEAPON_RANGE),
     FIGHTER_ROLE_DAMAGE_PERCENT(WingRole.FIGHTER, RoleStat.WEAPON_DAMAGE),
     FIGHTER_ROLE_TOP_SPEED_PERCENT(WingRole.FIGHTER, RoleStat.TOP_SPEED),
     FIGHTER_ROLE_ARMOR_PERCENT(WingRole.FIGHTER, RoleStat.ARMOR),
@@ -237,7 +161,7 @@ public enum FighterSkillEffect implements SkillEffect {
     }
 
     private static boolean matchesRole(ShipAPI fighter, WingRole role) {
-        return effectiveRole(fighter) == role;
+        return role == null || effectiveRole(fighter) == role;
     }
 
     private static void applyRoleDamage(ShipAPI fighter, String modId, float magnitude) {
@@ -267,11 +191,14 @@ public enum FighterSkillEffect implements SkillEffect {
         fighter.getMutableStats().getFighterWingRange().modifyPercent(modId, magnitude);
     }
 
+    private static void applyRoleWeaponRange(ShipAPI fighter, String modId, float magnitude) {
+        MutableShipStatsAPI fighterStats = fighter.getMutableStats();
+        fighterStats.getBallisticWeaponRangeBonus().modifyFlat(modId, magnitude);
+        fighterStats.getEnergyWeaponRangeBonus().modifyFlat(modId, magnitude);
+    }
+
     private static String roleKey(WingRole role) {
-        return switch (role) {
-            case INTERCEPTOR, BOMBER, SUPPORT -> "fighter.role." + role.name();
-            default -> "fighter.role." + WingRole.FIGHTER.name();
-        };
+        return "fighter.role." + (role == null ? "ALL" : role.name());
     }
 
     private final WingRole role;
@@ -280,6 +207,10 @@ public enum FighterSkillEffect implements SkillEffect {
 
     FighterSkillEffect() {
         this(null, null, null);
+    }
+
+    FighterSkillEffect(RoleStat roleStat) {
+        this(null, roleStat, null);
     }
 
     FighterSkillEffect(WingRole role, RoleStat roleStat) {
@@ -331,8 +262,8 @@ public enum FighterSkillEffect implements SkillEffect {
         if (roleStat == null) {
             return EffectText.templated(this, magnitude);
         }
-        String stat = Translation.msg("fighter.launched").arg("stat", Translation.text(roleStat.key())).arg("role", Translation.text(roleKey(role))).text();
-        return StatMode.PERCENT.description(magnitude, stat);
+        String stat = Translation.msg("fighter.launched").arg("stat", Translation.text(roleStat.statKey)).arg("role", Translation.text(roleKey(role))).text();
+        return roleStat.mode.description(magnitude, stat);
     }
 
     @FunctionalInterface
@@ -341,27 +272,28 @@ public enum FighterSkillEffect implements SkillEffect {
     }
 
     private enum RoleStat {
-        WEAPON_DAMAGE(FighterSkillEffect::applyRoleDamage),
-        TOP_SPEED(FighterSkillEffect::applyRoleTopSpeed),
-        ARMOR(FighterSkillEffect::applyRoleArmor),
-        SHIELD_DAMAGE_TAKEN(FighterSkillEffect::applyRoleShieldDamageTaken, true),
-        RATE_OF_FIRE(FighterSkillEffect::applyRoleRateOfFire),
-        ENGAGEMENT_RANGE(FighterSkillEffect::applyRoleEngagementRange);
+        WEAPON_DAMAGE(FighterSkillEffect::applyRoleDamage, "weapon.stat.DAMAGE"),
+        TOP_SPEED(FighterSkillEffect::applyRoleTopSpeed, "stat.topSpeed"),
+        ARMOR(FighterSkillEffect::applyRoleArmor, "stat.armor"),
+        SHIELD_DAMAGE_TAKEN(FighterSkillEffect::applyRoleShieldDamageTaken, "stat.damageTakenByShields", PERCENT, true),
+        RATE_OF_FIRE(FighterSkillEffect::applyRoleRateOfFire, "weapon.stat.FIRE_RATE"),
+        ENGAGEMENT_RANGE(FighterSkillEffect::applyRoleEngagementRange, "stat.engagementRange"),
+        WEAPON_RANGE(FighterSkillEffect::applyRoleWeaponRange, "weapon.stat.RANGE", FLAT, false);
 
         private final RoleStatApplier applier;
+        private final String statKey;
+        private final StatMode mode;
         private final boolean lowerIsBetter;
 
-        RoleStat(RoleStatApplier applier) {
-            this(applier, false);
+        RoleStat(RoleStatApplier applier, String statKey) {
+            this(applier, statKey, PERCENT, false);
         }
 
-        RoleStat(RoleStatApplier applier, boolean lowerIsBetter) {
+        RoleStat(RoleStatApplier applier, String statKey, StatMode mode, boolean lowerIsBetter) {
             this.applier = applier;
+            this.statKey = statKey;
+            this.mode = mode;
             this.lowerIsBetter = lowerIsBetter;
-        }
-
-        String key() {
-            return "fighter.stat." + name();
         }
     }
 }
