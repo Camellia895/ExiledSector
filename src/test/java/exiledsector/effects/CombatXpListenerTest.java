@@ -15,6 +15,7 @@ import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.ui.LabelAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillTree;
@@ -156,7 +157,7 @@ class CombatXpListenerTest {
         new CombatXpListener().reportPlayerEngagement(engagement(false, 40f));
 
         assertEquals(40f * ShipLevelConfig.DEFAULT_XP_LOSS_MULTIPLIER, ShipSkillDataManager.get("ship-a").getXp());
-        verify(textPanel).addPara(contains("reduced because the battle was lost"), eq(Color.YELLOW), any(String[].class));
+        verify(textPanel).addPara(eq("%s"), (Color) any(), (Color) any(), contains("reduced because the battle was lost"));
     }
 
     @Test
@@ -169,7 +170,7 @@ class CombatXpListenerTest {
         new CombatXpListener().reportPlayerEngagement(autoresolved);
 
         assertEquals(0f, ShipSkillDataManager.get("ship-a").getXp());
-        verify(textPanel, never()).addPara(anyString(), any(Color.class));
+        verify(textPanel, never()).addPara(anyString(), any(Color.class), any(Color.class), any(String[].class));
     }
 
     @Test
@@ -177,13 +178,18 @@ class CombatXpListenerTest {
         lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", ShipLevelConfig.XP_BASE_FIELD_ID)).thenReturn(30);
         List<FleetMemberAPI> members = List.of(member("ship-a"));
         when(fleetData.getMembersListCopy()).thenReturn(members);
+        LabelAPI label = mock(LabelAPI.class);
+        when(textPanel.addPara(anyString(), (Color) any(), (Color) any(), any(String[].class))).thenReturn(label);
 
         new CombatXpListener().reportPlayerEngagement(engagement(true, 40f));
 
         ShipSkillData data = ShipSkillDataManager.get("ship-a");
         assertTrue(data.getLevel() >= 1);
-        verify(textPanel).addPara("ExiledSector skill tree", Color.CYAN);
-        verify(textPanel).addPara(contains("earned %s XP"), eq(Color.YELLOW), eq("40"), eq("40"));
-        verify(textPanel).addPara(contains("ISS ship-a (Wolf-class) reached level"), eq(Color.GREEN));
+        verify(textPanel).addPara("%s", Color.CYAN, Color.CYAN, "ExiledSector skill tree");
+        verify(textPanel).addPara(eq("%s"), (Color) any(), (Color) any(),
+                eq("Every ship in your fleet earned 40 XP from 40 enemy deployment points destroyed or disabled."));
+        verify(label).setHighlight("40", "40");
+        verify(label).setHighlightColors(Color.YELLOW, Color.YELLOW);
+        verify(textPanel).addPara(eq("%s"), eq(Color.GREEN), eq(Color.GREEN), contains("ISS ship-a (Wolf-class) reached level"));
     }
 }

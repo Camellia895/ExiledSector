@@ -11,6 +11,8 @@ import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.effects.NpcFleetLeveller;
+import exiledsector.i18n.Translation;
+import exiledsector.ui.VanillaText;
 import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
@@ -48,7 +50,7 @@ public class NpcFleetInspectDialog implements CustomVisualDialogDelegate {
         panel.addUIElement(content).inTL(0f, 0f);
 
         TooltipMakerAPI buttons = panel.createUIElement(width, BUTTON_HEIGHT, false);
-        buttons.addButton("Close", CLOSE, BUTTON_WIDTH, BUTTON_HEIGHT, 0f);
+        buttons.addButton(Translation.text("inspect.close"), CLOSE, BUTTON_WIDTH, BUTTON_HEIGHT, 0f);
         panel.addUIElement(buttons).inBL((width - BUTTON_WIDTH) / 2f, PAD);
     }
 
@@ -67,8 +69,8 @@ public class NpcFleetInspectDialog implements CustomVisualDialogDelegate {
         List<FleetMemberAPI> members = fleet.getFleetData().getMembersListCopy();
         List<FleetMemberAPI> levelled = levelledMembers(fleet);
         content.addSectionHeading(fleet.getFullName(), Alignment.MID, PAD);
-        content.addPara("%s of %s ships have Exiled Sector skill trees.", PAD, Misc.getHighlightColor(),
-                String.valueOf(levelled.size()), String.valueOf(members.size()));
+        VanillaText.addPara(content, Translation.msg("inspect.levelledShips").arg("levelled", levelled.size())
+                .arg("total", members.size()).styled(), PAD, Misc.getTextColor());
         for (FleetMemberAPI member : levelled) {
             ShipTreeLookup.ShipTree tree = ShipTreeLookup.find(member);
             if (tree == null) {
@@ -83,7 +85,7 @@ public class NpcFleetInspectDialog implements CustomVisualDialogDelegate {
     private static String shipTitle(FleetMemberAPI member) {
         String hull = member.getHullSpec().getHullNameWithDashClass();
         String name = member.getShipName();
-        return name == null || name.isBlank() ? hull : name + ", " + hull;
+        return name == null || name.isBlank() ? hull : Translation.msg("inspect.shipTitle").arg("name", name).arg("hull", hull).text();
     }
 
     @Override

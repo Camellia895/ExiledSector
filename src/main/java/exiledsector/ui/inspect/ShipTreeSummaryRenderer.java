@@ -1,18 +1,17 @@
 package exiledsector.ui.inspect;
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
 import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.SkillTreeBonusSummary;
 import exiledsector.skills.SkillTreeBonusSummary.Summary;
 import exiledsector.skills.SkillType;
-import exiledsector.ui.SkillTreePanelStyle;
+import exiledsector.ui.VanillaText;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,62 +26,34 @@ public final class ShipTreeSummaryRenderer {
 
     public static void render(TooltipMakerAPI info, FleetMemberAPI member, ShipTreeLookup.ShipTree tree, float pad) {
         Summary summary = SkillTreeBonusSummary.of(tree.data(), member.getHullSpec().getHullSize());
-        Color highlight = Misc.getHighlightColor();
 
         List<String> parts = new ArrayList<>();
-        parts.add("Level " + summary.level());
+        parts.add(Translation.msg("summary.level").arg("level", summary.level()).text());
         if (tree.layoutName() != null) {
-            parts.add(tree.layoutName() + " build");
+            parts.add(Translation.msg("summary.build").arg("layout", tree.layoutName()).text());
         }
         if (summary.root() != null) {
-            parts.add(summary.root().getDisplayName() + " start");
+            parts.add(Translation.msg("summary.start").arg("root", summary.root().getDisplayName()).text());
         }
-        parts.add(summary.nodeCount() + (summary.nodeCount() == 1 ? " node" : " nodes"));
-        String header = String.join("  |  ", parts);
-        info.addPara("%s", pad, highlight, header);
+        parts.add(Translation.msg("summary.nodes").count(summary.nodeCount()).text());
+        info.addPara("%s", pad, Misc.getHighlightColor(), String.join(Translation.text("summary.separator"), parts));
 
         if (summary.notables().isEmpty()) {
-            info.addPara("No notables or keystones.", Misc.getGrayColor(), LINE_PAD);
+            VanillaText.addPara(info, Translation.styled("summary.noNotables"), LINE_PAD, Misc.getGrayColor());
         } else {
-            List<String> names = new ArrayList<>();
+            List<StyledText> names = new ArrayList<>();
             for (SkillType notable : summary.notables()) {
-                names.add(notable.getDisplayName());
+                names.add(StyledText.styled(notable.getDisplayName(), Style.HIGHLIGHT));
             }
-            LabelAPI label = info.addPara("%s", LINE_PAD, Misc.getTextColor(), "Notables and keystones: " + String.join(", ", names));
-            label.setHighlight(names.toArray(new String[0]));
-            label.setHighlightColor(highlight);
+            VanillaText.addPara(info, Translation.msg("summary.notables").arg("names", Translation.list(names)).styled(), LINE_PAD,
+                    Misc.getTextColor());
         }
 
         if (!summary.bonuses().isEmpty()) {
-            info.addPara("Bonuses:", SECTION_PAD);
+            VanillaText.addPara(info, Translation.styled("summary.bonuses"), SECTION_PAD, Misc.getTextColor());
             for (DescriptionLine line : summary.bonuses()) {
-                addColouredLine(info, StyledText.of(BULLET).append(line.display()));
+                VanillaText.addPara(info, StyledText.of(BULLET).append(line.display()), LINE_PAD, Misc.getTextColor());
             }
         }
-    }
-
-    private static void addColouredLine(TooltipMakerAPI info, StyledText text) {
-        LabelAPI label = info.addPara("%s", LINE_PAD, Misc.getTextColor(), text.plain());
-        List<StyledText.Span> spans = text.spans();
-        if (spans.isEmpty()) {
-            return;
-        }
-        String[] substrings = new String[spans.size()];
-        Color[] colors = new Color[spans.size()];
-        for (int i = 0; i < spans.size(); i++) {
-            StyledText.Span span = spans.get(i);
-            substrings[i] = text.plain().substring(span.start(), span.end());
-            colors[i] = colorFor(span.style());
-        }
-        label.setHighlight(substrings);
-        label.setHighlightColors(colors);
-    }
-
-    private static Color colorFor(Style style) {
-        return switch (style) {
-            case GOOD -> SkillTreePanelStyle.POSITIVE_STAT_COLOR;
-            case BAD -> SkillTreePanelStyle.NEGATIVE_STAT_COLOR;
-            default -> Misc.getHighlightColor();
-        };
     }
 }

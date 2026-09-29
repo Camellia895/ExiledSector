@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
+import exiledsector.i18n.Translation;
 
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,7 @@ public class NpcFleetInspectPlugin implements InteractionDialogPlugin {
     @Override
     public void init(InteractionDialogAPI dialog) {
         this.dialog = dialog;
-        dialog.getOptionPanel().addOption("Close", CLOSE);
+        dialog.getOptionPanel().addOption(Translation.text("inspect.close"), CLOSE);
         dialog.showCustomVisualDialog(NpcFleetInspectDialog.WIDTH, NpcFleetInspectDialog.HEIGHT,
                 new NpcFleetInspectDialog(List.of(fleet), dialog::dismiss));
     }

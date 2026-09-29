@@ -9,9 +9,12 @@ import com.fs.starfarer.api.campaign.TextPanelAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.ShipLevelSystem;
+import exiledsector.ui.VanillaText;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -72,8 +75,8 @@ public class CombatXpListener extends BaseCampaignEventListener {
             FleetMemberAPI member = entry.getKey();
             int level = ShipSkillDataManager.get(member.getId()).getLevel();
             if (level > entry.getValue()) {
-                lines.add(member.getShipName() + " (" + member.getHullSpec().getHullNameWithDashClass()
-                        + ") reached level " + level + ".");
+                lines.add(Translation.msg("combat.xp.levelUp").arg("ship", member.getShipName())
+                        .arg("hull", member.getHullSpec().getHullNameWithDashClass()).arg("level", level).text());
             }
         }
         return lines;
@@ -86,19 +89,13 @@ public class CombatXpListener extends BaseCampaignEventListener {
         }
         TextPanelAPI text = dialog.getTextPanel();
         text.setFontSmallInsignia();
-        text.addPara("ExiledSector skill tree", Misc.getBasePlayerColor());
+        VanillaText.addPara(text, Translation.styled("combat.xp.header"), Misc.getBasePlayerColor());
         text.setFontInsignia();
-        String xp = report.xpText();
-        String dp = report.dpText();
-        if (report.lost()) {
-            text.addPara("Every ship in your fleet earned %s XP from %s enemy deployment points destroyed or disabled, "
-                    + "reduced because the battle was lost.", Misc.getHighlightColor(), xp, dp);
-        } else {
-            text.addPara("Every ship in your fleet earned %s XP from %s enemy deployment points destroyed or disabled.",
-                    Misc.getHighlightColor(), xp, dp);
-        }
+        String earnedKey = report.lost() ? "combat.xp.earnedAfterLoss" : "combat.xp.earned";
+        VanillaText.addPara(text, Translation.msg(earnedKey).arg("xp", report.xpText()).arg("dp", report.dpText()).styled(),
+                Misc.getTextColor());
         for (String levelUp : report.levelUps()) {
-            text.addPara(levelUp, Misc.getPositiveHighlightColor());
+            VanillaText.addPara(text, StyledText.of(levelUp), Misc.getPositiveHighlightColor());
         }
     }
 

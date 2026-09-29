@@ -1,0 +1,86 @@
+package exiledsector.ui;
+
+import com.fs.starfarer.api.campaign.TextPanelAPI;
+import com.fs.starfarer.api.ui.LabelAPI;
+import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
+import exiledsector.i18n.Style;
+import exiledsector.i18n.StyledText;
+
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+
+public final class VanillaText {
+
+    public record Prepared(String text, String[] highlights, Color[] colors) {
+    }
+
+    private static final String HIGHLIGHT_BOUNDARY_PUNCTUATION = "/.,;:\"'[]+-=!@$%^&*(){}|\\?<>`~";
+
+    private VanillaText() {
+    }
+
+    public static Color defaultColor(Style style) {
+        return switch (style) {
+            case GOOD -> SkillTreePanelStyle.POSITIVE_STAT_COLOR;
+            case BAD -> SkillTreePanelStyle.NEGATIVE_STAT_COLOR;
+            default -> Misc.getHighlightColor();
+        };
+    }
+
+    public static LabelAPI addPara(TooltipMakerAPI tooltip, StyledText text, float pad, Color base) {
+        return addPara(tooltip, text, pad, base, VanillaText::defaultColor);
+    }
+
+    public static LabelAPI addPara(TooltipMakerAPI tooltip, StyledText text, float pad, Color base, Function<Style, Color> palette) {
+        Prepared prepared = prepare(text, palette);
+        LabelAPI label = tooltip.addPara("%s", pad, base, prepared.text());
+        highlight(label, prepared);
+        return label;
+    }
+
+    public static LabelAPI addPara(TextPanelAPI panel, StyledText text, Color base) {
+        Prepared prepared = prepare(text, VanillaText::defaultColor);
+        LabelAPI label = panel.addPara("%s", base, base, prepared.text());
+        highlight(label, prepared);
+        return label;
+    }
+
+    public static Prepared prepare(StyledText text, Function<Style, Color> palette) {
+        String plain = text.plain();
+        StringBuilder out = new StringBuilder(plain.length() + text.spans().size() * 2);
+        List<String> highlights = new ArrayList<>();
+        List<Color> colors = new ArrayList<>();
+        int cursor = 0;
+        for (StyledText.Span span : text.spans()) {
+            out.append(plain, cursor, span.start());
+            if (!out.isEmpty() && !isHighlightBoundary(out.charAt(out.length() - 1))) {
+                out.append(' ');
+            }
+            String highlighted = plain.substring(span.start(), span.end());
+            out.append(highlighted);
+            highlights.add(highlighted);
+            colors.add(palette.apply(span.style()));
+            cursor = span.end();
+            if (cursor < plain.length() && !isHighlightBoundary(plain.charAt(cursor))) {
+                out.append(' ');
+            }
+        }
+        out.append(plain.substring(cursor));
+        return new Prepared(out.toString(), highlights.toArray(new String[0]), colors.toArray(new Color[0]));
+    }
+
+    static boolean isHighlightBoundary(char c) {
+        return Character.isWhitespace(c) || HIGHLIGHT_BOUNDARY_PUNCTUATION.indexOf(c) >= 0;
+    }
+
+    private static void highlight(LabelAPI label, Prepared prepared) {
+        if (label == null || prepared.highlights().length == 0) {
+            return;
+        }
+        label.setHighlight(prepared.highlights());
+        label.setHighlightColors(prepared.colors());
+    }
+}

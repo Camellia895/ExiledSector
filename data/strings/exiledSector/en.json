@@ -1,4 +1,23 @@
 {
     "format.list.sep": ", ",
-    "format.sentences": "{a} {b}"
+    "format.sentences": "{a} {b}",
+
+    "combat.xp.header": "ExiledSector skill tree",
+    "combat.xp.earned": "Every ship in your fleet earned <hl>{xp}</hl> XP from <hl>{dp}</hl> enemy deployment points destroyed or disabled.",
+    "combat.xp.earnedAfterLoss": "Every ship in your fleet earned <hl>{xp}</hl> XP from <hl>{dp}</hl> enemy deployment points destroyed or disabled, reduced because the battle was lost.",
+    "combat.xp.levelUp": "{ship} ({hull}) reached level {level}.",
+
+    "inspect.close": "Close",
+    "inspect.levelledShips": "<hl>{levelled}</hl> of <hl>{total}</hl> ships have Exiled Sector skill trees.",
+    "inspect.shipTitle": "{name}, {hull}",
+
+    "summary.level": "Level {level}",
+    "summary.build": "{layout} build",
+    "summary.start": "{root} start",
+    "summary.nodes.one": "{count} node",
+    "summary.nodes.other": "{count} nodes",
+    "summary.separator": "  |  ",
+    "summary.noNotables": "No notables or keystones.",
+    "summary.notables": "Notables and keystones: {names}",
+    "summary.bonuses": "Bonuses:"
 }
