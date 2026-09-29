@@ -148,7 +148,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         if (event.isMouseMoveEvent()) {
             handleMouseMove(event);
         } else if (event.isLMBDownEvent() && position.containsEvent(event)) {
-            pendingClickNode = nodeRenderer.findNodeAt(viewport(), event.getX(), event.getY());
+            pendingClickNode = isOverOverlay(event.getX(), event.getY())
+                    ? null : nodeRenderer.findNodeAt(viewport(), event.getX(), event.getY());
             event.consume();
         } else if (event.isLMBUpEvent() && pendingClickNode != null) {
             nodeRenderer.chooseStartingRoot(pendingClickNode);
@@ -166,6 +167,10 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         }
         if (statPanel.isCollapseButtonHit(position, event.getX(), event.getY())) {
             statPanel.toggleCollapsed();
+            event.consume();
+            return;
+        }
+        if (isOverOverlay(event.getX(), event.getY())) {
             event.consume();
             return;
         }
@@ -248,7 +253,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         starRenderer.renderAurora(viewport, backgroundAlpha);
         ringBeltRenderer.render(viewport, backgroundAlpha);
         staticImageRenderer.render(viewport, backgroundAlpha);
-        nodeRenderer.render(viewport, alphaMult, mouseX, mouseY, mouseKnown);
+        boolean treeHovered = mouseKnown && !isOverOverlay(mouseX, mouseY);
+        nodeRenderer.render(viewport, alphaMult, mouseX, mouseY, treeHovered);
         starRenderer.renderGlow(viewport, backgroundAlpha);
         statPanel.render(position, alphaMult);
         ordnancePointsBar.render(position, alphaMult);
@@ -259,7 +265,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         drawShipCardFrame(alphaMult);
 
         if (!dragging && mouseKnown) {
-            nodeRenderer.renderHoverTooltip(viewport, mouseX, mouseY, alphaMult);
+            if (treeHovered) {
+                nodeRenderer.renderHoverTooltip(viewport, mouseX, mouseY, alphaMult);
+            }
             if (ordnancePointsBar.isHovered(position, mouseX, mouseY) || levelBar.isHovered(position, mouseX, mouseY)) {
                 readoutTooltipRenderer.render(Translation.text("ui.readout.title"), readoutTooltipBody, mouseX, mouseY, alphaMult);
             }
@@ -273,11 +281,23 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void drawShipCardFrame(float alphaMult) {
-        float boxX = position.getX() + SkillTreeRefitButton.SHIP_CARD_MARGIN - SHIP_CARD_FRAME_OUTSET;
-        float boxY = position.getY() + SkillTreeRefitButton.SHIP_CARD_MARGIN - SHIP_CARD_FRAME_OUTSET;
-        float boxWidth = SkillTreeRefitButton.SHIP_CARD_ICON_SIZE + SHIP_CARD_FRAME_OUTSET * 2f;
-        float boxHeight = shipCardHeight + SHIP_CARD_FRAME_OUTSET * 2f;
-        shipCardPanel.draw(boxX, boxY, boxWidth, boxHeight, alphaMult);
+        ScreenRect frame = shipCardFrame();
+        shipCardPanel.draw(frame.left(), frame.bottom(), frame.width(), frame.height(), alphaMult);
+    }
+
+    private ScreenRect shipCardFrame() {
+        return new ScreenRect(position.getX() + SkillTreeRefitButton.SHIP_CARD_MARGIN - SHIP_CARD_FRAME_OUTSET,
+                position.getY() + SkillTreeRefitButton.SHIP_CARD_MARGIN - SHIP_CARD_FRAME_OUTSET,
+                SkillTreeRefitButton.SHIP_CARD_ICON_SIZE + SHIP_CARD_FRAME_OUTSET * 2f,
+                shipCardHeight + SHIP_CARD_FRAME_OUTSET * 2f);
+    }
+
+    private boolean isOverOverlay(float x, float y) {
+        return statPanel.contains(x, y)
+                || ordnancePointsBar.isHovered(position, x, y)
+                || levelBar.isHovered(position, x, y)
+                || (!nodeRenderer.isStartingRootInputLocked() && SkillTreeSearchBar.contains(position, x, y))
+                || shipCardFrame().contains(x, y);
     }
 
     private TreeViewport viewport() {

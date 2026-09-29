@@ -71,6 +71,7 @@ final class SkillTreeStatPanel {
     private float cachedLayoutHeight;
 
     private boolean collapsed = false;
+    private ScreenRect drawnBounds = ScreenRect.NONE;
 
     SkillTreeStatPanel(FleetMemberAPI member, ShipVariantAPI variant) {
         this.member = member;
@@ -90,7 +91,12 @@ final class SkillTreeStatPanel {
         return isWithinButton(collapseButtonCenterX(layout), collapseButtonCenterY(layout), COLLAPSE_BUTTON_SIZE, x, y);
     }
 
+    boolean contains(float x, float y) {
+        return drawnBounds.contains(x, y);
+    }
+
     void render(PositionAPI position, float alphaMult) {
+        drawnBounds = ScreenRect.NONE;
         LazyFont font = SkillTreePanelStyle.font();
         if (font == null) return;
 
@@ -103,6 +109,7 @@ final class SkillTreeStatPanel {
         float panelX = rightEdge - panelWidth;
         float bottomY = layout.topY - panelHeight;
 
+        drawnBounds = new ScreenRect(panelX, bottomY, panelWidth, panelHeight);
         borderedPanel.draw(panelX, bottomY, panelWidth, panelHeight, alphaMult);
 
         if (!collapsed) {

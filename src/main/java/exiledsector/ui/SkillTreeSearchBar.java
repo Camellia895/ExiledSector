@@ -114,7 +114,7 @@ final class SkillTreeSearchBar {
         return text;
     }
 
-    private static boolean contains(PositionAPI position, float x, float y) {
+    static boolean contains(PositionAPI position, float x, float y) {
         float left = left(position);
         float bottom = bottom(position);
         return x >= left && x <= left + WIDTH && y >= bottom && y <= bottom + HEIGHT;
