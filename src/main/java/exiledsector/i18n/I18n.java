@@ -2,8 +2,10 @@ package exiledsector.i18n;
 
 import com.fs.starfarer.api.Global;
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -13,6 +15,7 @@ public final class I18n {
 
     public static final String CATALOGUE_DIRECTORY = "data/strings/exiledSector/";
 
+    private static final String MISSING_FILE_MESSAGE = "resource, not found in";
     private static final Logger LOG = Logger.getLogger(I18n.class);
     private static final ThreadLocal<Boolean> GAME_TEXT = ThreadLocal.withInitial(() -> Boolean.FALSE);
 
@@ -84,12 +87,24 @@ public final class I18n {
         try {
             JSONObject json = Global.getSettings().getMergedJSON(path(locale));
             return json == null ? Map.of() : flatten(json);
-        } catch (Exception e) {
-            if (LocaleChain.ENGLISH.equals(locale)) {
-                LOG.error("Failed to load the Exiled Sector English strings from " + path(locale), e);
+        } catch (RuntimeException e) {
+            if (!isMissingFile(e) || LocaleChain.ENGLISH.equals(locale)) {
+                logUnreadable(locale, e);
             }
             return Map.of();
+        } catch (IOException | JSONException e) {
+            logUnreadable(locale, e);
+            return Map.of();
         }
+    }
+
+    private static boolean isMissingFile(RuntimeException e) {
+        return e.getMessage() != null && e.getMessage().contains(MISSING_FILE_MESSAGE);
+    }
+
+    private static void logUnreadable(String locale, Exception e) {
+        LOG.error("Failed to load Exiled Sector strings for " + locale + " from " + path(locale)
+                + "; those strings fall back to English", e);
     }
 
     public static Map<String, String> flatten(JSONObject json) {

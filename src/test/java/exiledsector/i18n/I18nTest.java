@@ -2,6 +2,11 @@ package exiledsector.i18n;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
+import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.spi.LoggingEvent;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,11 +14,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -21,24 +28,51 @@ class I18nTest {
 
     private MockedStatic<Global> globalMock;
     private SettingsAPI settings;
+    private final List<LoggingEvent> errors = new ArrayList<>();
+    private final AppenderSkeleton errorCapture = new AppenderSkeleton() {
+        @Override
+        protected void append(LoggingEvent event) {
+            if (event.getLevel().isGreaterOrEqual(Level.ERROR)) {
+                errors.add(event);
+            }
+        }
+
+        @Override
+        public void close() {
+        }
+
+        @Override
+        public boolean requiresLayout() {
+            return false;
+        }
+    };
 
     @BeforeEach
     void setUp() {
         settings = mock(SettingsAPI.class);
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSettings).thenReturn(settings);
+        Logger.getLogger(I18n.class).setLevel(Level.ERROR);
+        Logger.getLogger(I18n.class).addAppender(errorCapture);
+    }
+
+    private static RuntimeException notFound(String locale) {
+        return new RuntimeException("Error loading [data/strings/exiledSector/" + locale
+                + ".json] resource, not found in [../mods/ExiledSector,CLASSPATH]");
     }
 
     @AfterEach
     void tearDown() {
         globalMock.close();
+        Logger.getLogger(I18n.class).removeAppender(errorCapture);
+        Logger.getLogger(I18n.class).setLevel(null);
     }
 
     @Test
     void loadsTheLocaleOverEnglishAndSkipsFilesNoModProvides() throws Exception {
         when(settings.getMergedJSON("data/strings/exiledSector/en.json"))
                 .thenReturn(new JSONObject("{\"a\":\"English A\",\"b\":\"English B\"}"));
-        when(settings.getMergedJSON("data/strings/exiledSector/zh.json")).thenThrow(new IOException("absent"));
+        when(settings.getMergedJSON("data/strings/exiledSector/zh.json")).thenThrow(notFound("zh"));
         when(settings.getMergedJSON("data/strings/exiledSector/zh_CN.json"))
                 .thenReturn(new JSONObject("{\"a\":\"中文甲\"}"));
 
@@ -47,15 +81,43 @@ class I18nTest {
         assertEquals("zh_CN", I18n.locale());
         assertEquals("中文甲", Translation.text("a"));
         assertEquals("English B", Translation.text("b"));
+        assertEquals(List.of(), errors);
     }
 
     @Test
-    void aMissingEnglishFileLeavesAnEmptyCatalogueInsteadOfCrashing() throws Exception {
-        when(settings.getMergedJSON("data/strings/exiledSector/en.json")).thenThrow(new IOException("absent"));
+    void aMissingEnglishFileLeavesAnEmptyCatalogueAndIsReported() throws Exception {
+        when(settings.getMergedJSON("data/strings/exiledSector/en.json")).thenThrow(notFound("en"));
 
         I18n.load("en");
 
         assertEquals("[[a]]", Translation.text("a"));
+        assertEquals(1, errors.size());
+    }
+
+    @Test
+    void aBrokenTranslationFileIsReportedAndItsStringsFallBackToEnglish() throws Exception {
+        when(settings.getMergedJSON("data/strings/exiledSector/en.json")).thenReturn(new JSONObject("{\"a\":\"English A\"}"));
+        when(settings.getMergedJSON("data/strings/exiledSector/zh.json")).thenThrow(notFound("zh"));
+        when(settings.getMergedJSON("data/strings/exiledSector/zh_CN.json"))
+                .thenThrow(new JSONException("mods/ExiledSector (data/strings/exiledSector/zh_CN.json)\nExpected a ',' or '}'"));
+
+        I18n.load("zh_CN");
+
+        assertEquals("English A", Translation.text("a"));
+        assertEquals(1, errors.size());
+        assertTrue(errors.get(0).getRenderedMessage().contains("zh_CN"));
+        assertTrue(errors.get(0).getRenderedMessage().contains("data/strings/exiledSector/zh_CN.json"));
+    }
+
+    @Test
+    void anUnexpectedFailureReadingATranslationIsReportedRatherThanTreatedAsMissing() throws Exception {
+        when(settings.getMergedJSON("data/strings/exiledSector/en.json")).thenReturn(new JSONObject("{\"a\":\"English A\"}"));
+        when(settings.getMergedJSON("data/strings/exiledSector/ru.json")).thenThrow(new IllegalStateException("disk on fire"));
+
+        I18n.load("ru");
+
+        assertEquals("English A", Translation.text("a"));
+        assertEquals(1, errors.size());
     }
 
     @Test
