@@ -1,5 +1,7 @@
 package exiledsector.ui.node;
 
+import exiledsector.i18n.Catalogue;
+import exiledsector.i18n.I18n;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -10,6 +12,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -23,6 +26,22 @@ class NodeSearchTest {
     private static SkillNode node(String id, String name) {
         SkillType type = new SkillType.Builder(id, name, "", SkillTier.SMALL).build();
         return new SkillNode(id + "_1", type, List.of(), 0f, 0f);
+    }
+
+    @Test
+    void inAnotherLanguageSearchAlsoMatchesTheEnglishNameAndTheId() {
+        I18n.install(new Catalogue("zh_CN", Map.of("skillType.armor.name", "重型装甲")));
+        NodeSearch search = new NodeSearch();
+        SkillNode armor = node("armor", "Heavy Armor");
+
+        search.setQuery("重型");
+        assertTrue(search.matches(armor, data));
+        search.setQuery("heavy");
+        assertTrue(search.matches(armor, data));
+        search.setQuery("armor");
+        assertTrue(search.matches(armor, data));
+        assertEquals("重型装甲", armor.getType().getDisplayName());
+        assertEquals("Heavy Armor", armor.getType().getSourceName());
     }
 
     @Test

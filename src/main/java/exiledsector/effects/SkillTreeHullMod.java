@@ -9,6 +9,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
+import exiledsector.i18n.I18n;
 import exiledsector.persistence.OpSpentSlotManager;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedNode;
@@ -214,7 +215,7 @@ public class SkillTreeHullMod extends BaseHullMod {
                     MagicIncompatibleHullmods.removeHullmodWithWarning(variant, hullModId, SkillConflictWarningHullMod.ID);
                     variant.removeMod(MAGICLIB_WARNING_HULLMOD_ID);
                     variant.addMod(SkillConflictWarningHullMod.ID);
-                    SkillConflictWarnings.recordRemoval(variant, hullModId, type.getDisplayName());
+                    SkillConflictWarnings.recordRemoval(variant, hullModId, I18n.forGameText(type::getDisplayName));
                     conflictFound = true;
                 }
             }

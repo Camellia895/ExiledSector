@@ -1,8 +1,10 @@
 package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
 import exiledsector.skills.unlock.UnlockCondition;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -148,7 +150,15 @@ public class SkillType {
     }
 
     public String getDisplayName() {
+        return Translation.data("skillType." + id + ".name", displayName);
+    }
+
+    public String getSourceName() {
         return displayName;
+    }
+
+    public StyledText getDescriptionText() {
+        return Translation.dataStyled("skillType." + id + ".description", descriptionOverride);
     }
 
     public String getIconPath() {

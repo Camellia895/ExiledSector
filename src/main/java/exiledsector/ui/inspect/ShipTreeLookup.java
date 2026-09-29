@@ -3,6 +3,7 @@ package exiledsector.ui.inspect;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.i18n.Translation;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
@@ -39,7 +40,7 @@ public final class ShipTreeLookup {
 
     private static String layoutName(String layoutId) {
         NpcLayout layout = layoutId == null ? null : NpcLayouts.find(layoutId);
-        return layout != null ? layout.name() : layoutId;
+        return layout != null ? Translation.data("npcLayout." + layout.id() + ".name", layout.name()) : layoutId;
     }
 
     private static boolean isInPlayerFleet(FleetMemberAPI member) {

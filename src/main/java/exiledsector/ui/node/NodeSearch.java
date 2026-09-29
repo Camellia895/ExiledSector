@@ -55,7 +55,11 @@ public final class NodeSearch {
     }
 
     private static boolean nameContains(SkillType type, String needle) {
-        return type != null && type.getDisplayName() != null
-                && type.getDisplayName().toLowerCase(Locale.ROOT).contains(needle);
+        return type != null && (containsIgnoringCase(type.getDisplayName(), needle)
+                || containsIgnoringCase(type.getSourceName(), needle) || containsIgnoringCase(type.getId(), needle));
+    }
+
+    private static boolean containsIgnoringCase(String text, String needle) {
+        return text != null && text.toLowerCase(Locale.ROOT).contains(needle);
     }
 }
