@@ -115,8 +115,7 @@ final class HullModTooltipTables {
     }
 
     private static String hullSizeName(HullSize size) {
-        String key = "hullSize." + size.name();
-        return Translation.has(key) ? Translation.text(key) : size.name();
+        return Translation.data("hullSize." + size.name(), size.name());
     }
 
     private static String bonus(float value) {
