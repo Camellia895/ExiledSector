@@ -198,13 +198,19 @@ public final class SkillTreePanelStyle {
         return (channel / COLOR_QUANTIZE_STEP) * COLOR_QUANTIZE_STEP;
     }
 
-    public Color highlightColor(Style style) {
+    public static Color standardHighlightColor(Style style) {
         return switch (style) {
             case GOOD -> POSITIVE_STAT_COLOR;
             case BAD -> NEGATIVE_STAT_COLOR;
-            case HIGHLIGHT -> Misc.getHighlightColor();
+            default -> Misc.getHighlightColor();
+        };
+    }
+
+    public Color highlightColor(Style style) {
+        return switch (style) {
             case HULLMOD -> lowTechColor();
             case NODE -> highTechColor();
+            default -> standardHighlightColor(style);
         };
     }
 

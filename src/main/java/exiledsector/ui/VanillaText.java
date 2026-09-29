@@ -3,7 +3,6 @@ package exiledsector.ui;
 import com.fs.starfarer.api.campaign.TextPanelAPI;
 import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 
@@ -22,16 +21,8 @@ public final class VanillaText {
     private VanillaText() {
     }
 
-    public static Color defaultColor(Style style) {
-        return switch (style) {
-            case GOOD -> SkillTreePanelStyle.POSITIVE_STAT_COLOR;
-            case BAD -> SkillTreePanelStyle.NEGATIVE_STAT_COLOR;
-            default -> Misc.getHighlightColor();
-        };
-    }
-
     public static LabelAPI addPara(TooltipMakerAPI tooltip, StyledText text, float pad, Color base) {
-        return addPara(tooltip, text, pad, base, VanillaText::defaultColor);
+        return addPara(tooltip, text, pad, base, SkillTreePanelStyle::standardHighlightColor);
     }
 
     public static LabelAPI addPara(TooltipMakerAPI tooltip, StyledText text, float pad, Color base, Function<Style, Color> palette) {
@@ -42,7 +33,7 @@ public final class VanillaText {
     }
 
     public static LabelAPI addPara(TextPanelAPI panel, StyledText text, Color base) {
-        Prepared prepared = prepare(text, VanillaText::defaultColor);
+        Prepared prepared = prepare(text, SkillTreePanelStyle::standardHighlightColor);
         LabelAPI label = panel.addPara("%s", base, base, prepared.text());
         highlight(label, prepared);
         return label;
