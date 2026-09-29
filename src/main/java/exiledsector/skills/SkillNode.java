@@ -91,7 +91,7 @@ public class SkillNode extends SkillTreeObject {
         }
         addLine(lines, LegacyHighlight.of(describeTemporaryDuration(type)), false);
         for (SkillTypeEffect effect : described) {
-            addLine(lines, LegacyHighlight.of(effect.effect().deallocationWarning(effect.magnitude())), false);
+            addLine(lines, effect.effect().deallocationWarning(effect.magnitude()), false);
         }
         addLine(lines, LegacyHighlight.of(describeItemCost(type)), false);
         addLine(lines, LegacyHighlight.of(describeExclusivity(type)), false);

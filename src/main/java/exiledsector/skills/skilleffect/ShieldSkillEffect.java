@@ -9,6 +9,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.i18n.StyledText;
 import org.lwjgl.util.vector.Vector2f;
 
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
@@ -16,7 +17,6 @@ import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import java.util.List;
 import java.util.function.Function;
 
-import static exiledsector.skills.skilleffect.SkillEffectText.pct;
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
@@ -33,8 +33,8 @@ public enum ShieldSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return "Causes " + pct(magnitude) + "% of beam weapon damage dealt to shields to be hard flux.";
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).styled();
         }
     },
     REMOVE_SHIELD {
@@ -63,8 +63,8 @@ public enum ShieldSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return "Removes this ship's shield entirely.";
+        public StyledText description(float magnitude) {
+            return EffectText.of(this);
         }
     },
     CREATE_FRONT_SHIELD_IF_NONE {
@@ -85,8 +85,8 @@ public enum ShieldSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return "Installs a makeshift, front-facing shield if this ship has none.";
+        public StyledText description(float magnitude) {
+            return EffectText.of(this);
         }
     },
     CONVERT_SHIELD_TO_FRONT {
@@ -118,8 +118,8 @@ public enum ShieldSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return "Converts this ship's shield to front-facing.";
+        public StyledText description(float magnitude) {
+            return EffectText.of(this);
         }
     },
     CONVERT_SHIELD_TO_OMNI {
@@ -151,25 +151,24 @@ public enum ShieldSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return "Converts this ship's shield to omni-directional.";
+        public StyledText description(float magnitude) {
+            return EffectText.of(this);
         }
     },
     SHIELD_ARC_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getShieldArcBonus), StatNames.SHIELD_ARC, false),
     SHIELD_ARC_FLAT(FLAT, bonus(MutableShipStatsAPI::getShieldArcBonus), StatNames.SHIELD_ARC, false),
     SHIELD_ARC_MULT(MULT, bonus(MutableShipStatsAPI::getShieldArcBonus), StatNames.SHIELD_ARC, false),
-    SHIELD_PIERCE_CHANCE_PERCENT(PERCENT, dynamicStat(Stats.SHIELD_PIERCED_MULT), "chance for shields to be pierced by EMP arcs", false),
-    SHIELD_PIERCE_CHANCE_MULT(MULT, dynamicStat(Stats.SHIELD_PIERCED_MULT), "chance for shields to be pierced by EMP arcs", false),
-    SHIELD_UPKEEP_PERCENT(PERCENT, stat(MutableShipStatsAPI::getShieldUpkeepMult), "shield flux upkeep", true),
-    SHIELD_UPKEEP_MULT(MULT, stat(MutableShipStatsAPI::getShieldUpkeepMult), "shield flux upkeep", true),
-    SHIELD_TURN_RATE_PERCENT(PERCENT, stat(MutableShipStatsAPI::getShieldTurnRateMult), "shield turn rate", false),
-    SHIELD_RAISE_RATE_PERCENT(PERCENT, stat(MutableShipStatsAPI::getShieldUnfoldRateMult), "shield raise rate", false),
+    SHIELD_PIERCE_CHANCE_PERCENT(PERCENT, dynamicStat(Stats.SHIELD_PIERCED_MULT), "stat.chanceForShieldsToBePiercedByEmpArcs", false),
+    SHIELD_PIERCE_CHANCE_MULT(MULT, dynamicStat(Stats.SHIELD_PIERCED_MULT), "stat.chanceForShieldsToBePiercedByEmpArcs", false),
+    SHIELD_UPKEEP_PERCENT(PERCENT, stat(MutableShipStatsAPI::getShieldUpkeepMult), "stat.shieldFluxUpkeep", true),
+    SHIELD_UPKEEP_MULT(MULT, stat(MutableShipStatsAPI::getShieldUpkeepMult), "stat.shieldFluxUpkeep", true),
+    SHIELD_TURN_RATE_PERCENT(PERCENT, stat(MutableShipStatsAPI::getShieldTurnRateMult), "stat.shieldTurnRate", false),
+    SHIELD_RAISE_RATE_PERCENT(PERCENT, stat(MutableShipStatsAPI::getShieldUnfoldRateMult), "stat.shieldRaiseRate", false),
     SHIELD_DAMAGE_SHARED_PERCENT(SharedShieldDamageListener.SHARED_PERCENT_KEY,
             SharedShieldDamageListener.class, SharedShieldDamageListener::new) {
         @Override
-        public String describe(float magnitude) {
-            return "Disperses " + pct(magnitude) + "% of shield damage taken to nearby allied ships within "
-                    + Math.round(SHARED_SHIELD_DAMAGE_RANGE) + " su, split evenly between them as hard flux.";
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("range", Math.round(SHARED_SHIELD_DAMAGE_RANGE)).styled();
         }
     };
 
@@ -186,8 +185,8 @@ public enum ShieldSkillEffect implements SkillEffect {
         this(null, null);
     }
 
-    ShieldSkillEffect(StatMode mode, StatTarget target, String statName, boolean lowerIsBetter) {
-        this(new SimpleStatEffect(mode, target, statName, lowerIsBetter), null);
+    ShieldSkillEffect(StatMode mode, StatTarget target, String statKey, boolean lowerIsBetter) {
+        this(new SimpleStatEffect(mode, target, statKey, lowerIsBetter), null);
     }
 
     <T> ShieldSkillEffect(String magnitudeKey, Class<T> listenerType, Function<ShipAPI, ? extends T> listenerFactory) {
@@ -216,8 +215,8 @@ public enum ShieldSkillEffect implements SkillEffect {
     }
 
     @Override
-    public String describe(float magnitude) {
-        return simpleStat.describe(magnitude);
+    public StyledText description(float magnitude) {
+        return simpleStat.description(magnitude);
     }
 
     @Override
@@ -304,7 +303,7 @@ public enum ShieldSkillEffect implements SkillEffect {
     }
 
     private static final class StatNames {
-        static final String SHIELD_ARC = "shield arc";
+        static final String SHIELD_ARC = "stat.shieldArc";
 
         private StatNames() {
         }

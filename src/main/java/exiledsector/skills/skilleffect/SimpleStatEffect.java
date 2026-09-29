@@ -1,15 +1,21 @@
 package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
 
-record SimpleStatEffect(StatMode mode, StatTarget target, String statName, boolean lowerIsBetter) {
+record SimpleStatEffect(StatMode mode, StatTarget target, String statKey, boolean lowerIsBetter) {
 
     void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
         target.apply(stats, modId, mode, magnitude);
     }
 
+    StyledText description(float magnitude) {
+        return mode.description(magnitude, Translation.text(statKey));
+    }
+
     String describe(float magnitude) {
-        return mode.describe(magnitude, statName);
+        return description(magnitude).plain();
     }
 
     boolean supportsTemporaryGating() {

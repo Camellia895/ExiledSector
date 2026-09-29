@@ -38,6 +38,7 @@ import static org.mockito.Mockito.when;
 class DescriptionGoldenTest {
 
     static final Path GOLDEN_FILE = Path.of("src/test/resources/i18n/descriptions.en.golden");
+    private static final Path ACTUAL_FILE = Path.of("target/i18n/descriptions.en.actual");
     private static final String UPDATE_PROPERTY = "exiledsector.updateGolden";
     private static final float[] SAMPLE_MAGNITUDES = {1f, 10f, 12.5f, 100f, -10f, -12.5f};
     private static final HullSize[] HULL_SIZES = {null, HullSize.FRIGATE, HullSize.DESTROYER, HullSize.CRUISER, HullSize.CAPITAL_SHIP};
@@ -69,6 +70,9 @@ class DescriptionGoldenTest {
     @Test
     void everyPlayerVisibleDescriptionMatchesTheRecordedEnglishTextAndHighlights() throws IOException {
         List<String> actual = generate();
+        Path actualFile = RealSkillData.projectRoot().resolve(ACTUAL_FILE);
+        Files.createDirectories(actualFile.getParent());
+        Files.writeString(actualFile, String.join("\n", actual) + "\n", StandardCharsets.UTF_8);
         Path golden = RealSkillData.projectRoot().resolve(GOLDEN_FILE);
         if (Boolean.getBoolean(UPDATE_PROPERTY)) {
             Files.createDirectories(golden.getParent());
@@ -90,7 +94,7 @@ class DescriptionGoldenTest {
             for (float magnitude : SAMPLE_MAGNITUDES) {
                 String key = name + "|" + magnitude;
                 addLine(lines, "effect|" + key, effect.description(magnitude), effect.lowerIsBetter());
-                addLine(lines, "warning|" + key, LegacyHighlight.of(effect.deallocationWarning(magnitude)), false);
+                addLine(lines, "warning|" + key, effect.deallocationWarning(magnitude), false);
             }
         }
         secondInCommandEnabled = false;

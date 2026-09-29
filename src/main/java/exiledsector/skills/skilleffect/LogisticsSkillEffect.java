@@ -5,12 +5,10 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
+import exiledsector.i18n.StyledText;
 
 import java.util.List;
 
-import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
-import static exiledsector.skills.skilleffect.SkillEffectText.pct;
-import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
@@ -21,10 +19,10 @@ import static exiledsector.skills.skilleffect.StatTarget.stat;
 
 public enum LogisticsSkillEffect implements SkillEffect {
 
-    FUEL_CAPACITY_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getFuelMod), "fuel capacity", false),
-    FUEL_CAPACITY_FLAT(FLAT, bonus(MutableShipStatsAPI::getFuelMod), "fuel capacity", false),
-    CARGO_CAPACITY_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getCargoMod), "cargo capacity", false),
-    CARGO_CAPACITY_FLAT(FLAT, bonus(MutableShipStatsAPI::getCargoMod), "cargo capacity", false),
+    FUEL_CAPACITY_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getFuelMod), "stat.fuelCapacity", false),
+    FUEL_CAPACITY_FLAT(FLAT, bonus(MutableShipStatsAPI::getFuelMod), "stat.fuelCapacity", false),
+    CARGO_CAPACITY_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getCargoMod), "stat.cargoCapacity", false),
+    CARGO_CAPACITY_FLAT(FLAT, bonus(MutableShipStatsAPI::getCargoMod), "stat.cargoCapacity", false),
     CARGO_CAPACITY_PER_FIGHTER_BAY {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -33,20 +31,20 @@ public enum LogisticsSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return flatChange(magnitude, "cargo capacity per fighter bay");
+        public StyledText description(float magnitude) {
+            return EffectText.flatChange(magnitude, "stat.cargoCapacityPerFighterBay");
         }
     },
-    CREW_CAPACITY_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getMaxCrewMod), "crew capacity", false),
-    CREW_CAPACITY_FLAT(FLAT, bonus(MutableShipStatsAPI::getMaxCrewMod), "crew capacity", false),
-    BURN_LEVEL_FLAT(FLAT, stat(MutableShipStatsAPI::getMaxBurnLevel), "max burn level", false),
-    SENSOR_PROFILE_PERCENT(PERCENT, stat(MutableShipStatsAPI::getSensorProfile), "sensor profile", true),
-    SENSOR_PROFILE_MULT(MULT, stat(MutableShipStatsAPI::getSensorProfile), "sensor profile", true),
-    SENSOR_STRENGTH_PERCENT(PERCENT, stat(MutableShipStatsAPI::getSensorStrength), "sensor strength", false),
-    SENSOR_STRENGTH_FLAT(FLAT, stat(MutableShipStatsAPI::getSensorStrength), "sensor strength", false),
-    COMBAT_VISION(FLAT, bonus(MutableShipStatsAPI::getSightRadiusMod), "in-combat sensor/vision range", false),
+    CREW_CAPACITY_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getMaxCrewMod), "stat.crewCapacity", false),
+    CREW_CAPACITY_FLAT(FLAT, bonus(MutableShipStatsAPI::getMaxCrewMod), "stat.crewCapacity", false),
+    BURN_LEVEL_FLAT(FLAT, stat(MutableShipStatsAPI::getMaxBurnLevel), "stat.maxBurnLevel", false),
+    SENSOR_PROFILE_PERCENT(PERCENT, stat(MutableShipStatsAPI::getSensorProfile), "stat.sensorProfile", true),
+    SENSOR_PROFILE_MULT(MULT, stat(MutableShipStatsAPI::getSensorProfile), "stat.sensorProfile", true),
+    SENSOR_STRENGTH_PERCENT(PERCENT, stat(MutableShipStatsAPI::getSensorStrength), "stat.sensorStrength", false),
+    SENSOR_STRENGTH_FLAT(FLAT, stat(MutableShipStatsAPI::getSensorStrength), "stat.sensorStrength", false),
+    COMBAT_VISION(FLAT, bonus(MutableShipStatsAPI::getSightRadiusMod), "stat.inCombatSensorVisionRange", false),
     CR_RECOVERY_RATE_PERCENT(PERCENT, stat(MutableShipStatsAPI::getBaseCRRecoveryRatePercentPerDay),
-            "combat readiness recovery rate", false),
+            "stat.combatReadinessRecoveryRate", false),
     MAX_COMBAT_READINESS_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -54,15 +52,15 @@ public enum LogisticsSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "maximum combat readiness");
+        public StyledText description(float magnitude) {
+            return EffectText.pctChange(magnitude, "stat.maximumCombatReadiness");
         }
     },
-    REPAIR_RATE_PER_DAY_PERCENT(PERCENT, stat(MutableShipStatsAPI::getRepairRatePercentPerDay), "repair rate per day", false),
+    REPAIR_RATE_PER_DAY_PERCENT(PERCENT, stat(MutableShipStatsAPI::getRepairRatePercentPerDay), "stat.repairRatePerDay", false),
     CR_LOSS_PER_SECOND_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getCRLossPerSecondPercent),
-            "rate of combat readiness loss from extended deployment", true),
+            "stat.rateOfCombatReadinessLossFromExtendedDeployment", true),
     CR_LOSS_PER_SECOND_MULT(MULT, bonus(MutableShipStatsAPI::getCRLossPerSecondPercent),
-            "rate of combat readiness loss from extended deployment", true),
+            "stat.rateOfCombatReadinessLossFromExtendedDeployment", true),
     MIN_CREW_MULT(MULT, bonus(MutableShipStatsAPI::getMinCrewMod), StatNames.MIN_CREW_REQUIRED, true),
     MIN_CREW_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getMinCrewMod), StatNames.MIN_CREW_REQUIRED, true),
     MIN_CREW_FLAT(FLAT, bonus(MutableShipStatsAPI::getMinCrewMod), StatNames.MIN_CREW_REQUIRED, true),
@@ -79,8 +77,8 @@ public enum LogisticsSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return flatChange(magnitude, "minimum crew required per fighter bay");
+        public StyledText description(float magnitude) {
+            return EffectText.flatChange(magnitude, "stat.minimumCrewRequiredPerFighterBay");
         }
     },
     MIN_CREW_PERCENT_PER_FIGHTER_BAY {
@@ -97,12 +95,12 @@ public enum LogisticsSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "minimum crew required per fighter bay (capped at -80% total)");
+        public StyledText description(float magnitude) {
+            return EffectText.pctChange(magnitude, "stat.minimumCrewRequiredPerFighterBayCappedAt80Total");
         }
     },
-    SUPPLIES_PER_MONTH_MULT(MULT, stat(MutableShipStatsAPI::getSuppliesPerMonth), "supply use for maintenance", true),
-    FUEL_USE_MULT(MULT, bonus(MutableShipStatsAPI::getFuelUseMod), "fuel consumption rate", true),
+    SUPPLIES_PER_MONTH_MULT(MULT, stat(MutableShipStatsAPI::getSuppliesPerMonth), "stat.supplyUseForMaintenance", true),
+    FUEL_USE_MULT(MULT, bonus(MutableShipStatsAPI::getFuelUseMod), "stat.fuelConsumptionRate", true),
     REMOVE_CIVILIAN_HULL_PENALTY {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -116,8 +114,8 @@ public enum LogisticsSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return "Removes the penalties of a civilian-grade hull.";
+        public StyledText description(float magnitude) {
+            return EffectText.of(this);
         }
     },
     REQUIRES_CIVILIAN_GRADE_HULL {
@@ -131,20 +129,20 @@ public enum LogisticsSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return "Can only be allocated on civilian-grade hulls.";
+        public StyledText description(float magnitude) {
+            return EffectText.of(this);
         }
     },
-    CREW_LOSS_PERCENT(PERCENT, stat(MutableShipStatsAPI::getCrewLossMult), "crew casualties", true),
-    CREW_LOSS_MULT(MULT, stat(MutableShipStatsAPI::getCrewLossMult), "crew casualties", true),
+    CREW_LOSS_PERCENT(PERCENT, stat(MutableShipStatsAPI::getCrewLossMult), "stat.crewCasualties", true),
+    CREW_LOSS_MULT(MULT, stat(MutableShipStatsAPI::getCrewLossMult), "stat.crewCasualties", true),
     SURVEY_COST_REDUCTION_HEAVY_MACHINERY(FLAT, dynamicMod("survey_cost_reduction_heavy_machinery"),
-            "heavy machinery required to perform surveys (fleet-wide)", false),
+            "stat.heavyMachineryRequiredToPerformSurveysFleetWide", false),
     SURVEY_COST_REDUCTION_SUPPLIES(FLAT, dynamicMod("survey_cost_reduction_supplies"),
-            "supplies required to perform surveys (fleet-wide)", false),
+            "stat.suppliesRequiredToPerformSurveysFleetWide", false),
     GROUND_SUPPORT_FLAT(FLAT, dynamicMod(Stats.FLEET_GROUND_SUPPORT),
-            "effective strength of planetary raids, up to the total number of marines in the fleet", false),
+            "stat.effectiveStrengthOfPlanetaryRaidsUpToTheTotalNumberOfMarinesInTheFleet", false),
     CORONA_RESISTANCE_MULT(MULT, dynamicStat(Stats.CORONA_EFFECT_MULT),
-            "combat readiness loss from being in a solar corona or a deep hyperspace storm", true),
+            "stat.combatReadinessLossFromBeingInASolarCoronaOrADeepHyperspaceStorm", true),
     POST_BATTLE_SALVAGE_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -162,8 +160,8 @@ public enum LogisticsSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "post-battle salvage recovered (fleet-wide)");
+        public StyledText description(float magnitude) {
+            return EffectText.pctChange(magnitude, "stat.postBattleSalvageRecoveredFleetWide");
         }
     },
     PHASE_FIELD_CONTRIBUTION_PERCENT {
@@ -188,12 +186,8 @@ public enum LogisticsSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return "Even if this ship isn't a phase ship, " + pct(magnitude) + "% of its sensor strength "
-                    + "counts toward the fleet-wide detected-at range reduction that phase ships normally "
-                    + "provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships "
-                    + "contribute, the less visible the fleet becomes, with diminishing returns. Only "
-                    + "applies while the fleet's transponder is off.";
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).styled();
         }
     };
 
@@ -203,8 +197,8 @@ public enum LogisticsSkillEffect implements SkillEffect {
         this.simpleStat = null;
     }
 
-    LogisticsSkillEffect(StatMode mode, StatTarget target, String statName, boolean lowerIsBetter) {
-        this.simpleStat = new SimpleStatEffect(mode, target, statName, lowerIsBetter);
+    LogisticsSkillEffect(StatMode mode, StatTarget target, String statKey, boolean lowerIsBetter) {
+        this.simpleStat = new SimpleStatEffect(mode, target, statKey, lowerIsBetter);
     }
 
     @Override
@@ -213,8 +207,8 @@ public enum LogisticsSkillEffect implements SkillEffect {
     }
 
     @Override
-    public String describe(float magnitude) {
-        return simpleStat.describe(magnitude);
+    public StyledText description(float magnitude) {
+        return simpleStat.description(magnitude);
     }
 
     @Override
@@ -223,7 +217,7 @@ public enum LogisticsSkillEffect implements SkillEffect {
     }
 
     private static final class StatNames {
-        static final String MIN_CREW_REQUIRED = "minimum crew required";
+        static final String MIN_CREW_REQUIRED = "stat.minimumCrewRequired";
 
         private StatNames() {
         }

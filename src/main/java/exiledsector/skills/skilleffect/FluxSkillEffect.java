@@ -2,8 +2,8 @@ package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import exiledsector.i18n.StyledText;
 
-import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
@@ -17,8 +17,8 @@ public enum FluxSkillEffect implements SkillEffect {
     FLUX_DISSIPATION_PERCENT(PERCENT, stat(MutableShipStatsAPI::getFluxDissipation), StatNames.FLUX_DISSIPATION, false),
     FLUX_DISSIPATION_FLAT(FLAT, stat(MutableShipStatsAPI::getFluxDissipation), StatNames.FLUX_DISSIPATION, false),
     FLUX_DISSIPATION_MULT(MULT, stat(MutableShipStatsAPI::getFluxDissipation), StatNames.FLUX_DISSIPATION, false),
-    VENT_RATE_PERCENT(PERCENT, stat(MutableShipStatsAPI::getVentRateMult), "venting speed", false),
-    VENT_RATE_MULT(MULT, stat(MutableShipStatsAPI::getVentRateMult), "venting speed", false),
+    VENT_RATE_PERCENT(PERCENT, stat(MutableShipStatsAPI::getVentRateMult), "stat.ventingSpeed", false),
+    VENT_RATE_MULT(MULT, stat(MutableShipStatsAPI::getVentRateMult), "stat.ventingSpeed", false),
     ZERO_FLUX_ALWAYS_ON {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -31,8 +31,8 @@ public enum FluxSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return "Allows the zero-flux speed boost to take effect regardless of flux level.";
+        public StyledText description(float magnitude) {
+            return EffectText.of(this);
         }
     },
     FLUX_DISSIPATION_WHILE_VENTING_PERCENT {
@@ -60,8 +60,8 @@ public enum FluxSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "flux dissipation rate while venting");
+        public StyledText description(float magnitude) {
+            return EffectText.pctChange(magnitude, "stat.fluxDissipationWhileVenting");
         }
     };
 
@@ -71,8 +71,8 @@ public enum FluxSkillEffect implements SkillEffect {
         this.simpleStat = null;
     }
 
-    FluxSkillEffect(StatMode mode, StatTarget target, String statName, boolean lowerIsBetter) {
-        this.simpleStat = new SimpleStatEffect(mode, target, statName, lowerIsBetter);
+    FluxSkillEffect(StatMode mode, StatTarget target, String statKey, boolean lowerIsBetter) {
+        this.simpleStat = new SimpleStatEffect(mode, target, statKey, lowerIsBetter);
     }
 
     @Override
@@ -81,8 +81,8 @@ public enum FluxSkillEffect implements SkillEffect {
     }
 
     @Override
-    public String describe(float magnitude) {
-        return simpleStat.describe(magnitude);
+    public StyledText description(float magnitude) {
+        return simpleStat.description(magnitude);
     }
 
     @Override
@@ -91,8 +91,8 @@ public enum FluxSkillEffect implements SkillEffect {
     }
 
     private static final class StatNames {
-        static final String FLUX_CAPACITY = "flux capacity";
-        static final String FLUX_DISSIPATION = "flux dissipation";
+        static final String FLUX_CAPACITY = "stat.fluxCapacity";
+        static final String FLUX_DISSIPATION = "stat.fluxDissipation";
 
         private StatNames() {
         }

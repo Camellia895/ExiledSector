@@ -5,10 +5,9 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.WingRole;
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
 
-import static exiledsector.skills.skilleffect.SkillEffectText.pct;
-import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
-import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
 import static exiledsector.skills.skilleffect.StatTarget.dynamicStat;
@@ -23,8 +22,8 @@ public enum FighterSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "weapon damage of fighters launched from this ship");
+        public StyledText description(float magnitude) {
+            return EffectText.pctChange(magnitude, "stat.weaponDamageOfFightersLaunchedFromThisShip");
         }
     },
     FIGHTER_TOP_SPEED_PERCENT {
@@ -34,16 +33,16 @@ public enum FighterSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "top speed of fighters launched from this ship");
+        public StyledText description(float magnitude) {
+            return EffectText.pctChange(magnitude, "stat.topSpeedOfFightersLaunchedFromThisShip");
         }
     },
     FIGHTER_CREW_LOSS_PERCENT(PERCENT, dynamicStat("fighter_crew_loss_mult"),
-            "casualties suffered by fighter pilots launched from this ship", true),
+            "stat.casualtiesSufferedByFighterPilotsLaunchedFromThisShip", true),
     FIGHTER_CREW_LOSS_MULT(MULT, dynamicStat("fighter_crew_loss_mult"),
-            "casualties suffered by fighter pilots launched from this ship", true),
-    FIGHTER_REFIT_TIME_MULT(MULT, stat(MutableShipStatsAPI::getFighterRefitTimeMult), "fighter refit time", true),
-    FIGHTER_REFIT_TIME_PERCENT(PERCENT, stat(MutableShipStatsAPI::getFighterRefitTimeMult), "fighter refit time", true),
+            "stat.casualtiesSufferedByFighterPilotsLaunchedFromThisShip", true),
+    FIGHTER_REFIT_TIME_MULT(MULT, stat(MutableShipStatsAPI::getFighterRefitTimeMult), "stat.fighterRefitTime", true),
+    FIGHTER_REFIT_TIME_PERCENT(PERCENT, stat(MutableShipStatsAPI::getFighterRefitTimeMult), "stat.fighterRefitTime", true),
     FIGHTER_REPLACEMENT_RATE_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -58,15 +57,14 @@ public enum FighterSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            String verb = magnitude >= 0 ? "slower" : "faster";
-            return pct(Math.abs(magnitude)) + "% " + verb + " fighter replacement rate decay and recovery.";
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this, magnitude >= 0 ? "slower" : "faster").arg("value", Math.abs(magnitude)).styled();
         }
     },
     FIGHTER_REPLACEMENT_DECAY_PERCENT(PERCENT, dynamicStat("replacement_rate_decrease_mult"),
-            "rate at which fighter replacement capability decays from losses", true),
+            "stat.rateAtWhichFighterReplacementCapabilityDecaysFromLosses", true),
     FIGHTER_REPLACEMENT_RECOVERY_PERCENT(PERCENT, dynamicStat("replacement_rate_increase_mult"),
-            "rate at which fighter replacement capability recovers", false),
+            "stat.rateAtWhichFighterReplacementCapabilityRecovers", false),
     FIGHTER_PD_DAMAGE_BONUS_PERCENT {
         @Override
         public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
@@ -76,8 +74,8 @@ public enum FighterSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "damage dealt by fighters launched from this ship to other fighters and missiles");
+        public StyledText description(float magnitude) {
+            return EffectText.pctChange(magnitude, "stat.damageDealtByFightersLaunchedFromThisShipToOtherFightersAndMissiles");
         }
     },
     FIGHTER_RELAUNCH_TIME_FLAT {
@@ -97,8 +95,8 @@ public enum FighterSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return flatChange(magnitude, "fighter relaunch time, as a % of base refit time");
+        public StyledText description(float magnitude) {
+            return EffectText.flatChange(magnitude, "stat.fighterRelaunchTimeAsAOfBaseRefitTime");
         }
     },
     FIGHTER_ARMOR_PERCENT {
@@ -108,8 +106,8 @@ public enum FighterSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "armor of fighters launched from this ship");
+        public StyledText description(float magnitude) {
+            return EffectText.pctChange(magnitude, "stat.armorOfFightersLaunchedFromThisShip");
         }
     },
     FIGHTER_SHIELD_DAMAGE_TAKEN_PERCENT {
@@ -124,8 +122,8 @@ public enum FighterSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "damage taken by shields of fighters launched from this ship");
+        public StyledText description(float magnitude) {
+            return EffectText.pctChange(magnitude, "stat.damageTakenByShieldsOfFightersLaunchedFromThisShip");
         }
     },
     FIGHTER_RATE_OF_FIRE_PERCENT {
@@ -135,8 +133,8 @@ public enum FighterSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "weapon rate of fire of fighters launched from this ship");
+        public StyledText description(float magnitude) {
+            return EffectText.pctChange(magnitude, "stat.weaponRateOfFireOfFightersLaunchedFromThisShip");
         }
     },
     FIGHTER_ENGAGEMENT_RANGE_PERCENT {
@@ -146,8 +144,8 @@ public enum FighterSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return pctChange(magnitude, "engagement range of fighters launched from this ship");
+        public StyledText description(float magnitude) {
+            return EffectText.pctChange(magnitude, "stat.engagementRangeOfFightersLaunchedFromThisShip");
         }
     },
     FIGHTER_WEAPON_RANGE_FLAT {
@@ -159,8 +157,8 @@ public enum FighterSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return flatChange(magnitude, "weapon range of fighters launched from this ship");
+        public StyledText description(float magnitude) {
+            return EffectText.flatChange(magnitude, "stat.weaponRangeOfFightersLaunchedFromThisShip");
         }
     },
     FIGHTER_ROLE_DAMAGE_PERCENT(WingRole.FIGHTER, RoleStat.WEAPON_DAMAGE),
@@ -198,8 +196,8 @@ public enum FighterSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return "Removes all of this ship's fighter bays.";
+        public StyledText description(float magnitude) {
+            return EffectText.of(this);
         }
     },
     FIGHTER_BAYS_FLAT {
@@ -214,8 +212,8 @@ public enum FighterSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return flatChange(magnitude, "number of fighter bays");
+        public StyledText description(float magnitude) {
+            return EffectText.flatChange(magnitude, "stat.numberOfFighterBays");
         }
 
         @Override
@@ -229,8 +227,8 @@ public enum FighterSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String deallocationWarning(float magnitude) {
-            return "Cannot be unallocated without at least 1 empty fighter bay.";
+        public StyledText deallocationWarning(float magnitude) {
+            return EffectText.msg(this, "warning").styled();
         }
     };
 
@@ -274,12 +272,10 @@ public enum FighterSkillEffect implements SkillEffect {
         fighter.getMutableStats().getFighterWingRange().modifyPercent(modId, magnitude);
     }
 
-    private static String roleDisplayName(WingRole role) {
+    private static String roleKey(WingRole role) {
         return switch (role) {
-            case INTERCEPTOR -> "Interceptors";
-            case BOMBER -> "Bombers";
-            case SUPPORT -> "Support fighters";
-            default -> "Fighters";
+            case INTERCEPTOR, BOMBER, SUPPORT -> "fighter.role." + role.name();
+            default -> "fighter.role." + WingRole.FIGHTER.name();
         };
     }
 
@@ -295,8 +291,8 @@ public enum FighterSkillEffect implements SkillEffect {
         this(role, roleStat, null);
     }
 
-    FighterSkillEffect(StatMode mode, StatTarget target, String statName, boolean lowerIsBetter) {
-        this(null, null, new SimpleStatEffect(mode, target, statName, lowerIsBetter));
+    FighterSkillEffect(StatMode mode, StatTarget target, String statKey, boolean lowerIsBetter) {
+        this(null, null, new SimpleStatEffect(mode, target, statKey, lowerIsBetter));
     }
 
     FighterSkillEffect(WingRole role, RoleStat roleStat, SimpleStatEffect simpleStat) {
@@ -333,11 +329,12 @@ public enum FighterSkillEffect implements SkillEffect {
     }
 
     @Override
-    public String describe(float magnitude) {
+    public StyledText description(float magnitude) {
         if (simpleStat != null) {
-            return simpleStat.describe(magnitude);
+            return simpleStat.description(magnitude);
         }
-        return pctChange(magnitude, roleStat.description + " of " + roleDisplayName(role) + " launched from this ship");
+        String stat = Translation.msg("fighter.launched").arg("stat", Translation.text(roleStat.key())).arg("role", Translation.text(roleKey(role))).text();
+        return StatMode.PERCENT.description(magnitude, stat);
     }
 
     @FunctionalInterface
@@ -346,25 +343,27 @@ public enum FighterSkillEffect implements SkillEffect {
     }
 
     private enum RoleStat {
-        WEAPON_DAMAGE("weapon damage", FighterSkillEffect::applyRoleDamage),
-        TOP_SPEED("top speed", FighterSkillEffect::applyRoleTopSpeed),
-        ARMOR("armor", FighterSkillEffect::applyRoleArmor),
-        SHIELD_DAMAGE_TAKEN("damage taken by shields", FighterSkillEffect::applyRoleShieldDamageTaken, true),
-        RATE_OF_FIRE("weapon rate of fire", FighterSkillEffect::applyRoleRateOfFire),
-        ENGAGEMENT_RANGE("engagement range", FighterSkillEffect::applyRoleEngagementRange);
+        WEAPON_DAMAGE(FighterSkillEffect::applyRoleDamage),
+        TOP_SPEED(FighterSkillEffect::applyRoleTopSpeed),
+        ARMOR(FighterSkillEffect::applyRoleArmor),
+        SHIELD_DAMAGE_TAKEN(FighterSkillEffect::applyRoleShieldDamageTaken, true),
+        RATE_OF_FIRE(FighterSkillEffect::applyRoleRateOfFire),
+        ENGAGEMENT_RANGE(FighterSkillEffect::applyRoleEngagementRange);
 
-        private final String description;
         private final RoleStatApplier applier;
         private final boolean lowerIsBetter;
 
-        RoleStat(String description, RoleStatApplier applier) {
-            this(description, applier, false);
+        RoleStat(RoleStatApplier applier) {
+            this(applier, false);
         }
 
-        RoleStat(String description, RoleStatApplier applier, boolean lowerIsBetter) {
-            this.description = description;
+        RoleStat(RoleStatApplier applier, boolean lowerIsBetter) {
             this.applier = applier;
             this.lowerIsBetter = lowerIsBetter;
+        }
+
+        String key() {
+            return "fighter.stat." + name();
         }
     }
 }

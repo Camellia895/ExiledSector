@@ -12,13 +12,12 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.skills.NeuralLinkScript;
 import com.fs.starfarer.api.util.FaderUtil;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.i18n.StyledText;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
 import java.util.Map;
 
-import static exiledsector.skills.skilleffect.SkillEffectText.pct;
-import static exiledsector.skills.skilleffect.SkillEffectText.pctMore;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
 import static exiledsector.skills.skilleffect.StatTarget.bonus;
@@ -27,9 +26,9 @@ import static exiledsector.skills.skilleffect.StatTarget.dynamicMod;
 public enum PhaseSkillEffect implements SkillEffect {
 
     PHASE_CLOAK_ACTIVATION_COST_MULT(MULT, bonus(MutableShipStatsAPI::getPhaseCloakActivationCostBonus),
-            "phase cloak activation cost", true),
+            "stat.phaseCloakActivationCost", true),
     PHASE_CLOAK_FLUX_THRESHOLD_PERCENT(PERCENT, dynamicMod("phase_cloak_flux_level_for_min_speed_mod"),
-            "hard flux threshold before phase speed penalty kicks in", false),
+            "stat.hardFluxThresholdBeforePhaseSpeedPenaltyKicksIn", false),
     COMBAT_BOOST_WHILE_PHASED {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -74,8 +73,8 @@ public enum PhaseSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return pctMore(magnitude, "flux dissipation, weapon rate of fire, and ammo regeneration while phased");
+        public StyledText description(float magnitude) {
+            return EffectText.pctMore(magnitude, "stat.fluxRateOfFireAndAmmoRegenWhilePhased");
         }
     },
     PHASE_ANCHOR_EMERGENCY_DIVE {
@@ -95,12 +94,8 @@ public enum PhaseSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return "While at risk of being destroyed or disabled, this ship can instead perform an emergency dive "
-                    + "into phase space, retreating from battle and suffering an additional combat readiness "
-                    + "penalty equal to " + pct(magnitude) + "% of its deployment cost. The ship must have enough "
-                    + "combat readiness to cover this cost. Only one ship per battle, regardless of side, can "
-                    + "perform this dive.";
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).styled();
         }
     };
 
@@ -112,8 +107,8 @@ public enum PhaseSkillEffect implements SkillEffect {
         this.simpleStat = null;
     }
 
-    PhaseSkillEffect(StatMode mode, StatTarget target, String statName, boolean lowerIsBetter) {
-        this.simpleStat = new SimpleStatEffect(mode, target, statName, lowerIsBetter);
+    PhaseSkillEffect(StatMode mode, StatTarget target, String statKey, boolean lowerIsBetter) {
+        this.simpleStat = new SimpleStatEffect(mode, target, statKey, lowerIsBetter);
     }
 
     @Override
@@ -122,8 +117,8 @@ public enum PhaseSkillEffect implements SkillEffect {
     }
 
     @Override
-    public String describe(float magnitude) {
-        return simpleStat.describe(magnitude);
+    public StyledText description(float magnitude) {
+        return simpleStat.description(magnitude);
     }
 
     @Override

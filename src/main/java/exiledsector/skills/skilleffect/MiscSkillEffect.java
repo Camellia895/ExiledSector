@@ -11,9 +11,8 @@ import com.fs.starfarer.api.combat.WeaponAPI.WeaponSize;
 import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
+import exiledsector.i18n.StyledText;
 
-import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
-import static exiledsector.skills.skilleffect.SkillEffectText.pct;
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
@@ -35,8 +34,8 @@ public enum MiscSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return "Point-defense weapons can identify and ignore decoy flares.";
+        public StyledText description(float magnitude) {
+            return EffectText.of(this);
         }
     },
     PD_BEST_TARGET_LEADING {
@@ -51,12 +50,12 @@ public enum MiscSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return "Point-defense weapons get the best possible target leading, regardless of combat readiness.";
+        public StyledText description(float magnitude) {
+            return EffectText.of(this);
         }
     },
     PD_DAMAGE_TO_MISSILES_PERCENT(PERCENT, stat(MutableShipStatsAPI::getDamageToMissiles),
-            "damage dealt to missiles by point defence weapons", false),
+            "stat.damageDealtToMissilesByPointDefenceWeapons", false),
     PD_RECLASSIFY_SMALL_WEAPONS {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -78,17 +77,17 @@ public enum MiscSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return "All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.";
+        public StyledText description(float magnitude) {
+            return EffectText.of(this);
         }
     },
     ELECTRONIC_WARFARE_PENALTY_PERCENT(PERCENT, dynamicMod(Stats.ELECTRONIC_WARFARE_PENALTY_MOD),
-            "electronic warfare penalty against this ship's weapon range", true),
+            "stat.electronicWarfarePenaltyAgainstThisShipSWeaponRange", true),
     ELECTRONIC_WARFARE_PENALTY_MULT(MULT, dynamicMod(Stats.ELECTRONIC_WARFARE_PENALTY_MOD),
-            "electronic warfare penalty against this ship's weapon range", true),
+            "stat.electronicWarfarePenaltyAgainstThisShipSWeaponRange", true),
 
-    ELECTRONIC_WARFARE(FLAT, dynamicMod("electronic_warfare_flat"), "ECM rating", false),
-    NAV_RATING(FLAT, dynamicMod("coord_maneuvers_flat"), "fleet nav rating", false),
+    ELECTRONIC_WARFARE(FLAT, dynamicMod("electronic_warfare_flat"), "stat.ecmRating", false),
+    NAV_RATING(FLAT, dynamicMod("coord_maneuvers_flat"), "stat.fleetNavRating", false),
     OBJECTIVE_CAPTURE_RATE_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -96,15 +95,14 @@ public enum MiscSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            String verb = magnitude >= 0 ? "faster" : "slower";
-            return "Captures combat objectives " + pct(Math.abs(magnitude)) + "% " + verb + ".";
+        public StyledText description(float magnitude) {
+            return EffectText.signed(this, magnitude).styled();
         }
     },
     OBJECTIVE_CAPTURE_RANGE_FLAT(FLAT, dynamicMod(Stats.SHIP_OBJECTIVE_CAP_RANGE_MOD),
-            "range from which combat objectives can be captured", false),
-    PEAK_CR_DURATION_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getPeakCRDuration), "peak combat readiness duration", false),
-    PEAK_CR_DURATION_MULT(MULT, bonus(MutableShipStatsAPI::getPeakCRDuration), "peak combat readiness duration", false),
+            "stat.rangeFromWhichCombatObjectivesCanBeCaptured", false),
+    PEAK_CR_DURATION_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getPeakCRDuration), "stat.peakCombatReadinessDuration", false),
+    PEAK_CR_DURATION_MULT(MULT, bonus(MutableShipStatsAPI::getPeakCRDuration), "stat.peakCombatReadinessDuration", false),
     COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -141,8 +139,8 @@ public enum MiscSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return flatChange(magnitude, "command point recovery rate while this ship is the flagship");
+        public StyledText description(float magnitude) {
+            return EffectText.flatChange(magnitude, "stat.commandPointRecoveryWhileFlagship");
         }
     };
 
@@ -152,8 +150,8 @@ public enum MiscSkillEffect implements SkillEffect {
         this.simpleStat = null;
     }
 
-    MiscSkillEffect(StatMode mode, StatTarget target, String statName, boolean lowerIsBetter) {
-        this.simpleStat = new SimpleStatEffect(mode, target, statName, lowerIsBetter);
+    MiscSkillEffect(StatMode mode, StatTarget target, String statKey, boolean lowerIsBetter) {
+        this.simpleStat = new SimpleStatEffect(mode, target, statKey, lowerIsBetter);
     }
 
     @Override
@@ -162,8 +160,8 @@ public enum MiscSkillEffect implements SkillEffect {
     }
 
     @Override
-    public String describe(float magnitude) {
-        return simpleStat.describe(magnitude);
+    public StyledText description(float magnitude) {
+        return simpleStat.description(magnitude);
     }
 
     @Override

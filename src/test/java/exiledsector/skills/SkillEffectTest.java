@@ -612,7 +612,7 @@ class SkillEffectTest {
     @Test
     void fighterBaysFlatHasADeallocationWarning() {
         assertEquals("Cannot be unallocated without at least 1 empty fighter bay.",
-                FighterSkillEffect.FIGHTER_BAYS_FLAT.deallocationWarning(1f));
+                FighterSkillEffect.FIGHTER_BAYS_FLAT.deallocationWarning(1f).plain());
     }
 
     @Test

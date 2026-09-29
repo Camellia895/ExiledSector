@@ -80,8 +80,8 @@ effect|BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_PERCENT|1.0	0	Grants <good>1%</goo
 effect|BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_PERCENT|10.0	0	Grants <good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
 effect|BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_PERCENT|12.5	0	Grants <good>12.5%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
 effect|BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_PERCENT|100.0	0	Grants <good>100%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
-effect|BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_PERCENT|-10.0	0	Grants -<good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
-effect|BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_PERCENT|-12.5	0	Grants -<good>12.5%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
+effect|BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_PERCENT|-10.0	0	Grants <good>-10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
+effect|BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_PERCENT|-12.5	0	Grants <good>-12.5%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
 effect|BALLISTIC_WEAPON_FIRE_RATE_MULT|1.0	0	<good>1%</good> more ballistic weapon rate of fire.
 effect|BALLISTIC_WEAPON_FIRE_RATE_MULT|10.0	0	<good>10%</good> more ballistic weapon rate of fire.
 effect|BALLISTIC_WEAPON_FIRE_RATE_MULT|12.5	0	<good>12.5%</good> more ballistic weapon rate of fire.
@@ -382,18 +382,18 @@ effect|CORONA_RESISTANCE_MULT|12.5	1	<good>12.5%</good> more combat readiness lo
 effect|CORONA_RESISTANCE_MULT|100.0	1	<good>100%</good> more combat readiness loss from being in a solar corona or a deep hyperspace storm.
 effect|CORONA_RESISTANCE_MULT|-10.0	1	<bad>10%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 effect|CORONA_RESISTANCE_MULT|-12.5	1	<bad>12.5%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-effect|COUNTS_AS_SAFETY_OVERRIDES|1.0	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-effect|COUNTS_AS_SAFETY_OVERRIDES|10.0	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-effect|COUNTS_AS_SAFETY_OVERRIDES|12.5	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-effect|COUNTS_AS_SAFETY_OVERRIDES|100.0	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-effect|COUNTS_AS_SAFETY_OVERRIDES|-10.0	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-effect|COUNTS_AS_SAFETY_OVERRIDES|-12.5	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-effect|COUNTS_AS_SHIELD_SHUNT|1.0	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-effect|COUNTS_AS_SHIELD_SHUNT|10.0	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-effect|COUNTS_AS_SHIELD_SHUNT|12.5	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-effect|COUNTS_AS_SHIELD_SHUNT|100.0	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-effect|COUNTS_AS_SHIELD_SHUNT|-10.0	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-effect|COUNTS_AS_SHIELD_SHUNT|-12.5	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
+effect|COUNTS_AS_SAFETY_OVERRIDES|1.0	0	Counts as the safetyoverrides hull mod for the Second-in-Command skill Enhanced Overrides.
+effect|COUNTS_AS_SAFETY_OVERRIDES|10.0	0	Counts as the safetyoverrides hull mod for the Second-in-Command skill Enhanced Overrides.
+effect|COUNTS_AS_SAFETY_OVERRIDES|12.5	0	Counts as the safetyoverrides hull mod for the Second-in-Command skill Enhanced Overrides.
+effect|COUNTS_AS_SAFETY_OVERRIDES|100.0	0	Counts as the safetyoverrides hull mod for the Second-in-Command skill Enhanced Overrides.
+effect|COUNTS_AS_SAFETY_OVERRIDES|-10.0	0	Counts as the safetyoverrides hull mod for the Second-in-Command skill Enhanced Overrides.
+effect|COUNTS_AS_SAFETY_OVERRIDES|-12.5	0	Counts as the safetyoverrides hull mod for the Second-in-Command skill Enhanced Overrides.
+effect|COUNTS_AS_SHIELD_SHUNT|1.0	0	Counts as the shield_shunt hull mod for the Second-in-Command skill Redistribution.
+effect|COUNTS_AS_SHIELD_SHUNT|10.0	0	Counts as the shield_shunt hull mod for the Second-in-Command skill Redistribution.
+effect|COUNTS_AS_SHIELD_SHUNT|12.5	0	Counts as the shield_shunt hull mod for the Second-in-Command skill Redistribution.
+effect|COUNTS_AS_SHIELD_SHUNT|100.0	0	Counts as the shield_shunt hull mod for the Second-in-Command skill Redistribution.
+effect|COUNTS_AS_SHIELD_SHUNT|-10.0	0	Counts as the shield_shunt hull mod for the Second-in-Command skill Redistribution.
+effect|COUNTS_AS_SHIELD_SHUNT|-12.5	0	Counts as the shield_shunt hull mod for the Second-in-Command skill Redistribution.
 effect|CREATE_FRONT_SHIELD_IF_NONE|1.0	0	Installs a makeshift, front-facing shield if this ship has none.
 effect|CREATE_FRONT_SHIELD_IF_NONE|10.0	0	Installs a makeshift, front-facing shield if this ship has none.
 effect|CREATE_FRONT_SHIELD_IF_NONE|12.5	0	Installs a makeshift, front-facing shield if this ship has none.
@@ -614,8 +614,8 @@ effect|ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT|1.0	0	Increases energy weapo
 effect|ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT|10.0	0	Increases energy weapon range by <good>10</good> for every point of this ship's sensor strength (after modifiers).
 effect|ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT|12.5	0	Increases energy weapon range by <good>12.5</good> for every point of this ship's sensor strength (after modifiers).
 effect|ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT|100.0	0	Increases energy weapon range by <good>100</good> for every point of this ship's sensor strength (after modifiers).
-effect|ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT|-10.0	0	Increases energy weapon range by -10 for every point of this ship's sensor strength (after modifiers).
-effect|ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT|-12.5	0	Increases energy weapon range by -12.5 for every point of this ship's sensor strength (after modifiers).
+effect|ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT|-10.0	0	Increases energy weapon range by <good>-10</good> for every point of this ship's sensor strength (after modifiers).
+effect|ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT|-12.5	0	Increases energy weapon range by <good>-12.5</good> for every point of this ship's sensor strength (after modifiers).
 effect|ENGINE_DURABILITY_PERCENT|1.0	0	Increases engine durability by <good>1%</good>.
 effect|ENGINE_DURABILITY_PERCENT|10.0	0	Increases engine durability by <good>10%</good>.
 effect|ENGINE_DURABILITY_PERCENT|12.5	0	Increases engine durability by <good>12.5%</good>.
@@ -1178,8 +1178,8 @@ effect|NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT|1.0	0	Each successive hit in
 effect|NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT|10.0	0	Each successive hit in a non-beam energy chain deals <bad>10%</bad> less damage than the one before it.
 effect|NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT|12.5	0	Each successive hit in a non-beam energy chain deals <bad>12.5%</bad> less damage than the one before it.
 effect|NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT|100.0	0	Each successive hit in a non-beam energy chain deals <bad>100%</bad> less damage than the one before it.
-effect|NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT|-10.0	0	Each successive hit in a non-beam energy chain deals -<bad>10%</bad> less damage than the one before it.
-effect|NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT|-12.5	0	Each successive hit in a non-beam energy chain deals -<bad>12.5%</bad> less damage than the one before it.
+effect|NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT|-10.0	0	Each successive hit in a non-beam energy chain deals <bad>-10%</bad> less damage than the one before it.
+effect|NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT|-12.5	0	Each successive hit in a non-beam energy chain deals <bad>-12.5%</bad> less damage than the one before it.
 effect|NON_BEAM_ENERGY_WEAPON_DAMAGE_FLAT|1.0	0	Increases non-beam energy weapon damage by <good>1</good>.
 effect|NON_BEAM_ENERGY_WEAPON_DAMAGE_FLAT|10.0	0	Increases non-beam energy weapon damage by <good>10</good>.
 effect|NON_BEAM_ENERGY_WEAPON_DAMAGE_FLAT|12.5	0	Increases non-beam energy weapon damage by <good>12.5</good>.
@@ -1514,8 +1514,8 @@ effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|1.0	0	Enemy ships within 100
 effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|10.0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <bad>10%</bad>.
 effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|12.5	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <bad>12.5%</bad>.
 effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|100.0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <bad>100%</bad>.
-effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|-10.0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by -10%.
-effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|-12.5	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by -12.5%.
+effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|-10.0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <bad>-10%</bad>.
+effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|-12.5	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <bad>-12.5%</bad>.
 effect|TOP_SPEED_FLAT|1.0	0	Increases top speed by <good>1</good>.
 effect|TOP_SPEED_FLAT|10.0	0	Increases top speed by <good>10</good>.
 effect|TOP_SPEED_FLAT|12.5	0	Increases top speed by <good>12.5</good>.
@@ -2875,7 +2875,7 @@ type|root_midline|CRUISER|1	0	Increases flux capacity by <good>5%</good>.
 type|root_midline|CAPITAL_SHIP|0	0	Increases hull points by <good>5%</good>.
 type|root_midline|CAPITAL_SHIP|1	0	Increases flux capacity by <good>5%</good>.
 type|safety_overrides|null|0	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-type|safety_overrides|null|1	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
+type|safety_overrides|null|1	0	Counts as the safetyoverrides hull mod for the Second-in-Command skill Enhanced Overrides.
 type|safety_overrides|null|2	0	<good>100%</good> more flux dissipation.
 type|safety_overrides|null|3	0	<bad>67%</bad> less peak combat readiness duration.
 type|safety_overrides|null|4	0	<bad>100%</bad> less venting speed.
@@ -2883,7 +2883,7 @@ type|safety_overrides|null|5	0	Increases range before falloff effectiveness appl
 type|safety_overrides|null|6	0	<bad>75%</bad> less weapon effectiveness past normal range.
 type|safety_overrides|null|7	0	Mutually exclusive with <hullmod>hullmod</hullmod>: safetyoverrides.
 type|safety_overrides|FRIGATE|0	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-type|safety_overrides|FRIGATE|1	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
+type|safety_overrides|FRIGATE|1	0	Counts as the safetyoverrides hull mod for the Second-in-Command skill Enhanced Overrides.
 type|safety_overrides|FRIGATE|2	0	<good>100%</good> more flux dissipation.
 type|safety_overrides|FRIGATE|3	0	<bad>67%</bad> less peak combat readiness duration.
 type|safety_overrides|FRIGATE|4	0	<bad>100%</bad> less venting speed.
@@ -2894,7 +2894,7 @@ type|safety_overrides|FRIGATE|8	0	Increases acceleration by <good>100</good>.
 type|safety_overrides|FRIGATE|9	0	Increases deceleration by <good>100</good>.
 type|safety_overrides|FRIGATE|10	0	Mutually exclusive with <hullmod>hullmod</hullmod>: safetyoverrides.
 type|safety_overrides|DESTROYER|0	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-type|safety_overrides|DESTROYER|1	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
+type|safety_overrides|DESTROYER|1	0	Counts as the safetyoverrides hull mod for the Second-in-Command skill Enhanced Overrides.
 type|safety_overrides|DESTROYER|2	0	<good>100%</good> more flux dissipation.
 type|safety_overrides|DESTROYER|3	0	<bad>67%</bad> less peak combat readiness duration.
 type|safety_overrides|DESTROYER|4	0	<bad>100%</bad> less venting speed.
@@ -2905,7 +2905,7 @@ type|safety_overrides|DESTROYER|8	0	Increases acceleration by <good>60</good>.
 type|safety_overrides|DESTROYER|9	0	Increases deceleration by <good>60</good>.
 type|safety_overrides|DESTROYER|10	0	Mutually exclusive with <hullmod>hullmod</hullmod>: safetyoverrides.
 type|safety_overrides|CRUISER|0	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-type|safety_overrides|CRUISER|1	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
+type|safety_overrides|CRUISER|1	0	Counts as the safetyoverrides hull mod for the Second-in-Command skill Enhanced Overrides.
 type|safety_overrides|CRUISER|2	0	<good>100%</good> more flux dissipation.
 type|safety_overrides|CRUISER|3	0	<bad>67%</bad> less peak combat readiness duration.
 type|safety_overrides|CRUISER|4	0	<bad>100%</bad> less venting speed.
@@ -2916,7 +2916,7 @@ type|safety_overrides|CRUISER|8	0	Increases acceleration by <good>40</good>.
 type|safety_overrides|CRUISER|9	0	Increases deceleration by <good>40</good>.
 type|safety_overrides|CRUISER|10	0	Mutually exclusive with <hullmod>hullmod</hullmod>: safetyoverrides.
 type|safety_overrides|CAPITAL_SHIP|0	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-type|safety_overrides|CAPITAL_SHIP|1	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
+type|safety_overrides|CAPITAL_SHIP|1	0	Counts as the safetyoverrides hull mod for the Second-in-Command skill Enhanced Overrides.
 type|safety_overrides|CAPITAL_SHIP|2	0	<good>100%</good> more flux dissipation.
 type|safety_overrides|CAPITAL_SHIP|3	0	<bad>67%</bad> less peak combat readiness duration.
 type|safety_overrides|CAPITAL_SHIP|4	0	<bad>100%</bad> less venting speed.
@@ -2963,23 +2963,23 @@ type|shield_raise_rate|CRUISER|0	0	Increases shield raise rate by <good>25%</goo
 type|shield_raise_rate|CAPITAL_SHIP|0	0	Increases shield raise rate by <good>25%</good>.
 type|shield_shunt|null|0	0	Increases armor by <good>15%</good>.
 type|shield_shunt|null|1	0	Removes this ship's shield entirely.
-type|shield_shunt|null|2	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
+type|shield_shunt|null|2	0	Counts as the shield_shunt hull mod for the Second-in-Command skill Redistribution.
 type|shield_shunt|null|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: shield_shunt, frontemitter, adaptiveshields, frontshield.\n\nMutually exclusive with <node>nodes</node>: Shield Conversion - Front, Shield Conversion - Omni, Makeshift Shield Generator.
 type|shield_shunt|FRIGATE|0	0	Increases armor by <good>15%</good>.
 type|shield_shunt|FRIGATE|1	0	Removes this ship's shield entirely.
-type|shield_shunt|FRIGATE|2	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
+type|shield_shunt|FRIGATE|2	0	Counts as the shield_shunt hull mod for the Second-in-Command skill Redistribution.
 type|shield_shunt|FRIGATE|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: shield_shunt, frontemitter, adaptiveshields, frontshield.\n\nMutually exclusive with <node>nodes</node>: Shield Conversion - Front, Shield Conversion - Omni, Makeshift Shield Generator.
 type|shield_shunt|DESTROYER|0	0	Increases armor by <good>15%</good>.
 type|shield_shunt|DESTROYER|1	0	Removes this ship's shield entirely.
-type|shield_shunt|DESTROYER|2	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
+type|shield_shunt|DESTROYER|2	0	Counts as the shield_shunt hull mod for the Second-in-Command skill Redistribution.
 type|shield_shunt|DESTROYER|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: shield_shunt, frontemitter, adaptiveshields, frontshield.\n\nMutually exclusive with <node>nodes</node>: Shield Conversion - Front, Shield Conversion - Omni, Makeshift Shield Generator.
 type|shield_shunt|CRUISER|0	0	Increases armor by <good>15%</good>.
 type|shield_shunt|CRUISER|1	0	Removes this ship's shield entirely.
-type|shield_shunt|CRUISER|2	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
+type|shield_shunt|CRUISER|2	0	Counts as the shield_shunt hull mod for the Second-in-Command skill Redistribution.
 type|shield_shunt|CRUISER|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: shield_shunt, frontemitter, adaptiveshields, frontshield.\n\nMutually exclusive with <node>nodes</node>: Shield Conversion - Front, Shield Conversion - Omni, Makeshift Shield Generator.
 type|shield_shunt|CAPITAL_SHIP|0	0	Increases armor by <good>15%</good>.
 type|shield_shunt|CAPITAL_SHIP|1	0	Removes this ship's shield entirely.
-type|shield_shunt|CAPITAL_SHIP|2	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
+type|shield_shunt|CAPITAL_SHIP|2	0	Counts as the shield_shunt hull mod for the Second-in-Command skill Redistribution.
 type|shield_shunt|CAPITAL_SHIP|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: shield_shunt, frontemitter, adaptiveshields, frontshield.\n\nMutually exclusive with <node>nodes</node>: Shield Conversion - Front, Shield Conversion - Omni, Makeshift Shield Generator.
 type|shield_turn_rate|null|0	0	Increases shield turn rate by <good>25%</good>.
 type|shield_turn_rate|FRIGATE|0	0	Increases shield turn rate by <good>25%</good>.
@@ -3309,7 +3309,7 @@ summary|option0|FRIGATE|125	0	If disabled, this ship is almost always recoverabl
 summary|option0|FRIGATE|126	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option0|FRIGATE|127	1	<bad>2%</bad> less armor damage taken per D-mod 
 summary|option0|FRIGATE|128	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option0|FRIGATE|129	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
+summary|option0|FRIGATE|129	0	Counts as the safetyoverrides hull mod for the Second-in-Command skill Enhanced Overrides.
 summary|option0|FRIGATE|130	0	<bad>67%</bad> less peak combat readiness duration.
 summary|option0|FRIGATE|131	0	<bad>100%</bad> less venting speed.
 summary|option0|FRIGATE|132	0	Increases range before falloff effectiveness applies by <good>450</good>.
@@ -3319,7 +3319,7 @@ summary|option0|FRIGATE|135	0	Increases acceleration by <good>100</good>.
 summary|option0|FRIGATE|136	0	Increases deceleration by <good>100</good>.
 summary|option0|FRIGATE|137	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su, split evenly between them as hard flux.
 summary|option0|FRIGATE|138	0	Removes this ship's shield entirely.
-summary|option0|FRIGATE|139	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
+summary|option0|FRIGATE|139	0	Counts as the shield_shunt hull mod for the Second-in-Command skill Redistribution.
 summary|option0|FRIGATE|140	1	<bad>51.4%</bad> less shield flux upkeep.
 summary|option0|FRIGATE|141	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 summary|option0|FRIGATE|142	0	Increases fuel capacity by <good>24%</good>.
@@ -3464,7 +3464,7 @@ summary|option0|DESTROYER|125	0	If disabled, this ship is almost always recovera
 summary|option0|DESTROYER|126	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option0|DESTROYER|127	1	<bad>2%</bad> less armor damage taken per D-mod 
 summary|option0|DESTROYER|128	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option0|DESTROYER|129	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
+summary|option0|DESTROYER|129	0	Counts as the safetyoverrides hull mod for the Second-in-Command skill Enhanced Overrides.
 summary|option0|DESTROYER|130	0	<bad>67%</bad> less peak combat readiness duration.
 summary|option0|DESTROYER|131	0	<bad>100%</bad> less venting speed.
 summary|option0|DESTROYER|132	0	Increases range before falloff effectiveness applies by <good>450</good>.
@@ -3474,7 +3474,7 @@ summary|option0|DESTROYER|135	0	Increases acceleration by <good>60</good>.
 summary|option0|DESTROYER|136	0	Increases deceleration by <good>60</good>.
 summary|option0|DESTROYER|137	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su, split evenly between them as hard flux.
 summary|option0|DESTROYER|138	0	Removes this ship's shield entirely.
-summary|option0|DESTROYER|139	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
+summary|option0|DESTROYER|139	0	Counts as the shield_shunt hull mod for the Second-in-Command skill Redistribution.
 summary|option0|DESTROYER|140	1	<bad>51.4%</bad> less shield flux upkeep.
 summary|option0|DESTROYER|141	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 summary|option0|DESTROYER|142	0	Increases fuel capacity by <good>24%</good>.
@@ -3619,7 +3619,7 @@ summary|option0|CRUISER|125	0	If disabled, this ship is almost always recoverabl
 summary|option0|CRUISER|126	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option0|CRUISER|127	1	<bad>2%</bad> less armor damage taken per D-mod 
 summary|option0|CRUISER|128	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option0|CRUISER|129	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
+summary|option0|CRUISER|129	0	Counts as the safetyoverrides hull mod for the Second-in-Command skill Enhanced Overrides.
 summary|option0|CRUISER|130	0	<bad>67%</bad> less peak combat readiness duration.
 summary|option0|CRUISER|131	0	<bad>100%</bad> less venting speed.
 summary|option0|CRUISER|132	0	Increases range before falloff effectiveness applies by <good>450</good>.
@@ -3629,7 +3629,7 @@ summary|option0|CRUISER|135	0	Increases acceleration by <good>40</good>.
 summary|option0|CRUISER|136	0	Increases deceleration by <good>40</good>.
 summary|option0|CRUISER|137	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su, split evenly between them as hard flux.
 summary|option0|CRUISER|138	0	Removes this ship's shield entirely.
-summary|option0|CRUISER|139	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
+summary|option0|CRUISER|139	0	Counts as the shield_shunt hull mod for the Second-in-Command skill Redistribution.
 summary|option0|CRUISER|140	1	<bad>51.4%</bad> less shield flux upkeep.
 summary|option0|CRUISER|141	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 summary|option0|CRUISER|142	0	Increases fuel capacity by <good>24%</good>.
@@ -3774,7 +3774,7 @@ summary|option0|CAPITAL_SHIP|125	0	If disabled, this ship is almost always recov
 summary|option0|CAPITAL_SHIP|126	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option0|CAPITAL_SHIP|127	1	<bad>2%</bad> less armor damage taken per D-mod 
 summary|option0|CAPITAL_SHIP|128	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option0|CAPITAL_SHIP|129	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
+summary|option0|CAPITAL_SHIP|129	0	Counts as the safetyoverrides hull mod for the Second-in-Command skill Enhanced Overrides.
 summary|option0|CAPITAL_SHIP|130	0	<bad>67%</bad> less peak combat readiness duration.
 summary|option0|CAPITAL_SHIP|131	0	<bad>100%</bad> less venting speed.
 summary|option0|CAPITAL_SHIP|132	0	Increases range before falloff effectiveness applies by <good>450</good>.
@@ -3784,7 +3784,7 @@ summary|option0|CAPITAL_SHIP|135	0	Increases acceleration by <good>20</good>.
 summary|option0|CAPITAL_SHIP|136	0	Increases deceleration by <good>20</good>.
 summary|option0|CAPITAL_SHIP|137	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su, split evenly between them as hard flux.
 summary|option0|CAPITAL_SHIP|138	0	Removes this ship's shield entirely.
-summary|option0|CAPITAL_SHIP|139	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
+summary|option0|CAPITAL_SHIP|139	0	Counts as the shield_shunt hull mod for the Second-in-Command skill Redistribution.
 summary|option0|CAPITAL_SHIP|140	1	<bad>51.4%</bad> less shield flux upkeep.
 summary|option0|CAPITAL_SHIP|141	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 summary|option0|CAPITAL_SHIP|142	0	Increases fuel capacity by <good>24%</good>.
@@ -3929,7 +3929,7 @@ summary|option1|FRIGATE|125	0	If disabled, this ship is almost always recoverabl
 summary|option1|FRIGATE|126	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option1|FRIGATE|127	1	<bad>2%</bad> less armor damage taken per D-mod 
 summary|option1|FRIGATE|128	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option1|FRIGATE|129	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
+summary|option1|FRIGATE|129	0	Counts as the safetyoverrides hull mod for the Second-in-Command skill Enhanced Overrides.
 summary|option1|FRIGATE|130	0	<bad>67%</bad> less peak combat readiness duration.
 summary|option1|FRIGATE|131	0	<bad>100%</bad> less venting speed.
 summary|option1|FRIGATE|132	0	Increases range before falloff effectiveness applies by <good>450</good>.
@@ -3939,7 +3939,7 @@ summary|option1|FRIGATE|135	0	Increases acceleration by <good>100</good>.
 summary|option1|FRIGATE|136	0	Increases deceleration by <good>100</good>.
 summary|option1|FRIGATE|137	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su, split evenly between them as hard flux.
 summary|option1|FRIGATE|138	0	Removes this ship's shield entirely.
-summary|option1|FRIGATE|139	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
+summary|option1|FRIGATE|139	0	Counts as the shield_shunt hull mod for the Second-in-Command skill Redistribution.
 summary|option1|FRIGATE|140	1	<bad>51.4%</bad> less shield flux upkeep.
 summary|option1|FRIGATE|141	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 summary|option1|FRIGATE|142	0	Increases cargo capacity by <good>24%</good>.
@@ -4084,7 +4084,7 @@ summary|option1|DESTROYER|125	0	If disabled, this ship is almost always recovera
 summary|option1|DESTROYER|126	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option1|DESTROYER|127	1	<bad>2%</bad> less armor damage taken per D-mod 
 summary|option1|DESTROYER|128	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option1|DESTROYER|129	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
+summary|option1|DESTROYER|129	0	Counts as the safetyoverrides hull mod for the Second-in-Command skill Enhanced Overrides.
 summary|option1|DESTROYER|130	0	<bad>67%</bad> less peak combat readiness duration.
 summary|option1|DESTROYER|131	0	<bad>100%</bad> less venting speed.
 summary|option1|DESTROYER|132	0	Increases range before falloff effectiveness applies by <good>450</good>.
@@ -4094,7 +4094,7 @@ summary|option1|DESTROYER|135	0	Increases acceleration by <good>60</good>.
 summary|option1|DESTROYER|136	0	Increases deceleration by <good>60</good>.
 summary|option1|DESTROYER|137	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su, split evenly between them as hard flux.
 summary|option1|DESTROYER|138	0	Removes this ship's shield entirely.
-summary|option1|DESTROYER|139	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
+summary|option1|DESTROYER|139	0	Counts as the shield_shunt hull mod for the Second-in-Command skill Redistribution.
 summary|option1|DESTROYER|140	1	<bad>51.4%</bad> less shield flux upkeep.
 summary|option1|DESTROYER|141	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 summary|option1|DESTROYER|142	0	Increases cargo capacity by <good>24%</good>.
@@ -4239,7 +4239,7 @@ summary|option1|CRUISER|125	0	If disabled, this ship is almost always recoverabl
 summary|option1|CRUISER|126	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option1|CRUISER|127	1	<bad>2%</bad> less armor damage taken per D-mod 
 summary|option1|CRUISER|128	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option1|CRUISER|129	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
+summary|option1|CRUISER|129	0	Counts as the safetyoverrides hull mod for the Second-in-Command skill Enhanced Overrides.
 summary|option1|CRUISER|130	0	<bad>67%</bad> less peak combat readiness duration.
 summary|option1|CRUISER|131	0	<bad>100%</bad> less venting speed.
 summary|option1|CRUISER|132	0	Increases range before falloff effectiveness applies by <good>450</good>.
@@ -4249,7 +4249,7 @@ summary|option1|CRUISER|135	0	Increases acceleration by <good>40</good>.
 summary|option1|CRUISER|136	0	Increases deceleration by <good>40</good>.
 summary|option1|CRUISER|137	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su, split evenly between them as hard flux.
 summary|option1|CRUISER|138	0	Removes this ship's shield entirely.
-summary|option1|CRUISER|139	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
+summary|option1|CRUISER|139	0	Counts as the shield_shunt hull mod for the Second-in-Command skill Redistribution.
 summary|option1|CRUISER|140	1	<bad>51.4%</bad> less shield flux upkeep.
 summary|option1|CRUISER|141	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 summary|option1|CRUISER|142	0	Increases cargo capacity by <good>24%</good>.
@@ -4394,7 +4394,7 @@ summary|option1|CAPITAL_SHIP|125	0	If disabled, this ship is almost always recov
 summary|option1|CAPITAL_SHIP|126	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option1|CAPITAL_SHIP|127	1	<bad>2%</bad> less armor damage taken per D-mod 
 summary|option1|CAPITAL_SHIP|128	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option1|CAPITAL_SHIP|129	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
+summary|option1|CAPITAL_SHIP|129	0	Counts as the safetyoverrides hull mod for the Second-in-Command skill Enhanced Overrides.
 summary|option1|CAPITAL_SHIP|130	0	<bad>67%</bad> less peak combat readiness duration.
 summary|option1|CAPITAL_SHIP|131	0	<bad>100%</bad> less venting speed.
 summary|option1|CAPITAL_SHIP|132	0	Increases range before falloff effectiveness applies by <good>450</good>.
@@ -4404,7 +4404,7 @@ summary|option1|CAPITAL_SHIP|135	0	Increases acceleration by <good>20</good>.
 summary|option1|CAPITAL_SHIP|136	0	Increases deceleration by <good>20</good>.
 summary|option1|CAPITAL_SHIP|137	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su, split evenly between them as hard flux.
 summary|option1|CAPITAL_SHIP|138	0	Removes this ship's shield entirely.
-summary|option1|CAPITAL_SHIP|139	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
+summary|option1|CAPITAL_SHIP|139	0	Counts as the shield_shunt hull mod for the Second-in-Command skill Redistribution.
 summary|option1|CAPITAL_SHIP|140	1	<bad>51.4%</bad> less shield flux upkeep.
 summary|option1|CAPITAL_SHIP|141	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 summary|option1|CAPITAL_SHIP|142	0	Increases cargo capacity by <good>24%</good>.
@@ -4549,7 +4549,7 @@ summary|option2|FRIGATE|125	0	If disabled, this ship is almost always recoverabl
 summary|option2|FRIGATE|126	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option2|FRIGATE|127	1	<bad>2%</bad> less armor damage taken per D-mod 
 summary|option2|FRIGATE|128	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option2|FRIGATE|129	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
+summary|option2|FRIGATE|129	0	Counts as the safetyoverrides hull mod for the Second-in-Command skill Enhanced Overrides.
 summary|option2|FRIGATE|130	0	<bad>67%</bad> less peak combat readiness duration.
 summary|option2|FRIGATE|131	0	<bad>100%</bad> less venting speed.
 summary|option2|FRIGATE|132	0	Increases range before falloff effectiveness applies by <good>450</good>.
@@ -4559,7 +4559,7 @@ summary|option2|FRIGATE|135	0	Increases acceleration by <good>100</good>.
 summary|option2|FRIGATE|136	0	Increases deceleration by <good>100</good>.
 summary|option2|FRIGATE|137	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su, split evenly between them as hard flux.
 summary|option2|FRIGATE|138	0	Removes this ship's shield entirely.
-summary|option2|FRIGATE|139	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
+summary|option2|FRIGATE|139	0	Counts as the shield_shunt hull mod for the Second-in-Command skill Redistribution.
 summary|option2|FRIGATE|140	1	<bad>51.4%</bad> less shield flux upkeep.
 summary|option2|FRIGATE|141	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 summary|option2|FRIGATE|142	0	Increases crew capacity by <good>24%</good>.
@@ -4704,7 +4704,7 @@ summary|option2|DESTROYER|125	0	If disabled, this ship is almost always recovera
 summary|option2|DESTROYER|126	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option2|DESTROYER|127	1	<bad>2%</bad> less armor damage taken per D-mod 
 summary|option2|DESTROYER|128	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option2|DESTROYER|129	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
+summary|option2|DESTROYER|129	0	Counts as the safetyoverrides hull mod for the Second-in-Command skill Enhanced Overrides.
 summary|option2|DESTROYER|130	0	<bad>67%</bad> less peak combat readiness duration.
 summary|option2|DESTROYER|131	0	<bad>100%</bad> less venting speed.
 summary|option2|DESTROYER|132	0	Increases range before falloff effectiveness applies by <good>450</good>.
@@ -4714,7 +4714,7 @@ summary|option2|DESTROYER|135	0	Increases acceleration by <good>60</good>.
 summary|option2|DESTROYER|136	0	Increases deceleration by <good>60</good>.
 summary|option2|DESTROYER|137	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su, split evenly between them as hard flux.
 summary|option2|DESTROYER|138	0	Removes this ship's shield entirely.
-summary|option2|DESTROYER|139	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
+summary|option2|DESTROYER|139	0	Counts as the shield_shunt hull mod for the Second-in-Command skill Redistribution.
 summary|option2|DESTROYER|140	1	<bad>51.4%</bad> less shield flux upkeep.
 summary|option2|DESTROYER|141	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 summary|option2|DESTROYER|142	0	Increases crew capacity by <good>24%</good>.
@@ -4859,7 +4859,7 @@ summary|option2|CRUISER|125	0	If disabled, this ship is almost always recoverabl
 summary|option2|CRUISER|126	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option2|CRUISER|127	1	<bad>2%</bad> less armor damage taken per D-mod 
 summary|option2|CRUISER|128	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option2|CRUISER|129	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
+summary|option2|CRUISER|129	0	Counts as the safetyoverrides hull mod for the Second-in-Command skill Enhanced Overrides.
 summary|option2|CRUISER|130	0	<bad>67%</bad> less peak combat readiness duration.
 summary|option2|CRUISER|131	0	<bad>100%</bad> less venting speed.
 summary|option2|CRUISER|132	0	Increases range before falloff effectiveness applies by <good>450</good>.
@@ -4869,7 +4869,7 @@ summary|option2|CRUISER|135	0	Increases acceleration by <good>40</good>.
 summary|option2|CRUISER|136	0	Increases deceleration by <good>40</good>.
 summary|option2|CRUISER|137	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su, split evenly between them as hard flux.
 summary|option2|CRUISER|138	0	Removes this ship's shield entirely.
-summary|option2|CRUISER|139	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
+summary|option2|CRUISER|139	0	Counts as the shield_shunt hull mod for the Second-in-Command skill Redistribution.
 summary|option2|CRUISER|140	1	<bad>51.4%</bad> less shield flux upkeep.
 summary|option2|CRUISER|141	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 summary|option2|CRUISER|142	0	Increases crew capacity by <good>24%</good>.
@@ -5014,7 +5014,7 @@ summary|option2|CAPITAL_SHIP|125	0	If disabled, this ship is almost always recov
 summary|option2|CAPITAL_SHIP|126	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option2|CAPITAL_SHIP|127	1	<bad>2%</bad> less armor damage taken per D-mod 
 summary|option2|CAPITAL_SHIP|128	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option2|CAPITAL_SHIP|129	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
+summary|option2|CAPITAL_SHIP|129	0	Counts as the safetyoverrides hull mod for the Second-in-Command skill Enhanced Overrides.
 summary|option2|CAPITAL_SHIP|130	0	<bad>67%</bad> less peak combat readiness duration.
 summary|option2|CAPITAL_SHIP|131	0	<bad>100%</bad> less venting speed.
 summary|option2|CAPITAL_SHIP|132	0	Increases range before falloff effectiveness applies by <good>450</good>.
@@ -5024,7 +5024,7 @@ summary|option2|CAPITAL_SHIP|135	0	Increases acceleration by <good>20</good>.
 summary|option2|CAPITAL_SHIP|136	0	Increases deceleration by <good>20</good>.
 summary|option2|CAPITAL_SHIP|137	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su, split evenly between them as hard flux.
 summary|option2|CAPITAL_SHIP|138	0	Removes this ship's shield entirely.
-summary|option2|CAPITAL_SHIP|139	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
+summary|option2|CAPITAL_SHIP|139	0	Counts as the shield_shunt hull mod for the Second-in-Command skill Redistribution.
 summary|option2|CAPITAL_SHIP|140	1	<bad>51.4%</bad> less shield flux upkeep.
 summary|option2|CAPITAL_SHIP|141	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 summary|option2|CAPITAL_SHIP|142	0	Increases crew capacity by <good>24%</good>.

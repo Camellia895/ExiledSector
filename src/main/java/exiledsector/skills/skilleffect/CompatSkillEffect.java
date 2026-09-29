@@ -3,6 +3,9 @@ package exiledsector.skills.skilleffect;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import exiledsector.compat.SecondInCommandCompat;
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
+import exiledsector.skills.HullModNames;
 
 public enum CompatSkillEffect implements SkillEffect {
 
@@ -22,8 +25,8 @@ public enum CompatSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return synergyDescription("Shield Shunt", "Redistribution");
+        public StyledText description(float magnitude) {
+            return synergyDescription("shield_shunt", "compat.skill.redistribution");
         }
     },
     COUNTS_AS_SAFETY_OVERRIDES {
@@ -40,8 +43,8 @@ public enum CompatSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return synergyDescription("Safety Overrides", "Enhanced Overrides");
+        public StyledText description(float magnitude) {
+            return synergyDescription("safetyoverrides", "compat.skill.enhancedOverrides");
         }
     },
     CONVERTED_HANGAR_REFIT_TIME_MULT(FighterSkillEffect.FIGHTER_REFIT_TIME_MULT, Stats.CONVERTED_HANGAR_NO_REFIT_PENALTY),
@@ -72,12 +75,13 @@ public enum CompatSkillEffect implements SkillEffect {
     }
 
     @Override
-    public String describe(float magnitude) {
-        String text = penalty.describe(magnitude);
+    public StyledText description(float magnitude) {
+        StyledText text = penalty.description(magnitude);
         if (!SecondInCommandCompat.isModEnabled()) {
             return text;
         }
-        return text + " Waived by the Second-in-Command skill Reconfiguration.";
+        StyledText waived = Translation.msg("compat.waived").arg("skill", Translation.text("compat.skill.reconfiguration")).styled();
+        return Translation.msg("format.sentences").arg("a", text).arg("b", waived).styled();
     }
 
     private static boolean isConvertedHangarPenaltyWaived(MutableShipStatsAPI stats, String waiverStatId) {
@@ -93,10 +97,11 @@ public enum CompatSkillEffect implements SkillEffect {
         return modId + "_" + skillId;
     }
 
-    private static String synergyDescription(String hullModName, String skillName) {
+    private static StyledText synergyDescription(String hullModId, String skillKey) {
         if (!SecondInCommandCompat.isModEnabled()) {
             return null;
         }
-        return "Counts as the " + hullModName + " hull mod for the Second-in-Command skill " + skillName + ".";
+        return Translation.msg("compat.countsAs").arg("hullmod", HullModNames.displayName(hullModId))
+                .arg("skill", Translation.text(skillKey)).styled();
     }
 }

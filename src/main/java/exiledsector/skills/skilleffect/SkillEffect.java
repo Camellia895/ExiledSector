@@ -60,7 +60,7 @@ public interface SkillEffect {
         return true;
     }
 
-    default String deallocationWarning(float magnitude) {
+    default StyledText deallocationWarning(float magnitude) {
         return null;
     }
 

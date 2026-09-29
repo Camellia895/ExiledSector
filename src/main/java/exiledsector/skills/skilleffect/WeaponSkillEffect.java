@@ -3,9 +3,7 @@ package exiledsector.skills.skilleffect;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
-
-import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
-import static exiledsector.skills.skilleffect.SkillEffectText.pct;
+import exiledsector.i18n.StyledText;
 
 public enum WeaponSkillEffect implements SkillEffect {
 
@@ -17,9 +15,8 @@ public enum WeaponSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            String verb = magnitude >= 0 ? "more" : "less";
-            return pct(Math.abs(magnitude)) + "% " + verb + " weapon damage per D-mod";
+        public StyledText description(float magnitude) {
+            return EffectText.signed(this, magnitude).styled();
         }
     },
     BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_PERCENT {
@@ -36,9 +33,8 @@ public enum WeaponSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return "Grants " + pct(magnitude) + "% more ballistic weapon damage for every burn level this ship "
-                    + "has above its hull's default, from any source.";
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).styled();
         }
     },
     ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT {
@@ -54,9 +50,8 @@ public enum WeaponSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return "Increases energy weapon range by " + pct(magnitude) + " for every point "
-                    + "of this ship's sensor strength (after modifiers).";
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).styled();
         }
     },
     BALLISTIC_WEAPON_LARGE_OP_COST_FLAT {
@@ -73,8 +68,8 @@ public enum WeaponSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return flatChange(magnitude, "ordnance point cost of large ballistic weapons");
+        public StyledText description(float magnitude) {
+            return EffectText.flatChange(magnitude, "stat.ordnancePointCostOfLargeBallisticWeapons");
         }
     };
 

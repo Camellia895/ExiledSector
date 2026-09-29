@@ -2,9 +2,8 @@ package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
+import exiledsector.i18n.StyledText;
 
-import static exiledsector.skills.skilleffect.SkillEffectText.pct;
-import static exiledsector.skills.skilleffect.SkillEffectText.pctMore;
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
@@ -17,7 +16,7 @@ public enum DefenseSkillEffect implements SkillEffect {
     HULL_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getHullBonus), StatNames.HULL_POINTS, false),
     HULL_FLAT(FLAT, bonus(MutableShipStatsAPI::getHullBonus), StatNames.HULL_POINTS, false),
     HULL_MULT(MULT, bonus(MutableShipStatsAPI::getHullBonus), StatNames.HULL_POINTS, false),
-    ARMOR_FLAT(FLAT, bonus(MutableShipStatsAPI::getArmorBonus), "armor", false),
+    ARMOR_FLAT(FLAT, bonus(MutableShipStatsAPI::getArmorBonus), "stat.armor", false),
     SHIP_RECOVERY_CHANCE_BONUS {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -30,12 +29,12 @@ public enum DefenseSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return "If disabled, this ship is almost always recoverable after the battle.";
+        public StyledText description(float magnitude) {
+            return EffectText.of(this);
         }
     },
-    BREAK_PROBABILITY_PERCENT(PERCENT, stat(MutableShipStatsAPI::getBreakProb), "chance of this ship breaking apart when destroyed", true),
-    ARMOR_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getArmorBonus), "armor", false),
+    BREAK_PROBABILITY_PERCENT(PERCENT, stat(MutableShipStatsAPI::getBreakProb), "stat.chanceOfThisShipBreakingApartWhenDestroyed", true),
+    ARMOR_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getArmorBonus), "stat.armor", false),
     ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD {
         @Override
         public boolean lowerIsBetter() {
@@ -48,9 +47,8 @@ public enum DefenseSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            String verb = magnitude >= 0 ? "more" : "less";
-            return pct(Math.abs(magnitude)) + "% " + verb + " armor damage taken per D-mod ";
+        public StyledText description(float magnitude) {
+            return EffectText.signed(this, magnitude).styled();
         }
     },
     DMOD_EFFECT_MULT {
@@ -65,24 +63,24 @@ public enum DefenseSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String describe(float magnitude) {
-            return pctMore(magnitude, "negative effects from D-mods");
+        public StyledText description(float magnitude) {
+            return EffectText.pctMore(magnitude, "stat.negativeEffectsFromDMods");
         }
     },
-    SHIELD_ABSORPTION_PERCENT(PERCENT, stat(MutableShipStatsAPI::getShieldAbsorptionMult), "damage taken by shields", true),
-    SHIELD_DAMAGE_TAKEN_MULT(MULT, stat(MutableShipStatsAPI::getShieldDamageTakenMult), "damage taken by shields", true),
-    ENGINE_DURABILITY_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getEngineHealthBonus), "engine durability", false),
+    SHIELD_ABSORPTION_PERCENT(PERCENT, stat(MutableShipStatsAPI::getShieldAbsorptionMult), "stat.damageTakenByShields", true),
+    SHIELD_DAMAGE_TAKEN_MULT(MULT, stat(MutableShipStatsAPI::getShieldDamageTakenMult), "stat.damageTakenByShields", true),
+    ENGINE_DURABILITY_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getEngineHealthBonus), "stat.engineDurability", false),
     REPAIR_TIME_PERCENT(PERCENT, all(stat(MutableShipStatsAPI::getCombatWeaponRepairTimeMult),
             stat(MutableShipStatsAPI::getCombatEngineRepairTimeMult)),
-            "weapon and engine repair time", true),
+            "stat.weaponAndEngineRepairTime", true),
     REPAIR_TIME_MULT(MULT, all(stat(MutableShipStatsAPI::getCombatWeaponRepairTimeMult),
             stat(MutableShipStatsAPI::getCombatEngineRepairTimeMult)),
-            "weapon and engine repair time", true),
-    EMP_DAMAGE_TAKEN_PERCENT(PERCENT, stat(MutableShipStatsAPI::getEmpDamageTakenMult), "EMP damage taken", true),
-    EMP_DAMAGE_TAKEN_MULT(MULT, stat(MutableShipStatsAPI::getEmpDamageTakenMult), "EMP damage taken", true),
+            "stat.weaponAndEngineRepairTime", true),
+    EMP_DAMAGE_TAKEN_PERCENT(PERCENT, stat(MutableShipStatsAPI::getEmpDamageTakenMult), "stat.empDamageTaken", true),
+    EMP_DAMAGE_TAKEN_MULT(MULT, stat(MutableShipStatsAPI::getEmpDamageTakenMult), "stat.empDamageTaken", true),
     ENERGY_DAMAGE_TAKEN_PERCENT(PERCENT, all(stat(MutableShipStatsAPI::getEnergyDamageTakenMult),
             stat(MutableShipStatsAPI::getEnergyShieldDamageTakenMult)),
-            "energy damage taken, including hits on shields, armor, and hull", true);
+            "stat.energyDamageTakenIncludingHitsOnShieldsArmorAndHull", true);
 
     private final SimpleStatEffect simpleStat;
 
@@ -90,8 +88,8 @@ public enum DefenseSkillEffect implements SkillEffect {
         this.simpleStat = null;
     }
 
-    DefenseSkillEffect(StatMode mode, StatTarget target, String statName, boolean lowerIsBetter) {
-        this.simpleStat = new SimpleStatEffect(mode, target, statName, lowerIsBetter);
+    DefenseSkillEffect(StatMode mode, StatTarget target, String statKey, boolean lowerIsBetter) {
+        this.simpleStat = new SimpleStatEffect(mode, target, statKey, lowerIsBetter);
     }
 
     @Override
@@ -100,8 +98,8 @@ public enum DefenseSkillEffect implements SkillEffect {
     }
 
     @Override
-    public String describe(float magnitude) {
-        return simpleStat.describe(magnitude);
+    public StyledText description(float magnitude) {
+        return simpleStat.description(magnitude);
     }
 
     @Override
@@ -110,7 +108,7 @@ public enum DefenseSkillEffect implements SkillEffect {
     }
 
     private static final class StatNames {
-        static final String HULL_POINTS = "hull points";
+        static final String HULL_POINTS = "stat.hullPoints";
 
         private StatNames() {
         }

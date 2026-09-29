@@ -2,6 +2,8 @@ package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.StatBonus;
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
 
 import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
 import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
@@ -9,7 +11,7 @@ import static exiledsector.skills.skilleffect.SkillEffectText.pctMore;
 
 public enum StatMode {
 
-    FLAT {
+    FLAT("desc.flat") {
         @Override
         void apply(MutableStat stat, String modId, float magnitude) {
             stat.modifyFlat(modId, magnitude);
@@ -30,7 +32,7 @@ public enum StatMode {
             return -magnitude;
         }
     },
-    PERCENT {
+    PERCENT("desc.pct") {
         @Override
         void apply(MutableStat stat, String modId, float magnitude) {
             stat.modifyPercent(modId, magnitude);
@@ -51,7 +53,7 @@ public enum StatMode {
             return -magnitude;
         }
     },
-    MULT {
+    MULT("desc.mult") {
         @Override
         void apply(MutableStat stat, String modId, float magnitude) {
             SkillEffectSupport.applyMult(stat, modId, magnitude);
@@ -72,6 +74,17 @@ public enum StatMode {
             return (1f / SkillEffectSupport.multFrom(magnitude) - 1f) * 100f;
         }
     };
+
+    private final String descriptionKey;
+
+    StatMode(String descriptionKey) {
+        this.descriptionKey = descriptionKey;
+    }
+
+    StyledText description(float magnitude, String statName) {
+        return Translation.msg(descriptionKey + (magnitude >= 0 ? ".up" : ".down")).arg("stat", statName)
+                .arg("value", Math.abs(magnitude)).styled();
+    }
 
     abstract void apply(MutableStat stat, String modId, float magnitude);
 

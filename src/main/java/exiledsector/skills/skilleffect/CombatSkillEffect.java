@@ -18,6 +18,7 @@ import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.combat.listeners.HullDamageAboutToBeTakenListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
+import exiledsector.i18n.StyledText;
 import org.lazywizard.lazylib.VectorUtils;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -27,100 +28,80 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import static exiledsector.skills.skilleffect.SkillEffectText.pct;
-
 public enum CombatSkillEffect implements SkillEffect {
 
     BEAM_WEAPON_SPLIT_TARGETS_FLAT(BeamSplitListener.TARGETS_KEY, BeamSplitListener.class, BeamSplitListener::new) {
         @Override
-        public String describe(float magnitude) {
-            int count = Math.round(magnitude);
-            return "Beam weapon hits split their damage evenly across the target and up to "
-                    + pct(magnitude) + " additional nearby enem" + (count == 1 ? "y" : "ies") + ". " +
-                    "The target acquisition range is half the beam weapon's range. " +
-                    "Split beams also carry the weapon's special beam effects.";
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).count(Math.round(magnitude)).arg("value", magnitude).styled();
         }
     },
     EXPLODE_ON_DEATH(DeathExplosionListener.FUEL_DAMAGE_PERCENT_KEY, DeathExplosionListener.class, DeathExplosionListener::new) {
         @Override
-        public String describe(float magnitude) {
-            return "When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to "
-                    + pct(magnitude) + "% of its maximum fuel capacity to nearby ships, tapering off with distance ";
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).styled();
         }
     },
     DEATH_ON_COLLISION(CollisionDeathListener.class, CollisionDeathListener::new) {
         @Override
-        public String describe(float magnitude) {
-            return "Any collision, however slight, is instantly fatal to this ship.";
+        public StyledText description(float magnitude) {
+            return EffectText.of(this);
         }
     },
     NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT(EnergyChainListener.CHANCE_KEY, EnergyChainListener.class, EnergyChainListener::new) {
         @Override
-        public String describe(float magnitude) {
-            return "Non-beam energy weapon hits that land on an enemy shield have a " + pct(magnitude)
-                    + "% chance to chain to a nearby enemy ship. The chaining projectile has an equal " +
-                    "chance to chain again, as long as it hits a shield.";
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).styled();
         }
     },
     NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT(EnergyChainListener.FALLOFF_KEY, EnergyChainListener.class, EnergyChainListener::new) {
         @Override
-        public String describe(float magnitude) {
-            return "Each successive hit in a non-beam energy chain deals " + pct(magnitude) + "% less damage "
-                    + "than the one before it.";
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).styled();
         }
     },
     ESCORT_MANEUVER_BONUS_PERCENT(EscortListener.MANEUVER_BONUS_KEY, EscortListener.class, EscortListener::new) {
         @Override
-        public String describe(float magnitude) {
-            return "While within range of a larger friendly ship, increases maneuverability (acceleration, "
-                    + "deceleration, and turn rate) by up to " + pct(magnitude) + "%, fading with distance. "
-                    + "Doubled for a destroyer escorting a capital ship.";
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).styled();
         }
     },
     ESCORT_SPEED_BONUS_PERCENT(EscortListener.SPEED_BONUS_KEY, EscortListener.class, EscortListener::new) {
         @Override
-        public String describe(float magnitude) {
-            return "While within range of a larger friendly ship, increases top speed by up to "
-                    + pct(magnitude) + "%, fading with distance. Doubled for a destroyer escorting a "
-                    + "capital ship.";
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).styled();
         }
     },
     ESCORT_WEAPON_RANGE_BONUS_PERCENT(EscortListener.WEAPON_RANGE_BONUS_KEY, EscortListener.class, EscortListener::new) {
         @Override
-        public String describe(float magnitude) {
-            return "While within range of a larger friendly ship, increases ballistic and energy weapon range "
-                    + "by up to " + pct(magnitude) + "%, fading with distance. Doubled for a destroyer "
-                    + "escorting a capital ship.";
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).styled();
         }
     },
     ESCORT_PROXIMITY_RANGE_FLAT(EscortListener.PROXIMITY_RANGE_KEY, EscortListener.class, EscortListener::new) {
         @Override
-        public String describe(float magnitude) {
-            return "The escort bonuses above apply at full strength within " + pct(magnitude)
-                    + " su of the larger friendly ship, fading out over an additional 500 su beyond that.";
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).styled();
         }
     },
     NANOFORGE_HULL_REGEN_PERCENT(NanoforgeMendingListener.REGEN_PERCENT_KEY, NanoforgeMendingListener.class, NanoforgeMendingListener::new) {
         @Override
-        public String describe(float magnitude) {
-            return "After " + pct(NanoforgeMendingListener.UNDAMAGED_SECONDS) + " seconds without taking hull damage, "
-                    + "repairs " + pct(magnitude) + "% of maximum hull per second in combat.";
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("seconds", NanoforgeMendingListener.UNDAMAGED_SECONDS).arg("value", magnitude).styled();
         }
     },
     DISINTEGRATION_ARMOR_DAMAGE_PERCENT(DisintegrationListener.ARMOR_DAMAGE_PERCENT_KEY,
             DisintegrationListener.class, DisintegrationListener::new) {
         @Override
-        public String describe(float magnitude) {
-            return "Energy weapon hits on armor strip an additional " + pct(magnitude)
-                    + "% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.";
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).styled();
         }
     },
     TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT(TerrifyingPresenceListener.ACCURACY_PENALTY_PERCENT_KEY,
             TerrifyingPresenceListener.class, TerrifyingPresenceListener::new) {
         @Override
-        public String describe(float magnitude) {
-            return "Enemy ships within " + pct(TerrifyingPresenceListener.RANGE) + " su have the target leading "
-                    + "accuracy of their autofiring weapons reduced by " + pct(magnitude) + "%.";
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("range", TerrifyingPresenceListener.RANGE).arg("value", magnitude).styled();
         }
     };
 
