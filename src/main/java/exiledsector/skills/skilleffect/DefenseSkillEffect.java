@@ -43,7 +43,7 @@ public enum DefenseSkillEffect implements SkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.signed(this, magnitude).styled();
+            return StatMode.MULT.describeStat(magnitude, "stat.armorDamageTakenPerDMod");
         }
     },
     DMOD_EFFECT_MULT {

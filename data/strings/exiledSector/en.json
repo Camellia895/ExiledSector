@@ -86,8 +86,7 @@
     "effect.ZERO_FLUX_ALWAYS_ON": "Allows the zero-flux speed boost to take effect regardless of flux level.",
     "stat.fluxDissipationWhileVenting": "flux dissipation rate while venting",
     "effect.SHIP_RECOVERY_CHANCE_BONUS": "If disabled, this ship is almost always recoverable after the battle.",
-    "effect.ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD.more": "<good>{value}%</good> more armor damage taken per D-mod.",
-    "effect.ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD.less": "<bad>{value}%</bad> less armor damage taken per D-mod.",
+    "stat.armorDamageTakenPerDMod": "armor damage taken per D-mod",
     "stat.negativeEffectsFromDMods": "negative effects from D-mods",
 
     "effect.PD_IGNORES_DECOY_FLARES": "Point-defense weapons can identify and ignore decoy flares.",
@@ -129,8 +128,7 @@
     "effect.BEAM_WEAPON_HARD_FLUX_PERCENT": "Causes {value}% of beam weapon damage dealt to shields to be hard flux.",
     "effect.SHIELD_DAMAGE_SHARED_PERCENT": "Disperses {value}% of shield damage taken to nearby allied ships within {range} su, split evenly between them as hard flux.",
     "effect.PHASE_FIELD_CONTRIBUTION_PERCENT": "Even if this ship isn't a phase ship, {value}% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.",
-    "effect.WEAPON_DAMAGE_MULT_PER_DMOD.more": "<good>{value}%</good> more weapon damage per D-mod.",
-    "effect.WEAPON_DAMAGE_MULT_PER_DMOD.less": "<bad>{value}%</bad> less weapon damage per D-mod.",
+    "stat.weaponDamagePerDMod": "weapon damage per D-mod",
     "effect.BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_PERCENT": "Grants <good>{value}%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.",
     "effect.ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT": "Increases energy weapon range by <good>{value}</good> for every point of this ship's sensor strength (after modifiers).",
 

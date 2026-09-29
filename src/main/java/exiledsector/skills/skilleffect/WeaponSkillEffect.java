@@ -16,7 +16,7 @@ public enum WeaponSkillEffect implements SkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.signed(this, magnitude).styled();
+            return StatMode.MULT.describeStat(magnitude, "stat.weaponDamagePerDMod");
         }
     },
     BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_PERCENT {
