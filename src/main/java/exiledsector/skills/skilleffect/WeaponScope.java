@@ -39,10 +39,6 @@ public enum WeaponScope {
         if (this == ALL) {
             return Translation.text(statKey);
         }
-        String specific = statKey + "." + name();
-        if (Translation.has(specific)) {
-            return Translation.text(specific);
-        }
         return Translation.msg("weapon.qualified").arg("scope", Translation.text("weapon.scope." + name())).arg("stat", Translation.text(statKey)).text();
     }
 
