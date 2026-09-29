@@ -65,7 +65,7 @@ Play your own way – all settings are in the LunaLib mod settings menu:
 
 ## Languages
 
-Exiled Sector is available in English and Simplified Chinese (简体中文). By default it follows the game's language, so a Chinese-localised Starsector shows the skill tree in Chinese automatically. You can also pick a language in the LunaLib settings; the change takes effect after a restart.
+Exiled Sector is available in English and Simplified Chinese. By default it follows the game's language, so a Chinese-localised Starsector shows the skill tree in Chinese automatically. You can also pick a language in the LunaLib settings; the change takes effect after a restart.
 
 The skill tree screen always shows the chosen language, using a bundled Noto Sans SC font. Text the game draws itself (settings, dialogs, the codex) stays in English unless the game can display Chinese characters.
 

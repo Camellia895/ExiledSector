@@ -1,0 +1,192 @@
+# Exiled Sector: skill effect mechanics
+
+This document explains how the less obvious skill effects work, with a focus on the ones that behave
+differently from vanilla Starsector or have no vanilla equivalent at all. The magnitudes quoted are the
+defaults in `data/skilltrees/skill_types.json` at the time of writing. Most of them are placeholders and
+will change with balancing.
+
+## Shared Fate
+
+The Shared Fate notable combines `SHIELD_DAMAGE_SHARED_PERCENT` at 20 with `WEAPON_DAMAGE_PERCENT` at
+−20. The smaller Shared Damage Taken nodes add to the same shared percentage. Nothing in vanilla works
+like this.
+
+When something hits the ship's shield, the game first looks for friendly ships within 1000 su that are
+alive, not hulks and not fighters. If there are none, the hit lands normally. If there are, the hit is
+reduced by the shared percentage before it lands. That percentage is the total from every allocated node,
+capped at 90%. Only shield hits are shared; armour and hull damage never are.
+
+Once the reduced hit has landed, the mod works out how much flux the removed portion would have caused on
+this ship's shield and hands that amount to the allies as hard flux, split evenly between them. Distance
+doesn't matter, and neither does the ally's own shield: the flux is calculated with this ship's shield
+efficiency, and an ally with no shield, or with its shield down, still receives its share. The mod places
+no cap on how much flux an ally can receive this way.
+
+The price is a 20% reduction to the damage of every weapon on the ship. It goes through the weapon stat
+hierarchy described further down, so it pools with any other weapon damage modifiers.
+
+## Lion's Gaze
+
+Lion's Gaze is the beam-splitting keystone (`beam_split`, using `BEAM_WEAPON_SPLIT_TARGETS_FLAT` at 1).
+It has no vanilla equivalent.
+
+Any beam hit on an enemy ship starts a split, whether it lands on shield or hull. The split looks for up
+to N additional targets, where N is the total magnitude, choosing the nearest other hostile ships that are
+alive and within half the beam weapon's range of the impact point. The beam's damage is then shared evenly
+between the original target and the split targets, so with one extra target each receives half. The
+original target's reduction is applied as a damage modifier, which also scales the EMP of that hit. The
+beam's own special effects, such as those of the Graviton Beam or Tachyon Lance, are not reduced; only the
+damage is shared.
+
+Normally each split target is fired on by a real beam. The mod creates an invisible, invulnerable drone
+that carries a copy of the firing weapon and places it just outside the original target's shield (or its
+hull, if the shield is down), on the line towards the split target. A connecting beam is drawn from the
+original impact point to the drone, so the result looks like the beam refracting off the target. Because
+the drone fires a genuine beam, the weapon's own effect code runs, damage is applied per second as usual,
+normal hard and soft flux rules apply, and the AI reacts to it as it would to any other beam.
+
+The drone is set up to behave like the ship it's standing in for. It receives a copy of the ship's
+captain, with the same personality, AI core, level and skills. The ship's weapon stat modifiers are copied
+onto it every quarter of a second, and so are its damage-dealt listeners (apart from other beam splitters
+and per-frame listeners), so on-hit effects from other nodes still apply. The drone's damage is then
+multiplied by the split share. Once a drone starts firing it keeps going for at least one second, and
+after that for as long as the original beam keeps hitting, plus a 0.3 second grace period. It stops
+straight away if its target dies or the firing ship is lost.
+
+Some beams can't be put on a drone. That happens when the weapon's effect code is listed in
+`data/config/exiledSector/split_beam_effect_blocklist.csv`, when the weapon's size has no drone slot, or
+when the drone hull fails to load. In those cases the split is simulated instead. Each damage tick of the
+original beam applies instant damage to every split target, equal to the tick's damage multiplied by the
+split share. EMP is added in proportion to the weapon's EMP-to-damage ratio, the flux is soft unless the
+beam forces hard flux, and a MagicLib fake beam provides the visual. Simulated splits don't run the
+weapon's effect code, and the AI doesn't treat them as beams.
+
+It hasn't yet been checked in game whether a kill made by a split beam is credited to the ship or to the
+drone.
+
+## High Scatter Amplifier
+
+The High Scatter Amplifier notable uses `BEAM_WEAPON_HARD_FLUX_PERCENT` at 50 and `BEAM_WEAPON_RANGE_MULT`
+at −25. It is unlocked by the High Scatter Amp blueprint and can't be combined with the vanilla High
+Scatter Amp or Advanced Optics hull mods, or with the Advanced Optics node. It's a deliberately simplified
+take on the vanilla hull mod:
+
+| | Vanilla hull mod | Exiled Sector node |
+|---|---|---|
+| Hard flux | Every beam hit on a shield deals hard flux | A percentage of each beam hit's shield flux is converted to hard flux |
+| Range | Base range above 200 su is cut by half of the excess, before percentage modifiers apply | Every beam's final range is reduced by 25% |
+| Damage | +10% beam damage (+15% as an S-mod) | Not included yet |
+
+The hard flux conversion happens on the target after the hit lands. It takes the percentage from the
+firing ship (capped at 100%), converts that share of the hit's shield flux from soft to hard, and never
+pushes hard flux above the target's current total flux. Beams that already force hard flux are left
+alone. The missing damage bonus is planned and would use `BEAM_WEAPON_DAMAGE_PERCENT`.
+
+## The weapon stat hierarchy
+
+Every effect that modifies a weapon-type stat follows the naming pattern
+`<SCOPE_>WEAPON_<STAT>_<FLAT|PERCENT|MULT>`. `WEAPON_DAMAGE_PERCENT` affects every weapon,
+`ENERGY_WEAPON_RANGE_MULT` affects only energy weapons, and `BEAM_WEAPON_DAMAGE_PERCENT` affects only
+beams. The scopes form a tree:
+
+```
+ALL weapons (no prefix)
+├─ BALLISTIC
+├─ MISSILE
+└─ ENERGY
+   ├─ NON_BEAM_ENERGY
+   └─ BEAM
+```
+
+A parent scope always covers all of its children. FLAT adds a fixed amount, PERCENT means "increased" or
+"reduced" by a percentage, and MULT means "more" or "less". Only combinations the engine can support
+cleanly are generated; any other name is rejected when the data loads.
+
+Flat and percentage modifiers from every scope that reaches a weapon are added together before the vanilla 
+formula runs, so +10% to all weapons and +10% to beams gives beams +20%. MULT modifiers always multiply. 
+The engine's energy stats already apply to beams, so an ENERGY effect writes only to the energy stat and 
+beams no longer receive the bonus twice.
+
+The engine has no stat for non-beam energy weapons only. NON_BEAM_ENERGY damage and range therefore put
+the bonus on the energy stat and a matching cancelling entry on the beam stat. Because damage and range
+pool per weapon, beams end up exactly where they would have been without the node. The cancelling entry
+never appears in a tooltip.
+
+The engine keeps a single ammo stat for all energy weapons, so ammo and ammo regeneration for beams or for
+non-beam energy weapons are applied directly to each matching weapon when the ship is created. The result
+is the same as a native stat would give and is correct in combat, but refit weapon tooltips don't show it.
+Regeneration is only exact against energy regeneration modifiers that exist when the ship is created, and
+these effects can't be used on temporary nodes.
+
+Weapon turn rate only has two engine stats, one for every non-beam weapon and one for beams, so the only
+turn rate effects are the all-weapons one (which now includes beams, Armored Weapon Mounts' penalty
+included) and the beam one. For missiles, projectile speed means the missile's maximum flight speed; for
+energy weapons it covers both projectile speed and beam travel speed. Autofire accuracy and ECCM chance
+both start from zero, so their effects exist only as PERCENT.
+
+When a node has matching child effects with the same stat, mode and value, its tooltip merges them into
+the parent. Ballistic, missile, non-beam energy and beam damage at +10% each read simply as "Increases
+weapon damage by 10%". A parent and a child on the same node stay on separate lines, because they stack.
+
+## Energy chain
+
+`NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT` gives a non-beam energy projectile that hits a shield a
+chance to spawn a copy of itself at the point of impact. The copy flies at the nearest enemy within the
+weapon's range that the chain hasn't hit yet, and it can chain again, up to the "Max Chain Count" setting
+(5 by default). Beams never chain, and neither do weapons listed in
+`data/config/exiledSector/energy_chain_blocklist.csv`.
+
+`NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT` makes each link weaker, but only in terms of damage dealt.
+On-hit effects run at full strength and EMP has no falloff at all. To achieve that, the falloff lowers the
+hit's base damage and restores it immediately afterwards, rather than using a damage modifier, because
+damage modifiers would scale the EMP as well.
+
+## Reworked vanilla hull mods
+
+Escort Package keeps vanilla's structure but splits it into four separately tunable magnitudes:
+manoeuvrability, speed, weapon range and the proximity range. The defaults match vanilla at +25%, +10% and
++20% within 700 su, fading out over the next 500 su and doubled for a destroyer escorting a capital. The
+bonus is recalculated about once a second. Vanilla's S-mod shield damage reduction for destroyers isn't
+included.
+
+The Phase Anchor emergency dive (`PHASE_ANCHOR_EMERGENCY_DIVE`) uses vanilla's trigger, animation and
+timing. It also shares vanilla's once-per-battle flag, so a ship with the vanilla Phase Anchor and a ship
+with this node share one dive per battle between them. Where vanilla charges the ship's full deployment
+cost in CR, the node charges a percentage of it set by its magnitude. It can't be used on temporary nodes.
+
+Reduced D-mod effect (`DMOD_EFFECT_MULT`) adjusts vanilla's D-mod effect multiplier and then re-applies
+the ship's D-mods. D-mods are applied before this mod's hull mod, so without the re-apply they would never
+see the new multiplier.
+
+Ground Support (`GROUND_SUPPORT_FLAT`) is a scalable, flat version of the vanilla hull mod's ground
+support, and is mutually exclusive with Ground Support and Advanced Ground Support.
+
+Militarized Subsystems installs the real vanilla hull mod as a permanent mod costing no OP, so that vanilla
+and Second-in-Command checks recognise it. It requires a civilian hull.
+
+For Second-in-Command, `COUNTS_AS_SHIELD_SHUNT` and `COUNTS_AS_SAFETY_OVERRIDES` make those nodes count as
+the corresponding hull mods for SiC's skill synergies. The Converted Hangar penalties are waived by the
+vanilla flags or by SiC's Reconfiguration skill.
+
+Ballistic Rangefinder, Missile Autoloader, Defensive Targeting Array and Neural Interface are passthrough
+nodes (`vanillaHullMod`). Rather than installing the hull mod, they run its code under the hull mod's id.
+The Ballistic Rangefinder and Missile Autoloader tooltips include vanilla-style tables built from vanilla's
+own numbers, with the row that applies to the current ship highlighted.
+
+## Other notables worth describing
+
+Disintegration makes energy hits on armour strip an extra percentage of the hit's damage directly from the
+surrounding armour cells, using vanilla's own armour damage spread (1/15 to the inner 3×3 cells and 1/30
+to the outer ring, skipping the corners). It respects the target's armour damage resistance, treats each
+beam damage tick as a separate hit, never damages hull, and shows no floating damage numbers.
+
+Terrifying Presence reduces the autofire aim accuracy of enemy ships within 1000 su by a number of
+percentage points. It updates four times a second, stacks across several sources, and lifts as soon as an
+enemy leaves range or the source ship dies or retreats.
+
+## Temporary nodes
+
+A node with `temporaryAfterDeploymentSeconds` only applies its effects for that many seconds after the
+ship deploys, and its tooltip states the duration. Effects that can't be switched off partway through a
+battle can't be used this way; that covers combat listeners, per-weapon ammo changes and the emergency
+dive. If one appears on a temporary node, the loader logs an error and ignores the duration.
