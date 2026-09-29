@@ -81,14 +81,16 @@ Open a ship's refit screen and click the **Skill Tree** button.
 
 **Multi-choice nodes** open a dropdown so you can pick an option. Ctrl+click repeats your last choice.
 
-Each ship can hold up to 60 nodes. Every number in this section can be changed in LunaLib settings.
+Each ship can have a max of 60 nodes. 
+
+Every number in this section can be changed in LunaLib settings.
 
 </details>
 
 <details>
 <summary><b>What's the difference between "increases" and "more"?</b></summary>
 
-They're two different kinds of modifier, and they stack very differently. If you've played Path of Exile, it's the same convention.
+They're two different kinds of modifier, and they stack very differently. If you've played Path of Exile, it's a similar convention.
 
 Starsector calculates a stat like this:
 
@@ -100,7 +102,7 @@ modified *= mult;
 | Tooltip wording | Kind | How it stacks |
 |---|---|---|
 | "**Increases** / **Decreases** flux capacity by 10%" | Percent | All percent bonuses on a stat are **added together** first, including those from vanilla hullmods and skills. |
-| "**Increases** flux capacity by 600" | Flat | Added after percent bonuses, so percent bonuses don't scale it. |
+| "**Increases** flux capacity by 600" | Flat | Added after percent bonuses, so percent bonuses don't scale it. This is different to Path of Exile. |
 | "10% **more** / **less** flux capacity" | Multiplier | Applied last, to the total. Multipliers **multiply** each other. |
 
 For example, with a base of 1000 flux capacity:
@@ -109,8 +111,6 @@ For example, with a base of 1000 flux capacity:
 - Two "10% more flux capacity" nodes give 1000 × 1.1 × 1.1 = **1210**.
 - "Increases by 15%", "Increases by 600", a +10% hullmod and "20% more" together give (1000 + 250 + 600) × 1.2 = **2220**.
 
-Multipliers are the rarer, stronger kind, because each one scales everything else you have. The same maths makes "less" reductions shrink as you stack them. Two "10% less damage taken" nodes give 0.9 × 0.9 = 0.81, which is 19% less, not 20%. That's why damage reduction is almost always a multiplier: it can never reach zero.
-
 Numbers are green when they help your ship and orange when they hurt it.
 
 </details>
@@ -118,11 +118,11 @@ Numbers are green when they help your ship and orange when they hurt it.
 <details>
 <summary><b>How do NPC fleets get skill trees?</b></summary>
 
-**Which fleets.** Every fleet except yours can have trees, in every faction, including your own faction's fleets and your allies. Stations don't get them.
+**Which fleets?** Every fleet except yours can have trees, in every faction, including your own faction's fleets and your allies. Stations don't get them.
 
-**Which ships.** Ships with officers and the flagship always get a tree. Each other ship has a 30% chance. Civilian and mothballed ships are left out. The roll is fixed per ship, so reloading a save won't reroll it.
+**Which ships?** Ships with officers and the flagship always get a tree. Each other ship has a 30% chance. Civilian and mothballed ships are left out. The roll is fixed per ship, so reloading a save won't reroll it.
 
-**How many nodes.** The number of nodes depends on your character level when the fleet is first levelled:
+**How many nodes?** The number of nodes depends on your character level when the fleet is first spawned:
 
 | Your level | Nodes |
 |---|---|
@@ -131,7 +131,7 @@ Numbers are green when they help your ship and orange when they hurt it.
 | 10 | 13–28 |
 | 15+ | 16–42 |
 
-**Which build.** There are nine builds, three for each starting point. Each ship gets a random build out of the ones that suit it:
+**Which build?** There are nine builds, three for each starting point. Each ship gets a random build out of the ones that suit it:
 
 | Starting point | Build | Needs |
 |---|---|---|
@@ -147,13 +147,13 @@ Numbers are green when they help your ship and orange when they hurt it.
 
 The build lists its nodes in order, and the ship takes them one by one. It skips any node it can't use, such as a shield node on a shieldless hull.
 
-**NPCs trade hullmods for nodes.** If a ship has a hullmod that the tree has a matching node for, the node replaces the hullmod. The OP the hullmod used then buys extra nodes. Built-in hullmods and S-mods are never touched.
+NPCs trade hullmods for nodes. If a ship has a hullmod that the tree has a matching node for, the node replaces the hullmod. The OP the hullmod used then buys extra nodes. Built-in hullmods and S-mods are never touched.
 
-**What NPCs never get.** NPCs never take wormholes, so the faction regions of the tree are yours alone.
+NPCs never take wormholes, so the faction regions of the tree are yours alone (for now).
 
-**Recovered ships.** If you recover a ship that has a tree, it keeps its tree, and the tree becomes a normal player tree. Reinforced Bulkheads' near-guaranteed recovery is switched off on NPC ships, so levelled enemies aren't free loot.
+If you recover a ship that has a tree, it keeps its tree, and the tree becomes a normal player tree. Reinforced Bulkheads' near-guaranteed recovery is switched off on NPC ships, so levelled enemies aren't free loot.
 
-**Seeing their trees.** Press **X** (rebindable) during a fleet encounter, or while hovering over a fleet on the map, to see which ships have trees along with their build, level, key nodes and combined bonuses. Pressing **F2** on a ship's tooltip opens a Codex entry with the same summary.
+**How do I view their trees?** Press **X** (rebindable) during a fleet encounter, or while hovering over a fleet on the map, to see which ships have trees along with their build, level, key nodes and combined bonuses. Pressing **F2** on a ship's tooltip opens a Codex entry with the same summary.
 
 All of this, including the table of nodes per level, can be changed on the **NPC Scaling** tab in LunaLib settings.
 
@@ -168,9 +168,7 @@ Hidden nodes show up as flickering sensor ghosts until you unlock them.
 
 **How wormholes work.** Wormholes come in linked pairs. Allocate one end and the other end comes free. It costs nothing extra, but it still counts toward your node limit. Removing either end removes both. Ctrl+click an allocated wormhole to jump the camera to the other end.
 
-Three pairs are shortcuts across the main tree. The other seven lead to faction regions that can't be reached any other way: Tri-Tachyon, Hegemony, Sindrian Diktat, Luddic, Persean League, pirates and [REDACTED]. This is where the keystones live.
-
-**Hullmod nodes** unlock when you learn the matching hullmod blueprint. Neural Interface also unlocks if you have a neural link.
+**Hullmod nodes** unlock when you learn the matching hullmod blueprint. Neural Interface also unlocks if you have the relevant Neural Link skill.
 
 If you'd rather skip all of this, LunaLib settings can reveal hidden nodes, or switch off each kind of unlock condition.
 
@@ -179,7 +177,7 @@ If you'd rather skip all of this, LunaLib settings can reveal hidden nodes, or s
 <details>
 <summary><b>How does this fit into the lore?</b></summary>
 
-The tree isn't your ship gaining sentience and learning kung fu. It's a picture of you and your crew making hundreds of small changes that pull the ship away from its factory spec: rerouted conduits, flux grids tuned to the captain's habits, armour patched where it keeps getting hit. That's the same thing vanilla's hullmods represent, just in finer steps. A veteran hull that has survived a dozen campaigns shouldn't fly like one fresh off a Domain-era template.
+The tree isn't your ship gaining sentience and learning kung fu. It's a picture of you and your crew making lots of small changes that pull the ship away from its factory spec: rerouted conduits, flux grids tuned to the captain's habits, armour patched where it keeps getting hit. That's the same thing vanilla's hullmods represent, just in finer steps. A veteran hull that has survived a dozen campaigns shouldn't fly like one fresh off a Domain-era template, and a ship your crew has been iterating on for years is going to be much more familiar to them. They'll learn the ins and outs of its quirks and get every edge they can.
 
 Exiled Sector is designed to replace the vanilla hullmod system. I wasn't comfortable disabling hullmods entirely, because that would make the mod parasitic and incompatible with the many mods that add their own. Instead, the OP cost and levelling hybrid is meant to make the tree the better deal most of the time. Every hullmod you install is 3–4 nodes you didn't take. Keep a hullmod when its unique effect, probably from another mod, is worth that trade.
 
