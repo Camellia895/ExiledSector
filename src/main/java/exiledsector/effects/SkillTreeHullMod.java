@@ -73,7 +73,7 @@ public class SkillTreeHullMod extends BaseHullMod {
     @Override
     public void advanceInCombat(ShipAPI ship, float amount) {
         forEachAllocatedEffect(dataFor(ship), ship.getHullSize(),
-                null,
+                (vanillaEffect, vanillaHullModId) -> vanillaEffect.advanceInCombat(ship, amount),
                 (effect, modId, magnitude) -> {
                     if (effect.isConditional()) {
                         effect.advanceInCombat(ship, modId, magnitude);
@@ -115,11 +115,9 @@ public class SkillTreeHullMod extends BaseHullMod {
             SkillType type = allocated.effectiveType();
             String vanillaHullModId = type.getVanillaHullModId();
             if (vanillaHullModId != null) {
-                if (vanillaDelegate != null) {
-                    HullModSpecAPI spec = Global.getSettings().getHullModSpec(vanillaHullModId);
-                    if (spec != null && spec.getEffect() != null) {
-                        vanillaDelegate.apply(spec.getEffect(), vanillaHullModId);
-                    }
+                HullModSpecAPI spec = Global.getSettings().getHullModSpec(vanillaHullModId);
+                if (spec != null && spec.getEffect() != null) {
+                    vanillaDelegate.apply(spec.getEffect(), vanillaHullModId);
                 }
             } else {
                 String modId = MOD_ID_PREFIX + allocated.node().getId();

@@ -547,6 +547,36 @@ class SkillTreeHullModTest {
         verify(vanillaEffect).applyEffectsAfterShipCreation(ship, "frontshield");
     }
 
+    private HullModEffect allocateVanillaHullModNode(String hullModId) {
+        SkillType keystoneType = new SkillType.Builder(hullModId, hullModId, "graphics/icons/" + hullModId + ".png", SkillTier.KEYSTONE)
+                .effects(List.of())
+                .vanillaHullModId(hullModId)
+                .build();
+        SkillNode keystoneNode = new SkillNode(hullModId + "_1", keystoneType, List.of(), 0f, 0f);
+        SkillTree.register(keystoneNode);
+        ShipSkillDataManager.get("ship-a").allocate(keystoneNode, 1);
+
+        SettingsAPI settings = mock(SettingsAPI.class);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+        HullModSpecAPI spec = mock(HullModSpecAPI.class);
+        when(settings.getHullModSpec(hullModId)).thenReturn(spec);
+        HullModEffect vanillaEffect = mock(HullModEffect.class);
+        when(spec.getEffect()).thenReturn(vanillaEffect);
+        return vanillaEffect;
+    }
+
+    @Test
+    void advanceInCombatDelegatesToTheRealVanillaHullModEffect() {
+        HullModEffect vanillaEffect = allocateVanillaHullModNode("missile_autoloader");
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        ShipAPI ship = mockShip(member, mock(MutableShipStatsAPI.class));
+
+        new SkillTreeHullMod().advanceInCombat(ship, 0.1f);
+
+        verify(vanillaEffect).advanceInCombat(ship, 0.1f);
+    }
+
     @Test
     void afterShipCreationSkipsNodesWithoutAVanillaHullMod() {
         SkillType hullType = new SkillType.Builder("hull", "Reinforced Hull", "graphics/hullmods/reinforced_bulkheads.png", SkillTier.SMALL)
