@@ -25,7 +25,7 @@ public final class FleetWideEffects {
         return sector == null ? null : sector.getPlayerFleet();
     }
 
-    static void recomputeSalvageBonus() {
+    public static void recomputeSalvageBonus() {
         CampaignFleetAPI fleet = playerFleet();
         if (fleet == null) {
             return;

@@ -152,11 +152,6 @@ public enum LogisticsSkillEffect implements SkillEffect {
         }
 
         @Override
-        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
-            FleetWideEffects.recomputeSalvageBonus();
-        }
-
-        @Override
         public boolean appliesToNpcShips() {
             return false;
         }

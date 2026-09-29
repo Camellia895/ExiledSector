@@ -6,6 +6,7 @@ import exiledsector.effects.CombatXpListener;
 import exiledsector.effects.NpcFleetDialogListener;
 import exiledsector.effects.NpcFleetInflationListener;
 import exiledsector.effects.NpcFleetSweepScript;
+import exiledsector.effects.SalvageBonusListener;
 import exiledsector.effects.SkillTreeInstaller;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillTree;
@@ -37,6 +38,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         Global.getSector().removeScriptsOfClass(SkillTreeInstaller.class);
         Global.getSector().addTransientScript(new SkillTreeInstaller());
         Global.getSector().addTransientListener(new CombatXpListener());
+        Global.getSector().addTransientListener(new SalvageBonusListener());
         Global.getSector().addTransientScript(new NpcFleetSweepScript());
         Global.getSector().addTransientListener(new NpcFleetDialogListener());
         Global.getSector().getListenerManager().addListener(new NpcFleetInflationListener(), true);
