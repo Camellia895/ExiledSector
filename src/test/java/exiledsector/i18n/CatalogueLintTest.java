@@ -1,6 +1,8 @@
 package exiledsector.i18n;
 
+import exiledsector.ExiledSectorModPlugin;
 import exiledsector.skills.npc.RealSkillData;
+import org.json.CDL;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,6 +28,7 @@ class CatalogueLintTest {
 
     private static final Path REPORT_DIRECTORY = Path.of("target/i18n");
     private static final Set<String> REPORTED_LOCALES = Set.of(LocaleChain.SIMPLIFIED_CHINESE);
+    private static final String HULL_MODS_FILE = "data/hullmods/hull_mods.csv";
 
     static Map<String, String> dataSources() throws IOException, JSONException {
         Path root = RealSkillData.projectRoot();
@@ -45,6 +48,16 @@ class CatalogueLintTest {
         while (ids.hasNext()) {
             String id = String.valueOf(ids.next());
             sources.put("npcLayout." + id + ".name", layouts.getJSONObject(id).getString("name"));
+        }
+        String hullModRows = Files.readString(root.resolve(HULL_MODS_FILE), StandardCharsets.UTF_8).replace("\r\n", "\n");
+        JSONArray hullMods = CDL.toJSONArray(hullModRows);
+        for (int i = 0; i < hullMods.length(); i++) {
+            JSONObject hullMod = hullMods.getJSONObject(i);
+            String id = hullMod.optString("id");
+            if (ExiledSectorModPlugin.LOCALISED_HULLMODS.contains(id)) {
+                sources.put("hullmod." + id + ".name", hullMod.getString("name"));
+                sources.put("hullmod." + id + ".description", hullMod.getString("desc"));
+            }
         }
         return sources;
     }

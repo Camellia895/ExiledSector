@@ -4,7 +4,7 @@ All player-visible text lives in message catalogues under `data/strings/exiledSe
 
 - `en.json` holds the English source for everything the Java code shows.
 - `zh_CN.json` holds the Simplified Chinese translation.
-- Skill type names and descriptions, and NPC layout names, keep their English source in `data/skilltrees/skill_types.json` and `data/config/exiledSector/npc_layouts.json`. Translations reference them by id: `skillType.<id>.name`, `skillType.<id>.description` and `npcLayout.<id>.name`.
+- Skill type names and descriptions, NPC layout names, and our hull mods' names and descriptions keep their English source in `data/skilltrees/skill_types.json`, `data/config/exiledSector/npc_layouts.json` and `data/hullmods/hull_mods.csv`. Translations reference them by id: `skillType.<id>.name`, `skillType.<id>.description`, `npcLayout.<id>.name`, `hullmod.<id>.name` and `hullmod.<id>.description`.
 
 ## Choosing the language
 

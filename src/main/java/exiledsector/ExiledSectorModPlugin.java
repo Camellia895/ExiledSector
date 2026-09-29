@@ -24,18 +24,20 @@ import exiledsector.ui.SkillTreeRefitButton;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
 import exiledsector.ui.inspect.SkillTreeCodexListener;
 
+import java.util.List;
 import java.util.Locale;
 
 public class ExiledSectorModPlugin extends BaseModPlugin {
 
     public static final String LOG_TAG = "ExiledSector";
     public static final String MOD_ID = "exiledSector";
+    public static final List<String> LOCALISED_HULLMODS = List.of(SkillTreeHullMod.ID, SkillConflictWarningHullMod.ID);
 
     @Override
     public void onApplicationLoad() throws Exception {
         loadLanguage();
         Global.getLogger(ExiledSectorModPlugin.class).info(LOG_TAG + " loaded");
-        localiseHullModNames();
+        localiseHullModText();
         SkillTreeRefitButton.addButton();
         ExiledSectorSettings.register();
         SkillTree.load();
@@ -54,22 +56,17 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         }
     }
 
-    private static void localiseHullModNames() {
-        I18n.forGameText(() -> {
-            localise(SkillTreeHullMod.ID, "hullmod.core.name", null);
-            localise(SkillConflictWarningHullMod.ID, "hullmod.conflict.name", "hullmod.conflict.description");
-        });
+    private static void localiseHullModText() {
+        I18n.forGameText(() -> LOCALISED_HULLMODS.forEach(ExiledSectorModPlugin::localise));
     }
 
-    private static void localise(String hullModId, String nameKey, String descriptionKey) {
+    private static void localise(String hullModId) {
         HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
         if (spec == null) {
             return;
         }
-        spec.setDisplayName(Translation.text(nameKey));
-        if (descriptionKey != null) {
-            spec.setDescriptionFormat(Translation.text(descriptionKey));
-        }
+        spec.setDisplayName(Translation.data("hullmod." + hullModId + ".name", spec.getDisplayName()));
+        spec.setDescriptionFormat(Translation.data("hullmod." + hullModId + ".description", spec.getDescriptionFormat()));
     }
 
     @Override
