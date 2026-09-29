@@ -1,6 +1,10 @@
 package exiledsector.ui;
 
+import exiledsector.i18n.I18n;
 import exiledsector.i18n.LanguageSetting;
+import exiledsector.i18n.PseudoLeaks;
+import exiledsector.i18n.PseudoLocale;
+import exiledsector.i18n.RealCatalogue;
 import exiledsector.skills.npc.NpcLevelTable;
 import exiledsector.skills.npc.NpcTreeConfig;
 import exiledsector.ui.inspect.NpcInspectConfig;
@@ -75,6 +79,20 @@ class ExiledSectorSettingsTest {
         assertFalse(registeredTexts.isEmpty());
         for (String text : registeredTexts) {
             assertFalse(text.contains("%"), () -> "LunaLib passes this through String.format: " + text);
+        }
+    }
+
+    @Test
+    void everySettingsTextComesFromTheCatalogue() {
+        I18n.install(RealCatalogue.of(PseudoLocale.LOCALE));
+        registeredTexts.clear();
+        ExiledSectorSettings.registerLanguage();
+        ExiledSectorSettings.register();
+        String options = String.join(",", LanguageSetting.OPTIONS);
+        for (String text : registeredTexts) {
+            boolean untranslated = text.isEmpty() || text.startsWith("exiledSector") || text.equals(options)
+                    || LanguageSetting.OPTIONS.contains(text);
+            assertFalse(!untranslated && PseudoLeaks.hasLeak(text), () -> "Hardcoded settings text: " + text);
         }
     }
 

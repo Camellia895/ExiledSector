@@ -9,9 +9,6 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -49,11 +46,6 @@ public final class RealCatalogue {
     }
 
     private static Catalogue load(String locale) {
-        List<Map<String, String>> layers = new ArrayList<>();
-        for (String candidate : LocaleChain.highestPriorityFirst(locale)) {
-            layers.add(entries(candidate));
-        }
-        Collections.reverse(layers);
-        return Catalogue.layered(locale, layers);
+        return Catalogue.compose(locale, RealCatalogue::entries);
     }
 }

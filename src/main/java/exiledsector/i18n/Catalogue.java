@@ -2,25 +2,45 @@ package exiledsector.i18n;
 
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 public final class Catalogue {
 
     private static final Logger LOG = Logger.getLogger(Catalogue.class);
 
     private final String locale;
+    private final boolean pseudo;
     private final Map<String, String> entries;
     private final Map<String, Template> templates = new ConcurrentHashMap<>();
     private final Set<String> reportedMissing = ConcurrentHashMap.newKeySet();
 
     public Catalogue(String locale, Map<String, String> entries) {
+        this(locale, entries, false);
+    }
+
+    Catalogue(String locale, Map<String, String> entries, boolean pseudo) {
         this.locale = locale;
+        this.pseudo = pseudo;
         this.entries = Collections.unmodifiableMap(new LinkedHashMap<>(entries));
+    }
+
+    public static Catalogue compose(String locale, Function<String, Map<String, String>> files) {
+        if (PseudoLocale.LOCALE.equals(locale)) {
+            return new Catalogue(locale, PseudoLocale.apply(compose(LocaleChain.ENGLISH, files).entries), true);
+        }
+        List<Map<String, String>> layers = new ArrayList<>();
+        for (String candidate : LocaleChain.highestPriorityFirst(locale)) {
+            layers.add(files.apply(candidate));
+        }
+        Collections.reverse(layers);
+        return layered(locale, layers);
     }
 
     public static Catalogue layered(String locale, List<Map<String, String>> lowestPriorityFirst) {
@@ -33,6 +53,10 @@ public final class Catalogue {
 
     public String locale() {
         return locale;
+    }
+
+    public boolean isPseudo() {
+        return pseudo;
     }
 
     public boolean has(String key) {

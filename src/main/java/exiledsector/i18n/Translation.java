@@ -29,14 +29,20 @@ public final class Translation {
     }
 
     public static String data(String key, String englishSource) {
-        return has(key) ? text(key) : englishSource;
+        if (has(key)) {
+            return text(key);
+        }
+        return I18n.catalogue().isPseudo() ? PseudoLocale.apply(englishSource) : englishSource;
     }
 
     public static StyledText dataStyled(String key, String englishSource) {
         if (has(key)) {
             return styled(key);
         }
-        return englishSource == null ? null : StyledText.parse(englishSource);
+        if (englishSource == null) {
+            return null;
+        }
+        return StyledText.parse(I18n.catalogue().isPseudo() ? PseudoLocale.apply(englishSource) : englishSource);
     }
 
     public static StyledText list(List<StyledText> items) {

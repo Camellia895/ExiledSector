@@ -4,11 +4,8 @@ import com.fs.starfarer.api.Global;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -80,15 +77,7 @@ public final class I18n {
     }
 
     private static Catalogue read(String locale) {
-        List<Map<String, String>> layers = new ArrayList<>();
-        for (String candidate : LocaleChain.highestPriorityFirst(locale)) {
-            Map<String, String> entries = readFile(candidate);
-            if (!entries.isEmpty()) {
-                layers.add(entries);
-            }
-        }
-        Collections.reverse(layers);
-        return Catalogue.layered(locale, layers);
+        return Catalogue.compose(locale, I18n::readFile);
     }
 
     private static Map<String, String> readFile(String locale) {
