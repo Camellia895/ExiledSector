@@ -30,6 +30,14 @@ if ($dirty) {
 
 Invoke-ModBuild -ProjectRoot $projectRoot
 
+Get-ChildItem (Join-Path $projectRoot "target\i18n") -Filter "missing-*.txt" -ErrorAction SilentlyContinue | ForEach-Object {
+    $missing = @(Get-Content $_.FullName | Where-Object { $_ })
+    if ($missing.Count -gt 0) {
+        $locale = $_.BaseName -replace '^missing-', ''
+        Write-Warning "$($missing.Count) strings have no $locale translation and will show in English; see $($_.FullName)."
+    }
+}
+
 if (Test-Path $releaseDir) {
     Remove-Item -Recurse -Force $releaseDir
 }
