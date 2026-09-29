@@ -127,9 +127,19 @@ public enum LogisticsSkillEffect implements SkillEffect {
     CREW_LOSS_PERCENT(PERCENT, stat(MutableShipStatsAPI::getCrewLossMult), "stat.crewCasualties", true),
     CREW_LOSS_MULT(MULT, stat(MutableShipStatsAPI::getCrewLossMult), "stat.crewCasualties", true),
     SURVEY_COST_REDUCTION_HEAVY_MACHINERY(FLAT, dynamicMod("survey_cost_reduction_heavy_machinery"),
-            "stat.heavyMachineryRequiredToPerformSurveysFleetWide", false),
+            "stat.heavyMachineryRequiredToPerformSurveysFleetWide", true) {
+        @Override
+        public StyledText description(float magnitude) {
+            return super.description(-magnitude);
+        }
+    },
     SURVEY_COST_REDUCTION_SUPPLIES(FLAT, dynamicMod("survey_cost_reduction_supplies"),
-            "stat.suppliesRequiredToPerformSurveysFleetWide", false),
+            "stat.suppliesRequiredToPerformSurveysFleetWide", true) {
+        @Override
+        public StyledText description(float magnitude) {
+            return super.description(-magnitude);
+        }
+    },
     GROUND_SUPPORT_FLAT(FLAT, dynamicMod(Stats.FLEET_GROUND_SUPPORT),
             "stat.effectiveStrengthOfPlanetaryRaidsUpToTheTotalNumberOfMarinesInTheFleet", false),
     CORONA_RESISTANCE_MULT(MULT, dynamicStat(Stats.CORONA_EFFECT_MULT),
