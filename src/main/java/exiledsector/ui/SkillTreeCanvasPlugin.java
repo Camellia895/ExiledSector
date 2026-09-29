@@ -67,7 +67,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.ringBeltRenderer = new SkillTreeRingBeltRenderer();
         this.starRenderer = new SkillTreeStarRenderer();
         this.nodeRenderer = new SkillTreeNodeRenderer(member, variant, style, refitButton, search);
-        this.searchBar = new SkillTreeSearchBar(search, style);
+        this.searchBar = new SkillTreeSearchBar(search);
         this.statPanel = new SkillTreeStatPanel(member, variant);
         this.ordnancePointsBar = new SkillTreeOrdnancePointsBar(member, variant);
         this.levelBar = new SkillTreeLevelBar(member);

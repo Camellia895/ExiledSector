@@ -72,10 +72,6 @@ public final class SkillTreePanelStyle {
         }
     }
 
-    public LazyFont getFont() {
-        return font();
-    }
-
     public static LazyFont font() {
         if (font == null && !fontLoadFailed) {
             font = loadFontOrDefault(Translation.has("meta.font") ? Translation.text("meta.font") : DEFAULT_FONT_PATH);

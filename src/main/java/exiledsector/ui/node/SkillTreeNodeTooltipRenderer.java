@@ -44,7 +44,7 @@ final class SkillTreeNodeTooltipRenderer {
     }
 
     void renderTooltip(SkillNode node, float mouseX, float mouseY, float alphaMult) {
-        LazyFont font = style.getFont();
+        LazyFont font = SkillTreePanelStyle.font();
         if (font == null) return;
 
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
@@ -67,7 +67,7 @@ final class SkillTreeNodeTooltipRenderer {
     }
 
     void renderTooltipForType(SkillType type, float mouseX, float mouseY, float alphaMult) {
-        LazyFont font = style.getFont();
+        LazyFont font = SkillTreePanelStyle.font();
         if (font == null) return;
 
         String titleText = type.getDisplayName();

@@ -51,7 +51,7 @@ final class SkillTreeNodeDropdownRenderer {
     }
 
     SkillType findOptionAt(TreeViewport viewport, float x, float y) {
-        LazyFont font = style.getFont();
+        LazyFont font = SkillTreePanelStyle.font();
         if (font == null) return null;
         for (DropdownRow row : computeRows(viewport, font)) {
             if (row.contains(x, y)) {
@@ -63,7 +63,7 @@ final class SkillTreeNodeDropdownRenderer {
 
     void render(TreeViewport viewport, float mouseX, float mouseY, boolean mouseKnown, float alphaMult) {
         if (openNode == null) return;
-        LazyFont font = style.getFont();
+        LazyFont font = SkillTreePanelStyle.font();
         if (font == null) return;
 
         List<DropdownRow> rows = computeRows(viewport, font);

@@ -17,7 +17,7 @@ final class SkillTreeInfoTooltipRenderer {
     }
 
     void render(String titleText, String bodyText, float mouseX, float mouseY, float alphaMult) {
-        LazyFont font = style.getFont();
+        LazyFont font = SkillTreePanelStyle.font();
         if (font == null) return;
 
         SkillTreePanelStyle.TooltipText title = titleCache.get(titleText, () -> SkillTreePanelStyle.buildWrappedText(

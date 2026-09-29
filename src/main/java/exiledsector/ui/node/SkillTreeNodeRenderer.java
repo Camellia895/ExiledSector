@@ -154,7 +154,7 @@ public final class SkillTreeNodeRenderer {
     }
 
     private void renderStartingRootPrompt(float x, float y) {
-        LazyFont font = style.getFont();
+        LazyFont font = SkillTreePanelStyle.font();
         if (font == null) {
             return;
         }

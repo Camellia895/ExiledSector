@@ -24,7 +24,6 @@ final class SkillTreeSearchBar {
     private static final Color PLACEHOLDER_COLOR = new Color(130, 130, 130);
 
     private final NodeSearch search;
-    private final SkillTreePanelStyle style;
     private final BorderedPanel panel = new BorderedPanel(SkillTreeSearchBar.class);
     private LazyFont.DrawableString text;
     private String renderedText;
@@ -32,9 +31,8 @@ final class SkillTreeSearchBar {
     private boolean focused;
     private float caretSeconds;
 
-    SkillTreeSearchBar(NodeSearch search, SkillTreePanelStyle style) {
+    SkillTreeSearchBar(NodeSearch search) {
         this.search = search;
-        this.style = style;
     }
 
     boolean handleClick(PositionAPI position, float x, float y) {
@@ -102,7 +100,7 @@ final class SkillTreeSearchBar {
     }
 
     private LazyFont.DrawableString textFor(String value) {
-        LazyFont font = style.getFont();
+        LazyFont font = SkillTreePanelStyle.font();
         if (font == null) {
             return null;
         }
