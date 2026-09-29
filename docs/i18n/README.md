@@ -46,15 +46,15 @@ A translation mod can ship `data/strings/exiledSector/<locale>.json`, for exampl
 - **Generating an atlas:** use the test-scope `BitmapFontGenerator`:
 
 ```
-java -cp target/test-classes;target/classes exiledsector.i18n.BitmapFontGenerator <font.ttf|.otf> graphics/fonts/exiledSector/<name>.fnt 20 24 2048 2048 data/strings/exiledSector/<locale>.json
+java -cp target/test-classes;target/classes exiledsector.i18n.BitmapFontGenerator <font.ttf|.otf> graphics/fonts/exiledSector/<name>.fnt 17 20 2048 1024 data/strings/exiledSector/en.json data/strings/exiledSector/<locale>.json
 ```
 
 Arguments:
 - the source font;
 - the output `.fnt` path;
 - the glyph size in pixels;
-- the line height LazyLib scales against;
-- the atlas size;
+- the line height LazyLib scales against: keep it at 20, the body text size, so body text draws at the atlas's own size instead of being scaled down;
+- the atlas size: use the smallest power-of-two page the glyphs fit, since every pixel costs 4 bytes of video memory;
 - the text files whose characters must be included.
 
 On top of those, the generator always includes ASCII, Latin-1, common punctuation, CJK symbols, full-width forms and the 3,755 common GB2312 hanzi. It fails instead of dropping glyphs that don't fit.

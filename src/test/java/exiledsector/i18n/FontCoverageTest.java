@@ -1,6 +1,7 @@
 package exiledsector.i18n;
 
 import exiledsector.skills.npc.RealSkillData;
+import exiledsector.ui.SkillTreePanelStyle;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class FontCoverageTest {
 
     private static final Pattern CHAR_ID = Pattern.compile("^char id=(\\d+) ", Pattern.MULTILINE);
+    private static final Pattern GLYPH_BOX = Pattern.compile("^char id=\\d+\\s+x=\\d+\\s+y=(\\d+)\\s+width=\\d+\\s+height=(\\d+)", Pattern.MULTILINE);
     private static final int MAX_ATLAS_SIZE = 4096;
 
     private static Path fontFile(String locale) {
@@ -36,17 +38,42 @@ class FontCoverageTest {
         return ids;
     }
 
+    private static List<String> metadata(Path fnt) throws IOException {
+        List<String> lines = Files.readAllLines(fnt, StandardCharsets.UTF_8);
+        return List.of(BitmapFontGeneratorTest.LAZYFONT_SPLIT.split(lines.get(0) + " " + lines.get(1) + " " + lines.get(2)));
+    }
+
     @Test
     void theChineseFontIsASinglePageAtlasLazyLibCanLoad() throws IOException {
         Path fnt = fontFile(LocaleChain.SIMPLIFIED_CHINESE);
-        List<String> lines = Files.readAllLines(fnt, StandardCharsets.UTF_8);
-        List<String> metadata = List.of(BitmapFontGeneratorTest.LAZYFONT_SPLIT.split(lines.get(0) + " " + lines.get(1) + " " + lines.get(2)));
+        List<String> metadata = metadata(fnt);
 
         assertEquals(BitmapFontGeneratorTest.LAZYFONT_METADATA_LENGTH, metadata.size());
         assertEquals("1", metadata.get(35), "pages");
         assertTrue(Integer.parseInt(metadata.get(31)) <= MAX_ATLAS_SIZE && Integer.parseInt(metadata.get(33)) <= MAX_ATLAS_SIZE);
         assertTrue(Files.isRegularFile(fnt.resolveSibling(metadata.get(50).replace("\"", ""))), "atlas image");
         assertTrue(Files.isRegularFile(fnt.resolveSibling("OFL.txt")), "font licence");
+    }
+
+    @Test
+    void chineseBodyTextDrawsAtTheAtlasNativeSize() throws IOException {
+        List<String> metadata = metadata(fontFile(LocaleChain.SIMPLIFIED_CHINESE));
+
+        assertEquals(String.valueOf((int) SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE), metadata.get(27),
+                "LazyFont scales text by font size / line height");
+    }
+
+    @Test
+    void theChineseAtlasIsNoTallerThanItsGlyphsNeed() throws IOException {
+        Path fnt = fontFile(LocaleChain.SIMPLIFIED_CHINESE);
+        int atlasHeight = Integer.parseInt(metadata(fnt).get(33));
+        int glyphBottom = 0;
+        Matcher matcher = GLYPH_BOX.matcher(Files.readString(fnt, StandardCharsets.UTF_8));
+        while (matcher.find()) {
+            glyphBottom = Math.max(glyphBottom, Integer.parseInt(matcher.group(1)) + Integer.parseInt(matcher.group(2)));
+        }
+
+        assertTrue(glyphBottom > atlasHeight / 2, "glyphs end at y=" + glyphBottom + ", so the atlas could be half as tall");
     }
 
     @Test
