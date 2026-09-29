@@ -18,9 +18,11 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.ExiledSectorModPlugin;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
+import exiledsector.skills.progression.SkillNodeOpCost;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.FluxSkillEffect;
 import exiledsector.skills.skilleffect.MiscSkillEffect;
@@ -30,6 +32,7 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
+import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,6 +57,7 @@ import static org.mockito.Mockito.when;
 class SkillTreeHullModTest {
 
     private MockedStatic<Global> globalMock;
+    private MockedStatic<LunaSettings> lunaSettingsMock;
     private Map<String, Object> persistentData;
 
     @BeforeEach
@@ -63,6 +67,7 @@ class SkillTreeHullModTest {
         SectorAPI sector = mock(SectorAPI.class);
         when(sector.getPersistentData()).thenReturn(persistentData);
 
+        lunaSettingsMock = Mockito.mockStatic(LunaSettings.class, invocation -> null);
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSector).thenReturn(sector);
 
@@ -73,6 +78,7 @@ class SkillTreeHullModTest {
     @AfterEach
     void tearDown() {
         globalMock.close();
+        lunaSettingsMock.close();
         SkillTree.getAllNodes().clear();
         SkillTree.getAllTypes().clear();
     }
@@ -334,7 +340,7 @@ class SkillTreeHullModTest {
         SkillTreeHullMod.removeHullModsConflictingWithAllocatedSkills(member, variant);
         verify(variant).addMod("exiledSector_conflictWarning");
 
-        data.deallocate(frontNode, 1);
+        data.deallocate(frontNode);
         when(variant.hasHullMod("adaptiveshields")).thenReturn(false);
         when(variant.hasHullMod("exiledSector_conflictWarning")).thenReturn(true);
 
@@ -463,9 +469,13 @@ class SkillTreeHullModTest {
     }
 
     @Test
-    void beforeShipCreationInstallsAndCostsTheOpSpentHullModWhenOpHasBeenSpentOnAllocatedNodes() {
+    void beforeShipCreationReservesThePaidNodesAtTheCurrentPerNodeCost() {
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
+        ShipHullSpecAPI hull = mock(ShipHullSpecAPI.class);
+        when(hull.getHullSize()).thenReturn(HullSize.FRIGATE);
+        when(member.getHullSpec()).thenReturn(hull);
+        lunaSettingsMock.when(() -> LunaSettings.getInt(ExiledSectorModPlugin.MOD_ID, SkillNodeOpCost.FRIGATE_FIELD_ID)).thenReturn(2);
         SkillType type = new SkillType.Builder("t", "t", "a.png", SkillTier.SMALL)
                 .effects(List.of())
                 .vanillaHullModId(null)
@@ -488,10 +498,10 @@ class SkillTreeHullModTest {
 
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
 
-        verify(opSpentSpec).setFrigateCost(4);
-        verify(opSpentSpec).setDestroyerCost(4);
-        verify(opSpentSpec).setCruiserCost(4);
-        verify(opSpentSpec).setCapitalCost(4);
+        verify(opSpentSpec).setFrigateCost(2);
+        verify(opSpentSpec).setDestroyerCost(2);
+        verify(opSpentSpec).setCruiserCost(2);
+        verify(opSpentSpec).setCapitalCost(2);
         verify(variant).addMod("exiledSector_opSpent_0");
     }
 

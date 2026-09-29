@@ -265,7 +265,7 @@ class SkillTreeInstallerTest {
         assertEquals(3, adopted.getLevel());
         assertEquals(2, adopted.getBankedFreeAllocations());
         assertTrue(adopted.isFreeNode("a_1"));
-        assertEquals(0, adopted.getSpentOp());
+        assertEquals(0, adopted.getSpentOp(1));
         assertFalse(adopted.isNpcBuild());
         assertTrue(tags.isEmpty());
         verify(member.getVariant()).removeMod(SkillTreeHullMod.ID);

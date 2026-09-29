@@ -205,8 +205,7 @@ class NpcFleetLevellerTest {
 
         String tag = NpcTreeTag.find(officered.getVariant());
         int opCostPerNode = SkillNodeOpCost.perNode(HullSize.DESTROYER);
-        assertTrue(tag.endsWith("|" + opCostPerNode));
-        assertEquals(10 / opCostPerNode * opCostPerNode, NpcTreeTag.decode(tag).getSpentOp());
+        assertEquals(10 / opCostPerNode * opCostPerNode, NpcTreeTag.decode(tag).getSpentOp(opCostPerNode));
         assertFalse(hullMods.contains("heavyarmor"));
     }
 

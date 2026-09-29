@@ -16,7 +16,6 @@ public class ShipSkillData {
 
     private final Set<String> allocatedNodeIds = new LinkedHashSet<>();
     private Map<String, String> optionalSelections = new LinkedHashMap<>();
-    private int spentOp = 0;
     private int level = 0;
     private float xp = 0f;
     private int bankedFreeAllocations = 0;
@@ -92,8 +91,19 @@ public class ShipSkillData {
         return allocatedNodeIds;
     }
 
-    public int getSpentOp() {
-        return spentOp;
+    public int getSpentOp(int opCostPerNode) {
+        return paidNodeCount() * opCostPerNode;
+    }
+
+    private int paidNodeCount() {
+        String startingRoot = resolveStartingRootId(SkillTree.getAllNodes().values());
+        int paid = 0;
+        for (String nodeId : allocatedNodeIds) {
+            if (!isFreeNode(nodeId) && !nodeId.equals(startingRoot)) {
+                paid++;
+            }
+        }
+        return paid;
     }
 
     public int getLevel() {
@@ -125,7 +135,7 @@ public class ShipSkillData {
     }
 
     public boolean isBlank() {
-        return allocatedNodeIds.isEmpty() && level == 0 && xp == 0f && bankedFreeAllocations == 0 && spentOp == 0;
+        return allocatedNodeIds.isEmpty() && level == 0 && xp == 0f && bankedFreeAllocations == 0;
     }
 
     public void addXp(float amount) {
@@ -144,7 +154,7 @@ public class ShipSkillData {
         bankedFreeAllocations++;
     }
 
-    public boolean convertMostRecentAllocationToFree(Collection<SkillNode> allNodes, int opCostPerNode) {
+    public boolean convertMostRecentAllocationToFree(Collection<SkillNode> allNodes) {
         String startingRoot = resolveStartingRootId(allNodes);
         List<String> order = new ArrayList<>(allocatedNodeIds);
         for (int i = order.size() - 1; i >= 0; i--) {
@@ -154,7 +164,6 @@ public class ShipSkillData {
                 continue;
             }
             freeNodeIds().add(nodeId);
-            spentOp -= opCostPerNode;
             return true;
         }
         return false;
@@ -171,13 +180,13 @@ public class ShipSkillData {
         }
     }
 
-    public void deallocate(SkillNode node, int opCost) {
+    public void deallocate(SkillNode node) {
         allocatedNodeIds.remove(node.getId());
-        release(node.getId(), opCost);
+        release(node.getId());
 
         String pairedId = node.getPairedNodeId();
         if (pairedId != null && allocatedNodeIds.remove(pairedId)) {
-            release(pairedId, opCost);
+            release(pairedId);
         }
     }
 
@@ -185,19 +194,17 @@ public class ShipSkillData {
         if (opCost > 0 && bankedFreeAllocations > 0) {
             bankedFreeAllocations--;
             freeNodeIds().add(nodeId);
-        } else {
-            spentOp += opCost;
         }
     }
 
-    private void release(String nodeId, int opCost) {
+    private void release(String nodeId) {
         if (optionalSelections != null) {
             optionalSelections.remove(nodeId);
         }
         if (freeNodeIds().remove(nodeId)) {
             bankedFreeAllocations++;
-        } else if (!pairedFreeNodeIds().remove(nodeId)) {
-            spentOp -= opCost;
+        } else {
+            pairedFreeNodeIds().remove(nodeId);
         }
     }
 
@@ -210,7 +217,7 @@ public class ShipSkillData {
         if (allocatedNodeIds.size() + slotsNeeded > maxAllocatedNodes) {
             return false;
         }
-        if (opCost > 0 && bankedFreeAllocations <= 0 && spentOp + opCost > totalOp) {
+        if (opCost > 0 && bankedFreeAllocations <= 0 && getSpentOp(opCost) + opCost > totalOp) {
             return false;
         }
         if (node.getConnectedNodeIds().isEmpty()) {
@@ -294,7 +301,7 @@ public class ShipSkillData {
     public void toggle(SkillNode node, Collection<SkillNode> allNodes, String satisfiedRootId, int totalOp, int opCost, int maxAllocatedNodes) {
         if (isAllocated(node.getId())) {
             if (canDeallocate(node, allNodes, satisfiedRootId)) {
-                deallocate(node, opCost);
+                deallocate(node);
             }
         } else if (canAllocate(node, satisfiedRootId, totalOp, opCost, maxAllocatedNodes)) {
             allocate(node, opCost);

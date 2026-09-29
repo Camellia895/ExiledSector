@@ -94,12 +94,12 @@ class NpcTreeTagTest {
         assertTrue(restored.isFreeNode("a"));
         assertTrue(restored.isFreeNode("b"));
         assertFalse(restored.isFreeNode("root"));
-        assertEquals(0, restored.getSpentOp());
+        assertEquals(0, restored.getSpentOp(1));
         assertTrue(restored.isNpcBuild());
     }
 
     @Test
-    void nodesChargedWithFreedOpKeepTheirOpCostThroughTheTag() {
+    void nodesChargedWithFreedOpStayChargedThroughTheTag() {
         ShipSkillData built = NpcSkillTreeBuilder.rootedTree(SkillTree.get("root"), 1);
         built.allocate(SkillTree.get("a"), 3);
         built.selectOption(SkillTree.get("optional_1"), SkillTree.getType("hull_option"), 3);
@@ -108,13 +108,27 @@ class NpcTreeTagTest {
         String tag = NpcTreeTag.encode("bulwark", built);
         ShipSkillData restored = NpcTreeTag.decode(tag);
 
-        assertEquals("exiledSector_npcTree|bulwark|1|root,a,optional_1=hull_option,b|3", tag);
-        assertEquals(6, restored.getSpentOp());
+        assertEquals("exiledSector_npcTree|bulwark|1|root,a,optional_1=hull_option,b", tag);
+        assertEquals(6, restored.getSpentOp(3));
         assertEquals(0, restored.getBankedFreeAllocations());
         assertTrue(restored.isFreeNode("a"));
         assertFalse(restored.isFreeNode("b"));
         assertEquals(List.copyOf(built.getAllocatedNodeIds()), List.copyOf(restored.getAllocatedNodeIds()));
         assertEquals("hull_option", restored.getOptionalSelection("optional_1"));
+    }
+
+    @Test
+    void tagsSavedWithAPerNodeCostStillDecodeToTheSameTree() {
+        ShipSkillData built = NpcSkillTreeBuilder.rootedTree(SkillTree.get("root"), 1);
+        built.allocate(SkillTree.get("a"), 3);
+        built.allocate(SkillTree.get("b"), 3);
+
+        ShipSkillData restored = NpcTreeTag.decode("exiledSector_npcTree|bulwark|1|root,a,b|3");
+
+        assertEquals(List.copyOf(built.getAllocatedNodeIds()), List.copyOf(restored.getAllocatedNodeIds()));
+        assertEquals(built.getSpentOp(3), restored.getSpentOp(3));
+        assertTrue(restored.isFreeNode("a"));
+        assertFalse(restored.isFreeNode("b"));
     }
 
     @Test

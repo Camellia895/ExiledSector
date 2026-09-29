@@ -67,8 +67,9 @@ final class NodeAllocator {
     Snapshot snapshot() {
         ShipSkillData data = data();
         ShipOpBudget budget = ShipOpBudget.of(member, variant);
-        return new Snapshot(data, satisfiedRootId(), budget.total - budget.used + data.getSpentOp(),
-                SkillNodeOpCost.perNode(member.getHullSpec()), ShipLevelConfig.maxAllocatedNodes());
+        int opCostPerNode = SkillNodeOpCost.perNode(member.getHullSpec());
+        return new Snapshot(data, satisfiedRootId(), budget.total - budget.used + data.getSpentOp(opCostPerNode),
+                opCostPerNode, ShipLevelConfig.maxAllocatedNodes());
     }
 
     boolean canAllocate(SkillNode node) {

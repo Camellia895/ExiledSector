@@ -21,11 +21,13 @@ class ShipSkillDataTest {
     @BeforeEach
     void setUp() {
         SkillTree.getAllTypes().clear();
+        SkillTree.getAllNodes().clear();
     }
 
     @AfterEach
     void tearDown() {
         SkillTree.getAllTypes().clear();
+        SkillTree.getAllNodes().clear();
     }
 
     private static SkillNode node(String id, List<String> prerequisiteIds) {
@@ -53,7 +55,7 @@ class ShipSkillDataTest {
     void startsWithNoProgress() {
         ShipSkillData data = new ShipSkillData();
 
-        assertEquals(0, data.getSpentOp());
+        assertEquals(0, data.getSpentOp(3));
         assertTrue(data.getAllocatedNodeIds().isEmpty());
     }
 
@@ -65,18 +67,41 @@ class ShipSkillDataTest {
         data.allocate(node, 3);
 
         assertTrue(data.isAllocated("armor_1"));
-        assertEquals(3, data.getSpentOp());
+        assertEquals(3, data.getSpentOp(3));
     }
 
     @Test
-    void allocateWithZeroOpCostAddsNothingToSpentOp() {
+    void aRootAllocatedBeforeStartingRootsWereRecordedStillCostsNothing() {
         ShipSkillData data = new ShipSkillData();
         SkillNode root = rootNode("root_low_tech_1", List.of());
+        SkillTree.register(root);
 
         data.allocate(root, 0);
+        data.allocate(node("armor_1", List.of("root_low_tech_1")), 3);
 
         assertTrue(data.isAllocated("root_low_tech_1"));
-        assertEquals(0, data.getSpentOp());
+        assertEquals(3, data.getSpentOp(3));
+    }
+
+    @Test
+    void spentOpPricesEveryPaidNodeAtTheCurrentCostSoRefundsNeverDrift() {
+        ShipSkillData data = new ShipSkillData();
+        data.chooseStartingRoot(rootNode("root_low_tech_1", List.of()));
+        SkillNode a = node("a", List.of());
+        SkillNode b = node("b", List.of());
+        data.allocate(a, 1);
+        data.allocate(b, 1);
+        data.addFreeAllocationCredit();
+        data.allocate(node("c", List.of()), 1);
+
+        assertEquals(2, data.getSpentOp(1));
+        assertEquals(6, data.getSpentOp(3));
+
+        data.deallocate(a);
+        assertEquals(3, data.getSpentOp(3));
+        data.deallocate(b);
+        assertEquals(0, data.getSpentOp(3));
+        assertEquals(0, data.getSpentOp(1));
     }
 
     @Test
@@ -85,10 +110,10 @@ class ShipSkillDataTest {
         SkillNode node = node("armor_1", List.of());
         data.allocate(node, 3);
 
-        data.deallocate(node, 3);
+        data.deallocate(node);
 
         assertFalse(data.isAllocated("armor_1"));
-        assertEquals(0, data.getSpentOp());
+        assertEquals(0, data.getSpentOp(3));
     }
 
     @Test
@@ -531,7 +556,7 @@ class ShipSkillDataTest {
 
         assertTrue(data.isAllocated("slot_1"));
         assertEquals("hull", data.getOptionalSelection("slot_1"));
-        assertEquals(1, data.getSpentOp());
+        assertEquals(1, data.getSpentOp(1));
     }
 
     @Test
@@ -548,7 +573,7 @@ class ShipSkillDataTest {
         assertTrue(data.isAllocated("slot_1"));
         assertTrue(data.isFreeNode("slot_1"));
         assertEquals(0, data.getBankedFreeAllocations());
-        assertEquals(0, data.getSpentOp());
+        assertEquals(0, data.getSpentOp(1));
     }
 
     @Test
@@ -562,11 +587,11 @@ class ShipSkillDataTest {
         SkillTree.registerType(chosenOption);
         data.selectOption(slot, chosenOption, 1);
 
-        data.deallocate(slot, 1);
+        data.deallocate(slot);
 
         assertFalse(data.isAllocated("slot_1"));
         assertEquals(1, data.getBankedFreeAllocations());
-        assertEquals(0, data.getSpentOp());
+        assertEquals(0, data.getSpentOp(1));
     }
 
     @Test
@@ -579,11 +604,11 @@ class ShipSkillDataTest {
         SkillTree.registerType(chosenOption);
         data.selectOption(slot, chosenOption, 1);
 
-        data.deallocate(slot, 1);
+        data.deallocate(slot);
 
         assertFalse(data.isAllocated("slot_1"));
         assertNull(data.getOptionalSelection("slot_1"));
-        assertEquals(0, data.getSpentOp());
+        assertEquals(0, data.getSpentOp(1));
     }
 
     @Test
@@ -620,7 +645,7 @@ class ShipSkillDataTest {
 
         assertTrue(data.isAllocated("slot_1"));
         assertEquals("armor", data.getOptionalSelection("slot_1"));
-        assertEquals(1, data.getSpentOp());
+        assertEquals(1, data.getSpentOp(1));
     }
 
     @Test
@@ -635,7 +660,7 @@ class ShipSkillDataTest {
 
         data.selectOption(slot, hullOption, 1);
 
-        assertEquals(1, data.getSpentOp());
+        assertEquals(1, data.getSpentOp(1));
     }
 
     @Test
@@ -655,12 +680,12 @@ class ShipSkillDataTest {
         data.allocate(a, 3);
         data.allocate(b, 3);
 
-        boolean converted = data.convertMostRecentAllocationToFree(List.of(a, b), 3);
+        boolean converted = data.convertMostRecentAllocationToFree(List.of(a, b));
 
         assertTrue(converted);
         assertTrue(data.isFreeNode("b"));
         assertFalse(data.isFreeNode("a"));
-        assertEquals(3, data.getSpentOp());
+        assertEquals(3, data.getSpentOp(3));
     }
 
     @Test
@@ -671,12 +696,12 @@ class ShipSkillDataTest {
         data.allocate(a, 3);
         data.chooseStartingRoot(root);
 
-        boolean converted = data.convertMostRecentAllocationToFree(List.of(a, root), 3);
+        boolean converted = data.convertMostRecentAllocationToFree(List.of(a, root));
 
         assertTrue(converted);
         assertTrue(data.isFreeNode("a"));
         assertFalse(data.isFreeNode("root_low_tech_1"));
-        assertEquals(0, data.getSpentOp());
+        assertEquals(0, data.getSpentOp(3));
     }
 
     @Test
@@ -687,11 +712,11 @@ class ShipSkillDataTest {
         data.chooseStartingRoot(startingRoot);
         data.allocate(otherRoot, 3);
 
-        boolean converted = data.convertMostRecentAllocationToFree(List.of(startingRoot, otherRoot), 3);
+        boolean converted = data.convertMostRecentAllocationToFree(List.of(startingRoot, otherRoot));
 
         assertTrue(converted);
         assertTrue(data.isFreeNode("root_high_tech_1"));
-        assertEquals(0, data.getSpentOp());
+        assertEquals(0, data.getSpentOp(3));
     }
 
     @Test
@@ -701,13 +726,13 @@ class ShipSkillDataTest {
         SkillNode b = node("b", List.of());
         data.allocate(a, 3);
         data.allocate(b, 3);
-        data.convertMostRecentAllocationToFree(List.of(a, b), 3);
+        data.convertMostRecentAllocationToFree(List.of(a, b));
 
-        boolean convertedAgain = data.convertMostRecentAllocationToFree(List.of(a, b), 3);
+        boolean convertedAgain = data.convertMostRecentAllocationToFree(List.of(a, b));
 
         assertTrue(convertedAgain);
         assertTrue(data.isFreeNode("a"));
-        assertEquals(0, data.getSpentOp());
+        assertEquals(0, data.getSpentOp(3));
     }
 
     @Test
@@ -717,15 +742,15 @@ class ShipSkillDataTest {
         SkillNode b = wormholeNode("wormhole_b", List.of(), "wormhole_a");
         data.allocate(a, 3);
 
-        boolean converted = data.convertMostRecentAllocationToFree(List.of(a, b), 3);
+        boolean converted = data.convertMostRecentAllocationToFree(List.of(a, b));
 
         assertTrue(converted);
         assertTrue(data.isFreeNode("wormhole_a"));
-        assertEquals(0, data.getSpentOp());
+        assertEquals(0, data.getSpentOp(3));
 
-        data.deallocate(a, 3);
+        data.deallocate(a);
 
-        assertEquals(0, data.getSpentOp());
+        assertEquals(0, data.getSpentOp(3));
     }
 
     @Test
@@ -734,7 +759,7 @@ class ShipSkillDataTest {
         SkillNode root = rootNode("root_low_tech_1", List.of());
         data.allocate(root, 0);
 
-        assertFalse(data.convertMostRecentAllocationToFree(List.of(root), 3));
+        assertFalse(data.convertMostRecentAllocationToFree(List.of(root)));
     }
 
     @Test
@@ -747,7 +772,7 @@ class ShipSkillDataTest {
 
         assertTrue(data.isFreeNode("a"));
         assertEquals(0, data.getBankedFreeAllocations());
-        assertEquals(0, data.getSpentOp());
+        assertEquals(0, data.getSpentOp(3));
     }
 
     @Test
@@ -769,11 +794,11 @@ class ShipSkillDataTest {
         SkillNode a = node("a", List.of());
         data.allocate(a, 3);
 
-        data.deallocate(a, 3);
+        data.deallocate(a);
 
         assertFalse(data.isAllocated("a"));
         assertEquals(1, data.getBankedFreeAllocations());
-        assertEquals(0, data.getSpentOp());
+        assertEquals(0, data.getSpentOp(3));
     }
 
     @Test
@@ -805,7 +830,7 @@ class ShipSkillDataTest {
         assertTrue(data.isAllocated("wormhole_b"));
         assertTrue(data.isFreeNode("wormhole_b"));
         assertFalse(data.isFreeNode("wormhole_a"));
-        assertEquals(3, data.getSpentOp());
+        assertEquals(3, data.getSpentOp(3));
     }
 
     @Test
@@ -818,7 +843,7 @@ class ShipSkillDataTest {
         data.allocate(a, 3);
 
         assertEquals(2, data.getAllocatedNodeIds().size());
-        assertEquals(6, data.getSpentOp());
+        assertEquals(3, data.getSpentOp(3));
     }
 
     @Test
@@ -827,11 +852,11 @@ class ShipSkillDataTest {
         SkillNode a = wormholeNode("wormhole_a", List.of(), "wormhole_b");
         data.allocate(a, 3);
 
-        data.deallocate(a, 3);
+        data.deallocate(a);
 
         assertFalse(data.isAllocated("wormhole_a"));
         assertFalse(data.isAllocated("wormhole_b"));
-        assertEquals(0, data.getSpentOp());
+        assertEquals(0, data.getSpentOp(3));
         assertEquals(0, data.getBankedFreeAllocations());
     }
 
@@ -842,11 +867,11 @@ class ShipSkillDataTest {
         SkillNode b = wormholeNode("wormhole_b", List.of(), "wormhole_a");
         data.allocate(a, 3);
 
-        data.deallocate(b, 3);
+        data.deallocate(b);
 
         assertFalse(data.isAllocated("wormhole_a"));
         assertFalse(data.isAllocated("wormhole_b"));
-        assertEquals(0, data.getSpentOp());
+        assertEquals(0, data.getSpentOp(3));
         assertEquals(0, data.getBankedFreeAllocations());
     }
 
@@ -857,9 +882,9 @@ class ShipSkillDataTest {
 
         for (int i = 0; i < 3; i++) {
             data.allocate(a, 3);
-            data.deallocate(a, 3);
+            data.deallocate(a);
 
-            assertEquals(0, data.getSpentOp());
+            assertEquals(0, data.getSpentOp(3));
             assertEquals(0, data.getBankedFreeAllocations());
         }
     }
@@ -872,7 +897,7 @@ class ShipSkillDataTest {
         data.allocate(plain, 3);
 
         assertEquals(1, data.getAllocatedNodeIds().size());
-        assertEquals(3, data.getSpentOp());
+        assertEquals(3, data.getSpentOp(3));
     }
 
     @Test
@@ -925,7 +950,7 @@ class ShipSkillDataTest {
         assertTrue(data.chooseStartingRoot(root));
 
         assertTrue(data.isAllocated("root_a"));
-        assertEquals(0, data.getSpentOp());
+        assertEquals(0, data.getSpentOp(3));
         assertEquals("root_a", data.resolveStartingRootId(List.of(root)));
     }
 

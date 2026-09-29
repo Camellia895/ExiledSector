@@ -17,6 +17,7 @@ import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.progression.SkillNodeOpCost;
 import exiledsector.skills.skilleffect.SkillEffect;
 import org.magiclib.util.MagicIncompatibleHullmods;
 
@@ -141,7 +142,7 @@ public class SkillTreeHullMod extends BaseHullMod {
         HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
         if (spec == null) return;
 
-        int opSpent = ShipSkillDataManager.get(member.getId()).getSpentOp();
+        int opSpent = ShipSkillDataManager.get(member.getId()).getSpentOp(SkillNodeOpCost.perNode(member.getHullSpec()));
         spec.setFrigateCost(opSpent);
         spec.setDestroyerCost(opSpent);
         spec.setCruiserCost(opSpent);

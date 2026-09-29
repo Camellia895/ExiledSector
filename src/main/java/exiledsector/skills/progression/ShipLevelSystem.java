@@ -22,8 +22,7 @@ public final class ShipLevelSystem {
         Collection<SkillNode> allNodes = SkillTree.getAllNodes().values();
         for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
             ShipSkillData data = ShipSkillDataManager.get(member.getId());
-            int opCostPerNode = SkillNodeOpCost.perNode(member.getHullSpec());
-            awardXp(data, xpAmount, curve, allNodes, opCostPerNode);
+            awardXp(data, xpAmount, curve, allNodes);
         }
     }
 
@@ -33,7 +32,7 @@ public final class ShipLevelSystem {
     }
 
     public static void awardXp(ShipSkillData data, float xpAmount, LevelCurve curve,
-                                Collection<SkillNode> allNodes, int opCostPerNode) {
+                                Collection<SkillNode> allNodes) {
         if (data.getLevel() >= curve.maxLevel()) return;
 
         data.addXp(xpAmount);
@@ -43,7 +42,7 @@ public final class ShipLevelSystem {
 
             data.subtractXp(required);
             data.incrementLevel();
-            if (!data.convertMostRecentAllocationToFree(allNodes, opCostPerNode)) {
+            if (!data.convertMostRecentAllocationToFree(allNodes)) {
                 data.addFreeAllocationCredit();
             }
         }

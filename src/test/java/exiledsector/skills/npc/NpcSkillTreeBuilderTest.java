@@ -136,7 +136,7 @@ class NpcSkillTreeBuilderTest {
 
         assertEquals(List.of(ROOT, "n1", "n2"), List.copyOf(build.data().getAllocatedNodeIds()));
         assertEquals(2, build.allocatedCount());
-        assertEquals(0, build.data().getSpentOp());
+        assertEquals(0, build.data().getSpentOp(1));
     }
 
     @Test
@@ -158,7 +158,7 @@ class NpcSkillTreeBuilderTest {
         assertTrue(data.isFreeNode("n1"));
         assertTrue(data.isFreeNode("n2"));
         assertTrue(data.isFreeNode("n3"));
-        assertEquals(0, data.getSpentOp());
+        assertEquals(0, data.getSpentOp(1));
         assertEquals(0, data.getBankedFreeAllocations());
     }
 
@@ -547,7 +547,7 @@ class NpcSkillTreeBuilderTest {
         assertEquals(List.of("allocated: path to converted hullmod heavyarmor", "allocated: converts hullmod heavyarmor",
                 NpcBuildStep.ALLOCATED_WITH_FREED_OP, NpcBuildStep.ALLOCATED_WITH_FREED_OP, "count reached"), outcomes(build));
         ShipSkillData data = build.data();
-        assertEquals(6, data.getSpentOp());
+        assertEquals(6, data.getSpentOp(3));
         assertEquals(0, data.getBankedFreeAllocations());
         assertTrue(data.isFreeNode("armor_1"));
         assertFalse(data.isFreeNode("b"));
@@ -561,7 +561,7 @@ class NpcSkillTreeBuilderTest {
                 new NpcFreedOp(1, Map.of("heavyarmor", 10), 3));
 
         assertEquals(1, build.steps().stream().filter(step -> NpcBuildStep.ALLOCATED_WITH_FREED_OP.equals(step.outcome())).count());
-        assertEquals(1, build.data().getSpentOp());
+        assertEquals(1, build.data().getSpentOp(1));
     }
 
     @Test
@@ -570,7 +570,7 @@ class NpcSkillTreeBuilderTest {
                 new NpcFreedOp(1, Map.of("heavyarmor", 10), 60));
 
         assertTrue(build.strippedHullModIds().isEmpty());
-        assertEquals(0, build.data().getSpentOp());
+        assertEquals(0, build.data().getSpentOp(1));
         assertFalse(outcomes(build).contains(NpcBuildStep.ALLOCATED_WITH_FREED_OP));
     }
 
