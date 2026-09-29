@@ -1,12 +1,16 @@
 package exiledsector.skills.skilleffect;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.BeamAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
+import com.fs.starfarer.api.combat.FluxTrackerAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
+import com.fs.starfarer.api.combat.listeners.DamageListener;
 import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.i18n.StyledText;
@@ -26,7 +30,7 @@ import static exiledsector.skills.skilleffect.StatTarget.stat;
 
 public enum ShieldSkillEffect implements SkillEffect {
 
-    BEAM_WEAPON_HARD_FLUX_PERCENT(BeamHardFluxListener.HARD_FLUX_PERCENT_KEY, BeamHardFluxListener.class, BeamHardFluxListener::new) {
+    BEAM_WEAPON_HARD_FLUX_PERCENT(BeamHardFluxListener.HARD_FLUX_PERCENT_KEY, BeamHardFluxListener.class, ship -> new BeamHardFluxListener()) {
         @Override
         public boolean supportsTemporaryGating() {
             return false;
@@ -219,34 +223,49 @@ public enum ShieldSkillEffect implements SkillEffect {
 
         private static final String HARD_FLUX_PERCENT_KEY = "exiledSector_beamDamageHardFluxPercent";
 
-        private final ShipAPI ship;
-
-        private BeamHardFluxListener(ShipAPI ship) {
-            this.ship = ship;
-        }
-
         @Override
         public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
-            if (!shieldHit) return null;
-            if (!(param instanceof BeamAPI)) return null;
-            if (!(target instanceof ShipAPI)) return null;
-
-            float percent = ship.getMutableStats().getDynamic().getValue(HARD_FLUX_PERCENT_KEY, 0f);
-            float hardPortion = damage.getDamage() * (percent / 100f);
-            if (hardPortion <= 0f) return null;
-
-            damage.setDamage(damage.getDamage() - hardPortion);
-            float hardFlux = damage.computeFluxDealt(hardPortion);
-            ((ShipAPI) target).getFluxTracker().increaseFlux(hardFlux, true);
+            if (shieldHit && param instanceof BeamAPI && target instanceof ShipAPI targetShip) {
+                SkillEffectSupport.ensureListener(targetShip, BeamHardFluxConverter.class, BeamHardFluxConverter::new);
+            }
             return null;
         }
     }
 
-    private static final class SharedShieldDamageListener implements DamageTakenModifier {
-
-        private static final String SHARED_PERCENT_KEY = "exiledSector_shieldDamageSharedPercent";
+    private static final class BeamHardFluxConverter implements DamageListener {
 
         private final ShipAPI ship;
+
+        private BeamHardFluxConverter(ShipAPI ship) {
+            this.ship = ship;
+        }
+
+        @Override
+        public void reportDamageApplied(Object source, CombatEntityAPI target, ApplyDamageResultAPI result) {
+            if (!(ship.getParamAboutToApplyDamage() instanceof BeamAPI beam) || beam.getSource() == null
+                    || beam.getDamage().isForceHardFlux()) return;
+
+            float percent = beam.getSource().getMutableStats().getDynamic().getValue(BeamHardFluxListener.HARD_FLUX_PERCENT_KEY, 0f);
+            float converted = result.getDamageToShields() * Math.min(percent, 100f) / 100f;
+            if (converted <= 0f) return;
+
+            FluxTrackerAPI flux = ship.getFluxTracker();
+            flux.setHardFlux(Math.min(flux.getCurrFlux(), flux.getHardFlux() + converted));
+        }
+    }
+
+    private static final class SharedShieldDamageListener implements DamageTakenModifier, DamageListener {
+
+        private static final String SHARED_PERCENT_KEY = "exiledSector_shieldDamageSharedPercent";
+        private static final String SHARE_MOD_ID = "exiledSector_shieldDamageShared";
+        private static final float MAX_SHARED_PERCENT = 90f;
+
+        private final ShipAPI ship;
+        private List<ShipAPI> allies = List.of();
+        private float alliesFoundAt = -1f;
+        private boolean sharePending;
+        private Object pendingSource;
+        private float pendingShare;
 
         private SharedShieldDamageListener(ShipAPI ship) {
             this.ship = ship;
@@ -254,26 +273,46 @@ public enum ShieldSkillEffect implements SkillEffect {
 
         @Override
         public String modifyDamageTaken(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
+            sharePending = false;
             if (!shieldHit) return null;
 
-            float percent = ship.getMutableStats().getDynamic().getValue(SHARED_PERCENT_KEY, 0f);
-            if (percent <= 0f) return null;
+            float share = Math.min(ship.getMutableStats().getDynamic().getValue(SHARED_PERCENT_KEY, 0f), MAX_SHARED_PERCENT) / 100f;
+            if (share <= 0f || nearbyAllies().isEmpty()) return null;
 
-            List<ShipAPI> allies = CombatQueries.shipsMatching(other -> other != ship && other.getOwner() == ship.getOwner()
-                    && other.isAlive() && !other.isHulk()
-                    && CombatQueries.withinRadius(other.getLocation(), ship.getLocation(), SHARED_SHIELD_DAMAGE_RANGE));
-            if (allies.isEmpty()) return null;
+            damage.getModifier().modifyMult(SHARE_MOD_ID, 1f - share);
+            sharePending = true;
+            pendingSource = param;
+            pendingShare = share;
+            return SHARE_MOD_ID;
+        }
 
-            float rawDamage = damage.getDamage();
-            float sharePerAlly = rawDamage * (percent / 100f) / (allies.size() + 1);
-            if (sharePerAlly <= 0f) return null;
+        @Override
+        public void reportDamageApplied(Object source, CombatEntityAPI target, ApplyDamageResultAPI result) {
+            if (!sharePending || ship.getParamAboutToApplyDamage() != pendingSource) return;
+            sharePending = false;
 
-            damage.setDamage(rawDamage - sharePerAlly * allies.size());
-            float hardFluxPerAlly = damage.computeFluxDealt(sharePerAlly);
+            float moved = result.getDamageToShields() * pendingShare / (1f - pendingShare);
+            if (moved <= 0f) return;
+
+            float perAlly = moved / allies.size();
             for (ShipAPI ally : allies) {
-                ally.getFluxTracker().increaseFlux(hardFluxPerAlly, true);
+                ally.getFluxTracker().increaseFlux(perAlly, true);
             }
-            return null;
+        }
+
+        private List<ShipAPI> nearbyAllies() {
+            float now = Global.getCombatEngine().getTotalElapsedTime(false);
+            if (now != alliesFoundAt) {
+                alliesFoundAt = now;
+                allies = CombatQueries.shipsMatching(this::sharesShieldDamageWith);
+            }
+            return allies;
+        }
+
+        private boolean sharesShieldDamageWith(ShipAPI other) {
+            return other != ship && other.getOwner() == ship.getOwner() && other.isAlive() && !other.isHulk()
+                    && !other.isFighter()
+                    && CombatQueries.withinRadius(other.getLocation(), ship.getLocation(), SHARED_SHIELD_DAMAGE_RANGE);
         }
     }
 
