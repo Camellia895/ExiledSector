@@ -112,7 +112,7 @@ public final class SkillTreePanelStyle {
         }
         float boxWidth = contentWidth + TOOLTIP_PADDING * 2f + TOOLTIP_WIDTH_SAFETY_MARGIN;
         float boxHeight = title.height + TOOLTIP_TITLE_BODY_GAP + body.height + tablesHeight + TOOLTIP_PADDING * 2f;
-        float boxX = mouseX + TOOLTIP_CURSOR_OFFSET;
+        float boxX = tooltipLeft(mouseX, boxWidth, Global.getSettings().getScreenWidth());
         float boxY = Math.max(TOOLTIP_SCREEN_MARGIN, mouseY - boxHeight - TOOLTIP_CURSOR_OFFSET);
 
         drawTooltipBackground(boxX, boxY, boxWidth, boxHeight, alphaMult, getAccentColor());
@@ -133,6 +133,14 @@ public final class SkillTreePanelStyle {
             table.draw(boxX + TOOLTIP_PADDING, tableTop, tableWidth, alphaMult);
             tableTop -= table.height();
         }
+    }
+
+    static float tooltipLeft(float mouseX, float boxWidth, float screenWidth) {
+        float rightOfCursor = mouseX + TOOLTIP_CURSOR_OFFSET;
+        if (rightOfCursor + boxWidth <= screenWidth - TOOLTIP_SCREEN_MARGIN) {
+            return rightOfCursor;
+        }
+        return Math.max(TOOLTIP_SCREEN_MARGIN, mouseX - TOOLTIP_CURSOR_OFFSET - boxWidth);
     }
 
     public Color getAccentColor() {
