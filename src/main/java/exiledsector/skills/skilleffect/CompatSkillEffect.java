@@ -75,6 +75,11 @@ public enum CompatSkillEffect implements SkillEffect {
     }
 
     @Override
+    public boolean lowerIsBetter() {
+        return penalty != null && penalty.lowerIsBetter();
+    }
+
+    @Override
     public StyledText description(float magnitude) {
         StyledText text = penalty.description(magnitude);
         if (!SecondInCommandCompat.isModEnabled()) {
