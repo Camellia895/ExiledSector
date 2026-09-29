@@ -1,6 +1,10 @@
 package exiledsector.ui;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.util.Misc;
+import exiledsector.i18n.Style;
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.TextWrapper;
 import exiledsector.skills.DescriptionLine;
 import exiledsector.ui.util.FallbackSupport;
 import exiledsector.ui.util.GLDraw;
@@ -13,7 +17,6 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -189,10 +192,11 @@ public final class SkillTreePanelStyle {
         return (channel / COLOR_QUANTIZE_STEP) * COLOR_QUANTIZE_STEP;
     }
 
-    public Color highlightColor(TooltipHighlighter.Highlight highlight) {
-        return switch (highlight) {
-            case POSITIVE -> POSITIVE_STAT_COLOR;
-            case NEGATIVE -> NEGATIVE_STAT_COLOR;
+    public Color highlightColor(Style style) {
+        return switch (style) {
+            case GOOD -> POSITIVE_STAT_COLOR;
+            case BAD -> NEGATIVE_STAT_COLOR;
+            case HIGHLIGHT -> Misc.getHighlightColor();
             case HULLMOD -> lowTechColor();
             case NODE -> highTechColor();
         };
@@ -219,33 +223,31 @@ public final class SkillTreePanelStyle {
 
     public TooltipText buildHighlightedWrappedText(LazyFont font, List<DescriptionLine> paragraphs, float fontSize,
                                                    float maxWidth, float maxHeight, Color color) {
-        StringBuilder wrapped = new StringBuilder();
-        List<TooltipHighlighter.Span> spans = new ArrayList<>();
+        StyledText wrapped = StyledText.EMPTY;
         for (DescriptionLine paragraph : paragraphs) {
             if (!wrapped.isEmpty()) {
-                wrapped.append(PARAGRAPH_SEPARATOR);
+                wrapped = wrapped.append(PARAGRAPH_SEPARATOR);
             }
-            String wrappedParagraph = font.wrapString(paragraph.text(), fontSize, maxWidth, maxHeight);
-            int offset = wrapped.length();
-            for (TooltipHighlighter.Span span : TooltipHighlighter.find(wrappedParagraph, paragraph.lowerIsBetter())) {
-                spans.add(new TooltipHighlighter.Span(span.start() + offset, span.end() + offset, span.highlight()));
-            }
-            wrapped.append(wrappedParagraph);
+            wrapped = wrapped.append(wrap(font, paragraph.display(), fontSize, maxWidth, maxHeight));
         }
-        TooltipText measured = buildMeasuredText(font, wrapped.toString(), fontSize, color,
+        TooltipText measured = buildMeasuredText(font, wrapped.plain(), fontSize, color,
                 LazyFont.TextAlignment.LEFT, LazyFont.TextAnchor.TOP_LEFT);
-        appendHighlighted(measured.drawable, wrapped + " ", spans);
+        appendHighlighted(measured.drawable, wrapped.plain() + " ", wrapped.spans());
         return measured;
     }
 
-    private void appendHighlighted(LazyFont.DrawableString drawable, String text, List<TooltipHighlighter.Span> spans) {
+    private static StyledText wrap(LazyFont font, StyledText text, float fontSize, float maxWidth, float maxHeight) {
+        return TextWrapper.wrap(text, line -> font.calcWidth(line, fontSize), fontSize, maxWidth, maxHeight);
+    }
+
+    private void appendHighlighted(LazyFont.DrawableString drawable, String text, List<StyledText.Span> spans) {
         drawable.setText("");
         int cursor = 0;
-        for (TooltipHighlighter.Span span : spans) {
+        for (StyledText.Span span : spans) {
             int start = colourChangeIndex(text, span.start());
             int end = colourChangeIndex(text, span.end());
             drawable.append(text.substring(cursor, start));
-            drawable.append(text.substring(start, end), highlightColor(span.highlight()));
+            drawable.append(text.substring(start, end), highlightColor(span.style()));
             cursor = end;
         }
         drawable.append(text.substring(cursor));
@@ -260,7 +262,7 @@ public final class SkillTreePanelStyle {
     }
 
     public static TooltipText buildWrappedText(LazyFont font, String rawText, float fontSize, float maxWidth, float maxHeight, Color color) {
-        return buildMeasuredText(font, font.wrapString(rawText, fontSize, maxWidth, maxHeight), fontSize, color,
+        return buildMeasuredText(font, wrap(font, StyledText.of(rawText), fontSize, maxWidth, maxHeight).plain(), fontSize, color,
                 LazyFont.TextAlignment.LEFT, LazyFont.TextAnchor.TOP_LEFT);
     }
 

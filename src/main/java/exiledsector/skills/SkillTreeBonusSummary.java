@@ -1,6 +1,7 @@
 package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.i18n.StyledText;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.WeaponEffectTooltipAggregator;
 
@@ -65,7 +66,7 @@ public final class SkillTreeBonusSummary {
             List<SkillTypeEffect> effects = new ArrayList<>();
             group.getValue().forEach((effect, total) -> effects.add(new SkillTypeEffect(effect, rounded(total))));
             for (SkillTypeEffect effect : WeaponEffectTooltipAggregator.collapse(effects)) {
-                String text = effect.effect().describe(effect.magnitude());
+                StyledText text = effect.effect().description(effect.magnitude());
                 if (text != null) {
                     lines.add(new DescriptionLine(withDuration(text, group.getKey().temporarySeconds()),
                             effect.effect().lowerIsBetter()));
@@ -79,11 +80,11 @@ public final class SkillTreeBonusSummary {
         return Math.round(total * 100f) / 100f;
     }
 
-    private static String withDuration(String text, Float seconds) {
+    private static StyledText withDuration(StyledText text, Float seconds) {
         if (seconds == null) {
             return text;
         }
         String formatted = seconds == Math.rint(seconds) ? String.valueOf(seconds.intValue()) : String.valueOf(seconds);
-        return "For the first " + formatted + " seconds after deployment: " + text;
+        return StyledText.of("For the first " + formatted + " seconds after deployment: ").append(text);
     }
 }

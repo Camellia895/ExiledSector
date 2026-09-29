@@ -2,6 +2,7 @@ package exiledsector.i18n;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public record StyledText(String plain, List<Span> spans) {
 
@@ -23,6 +24,10 @@ public record StyledText(String plain, List<Span> spans) {
 
     public static StyledText of(String plain) {
         return new StyledText(plain, List.of());
+    }
+
+    public static StyledText parse(String markup) {
+        return Template.parse(markup).render(Map.of());
     }
 
     public static StyledText styled(String plain, Style style) {

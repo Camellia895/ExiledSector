@@ -1,6 +1,7 @@
 package exiledsector.ui.node;
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.i18n.StyledText;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.ShipSkillData;
@@ -103,24 +104,28 @@ final class SkillTreeNodeTooltipRenderer {
 
     private List<DescriptionLine> bodyLines(SkillNode node, SkillType effectiveType, boolean showOptionalHint, ShipSkillData data) {
         if (SkillTypeUnlockStatus.isHidden(node.getType(), data)) {
-            return List.of(new DescriptionLine(LOCKED_NODE_BODY, false), new DescriptionLine(LOCKED_NODE_HINT, false));
+            return List.of(plainLine(LOCKED_NODE_BODY), plainLine(LOCKED_NODE_HINT));
         }
         List<DescriptionLine> lines = new ArrayList<>();
         if (showOptionalHint) {
-            lines.add(new DescriptionLine(OPTIONAL_NODE_HINT, false));
+            lines.add(plainLine(OPTIONAL_NODE_HINT));
         } else {
             lines.addAll(SkillNode.describeTypeLines(effectiveType, member.getHullSpec().getHullSize()));
         }
         if (data.isFreeNode(node.getId())) {
-            lines.add(new DescriptionLine(FREE_NODE_NOTE, false));
+            lines.add(plainLine(FREE_NODE_NOTE));
         }
         return lines;
+    }
+
+    private static DescriptionLine plainLine(String text) {
+        return new DescriptionLine(StyledText.of(text), false);
     }
 
     private static String joined(List<DescriptionLine> lines) {
         List<String> texts = new ArrayList<>();
         for (DescriptionLine line : lines) {
-            texts.add(line.text());
+            texts.add(line.display().toMarkup());
         }
         return String.join("\n\n", texts);
     }

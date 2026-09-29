@@ -1,6 +1,8 @@
 package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.i18n.LegacyHighlight;
+import exiledsector.i18n.StyledText;
 import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.layout.SkillTreeObject;
 import exiledsector.skills.skilleffect.WeaponEffectTooltipAggregator;
@@ -72,31 +74,31 @@ public class SkillNode extends SkillTreeObject {
     public static String describeType(SkillType type, HullSize hullSize) {
         List<String> texts = new ArrayList<>();
         for (DescriptionLine line : describeTypeLines(type, hullSize)) {
-            texts.add(line.text());
+            texts.add(line.plain());
         }
         return String.join("\n\n", texts);
     }
 
     public static List<DescriptionLine> describeTypeLines(SkillType type, HullSize hullSize) {
         List<DescriptionLine> lines = new ArrayList<>();
-        addLine(lines, type.getDescriptionOverride(), false);
+        addLine(lines, LegacyHighlight.of(type.getDescriptionOverride()), false);
         List<SkillTypeEffect> described = hullSize == null ? type.getEffects() : type.effectsFor(hullSize);
         for (SkillTypeEffect effect : WeaponEffectTooltipAggregator.collapse(described)) {
-            addLine(lines, effect.effect().describe(effect.magnitude()), effect.effect().lowerIsBetter());
+            addLine(lines, effect.effect().description(effect.magnitude()), effect.effect().lowerIsBetter());
         }
         for (String hullModId : type.getInstalledHullModIds()) {
-            lines.add(new DescriptionLine("Installs the " + HullModNames.displayName(hullModId) + " hull mod at no OP cost.", false));
+            addLine(lines, LegacyHighlight.of("Installs the " + HullModNames.displayName(hullModId) + " hull mod at no OP cost."), false);
         }
-        addLine(lines, describeTemporaryDuration(type), false);
+        addLine(lines, LegacyHighlight.of(describeTemporaryDuration(type)), false);
         for (SkillTypeEffect effect : described) {
-            addLine(lines, effect.effect().deallocationWarning(effect.magnitude()), false);
+            addLine(lines, LegacyHighlight.of(effect.effect().deallocationWarning(effect.magnitude())), false);
         }
-        addLine(lines, describeItemCost(type), false);
-        addLine(lines, describeExclusivity(type), false);
+        addLine(lines, LegacyHighlight.of(describeItemCost(type)), false);
+        addLine(lines, LegacyHighlight.of(describeExclusivity(type)), false);
         return lines;
     }
 
-    private static void addLine(List<DescriptionLine> lines, String text, boolean lowerIsBetter) {
+    private static void addLine(List<DescriptionLine> lines, StyledText text, boolean lowerIsBetter) {
         if (text != null) {
             lines.add(new DescriptionLine(text, lowerIsBetter));
         }

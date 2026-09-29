@@ -4,13 +4,13 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.i18n.Style;
+import exiledsector.i18n.StyledText;
 import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.SkillTreeBonusSummary;
 import exiledsector.skills.SkillTreeBonusSummary.Summary;
 import exiledsector.skills.SkillType;
 import exiledsector.ui.SkillTreePanelStyle;
-import exiledsector.ui.TooltipHighlighter;
-import exiledsector.ui.TooltipHighlighter.Span;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -56,32 +56,32 @@ public final class ShipTreeSummaryRenderer {
         if (!summary.bonuses().isEmpty()) {
             info.addPara("Bonuses:", SECTION_PAD);
             for (DescriptionLine line : summary.bonuses()) {
-                addColouredLine(info, BULLET + line.text(), line.lowerIsBetter());
+                addColouredLine(info, StyledText.of(BULLET).append(line.display()));
             }
         }
     }
 
-    private static void addColouredLine(TooltipMakerAPI info, String text, boolean lowerIsBetter) {
-        LabelAPI label = info.addPara("%s", LINE_PAD, Misc.getTextColor(), text);
-        List<Span> spans = TooltipHighlighter.find(text, lowerIsBetter);
+    private static void addColouredLine(TooltipMakerAPI info, StyledText text) {
+        LabelAPI label = info.addPara("%s", LINE_PAD, Misc.getTextColor(), text.plain());
+        List<StyledText.Span> spans = text.spans();
         if (spans.isEmpty()) {
             return;
         }
         String[] substrings = new String[spans.size()];
         Color[] colors = new Color[spans.size()];
         for (int i = 0; i < spans.size(); i++) {
-            Span span = spans.get(i);
-            substrings[i] = text.substring(span.start(), span.end());
-            colors[i] = colorFor(span.highlight());
+            StyledText.Span span = spans.get(i);
+            substrings[i] = text.plain().substring(span.start(), span.end());
+            colors[i] = colorFor(span.style());
         }
         label.setHighlight(substrings);
         label.setHighlightColors(colors);
     }
 
-    private static Color colorFor(TooltipHighlighter.Highlight highlight) {
-        return switch (highlight) {
-            case POSITIVE -> SkillTreePanelStyle.POSITIVE_STAT_COLOR;
-            case NEGATIVE -> SkillTreePanelStyle.NEGATIVE_STAT_COLOR;
+    private static Color colorFor(Style style) {
+        return switch (style) {
+            case GOOD -> SkillTreePanelStyle.POSITIVE_STAT_COLOR;
+            case BAD -> SkillTreePanelStyle.NEGATIVE_STAT_COLOR;
             default -> Misc.getHighlightColor();
         };
     }

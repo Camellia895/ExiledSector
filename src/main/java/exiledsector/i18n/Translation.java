@@ -32,7 +32,7 @@ public final class Translation {
         if (has(key)) {
             return styled(key);
         }
-        return englishSource == null ? null : Template.parse(englishSource).render(Map.of());
+        return englishSource == null ? null : StyledText.parse(englishSource);
     }
 
     public static StyledText list(List<StyledText> items) {

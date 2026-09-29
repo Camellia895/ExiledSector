@@ -1,5 +1,6 @@
 package exiledsector.ui;
 
+import exiledsector.i18n.StyledText;
 import exiledsector.skills.DescriptionLine;
 import org.junit.jupiter.api.Test;
 import org.lazywizard.lazylib.ui.LazyFont;
@@ -20,10 +21,13 @@ class HighlightedTooltipTextTest {
     private static final Color GREEN = SkillTreePanelStyle.POSITIVE_STAT_COLOR;
     private static final Color RED = SkillTreePanelStyle.NEGATIVE_STAT_COLOR;
 
+    private static DescriptionLine line(String markup, boolean lowerIsBetter) {
+        return new DescriptionLine(StyledText.parse(markup), lowerIsBetter);
+    }
+
     private LazyFont.DrawableString build(DescriptionLine... paragraphs) {
         LazyFont font = mock(LazyFont.class);
         LazyFont.DrawableString drawable = mock(LazyFont.DrawableString.class);
-        when(font.wrapString(anyString(), anyFloat(), anyFloat(), anyFloat())).thenAnswer(call -> call.getArgument(0));
         when(font.createText(anyString(), any(Color.class), anyFloat())).thenReturn(drawable);
         new SkillTreePanelStyle().buildHighlightedWrappedText(font, List.of(paragraphs), 20f, 480f, 800f, Color.WHITE);
         return drawable;
@@ -31,7 +35,7 @@ class HighlightedTooltipTextTest {
 
     @Test
     void colourChangesArePlacedOneCharacterLateToCompensateForLazyFontApplyingThemEarly() {
-        LazyFont.DrawableString drawable = build(new DescriptionLine("Increases flux capacity by 15%.", false));
+        LazyFont.DrawableString drawable = build(line("Increases flux capacity by <good>15%</good>.", false));
 
         InOrder order = inOrder(drawable);
         order.verify(drawable).setText("");
@@ -42,8 +46,8 @@ class HighlightedTooltipTextTest {
 
     @Test
     void aHighlightAtTheStartOfALaterParagraphIsStillColoured() {
-        LazyFont.DrawableString drawable = build(new DescriptionLine("Intro.", false),
-                new DescriptionLine("100% more flux dissipation.", false));
+        LazyFont.DrawableString drawable = build(line("Intro.", false),
+                line("<good>100%</good> more flux dissipation.", false));
 
         InOrder order = inOrder(drawable);
         order.verify(drawable).append("Intro.\n\n1");
@@ -53,8 +57,8 @@ class HighlightedTooltipTextTest {
 
     @Test
     void aHighlightEndingBeforeALineBreakResetsOnTheNextDrawnCharacter() {
-        LazyFont.DrawableString drawable = build(new DescriptionLine("Increases armor by 10%", false),
-                new DescriptionLine("Next.", false));
+        LazyFont.DrawableString drawable = build(line("Increases armor by <good>10%</good>", false),
+                line("Next.", false));
 
         InOrder order = inOrder(drawable);
         order.verify(drawable).append("Increases armor by 1");
@@ -64,7 +68,7 @@ class HighlightedTooltipTextTest {
 
     @Test
     void lowerIsBetterLinesSwapGreenAndRed() {
-        LazyFont.DrawableString drawable = build(new DescriptionLine("Decreases shield upkeep by 20%.", true));
+        LazyFont.DrawableString drawable = build(line("Decreases shield upkeep by <bad>20%</bad>.", true));
 
         InOrder order = inOrder(drawable);
         order.verify(drawable).append("Decreases shield upkeep by 2");
@@ -73,7 +77,7 @@ class HighlightedTooltipTextTest {
 
     @Test
     void lowerIsBetterTurnsAMoreIncreaseRed() {
-        LazyFont.DrawableString drawable = build(new DescriptionLine("25% more weapon recoil.", true));
+        LazyFont.DrawableString drawable = build(line("<good>25%</good> more weapon recoil.", true));
 
         InOrder order = inOrder(drawable);
         order.verify(drawable).append("2");

@@ -49,7 +49,7 @@ class SkillTreeBonusSummaryTest {
     }
 
     private static List<String> texts(Summary summary) {
-        return summary.bonuses().stream().map(DescriptionLine::text).toList();
+        return summary.bonuses().stream().map(DescriptionLine::plain).toList();
     }
 
     @Test

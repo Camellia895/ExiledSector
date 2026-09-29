@@ -4,6 +4,8 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.i18n.LegacyHighlight;
+import exiledsector.i18n.StyledText;
 
 import java.util.List;
 
@@ -11,7 +13,15 @@ public interface SkillEffect {
 
     void apply(MutableShipStatsAPI stats, String modId, float magnitude);
 
-    String describe(float magnitude);
+    default String describe(float magnitude) {
+        StyledText description = description(magnitude);
+        return description == null ? null : description.plain();
+    }
+
+    // TODO: make this abstract and drop the describe fallback once every effect builds its text from catalogue templates
+    default StyledText description(float magnitude) {
+        return LegacyHighlight.of(describe(magnitude));
+    }
 
     default boolean isConditional() {
         return false;

@@ -15,7 +15,6 @@ import exiledsector.skills.npc.RealSkillData;
 import exiledsector.skills.skilleffect.CompatSkillEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.SkillEffectNames;
-import exiledsector.ui.TooltipHighlighter;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -90,14 +89,14 @@ class DescriptionGoldenTest {
             SkillEffect effect = SkillEffect.byName(name);
             for (float magnitude : SAMPLE_MAGNITUDES) {
                 String key = name + "|" + magnitude;
-                addLine(lines, "effect|" + key, effect.describe(magnitude), effect.lowerIsBetter());
-                addLine(lines, "warning|" + key, effect.deallocationWarning(magnitude), false);
+                addLine(lines, "effect|" + key, effect.description(magnitude), effect.lowerIsBetter());
+                addLine(lines, "warning|" + key, LegacyHighlight.of(effect.deallocationWarning(magnitude)), false);
             }
         }
         secondInCommandEnabled = false;
         for (CompatSkillEffect effect : CompatSkillEffect.values()) {
             for (float magnitude : SAMPLE_MAGNITUDES) {
-                addLine(lines, "effect-noSiC|" + effect.name() + "|" + magnitude, effect.describe(magnitude), effect.lowerIsBetter());
+                addLine(lines, "effect-noSiC|" + effect.name() + "|" + magnitude, effect.description(magnitude), effect.lowerIsBetter());
             }
         }
         secondInCommandEnabled = true;
@@ -151,35 +150,14 @@ class DescriptionGoldenTest {
         return data;
     }
 
-    private static void addLine(List<String> lines, String key, String text, boolean lowerIsBetter) {
+    private static void addLine(List<String> lines, String key, StyledText text, boolean lowerIsBetter) {
         if (text == null) {
             return;
         }
-        lines.add(key + "\t" + (lowerIsBetter ? "1" : "0") + "\t" + escape(markup(text)));
-    }
-
-    static String markup(String text) {
-        if (text.indexOf('<') >= 0) {
-            throw new IllegalStateException("Description text contains '<': " + text);
+        if (text.plain().indexOf('<') >= 0) {
+            throw new IllegalStateException("Description text contains '<': " + text.plain());
         }
-        StringBuilder out = new StringBuilder();
-        int cursor = 0;
-        for (TooltipHighlighter.Span span : TooltipHighlighter.find(text, false)) {
-            String tag = tag(span.highlight());
-            out.append(text, cursor, span.start()).append('<').append(tag).append('>')
-                    .append(text, span.start(), span.end()).append("</").append(tag).append('>');
-            cursor = span.end();
-        }
-        return out.append(text.substring(cursor)).toString();
-    }
-
-    private static String tag(TooltipHighlighter.Highlight highlight) {
-        return switch (highlight) {
-            case POSITIVE -> "good";
-            case NEGATIVE -> "bad";
-            case HULLMOD -> "hullmod";
-            case NODE -> "node";
-        };
+        lines.add(key + "\t" + (lowerIsBetter ? "1" : "0") + "\t" + escape(text.toMarkup()));
     }
 
     private static String escape(String text) {
