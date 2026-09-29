@@ -59,6 +59,7 @@ class ShipTreeSummaryRendererTest {
         info = mock(TooltipMakerAPI.class);
         label = mock(LabelAPI.class);
         when(info.addPara(anyString(), anyFloat(), (Color) any(), any(String[].class))).thenReturn(label);
+        when(info.addPara(anyString(), anyFloat(), (Color) any(), (Color) any(), any(String[].class))).thenReturn(label);
         member = mock(FleetMemberAPI.class);
         ShipHullSpecAPI hullSpec = mock(ShipHullSpecAPI.class);
         when(hullSpec.getHullSize()).thenReturn(HullSize.CRUISER);
@@ -90,9 +91,9 @@ class ShipTreeSummaryRendererTest {
     void highlightsNotableNamesAndColoursBonusNumbers() {
         ShipTreeSummaryRenderer.render(info, member, new ShipTreeLookup.ShipTree(data, "Bulwark"), 5f);
 
-        verify(info).addPara(eq("%s"), anyFloat(), (Color) any(), eq("Notables and keystones: Heavy Armor"));
+        verify(info).addPara(eq("%s"), anyFloat(), (Color) any(), (Color) any(), eq("Notables and keystones: Heavy Armor"));
         verify(label).setHighlight("Heavy Armor");
-        verify(info).addPara(eq("%s"), anyFloat(), (Color) any(), eq("    - " + DefenseSkillEffect.HULL_PERCENT.describe(10f)));
+        verify(info).addPara(eq("%s"), anyFloat(), (Color) any(), (Color) any(), eq("    - " + DefenseSkillEffect.HULL_PERCENT.describe(10f)));
         verify(label).setHighlightColors(SkillTreePanelStyle.POSITIVE_STAT_COLOR);
     }
 }

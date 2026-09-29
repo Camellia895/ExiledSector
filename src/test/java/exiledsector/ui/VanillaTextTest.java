@@ -48,14 +48,27 @@ class VanillaTextTest {
     }
 
     @Test
+    void aParagraphWithHighlightsKeepsItsBaseColourForTheRestOfTheText() {
+        TooltipMakerAPI tooltip = mock(TooltipMakerAPI.class);
+        LabelAPI label = mock(LabelAPI.class);
+        when(tooltip.addPara(anyString(), anyFloat(), (Color) any(), (Color) any(), any(String[].class))).thenReturn(label);
+
+        VanillaText.addPara(tooltip, StyledText.parse("Increases armor by <good>10%</good>."), 3f, Color.GRAY, PALETTE);
+
+        verify(tooltip).addPara("%s", 3f, Color.GRAY, Color.GRAY, "Increases armor by 10%.");
+        verify(label).setHighlight("10%");
+        verify(label).setHighlightColors(Color.GREEN);
+    }
+
+    @Test
     void textIsAlwaysAnArgumentSoPercentSignsAreNeverFormatted() {
         TooltipMakerAPI tooltip = mock(TooltipMakerAPI.class);
         LabelAPI label = mock(LabelAPI.class);
-        when(tooltip.addPara(anyString(), anyFloat(), (Color) any(), any(String[].class))).thenReturn(label);
+        when(tooltip.addPara(anyString(), anyFloat(), (Color) any(), (Color) any(), any(String[].class))).thenReturn(label);
 
         VanillaText.addPara(tooltip, StyledText.of("100% plain"), 3f, Color.WHITE, PALETTE);
 
-        verify(tooltip).addPara("%s", 3f, Color.WHITE, "100% plain");
+        verify(tooltip).addPara("%s", 3f, Color.WHITE, Color.WHITE, "100% plain");
         verify(label, never()).setHighlight(any(String[].class));
     }
 }

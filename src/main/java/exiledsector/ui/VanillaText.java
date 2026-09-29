@@ -36,7 +36,7 @@ public final class VanillaText {
 
     public static LabelAPI addPara(TooltipMakerAPI tooltip, StyledText text, float pad, Color base, Function<Style, Color> palette) {
         Prepared prepared = prepare(text, palette);
-        LabelAPI label = tooltip.addPara("%s", pad, base, prepared.text());
+        LabelAPI label = tooltip.addPara("%s", pad, base, base, prepared.text());
         highlight(label, prepared);
         return label;
     }
