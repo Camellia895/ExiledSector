@@ -22,6 +22,13 @@ class NumberTextTest {
     }
 
     @Test
+    void neverUsesScientificNotation() {
+        assertEquals("0.0001", NumberText.format(1e-4f));
+        assertEquals("3000000000", NumberText.format(3e9f));
+        assertEquals("-0.00025", NumberText.format(-2.5e-4f));
+    }
+
+    @Test
     void doesNotDependOnTheDefaultLocale() {
         Locale previous = Locale.getDefault();
         try {
