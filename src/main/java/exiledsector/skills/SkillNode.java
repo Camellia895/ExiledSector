@@ -57,22 +57,6 @@ public class SkillNode extends SkillTreeObject {
         return type.getIconPath();
     }
 
-    public String getDescription() {
-        return getDescription(null);
-    }
-
-    public String getDescription(HullSize hullSize) {
-        return describeType(type, hullSize);
-    }
-
-    public static String describeType(SkillType type, HullSize hullSize) {
-        List<String> texts = new ArrayList<>();
-        for (DescriptionLine line : describeTypeLines(type, hullSize)) {
-            texts.add(line.plain());
-        }
-        return String.join("\n\n", texts);
-    }
-
     public static List<DescriptionLine> describeTypeLines(SkillType type, HullSize hullSize) {
         List<DescriptionLine> lines = new ArrayList<>();
         addLine(lines, type.getDescriptionText(), false);

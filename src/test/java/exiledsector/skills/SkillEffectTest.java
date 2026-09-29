@@ -91,7 +91,7 @@ class SkillEffectTest {
 
     @Test
     void hullFlatDescribesAFlatChangeToHullPoints() {
-        assertEquals("Increases hull points by 250.", DefenseSkillEffect.HULL_FLAT.describe(250f));
+        assertEquals("Increases hull points by 250.", DefenseSkillEffect.HULL_FLAT.description(250f).plain());
     }
 
     @Test
@@ -107,7 +107,7 @@ class SkillEffectTest {
 
     @Test
     void hullMultDescribesAMultiplicativeChangeToHullPoints() {
-        assertEquals("2% more hull points.", DefenseSkillEffect.HULL_MULT.describe(2f));
+        assertEquals("2% more hull points.", DefenseSkillEffect.HULL_MULT.description(2f).plain());
     }
 
     @Test
@@ -226,17 +226,17 @@ class SkillEffectTest {
 
     @Test
     void describeFormatsAWholeNumberMagnitudeWithoutADecimal() {
-        assertEquals("Increases hull points by 10%.", DefenseSkillEffect.HULL_PERCENT.describe(10f));
+        assertEquals("Increases hull points by 10%.", DefenseSkillEffect.HULL_PERCENT.description(10f).plain());
     }
 
     @Test
     void describeFormatsAFractionalMagnitudeWithADecimal() {
-        assertEquals("Increases flux capacity by 0.5%.", FluxSkillEffect.FLUX_CAPACITY_PERCENT.describe(0.5f));
+        assertEquals("Increases flux capacity by 0.5%.", FluxSkillEffect.FLUX_CAPACITY_PERCENT.description(0.5f).plain());
     }
 
     @Test
     void describeUsesTheUnqualifiedNameForTheAllWeaponsScope() {
-        assertEquals("Increases weapon damage by 5%.", SkillEffect.byName("WEAPON_DAMAGE_PERCENT").describe(5f));
+        assertEquals("Increases weapon damage by 5%.", SkillEffect.byName("WEAPON_DAMAGE_PERCENT").description(5f).plain());
     }
 
     @Test
@@ -328,7 +328,7 @@ class SkillEffectTest {
 
         verify(corona).modifyMult("mod_id", 0.75f);
         assertEquals("25% less combat readiness loss from being in a solar corona or a deep hyperspace storm.",
-                LogisticsSkillEffect.CORONA_RESISTANCE_MULT.describe(-25f));
+                LogisticsSkillEffect.CORONA_RESISTANCE_MULT.description(-25f).plain());
         assertTrue(LogisticsSkillEffect.CORONA_RESISTANCE_MULT.lowerIsBetter());
     }
 
@@ -585,12 +585,12 @@ class SkillEffectTest {
 
     @Test
     void describeUsesIncreasesForAPositiveBidirectionalMagnitude() {
-        assertEquals("Increases peak combat readiness duration by 20%.", MiscSkillEffect.PEAK_CR_DURATION_PERCENT.describe(20f));
+        assertEquals("Increases peak combat readiness duration by 20%.", MiscSkillEffect.PEAK_CR_DURATION_PERCENT.description(20f).plain());
     }
 
     @Test
     void describeUsesDecreasesForANegativeBidirectionalMagnitude() {
-        assertEquals("Decreases peak combat readiness duration by 20%.", MiscSkillEffect.PEAK_CR_DURATION_PERCENT.describe(-20f));
+        assertEquals("Decreases peak combat readiness duration by 20%.", MiscSkillEffect.PEAK_CR_DURATION_PERCENT.description(-20f).plain());
     }
 
     @Test
@@ -606,7 +606,7 @@ class SkillEffectTest {
 
     @Test
     void fighterBaysFlatDescribesTheBayCountOnly() {
-        assertEquals("Increases number of fighter bays by 1.", FighterSkillEffect.FIGHTER_BAYS_FLAT.describe(1f));
+        assertEquals("Increases number of fighter bays by 1.", FighterSkillEffect.FIGHTER_BAYS_FLAT.description(1f).plain());
     }
 
     @Test
@@ -1342,11 +1342,11 @@ class SkillEffectTest {
         assertEquals("Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy. "
                         + "The target acquisition range is half the beam weapon's range. "
                         + "Split beams also carry the weapon's special beam effects.",
-                CombatSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.describe(1f));
+                CombatSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.description(1f).plain());
         assertEquals("Beam weapon hits split their damage evenly across the target and up to 3 additional nearby enemies. "
                         + "The target acquisition range is half the beam weapon's range. "
                         + "Split beams also carry the weapon's special beam effects.",
-                CombatSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.describe(3f));
+                CombatSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.description(3f).plain());
     }
 
     @Test

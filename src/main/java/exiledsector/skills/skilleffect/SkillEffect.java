@@ -12,11 +12,6 @@ public interface SkillEffect {
 
     void apply(MutableShipStatsAPI stats, String modId, float magnitude);
 
-    default String describe(float magnitude) {
-        StyledText description = description(magnitude);
-        return description == null ? null : description.plain();
-    }
-
     StyledText description(float magnitude);
 
     default boolean isConditional() {

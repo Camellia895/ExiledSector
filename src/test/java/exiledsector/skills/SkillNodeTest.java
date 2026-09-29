@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -24,6 +25,10 @@ import static org.mockito.Mockito.when;
 class SkillNodeTest {
 
     private MockedStatic<Global> globalMock;
+
+    private static String description(SkillType type) {
+        return SkillNode.describeTypeLines(type, null).stream().map(DescriptionLine::plain).collect(Collectors.joining("\n\n"));
+    }
 
     @BeforeEach
     void setUp() {
@@ -47,7 +52,7 @@ class SkillNodeTest {
                 .build();
         SkillNode node = new SkillNode("hull_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Increases hull points by 10%.", node.getDescription());
+        assertEquals("Increases hull points by 10%.", description(node.getType()));
     }
 
     @Test
@@ -58,7 +63,7 @@ class SkillNodeTest {
                 .build();
 
         assertEquals("Increases hull points by 10%.\n\nThese effects only last for the first 60 seconds after the ship is deployed.",
-                SkillNode.describeType(type, null));
+                description(type));
     }
 
     @Test
@@ -71,7 +76,7 @@ class SkillNodeTest {
                 .build();
         SkillNode node = new SkillNode("heavyarmor_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Increases armor by 15%.\n\nIncreases hull points by 5%.", node.getDescription());
+        assertEquals("Increases armor by 15%.\n\nIncreases hull points by 5%.", description(node.getType()));
     }
 
     @Test
@@ -86,7 +91,7 @@ class SkillNodeTest {
 
         assertEquals(
                 "Increases number of fighter bays by 1.\n\nIncreases hull points by 5%.\n\nCannot be unallocated without at least 1 empty fighter bay.",
-                node.getDescription());
+                description(node.getType()));
     }
 
     @Test
@@ -99,7 +104,7 @@ class SkillNodeTest {
                 .build();
         SkillNode node = new SkillNode("cosmetic_1", type, List.of(), 0f, 0f);
 
-        assertEquals("", node.getDescription());
+        assertEquals("", description(node.getType()));
     }
 
     @Test
@@ -112,7 +117,7 @@ class SkillNodeTest {
                 .build();
         SkillNode node = new SkillNode("hull_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Custom flavor text.\n\nIncreases hull points by 10%.", node.getDescription());
+        assertEquals("Custom flavor text.\n\nIncreases hull points by 10%.", description(node.getType()));
     }
 
     @Test
@@ -131,7 +136,7 @@ class SkillNodeTest {
                 .build();
         SkillNode node = new SkillNode("escort_package_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Mutually exclusive with hullmod: Escort Package.", node.getDescription());
+        assertEquals("Mutually exclusive with hullmod: Escort Package.", description(node.getType()));
     }
 
     @Test
@@ -153,7 +158,7 @@ class SkillNodeTest {
                 .build();
         SkillNode node = new SkillNode("heavyarmor_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Increases armor by 15%.\n\nMutually exclusive with hullmod: Armored Cladding.", node.getDescription());
+        assertEquals("Increases armor by 15%.\n\nMutually exclusive with hullmod: Armored Cladding.", description(node.getType()));
     }
 
     @Test
@@ -173,7 +178,7 @@ class SkillNodeTest {
                 .build();
         SkillNode node = new SkillNode("hull_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Mutually exclusive with hullmod: unknown_hullmod.", node.getDescription());
+        assertEquals("Mutually exclusive with hullmod: unknown_hullmod.", description(node.getType()));
     }
 
     @Test
@@ -198,7 +203,7 @@ class SkillNodeTest {
                 .build();
         SkillNode node = new SkillNode("frontemitter_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Mutually exclusive with node: Shield Conversion - Omni.", node.getDescription());
+        assertEquals("Mutually exclusive with node: Shield Conversion - Omni.", description(node.getType()));
     }
 
     @Test
@@ -209,7 +214,7 @@ class SkillNodeTest {
         SkillType type = new SkillType.Builder("frontemitter", "Shield Conversion - Front", "a.png", SkillTier.NOTABLE).build();
         SkillNode node = new SkillNode("frontemitter_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Mutually exclusive with node: Shield Conversion - Omni.", node.getDescription());
+        assertEquals("Mutually exclusive with node: Shield Conversion - Omni.", description(node.getType()));
     }
 
     @Test
@@ -226,7 +231,7 @@ class SkillNodeTest {
                 .build();
         SkillNode node = new SkillNode("frontemitter_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Mutually exclusive with node: unknown_type.", node.getDescription());
+        assertEquals("Mutually exclusive with node: unknown_type.", description(node.getType()));
     }
 
     @Test
@@ -257,7 +262,7 @@ class SkillNodeTest {
                 .build();
         SkillNode node = new SkillNode("frontemitter_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Mutually exclusive with hullmod: Escort Package.\n\nMutually exclusive with node: Shield Conversion - Omni.", node.getDescription());
+        assertEquals("Mutually exclusive with hullmod: Escort Package.\n\nMutually exclusive with node: Shield Conversion - Omni.", description(node.getType()));
     }
 
     @Test
@@ -269,7 +274,7 @@ class SkillNodeTest {
                 .build();
 
         assertEquals("Mutually exclusive with hullmods: ground_support, advanced_ground_support.",
-                SkillNode.describeType(type, null));
+                description(type));
     }
 
     @Test
@@ -300,7 +305,7 @@ class SkillNodeTest {
                 .build();
         SkillNode node = new SkillNode("frontemitter_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Mutually exclusive with hullmod: Shield Shunt.\n\nMutually exclusive with node: Shield Shunt.", node.getDescription());
+        assertEquals("Mutually exclusive with hullmod: Shield Shunt.\n\nMutually exclusive with node: Shield Shunt.", description(node.getType()));
     }
 
     @Test

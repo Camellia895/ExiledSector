@@ -93,7 +93,7 @@ class ShipTreeSummaryRendererTest {
 
         verify(info).addPara(eq("%s"), anyFloat(), (Color) any(), (Color) any(), eq("Notables and keystones: Heavy Armor"));
         verify(label).setHighlight("Heavy Armor");
-        verify(info).addPara(eq("%s"), anyFloat(), (Color) any(), (Color) any(), eq("    - " + DefenseSkillEffect.HULL_PERCENT.describe(10f)));
+        verify(info).addPara(eq("%s"), anyFloat(), (Color) any(), (Color) any(), eq("    - " + DefenseSkillEffect.HULL_PERCENT.description(10f).plain()));
         verify(label).setHighlightColors(SkillTreePanelStyle.POSITIVE_STAT_COLOR);
     }
 }

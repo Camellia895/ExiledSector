@@ -60,7 +60,7 @@ class SkillTreeBonusSummaryTest {
 
         Summary summary = SkillTreeBonusSummary.of(data, HullSize.CRUISER);
 
-        assertEquals(List.of(DefenseSkillEffect.HULL_PERCENT.describe(20f)), texts(summary));
+        assertEquals(List.of(DefenseSkillEffect.HULL_PERCENT.description(20f).plain()), texts(summary));
     }
 
     @Test
@@ -71,7 +71,7 @@ class SkillTreeBonusSummaryTest {
 
         Summary summary = SkillTreeBonusSummary.of(data, HullSize.CRUISER);
 
-        assertTrue(texts(summary).contains(FluxSkillEffect.FLUX_CAPACITY_MULT.describe(21f)), texts(summary).toString());
+        assertTrue(texts(summary).contains(FluxSkillEffect.FLUX_CAPACITY_MULT.description(21f).plain()), texts(summary).toString());
     }
 
     @Test
@@ -81,7 +81,7 @@ class SkillTreeBonusSummaryTest {
 
         Summary summary = SkillTreeBonusSummary.of(data, HullSize.DESTROYER);
 
-        assertTrue(texts(summary).contains(DefenseSkillEffect.ARMOR_FLAT.describe(50f)), texts(summary).toString());
+        assertTrue(texts(summary).contains(DefenseSkillEffect.ARMOR_FLAT.description(50f).plain()), texts(summary).toString());
     }
 
     @Test
@@ -92,8 +92,8 @@ class SkillTreeBonusSummaryTest {
 
         Summary summary = SkillTreeBonusSummary.of(data, HullSize.CRUISER);
 
-        assertEquals(List.of(DefenseSkillEffect.HULL_PERCENT.describe(10f),
-                "For the first 60 seconds after deployment: " + DefenseSkillEffect.HULL_PERCENT.describe(30f)), texts(summary));
+        assertEquals(List.of(DefenseSkillEffect.HULL_PERCENT.description(10f).plain(),
+                "For the first 60 seconds after deployment: " + DefenseSkillEffect.HULL_PERCENT.description(30f).plain()), texts(summary));
     }
 
     @Test
@@ -122,7 +122,7 @@ class SkillTreeBonusSummaryTest {
 
         Summary summary = SkillTreeBonusSummary.of(data, HullSize.CRUISER);
 
-        assertEquals(List.of(DefenseSkillEffect.HULL_PERCENT.describe(12f)), texts(summary));
+        assertEquals(List.of(DefenseSkillEffect.HULL_PERCENT.description(12f).plain()), texts(summary));
     }
 
     @Test
@@ -133,7 +133,7 @@ class SkillTreeBonusSummaryTest {
 
         Summary summary = SkillTreeBonusSummary.of(data, HullSize.CRUISER);
 
-        assertEquals(List.of(DefenseSkillEffect.HULL_PERCENT.describe(10f)), texts(summary));
+        assertEquals(List.of(DefenseSkillEffect.HULL_PERCENT.description(10f).plain()), texts(summary));
     }
 
     @Test

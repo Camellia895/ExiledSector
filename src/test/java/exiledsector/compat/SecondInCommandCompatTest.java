@@ -175,11 +175,11 @@ class SecondInCommandCompatTest {
 
     @Test
     void synergyEffectsOnlyDescribeThemselvesWhenSecondInCommandIsEnabled() {
-        assertNull(CompatSkillEffect.COUNTS_AS_SHIELD_SHUNT.describe(0f));
+        assertNull(CompatSkillEffect.COUNTS_AS_SHIELD_SHUNT.description(0f));
 
         enableSecondInCommandWith();
 
-        assertNotNull(CompatSkillEffect.COUNTS_AS_SHIELD_SHUNT.describe(0f));
+        assertNotNull(CompatSkillEffect.COUNTS_AS_SHIELD_SHUNT.description(0f));
     }
 
     @Test

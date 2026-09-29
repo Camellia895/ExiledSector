@@ -13,10 +13,6 @@ record SimpleStatEffect(StatMode mode, StatTarget target, String statKey, boolea
         return mode.describeStat(magnitude, statKey);
     }
 
-    String describe(float magnitude) {
-        return description(magnitude).plain();
-    }
-
     boolean supportsTemporaryGating() {
         return target.supportsTemporaryGating();
     }

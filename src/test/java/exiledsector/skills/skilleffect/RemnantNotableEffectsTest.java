@@ -54,13 +54,13 @@ class RemnantNotableEffectsTest {
     @Test
     void missileGuidanceDescribesTheImprovedAlgorithmInsteadOfARawNumber() {
         assertEquals("Significantly improved missile guidance algorithm.",
-                SkillEffect.byName("MISSILE_WEAPON_GUIDANCE_FLAT").describe(1f));
+                SkillEffect.byName("MISSILE_WEAPON_GUIDANCE_FLAT").description(1f).plain());
     }
 
     @Test
     void weaponTurnRateDescriptionsCoverAllWeapons() {
-        assertEquals("Increases weapon turn rate by 50%.", SkillEffect.byName("WEAPON_TURN_RATE_PERCENT").describe(50f));
-        assertEquals("25% less weapon turn rate.", SkillEffect.byName("WEAPON_TURN_RATE_MULT").describe(-25f));
+        assertEquals("Increases weapon turn rate by 50%.", SkillEffect.byName("WEAPON_TURN_RATE_PERCENT").description(50f).plain());
+        assertEquals("25% less weapon turn rate.", SkillEffect.byName("WEAPON_TURN_RATE_MULT").description(-25f).plain());
     }
 
     @Test
@@ -73,7 +73,7 @@ class RemnantNotableEffectsTest {
 
         verify(maxCr).modifyFlat("mod_id", 0.05f, "Ship skill tree");
         assertEquals("Increases maximum combat readiness by 5%.",
-                LogisticsSkillEffect.MAX_COMBAT_READINESS_PERCENT.describe(5f));
+                LogisticsSkillEffect.MAX_COMBAT_READINESS_PERCENT.description(5f).plain());
     }
 
     @Test

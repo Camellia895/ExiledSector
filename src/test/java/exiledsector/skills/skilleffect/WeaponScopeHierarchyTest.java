@@ -150,12 +150,12 @@ class WeaponScopeHierarchyTest {
     @Test
     void descriptionsNameTheScopeAndNeverExposeTheBeamOffset() {
         assertEquals("Increases non-beam energy weapon damage by 10%.",
-                SkillEffect.byName("NON_BEAM_ENERGY_WEAPON_DAMAGE_PERCENT").describe(10f));
-        assertEquals("Increases weapon range by 50.", SkillEffect.byName("WEAPON_RANGE_FLAT").describe(50f));
+                SkillEffect.byName("NON_BEAM_ENERGY_WEAPON_DAMAGE_PERCENT").description(10f).plain());
+        assertEquals("Increases weapon range by 50.", SkillEffect.byName("WEAPON_RANGE_FLAT").description(50f).plain());
         assertEquals("Significantly improved missile guidance algorithm.",
-                SkillEffect.byName("MISSILE_WEAPON_GUIDANCE_FLAT").describe(1f));
-        assertTrue(SkillEffect.byName("ENERGY_WEAPON_FIRE_RATE_PERCENT").describe(10f).contains("Burst beams"));
-        assertFalse(SkillEffect.byName("BALLISTIC_WEAPON_FIRE_RATE_PERCENT").describe(10f).contains("Burst beams"));
+                SkillEffect.byName("MISSILE_WEAPON_GUIDANCE_FLAT").description(1f).plain());
+        assertTrue(SkillEffect.byName("ENERGY_WEAPON_FIRE_RATE_PERCENT").description(10f).plain().contains("Burst beams"));
+        assertFalse(SkillEffect.byName("BALLISTIC_WEAPON_FIRE_RATE_PERCENT").description(10f).plain().contains("Burst beams"));
     }
 
     @Test
@@ -164,12 +164,12 @@ class WeaponScopeHierarchyTest {
                 + "but the refit screen's weapon tooltips won't show it.";
         for (String name : List.of("BEAM_WEAPON_AMMO_PERCENT", "BEAM_WEAPON_AMMO_FLAT", "BEAM_WEAPON_AMMO_REGEN_PERCENT",
                 "NON_BEAM_ENERGY_WEAPON_AMMO_MULT", "NON_BEAM_ENERGY_WEAPON_AMMO_REGEN_MULT")) {
-            assertTrue(SkillEffect.byName(name).describe(10f).endsWith(note), name);
+            assertTrue(SkillEffect.byName(name).description(10f).plain().endsWith(note), name);
         }
         assertEquals("Increases beam weapon ammo capacity by 10%." + note,
-                SkillEffect.byName("BEAM_WEAPON_AMMO_PERCENT").describe(10f));
-        assertFalse(SkillEffect.byName("ENERGY_WEAPON_AMMO_PERCENT").describe(10f).contains("refit"));
-        assertFalse(SkillEffect.byName("WEAPON_AMMO_REGEN_PERCENT").describe(10f).contains("refit"));
+                SkillEffect.byName("BEAM_WEAPON_AMMO_PERCENT").description(10f).plain());
+        assertFalse(SkillEffect.byName("ENERGY_WEAPON_AMMO_PERCENT").description(10f).plain().contains("refit"));
+        assertFalse(SkillEffect.byName("WEAPON_AMMO_REGEN_PERCENT").description(10f).plain().contains("refit"));
     }
 
     private static WeaponAPI weapon(boolean beam, int specMaxAmmo) {
