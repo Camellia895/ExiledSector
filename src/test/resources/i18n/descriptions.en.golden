@@ -1510,12 +1510,12 @@ effect|SURVEY_COST_REDUCTION_SUPPLIES|12.5	0	Increases supplies required to perf
 effect|SURVEY_COST_REDUCTION_SUPPLIES|100.0	0	Increases supplies required to perform surveys (fleet-wide) by <good>100</good>.
 effect|SURVEY_COST_REDUCTION_SUPPLIES|-10.0	0	Decreases supplies required to perform surveys (fleet-wide) by <bad>10</bad>.
 effect|SURVEY_COST_REDUCTION_SUPPLIES|-12.5	0	Decreases supplies required to perform surveys (fleet-wide) by <bad>12.5</bad>.
-effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|1.0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <bad>1%</bad>.
-effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|10.0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <bad>10%</bad>.
-effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|12.5	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <bad>12.5%</bad>.
-effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|100.0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <bad>100%</bad>.
-effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|-10.0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <bad>-10%</bad>.
-effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|-12.5	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <bad>-12.5%</bad>.
+effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|1.0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>1%</good>.
+effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|10.0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>10%</good>.
+effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|12.5	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>12.5%</good>.
+effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|100.0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>100%</good>.
+effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|-10.0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>-10%</good>.
+effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|-12.5	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>-12.5%</good>.
 effect|TOP_SPEED_FLAT|1.0	0	Increases top speed by <good>1</good>.
 effect|TOP_SPEED_FLAT|10.0	0	Increases top speed by <good>10</good>.
 effect|TOP_SPEED_FLAT|12.5	0	Increases top speed by <good>12.5</good>.
@@ -3073,11 +3073,11 @@ type|temporary_acceleration|CRUISER|0	0	Increases acceleration by <good>50%</goo
 type|temporary_acceleration|CRUISER|1	0	These effects only last for the first 90 seconds after the ship is deployed.
 type|temporary_acceleration|CAPITAL_SHIP|0	0	Increases acceleration by <good>50%</good>.
 type|temporary_acceleration|CAPITAL_SHIP|1	0	These effects only last for the first 90 seconds after the ship is deployed.
-type|terrifying_presence|null|0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <bad>25%</bad>.
-type|terrifying_presence|FRIGATE|0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <bad>25%</bad>.
-type|terrifying_presence|DESTROYER|0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <bad>25%</bad>.
-type|terrifying_presence|CRUISER|0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <bad>25%</bad>.
-type|terrifying_presence|CAPITAL_SHIP|0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <bad>25%</bad>.
+type|terrifying_presence|null|0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
+type|terrifying_presence|FRIGATE|0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
+type|terrifying_presence|DESTROYER|0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
+type|terrifying_presence|CRUISER|0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
+type|terrifying_presence|CAPITAL_SHIP|0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
 type|top_speed|FRIGATE|0	0	Increases top speed by <good>6</good>.
 type|top_speed|DESTROYER|0	0	Increases top speed by <good>5</good>.
 type|top_speed|CRUISER|0	0	Increases top speed by <good>4</good>.
@@ -3326,7 +3326,7 @@ summary|option0|FRIGATE|142	0	Increases fuel capacity by <good>24%</good>.
 summary|option0|FRIGATE|143	0	Increases heavy machinery required to perform surveys (fleet-wide) by <good>7</good>.
 summary|option0|FRIGATE|144	0	Increases supplies required to perform surveys (fleet-wide) by <good>5</good>.
 summary|option0|FRIGATE|145	0	Captures combat objectives <good>100%</good> faster.
-summary|option0|FRIGATE|146	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <bad>25%</bad>.
+summary|option0|FRIGATE|146	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
 summary|option0|FRIGATE|147	0	Increases weapon turn rate by <good>80%</good>.
 summary|option0|FRIGATE|148	0	<bad>15%</bad> less ballistic weapon range.
 summary|option0|FRIGATE|149	0	<bad>15%</bad> less energy weapon range.
@@ -3481,7 +3481,7 @@ summary|option0|DESTROYER|142	0	Increases fuel capacity by <good>24%</good>.
 summary|option0|DESTROYER|143	0	Increases heavy machinery required to perform surveys (fleet-wide) by <good>13</good>.
 summary|option0|DESTROYER|144	0	Increases supplies required to perform surveys (fleet-wide) by <good>11</good>.
 summary|option0|DESTROYER|145	0	Captures combat objectives <good>100%</good> faster.
-summary|option0|DESTROYER|146	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <bad>25%</bad>.
+summary|option0|DESTROYER|146	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
 summary|option0|DESTROYER|147	0	Increases weapon turn rate by <good>80%</good>.
 summary|option0|DESTROYER|148	0	<bad>15%</bad> less ballistic weapon range.
 summary|option0|DESTROYER|149	0	<bad>15%</bad> less energy weapon range.
@@ -3636,7 +3636,7 @@ summary|option0|CRUISER|142	0	Increases fuel capacity by <good>24%</good>.
 summary|option0|CRUISER|143	0	Increases heavy machinery required to perform surveys (fleet-wide) by <good>22</good>.
 summary|option0|CRUISER|144	0	Increases supplies required to perform surveys (fleet-wide) by <good>20</good>.
 summary|option0|CRUISER|145	0	Captures combat objectives <good>100%</good> faster.
-summary|option0|CRUISER|146	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <bad>25%</bad>.
+summary|option0|CRUISER|146	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
 summary|option0|CRUISER|147	0	Increases weapon turn rate by <good>80%</good>.
 summary|option0|CRUISER|148	0	<bad>15%</bad> less ballistic weapon range.
 summary|option0|CRUISER|149	0	<bad>15%</bad> less energy weapon range.
@@ -3791,7 +3791,7 @@ summary|option0|CAPITAL_SHIP|142	0	Increases fuel capacity by <good>24%</good>.
 summary|option0|CAPITAL_SHIP|143	0	Increases heavy machinery required to perform surveys (fleet-wide) by <good>42</good>.
 summary|option0|CAPITAL_SHIP|144	0	Increases supplies required to perform surveys (fleet-wide) by <good>40</good>.
 summary|option0|CAPITAL_SHIP|145	0	Captures combat objectives <good>100%</good> faster.
-summary|option0|CAPITAL_SHIP|146	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <bad>25%</bad>.
+summary|option0|CAPITAL_SHIP|146	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
 summary|option0|CAPITAL_SHIP|147	0	Increases weapon turn rate by <good>80%</good>.
 summary|option0|CAPITAL_SHIP|148	0	<bad>15%</bad> less ballistic weapon range.
 summary|option0|CAPITAL_SHIP|149	0	<bad>15%</bad> less energy weapon range.
@@ -3946,7 +3946,7 @@ summary|option1|FRIGATE|142	0	Increases cargo capacity by <good>24%</good>.
 summary|option1|FRIGATE|143	0	Increases heavy machinery required to perform surveys (fleet-wide) by <good>7</good>.
 summary|option1|FRIGATE|144	0	Increases supplies required to perform surveys (fleet-wide) by <good>5</good>.
 summary|option1|FRIGATE|145	0	Captures combat objectives <good>100%</good> faster.
-summary|option1|FRIGATE|146	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <bad>25%</bad>.
+summary|option1|FRIGATE|146	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
 summary|option1|FRIGATE|147	0	Increases weapon turn rate by <good>80%</good>.
 summary|option1|FRIGATE|148	0	<bad>15%</bad> less ballistic weapon range.
 summary|option1|FRIGATE|149	0	<bad>15%</bad> less energy weapon range.
@@ -4101,7 +4101,7 @@ summary|option1|DESTROYER|142	0	Increases cargo capacity by <good>24%</good>.
 summary|option1|DESTROYER|143	0	Increases heavy machinery required to perform surveys (fleet-wide) by <good>13</good>.
 summary|option1|DESTROYER|144	0	Increases supplies required to perform surveys (fleet-wide) by <good>11</good>.
 summary|option1|DESTROYER|145	0	Captures combat objectives <good>100%</good> faster.
-summary|option1|DESTROYER|146	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <bad>25%</bad>.
+summary|option1|DESTROYER|146	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
 summary|option1|DESTROYER|147	0	Increases weapon turn rate by <good>80%</good>.
 summary|option1|DESTROYER|148	0	<bad>15%</bad> less ballistic weapon range.
 summary|option1|DESTROYER|149	0	<bad>15%</bad> less energy weapon range.
@@ -4256,7 +4256,7 @@ summary|option1|CRUISER|142	0	Increases cargo capacity by <good>24%</good>.
 summary|option1|CRUISER|143	0	Increases heavy machinery required to perform surveys (fleet-wide) by <good>22</good>.
 summary|option1|CRUISER|144	0	Increases supplies required to perform surveys (fleet-wide) by <good>20</good>.
 summary|option1|CRUISER|145	0	Captures combat objectives <good>100%</good> faster.
-summary|option1|CRUISER|146	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <bad>25%</bad>.
+summary|option1|CRUISER|146	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
 summary|option1|CRUISER|147	0	Increases weapon turn rate by <good>80%</good>.
 summary|option1|CRUISER|148	0	<bad>15%</bad> less ballistic weapon range.
 summary|option1|CRUISER|149	0	<bad>15%</bad> less energy weapon range.
@@ -4411,7 +4411,7 @@ summary|option1|CAPITAL_SHIP|142	0	Increases cargo capacity by <good>24%</good>.
 summary|option1|CAPITAL_SHIP|143	0	Increases heavy machinery required to perform surveys (fleet-wide) by <good>42</good>.
 summary|option1|CAPITAL_SHIP|144	0	Increases supplies required to perform surveys (fleet-wide) by <good>40</good>.
 summary|option1|CAPITAL_SHIP|145	0	Captures combat objectives <good>100%</good> faster.
-summary|option1|CAPITAL_SHIP|146	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <bad>25%</bad>.
+summary|option1|CAPITAL_SHIP|146	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
 summary|option1|CAPITAL_SHIP|147	0	Increases weapon turn rate by <good>80%</good>.
 summary|option1|CAPITAL_SHIP|148	0	<bad>15%</bad> less ballistic weapon range.
 summary|option1|CAPITAL_SHIP|149	0	<bad>15%</bad> less energy weapon range.
@@ -4566,7 +4566,7 @@ summary|option2|FRIGATE|142	0	Increases crew capacity by <good>24%</good>.
 summary|option2|FRIGATE|143	0	Increases heavy machinery required to perform surveys (fleet-wide) by <good>7</good>.
 summary|option2|FRIGATE|144	0	Increases supplies required to perform surveys (fleet-wide) by <good>5</good>.
 summary|option2|FRIGATE|145	0	Captures combat objectives <good>100%</good> faster.
-summary|option2|FRIGATE|146	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <bad>25%</bad>.
+summary|option2|FRIGATE|146	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
 summary|option2|FRIGATE|147	0	Increases weapon turn rate by <good>80%</good>.
 summary|option2|FRIGATE|148	0	<bad>15%</bad> less ballistic weapon range.
 summary|option2|FRIGATE|149	0	<bad>15%</bad> less energy weapon range.
@@ -4721,7 +4721,7 @@ summary|option2|DESTROYER|142	0	Increases crew capacity by <good>24%</good>.
 summary|option2|DESTROYER|143	0	Increases heavy machinery required to perform surveys (fleet-wide) by <good>13</good>.
 summary|option2|DESTROYER|144	0	Increases supplies required to perform surveys (fleet-wide) by <good>11</good>.
 summary|option2|DESTROYER|145	0	Captures combat objectives <good>100%</good> faster.
-summary|option2|DESTROYER|146	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <bad>25%</bad>.
+summary|option2|DESTROYER|146	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
 summary|option2|DESTROYER|147	0	Increases weapon turn rate by <good>80%</good>.
 summary|option2|DESTROYER|148	0	<bad>15%</bad> less ballistic weapon range.
 summary|option2|DESTROYER|149	0	<bad>15%</bad> less energy weapon range.
@@ -4876,7 +4876,7 @@ summary|option2|CRUISER|142	0	Increases crew capacity by <good>24%</good>.
 summary|option2|CRUISER|143	0	Increases heavy machinery required to perform surveys (fleet-wide) by <good>22</good>.
 summary|option2|CRUISER|144	0	Increases supplies required to perform surveys (fleet-wide) by <good>20</good>.
 summary|option2|CRUISER|145	0	Captures combat objectives <good>100%</good> faster.
-summary|option2|CRUISER|146	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <bad>25%</bad>.
+summary|option2|CRUISER|146	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
 summary|option2|CRUISER|147	0	Increases weapon turn rate by <good>80%</good>.
 summary|option2|CRUISER|148	0	<bad>15%</bad> less ballistic weapon range.
 summary|option2|CRUISER|149	0	<bad>15%</bad> less energy weapon range.
@@ -5031,7 +5031,7 @@ summary|option2|CAPITAL_SHIP|142	0	Increases crew capacity by <good>24%</good>.
 summary|option2|CAPITAL_SHIP|143	0	Increases heavy machinery required to perform surveys (fleet-wide) by <good>42</good>.
 summary|option2|CAPITAL_SHIP|144	0	Increases supplies required to perform surveys (fleet-wide) by <good>40</good>.
 summary|option2|CAPITAL_SHIP|145	0	Captures combat objectives <good>100%</good> faster.
-summary|option2|CAPITAL_SHIP|146	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <bad>25%</bad>.
+summary|option2|CAPITAL_SHIP|146	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
 summary|option2|CAPITAL_SHIP|147	0	Increases weapon turn rate by <good>80%</good>.
 summary|option2|CAPITAL_SHIP|148	0	<bad>15%</bad> less ballistic weapon range.
 summary|option2|CAPITAL_SHIP|149	0	<bad>15%</bad> less energy weapon range.
