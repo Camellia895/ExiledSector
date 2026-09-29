@@ -8,6 +8,8 @@ import exiledsector.effects.NpcFleetInflationListener;
 import exiledsector.effects.NpcFleetSweepScript;
 import exiledsector.effects.SalvageBonusListener;
 import exiledsector.effects.SkillTreeInstaller;
+import exiledsector.i18n.I18n;
+import exiledsector.i18n.LocaleChain;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.npc.NpcLayouts;
@@ -17,6 +19,8 @@ import exiledsector.ui.SkillTreeRefitButton;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
 import exiledsector.ui.inspect.SkillTreeCodexListener;
 
+import java.util.Locale;
+
 public class ExiledSectorModPlugin extends BaseModPlugin {
 
     public static final String LOG_TAG = "ExiledSector";
@@ -24,6 +28,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
 
     @Override
     public void onApplicationLoad() throws Exception {
+        I18n.load(LocaleChain.of(Locale.getDefault()));
         Global.getLogger(ExiledSectorModPlugin.class).info(LOG_TAG + " loaded");
         SkillTreeRefitButton.addButton();
         ExiledSectorSettings.register();
