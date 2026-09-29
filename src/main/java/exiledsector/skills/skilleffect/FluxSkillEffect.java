@@ -29,11 +29,6 @@ public enum FluxSkillEffect implements SkillEffect {
         public boolean supportsTemporaryGating() {
             return false;
         }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.of(this);
-        }
     },
     FLUX_DISSIPATION_WHILE_VENTING_PERCENT {
         @Override
@@ -82,7 +77,7 @@ public enum FluxSkillEffect implements SkillEffect {
 
     @Override
     public StyledText description(float magnitude) {
-        return simpleStat.description(magnitude);
+        return simpleStat != null ? simpleStat.description(magnitude) : EffectText.templated(this, magnitude);
     }
 
     @Override

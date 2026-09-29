@@ -31,11 +31,6 @@ public enum ShieldSkillEffect implements SkillEffect {
         public boolean supportsTemporaryGating() {
             return false;
         }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).styled();
-        }
     },
     REMOVE_SHIELD {
         @Override
@@ -61,11 +56,6 @@ public enum ShieldSkillEffect implements SkillEffect {
         public String shieldTypeBlockReason(ShieldAPI.ShieldType resolvedShieldType) {
             return resolvedShieldType == ShieldAPI.ShieldType.NONE ? "Ship has no shields." : null;
         }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.of(this);
-        }
     },
     CREATE_FRONT_SHIELD_IF_NONE {
         @Override
@@ -82,11 +72,6 @@ public enum ShieldSkillEffect implements SkillEffect {
         @Override
         public boolean supportsTemporaryGating() {
             return false;
-        }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.of(this);
         }
     },
     CONVERT_SHIELD_TO_FRONT {
@@ -116,11 +101,6 @@ public enum ShieldSkillEffect implements SkillEffect {
         public String shieldTypeBlockReason(ShieldAPI.ShieldType resolvedShieldType) {
             return resolvedShieldType == ShieldAPI.ShieldType.FRONT ? "Ship already has front shields." : null;
         }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.of(this);
-        }
     },
     CONVERT_SHIELD_TO_OMNI {
         @Override
@@ -148,11 +128,6 @@ public enum ShieldSkillEffect implements SkillEffect {
         @Override
         public String shieldTypeBlockReason(ShieldAPI.ShieldType resolvedShieldType) {
             return resolvedShieldType == ShieldAPI.ShieldType.OMNI ? "Ship already has omni-directional shields." : null;
-        }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.of(this);
         }
     },
     SHIELD_ARC_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getShieldArcBonus), StatNames.SHIELD_ARC, false),
@@ -216,7 +191,7 @@ public enum ShieldSkillEffect implements SkillEffect {
 
     @Override
     public StyledText description(float magnitude) {
-        return simpleStat.description(magnitude);
+        return simpleStat != null ? simpleStat.description(magnitude) : EffectText.templated(this, magnitude);
     }
 
     @Override

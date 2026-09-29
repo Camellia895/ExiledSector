@@ -93,11 +93,6 @@ public enum PhaseSkillEffect implements SkillEffect {
         public boolean supportsTemporaryGating() {
             return false;
         }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).styled();
-        }
     };
 
     private static final String PHASE_ANCHOR_CR_PENALTY_KEY = "exiledSector_phaseAnchorCrPenaltyPercent";
@@ -119,7 +114,7 @@ public enum PhaseSkillEffect implements SkillEffect {
 
     @Override
     public StyledText description(float magnitude) {
-        return simpleStat.description(magnitude);
+        return simpleStat != null ? simpleStat.description(magnitude) : EffectText.templated(this, magnitude);
     }
 
     @Override

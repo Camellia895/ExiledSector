@@ -27,11 +27,6 @@ public enum DefenseSkillEffect implements SkillEffect {
         public boolean appliesToNpcShips() {
             return false;
         }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.of(this);
-        }
     },
     BREAK_PROBABILITY_PERCENT(PERCENT, stat(MutableShipStatsAPI::getBreakProb), "stat.chanceOfThisShipBreakingApartWhenDestroyed", true),
     ARMOR_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getArmorBonus), "stat.armor", false),
@@ -99,7 +94,7 @@ public enum DefenseSkillEffect implements SkillEffect {
 
     @Override
     public StyledText description(float magnitude) {
-        return simpleStat.description(magnitude);
+        return simpleStat != null ? simpleStat.description(magnitude) : EffectText.templated(this, magnitude);
     }
 
     @Override

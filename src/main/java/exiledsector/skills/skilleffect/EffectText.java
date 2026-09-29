@@ -13,8 +13,8 @@ final class EffectText {
         return "effect." + effect.name();
     }
 
-    static StyledText of(SkillEffect effect) {
-        return Translation.styled(key(effect));
+    static StyledText templated(SkillEffect effect, float magnitude) {
+        return msg(effect).arg("value", magnitude).styled();
     }
 
     static Message msg(SkillEffect effect) {

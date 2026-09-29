@@ -194,11 +194,6 @@ public enum FighterSkillEffect implements SkillEffect {
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getNumFighterBays().modifyMult(modId, 0f);
         }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.of(this);
-        }
     },
     FIGHTER_BAYS_FLAT {
         @Override
@@ -332,6 +327,9 @@ public enum FighterSkillEffect implements SkillEffect {
     public StyledText description(float magnitude) {
         if (simpleStat != null) {
             return simpleStat.description(magnitude);
+        }
+        if (roleStat == null) {
+            return EffectText.templated(this, magnitude);
         }
         String stat = Translation.msg("fighter.launched").arg("stat", Translation.text(roleStat.key())).arg("role", Translation.text(roleKey(role))).text();
         return StatMode.PERCENT.description(magnitude, stat);

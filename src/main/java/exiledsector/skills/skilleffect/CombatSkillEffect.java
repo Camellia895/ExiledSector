@@ -36,54 +36,14 @@ public enum CombatSkillEffect implements SkillEffect {
             return EffectText.msg(this).count(Math.round(magnitude)).arg("value", magnitude).styled();
         }
     },
-    EXPLODE_ON_DEATH(DeathExplosionListener.FUEL_DAMAGE_PERCENT_KEY, DeathExplosionListener.class, DeathExplosionListener::new) {
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).styled();
-        }
-    },
-    DEATH_ON_COLLISION(CollisionDeathListener.class, CollisionDeathListener::new) {
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.of(this);
-        }
-    },
-    NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT(EnergyChainListener.CHANCE_KEY, EnergyChainListener.class, EnergyChainListener::new) {
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).styled();
-        }
-    },
-    NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT(EnergyChainListener.FALLOFF_KEY, EnergyChainListener.class, EnergyChainListener::new) {
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).styled();
-        }
-    },
-    ESCORT_MANEUVER_BONUS_PERCENT(EscortListener.MANEUVER_BONUS_KEY, EscortListener.class, EscortListener::new) {
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).styled();
-        }
-    },
-    ESCORT_SPEED_BONUS_PERCENT(EscortListener.SPEED_BONUS_KEY, EscortListener.class, EscortListener::new) {
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).styled();
-        }
-    },
-    ESCORT_WEAPON_RANGE_BONUS_PERCENT(EscortListener.WEAPON_RANGE_BONUS_KEY, EscortListener.class, EscortListener::new) {
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).styled();
-        }
-    },
-    ESCORT_PROXIMITY_RANGE_FLAT(EscortListener.PROXIMITY_RANGE_KEY, EscortListener.class, EscortListener::new) {
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).styled();
-        }
-    },
+    EXPLODE_ON_DEATH(DeathExplosionListener.FUEL_DAMAGE_PERCENT_KEY, DeathExplosionListener.class, DeathExplosionListener::new),
+    DEATH_ON_COLLISION(CollisionDeathListener.class, CollisionDeathListener::new),
+    NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT(EnergyChainListener.CHANCE_KEY, EnergyChainListener.class, EnergyChainListener::new),
+    NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT(EnergyChainListener.FALLOFF_KEY, EnergyChainListener.class, EnergyChainListener::new),
+    ESCORT_MANEUVER_BONUS_PERCENT(EscortListener.MANEUVER_BONUS_KEY, EscortListener.class, EscortListener::new),
+    ESCORT_SPEED_BONUS_PERCENT(EscortListener.SPEED_BONUS_KEY, EscortListener.class, EscortListener::new),
+    ESCORT_WEAPON_RANGE_BONUS_PERCENT(EscortListener.WEAPON_RANGE_BONUS_KEY, EscortListener.class, EscortListener::new),
+    ESCORT_PROXIMITY_RANGE_FLAT(EscortListener.PROXIMITY_RANGE_KEY, EscortListener.class, EscortListener::new),
     NANOFORGE_HULL_REGEN_PERCENT(NanoforgeMendingListener.REGEN_PERCENT_KEY, NanoforgeMendingListener.class, NanoforgeMendingListener::new) {
         @Override
         public StyledText description(float magnitude) {
@@ -91,12 +51,7 @@ public enum CombatSkillEffect implements SkillEffect {
         }
     },
     DISINTEGRATION_ARMOR_DAMAGE_PERCENT(DisintegrationListener.ARMOR_DAMAGE_PERCENT_KEY,
-            DisintegrationListener.class, DisintegrationListener::new) {
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).styled();
-        }
-    },
+            DisintegrationListener.class, DisintegrationListener::new),
     TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT(TerrifyingPresenceListener.ACCURACY_PENALTY_PERCENT_KEY,
             TerrifyingPresenceListener.class, TerrifyingPresenceListener::new) {
         @Override
@@ -132,6 +87,11 @@ public enum CombatSkillEffect implements SkillEffect {
     @Override
     public boolean supportsTemporaryGating() {
         return false;
+    }
+
+    @Override
+    public StyledText description(float magnitude) {
+        return EffectText.templated(this, magnitude);
     }
 
     private static final class EnergyChainListener implements DamageDealtModifier {

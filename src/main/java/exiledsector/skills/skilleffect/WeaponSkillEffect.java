@@ -31,11 +31,6 @@ public enum WeaponSkillEffect implements SkillEffect {
             float burnOverDefault = Math.max(0f, burnLevel.getModifiedValue() - burnLevel.getBaseValue());
             WeaponStatFamily.DAMAGE.target(WeaponScope.BALLISTIC).apply(stats, modId, StatMode.PERCENT, burnOverDefault * magnitude);
         }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).styled();
-        }
     },
     ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT {
         @Override
@@ -47,11 +42,6 @@ public enum WeaponSkillEffect implements SkillEffect {
             MutableShipStatsAPI stats = ship.getMutableStats();
             float rangeBonus = stats.getSensorStrength().getModifiedValue() * magnitude;
             WeaponStatFamily.RANGE.target(WeaponScope.ENERGY).apply(stats, modId, StatMode.FLAT, rangeBonus);
-        }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).styled();
         }
     },
     BALLISTIC_WEAPON_LARGE_OP_COST_FLAT {
@@ -74,4 +64,9 @@ public enum WeaponSkillEffect implements SkillEffect {
     };
 
     private static final String LARGE_BALLISTIC_OP_COST_KEY = "large_ballistic_mod";
+
+    @Override
+    public StyledText description(float magnitude) {
+        return EffectText.templated(this, magnitude);
+    }
 }

@@ -113,11 +113,6 @@ public enum LogisticsSkillEffect implements SkillEffect {
         public boolean supportsTemporaryGating() {
             return false;
         }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.of(this);
-        }
     },
     REQUIRES_CIVILIAN_GRADE_HULL {
         @Override
@@ -127,11 +122,6 @@ public enum LogisticsSkillEffect implements SkillEffect {
         @Override
         public String blockAllocationReason(FleetMemberAPI member, float magnitude, List<SkillEffect> currentlyAllocatedEffects) {
             return member.getVariant().hasHullMod(HullMods.CIVGRADE) ? null : "Requires a civilian-grade hull.";
-        }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.of(this);
         }
     },
     CREW_LOSS_PERCENT(PERCENT, stat(MutableShipStatsAPI::getCrewLossMult), "stat.crewCasualties", true),
@@ -185,11 +175,6 @@ public enum LogisticsSkillEffect implements SkillEffect {
         public boolean supportsTemporaryGating() {
             return false;
         }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).styled();
-        }
     };
 
     private final SimpleStatEffect simpleStat;
@@ -209,7 +194,7 @@ public enum LogisticsSkillEffect implements SkillEffect {
 
     @Override
     public StyledText description(float magnitude) {
-        return simpleStat.description(magnitude);
+        return simpleStat != null ? simpleStat.description(magnitude) : EffectText.templated(this, magnitude);
     }
 
     @Override

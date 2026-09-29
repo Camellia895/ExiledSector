@@ -32,11 +32,6 @@ public enum MiscSkillEffect implements SkillEffect {
         public boolean supportsTemporaryGating() {
             return false;
         }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.of(this);
-        }
     },
     PD_BEST_TARGET_LEADING {
         @Override
@@ -47,11 +42,6 @@ public enum MiscSkillEffect implements SkillEffect {
         @Override
         public boolean supportsTemporaryGating() {
             return false;
-        }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.of(this);
         }
     },
     PD_DAMAGE_TO_MISSILES_PERCENT(PERCENT, stat(MutableShipStatsAPI::getDamageToMissiles),
@@ -74,11 +64,6 @@ public enum MiscSkillEffect implements SkillEffect {
         @Override
         public boolean supportsTemporaryGating() {
             return false;
-        }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.of(this);
         }
     },
     ELECTRONIC_WARFARE_PENALTY_PERCENT(PERCENT, dynamicMod(Stats.ELECTRONIC_WARFARE_PENALTY_MOD),
@@ -161,7 +146,7 @@ public enum MiscSkillEffect implements SkillEffect {
 
     @Override
     public StyledText description(float magnitude) {
-        return simpleStat.description(magnitude);
+        return simpleStat != null ? simpleStat.description(magnitude) : EffectText.templated(this, magnitude);
     }
 
     @Override
