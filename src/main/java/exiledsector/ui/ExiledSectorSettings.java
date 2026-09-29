@@ -118,7 +118,7 @@ public final class ExiledSectorSettings {
                 "Always Level the Flagship", "Every NPC fleet's flagship gets a skill tree.",
                 NpcTreeConfig.DEFAULT_FLAGSHIP, NPC_SCALING_TAB);
         LunaSettings.SettingsCreator.addInt(MOD_ID, NpcTreeConfig.OTHER_SHIP_CHANCE_FIELD_ID,
-                "Chance for Other Ships (%)", "Chance that each remaining combat ship in an NPC fleet gets a skill tree.",
+                "Chance for Other Ships", "Percent chance that each remaining combat ship in an NPC fleet gets a skill tree.",
                 NpcTreeConfig.DEFAULT_OTHER_SHIP_CHANCE_PERCENT, 0, 100, NPC_SCALING_TAB);
         LunaSettings.SettingsCreator.addKeybind(MOD_ID, NpcInspectConfig.KEYBIND_FIELD_ID,
                 "Inspect NPC Skill Trees Key", "In a fleet encounter, or while hovering another fleet on the map, "

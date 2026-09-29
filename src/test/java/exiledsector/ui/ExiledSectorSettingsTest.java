@@ -10,16 +10,28 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 
 class ExiledSectorSettingsTest {
 
     private MockedStatic<LunaSettings.SettingsCreator> settingsCreatorMock;
+    private final List<String> registeredTexts = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
-        settingsCreatorMock = Mockito.mockStatic(LunaSettings.SettingsCreator.class);
+        settingsCreatorMock = Mockito.mockStatic(LunaSettings.SettingsCreator.class, invocation -> {
+            for (Object argument : invocation.getArguments()) {
+                if (argument instanceof String text) {
+                    registeredTexts.add(text);
+                }
+            }
+            return Mockito.RETURNS_DEFAULTS.answer(invocation);
+        });
         ExiledSectorSettings.register();
     }
 
@@ -54,6 +66,14 @@ class ExiledSectorSettingsTest {
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addInt(eq("exiledSector"),
                 eq(NpcTreeConfig.OTHER_SHIP_CHANCE_FIELD_ID), anyString(), anyString(), eq(30), eq(0), eq(100),
                 eq(ExiledSectorSettings.NPC_SCALING_TAB)));
+    }
+
+    @Test
+    void noSettingTextContainsAPercentSignBecauseLunaLibFormatsItBeforeDisplaying() {
+        assertFalse(registeredTexts.isEmpty());
+        for (String text : registeredTexts) {
+            assertFalse(text.contains("%"), () -> "LunaLib passes this through String.format: " + text);
+        }
     }
 
     @Test
