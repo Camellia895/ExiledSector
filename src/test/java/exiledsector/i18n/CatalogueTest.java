@@ -74,6 +74,26 @@ class CatalogueTest {
     }
 
     @Test
+    void thePseudoLocaleWrapsTextButLeavesMetadataUntouched() {
+        Catalogue pseudo = Catalogue.compose(PseudoLocale.LOCALE, locale -> locale.equals("en")
+                ? Map.of("meta.font", "graphics/fonts/orbitron20aabold.fnt", "meta.fakeBold", "true", "a", "Text")
+                : Map.of());
+
+        assertEquals("graphics/fonts/orbitron20aabold.fnt", pseudo.raw("meta.font"));
+        assertEquals("true", pseudo.raw("meta.fakeBold"));
+        assertEquals("[Text~]", pseudo.raw("a"));
+    }
+
+    @Test
+    void theRealPseudoLocaleKeepsTheEnglishFontSettings() {
+        Catalogue english = RealCatalogue.english();
+        Catalogue pseudo = RealCatalogue.of(PseudoLocale.LOCALE);
+
+        assertEquals(english.raw("meta.font"), pseudo.raw("meta.font"));
+        assertEquals(english.raw("meta.fakeBold"), pseudo.raw("meta.fakeBold"));
+    }
+
+    @Test
     void numbersFormatTheSameInEveryLocale() {
         I18n.install(Catalogue.layered("zh_CN", List.of(Map.of("value", "{value}"))));
 

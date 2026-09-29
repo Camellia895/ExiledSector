@@ -10,7 +10,6 @@ import exiledsector.skills.DescriptionLine;
 import exiledsector.ui.util.FallbackSupport;
 import exiledsector.ui.util.GLDraw;
 import org.apache.log4j.Logger;
-import org.lazywizard.lazylib.ui.FontException;
 import org.lazywizard.lazylib.ui.LazyFont;
 
 import javax.imageio.ImageIO;
@@ -57,7 +56,7 @@ public final class SkillTreePanelStyle {
     private static final float TOOLTIP_TABLE_GAP = 14f;
     private static final float TOOLTIP_SCREEN_MARGIN = 4f;
 
-    private static final String DEFAULT_FONT_PATH = "graphics/fonts/orbitron20aabold.fnt";
+    static final String DEFAULT_FONT_PATH = "graphics/fonts/orbitron20aabold.fnt";
     private static LazyFont font;
     private static boolean fontLoadFailed;
 
@@ -79,23 +78,23 @@ public final class SkillTreePanelStyle {
 
     public static LazyFont font() {
         if (font == null && !fontLoadFailed) {
-            String path = Translation.has("meta.font") ? Translation.text("meta.font") : DEFAULT_FONT_PATH;
-            font = loadFontOrNull(path);
-            if (font == null && !DEFAULT_FONT_PATH.equals(path)) {
-                font = loadFontOrNull(DEFAULT_FONT_PATH);
-            }
+            font = loadFontOrDefault(Translation.has("meta.font") ? Translation.text("meta.font") : DEFAULT_FONT_PATH);
             fontLoadFailed = font == null;
         }
         return font;
     }
 
-    private static LazyFont loadFontOrNull(String path) {
-        try {
-            return LazyFont.loadFont(path);
-        } catch (FontException e) {
-            Logger.getLogger(SkillTreePanelStyle.class).error("Failed to load font " + path, e);
-            return null;
+    static LazyFont loadFontOrDefault(String path) {
+        LazyFont loaded = loadFontOrNull(path);
+        if (loaded == null && !DEFAULT_FONT_PATH.equals(path)) {
+            loaded = loadFontOrNull(DEFAULT_FONT_PATH);
         }
+        return loaded;
+    }
+
+    private static LazyFont loadFontOrNull(String path) {
+        return FallbackSupport.getOrFallback(() -> LazyFont.loadFont(path), null,
+                Logger.getLogger(SkillTreePanelStyle.class), "Failed to load font " + path);
     }
 
     public void drawTooltipBackground(float x, float y, float width, float height, float alphaMult, Color borderColor) {
