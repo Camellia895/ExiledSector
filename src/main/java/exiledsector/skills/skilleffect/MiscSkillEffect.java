@@ -140,7 +140,7 @@ public enum MiscSkillEffect implements SkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.flatChange(magnitude, "stat.commandPointRecoveryWhileFlagship");
+            return StatMode.FLAT.describeStat(magnitude, "stat.commandPointRecoveryWhileFlagship");
         }
     };
 

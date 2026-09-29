@@ -75,7 +75,7 @@ public enum PhaseSkillEffect implements SkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.pctMore(magnitude, "stat.fluxRateOfFireAndAmmoRegenWhilePhased");
+            return StatMode.MULT.describeStat(magnitude, "stat.fluxRateOfFireAndAmmoRegenWhilePhased");
         }
     },
     PHASE_ANCHOR_EMERGENCY_DIVE {

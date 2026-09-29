@@ -69,7 +69,7 @@ public enum WeaponSkillEffect implements SkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.flatChange(magnitude, "stat.ordnancePointCostOfLargeBallisticWeapons");
+            return StatMode.FLAT.describeStat(magnitude, "stat.ordnancePointCostOfLargeBallisticWeapons");
         }
     };
 

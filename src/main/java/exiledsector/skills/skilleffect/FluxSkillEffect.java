@@ -61,7 +61,7 @@ public enum FluxSkillEffect implements SkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.pctChange(magnitude, "stat.fluxDissipationWhileVenting");
+            return StatMode.PERCENT.describeStat(magnitude, "stat.fluxDissipationWhileVenting");
         }
     };
 

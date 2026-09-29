@@ -33,7 +33,7 @@ public enum LogisticsSkillEffect implements SkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.flatChange(magnitude, "stat.cargoCapacityPerFighterBay");
+            return StatMode.FLAT.describeStat(magnitude, "stat.cargoCapacityPerFighterBay");
         }
     },
     CREW_CAPACITY_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getMaxCrewMod), "stat.crewCapacity", false),
@@ -54,7 +54,7 @@ public enum LogisticsSkillEffect implements SkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.pctChange(magnitude, "stat.maximumCombatReadiness");
+            return StatMode.PERCENT.describeStat(magnitude, "stat.maximumCombatReadiness");
         }
     },
     REPAIR_RATE_PER_DAY_PERCENT(PERCENT, stat(MutableShipStatsAPI::getRepairRatePercentPerDay), "stat.repairRatePerDay", false),
@@ -79,7 +79,7 @@ public enum LogisticsSkillEffect implements SkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.flatChange(magnitude, "stat.minimumCrewRequiredPerFighterBay");
+            return StatMode.FLAT.describeStat(magnitude, "stat.minimumCrewRequiredPerFighterBay");
         }
     },
     MIN_CREW_PERCENT_PER_FIGHTER_BAY {
@@ -97,7 +97,7 @@ public enum LogisticsSkillEffect implements SkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.pctChange(magnitude, "stat.minimumCrewRequiredPerFighterBayCappedAt80Total");
+            return StatMode.PERCENT.describeStat(magnitude, "stat.minimumCrewRequiredPerFighterBayCappedAt80Total");
         }
     },
     SUPPLIES_PER_MONTH_MULT(MULT, stat(MutableShipStatsAPI::getSuppliesPerMonth), "stat.supplyUseForMaintenance", true),
@@ -162,7 +162,7 @@ public enum LogisticsSkillEffect implements SkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.pctChange(magnitude, "stat.postBattleSalvageRecoveredFleetWide");
+            return StatMode.PERCENT.describeStat(magnitude, "stat.postBattleSalvageRecoveredFleetWide");
         }
     },
     PHASE_FIELD_CONTRIBUTION_PERCENT {

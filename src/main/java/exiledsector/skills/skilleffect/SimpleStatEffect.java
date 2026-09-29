@@ -2,7 +2,6 @@ package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import exiledsector.i18n.StyledText;
-import exiledsector.i18n.Translation;
 
 record SimpleStatEffect(StatMode mode, StatTarget target, String statKey, boolean lowerIsBetter) {
 
@@ -11,7 +10,7 @@ record SimpleStatEffect(StatMode mode, StatTarget target, String statKey, boolea
     }
 
     StyledText description(float magnitude) {
-        return mode.description(magnitude, Translation.text(statKey));
+        return mode.describeStat(magnitude, statKey);
     }
 
     String describe(float magnitude) {

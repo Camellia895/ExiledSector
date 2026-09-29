@@ -64,7 +64,7 @@ public enum DefenseSkillEffect implements SkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.pctMore(magnitude, "stat.negativeEffectsFromDMods");
+            return StatMode.MULT.describeStat(magnitude, "stat.negativeEffectsFromDMods");
         }
     },
     SHIELD_ABSORPTION_PERCENT(PERCENT, stat(MutableShipStatsAPI::getShieldAbsorptionMult), "stat.damageTakenByShields", true),

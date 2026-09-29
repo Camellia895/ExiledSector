@@ -23,7 +23,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.pctChange(magnitude, "stat.weaponDamageOfFightersLaunchedFromThisShip");
+            return StatMode.PERCENT.describeStat(magnitude, "stat.weaponDamageOfFightersLaunchedFromThisShip");
         }
     },
     FIGHTER_TOP_SPEED_PERCENT {
@@ -34,7 +34,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.pctChange(magnitude, "stat.topSpeedOfFightersLaunchedFromThisShip");
+            return StatMode.PERCENT.describeStat(magnitude, "stat.topSpeedOfFightersLaunchedFromThisShip");
         }
     },
     FIGHTER_CREW_LOSS_PERCENT(PERCENT, dynamicStat("fighter_crew_loss_mult"),
@@ -75,7 +75,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.pctChange(magnitude, "stat.damageDealtByFightersLaunchedFromThisShipToOtherFightersAndMissiles");
+            return StatMode.PERCENT.describeStat(magnitude, "stat.damageDealtByFightersLaunchedFromThisShipToOtherFightersAndMissiles");
         }
     },
     FIGHTER_RELAUNCH_TIME_FLAT {
@@ -96,7 +96,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.flatChange(magnitude, "stat.fighterRelaunchTimeAsAOfBaseRefitTime");
+            return StatMode.FLAT.describeStat(magnitude, "stat.fighterRelaunchTimeAsAOfBaseRefitTime");
         }
     },
     FIGHTER_ARMOR_PERCENT {
@@ -107,7 +107,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.pctChange(magnitude, "stat.armorOfFightersLaunchedFromThisShip");
+            return StatMode.PERCENT.describeStat(magnitude, "stat.armorOfFightersLaunchedFromThisShip");
         }
     },
     FIGHTER_SHIELD_DAMAGE_TAKEN_PERCENT {
@@ -123,7 +123,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.pctChange(magnitude, "stat.damageTakenByShieldsOfFightersLaunchedFromThisShip");
+            return StatMode.PERCENT.describeStat(magnitude, "stat.damageTakenByShieldsOfFightersLaunchedFromThisShip");
         }
     },
     FIGHTER_RATE_OF_FIRE_PERCENT {
@@ -134,7 +134,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.pctChange(magnitude, "stat.weaponRateOfFireOfFightersLaunchedFromThisShip");
+            return StatMode.PERCENT.describeStat(magnitude, "stat.weaponRateOfFireOfFightersLaunchedFromThisShip");
         }
     },
     FIGHTER_ENGAGEMENT_RANGE_PERCENT {
@@ -145,7 +145,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.pctChange(magnitude, "stat.engagementRangeOfFightersLaunchedFromThisShip");
+            return StatMode.PERCENT.describeStat(magnitude, "stat.engagementRangeOfFightersLaunchedFromThisShip");
         }
     },
     FIGHTER_WEAPON_RANGE_FLAT {
@@ -158,7 +158,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.flatChange(magnitude, "stat.weaponRangeOfFightersLaunchedFromThisShip");
+            return StatMode.FLAT.describeStat(magnitude, "stat.weaponRangeOfFightersLaunchedFromThisShip");
         }
     },
     FIGHTER_ROLE_DAMAGE_PERCENT(WingRole.FIGHTER, RoleStat.WEAPON_DAMAGE),
@@ -213,7 +213,7 @@ public enum FighterSkillEffect implements SkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.flatChange(magnitude, "stat.numberOfFighterBays");
+            return StatMode.FLAT.describeStat(magnitude, "stat.numberOfFighterBays");
         }
 
         @Override

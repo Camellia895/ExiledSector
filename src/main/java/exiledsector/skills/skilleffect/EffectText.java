@@ -9,18 +9,6 @@ final class EffectText {
     private EffectText() {
     }
 
-    static StyledText pctChange(float magnitude, String statKey) {
-        return StatMode.PERCENT.description(magnitude, Translation.text(statKey));
-    }
-
-    static StyledText flatChange(float magnitude, String statKey) {
-        return StatMode.FLAT.description(magnitude, Translation.text(statKey));
-    }
-
-    static StyledText pctMore(float magnitude, String statKey) {
-        return StatMode.MULT.description(magnitude, Translation.text(statKey));
-    }
-
     static String key(SkillEffect effect) {
         return "effect." + effect.name();
     }

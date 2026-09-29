@@ -67,6 +67,10 @@ public enum StatMode {
                 .arg("value", Math.abs(magnitude)).styled();
     }
 
+    StyledText describeStat(float magnitude, String statKey) {
+        return description(magnitude, Translation.text(statKey));
+    }
+
     abstract void apply(MutableStat stat, String modId, float magnitude);
 
     abstract void apply(StatBonus stat, String modId, float magnitude);
