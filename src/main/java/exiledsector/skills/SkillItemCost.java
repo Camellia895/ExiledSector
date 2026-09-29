@@ -2,6 +2,7 @@ package exiledsector.skills;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
+import exiledsector.i18n.NumberText;
 
 public record SkillItemCost(String itemId, float quantity) {
 
@@ -15,6 +16,6 @@ public record SkillItemCost(String itemId, float quantity) {
     }
 
     public static String formatQuantity(float value) {
-        return value == Math.rint(value) ? String.valueOf((int) value) : String.valueOf(value);
+        return NumberText.format(value);
     }
 }

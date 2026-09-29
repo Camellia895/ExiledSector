@@ -1,8 +1,8 @@
 package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledsector.i18n.LegacyHighlight;
 import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
 import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.layout.SkillTreeObject;
 import exiledsector.skills.skilleffect.WeaponEffectTooltipAggregator;
@@ -65,12 +65,6 @@ public class SkillNode extends SkillTreeObject {
         return describeType(type, hullSize);
     }
 
-    private static void addIfPresent(List<String> lines, String line) {
-        if (line != null) {
-            lines.add(line);
-        }
-    }
-
     public static String describeType(SkillType type, HullSize hullSize) {
         List<String> texts = new ArrayList<>();
         for (DescriptionLine line : describeTypeLines(type, hullSize)) {
@@ -81,20 +75,20 @@ public class SkillNode extends SkillTreeObject {
 
     public static List<DescriptionLine> describeTypeLines(SkillType type, HullSize hullSize) {
         List<DescriptionLine> lines = new ArrayList<>();
-        addLine(lines, LegacyHighlight.of(type.getDescriptionOverride()), false);
+        addLine(lines, Translation.dataStyled("skillType." + type.getId() + ".description", type.getDescriptionOverride()), false);
         List<SkillTypeEffect> described = hullSize == null ? type.getEffects() : type.effectsFor(hullSize);
         for (SkillTypeEffect effect : WeaponEffectTooltipAggregator.collapse(described)) {
             addLine(lines, effect.effect().description(effect.magnitude()), effect.effect().lowerIsBetter());
         }
         for (String hullModId : type.getInstalledHullModIds()) {
-            addLine(lines, LegacyHighlight.of("Installs the " + HullModNames.displayName(hullModId) + " hull mod at no OP cost."), false);
+            addLine(lines, Translation.msg("node.installs").arg("hullmod", HullModNames.displayName(hullModId)).styled(), false);
         }
-        addLine(lines, LegacyHighlight.of(describeTemporaryDuration(type)), false);
+        addLine(lines, describeTemporaryDuration(type), false);
         for (SkillTypeEffect effect : described) {
             addLine(lines, effect.effect().deallocationWarning(effect.magnitude()), false);
         }
-        addLine(lines, LegacyHighlight.of(describeItemCost(type)), false);
-        addLine(lines, LegacyHighlight.of(describeExclusivity(type)), false);
+        addLine(lines, describeItemCost(type), false);
+        addLine(lines, describeExclusivity(type), false);
         return lines;
     }
 
@@ -104,24 +98,23 @@ public class SkillNode extends SkillTreeObject {
         }
     }
 
-    private static String describeTemporaryDuration(SkillType type) {
+    private static StyledText describeTemporaryDuration(SkillType type) {
         Float seconds = type.getTemporaryAfterDeploymentSeconds();
         if (seconds == null) {
             return null;
         }
-        String formatted = seconds == Math.rint(seconds) ? String.valueOf(seconds.intValue()) : String.valueOf(seconds);
-        return "These effects only last for the first " + formatted + " seconds after the ship is deployed.";
+        return Translation.msg("node.temporary").arg("seconds", seconds).styled();
     }
 
-    private static String describeItemCost(SkillType type) {
+    private static StyledText describeItemCost(SkillType type) {
         SkillItemCost itemCost = type.getItemCost();
         if (itemCost == null) {
             return null;
         }
-        return "Costs " + itemCost.formattedQuantity() + " " + itemCost.commodityName() + " to allocate. It is returned to you upon de-allocation.";
+        return Translation.msg("node.itemCost").arg("quantity", itemCost.formattedQuantity()).arg("item", itemCost.commodityName()).styled();
     }
 
-    private static String describeExclusivity(SkillType type) {
+    private static StyledText describeExclusivity(SkillType type) {
         Set<String> hullModNames = new LinkedHashSet<>();
         for (String hullModId : type.getExclusiveHullModIds()) {
             if (!type.getInstalledHullModIds().contains(hullModId)) {
@@ -139,18 +132,22 @@ public class SkillNode extends SkillTreeObject {
             }
         }
 
-        List<String> lines = new ArrayList<>();
-        addIfPresent(lines, exclusivityLine("hullmod", hullModNames));
-        addIfPresent(lines, exclusivityLine("node", nodeNames));
-        return lines.isEmpty() ? null : String.join("\n\n", lines);
+        List<StyledText> lines = new ArrayList<>();
+        if (!hullModNames.isEmpty()) {
+            lines.add(exclusivityLine("node.exclusive.hullmods", hullModNames));
+        }
+        if (!nodeNames.isEmpty()) {
+            lines.add(exclusivityLine("node.exclusive.nodes", nodeNames));
+        }
+        return lines.isEmpty() ? null : StyledText.join(StyledText.of("\n\n"), lines);
     }
 
-    private static String exclusivityLine(String kind, Set<String> names) {
-        if (names.isEmpty()) {
-            return null;
+    private static StyledText exclusivityLine(String key, Set<String> names) {
+        List<StyledText> styledNames = new ArrayList<>();
+        for (String name : names) {
+            styledNames.add(StyledText.of(name));
         }
-        String label = names.size() == 1 ? kind : kind + "s";
-        return "Mutually exclusive with " + label + ": " + String.join(", ", names) + ".";
+        return Translation.msg(key).count(names.size()).arg("names", Translation.list(styledNames)).styled();
     }
 
     public SkillType resolveEffectiveType(ShipSkillData data) {

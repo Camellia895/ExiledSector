@@ -189,5 +189,14 @@
     "weapon.stat.HEALTH": "missile hitpoints",
     "weapon.note.burstBeam": "Burst beams instead recharge faster between bursts.",
     "weapon.note.perWeapon": "This is set directly on each weapon: it's correct in combat, but the refit screen's weapon tooltips won't show it.",
-    "weapon.guidanceImproved": "Significantly improved missile guidance algorithm."
+    "weapon.guidanceImproved": "Significantly improved missile guidance algorithm.",
+
+    "node.installs": "Installs the {hullmod} hull mod at no OP cost.",
+    "node.temporary": "These effects only last for the first {seconds} seconds after the ship is deployed.",
+    "node.itemCost": "Costs {quantity} {item} to allocate. It is returned to you upon de-allocation.",
+    "node.exclusive.hullmods.one": "Mutually exclusive with <hullmod>hullmod</hullmod>: {names}.",
+    "node.exclusive.hullmods.other": "Mutually exclusive with <hullmod>hullmods</hullmod>: {names}.",
+    "node.exclusive.nodes.one": "Mutually exclusive with <node>node</node>: {names}.",
+    "node.exclusive.nodes.other": "Mutually exclusive with <node>nodes</node>: {names}.",
+    "summary.forFirst": "For the first {seconds} seconds after deployment: {text}"
 }
