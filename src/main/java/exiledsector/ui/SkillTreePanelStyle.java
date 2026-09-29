@@ -5,6 +5,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.TextWrapper;
+import exiledsector.i18n.Translation;
 import exiledsector.skills.DescriptionLine;
 import exiledsector.ui.util.FallbackSupport;
 import exiledsector.ui.util.GLDraw;
@@ -56,7 +57,7 @@ public final class SkillTreePanelStyle {
     private static final float TOOLTIP_TABLE_GAP = 14f;
     private static final float TOOLTIP_SCREEN_MARGIN = 4f;
 
-    private static final String FONT_PATH = "graphics/fonts/orbitron20aabold.fnt";
+    private static final String DEFAULT_FONT_PATH = "graphics/fonts/orbitron20aabold.fnt";
     private static LazyFont font;
     private static boolean fontLoadFailed;
 
@@ -78,7 +79,11 @@ public final class SkillTreePanelStyle {
 
     public static LazyFont font() {
         if (font == null && !fontLoadFailed) {
-            font = loadFontOrNull(FONT_PATH);
+            String path = Translation.has("meta.font") ? Translation.text("meta.font") : DEFAULT_FONT_PATH;
+            font = loadFontOrNull(path);
+            if (font == null && !DEFAULT_FONT_PATH.equals(path)) {
+                font = loadFontOrNull(DEFAULT_FONT_PATH);
+            }
             fontLoadFailed = font == null;
         }
         return font;
@@ -121,7 +126,9 @@ public final class SkillTreePanelStyle {
         float bodyY = titleY - title.height - TOOLTIP_TITLE_BODY_GAP;
         float titleX = boxX + (boxWidth - title.width) / 2f;
         title.drawable.draw(titleX, titleY);
-        title.drawable.draw(titleX + TOOLTIP_TITLE_BOLD_OFFSET, titleY);
+        if (!Translation.has("meta.fakeBold") || !"false".equals(Translation.text("meta.fakeBold"))) {
+            title.drawable.draw(titleX + TOOLTIP_TITLE_BOLD_OFFSET, titleY);
+        }
         body.drawable.draw(boxX + TOOLTIP_PADDING, bodyY);
 
         float tableTop = bodyY - body.height;
