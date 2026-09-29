@@ -5,16 +5,21 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.codex.CodexDataV2;
 import com.fs.starfarer.api.impl.codex.CodexEntryPlugin;
 import com.fs.starfarer.api.impl.codex.CodexEntryV2;
+import exiledsector.i18n.Catalogue;
+import exiledsector.i18n.I18n;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
+import exiledsector.skills.npc.NpcLayout;
+import exiledsector.skills.npc.NpcLayouts;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -42,6 +47,7 @@ class SkillTreeCodexListenerTest {
         SkillDataResolver.clearCache();
         SkillTree.getAllNodes().clear();
         SkillTree.getAllTypes().clear();
+        NpcLayouts.register(Map.of());
     }
 
     private static FleetMemberAPI npc(String... tags) {
@@ -72,6 +78,18 @@ class SkillTreeCodexListenerTest {
         assertEquals(1, added.size());
         assertTrue(shipEntry.getRelatedEntries().contains(added.get(0)));
         assertTrue(added.get(0).getRelatedEntries().contains(shipEntry));
+    }
+
+    @Test
+    void theBuildNameIsResolvedInTheGameLanguageEvenWhenTheSkillTreeUsesAnother() {
+        NpcLayouts.register(Map.of("bulwark", new NpcLayout("bulwark", "Bulwark", "root_1", List.of(), "", List.of())));
+        I18n.install(new Catalogue("zh_CN", Map.of("npcLayout.bulwark.name", "壁垒")), new Catalogue("en", Map.of()));
+        memberEntry("temp-1", npc(NPC_TAG));
+
+        new SkillTreeCodexListener().reportAboutToOpenCodex();
+
+        SkillTreeCodexEntry added = (SkillTreeCodexEntry) skillTreeEntries().get(0);
+        assertEquals("Bulwark", added.tree().layoutName());
     }
 
     @Test

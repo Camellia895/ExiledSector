@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.listeners.CodexEventListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.codex.CodexDataV2;
 import com.fs.starfarer.api.impl.codex.CodexEntryPlugin;
+import exiledsector.i18n.I18n;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public class SkillTreeCodexListener implements CodexEventListener {
     }
 
     private void attach(CodexEntryPlugin memberEntry, FleetMemberAPI member) {
-        ShipTreeLookup.ShipTree tree = ShipTreeLookup.find(member);
+        ShipTreeLookup.ShipTree tree = I18n.forGameText(() -> ShipTreeLookup.find(member));
         if (tree == null) {
             return;
         }

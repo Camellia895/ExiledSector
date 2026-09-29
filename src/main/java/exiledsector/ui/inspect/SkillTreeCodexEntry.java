@@ -30,6 +30,10 @@ public class SkillTreeCodexEntry extends CodexEntryV2 implements CustomUIPanelPl
         this.tree = tree;
     }
 
+    ShipTreeLookup.ShipTree tree() {
+        return tree;
+    }
+
     @Override
     public void createTitleForList(TooltipMakerAPI info, float width, ListMode mode) {
         I18n.forGameText(() -> {
