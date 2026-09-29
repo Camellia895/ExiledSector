@@ -2,6 +2,7 @@ package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import exiledsector.i18n.StyledText;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -87,8 +88,8 @@ public final class ScopedWeaponEffect implements SkillEffect {
     }
 
     @Override
-    public String describe(float magnitude) {
-        return family.describe(scope, mode, magnitude);
+    public StyledText description(float magnitude) {
+        return family.description(scope, mode, magnitude);
     }
 
     @Override

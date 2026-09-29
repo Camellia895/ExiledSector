@@ -1,27 +1,26 @@
 package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.WeaponAPI;
+import exiledsector.i18n.Translation;
 
 import java.util.Arrays;
 import java.util.List;
 
 public enum WeaponScope {
 
-    ALL(null, "", ""),
-    BALLISTIC(ALL, "BALLISTIC_", "ballistic"),
-    MISSILE(ALL, "MISSILE_", "missile"),
-    ENERGY(ALL, "ENERGY_", "energy"),
-    NON_BEAM_ENERGY(ENERGY, "NON_BEAM_ENERGY_", "non-beam energy"),
-    BEAM(ENERGY, "BEAM_", "beam");
+    ALL(null, ""),
+    BALLISTIC(ALL, "BALLISTIC_"),
+    MISSILE(ALL, "MISSILE_"),
+    ENERGY(ALL, "ENERGY_"),
+    NON_BEAM_ENERGY(ENERGY, "NON_BEAM_ENERGY_"),
+    BEAM(ENERGY, "BEAM_");
 
     private final WeaponScope parent;
     private final String namePrefix;
-    private final String adjective;
 
-    WeaponScope(WeaponScope parent, String namePrefix, String adjective) {
+    WeaponScope(WeaponScope parent, String namePrefix) {
         this.parent = parent;
         this.namePrefix = namePrefix;
-        this.adjective = adjective;
     }
 
     public WeaponScope parent() {
@@ -36,8 +35,15 @@ public enum WeaponScope {
         return namePrefix;
     }
 
-    String qualify(String statName) {
-        return adjective.isEmpty() ? statName : adjective + " " + statName;
+    String qualify(String statKey) {
+        if (this == ALL) {
+            return Translation.text(statKey);
+        }
+        String specific = statKey + "." + name();
+        if (Translation.has(specific)) {
+            return Translation.text(specific);
+        }
+        return Translation.msg("weapon.qualified").arg("scope", Translation.text("weapon.scope." + name())).arg("stat", Translation.text(statKey)).text();
     }
 
     boolean matches(WeaponAPI weapon) {

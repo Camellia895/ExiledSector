@@ -5,10 +5,6 @@ import com.fs.starfarer.api.combat.StatBonus;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 
-import static exiledsector.skills.skilleffect.SkillEffectText.flatChange;
-import static exiledsector.skills.skilleffect.SkillEffectText.pctChange;
-import static exiledsector.skills.skilleffect.SkillEffectText.pctMore;
-
 public enum StatMode {
 
     FLAT("desc.flat") {
@@ -20,11 +16,6 @@ public enum StatMode {
         @Override
         void apply(StatBonus stat, String modId, float magnitude) {
             stat.modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        String describe(float magnitude, String statName) {
-            return flatChange(magnitude, statName);
         }
 
         @Override
@@ -44,11 +35,6 @@ public enum StatMode {
         }
 
         @Override
-        String describe(float magnitude, String statName) {
-            return pctChange(magnitude, statName);
-        }
-
-        @Override
         float inverse(float magnitude) {
             return -magnitude;
         }
@@ -62,11 +48,6 @@ public enum StatMode {
         @Override
         void apply(StatBonus stat, String modId, float magnitude) {
             SkillEffectSupport.applyMult(stat, modId, magnitude);
-        }
-
-        @Override
-        String describe(float magnitude, String statName) {
-            return pctMore(magnitude, statName);
         }
 
         @Override
@@ -89,8 +70,6 @@ public enum StatMode {
     abstract void apply(MutableStat stat, String modId, float magnitude);
 
     abstract void apply(StatBonus stat, String modId, float magnitude);
-
-    abstract String describe(float magnitude, String statName);
 
     abstract float inverse(float magnitude);
 }

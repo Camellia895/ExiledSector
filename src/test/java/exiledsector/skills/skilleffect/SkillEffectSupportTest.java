@@ -87,12 +87,12 @@ class SkillEffectSupportTest {
 
     @Test
     void pctMoreDescribesAPositiveMagnitudeAsMore() {
-        assertEquals("30% more beam weapon damage.", SkillEffectText.pctMore(30f, "beam weapon damage"));
+        assertEquals("<good>30%</good> more beam weapon damage.", StatMode.MULT.description(30f, "beam weapon damage").toMarkup());
     }
 
     @Test
     void pctMoreDescribesANegativeMagnitudeAsLess() {
-        assertEquals("20% less flux dissipation.", SkillEffectText.pctMore(-20f, "flux dissipation"));
+        assertEquals("<bad>20%</bad> less flux dissipation.", StatMode.MULT.description(-20f, "flux dissipation").toMarkup());
     }
 
     @Test
