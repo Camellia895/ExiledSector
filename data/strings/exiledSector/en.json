@@ -1,7 +1,4 @@
 {
-    "meta.font": "graphics/fonts/orbitron20aabold.fnt",
-    "meta.fakeBold": "true",
-
     "format.list.sep": ", ",
     "format.sentences": "{a} {b}",
 

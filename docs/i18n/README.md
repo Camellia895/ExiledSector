@@ -14,7 +14,7 @@ All player-visible text lives in message catalogues under `data/strings/exiledSe
 
 ## Where text is drawn
 
-- **Our own UI (the skill tree screen):** this is drawn by the mod with LazyLib, using the font named by `meta.font`. It can always show the chosen language.
+- **Our own UI (the skill tree screen):** this is drawn by the mod with LazyLib, using Orbitron, or the font a language names with `meta.font`. It can always show the chosen language.
 - **Game-drawn text (LunaLib settings, dialogs, the codex, combat floaters and hull mod text):** this uses the game's fonts. It switches to Chinese only when the game can display Chinese characters, meaning its locale is Chinese or `cjkMode` is on. Otherwise it stays in English.
 
 ## Writing strings
@@ -34,7 +34,7 @@ All player-visible text lives in message catalogues under `data/strings/exiledSe
 `CatalogueLintTest` checks every catalogue:
 - placeholders and tags must match English;
 - tags must be balanced;
-- every key must match an English key or a data id.
+- every key must match an English key or a data id, except `meta.*` settings, which have no English counterpart.
 
 It also writes `target/i18n/missing-<locale>.txt`, which lists untranslated strings; `release.ps1` warns when that file isn't empty.
 
@@ -42,7 +42,7 @@ It also writes `target/i18n/missing-<locale>.txt`, which lists untranslated stri
 
 A translation mod can ship `data/strings/exiledSector/<locale>.json`, for example `ru.json` or `ja.json`. Starsector merges it into our catalogue. It can also override individual keys of an existing language.
 
-- **Fonts:** if the language needs characters Orbitron lacks, set `meta.font` to a single-page BMFont atlas and ship it too. LazyLib can't read multi-page fonts.
+- **Fonts:** if the language needs characters Orbitron lacks, set `meta.font` to a single-page BMFont atlas and ship it too. LazyLib can't read multi-page fonts. Set `meta.fakeBold` to `false` if the double-drawn bold smears the glyphs.
 - **Generating an atlas:** use the test-scope `BitmapFontGenerator`:
 
 ```

@@ -13,6 +13,8 @@ import java.util.function.Function;
 
 public final class Catalogue {
 
+    static final String METADATA_PREFIX = "meta.";
+
     private static final Logger LOG = Logger.getLogger(Catalogue.class);
 
     private final String locale;

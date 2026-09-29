@@ -33,6 +33,9 @@ final class CatalogueLint {
             String key = entry.getKey();
             String value = entry.getValue();
             checkValue(problems, locale, key, value);
+            if (key.startsWith(Catalogue.METADATA_PREFIX)) {
+                continue;
+            }
             String source = source(key, english, dataSources);
             if (source == null) {
                 problems.add(locale + " " + key + ": no English string or data text with this key");

@@ -118,6 +118,12 @@ class CatalogueLintTest {
     }
 
     @Test
+    void metadataKeysNeedNoEnglishSource() {
+        assertEquals(List.of(), CatalogueLint.translationProblems("zh_CN", Map.of(),
+                Map.of("meta.font", "graphics/fonts/exiledSector/notosanssc.fnt", "meta.fakeBold", "false"), Map.of()));
+    }
+
+    @Test
     void checksDataTranslationsAgainstTheEnglishDataText() {
         Map<String, String> sources = Map.of("skillType.armor.description", "Adds <good>armor</good>.");
 

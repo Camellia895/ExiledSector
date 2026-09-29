@@ -85,12 +85,11 @@ class CatalogueTest {
     }
 
     @Test
-    void theRealPseudoLocaleKeepsTheEnglishFontSettings() {
-        Catalogue english = RealCatalogue.english();
-        Catalogue pseudo = RealCatalogue.of(PseudoLocale.LOCALE);
-
-        assertEquals(english.raw("meta.font"), pseudo.raw("meta.font"));
-        assertEquals(english.raw("meta.fakeBold"), pseudo.raw("meta.fakeBold"));
+    void englishAndThePseudoLocaleLeaveTheFontSettingsToTheCodeDefaults() {
+        for (Catalogue catalogue : List.of(RealCatalogue.english(), RealCatalogue.of(PseudoLocale.LOCALE))) {
+            assertFalse(catalogue.has("meta.font"));
+            assertFalse(catalogue.has("meta.fakeBold"));
+        }
     }
 
     @Test
