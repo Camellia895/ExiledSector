@@ -1414,18 +1414,18 @@ effect|SHIELD_DAMAGE_TAKEN_MULT|12.5	1	<good>12.5%</good> more damage taken by s
 effect|SHIELD_DAMAGE_TAKEN_MULT|100.0	1	<good>100%</good> more damage taken by shields.
 effect|SHIELD_DAMAGE_TAKEN_MULT|-10.0	1	<bad>10%</bad> less damage taken by shields.
 effect|SHIELD_DAMAGE_TAKEN_MULT|-12.5	1	<bad>12.5%</bad> less damage taken by shields.
-effect|SHIELD_PIERCE_CHANCE_MULT|1.0	0	<good>1%</good> more chance for shields to be pierced by EMP arcs.
-effect|SHIELD_PIERCE_CHANCE_MULT|10.0	0	<good>10%</good> more chance for shields to be pierced by EMP arcs.
-effect|SHIELD_PIERCE_CHANCE_MULT|12.5	0	<good>12.5%</good> more chance for shields to be pierced by EMP arcs.
-effect|SHIELD_PIERCE_CHANCE_MULT|100.0	0	<good>100%</good> more chance for shields to be pierced by EMP arcs.
-effect|SHIELD_PIERCE_CHANCE_MULT|-10.0	0	<bad>10%</bad> less chance for shields to be pierced by EMP arcs.
-effect|SHIELD_PIERCE_CHANCE_MULT|-12.5	0	<bad>12.5%</bad> less chance for shields to be pierced by EMP arcs.
-effect|SHIELD_PIERCE_CHANCE_PERCENT|1.0	0	Increases chance for shields to be pierced by EMP arcs by <good>1%</good>.
-effect|SHIELD_PIERCE_CHANCE_PERCENT|10.0	0	Increases chance for shields to be pierced by EMP arcs by <good>10%</good>.
-effect|SHIELD_PIERCE_CHANCE_PERCENT|12.5	0	Increases chance for shields to be pierced by EMP arcs by <good>12.5%</good>.
-effect|SHIELD_PIERCE_CHANCE_PERCENT|100.0	0	Increases chance for shields to be pierced by EMP arcs by <good>100%</good>.
-effect|SHIELD_PIERCE_CHANCE_PERCENT|-10.0	0	Decreases chance for shields to be pierced by EMP arcs by <bad>10%</bad>.
-effect|SHIELD_PIERCE_CHANCE_PERCENT|-12.5	0	Decreases chance for shields to be pierced by EMP arcs by <bad>12.5%</bad>.
+effect|SHIELD_PIERCE_CHANCE_MULT|1.0	1	<good>1%</good> more chance for shields to be pierced by EMP arcs.
+effect|SHIELD_PIERCE_CHANCE_MULT|10.0	1	<good>10%</good> more chance for shields to be pierced by EMP arcs.
+effect|SHIELD_PIERCE_CHANCE_MULT|12.5	1	<good>12.5%</good> more chance for shields to be pierced by EMP arcs.
+effect|SHIELD_PIERCE_CHANCE_MULT|100.0	1	<good>100%</good> more chance for shields to be pierced by EMP arcs.
+effect|SHIELD_PIERCE_CHANCE_MULT|-10.0	1	<bad>10%</bad> less chance for shields to be pierced by EMP arcs.
+effect|SHIELD_PIERCE_CHANCE_MULT|-12.5	1	<bad>12.5%</bad> less chance for shields to be pierced by EMP arcs.
+effect|SHIELD_PIERCE_CHANCE_PERCENT|1.0	1	Increases chance for shields to be pierced by EMP arcs by <good>1%</good>.
+effect|SHIELD_PIERCE_CHANCE_PERCENT|10.0	1	Increases chance for shields to be pierced by EMP arcs by <good>10%</good>.
+effect|SHIELD_PIERCE_CHANCE_PERCENT|12.5	1	Increases chance for shields to be pierced by EMP arcs by <good>12.5%</good>.
+effect|SHIELD_PIERCE_CHANCE_PERCENT|100.0	1	Increases chance for shields to be pierced by EMP arcs by <good>100%</good>.
+effect|SHIELD_PIERCE_CHANCE_PERCENT|-10.0	1	Decreases chance for shields to be pierced by EMP arcs by <bad>10%</bad>.
+effect|SHIELD_PIERCE_CHANCE_PERCENT|-12.5	1	Decreases chance for shields to be pierced by EMP arcs by <bad>12.5%</bad>.
 effect|SHIELD_RAISE_RATE_PERCENT|1.0	0	Increases shield raise rate by <good>1%</good>.
 effect|SHIELD_RAISE_RATE_PERCENT|10.0	0	Increases shield raise rate by <good>10%</good>.
 effect|SHIELD_RAISE_RATE_PERCENT|12.5	0	Increases shield raise rate by <good>12.5%</good>.
@@ -2423,19 +2423,19 @@ type|hardened_subsystems|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</h
 type|hardened_subsystems|CAPITAL_SHIP|0	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
 type|hardened_subsystems|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Hardened Subsystems.
 type|hardenedshieldemitter|null|0	1	<bad>10%</bad> less damage taken by shields.
-type|hardenedshieldemitter|null|1	0	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
+type|hardenedshieldemitter|null|1	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 type|hardenedshieldemitter|null|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Hardened Shields.
 type|hardenedshieldemitter|FRIGATE|0	1	<bad>10%</bad> less damage taken by shields.
-type|hardenedshieldemitter|FRIGATE|1	0	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
+type|hardenedshieldemitter|FRIGATE|1	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 type|hardenedshieldemitter|FRIGATE|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Hardened Shields.
 type|hardenedshieldemitter|DESTROYER|0	1	<bad>10%</bad> less damage taken by shields.
-type|hardenedshieldemitter|DESTROYER|1	0	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
+type|hardenedshieldemitter|DESTROYER|1	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 type|hardenedshieldemitter|DESTROYER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Hardened Shields.
 type|hardenedshieldemitter|CRUISER|0	1	<bad>10%</bad> less damage taken by shields.
-type|hardenedshieldemitter|CRUISER|1	0	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
+type|hardenedshieldemitter|CRUISER|1	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 type|hardenedshieldemitter|CRUISER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Hardened Shields.
 type|hardenedshieldemitter|CAPITAL_SHIP|0	1	<bad>10%</bad> less damage taken by shields.
-type|hardenedshieldemitter|CAPITAL_SHIP|1	0	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
+type|hardenedshieldemitter|CAPITAL_SHIP|1	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 type|hardenedshieldemitter|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Hardened Shields.
 type|heavy_ballistics_integration|null|0	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 type|heavy_ballistics_integration|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Heavy Ballistics Integration.
@@ -3267,7 +3267,7 @@ summary|option0|FRIGATE|83	0	When this ship is destroyed, it detonates violently
 summary|option0|FRIGATE|84	0	Increases effective strength of planetary raids, up to the total number of marines in the fleet by <good>100</good>.
 summary|option0|FRIGATE|85	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
 summary|option0|FRIGATE|86	1	<bad>34.21%</bad> less damage taken by shields.
-summary|option0|FRIGATE|87	0	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
+summary|option0|FRIGATE|87	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 summary|option0|FRIGATE|88	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 summary|option0|FRIGATE|89	0	Increases hull points by <good>150</good>.
 summary|option0|FRIGATE|90	0	Causes 50% of beam weapon damage dealt to shields to be hard flux.
@@ -3422,7 +3422,7 @@ summary|option0|DESTROYER|83	0	When this ship is destroyed, it detonates violent
 summary|option0|DESTROYER|84	0	Increases effective strength of planetary raids, up to the total number of marines in the fleet by <good>100</good>.
 summary|option0|DESTROYER|85	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
 summary|option0|DESTROYER|86	1	<bad>34.21%</bad> less damage taken by shields.
-summary|option0|DESTROYER|87	0	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
+summary|option0|DESTROYER|87	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 summary|option0|DESTROYER|88	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 summary|option0|DESTROYER|89	0	Increases hull points by <good>300</good>.
 summary|option0|DESTROYER|90	0	Causes 50% of beam weapon damage dealt to shields to be hard flux.
@@ -3577,7 +3577,7 @@ summary|option0|CRUISER|83	0	When this ship is destroyed, it detonates violently
 summary|option0|CRUISER|84	0	Increases effective strength of planetary raids, up to the total number of marines in the fleet by <good>100</good>.
 summary|option0|CRUISER|85	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
 summary|option0|CRUISER|86	1	<bad>34.21%</bad> less damage taken by shields.
-summary|option0|CRUISER|87	0	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
+summary|option0|CRUISER|87	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 summary|option0|CRUISER|88	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 summary|option0|CRUISER|89	0	Increases hull points by <good>400</good>.
 summary|option0|CRUISER|90	0	Causes 50% of beam weapon damage dealt to shields to be hard flux.
@@ -3732,7 +3732,7 @@ summary|option0|CAPITAL_SHIP|83	0	When this ship is destroyed, it detonates viol
 summary|option0|CAPITAL_SHIP|84	0	Increases effective strength of planetary raids, up to the total number of marines in the fleet by <good>100</good>.
 summary|option0|CAPITAL_SHIP|85	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
 summary|option0|CAPITAL_SHIP|86	1	<bad>34.21%</bad> less damage taken by shields.
-summary|option0|CAPITAL_SHIP|87	0	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
+summary|option0|CAPITAL_SHIP|87	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 summary|option0|CAPITAL_SHIP|88	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 summary|option0|CAPITAL_SHIP|89	0	Increases hull points by <good>500</good>.
 summary|option0|CAPITAL_SHIP|90	0	Causes 50% of beam weapon damage dealt to shields to be hard flux.
@@ -3887,7 +3887,7 @@ summary|option1|FRIGATE|83	0	When this ship is destroyed, it detonates violently
 summary|option1|FRIGATE|84	0	Increases effective strength of planetary raids, up to the total number of marines in the fleet by <good>100</good>.
 summary|option1|FRIGATE|85	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
 summary|option1|FRIGATE|86	1	<bad>34.21%</bad> less damage taken by shields.
-summary|option1|FRIGATE|87	0	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
+summary|option1|FRIGATE|87	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 summary|option1|FRIGATE|88	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 summary|option1|FRIGATE|89	0	Increases hull points by <good>150</good>.
 summary|option1|FRIGATE|90	0	Causes 50% of beam weapon damage dealt to shields to be hard flux.
@@ -4042,7 +4042,7 @@ summary|option1|DESTROYER|83	0	When this ship is destroyed, it detonates violent
 summary|option1|DESTROYER|84	0	Increases effective strength of planetary raids, up to the total number of marines in the fleet by <good>100</good>.
 summary|option1|DESTROYER|85	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
 summary|option1|DESTROYER|86	1	<bad>34.21%</bad> less damage taken by shields.
-summary|option1|DESTROYER|87	0	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
+summary|option1|DESTROYER|87	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 summary|option1|DESTROYER|88	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 summary|option1|DESTROYER|89	0	Increases hull points by <good>300</good>.
 summary|option1|DESTROYER|90	0	Causes 50% of beam weapon damage dealt to shields to be hard flux.
@@ -4197,7 +4197,7 @@ summary|option1|CRUISER|83	0	When this ship is destroyed, it detonates violently
 summary|option1|CRUISER|84	0	Increases effective strength of planetary raids, up to the total number of marines in the fleet by <good>100</good>.
 summary|option1|CRUISER|85	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
 summary|option1|CRUISER|86	1	<bad>34.21%</bad> less damage taken by shields.
-summary|option1|CRUISER|87	0	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
+summary|option1|CRUISER|87	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 summary|option1|CRUISER|88	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 summary|option1|CRUISER|89	0	Increases hull points by <good>400</good>.
 summary|option1|CRUISER|90	0	Causes 50% of beam weapon damage dealt to shields to be hard flux.
@@ -4352,7 +4352,7 @@ summary|option1|CAPITAL_SHIP|83	0	When this ship is destroyed, it detonates viol
 summary|option1|CAPITAL_SHIP|84	0	Increases effective strength of planetary raids, up to the total number of marines in the fleet by <good>100</good>.
 summary|option1|CAPITAL_SHIP|85	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
 summary|option1|CAPITAL_SHIP|86	1	<bad>34.21%</bad> less damage taken by shields.
-summary|option1|CAPITAL_SHIP|87	0	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
+summary|option1|CAPITAL_SHIP|87	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 summary|option1|CAPITAL_SHIP|88	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 summary|option1|CAPITAL_SHIP|89	0	Increases hull points by <good>500</good>.
 summary|option1|CAPITAL_SHIP|90	0	Causes 50% of beam weapon damage dealt to shields to be hard flux.
@@ -4507,7 +4507,7 @@ summary|option2|FRIGATE|83	0	When this ship is destroyed, it detonates violently
 summary|option2|FRIGATE|84	0	Increases effective strength of planetary raids, up to the total number of marines in the fleet by <good>100</good>.
 summary|option2|FRIGATE|85	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
 summary|option2|FRIGATE|86	1	<bad>34.21%</bad> less damage taken by shields.
-summary|option2|FRIGATE|87	0	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
+summary|option2|FRIGATE|87	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 summary|option2|FRIGATE|88	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 summary|option2|FRIGATE|89	0	Increases hull points by <good>150</good>.
 summary|option2|FRIGATE|90	0	Causes 50% of beam weapon damage dealt to shields to be hard flux.
@@ -4662,7 +4662,7 @@ summary|option2|DESTROYER|83	0	When this ship is destroyed, it detonates violent
 summary|option2|DESTROYER|84	0	Increases effective strength of planetary raids, up to the total number of marines in the fleet by <good>100</good>.
 summary|option2|DESTROYER|85	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
 summary|option2|DESTROYER|86	1	<bad>34.21%</bad> less damage taken by shields.
-summary|option2|DESTROYER|87	0	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
+summary|option2|DESTROYER|87	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 summary|option2|DESTROYER|88	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 summary|option2|DESTROYER|89	0	Increases hull points by <good>300</good>.
 summary|option2|DESTROYER|90	0	Causes 50% of beam weapon damage dealt to shields to be hard flux.
@@ -4817,7 +4817,7 @@ summary|option2|CRUISER|83	0	When this ship is destroyed, it detonates violently
 summary|option2|CRUISER|84	0	Increases effective strength of planetary raids, up to the total number of marines in the fleet by <good>100</good>.
 summary|option2|CRUISER|85	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
 summary|option2|CRUISER|86	1	<bad>34.21%</bad> less damage taken by shields.
-summary|option2|CRUISER|87	0	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
+summary|option2|CRUISER|87	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 summary|option2|CRUISER|88	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 summary|option2|CRUISER|89	0	Increases hull points by <good>400</good>.
 summary|option2|CRUISER|90	0	Causes 50% of beam weapon damage dealt to shields to be hard flux.
@@ -4972,7 +4972,7 @@ summary|option2|CAPITAL_SHIP|83	0	When this ship is destroyed, it detonates viol
 summary|option2|CAPITAL_SHIP|84	0	Increases effective strength of planetary raids, up to the total number of marines in the fleet by <good>100</good>.
 summary|option2|CAPITAL_SHIP|85	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
 summary|option2|CAPITAL_SHIP|86	1	<bad>34.21%</bad> less damage taken by shields.
-summary|option2|CAPITAL_SHIP|87	0	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
+summary|option2|CAPITAL_SHIP|87	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 summary|option2|CAPITAL_SHIP|88	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 summary|option2|CAPITAL_SHIP|89	0	Increases hull points by <good>500</good>.
 summary|option2|CAPITAL_SHIP|90	0	Causes 50% of beam weapon damage dealt to shields to be hard flux.
