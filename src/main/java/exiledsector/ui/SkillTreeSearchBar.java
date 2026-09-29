@@ -2,6 +2,7 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
+import exiledsector.i18n.Translation;
 import exiledsector.ui.node.NodeSearch;
 import exiledsector.ui.util.BorderedPanel;
 import org.lazywizard.lazylib.ui.LazyFont;
@@ -18,7 +19,6 @@ final class SkillTreeSearchBar {
     private static final float TEXT_PADDING = 22f;
     private static final float FONT_SIZE = SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE;
     private static final float CARET_BLINK_SECONDS = 0.5f;
-    private static final String PLACEHOLDER = "Search nodes...";
     private static final String CARET = "|";
     private static final Color TEXT_COLOR = SkillTreePanelStyle.TOOLTIP_BODY_COLOR;
     private static final Color PLACEHOLDER_COLOR = new Color(130, 130, 130);
@@ -95,7 +95,7 @@ final class SkillTreeSearchBar {
     private String displayText() {
         String query = search.getQuery();
         if (!focused) {
-            return query.isEmpty() ? PLACEHOLDER : query;
+            return query.isEmpty() ? Translation.text("ui.search.placeholder") : query;
         }
         boolean caretVisible = ((int) (caretSeconds / CARET_BLINK_SECONDS)) % 2 == 0;
         return caretVisible ? query + CARET : query;

@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import exiledsector.i18n.Translation;
 import lunalib.lunaRefit.BaseRefitButton;
 import lunalib.lunaRefit.LunaRefitManager;
 
@@ -34,7 +35,7 @@ public class SkillTreeRefitButton extends BaseRefitButton {
 
     @Override
     public String getButtonName(FleetMemberAPI member, ShipVariantAPI variant) {
-        return "Skill Tree";
+        return Translation.text("ui.refitButton");
     }
 
     @Override

@@ -2,6 +2,7 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
+import exiledsector.i18n.Translation;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.progression.ShipLevelConfig;
@@ -39,11 +40,10 @@ final class SkillTreeLevelBar {
     }
 
     private String label() {
-        String label = "Level " + level;
         if (bankedFreeAllocations > 0) {
-            label += " - +" + bankedFreeAllocations + " Free";
+            return Translation.msg("ui.levelBar.levelWithFree").arg("level", level).arg("free", bankedFreeAllocations).text();
         }
-        return label;
+        return Translation.msg("ui.levelBar.level").arg("level", level).text();
     }
 
     boolean isHovered(PositionAPI position, float x, float y) {

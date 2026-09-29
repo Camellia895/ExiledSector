@@ -1,7 +1,7 @@
 package exiledsector.ui.node;
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.ShipSkillData;
@@ -29,12 +29,6 @@ import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE;
 final class SkillTreeNodeTooltipRenderer {
 
     private static final float TOOLTIP_MAX_TEXT_HEIGHT = 800f;
-
-    private static final String OPTIONAL_NODE_HINT = "Click to choose an option.";
-    private static final String FREE_NODE_NOTE = "Granted free by a level-up.";
-    private static final String LOCKED_NODE_TITLE = "Unidentified";
-    private static final String LOCKED_NODE_BODY = "Unidentified - explore the sector to discover this node";
-    private static final String LOCKED_NODE_HINT = "Hullmod blueprints would be a good place to start searching.";
 
     private final FleetMemberAPI member;
     private final SkillTreePanelStyle style;
@@ -99,27 +93,27 @@ final class SkillTreeNodeTooltipRenderer {
     }
 
     private String titleText(SkillNode node, SkillType effectiveType, ShipSkillData data) {
-        return SkillTypeUnlockStatus.isHidden(node.getType(), data) ? LOCKED_NODE_TITLE : effectiveType.getDisplayName();
+        return SkillTypeUnlockStatus.isHidden(node.getType(), data) ? Translation.text("ui.node.lockedTitle") : effectiveType.getDisplayName();
     }
 
     private List<DescriptionLine> bodyLines(SkillNode node, SkillType effectiveType, boolean showOptionalHint, ShipSkillData data) {
         if (SkillTypeUnlockStatus.isHidden(node.getType(), data)) {
-            return List.of(plainLine(LOCKED_NODE_BODY), plainLine(LOCKED_NODE_HINT));
+            return List.of(plainLine("ui.node.lockedBody"), plainLine("ui.node.lockedHint"));
         }
         List<DescriptionLine> lines = new ArrayList<>();
         if (showOptionalHint) {
-            lines.add(plainLine(OPTIONAL_NODE_HINT));
+            lines.add(plainLine("ui.node.optionalHint"));
         } else {
             lines.addAll(SkillNode.describeTypeLines(effectiveType, member.getHullSpec().getHullSize()));
         }
         if (data.isFreeNode(node.getId())) {
-            lines.add(plainLine(FREE_NODE_NOTE));
+            lines.add(plainLine("ui.node.freeNote"));
         }
         return lines;
     }
 
-    private static DescriptionLine plainLine(String text) {
-        return new DescriptionLine(StyledText.of(text), false);
+    private static DescriptionLine plainLine(String key) {
+        return new DescriptionLine(Translation.styled(key), false);
     }
 
     private static String joined(List<DescriptionLine> lines) {

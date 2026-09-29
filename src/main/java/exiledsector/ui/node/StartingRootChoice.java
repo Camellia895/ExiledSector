@@ -14,7 +14,6 @@ final class StartingRootChoice {
 
     enum Phase { CHOOSING, FLYING, CHOSEN }
 
-    static final String PROMPT = "Choose a starting location - this cannot be undone";
     static final float FLIGHT_SECONDS = 1.5f;
     static final float ROOT_FOOTPRINT = NODE_SIZE * SkillTier.ROOT.getSizeMultiplier();
     static final float CLUSTER_RADIUS = ROOT_FOOTPRINT * 0.7f;

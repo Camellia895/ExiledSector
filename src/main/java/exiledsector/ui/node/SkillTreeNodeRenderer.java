@@ -2,6 +2,7 @@ package exiledsector.ui.node;
 
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.i18n.Translation;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
@@ -158,7 +159,7 @@ public final class SkillTreeNodeRenderer {
             return;
         }
         if (startingRootPrompt == null) {
-            startingRootPrompt = SkillTreePanelStyle.buildSimpleText(font, StartingRootChoice.PROMPT,
+            startingRootPrompt = SkillTreePanelStyle.buildSimpleText(font, Translation.text("ui.node.startingRootPrompt"),
                     SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR, LazyFont.TextAnchor.BOTTOM_CENTER);
         }
         startingRootPrompt.draw(x, y);

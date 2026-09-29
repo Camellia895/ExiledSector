@@ -6,6 +6,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.effects.SkillTreeHullMod;
+import exiledsector.i18n.Translation;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.progression.ShipLevelConfig;
@@ -28,7 +29,6 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private static final float ZOOM_STEP = 1.1f;
     private static final float SHIP_CARD_FRAME_OUTSET = 8f;
 
-    private static final String READOUT_TOOLTIP_TITLE = "Level, XP & Ordnance Points";
 
     private final String readoutTooltipBody;
 
@@ -261,7 +261,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         if (!dragging && mouseKnown) {
             nodeRenderer.renderHoverTooltip(viewport, mouseX, mouseY, alphaMult);
             if (ordnancePointsBar.isHovered(position, mouseX, mouseY) || levelBar.isHovered(position, mouseX, mouseY)) {
-                readoutTooltipRenderer.render(READOUT_TOOLTIP_TITLE, readoutTooltipBody, mouseX, mouseY, alphaMult);
+                readoutTooltipRenderer.render(Translation.text("ui.readout.title"), readoutTooltipBody, mouseX, mouseY, alphaMult);
             }
         }
     }
@@ -269,11 +269,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private static String buildReadoutTooltipBody(FleetMemberAPI member) {
         int opCost = SkillNodeOpCost.perNode(member.getHullSpec());
         int maxNodes = ShipLevelConfig.maxAllocatedNodes();
-        return "Allocating nodes costs ordinance points (different based on hull size). For this hull, the cost is " + opCost + "\n\n"
-                + "Each level this ship gains allows one free allocation. When the ship levels up, it will refund ordinance points spent on the skill tree.\n\n"
-                + "You can allocate a maximum of " + maxNodes + " nodes.\n\n"
-                + "Earn XP by destroying enemy ships. The larger the hull, the more XP gained. Losing combat awards half XP.\n\n"
-                + "Hold Ctrl while allocating an optional node to allocate the same type again without reopening the picker.";
+        return Translation.msg("ui.readout.body").arg("opCost", opCost).arg("maxNodes", maxNodes).text();
     }
 
     private void drawShipCardFrame(float alphaMult) {

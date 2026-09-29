@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
+import exiledsector.i18n.Translation;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedSkillEffects;
 import exiledsector.skills.ShipSkillData;
@@ -24,6 +25,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -228,60 +230,61 @@ final class SkillTreeStatPanel {
         ShipHullSpecAPI hullSpec = member.getHullSpec();
 
         List<StatLine> general = new ArrayList<>();
-        addComparedStat(general, "Hull Points", stats.getHullBonus().computeEffective(hullSpec.getHitpoints()), hullSpec.getHitpoints());
-        addComparedStat(general, "armor", stats.getArmorBonus().computeEffective(hullSpec.getArmorRating()), hullSpec.getArmorRating());
-        addComparedStat(general, "Max Flux", stats.getFluxCapacity().getModifiedValue(), stats.getFluxCapacity().getBaseValue());
-        addComparedStat(general, "Flux Dissipation", stats.getFluxDissipation().getModifiedValue(), stats.getFluxDissipation().getBaseValue());
-        groups.add(new StatGroup("General", general));
+        addComparedStat(general, Translation.text("ui.stats.hullPoints"), stats.getHullBonus().computeEffective(hullSpec.getHitpoints()), hullSpec.getHitpoints());
+        addComparedStat(general, Translation.text("ui.stats.armor"), stats.getArmorBonus().computeEffective(hullSpec.getArmorRating()), hullSpec.getArmorRating());
+        addComparedStat(general, Translation.text("ui.stats.maxFlux"), stats.getFluxCapacity().getModifiedValue(), stats.getFluxCapacity().getBaseValue());
+        addComparedStat(general, Translation.text("ui.stats.fluxDissipation"), stats.getFluxDissipation().getModifiedValue(), stats.getFluxDissipation().getBaseValue());
+        groups.add(new StatGroup(Translation.text("ui.stats.group.general"), general));
 
         List<StatLine> mobility = new ArrayList<>();
-        addComparedStat(mobility, "Top Speed", stats.getMaxSpeed().getModifiedValue(), stats.getMaxSpeed().getBaseValue());
-        addComparedStat(mobility, "Max Turn Rate", stats.getMaxTurnRate().getModifiedValue(), stats.getMaxTurnRate().getBaseValue());
-        addComparedStat(mobility, "Acceleration", stats.getAcceleration().getModifiedValue(), stats.getAcceleration().getBaseValue());
-        groups.add(new StatGroup("Mobility", mobility));
+        addComparedStat(mobility, Translation.text("ui.stats.topSpeed"), stats.getMaxSpeed().getModifiedValue(), stats.getMaxSpeed().getBaseValue());
+        addComparedStat(mobility, Translation.text("ui.stats.maxTurnRate"), stats.getMaxTurnRate().getModifiedValue(), stats.getMaxTurnRate().getBaseValue());
+        addComparedStat(mobility, Translation.text("ui.stats.acceleration"), stats.getAcceleration().getModifiedValue(), stats.getAcceleration().getBaseValue());
+        groups.add(new StatGroup(Translation.text("ui.stats.group.mobility"), mobility));
 
         ShieldAPI.ShieldType shieldType = ShieldSkillEffect.resolveDisplayShieldType(hullSpec.getShieldType(), AllocatedSkillEffects.forMember(member));
         if (shieldType != ShieldAPI.ShieldType.NONE) {
             List<StatLine> defense = new ArrayList<>();
-            defense.add(new StatLine("Shield Type", shieldType.name()));
+            defense.add(new StatLine(Translation.text("ui.stats.shieldType"), Translation.text("shieldType." + shieldType.name())));
             ShipHullSpecAPI.ShieldSpecAPI shieldSpec = getShieldSpecOrNull(hullSpec);
             if (shieldSpec != null) {
-                addComparedStat(defense, "Shield Arc", stats.getShieldArcBonus().computeEffective(shieldSpec.getArc()), shieldSpec.getArc());
-                addComparedStat(defense, "Shield Efficiency",
+                addComparedStat(defense, Translation.text("ui.stats.shieldArc"), stats.getShieldArcBonus().computeEffective(shieldSpec.getArc()), shieldSpec.getArc());
+                addComparedStat(defense, Translation.text("ui.stats.shieldEfficiency"),
                         hullSpec.getBaseShieldFluxPerDamageAbsorbed() * stats.getShieldAbsorptionMult().getModifiedValue(),
                         hullSpec.getBaseShieldFluxPerDamageAbsorbed() * stats.getShieldAbsorptionMult().getBaseValue());
-                addComparedStatLowerIsBetter(defense, "Shield Upkeep",
+                addComparedStatLowerIsBetter(defense, Translation.text("ui.stats.shieldUpkeep"),
                         shieldSpec.getUpkeepCost() * stats.getShieldUpkeepMult().getModifiedValue(),
                         shieldSpec.getUpkeepCost() * stats.getShieldUpkeepMult().getBaseValue());
             } else {
-                addStat(defense, "Shield Arc", stats.getShieldArcBonus().computeEffective(ShieldSkillEffect.MAKESHIFT_SHIELD_ARC));
-                addStat(defense, "Shield Efficiency", ShieldSkillEffect.MAKESHIFT_SHIELD_EFFICIENCY * stats.getShieldAbsorptionMult().getModifiedValue());
+                addStat(defense, Translation.text("ui.stats.shieldArc"), stats.getShieldArcBonus().computeEffective(ShieldSkillEffect.MAKESHIFT_SHIELD_ARC));
+                addStat(defense, Translation.text("ui.stats.shieldEfficiency"), ShieldSkillEffect.MAKESHIFT_SHIELD_EFFICIENCY * stats.getShieldAbsorptionMult().getModifiedValue());
             }
-            groups.add(new StatGroup("Defense", defense));
+            groups.add(new StatGroup(Translation.text("ui.stats.group.defense"), defense));
         }
 
         List<StatLine> logistics = new ArrayList<>();
-        logistics.add(new StatLine("Crew", Math.round(member.getMinCrew()) + "-" + Math.round(member.getMaxCrew())));
-        addComparedStat(logistics, "Cargo Capacity", member.getCargoCapacity(), hullSpec.getCargo());
-        addComparedStat(logistics, "Fuel Capacity", member.getFuelCapacity(), hullSpec.getFuel());
-        addStat(logistics, "Fuel Use", member.getFuelUse());
-        addComparedStat(logistics, "Burn Level", stats.getMaxBurnLevel().getModifiedValue(), stats.getMaxBurnLevel().getBaseValue());
-        addComparedStatLowerIsBetter(logistics, "Sensor Profile", stats.getSensorProfile().getModifiedValue(), stats.getSensorProfile().getBaseValue());
-        addComparedStat(logistics, "Sensor Strength", stats.getSensorStrength().getModifiedValue(), stats.getSensorStrength().getBaseValue());
+        logistics.add(new StatLine(Translation.text("ui.stats.crew"), Math.round(member.getMinCrew()) + "-" + Math.round(member.getMaxCrew())));
+        addComparedStat(logistics, Translation.text("ui.stats.cargoCapacity"), member.getCargoCapacity(), hullSpec.getCargo());
+        addComparedStat(logistics, Translation.text("ui.stats.fuelCapacity"), member.getFuelCapacity(), hullSpec.getFuel());
+        addStat(logistics, Translation.text("ui.stats.fuelUse"), member.getFuelUse());
+        addComparedStat(logistics, Translation.text("ui.stats.burnLevel"), stats.getMaxBurnLevel().getModifiedValue(), stats.getMaxBurnLevel().getBaseValue());
+        addComparedStatLowerIsBetter(logistics, Translation.text("ui.stats.sensorProfile"), stats.getSensorProfile().getModifiedValue(), stats.getSensorProfile().getBaseValue());
+        addComparedStat(logistics, Translation.text("ui.stats.sensorStrength"), stats.getSensorStrength().getModifiedValue(), stats.getSensorStrength().getBaseValue());
         try {
             ShipOpBudget budget = ShipOpBudget.of(member, variant);
-            logistics.add(new StatLine("Ordnance Points", budget.used + "/" + budget.total));
+            logistics.add(new StatLine(Translation.text("ui.stats.ordnancePoints"), budget.used + "/" + budget.total));
         } catch (RuntimeException e) {
             Logger.getLogger(SkillTreeStatPanel.class).error("Failed to compute ordnance point stats", e);
         }
         ShipSkillData skillData = ShipSkillDataManager.get(member.getId());
-        logistics.add(new StatLine("Level", skillData.getLevel() + " (" + Math.round(skillData.getXp()) + " XP)"));
+        logistics.add(new StatLine(Translation.text("ui.stats.level"), Translation.msg("ui.stats.levelValue").arg("level", skillData.getLevel())
+                .arg("xp", Math.round(skillData.getXp())).text()));
         if (skillData.getBankedFreeAllocations() > 0) {
-            logistics.add(new StatLine("Free Allocations Banked", String.valueOf(skillData.getBankedFreeAllocations())));
+            logistics.add(new StatLine(Translation.text("ui.stats.freeAllocationsBanked"), String.valueOf(skillData.getBankedFreeAllocations())));
         }
-        addStat(logistics, "Max Combat Readiness", stats.getMaxCombatReadiness().getModifiedValue() * 100f, "%");
-        addComparedStatLowerIsBetter(logistics, "Supplies/mo", stats.getSuppliesPerMonth().getModifiedValue(), stats.getSuppliesPerMonth().getBaseValue());
-        groups.add(new StatGroup("Logistics", logistics));
+        addStat(logistics, Translation.text("ui.stats.maxCombatReadiness"), stats.getMaxCombatReadiness().getModifiedValue() * 100f, "%");
+        addComparedStatLowerIsBetter(logistics, Translation.text("ui.stats.suppliesPerMonth"), stats.getSuppliesPerMonth().getModifiedValue(), stats.getSuppliesPerMonth().getBaseValue());
+        groups.add(new StatGroup(Translation.text("ui.stats.group.logistics"), logistics));
 
         return groups;
     }
@@ -420,6 +423,6 @@ final class SkillTreeStatPanel {
         if (value == Math.round(value)) {
             return String.valueOf(Math.round(value));
         }
-        return String.format("%.1f", value);
+        return String.format(Locale.ROOT, "%.1f", value);
     }
 }
