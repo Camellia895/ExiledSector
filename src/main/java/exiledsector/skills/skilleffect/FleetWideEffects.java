@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.impl.hullmods.PhaseField;
+import exiledsector.i18n.Translation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +85,7 @@ public final class FleetWideEffects {
         float mult = Math.max(PhaseField.MIN_FIELD_MULT, Math.min(1f, totalProfile / total));
 
         fleet.getStats().getDetectedRangeMod()
-                .modifyMult(EXTENDED_PHASE_FIELD_MOD_ID, mult, "Phase ships and phase sensor networks in fleet");
+                .modifyMult(EXTENDED_PHASE_FIELD_MOD_ID, mult, Translation.gameText("modifier.phaseSensorNetworks"));
     }
 
     private static Float phaseSensorContribution(FleetMemberAPI member) {

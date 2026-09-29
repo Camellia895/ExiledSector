@@ -11,6 +11,7 @@ import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.effects.NpcFleetLeveller;
+import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.ui.VanillaText;
 import org.lwjgl.input.Keyboard;
@@ -40,6 +41,10 @@ public class NpcFleetInspectDialog implements CustomVisualDialogDelegate {
     @Override
     public void init(CustomPanelAPI panel, DialogCallbacks callbacks) {
         this.callbacks = callbacks;
+        I18n.forGameText(() -> buildPanel(panel));
+    }
+
+    private void buildPanel(CustomPanelAPI panel) {
         float width = panel.getPosition().getWidth();
         float height = panel.getPosition().getHeight();
 

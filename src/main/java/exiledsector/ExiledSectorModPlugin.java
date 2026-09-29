@@ -2,14 +2,19 @@ package exiledsector;
 
 import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.effects.CombatXpListener;
 import exiledsector.effects.NpcFleetDialogListener;
 import exiledsector.effects.NpcFleetInflationListener;
 import exiledsector.effects.NpcFleetSweepScript;
 import exiledsector.effects.SalvageBonusListener;
+import exiledsector.effects.SkillConflictWarningHullMod;
+import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.effects.SkillTreeInstaller;
 import exiledsector.i18n.I18n;
-import exiledsector.i18n.LocaleChain;
+import exiledsector.i18n.LanguageSetting;
+import exiledsector.i18n.Languages;
+import exiledsector.i18n.Translation;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.npc.NpcLayouts;
@@ -28,13 +33,43 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
 
     @Override
     public void onApplicationLoad() throws Exception {
-        I18n.load(LocaleChain.of(Locale.getDefault()));
+        loadLanguage();
         Global.getLogger(ExiledSectorModPlugin.class).info(LOG_TAG + " loaded");
+        localiseHullModNames();
         SkillTreeRefitButton.addButton();
         ExiledSectorSettings.register();
         SkillTree.load();
         CsvIdBlocklist.loadAll();
         NpcLayouts.load();
+    }
+
+    private static void loadLanguage() {
+        Locale jvmLocale = Locale.getDefault();
+        boolean gameRendersCjk = LanguageSetting.gameRendersCjk(jvmLocale);
+        I18n.load(LanguageSetting.resolve(LanguageSetting.AUTO, jvmLocale, gameRendersCjk));
+        ExiledSectorSettings.registerLanguage();
+        Languages chosen = LanguageSetting.resolve(LanguageSetting.selected(), jvmLocale, gameRendersCjk);
+        if (!chosen.equals(I18n.languages())) {
+            I18n.load(chosen);
+        }
+    }
+
+    private static void localiseHullModNames() {
+        I18n.forGameText(() -> {
+            localise(SkillTreeHullMod.ID, "hullmod.core.name", null);
+            localise(SkillConflictWarningHullMod.ID, "hullmod.conflict.name", "hullmod.conflict.description");
+        });
+    }
+
+    private static void localise(String hullModId, String nameKey, String descriptionKey) {
+        HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
+        if (spec == null) {
+            return;
+        }
+        spec.setDisplayName(Translation.text(nameKey));
+        if (descriptionKey != null) {
+            spec.setDescriptionFormat(Translation.text(descriptionKey));
+        }
     }
 
     @Override

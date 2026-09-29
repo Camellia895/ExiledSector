@@ -16,6 +16,10 @@ public final class Translation {
         return I18n.catalogue().template(key).render(Map.of());
     }
 
+    public static String gameText(String key) {
+        return I18n.forGameText(() -> text(key));
+    }
+
     public static Message msg(String key) {
         return new Message(key);
     }

@@ -10,8 +10,10 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.io.IOException;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -54,6 +56,20 @@ class I18nTest {
         I18n.load("en");
 
         assertEquals("[[a]]", Translation.text("a"));
+    }
+
+    @Test
+    void gameDrawnTextUsesTheGameCatalogueOnlyInsideItsScope() {
+        I18n.install(new Catalogue("zh_CN", Map.of("a", "中文")), new Catalogue("en", Map.of("a", "English")));
+
+        assertEquals("中文", Translation.text("a"));
+        assertEquals("English", I18n.forGameText(() -> Translation.text("a")));
+        assertEquals("English", Translation.gameText("a"));
+        assertThrows(IllegalStateException.class, () -> I18n.forGameText(() -> {
+            throw new IllegalStateException("boom");
+        }));
+        assertEquals("中文", Translation.text("a"));
+        assertEquals(new Languages("zh_CN", "en"), I18n.languages());
     }
 
     @Test

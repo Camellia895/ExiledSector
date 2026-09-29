@@ -48,6 +48,7 @@ import static org.mockito.Mockito.when;
 class ExiledSectorModPluginTest {
 
     private MockedStatic<Global> globalMock;
+    private MockedStatic<LunaSettings> lunaSettingsMock;
     private MockedStatic<LunaSettings.SettingsCreator> settingsCreatorMock;
     private SectorAPI sector;
     private ListenerManagerAPI listenerManager;
@@ -73,6 +74,7 @@ class ExiledSectorModPluginTest {
 
         Logger logger = mock(Logger.class);
 
+        lunaSettingsMock = Mockito.mockStatic(LunaSettings.class, invocation -> null);
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSector).thenReturn(sector);
         globalMock.when(Global::getSettings).thenReturn(settings);
@@ -85,6 +87,7 @@ class ExiledSectorModPluginTest {
         NpcLayouts.register(Map.of());
         settingsCreatorMock.close();
         globalMock.close();
+        lunaSettingsMock.close();
         BaseRefitButton registered = LunaRefitManager.getFirstButtonOfClass(SkillTreeRefitButton.class);
         if (registered != null) {
             LunaRefitManager.INSTANCE.removeButton(registered);
@@ -102,7 +105,7 @@ class ExiledSectorModPluginTest {
     void onApplicationLoadRefreshesLunaSettingsSoNewSettingsAreWrittenWithTheirDefaults() throws Exception {
         new ExiledSectorModPlugin().onApplicationLoad();
 
-        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.refresh("exiledSector"));
+        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.refresh("exiledSector"), Mockito.times(2));
     }
 
     @Test

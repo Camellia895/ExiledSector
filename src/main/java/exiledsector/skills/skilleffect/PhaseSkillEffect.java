@@ -13,6 +13,7 @@ import com.fs.starfarer.api.impl.campaign.skills.NeuralLinkScript;
 import com.fs.starfarer.api.util.FaderUtil;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
@@ -165,7 +166,7 @@ public enum PhaseSkillEffect implements SkillEffect {
 
             ship.setHitpoints(1f);
             if (member != null) {
-                member.getRepairTracker().applyCREvent(-crCost, "Emergency phase dive");
+                member.getRepairTracker().applyCREvent(-crCost, Translation.gameText("modifier.emergencyPhaseDive"));
             }
             diving = true;
             customData.put(DIVE_FLAG_KEY, Boolean.TRUE);
@@ -187,7 +188,7 @@ public enum PhaseSkillEffect implements SkillEffect {
 
             if (diveProgress == 0f && ship.getFluxTracker().showFloaty()) {
                 float timeMult = ship.getMutableStats().getTimeMult().getModifiedValue();
-                Global.getCombatEngine().addFloatingTextAlways(ship.getLocation(), "Emergency dive!",
+                Global.getCombatEngine().addFloatingTextAlways(ship.getLocation(), Translation.gameText("combat.emergencyDive"),
                         NeuralLinkScript.getFloatySize(ship), effectColor, ship,
                         16f * timeMult, 3.2f / timeMult, 1f / timeMult, 0f, 0f, 1f);
             }

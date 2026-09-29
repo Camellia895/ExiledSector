@@ -24,7 +24,7 @@ public class NpcFleetInspectPlugin implements InteractionDialogPlugin {
     @Override
     public void init(InteractionDialogAPI dialog) {
         this.dialog = dialog;
-        dialog.getOptionPanel().addOption(Translation.text("inspect.close"), CLOSE);
+        dialog.getOptionPanel().addOption(Translation.gameText("inspect.close"), CLOSE);
         dialog.showCustomVisualDialog(NpcFleetInspectDialog.WIDTH, NpcFleetInspectDialog.HEIGHT,
                 new NpcFleetInspectDialog(List.of(fleet), dialog::dismiss));
     }

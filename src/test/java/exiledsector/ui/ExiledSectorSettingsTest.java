@@ -1,5 +1,6 @@
 package exiledsector.ui;
 
+import exiledsector.i18n.LanguageSetting;
 import exiledsector.skills.npc.NpcLevelTable;
 import exiledsector.skills.npc.NpcTreeConfig;
 import exiledsector.ui.inspect.NpcInspectConfig;
@@ -32,6 +33,7 @@ class ExiledSectorSettingsTest {
             }
             return Mockito.RETURNS_DEFAULTS.answer(invocation);
         });
+        ExiledSectorSettings.registerLanguage();
         ExiledSectorSettings.register();
     }
 
@@ -47,25 +49,25 @@ class ExiledSectorSettingsTest {
             settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addInt(eq("exiledSector"),
                     eq(NpcLevelTable.minNodesFieldId(current)), anyString(), anyString(),
                     eq(NpcLevelTable.defaultMinNodes(current)), eq(NpcLevelTable.MIN_NODES), eq(NpcLevelTable.MAX_NODES),
-                    eq(ExiledSectorSettings.NPC_SCALING_TAB)));
+                    eq(ExiledSectorSettings.npcScalingTab())));
             settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addInt(eq("exiledSector"),
                     eq(NpcLevelTable.maxNodesFieldId(current)), anyString(), anyString(),
                     eq(NpcLevelTable.defaultMaxNodes(current)), eq(NpcLevelTable.MIN_NODES), eq(NpcLevelTable.MAX_NODES),
-                    eq(ExiledSectorSettings.NPC_SCALING_TAB)));
+                    eq(ExiledSectorSettings.npcScalingTab())));
         }
     }
 
     @Test
     void registersTheNpcTreeTogglesOnTheNpcScalingTab() {
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addBoolean(eq("exiledSector"),
-                eq(NpcTreeConfig.ENABLED_FIELD_ID), anyString(), anyString(), eq(true), eq(ExiledSectorSettings.NPC_SCALING_TAB)));
+                eq(NpcTreeConfig.ENABLED_FIELD_ID), anyString(), anyString(), eq(true), eq(ExiledSectorSettings.npcScalingTab())));
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addBoolean(eq("exiledSector"),
-                eq(NpcTreeConfig.OFFICERED_SHIPS_FIELD_ID), anyString(), anyString(), eq(true), eq(ExiledSectorSettings.NPC_SCALING_TAB)));
+                eq(NpcTreeConfig.OFFICERED_SHIPS_FIELD_ID), anyString(), anyString(), eq(true), eq(ExiledSectorSettings.npcScalingTab())));
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addBoolean(eq("exiledSector"),
-                eq(NpcTreeConfig.FLAGSHIP_FIELD_ID), anyString(), anyString(), eq(true), eq(ExiledSectorSettings.NPC_SCALING_TAB)));
+                eq(NpcTreeConfig.FLAGSHIP_FIELD_ID), anyString(), anyString(), eq(true), eq(ExiledSectorSettings.npcScalingTab())));
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addInt(eq("exiledSector"),
                 eq(NpcTreeConfig.OTHER_SHIP_CHANCE_FIELD_ID), anyString(), anyString(), eq(30), eq(0), eq(100),
-                eq(ExiledSectorSettings.NPC_SCALING_TAB)));
+                eq(ExiledSectorSettings.npcScalingTab())));
     }
 
     @Test
@@ -77,14 +79,20 @@ class ExiledSectorSettingsTest {
     }
 
     @Test
-    void refreshesAfterRegisteringEverything() {
-        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.refresh("exiledSector"));
+    void refreshesAfterTheLanguageChoiceAndAgainAfterEverythingElse() {
+        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.refresh("exiledSector"), Mockito.times(2));
+    }
+
+    @Test
+    void offersTheLanguageChoiceAsARadioDefaultingToAuto() {
+        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addRadio(eq("exiledSector"), eq(LanguageSetting.FIELD_ID),
+                anyString(), anyString(), eq(LanguageSetting.AUTO), eq("Auto,English,Simplified Chinese"), eq("")));
     }
 
     @Test
     void registersTheInspectKeybindOnTheNpcScalingTab() {
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addKeybind(eq("exiledSector"),
                 eq(NpcInspectConfig.KEYBIND_FIELD_ID), anyString(), anyString(), eq(NpcInspectConfig.DEFAULT_KEY),
-                eq(ExiledSectorSettings.NPC_SCALING_TAB)));
+                eq(ExiledSectorSettings.npcScalingTab())));
     }
 }

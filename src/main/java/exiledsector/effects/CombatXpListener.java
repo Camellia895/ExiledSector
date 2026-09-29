@@ -9,6 +9,7 @@ import com.fs.starfarer.api.campaign.TextPanelAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.persistence.ShipSkillDataManager;
@@ -35,14 +36,12 @@ public class CombatXpListener extends BaseCampaignEventListener {
         }
         float defeatedDp = enemyDeploymentPointsDefeated(result);
         boolean lost = !result.didPlayerWin();
-        float xp = defeatedDp * ShipLevelConfig.xpPerDeploymentPoint();
-        if (lost) {
-            xp *= ShipLevelConfig.xpLossMultiplier();
-        }
+        float lossMultiplier = lost ? ShipLevelConfig.xpLossMultiplier() : 1f;
+        float xp = defeatedDp * ShipLevelConfig.xpPerDeploymentPoint() * lossMultiplier;
 
         Map<FleetMemberAPI, Integer> levelsBefore = levelsOf(playerFleet);
         ShipLevelSystem.awardXpToFleet(playerFleet, xp);
-        report(new CombatXpReport(xp, defeatedDp, lost, levelUps(levelsBefore)));
+        I18n.forGameText(() -> report(new CombatXpReport(xp, defeatedDp, lost, levelUps(levelsBefore))));
     }
 
     private static float enemyDeploymentPointsDefeated(EngagementResultAPI result) {

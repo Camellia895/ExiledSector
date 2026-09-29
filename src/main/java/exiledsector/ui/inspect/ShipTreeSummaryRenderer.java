@@ -3,6 +3,7 @@ package exiledsector.ui.inspect;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.i18n.I18n;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
@@ -25,6 +26,10 @@ public final class ShipTreeSummaryRenderer {
     }
 
     public static void render(TooltipMakerAPI info, FleetMemberAPI member, ShipTreeLookup.ShipTree tree, float pad) {
+        I18n.forGameText(() -> renderSummary(info, member, tree, pad));
+    }
+
+    private static void renderSummary(TooltipMakerAPI info, FleetMemberAPI member, ShipTreeLookup.ShipTree tree, float pad) {
         Summary summary = SkillTreeBonusSummary.of(tree.data(), member.getHullSpec().getHullSize());
 
         List<String> parts = new ArrayList<>();

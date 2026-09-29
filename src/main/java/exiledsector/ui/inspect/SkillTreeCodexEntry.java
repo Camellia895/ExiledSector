@@ -10,13 +10,15 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.i18n.I18n;
+import exiledsector.i18n.Translation;
+import exiledsector.ui.VanillaText;
 
 import java.util.List;
 
 public class SkillTreeCodexEntry extends CodexEntryV2 implements CustomUIPanelPlugin {
 
     public static final String ID_PREFIX = "exiledSector_skillTree_";
-    static final String TITLE = "Exiled Sector skill tree";
     private static final float RELATED_ENTRIES_WIDTH = 290f;
     private static final float BOX_HORIZONTAL_PAD = 30f;
     private static final float PAD = 10f;
@@ -24,14 +26,16 @@ public class SkillTreeCodexEntry extends CodexEntryV2 implements CustomUIPanelPl
     private final ShipTreeLookup.ShipTree tree;
 
     public SkillTreeCodexEntry(String id, FleetMemberAPI member, ShipTreeLookup.ShipTree tree) {
-        super(id, TITLE, null, member);
+        super(id, Translation.gameText("codex.title"), null, member);
         this.tree = tree;
     }
 
     @Override
     public void createTitleForList(TooltipMakerAPI info, float width, ListMode mode) {
-        info.addPara(TITLE, Misc.getBasePlayerColor(), 0f);
-        info.addPara("Level " + tree.data().getLevel(), Misc.getGrayColor(), 0f);
+        I18n.forGameText(() -> {
+            VanillaText.addPara(info, Translation.styled("codex.title"), 0f, Misc.getBasePlayerColor());
+            VanillaText.addPara(info, Translation.msg("summary.level").arg("level", tree.data().getLevel()).styled(), 0f, Misc.getGrayColor());
+        });
     }
 
     @Override

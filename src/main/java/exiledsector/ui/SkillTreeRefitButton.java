@@ -35,7 +35,7 @@ public class SkillTreeRefitButton extends BaseRefitButton {
 
     @Override
     public String getButtonName(FleetMemberAPI member, ShipVariantAPI variant) {
-        return Translation.text("ui.refitButton");
+        return Translation.gameText("ui.refitButton");
     }
 
     @Override

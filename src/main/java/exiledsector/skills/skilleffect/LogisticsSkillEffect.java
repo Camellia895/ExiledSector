@@ -6,6 +6,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
 
 import java.util.List;
 
@@ -48,7 +49,7 @@ public enum LogisticsSkillEffect implements SkillEffect {
     MAX_COMBAT_READINESS_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getMaxCombatReadiness().modifyFlat(modId, magnitude / 100f, "Ship skill tree");
+            stats.getMaxCombatReadiness().modifyFlat(modId, magnitude / 100f, Translation.gameText("modifier.shipSkillTree"));
         }
 
         @Override

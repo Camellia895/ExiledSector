@@ -29,7 +29,6 @@ public class SkillTreeHullMod extends BaseHullMod {
 
     private static final String MOD_ID_PREFIX = "exiledSector_skill_";
     private static final String MAGICLIB_WARNING_HULLMOD_ID = "ML_incompatibleHullmodWarning";
-    private static final String CONFLICT_WARNING_HULLMOD_ID = "exiledSector_conflictWarning";
     private static final String OP_SPENT_HULLMOD_ID_PREFIX = "exiledSector_opSpent_";
     private static final String INSTALLED_HULLMOD_TAG_PREFIX = "exiledSector_installed_";
 
@@ -212,9 +211,9 @@ public class SkillTreeHullMod extends BaseHullMod {
             SkillType type = allocated.effectiveType();
             for (String hullModId : type.getExclusiveHullModIds()) {
                 if (isRemovableConflict(variant, hullModId)) {
-                    MagicIncompatibleHullmods.removeHullmodWithWarning(variant, hullModId, CONFLICT_WARNING_HULLMOD_ID);
+                    MagicIncompatibleHullmods.removeHullmodWithWarning(variant, hullModId, SkillConflictWarningHullMod.ID);
                     variant.removeMod(MAGICLIB_WARNING_HULLMOD_ID);
-                    variant.addMod(CONFLICT_WARNING_HULLMOD_ID);
+                    variant.addMod(SkillConflictWarningHullMod.ID);
                     SkillConflictWarnings.recordRemoval(variant, hullModId, type.getDisplayName());
                     conflictFound = true;
                 }
@@ -222,8 +221,8 @@ public class SkillTreeHullMod extends BaseHullMod {
         }
 
         if (!conflictFound) {
-            if (variant.hasHullMod(CONFLICT_WARNING_HULLMOD_ID)) {
-                variant.removeMod(CONFLICT_WARNING_HULLMOD_ID);
+            if (variant.hasHullMod(SkillConflictWarningHullMod.ID)) {
+                variant.removeMod(SkillConflictWarningHullMod.ID);
             }
             SkillConflictWarnings.clear(variant);
         }
