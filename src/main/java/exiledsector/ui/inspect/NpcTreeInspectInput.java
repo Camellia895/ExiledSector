@@ -21,9 +21,8 @@ public class NpcTreeInspectInput implements CampaignInputListener {
 
     @Override
     public void processCampaignInputPreCore(List<InputEventAPI> events) {
-        int key = NpcInspectConfig.key();
         for (InputEventAPI event : events) {
-            if (!event.isConsumed() && event.isKeyDownEvent() && event.getEventValue() == key && tryOpen()) {
+            if (!event.isConsumed() && event.isKeyDownEvent() && event.getEventValue() == NpcInspectConfig.key() && tryOpen()) {
                 event.consume();
             }
         }
