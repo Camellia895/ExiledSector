@@ -338,4 +338,52 @@ class SkillTreeInstallerTest {
         verify(member.getVariant(), never()).removeMod(SkillTreeHullMod.ID);
         verify(member.getVariant(), never()).removeTag(anyString());
     }
+
+    @Test
+    void thePanelInstallsItsHullModOnAShipBoughtWhilePausedAndOnTheRefitCopyBeingEdited() {
+        FleetMemberAPI member = mockMember("bought", false);
+        ShipVariantAPI stock = member.getVariant();
+        ShipVariantAPI owned = mock(ShipVariantAPI.class);
+        when(stock.getSource()).thenReturn(VariantSource.STOCK);
+        when(stock.clone()).thenReturn(owned);
+        ShipVariantAPI refitCopy = mock(ShipVariantAPI.class);
+
+        assertTrue(SkillTreeInstaller.ensureInstalled(member, refitCopy));
+
+        verify(owned).addPermaMod(SkillTreeHullMod.ID);
+        verify(member).setVariant(owned, false, true);
+        verify(refitCopy).addPermaMod(SkillTreeHullMod.ID);
+        verify(member).setStatUpdateNeeded(true);
+    }
+
+    @Test
+    void thePanelChangesNothingOnAShipThatAlreadyHasItsHullMod() {
+        FleetMemberAPI member = mockMember("veteran", true);
+        ShipVariantAPI refitCopy = mock(ShipVariantAPI.class);
+        when(refitCopy.hasHullMod(SkillTreeHullMod.ID)).thenReturn(true);
+
+        assertFalse(SkillTreeInstaller.ensureInstalled(member, refitCopy));
+
+        verify(member.getVariant(), never()).addPermaMod(anyString());
+        verify(refitCopy, never()).addPermaMod(anyString());
+        verify(member, never()).setStatUpdateNeeded(anyBoolean());
+    }
+
+    @Test
+    void thePanelAdoptsAnNpcTreeAndStripsTheTagFromTheRefitCopyToo() {
+        registerNpcTreeNodes();
+        String tag = "exiledSector_npcTree|bulwark|3|root_1,a_1";
+        List<String> shipTags = new ArrayList<>(List.of(tag));
+        FleetMemberAPI member = recoveredNpc("recovered", new HashSet<>(Set.of(SkillTreeHullMod.ID)), shipTags);
+        List<String> copyTags = new ArrayList<>(List.of(tag));
+        ShipVariantAPI refitCopy = recoveredNpc("copy-holder", new HashSet<>(Set.of(SkillTreeHullMod.ID)), copyTags).getVariant();
+
+        assertTrue(SkillTreeInstaller.ensureInstalled(member, refitCopy));
+
+        assertEquals(List.of("root_1", "a_1"), List.copyOf(ShipSkillDataManager.get("recovered").getAllocatedNodeIds()));
+        assertTrue(shipTags.isEmpty());
+        assertTrue(copyTags.isEmpty());
+        verify(refitCopy).removeMod(SkillTreeHullMod.ID);
+        verify(refitCopy).addPermaMod(SkillTreeHullMod.ID);
+    }
 }

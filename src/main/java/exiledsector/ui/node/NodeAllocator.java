@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.compat.SecondInCommandCompat;
 import exiledsector.effects.SkillTreeHullMod;
+import exiledsector.effects.SkillTreeInstaller;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.AllocatedSkillEffects;
@@ -188,6 +189,7 @@ final class NodeAllocator {
 
     private void refreshShipStats() {
         revision++;
+        SkillTreeInstaller.ensureInstalled(member, variant);
         FleetWideEffects.markPhaseFieldStale();
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(member.getHullSpec().getHullSize(), member.getStats(), SkillTreeHullMod.ID);
         SkillTreeHullMod.syncOpSpentHullMod(member, variant);

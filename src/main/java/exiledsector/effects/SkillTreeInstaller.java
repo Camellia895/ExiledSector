@@ -54,17 +54,37 @@ public class SkillTreeInstaller implements EveryFrameScript {
         }
     }
 
+    public static boolean ensureInstalled(FleetMemberAPI member, ShipVariantAPI editedVariant) {
+        boolean changed = adoptNpcTree(member);
+        changed |= ensureHullModAppliesLast(member);
+        if (editedVariant != null && editedVariant != member.getVariant()) {
+            if (NpcTreeTag.find(editedVariant) != null) {
+                clearNpcTree(editedVariant);
+                changed = true;
+            }
+            changed |= ensureAppliesLast(editedVariant);
+        }
+        return changed;
+    }
+
     private static boolean ensureHullModAppliesLast(FleetMemberAPI member) {
-        ShipVariantAPI variant = member.getVariant();
+        ShipVariantAPI variant = member.getVariant().hasHullMod(SkillTreeHullMod.ID) ? member.getVariant() : ownedVariant(member);
+        if (!ensureAppliesLast(variant)) {
+            return false;
+        }
+        member.setStatUpdateNeeded(true);
+        return true;
+    }
+
+    private static boolean ensureAppliesLast(ShipVariantAPI variant) {
         if (!variant.hasHullMod(SkillTreeHullMod.ID)) {
-            ownedVariant(member).addPermaMod(SkillTreeHullMod.ID);
+            variant.addPermaMod(SkillTreeHullMod.ID);
         } else if (SecondInCommandCompat.isAppliedBeforeController(variant, SkillTreeHullMod.ID)) {
             variant.removePermaMod(SkillTreeHullMod.ID);
             variant.addPermaMod(SkillTreeHullMod.ID);
         } else {
             return false;
         }
-        member.setStatUpdateNeeded(true);
         return true;
     }
 
@@ -78,13 +98,16 @@ public class SkillTreeInstaller implements EveryFrameScript {
             ShipSkillDataManager.put(member.getId(), npcTree);
         }
 
-        ShipVariantAPI variant = ownedVariant(member);
+        clearNpcTree(ownedVariant(member));
+        member.setStatUpdateNeeded(true);
+        return true;
+    }
+
+    private static void clearNpcTree(ShipVariantAPI variant) {
         NpcTreeTag.removeAll(variant);
         if (variant.hasHullMod(SkillTreeHullMod.ID) && !variant.getPermaMods().contains(SkillTreeHullMod.ID)) {
             variant.removeMod(SkillTreeHullMod.ID);
         }
-        member.setStatUpdateNeeded(true);
-        return true;
     }
 
     static ShipVariantAPI ownedVariant(FleetMemberAPI member) {

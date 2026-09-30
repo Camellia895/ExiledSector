@@ -14,6 +14,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
+import com.fs.starfarer.api.loading.VariantSource;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
@@ -61,6 +62,7 @@ class NodeAllocatorTest {
     private CargoAPI cargo;
     private FleetMemberAPI member;
     private ShipVariantAPI variant;
+    private ShipVariantAPI shipVariant;
 
     private SkillNode root;
     private SkillNode frontShield;
@@ -104,6 +106,9 @@ class NodeAllocatorTest {
         when(member.getHullSpec()).thenReturn(hullSpec);
         variant = mock(ShipVariantAPI.class);
         when(variant.computeOPCost(any())).thenReturn(80);
+        shipVariant = mock(ShipVariantAPI.class);
+        when(shipVariant.getSource()).thenReturn(VariantSource.REFIT);
+        when(member.getVariant()).thenReturn(shipVariant);
     }
 
     @AfterEach
@@ -329,6 +334,16 @@ class NodeAllocatorTest {
         assertEquals(1, hullModConstruction.constructed().size());
         fitWingsWithBays(2, 2f);
         assertNotNull(allocator.blockDeallocationReason(choice));
+    }
+
+    @Test
+    void allocatingOnAShipThatHasNotHadItsHullModInstalledYetInstallsItOnTheShipAndTheRefitCopy() {
+        data().chooseStartingRoot(root);
+
+        assertTrue(allocatorStartingAt(root).toggle(frontShield));
+
+        verify(shipVariant).addPermaMod(SkillTreeHullMod.ID);
+        verify(variant).addPermaMod(SkillTreeHullMod.ID);
     }
 
     @Test

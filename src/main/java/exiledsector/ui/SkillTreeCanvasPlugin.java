@@ -6,6 +6,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.effects.SkillTreeHullMod;
+import exiledsector.effects.SkillTreeInstaller;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;
@@ -62,6 +63,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private CameraPanAnimation cameraPan;
 
     public SkillTreeCanvasPlugin(FleetMemberAPI member, ShipVariantAPI variant, float shipCardHeight, BaseRefitButton refitButton) {
+        if (SkillTreeInstaller.ensureInstalled(member, variant) && refitButton != null) {
+            refitButton.refreshVariant();
+        }
         SkillTreeHullMod.syncOpSpentHullMod(member, variant);
         SkillTreePanelStyle style = new SkillTreePanelStyle();
         this.starfieldRenderer = new SkillTreeStarfieldRenderer(style);
