@@ -75,6 +75,7 @@ final class SkillTreeNodeConnectorRenderer {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        clearBatch();
 
         for (SkillNode node : SkillTree.getAllNodes().values()) {
             if (node.getType().getTier() == SkillTier.ROOT) continue;
@@ -86,6 +87,7 @@ final class SkillTreeNodeConnectorRenderer {
             drawConnectorsFrom(node, nodeEndpoint, viewport, tree, alphaMult);
         }
 
+        flushBatch();
         GL11.glDisable(GL11.GL_BLEND);
     }
 
@@ -142,12 +144,6 @@ final class SkillTreeNodeConnectorRenderer {
     }
 
     private void drawStraightNodeConnectorLine(ConnectorEndpoint a, ConnectorEndpoint b, ConnectorFade fade, float zoom, float alphaMult) {
-        clearBatch();
-        drawStraightNodeConnectorLineImpl(a, b, fade, zoom, alphaMult);
-        flushBatch();
-    }
-
-    private void drawStraightNodeConnectorLineImpl(ConnectorEndpoint a, ConnectorEndpoint b, ConnectorFade fade, float zoom, float alphaMult) {
         float x1 = a.point().x;
         float y1 = a.point().y;
         float r1 = a.radius();
@@ -218,12 +214,6 @@ final class SkillTreeNodeConnectorRenderer {
     }
 
     private void drawCurvedNodeConnectorLine(ConnectorEndpoint a, Vector2f through, ConnectorEndpoint b, ConnectorFade fade, float zoom, float alphaMult) {
-        clearBatch();
-        drawCurvedNodeConnectorLineImpl(a, through, b, fade, zoom, alphaMult);
-        flushBatch();
-    }
-
-    private void drawCurvedNodeConnectorLineImpl(ConnectorEndpoint a, Vector2f through, ConnectorEndpoint b, ConnectorFade fade, float zoom, float alphaMult) {
         float r1 = a.radius();
         float r2 = b.radius();
         float cx = 2f * through.x - (a.point().x + b.point().x) / 2f;
