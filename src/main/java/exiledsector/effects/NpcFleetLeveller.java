@@ -36,11 +36,15 @@ public final class NpcFleetLeveller {
             return;
         }
         Map<String, String> records = NpcTreeRecords.of(fleet.getMemoryWithoutUpdate());
-        int playerLevel = Global.getSector().getPlayerStats().getLevel();
-        String seedPrefix = Global.getSector().getSeedString() + "|" + fleet.getId() + "|";
+        String seedPrefix = null;
+        int playerLevel = 0;
         for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
             String record = records.get(member.getId());
             if (record == null) {
+                if (seedPrefix == null) {
+                    playerLevel = Global.getSector().getPlayerStats().getLevel();
+                    seedPrefix = Global.getSector().getSeedString() + "|" + fleet.getId() + "|";
+                }
                 record = decide(member, playerLevel, new Random((seedPrefix + member.getId()).hashCode()));
                 records.put(member.getId(), record);
             }
