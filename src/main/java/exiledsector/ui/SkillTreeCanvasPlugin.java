@@ -78,8 +78,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
         SkillNode startingRoot = nodeRenderer.getStartingRoot();
         if (startingRoot != null) {
-            this.panX = -startingRoot.getOffsetX();
-            this.panY = startingRoot.getOffsetY();
+            centreOn(startingRoot.getOffsetX(), startingRoot.getOffsetY());
         }
     }
 
@@ -99,8 +98,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         boolean followingStartingRoot = nodeRenderer.isStartingRootFlying();
         nodeRenderer.advance(amount);
         if (followingStartingRoot) {
-            panX = -nodeRenderer.startingRootOffsetX() * zoom;
-            panY = nodeRenderer.startingRootOffsetY() * zoom;
+            centreOn(nodeRenderer.startingRootOffsetX(), nodeRenderer.startingRootOffsetY());
         }
         ShipOpBudget budget = nodeRenderer.budget();
         statPanel.refresh(budget, nodeRenderer.statsRevision());
@@ -113,11 +111,15 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             return;
         }
         cameraPan.advance(amount);
-        panX = cameraPan.x() * zoom;
-        panY = cameraPan.y() * zoom;
+        centreOn(cameraPan.x(), cameraPan.y());
         if (cameraPan.isFinished()) {
             cameraPan = null;
         }
+    }
+
+    private void centreOn(float treeX, float treeY) {
+        panX = -treeX * zoom;
+        panY = treeY * zoom;
     }
 
     @Override
@@ -206,8 +208,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         } else if (pendingClickNode != null) {
             SkillNode jumpTarget = nodeRenderer.wormholeJumpTarget(pendingClickNode, pendingClickCtrlDown);
             if (jumpTarget != null) {
-                cameraPan = new CameraPanAnimation(panX / zoom, panY / zoom,
-                        -jumpTarget.getOffsetX(), jumpTarget.getOffsetY());
+                cameraPan = new CameraPanAnimation(-panX / zoom, panY / zoom, jumpTarget.getOffsetX(), jumpTarget.getOffsetY());
                 nodeRenderer.launchWormholeGhosts(pendingClickNode, jumpTarget);
             } else {
                 nodeRenderer.toggleAllocation(pendingClickNode, pendingClickCtrlDown);
