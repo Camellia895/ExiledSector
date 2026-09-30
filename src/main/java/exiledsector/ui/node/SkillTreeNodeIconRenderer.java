@@ -8,7 +8,9 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 final class SkillTreeNodeIconRenderer {
 
@@ -16,6 +18,7 @@ final class SkillTreeNodeIconRenderer {
     private static final float PIE_WEDGE_SEGMENT_DEGREES = 6f;
 
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeNodeIconRenderer.class);
+    private final Map<String, List<SkillType>> optionTypesByTypeId = new HashMap<>();
 
     void drawIcon(String spritePath, float cx, float cy, float size, float alphaMult, Color tint) {
         SpriteDraw.drawAtCenter(spriteCache, spritePath, cx, cy, size, size, tint, alphaMult);
@@ -47,11 +50,16 @@ final class SkillTreeNodeIconRenderer {
     }
 
     private List<SkillType> optionTypesOf(SkillType optionalType) {
+        List<SkillType> cached = optionTypesByTypeId.get(optionalType.getId());
+        if (cached != null) {
+            return cached;
+        }
         List<SkillType> options = new ArrayList<>();
         for (String optionId : optionalType.getOptionalOptionIds()) {
             SkillType option = SkillTree.getType(optionId);
             if (option != null) options.add(option);
         }
+        optionTypesByTypeId.put(optionalType.getId(), options);
         return options;
     }
 

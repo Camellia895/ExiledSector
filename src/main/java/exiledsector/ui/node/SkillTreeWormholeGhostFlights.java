@@ -38,7 +38,7 @@ final class SkillTreeWormholeGhostFlights {
     private final SkillTreeNodeGhostRenderer ghostRenderer;
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeWormholeGhostFlights.class);
     private final Random random;
-    private final Map<String, Float> secondsUntilNextFlight = new HashMap<>();
+    private final Map<String, float[]> secondsUntilNextFlight = new HashMap<>();
     private final List<Flight> flights = new ArrayList<>();
     private List<WormholePair> pairs;
 
@@ -69,14 +69,17 @@ final class SkillTreeWormholeGhostFlights {
 
     private void scheduleFlights(WormholePair pair, float amount) {
         String key = pair.a().getId();
-        float remaining = secondsUntilNextFlight.computeIfAbsent(key,
-                id -> random.nextFloat() * MAX_SECONDS_BETWEEN_FLIGHTS) - amount;
-        if (remaining <= 0f) {
+        float[] remaining = secondsUntilNextFlight.get(key);
+        if (remaining == null) {
+            remaining = new float[]{random.nextFloat() * MAX_SECONDS_BETWEEN_FLIGHTS};
+            secondsUntilNextFlight.put(key, remaining);
+        }
+        remaining[0] -= amount;
+        if (remaining[0] <= 0f) {
             flights.add(launch(pair));
-            remaining = MIN_SECONDS_BETWEEN_FLIGHTS
+            remaining[0] = MIN_SECONDS_BETWEEN_FLIGHTS
                     + random.nextFloat() * (MAX_SECONDS_BETWEEN_FLIGHTS - MIN_SECONDS_BETWEEN_FLIGHTS);
         }
-        secondsUntilNextFlight.put(key, remaining);
     }
 
     void launchFrom(SkillNode from, SkillNode to) {

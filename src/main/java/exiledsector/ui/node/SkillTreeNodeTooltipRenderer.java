@@ -75,13 +75,16 @@ final class SkillTreeNodeTooltipRenderer {
     }
 
     private List<SkillTreeTooltipTable> tablesFor(LazyFont font, SkillType type) {
-        return tablesByType.computeIfAbsent(type.getId(), id -> {
-            List<SkillTreeTooltipTable> measured = new ArrayList<>();
-            for (TooltipTable table : HullModTooltipTables.forType(type, member.getHullSpec())) {
-                measured.add(SkillTreeTooltipTable.measure(font, table, style.getAccentColor()));
-            }
-            return measured;
-        });
+        List<SkillTreeTooltipTable> cached = tablesByType.get(type.getId());
+        if (cached != null) {
+            return cached;
+        }
+        List<SkillTreeTooltipTable> measured = new ArrayList<>();
+        for (TooltipTable table : HullModTooltipTables.forType(type, member.getHullSpec())) {
+            measured.add(SkillTreeTooltipTable.measure(font, table, style.getAccentColor()));
+        }
+        tablesByType.put(type.getId(), measured);
+        return measured;
     }
 
     private static String titleText(SkillType effectiveType, boolean hidden) {
