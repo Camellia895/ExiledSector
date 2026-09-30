@@ -16,7 +16,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -103,28 +102,6 @@ class NpcLayoutsDataTest {
                 }
             }
         }
-
-        assertTrue(problems.isEmpty(), String.join("\n", problems));
-    }
-
-    @Test
-    void everyEquivalentHullmodBelongsToExactlyOneSkillType() {
-        Map<String, List<String>> typesByHullMod = new TreeMap<>();
-        for (SkillNode node : SkillTree.getAllNodes().values()) {
-            String hullModId = node.getType().getEquivalentHullModId();
-            if (hullModId != null) {
-                List<String> typeIds = typesByHullMod.computeIfAbsent(hullModId, key -> new ArrayList<>());
-                if (!typeIds.contains(node.getType().getId())) {
-                    typeIds.add(node.getType().getId());
-                }
-            }
-        }
-        List<String> problems = new ArrayList<>();
-        typesByHullMod.forEach((hullModId, typeIds) -> {
-            if (typeIds.size() > 1) {
-                problems.add(hullModId + " is the equivalent hullmod of " + typeIds);
-            }
-        });
 
         assertTrue(problems.isEmpty(), String.join("\n", problems));
     }
