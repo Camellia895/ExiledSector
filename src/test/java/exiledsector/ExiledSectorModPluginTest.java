@@ -10,6 +10,7 @@ import exiledsector.effects.NpcFleetDialogListener;
 import exiledsector.effects.NpcFleetInflationListener;
 import exiledsector.effects.NpcFleetSweepScript;
 import exiledsector.effects.SkillTreeInstaller;
+import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.npc.NpcLayout;
@@ -35,7 +36,10 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -53,10 +57,11 @@ class ExiledSectorModPluginTest {
     private SectorAPI sector;
     private ListenerManagerAPI listenerManager;
     private SettingsAPI settings;
+    private Map<String, Object> persistentData;
 
     @BeforeEach
     void setUp() throws Exception {
-        Map<String, Object> persistentData = new HashMap<>();
+        persistentData = new HashMap<>();
         sector = mock(SectorAPI.class);
         when(sector.getPersistentData()).thenReturn(persistentData);
         listenerManager = mock(ListenerManagerAPI.class);
@@ -131,6 +136,21 @@ class ExiledSectorModPluginTest {
         InOrder order = inOrder(sector);
         order.verify(sector).removeScriptsOfClass(SkillTreeInstaller.class);
         order.verify(sector).addTransientScript(any(SkillTreeInstaller.class));
+    }
+
+    @Test
+    void onGameLoadReleasesReserveSlotsAndDropsBlankRecordsLeftByShipsWithNoProgress() {
+        ShipSkillDataManager.get("temporary-copy");
+        ShipSkillDataManager.get("levelled").addXp(5f);
+        persistentData.put("exiledSector_opSpentSlots", new HashMap<>(Map.of("temporary-copy", 0, "levelled", 1, "sold", 2)));
+        persistentData.put("exiledSector_opSpentNextSlot", 3);
+
+        new ExiledSectorModPlugin().onGameLoad(false);
+
+        assertEquals(Map.of("levelled", 1), persistentData.get("exiledSector_opSpentSlots"));
+        assertNull(ShipSkillDataManager.find("temporary-copy"));
+        assertNotNull(ShipSkillDataManager.find("levelled"));
+        assertFalse(persistentData.containsKey("exiledSector_opSpentNextSlot"));
     }
 
     @Test

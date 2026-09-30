@@ -24,6 +24,19 @@ public class ShipSkillDataManager {
         return getStore().computeIfAbsent(shipId, key -> new ShipSkillData());
     }
 
+    public static ShipSkillData find(String shipId) {
+        return getStore().get(shipId);
+    }
+
+    public static boolean hasProgress(String shipId) {
+        ShipSkillData data = find(shipId);
+        return data != null && !data.isBlank();
+    }
+
+    public static void removeBlankRecords() {
+        getStore().values().removeIf(ShipSkillData::isBlank);
+    }
+
     public static void put(String shipId, ShipSkillData data) {
         getStore().put(shipId, data);
     }

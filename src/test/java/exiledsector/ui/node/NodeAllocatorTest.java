@@ -15,6 +15,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.loading.VariantSource;
+import exiledsector.effects.OpReserveParity;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
@@ -29,6 +30,7 @@ import exiledsector.skills.skilleffect.FighterSkillEffect;
 import exiledsector.skills.skilleffect.LogisticsSkillEffect;
 import exiledsector.skills.unlock.UnlockCondition;
 import lunalib.lunaSettings.LunaSettings;
+import org.apache.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,6 +49,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -146,12 +149,48 @@ class NodeAllocatorTest {
         assertEquals(SkillNodeOpCost.perNode(HullSize.CRUISER), snapshot.opCostFor(frontShield));
     }
 
+    private void reserveOnVariant(int cost) {
+        HullModSpecAPI reserve = mock(HullModSpecAPI.class);
+        when(reserve.getCostFor(any())).thenReturn(cost);
+        when(settings.getHullModSpec("exiledSector_opSpent_0")).thenReturn(reserve);
+        when(variant.getHullMods()).thenReturn(List.of("exiledSector_opSpent_0"));
+    }
+
     @Test
-    void theBudgetIsTheShipsFreeOpPlusWhatTheTreeHasAlreadySpent() {
+    void theBudgetIsTheShipsFreeOpPlusTheOpItsReserveAlreadyHolds() {
         data().chooseStartingRoot(root);
         data().allocate(frontShield, 3);
+        reserveOnVariant(3);
 
         assertEquals(100 - 80 + 3, allocatorStartingAt(root).snapshot().totalOpBudget());
+    }
+
+    @Test
+    void theBudgetCheckReportsAReserveThatDisagreesWithThePaidNodes() {
+        data().chooseStartingRoot(root);
+        data().allocate(frontShield, 3);
+        reserveOnVariant(1);
+        Logger logger = mock(Logger.class);
+
+        try (MockedStatic<Logger> loggerMock = Mockito.mockStatic(Logger.class)) {
+            loggerMock.when(() -> Logger.getLogger(OpReserveParity.class)).thenReturn(logger);
+            allocatorStartingAt(root).snapshot();
+        }
+
+        verify(logger).warn(contains("while allocating nodes"));
+        verify(logger).warn(contains("its paid nodes cost 3 OP but the variant reserves 1 OP"));
+    }
+
+    @Test
+    void aMissingReserveIsNeverCountedAsFreeOpForMoreNodes() {
+        data().chooseStartingRoot(root);
+        data().allocate(frontShield, 3);
+        when(variant.computeOPCost(any())).thenReturn(97);
+
+        NodeAllocator.Snapshot snapshot = allocatorStartingAt(root).snapshot();
+
+        assertEquals(100 - 97, snapshot.totalOpBudget());
+        assertFalse(snapshot.canAllocate(coreSlot));
     }
 
     @Test

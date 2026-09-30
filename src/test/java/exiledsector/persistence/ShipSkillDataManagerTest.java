@@ -17,9 +17,12 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -94,5 +97,42 @@ class ShipSkillDataManagerTest {
         ShipSkillDataManager.put("ship-a", replacement);
 
         assertSame(replacement, ShipSkillDataManager.get("ship-a"));
+    }
+
+    @Test
+    void findLooksUpAShipWithoutCreatingARecordForIt() {
+        assertNull(ShipSkillDataManager.find("temporary-copy"));
+
+        ShipSkillData data = ShipSkillDataManager.get("ship-a");
+
+        assertSame(data, ShipSkillDataManager.find("ship-a"));
+        assertNull(ShipSkillDataManager.find("temporary-copy"));
+    }
+
+    @Test
+    void aShipHasProgressOnceItHasAnyNodesOrXp() {
+        ShipSkillDataManager.get("allocated").allocate(node("armor_1"), 3);
+        ShipSkillDataManager.get("levelled").addXp(1f);
+        ShipSkillDataManager.get("blank");
+
+        assertTrue(ShipSkillDataManager.hasProgress("allocated"));
+        assertTrue(ShipSkillDataManager.hasProgress("levelled"));
+        assertFalse(ShipSkillDataManager.hasProgress("blank"));
+        assertFalse(ShipSkillDataManager.hasProgress("unknown"));
+    }
+
+    @Test
+    void removingBlankRecordsKeepsEveryShipWithProgress() {
+        ShipSkillDataManager.get("blank-a");
+        ShipSkillDataManager.get("blank-b");
+        ShipSkillDataManager.get("levelled").addXp(10f);
+        ShipSkillDataManager.get("allocated").allocate(node("armor_1"), 3);
+
+        ShipSkillDataManager.removeBlankRecords();
+
+        assertNull(ShipSkillDataManager.find("blank-a"));
+        assertNull(ShipSkillDataManager.find("blank-b"));
+        assertNotNull(ShipSkillDataManager.find("levelled"));
+        assertNotNull(ShipSkillDataManager.find("allocated"));
     }
 }

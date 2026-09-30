@@ -6,6 +6,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.FleetEncounterContext;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
+import exiledsector.effects.OpReserveParity;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.effects.SkillTreeInstaller;
 import exiledsector.i18n.Translation;
@@ -68,6 +69,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         if (SkillTreeInstaller.ensureInstalled(member, variant) && refitButton != null) {
             refitButton.refreshVariant();
         }
+        OpReserveParity.warnIfOutOfSync(member, variant, "before the skill tree re-synced it");
         SkillTreeHullMod.syncOpSpentHullMod(member, variant);
         SkillTreePanelStyle style = new SkillTreePanelStyle();
         this.starfieldRenderer = new SkillTreeStarfieldRenderer(style);

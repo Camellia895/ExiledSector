@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.compat.SecondInCommandCompat;
+import exiledsector.effects.OpReserveParity;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.effects.SkillTreeInstaller;
 import exiledsector.persistence.ShipSkillDataManager;
@@ -80,7 +81,9 @@ final class NodeAllocator {
         ShipOpBudget budget = ShipOpBudget.of(member, variant);
         int opCostPerNode = SkillNodeOpCost.perNode(member.getHullSpec());
         String rootId = satisfiedRootId();
-        int totalOpBudget = budget.total - budget.used + data.getSpentOp(opCostPerNode);
+        int reservedOp = OpReserveParity.reservedOp(variant);
+        OpReserveParity.warnIfOutOfSync(member, variant, data.getSpentOp(opCostPerNode), reservedOp, "while allocating nodes");
+        int totalOpBudget = budget.total - budget.used + reservedOp;
         int maxAllocatedNodes = ShipLevelConfig.maxAllocatedNodes();
         return new Snapshot(data, rootId, budget, totalOpBudget, opCostPerNode, maxAllocatedNodes, revision,
                 hiddenNodeIds(data), allocatableNodeIds(data, rootId, totalOpBudget, opCostPerNode, maxAllocatedNodes));

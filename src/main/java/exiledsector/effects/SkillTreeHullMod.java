@@ -37,7 +37,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
 
     private static final String MOD_ID_PREFIX = "exiledSector_skill_";
     private static final String MAGICLIB_WARNING_HULLMOD_ID = "ML_incompatibleHullmodWarning";
-    private static final String OP_SPENT_HULLMOD_ID_PREFIX = "exiledSector_opSpent_";
+    static final String OP_SPENT_HULLMOD_ID_PREFIX = "exiledSector_opSpent_";
     private static final String INSTALLED_HULLMOD_TAG_PREFIX = "exiledSector_installed_";
     private static final String COMBAT_PLAN_KEY = "exiledSector_combatPlan";
 
@@ -170,23 +170,43 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
     public static void syncOpSpentHullMod(FleetMemberAPI member, ShipVariantAPI variant) {
         if (member == null || variant == null || SkillDataResolver.isNpcTree(variant)) return;
 
-        String hullModId = OP_SPENT_HULLMOD_ID_PREFIX + OpSpentSlotManager.slotFor(member.getId());
-        HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
-        if (spec == null) return;
-
-        int opSpent = ShipSkillDataManager.get(member.getId()).getSpentOp(SkillNodeOpCost.perNode(member.getHullSpec()));
-        spec.setFrigateCost(opSpent);
-        spec.setDestroyerCost(opSpent);
-        spec.setCruiserCost(opSpent);
-        spec.setCapitalCost(opSpent);
-
-        if (opSpent > 0) {
-            if (!variant.hasHullMod(hullModId)) {
-                variant.addMod(hullModId);
+        ShipSkillData data = ShipSkillDataManager.find(member.getId());
+        int opSpent = data == null ? 0 : data.getSpentOp(SkillNodeOpCost.perNode(member.getHullSpec()));
+        if (opSpent <= 0) {
+            Integer slot = OpSpentSlotManager.existingSlot(member.getId());
+            if (slot != null) {
+                String reserveId = OP_SPENT_HULLMOD_ID_PREFIX + slot;
+                setReserveCost(reserveId, 0);
+                variant.removeMod(reserveId);
             }
-        } else if (variant.hasHullMod(hullModId)) {
-            variant.removeMod(hullModId);
+            return;
         }
+
+        String reserveId = reserveHullModFor(member.getId(), opSpent);
+        for (String hullModId : new ArrayList<>(variant.getHullMods())) {
+            if (hullModId.startsWith(OP_SPENT_HULLMOD_ID_PREFIX) && !hullModId.equals(reserveId)) {
+                variant.removeMod(hullModId);
+            }
+        }
+        if (reserveId != null && !variant.hasHullMod(reserveId)) {
+            variant.addMod(reserveId);
+        }
+    }
+
+    private static String reserveHullModFor(String shipId, int opSpent) {
+        String hullModId = OP_SPENT_HULLMOD_ID_PREFIX + OpSpentSlotManager.slotFor(shipId);
+        return setReserveCost(hullModId, opSpent) ? hullModId : null;
+    }
+
+    private static boolean setReserveCost(String hullModId, int cost) {
+        HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
+        if (spec == null) return false;
+
+        spec.setFrigateCost(cost);
+        spec.setDestroyerCost(cost);
+        spec.setCruiserCost(cost);
+        spec.setCapitalCost(cost);
+        return true;
     }
 
     public static void syncInstalledHullMods(FleetMemberAPI member, ShipVariantAPI variant) {

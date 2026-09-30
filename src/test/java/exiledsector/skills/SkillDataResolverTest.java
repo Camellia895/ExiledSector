@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.when;
 
 class SkillDataResolverTest {
@@ -95,10 +96,18 @@ class SkillDataResolverTest {
     @Test
     void anUntaggedShipUsesItsSavedTree() {
         ShipSkillData saved = new ShipSkillData();
-        dataManagerMock.when(() -> ShipSkillDataManager.get("ship-a")).thenReturn(saved);
+        dataManagerMock.when(() -> ShipSkillDataManager.find("ship-a")).thenReturn(saved);
 
         assertSame(saved, SkillDataResolver.resolve(member("ship-a"), variantWithTags("exiledSector_installed_x")));
         assertSame(saved, SkillDataResolver.resolve(member("ship-a"), null));
+    }
+
+    @Test
+    void anUntaggedShipWithNoSavedTreeReadsAsBlankWithoutOneBeingStored() {
+        ShipSkillData resolved = SkillDataResolver.resolve(member("temporary-copy"), variantWithTags());
+
+        assertTrue(resolved.isBlank());
+        dataManagerMock.verify(() -> ShipSkillDataManager.get("temporary-copy"), never());
     }
 
     @Test

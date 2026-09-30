@@ -50,6 +50,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.never;
@@ -517,7 +518,7 @@ class SkillTreeHullModTest {
         when(stats.getFleetMember()).thenReturn(member);
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(stats.getVariant()).thenReturn(variant);
-        when(variant.hasHullMod("exiledSector_opSpent_0")).thenReturn(true);
+        persistentData.put("exiledSector_opSpentSlots", new HashMap<>(Map.of("ship-a", 0)));
 
         SettingsAPI settings = mock(SettingsAPI.class);
         globalMock.when(Global::getSettings).thenReturn(settings);
@@ -528,6 +529,83 @@ class SkillTreeHullModTest {
 
         verify(variant).removeMod("exiledSector_opSpent_0");
         verify(variant, never()).addMod(anyString());
+        verify(opSpentSpec).setFrigateCost(0);
+    }
+
+    // persistentData is a raw Object map; the slots key is only ever written as Map<String, Integer>
+    @SuppressWarnings("unchecked")
+    private Map<String, Integer> reserveSlots() {
+        return (Map<String, Integer>) persistentData.getOrDefault("exiledSector_opSpentSlots", Map.of());
+    }
+
+    @Test
+    void aShipWithoutPaidNodesTakesNoReserveSlotAndGetsNoSkillRecord() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        FleetMemberAPI copy = memberWithId("temporary-copy");
+        when(stats.getFleetMember()).thenReturn(copy);
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(stats.getVariant()).thenReturn(variant);
+
+        new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, SkillTreeHullMod.ID);
+
+        assertTrue(reserveSlots().isEmpty());
+        assertNull(ShipSkillDataManager.find("temporary-copy"));
+        verify(variant, never()).addMod(anyString());
+    }
+
+    @Test
+    void aCopyWithoutPaidNodesLeavesTheReserveOfTheShipWhoseVariantItShares() {
+        persistentData.put("exiledSector_opSpentSlots", new HashMap<>(Map.of("real-ship", 4)));
+        ShipVariantAPI sharedVariant = mock(ShipVariantAPI.class);
+        when(sharedVariant.getHullMods()).thenReturn(List.of("exiledSector_opSpent_4"));
+
+        SkillTreeHullMod.syncOpSpentHullMod(memberWithId("temporary-copy"), sharedVariant);
+
+        verify(sharedVariant, never()).removeMod(anyString());
+        assertEquals(Map.of("real-ship", 4), reserveSlots());
+    }
+
+    @Test
+    void aReserveCopiedFromAnotherShipIsSwappedForThisShipsOwn() {
+        FleetMemberAPI member = memberWithId("ship-a");
+        ShipHullSpecAPI hull = mock(ShipHullSpecAPI.class);
+        when(hull.getHullSize()).thenReturn(HullSize.FRIGATE);
+        when(member.getHullSpec()).thenReturn(hull);
+        SkillType type = new SkillType.Builder("t", "t", "a.png", SkillTier.SMALL).effects(List.of()).build();
+        ShipSkillDataManager.get("ship-a").allocate(new SkillNode("armor_1", type, List.of(), 0f, 0f), 1);
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(variant.getHullMods()).thenReturn(List.of("hardenedshieldemitter", "exiledSector_opSpent_7"));
+        SettingsAPI settings = mock(SettingsAPI.class);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+        when(settings.getHullModSpec("exiledSector_opSpent_0")).thenReturn(mock(HullModSpecAPI.class));
+
+        SkillTreeHullMod.syncOpSpentHullMod(member, variant);
+
+        verify(variant).removeMod("exiledSector_opSpent_7");
+        verify(variant, never()).removeMod("hardenedshieldemitter");
+        verify(variant).addMod("exiledSector_opSpent_0");
+        assertEquals(Map.of("ship-a", 0), reserveSlots());
+    }
+
+    @Test
+    void refundingTheLastPaidNodeClearsTheReserveFromTheShipAndTheRefitWorkingCopyAlike() {
+        ShipSkillDataManager.get("ship-a");
+        persistentData.put("exiledSector_opSpentSlots", new HashMap<>(Map.of("ship-a", 3)));
+        SettingsAPI settings = mock(SettingsAPI.class);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+        HullModSpecAPI reserve = mock(HullModSpecAPI.class);
+        when(settings.getHullModSpec("exiledSector_opSpent_3")).thenReturn(reserve);
+        ShipVariantAPI memberVariant = mock(ShipVariantAPI.class);
+        ShipVariantAPI refitWorkingCopy = mock(ShipVariantAPI.class);
+        FleetMemberAPI member = memberWithId("ship-a");
+
+        SkillTreeHullMod.syncOpSpentHullMod(member, memberVariant);
+        SkillTreeHullMod.syncOpSpentHullMod(member, refitWorkingCopy);
+
+        verify(memberVariant).removeMod("exiledSector_opSpent_3");
+        verify(refitWorkingCopy).removeMod("exiledSector_opSpent_3");
+        verify(reserve, atLeastOnce()).setCruiserCost(0);
+        assertEquals(Map.of("ship-a", 3), reserveSlots());
     }
 
     @Test

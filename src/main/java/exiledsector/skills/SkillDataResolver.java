@@ -21,7 +21,11 @@ public final class SkillDataResolver {
         if (npcTag != null) {
             return NPC_TREES.computeIfAbsent(npcTag, SkillDataResolver::decodeOrEmpty);
         }
-        return member == null ? null : ShipSkillDataManager.get(member.getId());
+        if (member == null) {
+            return null;
+        }
+        ShipSkillData saved = ShipSkillDataManager.find(member.getId());
+        return saved != null ? saved : new ShipSkillData();
     }
 
     public static boolean isNpcTree(ShipVariantAPI variant) {
