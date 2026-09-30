@@ -16,6 +16,8 @@ import java.util.function.Function;
 
 final class SkillEffectSupport {
 
+    static final int MAX_COUNTED_DMODS = 5;
+
     private SkillEffectSupport() {
     }
 
@@ -40,7 +42,7 @@ final class SkillEffectSupport {
     // the per-D-mod multiplier compounds (e.g. -2% per D-mod means 0.98^dmodCount, not a flat
     // -2%-times-count reduction), matching the "(multiplicative)" design of these two effects
     static float compoundMultPerDMod(MutableShipStatsAPI stats, float magnitudePerDMod) {
-        return (float) Math.pow(multFrom(magnitudePerDMod), countDMods(stats));
+        return (float) Math.pow(multFrom(magnitudePerDMod), Math.min(countDMods(stats), MAX_COUNTED_DMODS));
     }
 
     private static int countDMods(MutableShipStatsAPI stats) {

@@ -17,8 +17,10 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -83,6 +85,34 @@ class SkillEffectSupportTest {
         verify(dmodEffectMult).modifyMult("mod_id", 0.95f);
         verify(dmodEffect).applyEffectsBeforeShipCreation(HullSize.CRUISER, stats, "degraded_engines");
         verifyNoInteractions(otherEffect);
+    }
+
+    private static float compoundMultWithDMods(int dModCount, float magnitudePerDMod) {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        SettingsAPI settings = mock(SettingsAPI.class);
+        HullModSpecAPI dmodSpec = mock(HullModSpecAPI.class);
+        when(stats.getVariant()).thenReturn(variant);
+        when(variant.getHullMods()).thenReturn(IntStream.range(0, dModCount).mapToObj(i -> "dmod_" + i).toList());
+        when(settings.getHullModSpec(anyString())).thenReturn(dmodSpec);
+        when(dmodSpec.hasTag(Tags.HULLMOD_DMOD)).thenReturn(true);
+
+        try (MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
+            global.when(Global::getSettings).thenReturn(settings);
+            return SkillEffectSupport.compoundMultPerDMod(stats, magnitudePerDMod);
+        }
+    }
+
+    @Test
+    void perDModMultipliersCompoundForEachDModUpToTheCap() {
+        assertEquals((float) Math.pow(1.02, 3), compoundMultWithDMods(3, 2f), 0.0001f);
+    }
+
+    @Test
+    void perDModMultipliersCountAtMostFiveDMods() {
+        assertEquals(5, SkillEffectSupport.MAX_COUNTED_DMODS);
+        assertEquals((float) Math.pow(1.02, 5), compoundMultWithDMods(7, 2f), 0.0001f);
+        assertEquals((float) Math.pow(0.98, 5), compoundMultWithDMods(7, -2f), 0.0001f);
     }
 
     @Test

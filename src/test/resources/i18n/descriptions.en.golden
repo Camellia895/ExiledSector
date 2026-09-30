@@ -10,12 +10,12 @@ effect|ACCELERATION_PERCENT|12.5	0	Increases acceleration by <good>12.5%</good>.
 effect|ACCELERATION_PERCENT|100.0	0	Increases acceleration by <good>100%</good>.
 effect|ACCELERATION_PERCENT|-10.0	0	Decreases acceleration by <bad>10%</bad>.
 effect|ACCELERATION_PERCENT|-12.5	0	Decreases acceleration by <bad>12.5%</bad>.
-effect|ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD|1.0	1	<good>1%</good> more armor damage taken per D-mod.
-effect|ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD|10.0	1	<good>10%</good> more armor damage taken per D-mod.
-effect|ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD|12.5	1	<good>12.5%</good> more armor damage taken per D-mod.
-effect|ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD|100.0	1	<good>100%</good> more armor damage taken per D-mod.
-effect|ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD|-10.0	1	<bad>10%</bad> less armor damage taken per D-mod.
-effect|ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD|-12.5	1	<bad>12.5%</bad> less armor damage taken per D-mod.
+effect|ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD|1.0	1	<good>1%</good> more armor damage taken per D-mod, up to 5 D-mods.
+effect|ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD|10.0	1	<good>10%</good> more armor damage taken per D-mod, up to 5 D-mods.
+effect|ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD|12.5	1	<good>12.5%</good> more armor damage taken per D-mod, up to 5 D-mods.
+effect|ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD|100.0	1	<good>100%</good> more armor damage taken per D-mod, up to 5 D-mods.
+effect|ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD|-10.0	1	<bad>10%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+effect|ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD|-12.5	1	<bad>12.5%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 effect|ARMOR_FLAT|1.0	0	Increases armor by <good>1</good>.
 effect|ARMOR_FLAT|10.0	0	Increases armor by <good>10</good>.
 effect|ARMOR_FLAT|12.5	0	Increases armor by <good>12.5</good>.
@@ -1600,12 +1600,12 @@ effect|WEAPON_DAMAGE_MULT|12.5	0	<good>12.5%</good> more weapon damage.
 effect|WEAPON_DAMAGE_MULT|100.0	0	<good>100%</good> more weapon damage.
 effect|WEAPON_DAMAGE_MULT|-10.0	0	<bad>10%</bad> less weapon damage.
 effect|WEAPON_DAMAGE_MULT|-12.5	0	<bad>12.5%</bad> less weapon damage.
-effect|WEAPON_DAMAGE_MULT_PER_DMOD|1.0	0	<good>1%</good> more weapon damage per D-mod.
-effect|WEAPON_DAMAGE_MULT_PER_DMOD|10.0	0	<good>10%</good> more weapon damage per D-mod.
-effect|WEAPON_DAMAGE_MULT_PER_DMOD|12.5	0	<good>12.5%</good> more weapon damage per D-mod.
-effect|WEAPON_DAMAGE_MULT_PER_DMOD|100.0	0	<good>100%</good> more weapon damage per D-mod.
-effect|WEAPON_DAMAGE_MULT_PER_DMOD|-10.0	0	<bad>10%</bad> less weapon damage per D-mod.
-effect|WEAPON_DAMAGE_MULT_PER_DMOD|-12.5	0	<bad>12.5%</bad> less weapon damage per D-mod.
+effect|WEAPON_DAMAGE_MULT_PER_DMOD|1.0	0	<good>1%</good> more weapon damage per D-mod, up to 5 D-mods.
+effect|WEAPON_DAMAGE_MULT_PER_DMOD|10.0	0	<good>10%</good> more weapon damage per D-mod, up to 5 D-mods.
+effect|WEAPON_DAMAGE_MULT_PER_DMOD|12.5	0	<good>12.5%</good> more weapon damage per D-mod, up to 5 D-mods.
+effect|WEAPON_DAMAGE_MULT_PER_DMOD|100.0	0	<good>100%</good> more weapon damage per D-mod, up to 5 D-mods.
+effect|WEAPON_DAMAGE_MULT_PER_DMOD|-10.0	0	<bad>10%</bad> less weapon damage per D-mod, up to 5 D-mods.
+effect|WEAPON_DAMAGE_MULT_PER_DMOD|-12.5	0	<bad>12.5%</bad> less weapon damage per D-mod, up to 5 D-mods.
 effect|WEAPON_DAMAGE_PERCENT|1.0	0	Increases weapon damage by <good>1%</good>.
 effect|WEAPON_DAMAGE_PERCENT|10.0	0	Increases weapon damage by <good>10%</good>.
 effect|WEAPON_DAMAGE_PERCENT|12.5	0	Increases weapon damage by <good>12.5%</good>.
@@ -2726,11 +2726,11 @@ type|peak_cr_duration|FRIGATE|0	0	Increases peak combat readiness duration by <g
 type|peak_cr_duration|DESTROYER|0	0	Increases peak combat readiness duration by <good>25%</good>.
 type|peak_cr_duration|CRUISER|0	0	Increases peak combat readiness duration by <good>25%</good>.
 type|peak_cr_duration|CAPITAL_SHIP|0	0	Increases peak combat readiness duration by <good>25%</good>.
-type|perseverence_through_faith|null|0	0	<good>2%</good> more weapon damage per D-mod.
-type|perseverence_through_faith|FRIGATE|0	0	<good>2%</good> more weapon damage per D-mod.
-type|perseverence_through_faith|DESTROYER|0	0	<good>2%</good> more weapon damage per D-mod.
-type|perseverence_through_faith|CRUISER|0	0	<good>2%</good> more weapon damage per D-mod.
-type|perseverence_through_faith|CAPITAL_SHIP|0	0	<good>2%</good> more weapon damage per D-mod.
+type|perseverence_through_faith|null|0	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
+type|perseverence_through_faith|FRIGATE|0	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
+type|perseverence_through_faith|DESTROYER|0	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
+type|perseverence_through_faith|CRUISER|0	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
+type|perseverence_through_faith|CAPITAL_SHIP|0	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
 type|phase_anchor|null|0	1	<bad>100%</bad> less phase cloak activation cost.
 type|phase_anchor|null|1	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 type|phase_anchor|null|2	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
@@ -2856,11 +2856,11 @@ type|repair_time|FRIGATE|0	1	<bad>15%</bad> less weapon and engine repair time.
 type|repair_time|DESTROYER|0	1	<bad>15%</bad> less weapon and engine repair time.
 type|repair_time|CRUISER|0	1	<bad>15%</bad> less weapon and engine repair time.
 type|repair_time|CAPITAL_SHIP|0	1	<bad>15%</bad> less weapon and engine repair time.
-type|restriction_breeds_creativity|null|0	1	<bad>2%</bad> less armor damage taken per D-mod.
-type|restriction_breeds_creativity|FRIGATE|0	1	<bad>2%</bad> less armor damage taken per D-mod.
-type|restriction_breeds_creativity|DESTROYER|0	1	<bad>2%</bad> less armor damage taken per D-mod.
-type|restriction_breeds_creativity|CRUISER|0	1	<bad>2%</bad> less armor damage taken per D-mod.
-type|restriction_breeds_creativity|CAPITAL_SHIP|0	1	<bad>2%</bad> less armor damage taken per D-mod.
+type|restriction_breeds_creativity|null|0	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+type|restriction_breeds_creativity|FRIGATE|0	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+type|restriction_breeds_creativity|DESTROYER|0	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+type|restriction_breeds_creativity|CRUISER|0	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+type|restriction_breeds_creativity|CAPITAL_SHIP|0	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 type|root_high_tech|null|0	0	Increases flux dissipation by <good>10%</good>.
 type|root_high_tech|FRIGATE|0	0	Increases flux dissipation by <good>10%</good>.
 type|root_high_tech|FRIGATE|1	0	Increases flux capacity by <good>20</good>.
@@ -3313,7 +3313,7 @@ summary|option0|FRIGATE|109	0	Increases non-beam energy weapon range by <good>10
 summary|option0|FRIGATE|110	0	Increases flux capacity by <good>15%</good>.
 summary|option0|FRIGATE|111	0	Increases flux capacity by <good>620</good>.
 summary|option0|FRIGATE|112	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
-summary|option0|FRIGATE|113	0	<good>2%</good> more weapon damage per D-mod.
+summary|option0|FRIGATE|113	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
 summary|option0|FRIGATE|114	1	<bad>100%</bad> less phase cloak activation cost.
 summary|option0|FRIGATE|115	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 summary|option0|FRIGATE|116	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
@@ -3327,7 +3327,7 @@ summary|option0|FRIGATE|123	1	<bad>75%</bad> less casualties suffered by fighter
 summary|option0|FRIGATE|124	1	<bad>18.55%</bad> less negative effects from D-mods.
 summary|option0|FRIGATE|125	0	If disabled, this ship is almost always recoverable after the battle.
 summary|option0|FRIGATE|126	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option0|FRIGATE|127	1	<bad>2%</bad> less armor damage taken per D-mod.
+summary|option0|FRIGATE|127	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 summary|option0|FRIGATE|128	0	Allows the zero-flux speed boost to take effect regardless of flux level.
 summary|option0|FRIGATE|129	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
 summary|option0|FRIGATE|130	0	<bad>67%</bad> less peak combat readiness duration.
@@ -3468,7 +3468,7 @@ summary|option0|DESTROYER|109	0	Increases non-beam energy weapon range by <good>
 summary|option0|DESTROYER|110	0	Increases flux capacity by <good>15%</good>.
 summary|option0|DESTROYER|111	0	Increases flux capacity by <good>640</good>.
 summary|option0|DESTROYER|112	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
-summary|option0|DESTROYER|113	0	<good>2%</good> more weapon damage per D-mod.
+summary|option0|DESTROYER|113	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
 summary|option0|DESTROYER|114	1	<bad>100%</bad> less phase cloak activation cost.
 summary|option0|DESTROYER|115	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 summary|option0|DESTROYER|116	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
@@ -3482,7 +3482,7 @@ summary|option0|DESTROYER|123	1	<bad>75%</bad> less casualties suffered by fight
 summary|option0|DESTROYER|124	1	<bad>18.55%</bad> less negative effects from D-mods.
 summary|option0|DESTROYER|125	0	If disabled, this ship is almost always recoverable after the battle.
 summary|option0|DESTROYER|126	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option0|DESTROYER|127	1	<bad>2%</bad> less armor damage taken per D-mod.
+summary|option0|DESTROYER|127	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 summary|option0|DESTROYER|128	0	Allows the zero-flux speed boost to take effect regardless of flux level.
 summary|option0|DESTROYER|129	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
 summary|option0|DESTROYER|130	0	<bad>67%</bad> less peak combat readiness duration.
@@ -3623,7 +3623,7 @@ summary|option0|CRUISER|109	0	Increases non-beam energy weapon range by <good>10
 summary|option0|CRUISER|110	0	Increases flux capacity by <good>15%</good>.
 summary|option0|CRUISER|111	0	Increases flux capacity by <good>660</good>.
 summary|option0|CRUISER|112	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
-summary|option0|CRUISER|113	0	<good>2%</good> more weapon damage per D-mod.
+summary|option0|CRUISER|113	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
 summary|option0|CRUISER|114	1	<bad>100%</bad> less phase cloak activation cost.
 summary|option0|CRUISER|115	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 summary|option0|CRUISER|116	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
@@ -3637,7 +3637,7 @@ summary|option0|CRUISER|123	1	<bad>75%</bad> less casualties suffered by fighter
 summary|option0|CRUISER|124	1	<bad>18.55%</bad> less negative effects from D-mods.
 summary|option0|CRUISER|125	0	If disabled, this ship is almost always recoverable after the battle.
 summary|option0|CRUISER|126	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option0|CRUISER|127	1	<bad>2%</bad> less armor damage taken per D-mod.
+summary|option0|CRUISER|127	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 summary|option0|CRUISER|128	0	Allows the zero-flux speed boost to take effect regardless of flux level.
 summary|option0|CRUISER|129	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
 summary|option0|CRUISER|130	0	<bad>67%</bad> less peak combat readiness duration.
@@ -3778,7 +3778,7 @@ summary|option0|CAPITAL_SHIP|109	0	Increases non-beam energy weapon range by <go
 summary|option0|CAPITAL_SHIP|110	0	Increases flux capacity by <good>15%</good>.
 summary|option0|CAPITAL_SHIP|111	0	Increases flux capacity by <good>680</good>.
 summary|option0|CAPITAL_SHIP|112	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
-summary|option0|CAPITAL_SHIP|113	0	<good>2%</good> more weapon damage per D-mod.
+summary|option0|CAPITAL_SHIP|113	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
 summary|option0|CAPITAL_SHIP|114	1	<bad>100%</bad> less phase cloak activation cost.
 summary|option0|CAPITAL_SHIP|115	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 summary|option0|CAPITAL_SHIP|116	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
@@ -3792,7 +3792,7 @@ summary|option0|CAPITAL_SHIP|123	1	<bad>75%</bad> less casualties suffered by fi
 summary|option0|CAPITAL_SHIP|124	1	<bad>18.55%</bad> less negative effects from D-mods.
 summary|option0|CAPITAL_SHIP|125	0	If disabled, this ship is almost always recoverable after the battle.
 summary|option0|CAPITAL_SHIP|126	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option0|CAPITAL_SHIP|127	1	<bad>2%</bad> less armor damage taken per D-mod.
+summary|option0|CAPITAL_SHIP|127	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 summary|option0|CAPITAL_SHIP|128	0	Allows the zero-flux speed boost to take effect regardless of flux level.
 summary|option0|CAPITAL_SHIP|129	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
 summary|option0|CAPITAL_SHIP|130	0	<bad>67%</bad> less peak combat readiness duration.
@@ -3933,7 +3933,7 @@ summary|option1|FRIGATE|109	0	Increases non-beam energy weapon range by <good>10
 summary|option1|FRIGATE|110	0	Increases flux capacity by <good>15%</good>.
 summary|option1|FRIGATE|111	0	Increases flux capacity by <good>620</good>.
 summary|option1|FRIGATE|112	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
-summary|option1|FRIGATE|113	0	<good>2%</good> more weapon damage per D-mod.
+summary|option1|FRIGATE|113	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
 summary|option1|FRIGATE|114	1	<bad>100%</bad> less phase cloak activation cost.
 summary|option1|FRIGATE|115	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 summary|option1|FRIGATE|116	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
@@ -3947,7 +3947,7 @@ summary|option1|FRIGATE|123	1	<bad>75%</bad> less casualties suffered by fighter
 summary|option1|FRIGATE|124	1	<bad>18.55%</bad> less negative effects from D-mods.
 summary|option1|FRIGATE|125	0	If disabled, this ship is almost always recoverable after the battle.
 summary|option1|FRIGATE|126	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option1|FRIGATE|127	1	<bad>2%</bad> less armor damage taken per D-mod.
+summary|option1|FRIGATE|127	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 summary|option1|FRIGATE|128	0	Allows the zero-flux speed boost to take effect regardless of flux level.
 summary|option1|FRIGATE|129	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
 summary|option1|FRIGATE|130	0	<bad>67%</bad> less peak combat readiness duration.
@@ -4088,7 +4088,7 @@ summary|option1|DESTROYER|109	0	Increases non-beam energy weapon range by <good>
 summary|option1|DESTROYER|110	0	Increases flux capacity by <good>15%</good>.
 summary|option1|DESTROYER|111	0	Increases flux capacity by <good>640</good>.
 summary|option1|DESTROYER|112	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
-summary|option1|DESTROYER|113	0	<good>2%</good> more weapon damage per D-mod.
+summary|option1|DESTROYER|113	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
 summary|option1|DESTROYER|114	1	<bad>100%</bad> less phase cloak activation cost.
 summary|option1|DESTROYER|115	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 summary|option1|DESTROYER|116	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
@@ -4102,7 +4102,7 @@ summary|option1|DESTROYER|123	1	<bad>75%</bad> less casualties suffered by fight
 summary|option1|DESTROYER|124	1	<bad>18.55%</bad> less negative effects from D-mods.
 summary|option1|DESTROYER|125	0	If disabled, this ship is almost always recoverable after the battle.
 summary|option1|DESTROYER|126	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option1|DESTROYER|127	1	<bad>2%</bad> less armor damage taken per D-mod.
+summary|option1|DESTROYER|127	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 summary|option1|DESTROYER|128	0	Allows the zero-flux speed boost to take effect regardless of flux level.
 summary|option1|DESTROYER|129	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
 summary|option1|DESTROYER|130	0	<bad>67%</bad> less peak combat readiness duration.
@@ -4243,7 +4243,7 @@ summary|option1|CRUISER|109	0	Increases non-beam energy weapon range by <good>10
 summary|option1|CRUISER|110	0	Increases flux capacity by <good>15%</good>.
 summary|option1|CRUISER|111	0	Increases flux capacity by <good>660</good>.
 summary|option1|CRUISER|112	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
-summary|option1|CRUISER|113	0	<good>2%</good> more weapon damage per D-mod.
+summary|option1|CRUISER|113	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
 summary|option1|CRUISER|114	1	<bad>100%</bad> less phase cloak activation cost.
 summary|option1|CRUISER|115	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 summary|option1|CRUISER|116	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
@@ -4257,7 +4257,7 @@ summary|option1|CRUISER|123	1	<bad>75%</bad> less casualties suffered by fighter
 summary|option1|CRUISER|124	1	<bad>18.55%</bad> less negative effects from D-mods.
 summary|option1|CRUISER|125	0	If disabled, this ship is almost always recoverable after the battle.
 summary|option1|CRUISER|126	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option1|CRUISER|127	1	<bad>2%</bad> less armor damage taken per D-mod.
+summary|option1|CRUISER|127	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 summary|option1|CRUISER|128	0	Allows the zero-flux speed boost to take effect regardless of flux level.
 summary|option1|CRUISER|129	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
 summary|option1|CRUISER|130	0	<bad>67%</bad> less peak combat readiness duration.
@@ -4398,7 +4398,7 @@ summary|option1|CAPITAL_SHIP|109	0	Increases non-beam energy weapon range by <go
 summary|option1|CAPITAL_SHIP|110	0	Increases flux capacity by <good>15%</good>.
 summary|option1|CAPITAL_SHIP|111	0	Increases flux capacity by <good>680</good>.
 summary|option1|CAPITAL_SHIP|112	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
-summary|option1|CAPITAL_SHIP|113	0	<good>2%</good> more weapon damage per D-mod.
+summary|option1|CAPITAL_SHIP|113	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
 summary|option1|CAPITAL_SHIP|114	1	<bad>100%</bad> less phase cloak activation cost.
 summary|option1|CAPITAL_SHIP|115	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 summary|option1|CAPITAL_SHIP|116	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
@@ -4412,7 +4412,7 @@ summary|option1|CAPITAL_SHIP|123	1	<bad>75%</bad> less casualties suffered by fi
 summary|option1|CAPITAL_SHIP|124	1	<bad>18.55%</bad> less negative effects from D-mods.
 summary|option1|CAPITAL_SHIP|125	0	If disabled, this ship is almost always recoverable after the battle.
 summary|option1|CAPITAL_SHIP|126	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option1|CAPITAL_SHIP|127	1	<bad>2%</bad> less armor damage taken per D-mod.
+summary|option1|CAPITAL_SHIP|127	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 summary|option1|CAPITAL_SHIP|128	0	Allows the zero-flux speed boost to take effect regardless of flux level.
 summary|option1|CAPITAL_SHIP|129	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
 summary|option1|CAPITAL_SHIP|130	0	<bad>67%</bad> less peak combat readiness duration.
@@ -4553,7 +4553,7 @@ summary|option2|FRIGATE|109	0	Increases non-beam energy weapon range by <good>10
 summary|option2|FRIGATE|110	0	Increases flux capacity by <good>15%</good>.
 summary|option2|FRIGATE|111	0	Increases flux capacity by <good>620</good>.
 summary|option2|FRIGATE|112	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
-summary|option2|FRIGATE|113	0	<good>2%</good> more weapon damage per D-mod.
+summary|option2|FRIGATE|113	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
 summary|option2|FRIGATE|114	1	<bad>100%</bad> less phase cloak activation cost.
 summary|option2|FRIGATE|115	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 summary|option2|FRIGATE|116	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
@@ -4567,7 +4567,7 @@ summary|option2|FRIGATE|123	1	<bad>75%</bad> less casualties suffered by fighter
 summary|option2|FRIGATE|124	1	<bad>18.55%</bad> less negative effects from D-mods.
 summary|option2|FRIGATE|125	0	If disabled, this ship is almost always recoverable after the battle.
 summary|option2|FRIGATE|126	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option2|FRIGATE|127	1	<bad>2%</bad> less armor damage taken per D-mod.
+summary|option2|FRIGATE|127	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 summary|option2|FRIGATE|128	0	Allows the zero-flux speed boost to take effect regardless of flux level.
 summary|option2|FRIGATE|129	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
 summary|option2|FRIGATE|130	0	<bad>67%</bad> less peak combat readiness duration.
@@ -4708,7 +4708,7 @@ summary|option2|DESTROYER|109	0	Increases non-beam energy weapon range by <good>
 summary|option2|DESTROYER|110	0	Increases flux capacity by <good>15%</good>.
 summary|option2|DESTROYER|111	0	Increases flux capacity by <good>640</good>.
 summary|option2|DESTROYER|112	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
-summary|option2|DESTROYER|113	0	<good>2%</good> more weapon damage per D-mod.
+summary|option2|DESTROYER|113	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
 summary|option2|DESTROYER|114	1	<bad>100%</bad> less phase cloak activation cost.
 summary|option2|DESTROYER|115	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 summary|option2|DESTROYER|116	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
@@ -4722,7 +4722,7 @@ summary|option2|DESTROYER|123	1	<bad>75%</bad> less casualties suffered by fight
 summary|option2|DESTROYER|124	1	<bad>18.55%</bad> less negative effects from D-mods.
 summary|option2|DESTROYER|125	0	If disabled, this ship is almost always recoverable after the battle.
 summary|option2|DESTROYER|126	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option2|DESTROYER|127	1	<bad>2%</bad> less armor damage taken per D-mod.
+summary|option2|DESTROYER|127	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 summary|option2|DESTROYER|128	0	Allows the zero-flux speed boost to take effect regardless of flux level.
 summary|option2|DESTROYER|129	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
 summary|option2|DESTROYER|130	0	<bad>67%</bad> less peak combat readiness duration.
@@ -4863,7 +4863,7 @@ summary|option2|CRUISER|109	0	Increases non-beam energy weapon range by <good>10
 summary|option2|CRUISER|110	0	Increases flux capacity by <good>15%</good>.
 summary|option2|CRUISER|111	0	Increases flux capacity by <good>660</good>.
 summary|option2|CRUISER|112	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
-summary|option2|CRUISER|113	0	<good>2%</good> more weapon damage per D-mod.
+summary|option2|CRUISER|113	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
 summary|option2|CRUISER|114	1	<bad>100%</bad> less phase cloak activation cost.
 summary|option2|CRUISER|115	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 summary|option2|CRUISER|116	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
@@ -4877,7 +4877,7 @@ summary|option2|CRUISER|123	1	<bad>75%</bad> less casualties suffered by fighter
 summary|option2|CRUISER|124	1	<bad>18.55%</bad> less negative effects from D-mods.
 summary|option2|CRUISER|125	0	If disabled, this ship is almost always recoverable after the battle.
 summary|option2|CRUISER|126	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option2|CRUISER|127	1	<bad>2%</bad> less armor damage taken per D-mod.
+summary|option2|CRUISER|127	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 summary|option2|CRUISER|128	0	Allows the zero-flux speed boost to take effect regardless of flux level.
 summary|option2|CRUISER|129	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
 summary|option2|CRUISER|130	0	<bad>67%</bad> less peak combat readiness duration.
@@ -5018,7 +5018,7 @@ summary|option2|CAPITAL_SHIP|109	0	Increases non-beam energy weapon range by <go
 summary|option2|CAPITAL_SHIP|110	0	Increases flux capacity by <good>15%</good>.
 summary|option2|CAPITAL_SHIP|111	0	Increases flux capacity by <good>680</good>.
 summary|option2|CAPITAL_SHIP|112	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
-summary|option2|CAPITAL_SHIP|113	0	<good>2%</good> more weapon damage per D-mod.
+summary|option2|CAPITAL_SHIP|113	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
 summary|option2|CAPITAL_SHIP|114	1	<bad>100%</bad> less phase cloak activation cost.
 summary|option2|CAPITAL_SHIP|115	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 summary|option2|CAPITAL_SHIP|116	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
@@ -5032,7 +5032,7 @@ summary|option2|CAPITAL_SHIP|123	1	<bad>75%</bad> less casualties suffered by fi
 summary|option2|CAPITAL_SHIP|124	1	<bad>18.55%</bad> less negative effects from D-mods.
 summary|option2|CAPITAL_SHIP|125	0	If disabled, this ship is almost always recoverable after the battle.
 summary|option2|CAPITAL_SHIP|126	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option2|CAPITAL_SHIP|127	1	<bad>2%</bad> less armor damage taken per D-mod.
+summary|option2|CAPITAL_SHIP|127	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 summary|option2|CAPITAL_SHIP|128	0	Allows the zero-flux speed boost to take effect regardless of flux level.
 summary|option2|CAPITAL_SHIP|129	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
 summary|option2|CAPITAL_SHIP|130	0	<bad>67%</bad> less peak combat readiness duration.
