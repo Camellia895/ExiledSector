@@ -47,10 +47,13 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -724,6 +727,79 @@ class SkillTreeHullModTest {
         when(ship.getHullSize()).thenReturn(HullSize.FRIGATE);
         when(stats.getFleetMember()).thenReturn(member);
         return ship;
+    }
+
+    private static ShipAPI withRealCustomData(ShipAPI ship) {
+        Map<String, Object> customData = new HashMap<>();
+        when(ship.getCustomData()).thenReturn(customData);
+        doAnswer(invocation -> customData.put(invocation.getArgument(0), invocation.getArgument(1)))
+                .when(ship).setCustomData(anyString(), any());
+        return ship;
+    }
+
+    private static SkillNode registerTemporaryHullNode() {
+        SkillType temporaryType = new SkillType.Builder("surge", "Surge", "graphics/icons/surge.png", SkillTier.SMALL)
+                .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)))
+                .temporaryAfterDeploymentSeconds(60f)
+                .build();
+        SkillNode node = new SkillNode("surge_1", temporaryType, List.of(), 0f, 0f);
+        SkillTree.register(node);
+        return node;
+    }
+
+    @Test
+    void aTemporaryNodeIsLeftAloneWhileItsWindowIsOpen() {
+        SkillNode node = registerTemporaryHullNode();
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        ShipSkillDataManager.get("ship-a").allocate(node, 1);
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        StatBonus hull = mock(StatBonus.class);
+        when(stats.getHullBonus()).thenReturn(hull);
+        ShipAPI ship = withRealCustomData(mockShip(member, stats));
+        when(ship.getFullTimeDeployed()).thenReturn(30f);
+
+        new SkillTreeHullMod().advanceInCombat(ship, 0.1f);
+
+        verify(hull, never()).modifyPercent(anyString(), anyFloat());
+    }
+
+    @Test
+    void aTemporaryNodeIsZeroedOnceWhenItsWindowCloses() {
+        SkillNode node = registerTemporaryHullNode();
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        ShipSkillDataManager.get("ship-a").allocate(node, 1);
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        StatBonus hull = mock(StatBonus.class);
+        when(stats.getHullBonus()).thenReturn(hull);
+        ShipAPI ship = withRealCustomData(mockShip(member, stats));
+        when(ship.getFullTimeDeployed()).thenReturn(59f, 61f, 62f);
+        SkillTreeHullMod hullMod = new SkillTreeHullMod();
+
+        hullMod.advanceInCombat(ship, 0.1f);
+        hullMod.advanceInCombat(ship, 0.1f);
+        hullMod.advanceInCombat(ship, 0.1f);
+
+        verify(hull, times(1)).modifyPercent("exiledSector_skill_surge_1", 0f);
+        verify(hull, never()).modifyPercent("exiledSector_skill_surge_1", 10f);
+    }
+
+    @Test
+    void advanceInCombatResolvesTheShipsTreeOnlyOnce() {
+        SkillNode node = registerTemporaryHullNode();
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        ShipSkillDataManager.get("ship-a").allocate(node, 1);
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        ShipAPI ship = withRealCustomData(mockShip(member, stats));
+        SkillTreeHullMod hullMod = new SkillTreeHullMod();
+
+        hullMod.advanceInCombat(ship, 0.1f);
+        hullMod.advanceInCombat(ship, 0.1f);
+        hullMod.advanceInCombat(ship, 0.1f);
+
+        verify(ship, times(1)).getVariant();
     }
 
     @Test

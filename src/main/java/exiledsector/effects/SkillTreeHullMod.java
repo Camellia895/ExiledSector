@@ -24,6 +24,8 @@ import org.magiclib.util.MagicIncompatibleHullmods;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class SkillTreeHullMod extends BaseHullMod {
@@ -34,6 +36,7 @@ public class SkillTreeHullMod extends BaseHullMod {
     private static final String MAGICLIB_WARNING_HULLMOD_ID = "ML_incompatibleHullmodWarning";
     private static final String OP_SPENT_HULLMOD_ID_PREFIX = "exiledSector_opSpent_";
     private static final String INSTALLED_HULLMOD_TAG_PREFIX = "exiledSector_installed_";
+    private static final String COMBAT_PLAN_KEY = "exiledSector_combatPlan";
 
     @Override
     public void applyEffectsBeforeShipCreation(HullSize hullSize, MutableShipStatsAPI stats, String id) {
@@ -74,33 +77,43 @@ public class SkillTreeHullMod extends BaseHullMod {
 
     @Override
     public void advanceInCombat(ShipAPI ship, float amount) {
-        forEachAllocatedEffect(dataFor(ship), ship.getHullSize(),
-                (vanillaEffect, vanillaHullModId) -> vanillaEffect.advanceInCombat(ship, amount),
-                (effect, modId, magnitude) -> {
-                    if (effect.isConditional()) {
-                        effect.advanceInCombat(ship, modId, magnitude);
-                    }
-                });
-        reapplyTemporaryNodes(ship);
+        combatPlanFor(ship).advance(ship, amount);
     }
 
-    private void reapplyTemporaryNodes(ShipAPI ship) {
-        ShipSkillData data = dataFor(ship);
-        if (data == null) return;
+    private ShipCombatPlan combatPlanFor(ShipAPI ship) {
+        Map<String, Object> customData = ship.getCustomData();
+        if (customData != null && customData.get(COMBAT_PLAN_KEY) instanceof ShipCombatPlan plan) {
+            return plan;
+        }
+        ShipCombatPlan plan = buildCombatPlan(dataFor(ship), ship.getHullSize());
+        ship.setCustomData(COMBAT_PLAN_KEY, plan);
+        return plan;
+    }
 
-        MutableShipStatsAPI stats = ship.getMutableStats();
-        HullSize hullSize = ship.getHullSize();
+    private ShipCombatPlan buildCombatPlan(ShipSkillData data, HullSize hullSize) {
+        ShipCombatPlan plan = new ShipCombatPlan();
+        forEachAllocatedEffect(data, hullSize,
+                (vanillaEffect, vanillaHullModId) -> plan.addVanillaEffect(vanillaEffect),
+                (effect, modId, magnitude) -> {
+                    if (effect.isConditional()) {
+                        plan.addConditionalEffect(new ShipCombatPlan.AppliedEffect(effect, modId, magnitude));
+                    }
+                });
+        if (data == null) return plan;
+
         for (AllocatedNode allocated : AllocatedNode.of(data)) {
             SkillType type = allocated.effectiveType();
             Float durationSeconds = type.getTemporaryAfterDeploymentSeconds();
             if (durationSeconds == null) continue;
 
-            boolean active = ship.getFullTimeDeployed() < durationSeconds;
             String modId = MOD_ID_PREFIX + allocated.node().getId();
+            List<ShipCombatPlan.AppliedEffect> effects = new ArrayList<>();
             for (SkillTypeEffect effect : AllocatedSkillEffects.appliedEffects(data, type, hullSize)) {
-                effect.effect().apply(stats, modId, active ? effect.magnitude() : 0f);
+                effects.add(new ShipCombatPlan.AppliedEffect(effect.effect(), modId, effect.magnitude()));
             }
+            plan.addTemporaryNode(durationSeconds, effects);
         }
+        return plan;
     }
 
     private static ShipSkillData dataFor(ShipAPI ship) {
