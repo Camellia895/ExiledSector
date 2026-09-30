@@ -222,6 +222,19 @@ class NodeAllocatorTest {
     }
 
     @Test
+    void theFirstPaidNodeAfterChoosingTheRootReservesItsOpOnTheVariantBeingEdited() {
+        HullModSpecAPI reserve = mock(HullModSpecAPI.class);
+        when(settings.getHullModSpec("exiledSector_opSpent_0")).thenReturn(reserve);
+        NodeAllocator allocator = allocatorStartingAt(root);
+        assertTrue(allocator.chooseStartingRoot(root));
+
+        assertTrue(allocator.toggle(frontShield));
+
+        verify(reserve).setCruiserCost(SkillNodeOpCost.perNode(HullSize.CRUISER));
+        verify(variant).addMod("exiledSector_opSpent_0");
+    }
+
+    @Test
     void aToggleThatChangesNothingTakesNoItemAndDoesNotRefreshTheShip() {
         data().chooseStartingRoot(root);
 

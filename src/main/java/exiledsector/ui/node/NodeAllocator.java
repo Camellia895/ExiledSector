@@ -190,6 +190,8 @@ final class NodeAllocator {
         revision++;
         FleetWideEffects.markPhaseFieldStale();
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(member.getHullSpec().getHullSize(), member.getStats(), SkillTreeHullMod.ID);
+        SkillTreeHullMod.syncOpSpentHullMod(member, variant);
+        SkillTreeHullMod.syncInstalledHullMods(member, variant);
         member.setStatUpdateNeeded(true);
         member.updateStats();
     }
