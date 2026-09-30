@@ -39,7 +39,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final SkillTreeStarRenderer starRenderer;
     private final SkillTreeNodeRenderer nodeRenderer;
     private final SkillTreeStatPanel statPanel;
-    private final SkillTreeOrdnancePointsBar ordnancePointsBar;
+    private final SkillTreeReadoutBar ordnancePointsBar = new SkillTreeReadoutBar(SkillTreeCanvasPlugin.class, 0);
     private final SkillTreeLevelBar levelBar;
     private final SkillTreeInfoTooltipRenderer readoutTooltipRenderer;
     private final NodeSearch search = new NodeSearch();
@@ -70,8 +70,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.nodeRenderer = new SkillTreeNodeRenderer(member, variant, style, refitButton, search);
         this.searchBar = new SkillTreeSearchBar(search);
         this.statPanel = new SkillTreeStatPanel(member);
-        this.ordnancePointsBar = new SkillTreeOrdnancePointsBar();
-        this.levelBar = new SkillTreeLevelBar(member);
+        this.levelBar = new SkillTreeLevelBar(member, 1);
         this.readoutTooltipRenderer = new SkillTreeInfoTooltipRenderer(style);
         this.readoutTooltipBody = buildReadoutTooltipBody(member);
         this.shipCardHeight = shipCardHeight;
@@ -102,7 +101,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         }
         ShipOpBudget budget = nodeRenderer.budget();
         statPanel.refresh(budget, nodeRenderer.statsRevision());
-        ordnancePointsBar.advance(amount, budget, position, mouseX, mouseY, mouseKnown);
+        ordnancePointsBar.advance(amount, position, budget.used, budget.total, mouseX, mouseY, mouseKnown);
         levelBar.advance(amount, position, mouseX, mouseY, mouseKnown);
     }
 
@@ -261,7 +260,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         nodeRenderer.render(viewport, alphaMult, mouseX, mouseY, treeHovered);
         starRenderer.renderGlow(viewport, backgroundAlpha);
         statPanel.render(position, alphaMult);
-        ordnancePointsBar.render(position, alphaMult);
+        ordnancePointsBar.render(position, alphaMult, null);
         levelBar.render(position, alphaMult);
         if (!nodeRenderer.isStartingRootInputLocked()) {
             searchBar.render(position, alphaMult);

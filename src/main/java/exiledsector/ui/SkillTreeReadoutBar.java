@@ -1,6 +1,7 @@
 package exiledsector.ui;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.util.FaderUtil;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.ui.util.CachedText;
@@ -27,8 +28,9 @@ final class SkillTreeReadoutBar {
     private static final float TEXT_SHADOW_OFFSET_X = 1f;
     private static final float TEXT_SHADOW_OFFSET_Y = -1f;
 
-    static final float BAR_WIDTH = 297f;
-    static final float BAR_HEIGHT = 30f;
+    private static final float BAR_WIDTH = 297f;
+    private static final float BAR_HEIGHT = 30f;
+    private static final float ROW_GAP = 8f;
     private static final float FONT_SIZE = 20f;
 
     private static final float EDGE_LINE_WIDTH = 2f;
@@ -47,6 +49,7 @@ final class SkillTreeReadoutBar {
     private static final float HOVER_FADE_OUT = 0.25f;
 
     private final SpriteCache spriteCache;
+    private final int row;
     private final FaderUtil hoverFader = new FaderUtil(HOVER_FADE_IN, HOVER_FADE_OUT);
 
     private final CachedText<Void, LabelTexts> labelCache = new CachedText<>();
@@ -55,14 +58,20 @@ final class SkillTreeReadoutBar {
     private Color overflowColor;
 
     private boolean initialized = false;
+    private int spent;
+    private int total;
     private float displayedSpent;
     private float displayedTotal;
 
-    SkillTreeReadoutBar(Class<?> owner) {
+    SkillTreeReadoutBar(Class<?> owner, int row) {
         this.spriteCache = new SpriteCache(owner);
+        this.row = row;
     }
 
-    void advance(float amount, int spent, int total, boolean hovered) {
+    void advance(float amount, PositionAPI position, int spent, int total, float mouseX, float mouseY, boolean mouseKnown) {
+        this.spent = spent;
+        this.total = total;
+        boolean hovered = mouseKnown && isHovered(position, mouseX, mouseY);
         if (!initialized) {
             displayedSpent = spent;
             displayedTotal = total;
@@ -80,18 +89,27 @@ final class SkillTreeReadoutBar {
         hoverFader.advance(amount);
     }
 
-    static boolean containsPoint(float barLeft, float barBottom, float x, float y) {
-        return x >= barLeft && x <= barLeft + BAR_WIDTH
-                && y >= barBottom && y <= barBottom + BAR_HEIGHT;
+    boolean isHovered(PositionAPI position, float x, float y) {
+        if (position == null) return false;
+        float left = left(position);
+        float bottom = bottom(position);
+        return x >= left && x <= left + BAR_WIDTH && y >= bottom && y <= bottom + BAR_HEIGHT;
     }
 
-    void render(float left, float bottom, int spent, int total, float alphaMult) {
-        render(left, bottom, spent, total, alphaMult, null);
+    private static float left(PositionAPI position) {
+        return position.getX() + SkillTreeRefitButton.SHIP_CARD_MARGIN;
     }
 
-    void render(float left, float bottom, int spent, int total, float alphaMult, String labelOverride) {
+    private float bottom(PositionAPI position) {
+        float top = position.getY() + position.getHeight() - SkillTreeRefitButton.SHIP_CARD_MARGIN;
+        return top - BAR_HEIGHT - row * (BAR_HEIGHT + ROW_GAP);
+    }
+
+    void render(PositionAPI position, float alphaMult, String labelOverride) {
         LazyFont font = SkillTreePanelStyle.font();
         if (font == null) return;
+        float left = left(position);
+        float bottom = bottom(position);
         if (!initialized) {
             displayedSpent = spent;
             displayedTotal = total;

@@ -10,33 +10,32 @@ import exiledsector.skills.progression.ShipLevelSystem;
 
 final class SkillTreeLevelBar {
 
-    private static final float BAR_GAP = 8f;
-
     private final FleetMemberAPI member;
-    private final SkillTreeReadoutBar bar = new SkillTreeReadoutBar(SkillTreeLevelBar.class);
+    private final SkillTreeReadoutBar bar;
 
     private int level;
-    private int xp;
-    private int xpToNextLevel;
     private int bankedFreeAllocations;
 
-    SkillTreeLevelBar(FleetMemberAPI member) {
+    SkillTreeLevelBar(FleetMemberAPI member, int row) {
         this.member = member;
+        this.bar = new SkillTreeReadoutBar(SkillTreeLevelBar.class, row);
     }
 
     void advance(float amount, PositionAPI position, float mouseX, float mouseY, boolean mouseKnown) {
-        refresh();
+        ShipSkillData data = ShipSkillDataManager.get(member.getId());
+        level = data.getLevel();
+        bankedFreeAllocations = data.getBankedFreeAllocations();
+        int xp = Math.round(data.getXp());
 
-        boolean hovered = mouseKnown && isHovered(position, mouseX, mouseY);
-        bar.advance(amount, xp, xpToNextLevel, hovered);
+        int maxLevel = ShipLevelConfig.maxLevel();
+        int xpToNextLevel = level >= maxLevel ? Math.max(xp, 1)
+                : Math.round(ShipLevelSystem.xpToReachNextLevel(level, ShipLevelConfig.xpBase(), ShipLevelConfig.xpGrowth(),
+                        ShipLevelConfig.xpGrowthCutoffLevel()));
+        bar.advance(amount, position, xp, xpToNextLevel, mouseX, mouseY, mouseKnown);
     }
 
     void render(PositionAPI position, float alphaMult) {
-        refresh();
-
-        float barLeft = barLeft(position);
-        float barBottom = barBottom(position);
-        bar.render(barLeft, barBottom, xp, xpToNextLevel, alphaMult, label());
+        bar.render(position, alphaMult, label());
     }
 
     private String label() {
@@ -47,28 +46,6 @@ final class SkillTreeLevelBar {
     }
 
     boolean isHovered(PositionAPI position, float x, float y) {
-        return position != null && SkillTreeReadoutBar.containsPoint(barLeft(position), barBottom(position), x, y);
-    }
-
-    private float barLeft(PositionAPI position) {
-        return position.getX() + SkillTreeRefitButton.SHIP_CARD_MARGIN;
-    }
-
-    private float barBottom(PositionAPI position) {
-        float opBarTop = position.getY() + position.getHeight() - SkillTreeRefitButton.SHIP_CARD_MARGIN;
-        float opBarBottom = opBarTop - SkillTreeReadoutBar.BAR_HEIGHT;
-        return opBarBottom - BAR_GAP - SkillTreeReadoutBar.BAR_HEIGHT;
-    }
-
-    private void refresh() {
-        ShipSkillData data = ShipSkillDataManager.get(member.getId());
-        level = data.getLevel();
-        xp = Math.round(data.getXp());
-        bankedFreeAllocations = data.getBankedFreeAllocations();
-
-        int maxLevel = ShipLevelConfig.maxLevel();
-        xpToNextLevel = level >= maxLevel ? Math.max(xp, 1)
-                : Math.round(ShipLevelSystem.xpToReachNextLevel(level, ShipLevelConfig.xpBase(), ShipLevelConfig.xpGrowth(),
-                        ShipLevelConfig.xpGrowthCutoffLevel()));
+        return bar.isHovered(position, x, y);
     }
 }
