@@ -61,6 +61,9 @@ final class SkillTreeReadoutBar {
     private int total;
     private float displayedSpent;
     private float displayedTotal;
+    private int labelledSpent = -1;
+    private int labelledTotal = -1;
+    private String spentOfTotalLabel;
 
     SkillTreeReadoutBar(Class<?> owner, int row) {
         this.spriteCache = new SpriteCache(owner);
@@ -134,8 +137,19 @@ final class SkillTreeReadoutBar {
         drawEdgeBevel(left, bottom, barColor, alphaMult, glowBoost);
         drawCornerAccents(left, bottom, barColor, alphaMult);
 
-        String label = labelOverride != null ? labelOverride : (Math.round(displayedSpent) + " / " + Math.round(displayedTotal));
+        String label = labelOverride != null ? labelOverride : spentOfTotalLabel();
         drawLabel(font, label, left, bottom);
+    }
+
+    private String spentOfTotalLabel() {
+        int shownSpent = Math.round(displayedSpent);
+        int shownTotal = Math.round(displayedTotal);
+        if (shownSpent != labelledSpent || shownTotal != labelledTotal) {
+            labelledSpent = shownSpent;
+            labelledTotal = shownTotal;
+            spentOfTotalLabel = shownSpent + " / " + shownTotal;
+        }
+        return spentOfTotalLabel;
     }
 
     private void drawLeadingEdgeGlow(float edgeX, float bottom, Color color, float alphaMult, float glowBoost) {

@@ -31,6 +31,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private static final float SHIP_CARD_FRAME_OUTSET = 8f;
 
 
+    private final String readoutTooltipTitle = Translation.text("ui.readout.title");
     private final String readoutTooltipBody;
 
     private final SkillTreeStarfieldRenderer starfieldRenderer;
@@ -272,7 +273,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                 nodeRenderer.renderHoverTooltip(viewport, mouseX, mouseY, alphaMult);
             }
             if (ordnancePointsBar.isHovered(position, mouseX, mouseY) || levelBar.isHovered(position, mouseX, mouseY)) {
-                readoutTooltipRenderer.render(Translation.text("ui.readout.title"), readoutTooltipBody, mouseX, mouseY, alphaMult);
+                readoutTooltipRenderer.render(readoutTooltipTitle, readoutTooltipBody, mouseX, mouseY, alphaMult);
             }
         }
     }

@@ -32,6 +32,10 @@ final class SkillTreeSearchBar {
     private Color renderedColor;
     private boolean focused;
     private float caretSeconds;
+    private String fittedQuery;
+    private boolean fittedFocused;
+    private String fittedWithCaret;
+    private String fittedWithoutCaret;
 
     SkillTreeSearchBar(NodeSearch search) {
         this.search = search;
@@ -84,7 +88,7 @@ final class SkillTreeSearchBar {
         if (font == null) {
             return;
         }
-        LazyFont.DrawableString drawable = textFor(font, displayText(value -> font.calcWidth(value, FONT_SIZE)));
+        LazyFont.DrawableString drawable = textFor(font, displayText(font));
         Color color = search.getQuery().isEmpty() && !focused ? PLACEHOLDER_COLOR : TEXT_COLOR;
         if (!color.equals(renderedColor)) {
             drawable.setBaseColor(color);
@@ -93,14 +97,26 @@ final class SkillTreeSearchBar {
         drawable.draw(x + TEXT_PADDING, y + HEIGHT / 2f + FONT_SIZE / 2f);
     }
 
-    private String displayText(ToDoubleFunction<String> widthOf) {
+    private String displayText(LazyFont font) {
         String query = search.getQuery();
-        if (!focused) {
-            return query.isEmpty() ? fitStart(Translation.text("ui.search.placeholder"), widthOf) : fitEnd(query, widthOf);
+        if (!query.equals(fittedQuery) || focused != fittedFocused) {
+            refit(query, value -> font.calcWidth(value, FONT_SIZE));
         }
-        String withCaret = fitEnd(query + CARET, widthOf);
-        boolean caretVisible = ((int) (caretSeconds / CARET_BLINK_SECONDS)) % 2 == 0;
-        return caretVisible || !withCaret.endsWith(CARET) ? withCaret : withCaret.substring(0, withCaret.length() - CARET.length());
+        boolean caretVisible = focused && ((int) (caretSeconds / CARET_BLINK_SECONDS)) % 2 == 0;
+        return caretVisible ? fittedWithCaret : fittedWithoutCaret;
+    }
+
+    private void refit(String query, ToDoubleFunction<String> widthOf) {
+        fittedQuery = query;
+        fittedFocused = focused;
+        if (!focused) {
+            fittedWithoutCaret = query.isEmpty() ? fitStart(Translation.text("ui.search.placeholder"), widthOf) : fitEnd(query, widthOf);
+            fittedWithCaret = fittedWithoutCaret;
+            return;
+        }
+        fittedWithCaret = fitEnd(query + CARET, widthOf);
+        fittedWithoutCaret = fittedWithCaret.endsWith(CARET)
+                ? fittedWithCaret.substring(0, fittedWithCaret.length() - CARET.length()) : fittedWithCaret;
     }
 
     static String fitEnd(String value, ToDoubleFunction<String> widthOf) {

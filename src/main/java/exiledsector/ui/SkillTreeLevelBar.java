@@ -13,8 +13,11 @@ final class SkillTreeLevelBar {
     private final FleetMemberAPI member;
     private final SkillTreeReadoutBar bar;
 
-    private int level;
-    private int bankedFreeAllocations;
+    private int level = -1;
+    private int bankedFreeAllocations = -1;
+    private int xp = -1;
+    private int xpToNextLevel;
+    private String label;
 
     SkillTreeLevelBar(FleetMemberAPI member, int row) {
         this.member = member;
@@ -22,20 +25,31 @@ final class SkillTreeLevelBar {
     }
 
     void advance(float amount, PositionAPI position, float mouseX, float mouseY, boolean mouseKnown) {
-        ShipSkillData data = ShipSkillDataManager.get(member.getId());
-        level = data.getLevel();
-        bankedFreeAllocations = data.getBankedFreeAllocations();
-        int xp = Math.round(data.getXp());
-
-        int maxLevel = ShipLevelConfig.maxLevel();
-        int xpToNextLevel = level >= maxLevel ? Math.max(xp, 1)
-                : Math.round(ShipLevelSystem.xpToReachNextLevel(level, ShipLevelConfig.xpBase(), ShipLevelConfig.xpGrowth(),
-                        ShipLevelConfig.xpGrowthCutoffLevel()));
+        refreshIfChanged();
         bar.advance(amount, position, xp, xpToNextLevel, mouseX, mouseY, mouseKnown);
     }
 
+    private void refreshIfChanged() {
+        ShipSkillData data = ShipSkillDataManager.get(member.getId());
+        int currentXp = Math.round(data.getXp());
+        if (data.getLevel() == level && data.getBankedFreeAllocations() == bankedFreeAllocations && currentXp == xp) {
+            return;
+        }
+        level = data.getLevel();
+        bankedFreeAllocations = data.getBankedFreeAllocations();
+        xp = currentXp;
+        int maxLevel = ShipLevelConfig.maxLevel();
+        xpToNextLevel = level >= maxLevel ? Math.max(xp, 1)
+                : Math.round(ShipLevelSystem.xpToReachNextLevel(level, ShipLevelConfig.xpBase(), ShipLevelConfig.xpGrowth(),
+                        ShipLevelConfig.xpGrowthCutoffLevel()));
+        label = label();
+    }
+
     void render(PositionAPI position, float alphaMult) {
-        bar.render(position, alphaMult, label());
+        if (label == null) {
+            refreshIfChanged();
+        }
+        bar.render(position, alphaMult, label);
     }
 
     private String label() {
