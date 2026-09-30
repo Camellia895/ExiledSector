@@ -6,10 +6,13 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.persistence.ShipSkillDataManager;
@@ -19,7 +22,11 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
+import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.progression.SkillNodeOpCost;
+import exiledsector.skills.skilleffect.FighterSkillEffect;
+import exiledsector.skills.skilleffect.LogisticsSkillEffect;
+import exiledsector.skills.unlock.UnlockCondition;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +35,7 @@ import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -218,7 +227,7 @@ class NodeAllocatorTest {
         assertTrue(allocator.toggle(coreSlot));
         verify(cargo).addCommodity("alpha_core", 1f);
         assertEquals(2, hullModConstruction.constructed().size());
-        verify(member, Mockito.times(2)).updateStats();
+        verify(member, times(2)).updateStats();
     }
 
     @Test
@@ -242,6 +251,84 @@ class NodeAllocatorTest {
 
         verifyNoInteractions(cargo);
         assertTrue(hullModConstruction.constructed().isEmpty());
+    }
+
+    @Test
+    void aNodeBehindAnUnmetUnlockConditionIsLockedAndHidden() {
+        SkillNode secret = register("secret_1", type("secret", "Secret", SkillTier.NOTABLE)
+                .unlockConditions(List.of(UnlockCondition.minShipLevel(5))).build(), "root_1");
+        NodeAllocator allocator = allocatorStartingAt(root);
+
+        assertEquals(NodeAllocator.LOCKED_REASON, allocator.blockAllocationReason(secret.getType()));
+        assertTrue(allocator.snapshot().isHidden(secret));
+        assertFalse(allocator.snapshot().isHidden(frontShield));
+    }
+
+    @Test
+    void aDeactivatedSecondInCommandSModOfAnExclusiveHullmodBlocksAllocation() {
+        HullModSpecAPI spec = mock(HullModSpecAPI.class);
+        when(spec.getDisplayName()).thenReturn("Heavy Armor");
+        when(settings.getHullModSpec("heavyarmor")).thenReturn(spec);
+        when(variant.hasTag("sc_inactive_smods_heavyarmor")).thenReturn(true);
+
+        assertEquals("Ship has a deactivated Heavy Armor S-mod that Best of the Best will restore.",
+                allocatorStartingAt(root).blockAllocationReason(armorType));
+    }
+
+    @Test
+    void anEffectsOwnAllocationRuleBlocksTheNode() {
+        when(member.getVariant()).thenReturn(variant);
+        SkillType civilianOnly = type("civilian_only", "Civilian Only", SkillTier.SMALL)
+                .effects(List.of(new SkillTypeEffect(LogisticsSkillEffect.REQUIRES_CIVILIAN_GRADE_HULL, 1f))).build();
+
+        assertNotNull(allocatorStartingAt(root).blockAllocationReason(civilianOnly));
+        when(variant.hasHullMod(HullMods.CIVGRADE)).thenReturn(true);
+        assertNull(allocatorStartingAt(root).blockAllocationReason(civilianOnly));
+    }
+
+    private void fitWingsWithBays(int fittedWings, float bays) {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        when(stats.getNumFighterBays()).thenReturn(new MutableStat(bays));
+        when(member.getStats()).thenReturn(stats);
+        when(member.getVariant()).thenReturn(variant);
+        when(variant.getFittedWings()).thenReturn(Collections.nCopies(fittedWings, "wing"));
+    }
+
+    @Test
+    void anEffectsOwnDeallocationRuleKeepsTheNodeAllocatedUntilItIsSafeToRemove() {
+        SkillNode hangar = register("hangar_1", type("hangar", "Hangar", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(FighterSkillEffect.FIGHTER_BAYS_FLAT, 1f))).build(), "root_1");
+        data().chooseStartingRoot(root);
+        data().allocate(hangar, 0);
+        NodeAllocator allocator = allocatorStartingAt(root);
+
+        fitWingsWithBays(2, 2f);
+        assertNotNull(allocator.blockDeallocationReason(hangar));
+        assertFalse(allocator.canDeallocate(hangar));
+
+        fitWingsWithBays(1, 2f);
+        assertNull(allocator.blockDeallocationReason(hangar));
+        assertTrue(allocator.canDeallocate(hangar));
+    }
+
+    @Test
+    void allocatingAnOptionChargesTheNodeRecordsTheChoiceAndRefreshesTheShip() {
+        SkillType hangarOption = type("hangar_option", "Hangar Option", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(FighterSkillEffect.FIGHTER_BAYS_FLAT, 1f))).build();
+        SkillTree.registerType(hangarOption);
+        SkillNode choice = register("choice_1", type("choice", "Choice", SkillTier.NOTABLE)
+                .optionalOptionIds(List.of("hangar_option")).build(), "root_1");
+        data().chooseStartingRoot(root);
+        NodeAllocator allocator = allocatorStartingAt(root);
+
+        allocator.allocateOption(choice, hangarOption);
+
+        assertTrue(data().isAllocated("choice_1"));
+        assertEquals(hangarOption, choice.resolveEffectiveType(data()));
+        assertEquals(SkillNodeOpCost.perNode(HullSize.CRUISER), data().getSpentOp(SkillNodeOpCost.perNode(HullSize.CRUISER)));
+        assertEquals(1, hullModConstruction.constructed().size());
+        fitWingsWithBays(2, 2f);
+        assertNotNull(allocator.blockDeallocationReason(choice));
     }
 
     @Test

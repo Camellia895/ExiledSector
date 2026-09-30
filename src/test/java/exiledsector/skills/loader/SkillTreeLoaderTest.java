@@ -22,7 +22,6 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -119,13 +118,18 @@ class SkillTreeLoaderTest {
     }
 
     @Test
-    void unknownSkillTypeThrows() throws Exception {
-        JSONObject root = new JSONObject("{ \"nodes\": [ {"
-                + "\"id\": \"mystery\","
-                + "\"type\": \"does_not_exist\""
-                + "} ] }");
+    void nodesWithAnUnknownTypeOrMissingFieldsAreSkippedAndTheRestStillLoad() throws Exception {
+        JSONObject root = new JSONObject("{ \"nodes\": ["
+                + "{\"id\": \"a\", \"type\": \"bare\"},"
+                + "{\"id\": \"mystery\", \"type\": \"does_not_exist\"},"
+                + "{\"type\": \"bare\"},"
+                + "\"not_an_object\","
+                + "{\"id\": \"b\", \"type\": \"capacitors\"}"
+                + "] }");
 
-        assertThrows(org.json.JSONException.class, () -> SkillTreeLoader.parseNodes(root, SKILL_TYPES));
+        List<SkillNode> nodes = SkillTreeLoader.parseNodes(root, SKILL_TYPES);
+
+        assertEquals(List.of("a", "b"), nodes.stream().map(SkillNode::getId).toList());
     }
 
     @Test

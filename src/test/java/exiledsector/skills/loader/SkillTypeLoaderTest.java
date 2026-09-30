@@ -1,5 +1,7 @@
 package exiledsector.skills.loader;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
@@ -9,7 +11,10 @@ import exiledsector.skills.unlock.UnlockCondition;
 import exiledsector.skills.unlock.UnlockConditionType;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.Map;
@@ -18,6 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class SkillTypeLoaderTest {
 
@@ -401,5 +408,65 @@ class SkillTypeLoaderTest {
 
         assertEquals(1, types.size());
         assertEquals("Second", types.get("a").getDisplayName());
+    }
+
+    private static Float temporarySecondsFor(String extraFields) throws Exception {
+        JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
+                + "\"id\": \"burst\", \"name\": \"Burst\", \"icon\": \"a.png\","
+                + "\"temporaryAfterDeploymentSeconds\": 30,"
+                + extraFields
+                + "} ] }");
+        return SkillTypeLoader.parseSkillTypes(root).get("burst").getTemporaryAfterDeploymentSeconds();
+    }
+
+    @Test
+    void temporaryGatingIsKeptWhenEveryEffectSupportsIt() throws Exception {
+        assertEquals(30f, temporarySecondsFor("\"effects\": [ { \"effect\": \"HULL_PERCENT\", \"magnitude\": 10 } ]"));
+    }
+
+    @Test
+    void temporaryGatingIsDroppedWhenTheTypeInstallsHullMods() throws Exception {
+        assertNull(temporarySecondsFor("\"effects\": [ { \"effect\": \"HULL_PERCENT\", \"magnitude\": 10 } ],"
+                + "\"installedHullMods\": [ \"heavyarmor\" ]"));
+    }
+
+    @Test
+    void temporaryGatingIsDroppedWhenAnEffectCannotBeGated() throws Exception {
+        assertNull(temporarySecondsFor("\"effects\": [ { \"effect\": \"HULL_PERCENT\", \"magnitude\": 10 },"
+                + "{ \"effect\": \"PD_IGNORES_DECOY_FLARES\", \"magnitude\": 1 } ]"));
+    }
+
+    @Test
+    void temporaryGatingIsDroppedWhenAHullSizeEffectCannotBeGated() throws Exception {
+        assertNull(temporarySecondsFor("\"hullSizeEffects\": [ { \"effect\": \"PD_IGNORES_DECOY_FLARES\","
+                + "\"frigate\": 1, \"destroyer\": 1, \"cruiser\": 1, \"capitalShip\": 1 } ]"));
+    }
+
+    @Test
+    void anUnreadableDataFileLoadsNoTypesInsteadOfCrashing() throws Exception {
+        SettingsAPI settings = mock(SettingsAPI.class);
+        when(settings.loadJSON("data/skilltrees/skill_types.json")).thenThrow(new IOException("missing"));
+        try (MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
+            global.when(Global::getSettings).thenReturn(settings);
+
+            assertTrue(SkillTypeLoader.loadSkillTypes().isEmpty());
+        }
+    }
+
+    @Test
+    void typesWithABadFieldAreSkippedAndTheRestStillLoad() throws Exception {
+        JSONObject root = new JSONObject("{ \"skillTypes\": ["
+                + "{\"id\": \"good_a\", \"name\": \"Good A\", \"icon\": \"a.png\"},"
+                + "{\"id\": \"bad_effect\", \"name\": \"Bad\", \"icon\": \"a.png\","
+                + " \"effects\": [ { \"effect\": \"NOT_AN_EFFECT\", \"magnitude\": 1 } ]},"
+                + "{\"id\": \"bad_tier\", \"name\": \"Bad\", \"icon\": \"a.png\", \"tier\": \"ENORMOUS\"},"
+                + "{\"id\": \"bad_unlock\", \"name\": \"Bad\", \"icon\": \"a.png\","
+                + " \"unlockConditions\": [ { \"type\": \"teleport\" } ]},"
+                + "{\"id\": \"no_name\", \"icon\": \"a.png\"},"
+                + "\"not_an_object\","
+                + "{\"id\": \"good_b\", \"name\": \"Good B\", \"icon\": \"a.png\"}"
+                + "] }");
+
+        assertEquals(List.of("good_a", "good_b"), List.copyOf(SkillTypeLoader.parseSkillTypes(root).keySet()));
     }
 }

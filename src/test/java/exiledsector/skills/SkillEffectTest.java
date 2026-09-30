@@ -2,6 +2,7 @@ package exiledsector.skills;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
+import com.fs.starfarer.api.SoundPlayerAPI;
 import com.fs.starfarer.api.combat.BeamAPI;
 import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
@@ -12,11 +13,14 @@ import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipCommand;
+import com.fs.starfarer.api.combat.ShipSystemAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
+import com.fs.starfarer.api.combat.listeners.CombatListenerManagerAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.combat.listeners.HullDamageAboutToBeTakenListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -1265,6 +1269,54 @@ class SkillEffectTest {
     }
 
     @Test
+    void phaseAnchorDiveMakesTheShipHullInvulnerableAndRetreatingThenRemovesItFromTheBattlefield() {
+        ShipAPI ship = mock(ShipAPI.class, Answers.RETURNS_DEEP_STUBS);
+        when(ship.getHitpoints()).thenReturn(100f);
+        when(ship.getHullSize()).thenReturn(ShipAPI.HullSize.CRUISER);
+        Vector2f location = new Vector2f(10f, 10f);
+        when(ship.getLocation()).thenReturn(location);
+        when(ship.getFluxTracker().showFloaty()).thenReturn(true);
+        ShipSystemAPI phaseCloak = mock(ShipSystemAPI.class, Answers.RETURNS_DEEP_STUBS);
+        when(phaseCloak.getSpecAPI().getEffectColor2()).thenReturn(java.awt.Color.CYAN);
+        when(phaseCloak.getChargeUpDur()).thenReturn(1f);
+        when(ship.getPhaseCloak()).thenReturn(phaseCloak);
+        Object listener = capturePhaseAnchorDiveListener(ship, 0f);
+        MutableStat hullDamageTaken = mock(MutableStat.class);
+        when(ship.getMutableStats().getTimeMult()).thenReturn(new MutableStat(1f));
+        when(ship.getMutableStats().getHullDamageTakenMult()).thenReturn(hullDamageTaken);
+
+        try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
+            CombatEngineAPI engine = mock(CombatEngineAPI.class);
+            SoundPlayerAPI sound = mock(SoundPlayerAPI.class);
+            SettingsAPI settings = mock(SettingsAPI.class);
+            globalMock.when(Global::getCombatEngine).thenReturn(engine);
+            globalMock.when(Global::getSettings).thenReturn(settings);
+            globalMock.when(Global::getSoundPlayer).thenReturn(sound);
+            when(engine.getCustomData()).thenReturn(new HashMap<>());
+            ((HullDamageAboutToBeTakenListener) listener).notifyAboutToTakeHullDamage(new Object(), ship, location, 150f);
+            AdvanceableListener dive = (AdvanceableListener) listener;
+
+            dive.advance(0.5f);
+            verify(hullDamageTaken).modifyMult("mod_id", 0f);
+            verify(ship).setRetreating(true, false);
+            verify(ship).blockCommandForOneFrame(ShipCommand.USE_SYSTEM);
+            verify(phaseCloak).forceState(ShipSystemAPI.SystemState.IN, 0.5f);
+            verify(engine).addFloatingTextAlways(eq(location), eq("Emergency dive!"), anyFloat(), any(), eq(ship),
+                    anyFloat(), anyFloat(), anyFloat(), anyFloat(), anyFloat(), anyFloat());
+            assertEquals(new Vector2f(10f, 10f), location);
+
+            dive.advance(0.6f);
+            assertEquals(new Vector2f(10f, 10f), location);
+            dive.advance(0.5f);
+
+            verify(sound).playSound(eq("phase_anchor_vanish"), eq(1f), eq(1f), eq(location), any());
+            verify(engine).addFloatingTextAlways(any(), anyString(), anyFloat(), any(), any(),
+                    anyFloat(), anyFloat(), anyFloat(), anyFloat(), anyFloat(), anyFloat());
+            assertEquals(new Vector2f(0f, -1000000f), location);
+        }
+    }
+
+    @Test
     void beamSplitTargetsFlatModifiesTheDynamicStat() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
@@ -1419,7 +1471,7 @@ class SkillEffectTest {
 
         try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class);
              MockedStatic<MagicFakeBeam> fakeBeamMock = Mockito.mockStatic(MagicFakeBeam.class);
-             MockedStatic<MagicFakeBeamPlugin> fakeBeamPluginMock = Mockito.mockStatic(MagicFakeBeamPlugin.class)) {
+             MockedStatic<MagicFakeBeamPlugin> ignoredFakeBeamPlugin = Mockito.mockStatic(MagicFakeBeamPlugin.class)) {
             CombatEngineAPI engine = mock(CombatEngineAPI.class);
             globalMock.when(Global::getCombatEngine).thenReturn(engine);
             stubShipGrid(engine, ship, primaryTarget, enemy1, enemy2);
@@ -1463,7 +1515,7 @@ class SkillEffectTest {
 
         try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class);
              MockedStatic<MagicFakeBeam> fakeBeamMock = Mockito.mockStatic(MagicFakeBeam.class);
-             MockedStatic<MagicFakeBeamPlugin> fakeBeamPluginMock = Mockito.mockStatic(MagicFakeBeamPlugin.class)) {
+             MockedStatic<MagicFakeBeamPlugin> ignoredFakeBeamPlugin = Mockito.mockStatic(MagicFakeBeamPlugin.class)) {
             CombatEngineAPI engine = mock(CombatEngineAPI.class);
             globalMock.when(Global::getCombatEngine).thenReturn(engine);
             stubShipGrid(engine, ship, primaryTarget, enemy);
@@ -1585,6 +1637,87 @@ class SkillEffectTest {
         verify(engine, never()).spawnProjectile(any(), any(), anyString(), any(), any(Vector2f.class), anyFloat(), any(Vector2f.class));
     }
 
+    private DamagingProjectileAPI mockChainedProjectile(WeaponAPI weapon, float dealtMult, int chainCount, List<ShipAPI> hitSoFar) {
+        DamagingProjectileAPI projectile = mockEnergyProjectile(weapon);
+        projectile.getCustomData().put("exiledSector_energyChainDealtMult", dealtMult);
+        projectile.getCustomData().put("exiledSector_energyChainCount", chainCount);
+        projectile.getCustomData().put("exiledSector_energyChainHitList", hitSoFar);
+        return projectile;
+    }
+
+    private DamageAPI runChainedHit(ShipAPI ship, DamagingProjectileAPI projectile, CombatEngineAPI engine, ShipAPI target,
+                                    boolean shieldHit, ShipAPI... gridShips) {
+        DamageDealtModifier listener = captureEnergyChainListener(ship);
+        DamageAPI damage = mock(DamageAPI.class);
+        when(damage.getDamage()).thenReturn(100f);
+        when(damage.getBaseDamage()).thenReturn(100f);
+        CombatListenerManagerAPI listenerManager = mock(CombatListenerManagerAPI.class);
+        when(engine.getListenerManager()).thenReturn(listenerManager);
+        stubShipGrid(engine, gridShips);
+
+        try (MockedStatic<lunalib.lunaSettings.LunaSettings> lunaMock = Mockito.mockStatic(lunalib.lunaSettings.LunaSettings.class);
+             MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
+            globalMock.when(Global::getCombatEngine).thenReturn(engine);
+            lunaMock.when(() -> lunalib.lunaSettings.LunaSettings.getInt(anyString(), anyString())).thenReturn(MaxChainCountConfig.DEFAULT);
+
+            listener.modifyDamageDealt(projectile, target, damage, target.getLocation(), shieldHit);
+        }
+        return damage;
+    }
+
+    @Test
+    void aChainedShotDealsItsReducedShareAndChainsOnToTheNearestShipNotAlreadyHit() {
+        ShipAPI ship = mockEnergyChainShip(20f);
+        WeaponAPI weapon = mockEnergyWeapon("energy_gun", false);
+        ShipAPI firstTarget = mockBeamSplitEnemy(1, new Vector2f(100f, 150f));
+        ShipAPI currentTarget = mockBeamSplitEnemy(1, new Vector2f(100f, 0f));
+        ShipAPI fartherTarget = mockBeamSplitEnemy(1, new Vector2f(400f, 0f));
+        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+        DamagingProjectileAPI chainShot = mock(DamagingProjectileAPI.class, Answers.RETURNS_DEEP_STUBS);
+        when(chainShot.getDamage().getModifier().getModifiedValue()).thenReturn(1f);
+        when(chainShot.getDamage().getMultiplier()).thenReturn(1f);
+        when(engine.spawnProjectile(any(), any(), anyString(), anyString(), any(Vector2f.class), anyFloat(), any(Vector2f.class)))
+                .thenReturn(chainShot);
+
+        DamageAPI damage = runChainedHit(ship, mockChainedProjectile(weapon, 0.8f, 1, List.of(ship, firstTarget)), engine,
+                currentTarget, true, ship, firstTarget, currentTarget, fartherTarget);
+
+        verify(damage).setDamage(80f);
+        verify(engine).spawnProjectile(eq(ship), eq(weapon), eq("energy_gun"), eq("energy_gun_overcharged_shot"),
+                any(Vector2f.class), eq(0f), any(Vector2f.class));
+        verify(chainShot).setCustomData("exiledSector_energyChainHitList", List.of(ship, firstTarget, currentTarget));
+        verify(chainShot).setCustomData("exiledSector_energyChainCount", 2);
+        verify(chainShot).setCustomData("exiledSector_energyChainDealtMult", 0.8f * (1f - 20f / 100f));
+        verify(chainShot.getDamage()).setDamage(100f);
+    }
+
+    @Test
+    void aShotThatHasReachedTheChainCapNeverChainsFurther() {
+        ShipAPI ship = mockEnergyChainShip(0f);
+        ShipAPI currentTarget = mockBeamSplitEnemy(1, new Vector2f(100f, 0f));
+        ShipAPI nextTarget = mockBeamSplitEnemy(1, new Vector2f(200f, 0f));
+        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+
+        runChainedHit(ship, mockChainedProjectile(mockEnergyWeapon("energy_gun", false), 1f, MaxChainCountConfig.DEFAULT,
+                List.of(ship)), engine, currentTarget, true, ship, currentTarget, nextTarget);
+
+        verify(engine, never()).spawnProjectile(any(), any(), anyString(), any(), any(Vector2f.class), anyFloat(), any(Vector2f.class));
+    }
+
+    @Test
+    void aChainedShotThatHitsHullDealsItsReducedShareWithoutChaining() {
+        ShipAPI ship = mockEnergyChainShip(0f);
+        ShipAPI currentTarget = mockBeamSplitEnemy(1, new Vector2f(100f, 0f));
+        ShipAPI nextTarget = mockBeamSplitEnemy(1, new Vector2f(200f, 0f));
+        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+
+        DamageAPI damage = runChainedHit(ship, mockChainedProjectile(mockEnergyWeapon("energy_gun", false), 0.5f, 1,
+                List.of(ship)), engine, currentTarget, false, ship, currentTarget, nextTarget);
+
+        verify(damage).setDamage(50f);
+        verify(engine, never()).spawnProjectile(any(), any(), anyString(), any(), any(Vector2f.class), anyFloat(), any(Vector2f.class));
+    }
+
     @Test
     void beamSplitAppliesOnlyThisTicksShareOfPerSecondBeamDamageToSplitTargets() {
         ShipAPI ship = mock(ShipAPI.class);
@@ -1615,7 +1748,7 @@ class SkillEffectTest {
         String returnedModifierId;
         try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class);
              MockedStatic<MagicFakeBeam> fakeBeamMock = Mockito.mockStatic(MagicFakeBeam.class);
-             MockedStatic<MagicFakeBeamPlugin> fakeBeamPluginMock = Mockito.mockStatic(MagicFakeBeamPlugin.class)) {
+             MockedStatic<MagicFakeBeamPlugin> ignoredFakeBeamPlugin = Mockito.mockStatic(MagicFakeBeamPlugin.class)) {
             CombatEngineAPI engine = mock(CombatEngineAPI.class);
             globalMock.when(Global::getCombatEngine).thenReturn(engine);
             stubShipGrid(engine, ship, primaryTarget, enemy1, enemy2);
@@ -1727,7 +1860,7 @@ class SkillEffectTest {
 
         try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class);
              MockedStatic<MagicFakeBeam> fakeBeamMock = Mockito.mockStatic(MagicFakeBeam.class);
-             MockedStatic<MagicFakeBeamPlugin> fakeBeamPluginMock = Mockito.mockStatic(MagicFakeBeamPlugin.class)) {
+             MockedStatic<MagicFakeBeamPlugin> ignoredFakeBeamPlugin = Mockito.mockStatic(MagicFakeBeamPlugin.class)) {
             CombatEngineAPI engine = mock(CombatEngineAPI.class);
             globalMock.when(Global::getCombatEngine).thenReturn(engine);
             stubShipGrid(engine, ship, primaryTarget, enemy1, enemy2);
@@ -1782,7 +1915,7 @@ class SkillEffectTest {
 
         try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class);
              MockedStatic<MagicFakeBeam> fakeBeamMock = Mockito.mockStatic(MagicFakeBeam.class);
-             MockedStatic<MagicFakeBeamPlugin> fakeBeamPluginMock = Mockito.mockStatic(MagicFakeBeamPlugin.class)) {
+             MockedStatic<MagicFakeBeamPlugin> ignoredFakeBeamPlugin = Mockito.mockStatic(MagicFakeBeamPlugin.class)) {
             CombatEngineAPI engine = mock(CombatEngineAPI.class);
             globalMock.when(Global::getCombatEngine).thenReturn(engine);
             stubShipGrid(engine, ship, primaryTarget, enemyInRange, enemyOutOfRange);
@@ -1830,7 +1963,7 @@ class SkillEffectTest {
 
         try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class);
              MockedStatic<MagicFakeBeam> fakeBeamMock = Mockito.mockStatic(MagicFakeBeam.class);
-             MockedStatic<MagicFakeBeamPlugin> fakeBeamPluginMock = Mockito.mockStatic(MagicFakeBeamPlugin.class)) {
+             MockedStatic<MagicFakeBeamPlugin> ignoredFakeBeamPlugin = Mockito.mockStatic(MagicFakeBeamPlugin.class)) {
             CombatEngineAPI engine = mock(CombatEngineAPI.class);
             globalMock.when(Global::getCombatEngine).thenReturn(engine);
             stubShipGrid(engine, ship, primaryTarget, enemyJustOutOfHalfRange);
@@ -1878,7 +2011,7 @@ class SkillEffectTest {
 
         try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class);
              MockedStatic<MagicFakeBeam> fakeBeamMock = Mockito.mockStatic(MagicFakeBeam.class);
-             MockedStatic<MagicFakeBeamPlugin> fakeBeamPluginMock = Mockito.mockStatic(MagicFakeBeamPlugin.class)) {
+             MockedStatic<MagicFakeBeamPlugin> ignoredFakeBeamPlugin = Mockito.mockStatic(MagicFakeBeamPlugin.class)) {
             CombatEngineAPI engine = mock(CombatEngineAPI.class);
             globalMock.when(Global::getCombatEngine).thenReturn(engine);
             stubShipGrid(engine, ship, primaryTarget, enemy);
@@ -1924,8 +2057,8 @@ class SkillEffectTest {
         when(damage.getType()).thenReturn(DamageType.ENERGY);
 
         try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class);
-             MockedStatic<MagicFakeBeam> fakeBeamMock = Mockito.mockStatic(MagicFakeBeam.class);
-             MockedStatic<MagicFakeBeamPlugin> fakeBeamPluginMock = Mockito.mockStatic(MagicFakeBeamPlugin.class)) {
+             MockedStatic<MagicFakeBeam> ignoredFakeBeam = Mockito.mockStatic(MagicFakeBeam.class);
+             MockedStatic<MagicFakeBeamPlugin> ignoredFakeBeamPlugin = Mockito.mockStatic(MagicFakeBeamPlugin.class)) {
             CombatEngineAPI engine = mock(CombatEngineAPI.class);
             globalMock.when(Global::getCombatEngine).thenReturn(engine);
             stubShipGrid(engine, ship, primaryTarget, neutralBystander);

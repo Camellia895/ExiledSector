@@ -1,5 +1,6 @@
 package exiledsector.skills.skilleffect;
 
+import com.fs.starfarer.api.combat.AmmoTrackerAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -206,6 +208,106 @@ class WeaponScopeHierarchyTest {
         verify(beam).setMaxAmmo(15);
         verify(pulse, never()).setMaxAmmo(anyInt());
         assertFalse(effect.supportsTemporaryGating());
+    }
+
+    private static ShipAPI shipWith(MutableShipStatsAPI stats, WeaponAPI... weapons) {
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.getMutableStats()).thenReturn(stats);
+        when(ship.getAllWeapons()).thenReturn(List.of(weapons));
+        return ship;
+    }
+
+    private static MutableShipStatsAPI statsWithDynamicMod(String key, StatBonus child) {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
+        when(stats.getDynamic()).thenReturn(dynamic);
+        when(dynamic.getMod(key)).thenReturn(child);
+        return stats;
+    }
+
+    @Test
+    void nonBeamAmmoAddsFlatBonusesAfterThePooledPercentAndRefillsTheWeapon() {
+        StatBonus energyAmmo = new StatBonus();
+        energyAmmo.modifyPercent("energy", 50f);
+        energyAmmo.modifyFlat("energy", 2f);
+        MutableShipStatsAPI stats = statsWithDynamicMod("exiledSector_NON_BEAM_ENERGY_AMMO", new StatBonus());
+        when(stats.getEnergyAmmoBonus()).thenReturn(energyAmmo);
+        WeaponAPI pulse = weapon(false, 10);
+        WeaponAPI beam = weapon(true, 10);
+        WeaponAPI noAmmo = weapon(false, 10);
+        when(noAmmo.usesAmmo()).thenReturn(false);
+
+        SkillEffect effect = SkillEffect.byName("NON_BEAM_ENERGY_WEAPON_AMMO_FLAT");
+        effect.apply(stats, "mod_id", 3f);
+        effect.applyAfterShipCreation(shipWith(stats, pulse, beam, noAmmo), "mod_id", 3f);
+
+        verify(pulse).setMaxAmmo(20);
+        verify(pulse).resetAmmo();
+        verify(beam, never()).setMaxAmmo(anyInt());
+        verify(noAmmo, never()).setMaxAmmo(anyInt());
+    }
+
+    private static WeaponAPI regeneratingWeapon(boolean beam, float specAmmoPerSecond) {
+        WeaponAPI weapon = weapon(beam, 10);
+        AmmoTrackerAPI tracker = mock(AmmoTrackerAPI.class);
+        when(weapon.getAmmoTracker()).thenReturn(tracker);
+        when(weapon.getSpec().getAmmoPerSecond()).thenReturn(specAmmoPerSecond);
+        return weapon;
+    }
+
+    @Test
+    void beamAmmoRegenScalesByThePooledRegenOverTheShipWideEnergyRegenTheEngineAlreadyApplies() {
+        MutableStat energyRegen = new MutableStat(1f);
+        energyRegen.modifyPercent("energy", 20f);
+        MutableShipStatsAPI stats = statsWithDynamicMod("exiledSector_BEAM_AMMO_REGEN", new StatBonus());
+        when(stats.getEnergyAmmoRegenMult()).thenReturn(energyRegen);
+        WeaponAPI beam = regeneratingWeapon(true, 2f);
+        WeaponAPI pulse = regeneratingWeapon(false, 2f);
+
+        SkillEffect effect = SkillEffect.byName("BEAM_WEAPON_AMMO_REGEN_PERCENT");
+        effect.apply(stats, "mod_id", 30f);
+        effect.applyAfterShipCreation(shipWith(stats, beam, pulse), "mod_id", 30f);
+
+        verify(beam.getAmmoTracker()).setAmmoPerSecond(2f * 1.5f / 1.2f);
+        verify(pulse.getAmmoTracker(), never()).setAmmoPerSecond(anyFloat());
+    }
+
+    @Test
+    void ammoRegenLeavesWeaponsAloneWhenTheShipWideEnergyRegenIsZero() {
+        MutableStat energyRegen = new MutableStat(1f);
+        energyRegen.modifyMult("energy", 0f);
+        MutableShipStatsAPI stats = statsWithDynamicMod("exiledSector_NON_BEAM_ENERGY_AMMO_REGEN", new StatBonus());
+        when(stats.getEnergyAmmoRegenMult()).thenReturn(energyRegen);
+        WeaponAPI pulse = regeneratingWeapon(false, 2f);
+
+        SkillEffect effect = SkillEffect.byName("NON_BEAM_ENERGY_WEAPON_AMMO_REGEN_MULT");
+        effect.apply(stats, "mod_id", 50f);
+        effect.applyAfterShipCreation(shipWith(stats, pulse), "mod_id", 50f);
+
+        verify(pulse.getAmmoTracker(), never()).setAmmoPerSecond(anyFloat());
+    }
+
+    private static WeaponAPI typed(WeaponAPI.WeaponType type, boolean beam) {
+        WeaponAPI weapon = mock(WeaponAPI.class);
+        when(weapon.getType()).thenReturn(type);
+        when(weapon.isBeam()).thenReturn(beam);
+        return weapon;
+    }
+
+    @Test
+    void eachScopeMatchesTheWeaponsItNames() {
+        WeaponAPI ballistic = typed(WeaponAPI.WeaponType.BALLISTIC, false);
+        WeaponAPI missile = typed(WeaponAPI.WeaponType.MISSILE, false);
+        WeaponAPI pulse = typed(WeaponAPI.WeaponType.ENERGY, false);
+        WeaponAPI beam = typed(WeaponAPI.WeaponType.ENERGY, true);
+        List<WeaponAPI> weapons = List.of(ballistic, missile, pulse, beam);
+
+        assertEquals(weapons, weapons.stream().filter(WeaponScope.ALL::matches).toList());
+        assertEquals(List.of(ballistic), weapons.stream().filter(WeaponScope.BALLISTIC::matches).toList());
+        assertEquals(List.of(missile), weapons.stream().filter(WeaponScope.MISSILE::matches).toList());
+        assertEquals(List.of(pulse, beam), weapons.stream().filter(WeaponScope.ENERGY::matches).toList());
+        assertEquals(List.of(pulse), weapons.stream().filter(WeaponScope.NON_BEAM_ENERGY::matches).toList());
+        assertEquals(List.of(beam), weapons.stream().filter(WeaponScope.BEAM::matches).toList());
     }
 
     private static SkillTypeEffect entry(String name, float magnitude) {

@@ -169,7 +169,12 @@ public final class SkillTreeLoader {
         List<SkillNode> nodes = new ArrayList<>();
         JSONArray nodeArray = root.getJSONArray("nodes");
         for (int i = 0; i < nodeArray.length(); i++) {
-            nodes.add(parseNode(nodeArray.getJSONObject(i), skillTypes));
+            try {
+                nodes.add(parseNode(nodeArray.getJSONObject(i), skillTypes));
+            } catch (JSONException e) {
+                Logger.getLogger(SkillTreeLoader.class).error("Skipping skill node " + SkillTypeLoader.entryLabel(nodeArray, i)
+                        + " in " + DATA_PATH + ": " + e.getMessage());
+            }
         }
         return nodes;
     }
@@ -181,7 +186,7 @@ public final class SkillTreeLoader {
         String typeId = json.getString("type");
         SkillType type = skillTypes.get(typeId);
         if (type == null) {
-            throw new JSONException("Unknown skill type \"" + typeId + "\" referenced by node \"" + json.optString("id") + "\"");
+            throw new JSONException("Unknown skill type \"" + typeId + "\"");
         }
 
         return new SkillNode(

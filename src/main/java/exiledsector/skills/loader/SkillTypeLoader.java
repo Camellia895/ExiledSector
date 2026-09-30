@@ -45,7 +45,14 @@ public final class SkillTypeLoader {
         Map<String, SkillType> types = new LinkedHashMap<>();
         JSONArray typeArray = root.getJSONArray("skillTypes");
         for (int i = 0; i < typeArray.length(); i++) {
-            SkillType type = parseSkillType(typeArray.getJSONObject(i));
+            SkillType type;
+            try {
+                type = parseSkillType(typeArray.getJSONObject(i));
+            } catch (JSONException | IllegalArgumentException e) {
+                Logger.getLogger(SkillTypeLoader.class).error("Skipping skill type " + entryLabel(typeArray, i)
+                        + " in " + DATA_PATH + ": " + e.getMessage());
+                continue;
+            }
             if (types.containsKey(type.getId())) {
                 Logger.getLogger(SkillTypeLoader.class).error("Duplicate skill type id \"" + type.getId()
                         + "\" in " + DATA_PATH + " - the earlier definition was overwritten.");
@@ -101,8 +108,7 @@ public final class SkillTypeLoader {
         for (String name : parseStringArray(array)) {
             HullSize hullSize = SHIP_HULL_SIZES.stream().filter(size -> size.name().equals(name)).findFirst().orElse(null);
             if (hullSize == null) {
-                Logger.getLogger(SkillTypeLoader.class).error("Skill type \"" + id + "\" lists unknown hull size \"" + name
-                        + "\" in requiredHullSizes - ignoring it.");
+                logTypeError(id, "lists unknown hull size \"" + name + "\" in requiredHullSizes - ignoring it.");
             } else {
                 hullSizes.add(hullSize);
             }
@@ -124,7 +130,7 @@ public final class SkillTypeLoader {
             return null;
         }
         if (!installedHullModIds.isEmpty()) {
-            Logger.getLogger(SkillTypeLoader.class).error("Skill type \"" + id + "\" sets temporaryAfterDeploymentSeconds "
+            logTypeError(id, "sets temporaryAfterDeploymentSeconds "
                     + "but also installs hull mods, which can't be removed mid-combat - ignoring the "
                     + "temporaryAfterDeploymentSeconds field.");
             return null;
@@ -145,9 +151,13 @@ public final class SkillTypeLoader {
     }
 
     private static void logUnsupportedTemporaryGating(String id, SkillEffect effect) {
-        Logger.getLogger(SkillTypeLoader.class).error("Skill type \"" + id + "\" sets temporaryAfterDeploymentSeconds "
+        logTypeError(id, "sets temporaryAfterDeploymentSeconds "
                 + "but includes effect \"" + effect.name() + "\", which doesn't support temporary gating - "
                 + "ignoring the temporaryAfterDeploymentSeconds field.");
+    }
+
+    private static void logTypeError(String id, String problem) {
+        Logger.getLogger(SkillTypeLoader.class).error("Skill type \"" + id + "\" " + problem);
     }
 
     private static List<UnlockCondition> parseUnlockConditions(JSONArray conditionsArray) throws JSONException {
@@ -171,7 +181,6 @@ public final class SkillTypeLoader {
             case CHARACTER_STAT -> UnlockCondition.characterStat(json.getString("statId"));
             case MIN_SHIP_LEVEL -> UnlockCondition.minShipLevel(json.getInt("level"));
             case MEMORY_FLAG -> UnlockCondition.memoryFlag(json.getString("key"));
-            default -> throw new JSONException("Unknown unlock condition type \"" + json.getString("type") + "\"");
         };
     }
 
@@ -185,6 +194,12 @@ public final class SkillTypeLoader {
             result.append(Character.toUpperCase(c));
         }
         return result.toString();
+    }
+
+    static String entryLabel(JSONArray array, int index) {
+        JSONObject entry = array.optJSONObject(index);
+        String id = entry == null ? null : entry.optString("id", null);
+        return id != null ? "\"" + id + "\"" : "#" + index;
     }
 
     static List<String> parseStringArray(JSONArray array) throws JSONException {
