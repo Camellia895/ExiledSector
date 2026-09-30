@@ -6,7 +6,6 @@ $zipName = "ExiledSector.zip"
 $releaseDir = Join-Path $projectRoot "target\release"
 $stageDir = Join-Path $releaseDir $modFolderName
 $zipPath = Join-Path $releaseDir $zipName
-$excludedGraphics = @("description", "unused")
 
 . (Join-Path $projectRoot "build-common.ps1")
 
@@ -41,18 +40,7 @@ Get-ChildItem (Join-Path $projectRoot "target\i18n") -Filter "missing-*.txt" -Er
 if (Test-Path $releaseDir) {
     Remove-Item -Recurse -Force $releaseDir
 }
-New-Item -ItemType Directory -Force -Path $stageDir | Out-Null
-
-Copy-Item -Path (Join-Path $projectRoot "mod_info.json") -Destination $stageDir
-Copy-Item -Path (Join-Path $projectRoot "ExiledSector.version") -Destination $stageDir
-Copy-Item -Path (Join-Path $projectRoot "LICENSE") -Destination $stageDir
-Copy-Item -Path (Join-Path $projectRoot "jars") -Destination $stageDir -Recurse
-Copy-Item -Path (Join-Path $projectRoot "data") -Destination $stageDir -Recurse
-
-$stagedGraphics = New-Item -ItemType Directory -Force -Path (Join-Path $stageDir "graphics")
-Get-ChildItem (Join-Path $projectRoot "graphics") |
-    Where-Object { $excludedGraphics -notcontains $_.Name } |
-    ForEach-Object { Copy-Item -Path $_.FullName -Destination $stagedGraphics.FullName -Recurse }
+Copy-ModFiles -ProjectRoot $projectRoot -Destination $stageDir
 
 Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem

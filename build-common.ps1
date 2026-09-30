@@ -53,3 +53,20 @@ function Invoke-ModBuild {
         Pop-Location
     }
 }
+
+function Copy-ModFiles {
+    param([string]$ProjectRoot, [string]$Destination)
+
+    $excludedGraphics = @("description", "unused")
+    New-Item -ItemType Directory -Force -Path $Destination | Out-Null
+    foreach ($file in @("mod_info.json", "ExiledSector.version", "LICENSE")) {
+        Copy-Item -Path (Join-Path $ProjectRoot $file) -Destination $Destination -Force
+    }
+    foreach ($folder in @("jars", "data")) {
+        Copy-Item -Path (Join-Path $ProjectRoot $folder) -Destination $Destination -Recurse -Force
+    }
+    $graphics = New-Item -ItemType Directory -Force -Path (Join-Path $Destination "graphics")
+    Get-ChildItem (Join-Path $ProjectRoot "graphics") |
+        Where-Object { $excludedGraphics -notcontains $_.Name } |
+        ForEach-Object { Copy-Item -Path $_.FullName -Destination $graphics.FullName -Recurse -Force }
+}
