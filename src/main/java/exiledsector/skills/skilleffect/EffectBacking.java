@@ -4,7 +4,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import exiledsector.i18n.StyledText;
 
-sealed interface EffectBacking permits SimpleStatEffect, ListenerEffect {
+sealed interface EffectBacking permits SimpleStatEffect, ConditionalStatEffect, ListenerEffect {
 
     default void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
     }

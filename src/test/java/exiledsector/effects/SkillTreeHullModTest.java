@@ -780,8 +780,7 @@ class SkillTreeHullModTest {
 
         new SkillTreeHullMod().advanceInCombat(ship, 0.1f);
 
-        verify(dissipation).unmodify("exiledSector_skill_fluxbreakers_1");
-        verify(dissipation, never()).modifyPercent(anyString(), anyFloat());
+        verify(dissipation).modifyPercent("exiledSector_skill_fluxbreakers_1", 0f);
     }
 
     @Test
@@ -895,8 +894,8 @@ class SkillTreeHullModTest {
 
         new SkillTreeHullMod().advanceInCombat(ship, 0.1f);
 
-        verify(dissipation).unmodifyMult("exiledSector_skill_phase_anchor_1");
-        verify(dissipation, never()).modifyMult(anyString(), anyFloat());
+        verify(dissipation).modifyMult("exiledSector_skill_phase_anchor_1", 1f);
+        verify(missileAmmoRegen).modifyMult("exiledSector_skill_phase_anchor_1", 1f);
     }
 
     @Test
@@ -962,8 +961,7 @@ class SkillTreeHullModTest {
 
         new SkillTreeHullMod().advanceInCombat(ship, 0.1f);
 
-        verify(commandPointRate).unmodify("exiledSector_skill_operations_center_1");
-        verify(commandPointRate, never()).modifyFlat(anyString(), anyFloat());
+        verify(commandPointRate).modifyFlat("exiledSector_skill_operations_center_1", 0f);
     }
 
     private static MutableShipStatsAPI statsWithHullAndRecovery(String memberId, StatBonus hull, StatBonus recovery) {

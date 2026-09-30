@@ -4,7 +4,6 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.WeaponAPI.AIHints;
 import com.fs.starfarer.api.combat.WeaponAPI.WeaponSize;
@@ -88,46 +87,21 @@ public enum MiscSkillEffect implements BackedSkillEffect {
             "stat.rangeFromWhichCombatObjectivesCanBeCaptured", false),
     PEAK_CR_DURATION_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getPeakCRDuration), "stat.peakCombatReadinessDuration", false),
     PEAK_CR_DURATION_MULT(MULT, bonus(MutableShipStatsAPI::getPeakCRDuration), "stat.peakCombatReadinessDuration", false),
-    COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-        }
+    COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP(new ConditionalStatEffect(FLAT, dynamicMod("command_point_rate_flat"),
+            "stat.commandPointRecoveryWhileFlagship", MiscSkillEffect::isFlagship));
 
-        @Override
-        public boolean isConditional() {
+    private static boolean isFlagship(ShipAPI ship) {
+        if (ship == Global.getCombatEngine().getPlayerShip()) {
             return true;
         }
-
-        @Override
-        public boolean supportsTemporaryGating() {
+        FleetMemberAPI member = ship.getMutableStats().getFleetMember();
+        if (member == null) {
             return false;
         }
-
-        @Override
-        public void advanceInCombat(ShipAPI ship, String modId, float magnitude) {
-            boolean isFlagship = ship == Global.getCombatEngine().getPlayerShip();
-            if (!isFlagship) {
-                FleetMemberAPI member = ship.getMutableStats().getFleetMember();
-                if (member != null) {
-                    PersonAPI commander = member.getFleetCommanderForStats();
-                    if (commander == null) commander = member.getFleetCommander();
-                    isFlagship = commander != null && commander == ship.getCaptain();
-                }
-            }
-
-            StatBonus commandPointRate = ship.getMutableStats().getDynamic().getMod("command_point_rate_flat");
-            if (isFlagship) {
-                commandPointRate.modifyFlat(modId, magnitude);
-            } else {
-                commandPointRate.unmodify(modId);
-            }
-        }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return StatMode.FLAT.describeStat(magnitude, "stat.commandPointRecoveryWhileFlagship");
-        }
-    };
+        PersonAPI commander = member.getFleetCommanderForStats();
+        if (commander == null) commander = member.getFleetCommander();
+        return commander != null && commander == ship.getCaptain();
+    }
 
     private final EffectBacking backing;
 

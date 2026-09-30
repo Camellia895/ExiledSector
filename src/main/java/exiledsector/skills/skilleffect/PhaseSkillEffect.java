@@ -2,7 +2,6 @@ package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
-import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipCommand;
 import com.fs.starfarer.api.combat.ShipSystemAPI;
@@ -12,7 +11,6 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.skills.NeuralLinkScript;
 import com.fs.starfarer.api.util.FaderUtil;
 import com.fs.starfarer.api.util.Misc;
-import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -21,8 +19,10 @@ import java.util.Map;
 
 import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
+import static exiledsector.skills.skilleffect.StatTarget.all;
 import static exiledsector.skills.skilleffect.StatTarget.bonus;
 import static exiledsector.skills.skilleffect.StatTarget.dynamicMod;
+import static exiledsector.skills.skilleffect.StatTarget.stat;
 
 public enum PhaseSkillEffect implements BackedSkillEffect {
 
@@ -30,54 +30,11 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
             "stat.phaseCloakActivationCost", true),
     PHASE_CLOAK_FLUX_THRESHOLD_PERCENT(PERCENT, dynamicMod("phase_cloak_flux_level_for_min_speed_mod"),
             "stat.hardFluxThresholdBeforePhaseSpeedPenaltyKicksIn", false),
-    COMBAT_BOOST_WHILE_PHASED {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-        }
-
-        @Override
-        public boolean isConditional() {
-            return true;
-        }
-
-        @Override
-        public boolean supportsTemporaryGating() {
-            return false;
-        }
-
-        @Override
-        public void advanceInCombat(ShipAPI ship, String modId, float magnitude) {
-            boolean active = ship.isPhased();
-            ShipSystemAPI phaseCloak = ship.getPhaseCloak();
-            if (active && phaseCloak != null && phaseCloak.isChargedown()) {
-                active = false;
-            }
-
-            MutableShipStatsAPI stats = ship.getMutableStats();
-            float mult = SkillEffectSupport.multFrom(magnitude);
-            MutableStat[] boosted = {
-                    stats.getFluxDissipation(),
-                    stats.getBallisticRoFMult(),
-                    stats.getEnergyRoFMult(),
-                    stats.getMissileRoFMult(),
-                    stats.getBallisticAmmoRegenMult(),
-                    stats.getEnergyAmmoRegenMult(),
-                    stats.getMissileAmmoRegenMult()
-            };
-            for (MutableStat stat : boosted) {
-                if (active) {
-                    stat.modifyMult(modId, mult);
-                } else {
-                    stat.unmodifyMult(modId);
-                }
-            }
-        }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return StatMode.MULT.describeStat(magnitude, "stat.fluxRateOfFireAndAmmoRegenWhilePhased");
-        }
-    },
+    COMBAT_BOOST_WHILE_PHASED(new ConditionalStatEffect(MULT, all(stat(MutableShipStatsAPI::getFluxDissipation),
+            stat(MutableShipStatsAPI::getBallisticRoFMult), stat(MutableShipStatsAPI::getEnergyRoFMult),
+            stat(MutableShipStatsAPI::getMissileRoFMult), stat(MutableShipStatsAPI::getBallisticAmmoRegenMult),
+            stat(MutableShipStatsAPI::getEnergyAmmoRegenMult), stat(MutableShipStatsAPI::getMissileAmmoRegenMult)),
+            "stat.fluxRateOfFireAndAmmoRegenWhilePhased", PhaseSkillEffect::isBoostedByPhase)),
     PHASE_ANCHOR_EMERGENCY_DIVE {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -96,6 +53,11 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
     };
 
     private static final String PHASE_ANCHOR_CR_PENALTY_KEY = "exiledSector_phaseAnchorCrPenaltyPercent";
+
+    private static boolean isBoostedByPhase(ShipAPI ship) {
+        ShipSystemAPI phaseCloak = ship.getPhaseCloak();
+        return ship.isPhased() && (phaseCloak == null || !phaseCloak.isChargedown());
+    }
 
     private final EffectBacking backing;
 

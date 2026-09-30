@@ -1,8 +1,6 @@
 package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
-import com.fs.starfarer.api.combat.ShipAPI;
-import exiledsector.i18n.StyledText;
 
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
@@ -30,35 +28,8 @@ public enum FluxSkillEffect implements BackedSkillEffect {
             return false;
         }
     },
-    FLUX_DISSIPATION_WHILE_VENTING_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-        }
-
-        @Override
-        public boolean isConditional() {
-            return true;
-        }
-
-        @Override
-        public boolean supportsTemporaryGating() {
-            return false;
-        }
-
-        @Override
-        public void advanceInCombat(ShipAPI ship, String modId, float magnitude) {
-            if (ship.getFluxTracker().isVenting()) {
-                ship.getMutableStats().getFluxDissipation().modifyPercent(modId, magnitude);
-            } else {
-                ship.getMutableStats().getFluxDissipation().unmodify(modId);
-            }
-        }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return StatMode.PERCENT.describeStat(magnitude, "stat.fluxDissipationWhileVenting");
-        }
-    };
+    FLUX_DISSIPATION_WHILE_VENTING_PERCENT(new ConditionalStatEffect(PERCENT, stat(MutableShipStatsAPI::getFluxDissipation),
+            "stat.fluxDissipationWhileVenting", ship -> ship.getFluxTracker().isVenting()));
 
     private final EffectBacking backing;
 
