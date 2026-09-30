@@ -8,7 +8,6 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.SpriteCache;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
@@ -123,13 +122,10 @@ final class SkillTreeWormholeGhostFlights {
         Color color = ghostRenderer.ghostColor();
         float size = SkillTreeNodeGeometry.NODE_SIZE * GHOST_SIZE_RATIO * viewport.zoom();
 
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
         for (Flight flight : flights) {
             drawFlight(flight, sprite, color, size, viewport, alphaMult);
         }
-        GL11.glDisable(GL11.GL_BLEND);
     }
 
     private void drawFlight(Flight flight, SpriteAPI sprite, Color color, float size, TreeViewport viewport, float alphaMult) {

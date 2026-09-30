@@ -11,6 +11,7 @@ import exiledsector.skills.layout.Star;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.ColorUtil;
 import exiledsector.ui.util.SpriteCache;
+import exiledsector.ui.util.SpriteDraw;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.Sphere;
 import org.lwjgl.util.vector.Vector2f;
@@ -220,23 +221,15 @@ public class SkillTreeStarRenderer {
         for (Star star : stars) {
             PlanetSpecAPI spec = resolveSpec(star.getStarType());
             String coronaPath = spec == null ? null : spec.getCoronaTexture();
-            if (coronaPath == null || coronaPath.isEmpty() || !spriteCache.ensureLoaded(coronaPath)) {
+            if (coronaPath == null || coronaPath.isEmpty()) {
                 continue;
             }
 
             float radius = star.getRadius() * zoom;
             float haloRadius = star.getRadius() * spec.getCoronaSize() * zoom;
             if (haloRadius > radius) {
-                SpriteAPI corona = Global.getSettings().getSprite(coronaPath);
-                float screenX = viewport.screenX(star.getX());
-                float screenY = viewport.screenY(star.getY());
-                Color coronaColor = resolveColor(star, spec.getCoronaColor());
-
-                corona.setBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-                corona.setColor(coronaColor);
-                corona.setAlphaMult(alphaMult);
-                corona.setSize(haloRadius * 2f, haloRadius * 2f);
-                corona.renderAtCenter(screenX, screenY);
+                SpriteDraw.drawAdditiveAtCenter(spriteCache, coronaPath, new Vector2f(viewport.screenX(star.getX()), viewport.screenY(star.getY())),
+                        new Vector2f(haloRadius * 2f, haloRadius * 2f), resolveColor(star, spec.getCoronaColor()), alphaMult);
             }
         }
     }

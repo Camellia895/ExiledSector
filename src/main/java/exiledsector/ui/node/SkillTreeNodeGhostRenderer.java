@@ -6,7 +6,6 @@ import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import exiledsector.ui.util.FallbackSupport;
 import exiledsector.ui.util.SpriteCache;
 import org.apache.log4j.Logger;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -45,10 +44,6 @@ final class SkillTreeNodeGhostRenderer {
         SpriteAPI sprite = Global.getSettings().getSprite(GHOST_TEXTURE_PATH);
         float size = footprintSize * GHOST_SIZE_RATIO;
 
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
         for (GhostInstance ghost : ghosts) {
             float blinkT = (float) (0.5 + 0.5 * Math.sin(2 * Math.PI * (elapsedSeconds / ghost.blinkPeriod + ghost.blinkPhase)));
             float alpha = (GHOST_MIN_ALPHA + (GHOST_MAX_ALPHA - GHOST_MIN_ALPHA) * blinkT) * alphaMult;
@@ -59,8 +54,6 @@ final class SkillTreeNodeGhostRenderer {
             sprite.setAlphaMult(alpha);
             sprite.renderAtCenter(cx + ghost.offsetXFraction * footprintSize, cy + ghost.offsetYFraction * footprintSize);
         }
-
-        GL11.glDisable(GL11.GL_BLEND);
     }
 
     Color ghostColor() {

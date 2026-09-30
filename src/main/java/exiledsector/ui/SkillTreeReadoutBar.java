@@ -1,16 +1,17 @@
 package exiledsector.ui;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.FaderUtil;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.ui.util.CachedText;
 import exiledsector.ui.util.FallbackSupport;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.SpriteCache;
+import exiledsector.ui.util.SpriteDraw;
 import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.ui.LazyFont;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
 
@@ -121,14 +122,8 @@ final class SkillTreeReadoutBar {
     }
 
     private void drawLeadingEdgeGlow(float edgeX, float bottom, Color color, float alphaMult, float glowBoost) {
-        if (!spriteCache.ensureLoaded(GLOW_LINE_TEXTURE)) return;
-
-        SpriteAPI sprite = Global.getSettings().getSprite(GLOW_LINE_TEXTURE);
-        sprite.setAdditiveBlend();
-        sprite.setColor(color);
-        sprite.setSize(LEADING_EDGE_GLOW_WIDTH, BAR_HEIGHT);
-        sprite.setAlphaMult(alphaMult * (0.35f + 0.65f * glowBoost));
-        sprite.renderAtCenter(edgeX, bottom + BAR_HEIGHT / 2f);
+        SpriteDraw.drawAdditiveAtCenter(spriteCache, GLOW_LINE_TEXTURE, new Vector2f(edgeX, bottom + BAR_HEIGHT / 2f),
+                new Vector2f(LEADING_EDGE_GLOW_WIDTH, BAR_HEIGHT), color, alphaMult * (0.35f + 0.65f * glowBoost));
     }
 
     private void drawInnerGlow(float left, float bottom, float width, Color color, float alphaMult, float glowBoost) {

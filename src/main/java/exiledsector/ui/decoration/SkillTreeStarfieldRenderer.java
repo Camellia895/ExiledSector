@@ -1,12 +1,11 @@
 package exiledsector.ui.decoration;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.skills.layout.Star;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.util.SpriteCache;
-import org.lwjgl.opengl.GL11;
+import exiledsector.ui.util.SpriteDraw;
+import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -87,19 +86,12 @@ public class SkillTreeStarfieldRenderer {
         float panelCenterY = position.getY() + position.getHeight() / 2f;
         Color accentColor = style.getAccentColor();
 
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
         for (int i = 0; i < LAYER_SPECS.length; i++) {
             LayerSpec spec = LAYER_SPECS[i];
             float offsetX = panX * spec.parallaxFactor;
             float offsetY = panY * spec.parallaxFactor;
 
             for (Star star : layers[i]) {
-                String path = STAR_SPRITE_PATHS[star.spriteIndex];
-                if (!spriteCache.ensureLoaded(path)) continue;
-
                 float wrappedX = wrap(star.baseX + offsetX, fieldWidth);
                 float wrappedY = wrap(star.baseY + offsetY, fieldHeight);
                 float screenX = panelCenterX + wrappedX - fieldWidth / 2f;
@@ -107,15 +99,11 @@ public class SkillTreeStarfieldRenderer {
 
                 float twinkle = 0.6f + 0.4f * (float) Math.sin(elapsedTime * star.twinkleSpeed + star.twinklePhase);
 
-                SpriteAPI sprite = Global.getSettings().getSprite(path);
-                sprite.setSize(star.size, star.size);
-                sprite.setColor(star.useAccentColor ? accentColor : STANDARD_STAR_COLOR);
-                sprite.setAlphaMult(alphaMult * star.baseAlpha * twinkle);
-                sprite.renderAtCenter(screenX, screenY);
+                SpriteDraw.drawAtCenter(spriteCache, STAR_SPRITE_PATHS[star.spriteIndex], new Vector2f(screenX, screenY),
+                        new Vector2f(star.size, star.size), star.useAccentColor ? accentColor : STANDARD_STAR_COLOR,
+                        alphaMult * star.baseAlpha * twinkle);
             }
         }
-
-        GL11.glDisable(GL11.GL_BLEND);
     }
 
     // generic array creation isn't allowed directly; the raw List[] is only ever populated with List<Star>

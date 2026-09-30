@@ -327,19 +327,15 @@ final class SkillTreeNodeRingRenderer {
     }
 
     private void drawWormholeGlow(float cx, float cy, float baseRadius, Color color, float alphaMult, float openness) {
-        if (!spriteCache.ensureLoaded(WORMHOLE_GLOW_TEXTURE_PATH)) return;
+        Vector2f center = new Vector2f(cx, cy);
         float size = baseRadius * 2f * WORMHOLE_GLOW_SIZE_RATIO;
+        Vector2f glowSize = new Vector2f(size, size);
         float closedness = 1f - openness;
         float alpha = WORMHOLE_GLOW_ALPHA * closedness * closedness * closedness * alphaMult;
 
-        SpriteAPI sprite = Global.getSettings().getSprite(WORMHOLE_GLOW_TEXTURE_PATH);
-        sprite.setAdditiveBlend();
-        sprite.setColor(color);
-        sprite.setSize(size, size);
-        sprite.setAlphaMult(alpha);
         //intentionally rendering two because it's prettier
-        sprite.renderAtCenter(cx, cy);
-        sprite.renderAtCenter(cx, cy);
+        SpriteDraw.drawAdditiveAtCenter(spriteCache, WORMHOLE_GLOW_TEXTURE_PATH, center, glowSize, color, alpha);
+        SpriteDraw.drawAdditiveAtCenter(spriteCache, WORMHOLE_GLOW_TEXTURE_PATH, center, glowSize, color, alpha);
     }
 
     private Color resolveWormholeColor(SkillNode node) {
