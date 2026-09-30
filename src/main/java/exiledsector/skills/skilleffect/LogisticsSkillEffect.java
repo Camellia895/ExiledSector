@@ -173,7 +173,7 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
 
         @Override
         public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
-            FleetWideEffects.recomputeExtendedPhaseField();
+            FleetWideEffects.markPhaseFieldStale();
         }
 
         @Override

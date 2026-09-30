@@ -19,6 +19,7 @@ import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.ShipOpBudget;
 import exiledsector.skills.progression.SkillNodeOpCost;
+import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 
@@ -169,6 +170,7 @@ final class NodeAllocator {
 
     private void refreshShipStats() {
         revision++;
+        FleetWideEffects.markPhaseFieldStale();
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(member.getHullSpec().getHullSize(), member.getStats(), SkillTreeHullMod.ID);
         member.setStatUpdateNeeded(true);
         member.updateStats();

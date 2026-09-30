@@ -1,8 +1,10 @@
 package exiledsector.effects;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.BaseHullMod;
 import com.fs.starfarer.api.combat.HullModEffect;
+import com.fs.starfarer.api.combat.HullModFleetEffect;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
@@ -19,6 +21,7 @@ import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.progression.SkillNodeOpCost;
+import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.skills.skilleffect.SkillEffect;
 import org.magiclib.util.MagicIncompatibleHullmods;
 
@@ -28,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class SkillTreeHullMod extends BaseHullMod {
+public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect {
 
     public static final String ID = "exiledSector_core";
 
@@ -73,6 +76,29 @@ public class SkillTreeHullMod extends BaseHullMod {
         forEachAllocatedEffect(dataFor(ship), ship.getHullSize(),
                 (vanillaEffect, vanillaHullModId) -> vanillaEffect.applyEffectsToFighterSpawnedByShip(fighter, ship, vanillaHullModId),
                 (effect, modId, magnitude) -> effect.applyToFighterSpawnedByShip(fighter, ship, modId, magnitude));
+    }
+
+    @Override
+    public boolean withOnFleetSync() {
+        return true;
+    }
+
+    @Override
+    public void onFleetSync(CampaignFleetAPI fleet) {
+        if (fleet != null && fleet.isPlayerFleet()) {
+            FleetWideEffects.markPhaseFieldStale();
+        }
+    }
+
+    @Override
+    public boolean withAdvanceInCampaign() {
+        return false;
+    }
+
+    // withAdvanceInCampaign() returns false, so the engine never calls this
+    @Override
+    @SuppressWarnings("java:S1186")
+    public void advanceInCampaign(CampaignFleetAPI fleet) {
     }
 
     @Override

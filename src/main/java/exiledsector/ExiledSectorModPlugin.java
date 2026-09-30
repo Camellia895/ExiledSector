@@ -19,6 +19,7 @@ import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.npc.NpcLayouts;
 import exiledsector.skills.skilleffect.CsvIdBlocklist;
+import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.SkillTreeRefitButton;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
@@ -72,6 +73,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
     @Override
     public void onGameLoad(boolean newGame) {
         SkillDataResolver.clearCache();
+        FleetWideEffects.markPhaseFieldStale();
         Global.getSector().removeScriptsOfClass(SkillTreeInstaller.class);
         Global.getSector().addTransientScript(new SkillTreeInstaller());
         Global.getSector().addTransientListener(new CombatXpListener());

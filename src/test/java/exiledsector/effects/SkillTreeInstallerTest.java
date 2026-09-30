@@ -40,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.inOrder;
@@ -145,8 +146,7 @@ class SkillTreeInstallerTest {
 
         installer.advance(0.01f);
 
-        // once from SkillTreeInstaller.advance itself, once from FleetWideEffects.recomputeExtendedPhaseField
-        globalMock.verify(Global::getSector, times(2));
+        verify(fleetData, times(1)).getMembersListCopy();
     }
 
     @Test
@@ -155,10 +155,10 @@ class SkillTreeInstallerTest {
         installer.advance(0.01f);
 
         installer.advance(0.5f);
-        globalMock.verify(Global::getSector, times(2));
+        verify(fleetData, times(1)).getMembersListCopy();
 
         installer.advance(0.5f);
-        globalMock.verify(Global::getSector, times(4));
+        verify(fleetData, times(2)).getMembersListCopy();
     }
 
     @Test
@@ -213,7 +213,7 @@ class SkillTreeInstallerTest {
     }
 
     @Test
-    void reappliesEffectsOnEveryQualifyingTickRegardlessOfWhetherTheModWasJustAdded() {
+    void leavesApplyingEffectsToTheEnginesStatsRebuild() {
         SkillType hullType = new SkillType.Builder("hull", "Hull", "graphics/hullmods/reinforced_bulkheads.png", SkillTier.SMALL)
                 .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)))
                 .build();
@@ -228,7 +228,35 @@ class SkillTreeInstallerTest {
 
         new SkillTreeInstaller().advance(0.01f);
 
-        verify(hullBonus).modifyPercent("exiledSector_skill_hull_1", 10f);
+        verify(hullBonus, never()).modifyPercent(anyString(), anyFloat());
+    }
+
+    @Test
+    void requestsOneFleetSyncAfterLoadSoStatsAreRebuiltWithTheLoadedTrees() {
+        FleetMemberAPI member = mockMember("ship-a", true);
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
+        SkillTreeInstaller installer = new SkillTreeInstaller();
+
+        installer.advance(0.01f);
+        installer.advance(1f);
+
+        verify(fleetData, times(1)).setSyncNeeded();
+    }
+
+    @Test
+    void requestsAFleetSyncWhenItInstallsItsHullModOnANewShip() {
+        FleetMemberAPI veteran = mockMember("veteran", true);
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(veteran));
+        SkillTreeInstaller installer = new SkillTreeInstaller();
+        installer.advance(0.01f);
+
+        FleetMemberAPI newcomer = mockMember("newcomer", false);
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(veteran, newcomer));
+        installer.advance(1f);
+
+        verify(newcomer.getVariant()).addPermaMod(SkillTreeHullMod.ID);
+        verify(newcomer).setStatUpdateNeeded(true);
+        verify(fleetData, times(2)).setSyncNeeded();
     }
 
     private static FleetMemberAPI recoveredNpc(String id, Set<String> hullMods, List<String> tags) {

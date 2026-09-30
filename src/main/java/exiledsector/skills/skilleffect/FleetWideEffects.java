@@ -18,6 +18,9 @@ public final class FleetWideEffects {
     private static final String POST_BATTLE_SALVAGE_FLEET_MOD_ID = "exiledSector_postBattleSalvage";
     private static final String EXTENDED_PHASE_FIELD_MOD_ID = "exiledSector_extendedPhaseField";
 
+    private static boolean phaseFieldStale = true;
+    private static Boolean lastTransponderOn;
+
     private FleetWideEffects() {
     }
 
@@ -39,11 +42,26 @@ public final class FleetWideEffects {
                 .modifyFlat(POST_BATTLE_SALVAGE_FLEET_MOD_ID, totalPercent / 100f);
     }
 
-    public static void recomputeExtendedPhaseField() {
+    public static void markPhaseFieldStale() {
+        phaseFieldStale = true;
+    }
+
+    public static void recomputeExtendedPhaseFieldIfStale() {
         CampaignFleetAPI fleet = playerFleet();
         if (fleet == null) {
             return;
         }
+        boolean transponderOn = fleet.isTransponderOn();
+        boolean vanillaFieldReapplied = fleet.getStats().getDetectedRangeMod().getMultBonus(PhaseField.MOD_KEY) != null;
+        if (!phaseFieldStale && !vanillaFieldReapplied && Boolean.valueOf(transponderOn).equals(lastTransponderOn)) {
+            return;
+        }
+        phaseFieldStale = false;
+        lastTransponderOn = transponderOn;
+        recomputeExtendedPhaseField(fleet);
+    }
+
+    private static void recomputeExtendedPhaseField(CampaignFleetAPI fleet) {
 
         // This replaces vanilla's own Phase Field fleet-wide calculation (which only ever counts
         // real phase ships) with one that also folds in ships with this node, so both share a

@@ -17,6 +17,7 @@ public class SkillTreeInstaller implements EveryFrameScript {
     private static final float CHECK_INTERVAL_SECONDS = 1f;
 
     private float timeSinceLastCheck = CHECK_INTERVAL_SECONDS;
+    private boolean syncedSinceLoad;
 
     @Override
     public boolean isDone() {
@@ -31,32 +32,45 @@ public class SkillTreeInstaller implements EveryFrameScript {
     @Override
     public void advance(float amount) {
         timeSinceLastCheck += amount;
-        if (timeSinceLastCheck < CHECK_INTERVAL_SECONDS) return;
-        timeSinceLastCheck = 0f;
+        if (timeSinceLastCheck >= CHECK_INTERVAL_SECONDS) {
+            timeSinceLastCheck = 0f;
+            checkPlayerShips();
+        }
+        FleetWideEffects.recomputeExtendedPhaseFieldIfStale();
+    }
 
+    private void checkPlayerShips() {
         CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
         if (playerFleet == null) return;
 
+        boolean changed = !syncedSinceLoad;
         for (FleetMemberAPI member : playerFleet.getFleetData().getMembersListCopy()) {
-            adoptNpcTree(member);
-            ShipVariantAPI variant = member.getVariant();
-            if (!variant.hasHullMod(SkillTreeHullMod.ID)) {
-                variant = ownedVariant(member);
-                variant.addPermaMod(SkillTreeHullMod.ID);
-            } else if (SecondInCommandCompat.isAppliedBeforeController(variant, SkillTreeHullMod.ID)) {
-                variant.removePermaMod(SkillTreeHullMod.ID);
-                variant.addPermaMod(SkillTreeHullMod.ID);
-                member.setStatUpdateNeeded(true);
-            }
-            new SkillTreeHullMod().applyEffectsBeforeShipCreation(member.getHullSpec().getHullSize(), member.getStats(), SkillTreeHullMod.ID);
+            changed |= adoptNpcTree(member);
+            changed |= ensureHullModAppliesLast(member);
         }
-
-        FleetWideEffects.recomputeExtendedPhaseField();
+        if (changed) {
+            syncedSinceLoad = true;
+            playerFleet.getFleetData().setSyncNeeded();
+        }
     }
 
-    static void adoptNpcTree(FleetMemberAPI member) {
+    private static boolean ensureHullModAppliesLast(FleetMemberAPI member) {
+        ShipVariantAPI variant = member.getVariant();
+        if (!variant.hasHullMod(SkillTreeHullMod.ID)) {
+            ownedVariant(member).addPermaMod(SkillTreeHullMod.ID);
+        } else if (SecondInCommandCompat.isAppliedBeforeController(variant, SkillTreeHullMod.ID)) {
+            variant.removePermaMod(SkillTreeHullMod.ID);
+            variant.addPermaMod(SkillTreeHullMod.ID);
+        } else {
+            return false;
+        }
+        member.setStatUpdateNeeded(true);
+        return true;
+    }
+
+    static boolean adoptNpcTree(FleetMemberAPI member) {
         String tag = NpcTreeTag.find(member.getVariant());
-        if (tag == null) return;
+        if (tag == null) return false;
 
         ShipSkillData npcTree = NpcTreeTag.decode(tag);
         if (npcTree != null && ShipSkillDataManager.get(member.getId()).isBlank()) {
@@ -70,6 +84,7 @@ public class SkillTreeInstaller implements EveryFrameScript {
             variant.removeMod(SkillTreeHullMod.ID);
         }
         member.setStatUpdateNeeded(true);
+        return true;
     }
 
     static ShipVariantAPI ownedVariant(FleetMemberAPI member) {
