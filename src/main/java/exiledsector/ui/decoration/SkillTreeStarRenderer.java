@@ -13,7 +13,6 @@ import exiledsector.ui.util.ColorUtil;
 import exiledsector.ui.util.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.glu.Sphere;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
@@ -23,10 +22,6 @@ import java.util.Map;
 
 public class SkillTreeStarRenderer {
 
-    private static final int SPHERE_DETAIL = 32;
-    private static final Sphere SPHERE = texturedSphere();
-    private static boolean unitSphereCompiled;
-    private static int unitSphereList;
     private static final float RIM_ALPHA_MULT = 0.37f;
     private static final String FALLBACK_STAR_TYPE = "star_yellow";
 
@@ -44,6 +39,7 @@ public class SkillTreeStarRenderer {
     private static final int ATMOSPHERE_SEGMENTS = 64;
 
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeStarRenderer.class);
+    private final UnitSphere sphere = new UnitSphere();
     private final Map<String, Float> angleById = new HashMap<>();
     private final Map<String, AuroraRenderer> auroraById = new HashMap<>();
     private final Map<String, AuroraDelegate> auroraDelegateById = new HashMap<>();
@@ -99,10 +95,10 @@ public class SkillTreeStarRenderer {
             texture.bindTexture();
 
             Misc.setColor(discColor, alphaMult);
-            drawSphere(radius);
+            sphere.draw(radius);
             Misc.setColor(discColor, alphaMult * RIM_ALPHA_MULT);
-            drawSphere(radius + 0.25f * zoom);
-            drawSphere(radius + 0.5f * zoom);
+            sphere.draw(radius + 0.25f * zoom);
+            sphere.draw(radius + 0.5f * zoom);
 
             GL11.glPopMatrix();
 
@@ -239,37 +235,6 @@ public class SkillTreeStarRenderer {
                         haloRadius * 2f, haloRadius * 2f, resolveColor(star, spec.getCoronaColor()), alphaMult);
             }
         }
-    }
-
-    private static Sphere texturedSphere() {
-        Sphere sphere = new Sphere();
-        sphere.setTextureFlag(true);
-        return sphere;
-    }
-
-    private static void drawSphere(float radius) {
-        if (!unitSphereCompiled) {
-            unitSphereList = compileUnitSphere();
-            unitSphereCompiled = true;
-        }
-        if (unitSphereList == 0) {
-            SPHERE.draw(radius, SPHERE_DETAIL, SPHERE_DETAIL);
-            return;
-        }
-        GL11.glPushMatrix();
-        GL11.glScalef(radius, radius, radius);
-        GL11.glCallList(unitSphereList);
-        GL11.glPopMatrix();
-    }
-
-    private static int compileUnitSphere() {
-        int list = GL11.glGenLists(1);
-        if (list != 0) {
-            GL11.glNewList(list, GL11.GL_COMPILE);
-            SPHERE.draw(1f, SPHERE_DETAIL, SPHERE_DETAIL);
-            GL11.glEndList();
-        }
-        return list;
     }
 
     private Color resolveColor(Star star, Color fallback) {
