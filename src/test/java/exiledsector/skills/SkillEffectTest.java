@@ -43,7 +43,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1514,7 +1513,7 @@ class SkillEffectTest {
         ShipAPI nextTarget = mockBeamSplitEnemy(1, new Vector2f(100f, 0f));
         DamageAPI damage = mock(DamageAPI.class);
         when(damage.getDamage()).thenReturn(100f);
-        when(engine.getShips()).thenReturn(Arrays.asList(ship, shieldedTarget, nextTarget));
+        stubShipGrid(engine, ship, shieldedTarget, nextTarget);
 
         try (MockedStatic<lunalib.lunaSettings.LunaSettings> lunaMock = Mockito.mockStatic(lunalib.lunaSettings.LunaSettings.class);
              MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {

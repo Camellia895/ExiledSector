@@ -2,6 +2,7 @@ package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.BeamAPI;
+import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
@@ -45,11 +46,15 @@ class ShieldFluxListenersTest {
     private final List<ShipAPI> ships = new ArrayList<>();
     private MockedStatic<Global> globalMock;
     private CombatEngineAPI engine;
+    private CollisionGridAPI shipGrid;
 
     @BeforeEach
     void setUp() {
         engine = mock(CombatEngineAPI.class);
         when(engine.getShips()).thenReturn(ships);
+        shipGrid = mock(CollisionGridAPI.class);
+        when(engine.getShipGrid()).thenReturn(shipGrid);
+        when(shipGrid.getCheckIterator(any(), anyFloat(), anyFloat())).thenAnswer(invocation -> new ArrayList<Object>(ships).iterator());
         when(engine.getTotalElapsedTime(false)).thenReturn(5f);
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getCombatEngine).thenReturn(engine);
@@ -160,6 +165,19 @@ class ShieldFluxListenersTest {
 
         verify(flux).setHardFlux(120f);
         verify(flux, never()).increaseFlux(anyFloat(), anyBoolean());
+    }
+
+    @Test
+    void theConverterSkipsTheZeroDamageFramesBetweenBeamTicksWithoutLookingAtTheBeam() {
+        ShipAPI target = mock(ShipAPI.class);
+        FluxTrackerAPI flux = mock(FluxTrackerAPI.class);
+        when(target.getFluxTracker()).thenReturn(flux);
+        DamageListener converter = converterOn(target);
+
+        converter.reportDamageApplied(new Object(), target, shieldFlux(0f));
+
+        verify(target, never()).getParamAboutToApplyDamage();
+        verifyNoInteractions(flux);
     }
 
     @Test
@@ -288,6 +306,6 @@ class ShieldFluxListenersTest {
         when(engine.getTotalElapsedTime(false)).thenReturn(5.1f);
         listener.modifyDamageTaken(new Object(), defender, damageWithModifier(new MutableStat(1f)), new Vector2f(), true);
 
-        verify(engine, times(2)).getShips();
+        verify(shipGrid, times(2)).getCheckIterator(any(), anyFloat(), anyFloat());
     }
 }

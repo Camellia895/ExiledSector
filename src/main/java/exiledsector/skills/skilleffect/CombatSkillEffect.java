@@ -158,7 +158,7 @@ public enum CombatSkillEffect implements BackedSkillEffect {
         private ShipAPI findNearestChainTarget(Vector2f point, float range, List<ShipAPI> excluded) {
             ShipAPI nearest = null;
             float nearestDistanceSq = Float.MAX_VALUE;
-            for (ShipAPI candidate : CombatQueries.shipsMatching(other -> !excluded.contains(other) && other.isAlive() && !other.isHulk()
+            for (ShipAPI candidate : CombatQueries.shipsNear(point, range, other -> !excluded.contains(other) && other.isAlive() && !other.isHulk()
                     && CombatQueries.isHostile(ship, other) && CombatQueries.withinRadius(other.getLocation(), point, range))) {
                 float distanceSq = Vector2f.sub(candidate.getLocation(), point, null).lengthSquared();
                 if (distanceSq < nearestDistanceSq) {

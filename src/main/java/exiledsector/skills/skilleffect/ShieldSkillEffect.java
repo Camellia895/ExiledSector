@@ -214,11 +214,12 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
 
         @Override
         public void reportDamageApplied(Object source, CombatEntityAPI target, ApplyDamageResultAPI result) {
-            if (!(ship.getParamAboutToApplyDamage() instanceof BeamAPI beam) || beam.getSource() == null
+            float shieldFlux = result.getDamageToShields();
+            if (shieldFlux <= 0f || !(ship.getParamAboutToApplyDamage() instanceof BeamAPI beam) || beam.getSource() == null
                     || beam.getDamage().isForceHardFlux()) return;
 
             float percent = beam.getSource().getMutableStats().getDynamic().getValue(BeamHardFluxListener.HARD_FLUX_PERCENT_KEY, 0f);
-            float converted = result.getDamageToShields() * Math.min(percent, 100f) / 100f;
+            float converted = shieldFlux * Math.min(percent, 100f) / 100f;
             if (converted <= 0f) return;
 
             FluxTrackerAPI flux = ship.getFluxTracker();
@@ -276,7 +277,7 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
             float now = Global.getCombatEngine().getTotalElapsedTime(false);
             if (now != alliesFoundAt) {
                 alliesFoundAt = now;
-                allies = CombatQueries.shipsMatching(this::sharesShieldDamageWith);
+                allies = CombatQueries.shipsNear(ship.getLocation(), SHARED_SHIELD_DAMAGE_RANGE, this::sharesShieldDamageWith);
             }
             return allies;
         }

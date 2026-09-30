@@ -42,6 +42,9 @@ final class ChainHitDamageRestorer implements DamageListener {
 
     @Override
     public void reportDamageApplied(Object source, CombatEntityAPI target, ApplyDamageResultAPI result) {
+        if (pending.isEmpty()) {
+            return;
+        }
         pending.removeIf(restore -> restore.restoreIfFor(target));
     }
 
