@@ -38,6 +38,8 @@ import static exiledsector.ui.node.SkillTreeNodeGeometry.donutRadius;
 final class SkillTreeNodeRingRenderer {
 
     private static final int RING_SEGMENTS = 32;
+    private static final float[] RING_COS = unitCircle(true);
+    private static final float[] RING_SIN = unitCircle(false);
     private static final float RING_LINE_THICKNESS = 1.5f;
 
     private static final String[] RING_STACK_TEXTURES = {
@@ -109,7 +111,8 @@ final class SkillTreeNodeRingRenderer {
     private final Map<String, List<RingInstance>> ringStacks = new HashMap<>();
     private final Map<String, List<RingInstance>> pinkRingStacks = new HashMap<>();
     private final WormholeOpenness wormholeOpenness;
-    private final Map<String, Color> parsedColors = new HashMap<>();
+    private final Map<String, Color> wormholeColors = new HashMap<>();
+    private final Map<String, Color> ringBeltColors = new HashMap<>();
     private float breathingPhase = 0f;
     private float elapsedSeconds = 0f;
 
@@ -140,9 +143,7 @@ final class SkillTreeNodeRingRenderer {
         pulseElapsed.put(nodeId, 0f);
     }
 
-    void draw(Vector2f center, float footprintSize, float alphaMult, boolean allocated, boolean breathing, float zoom, SkillNode node) {
-        float cx = center.x;
-        float cy = center.y;
+    void draw(float cx, float cy, float footprintSize, float alphaMult, boolean allocated, boolean breathing, float zoom, SkillNode node) {
         SkillTier tier = node.getType().getTier();
         String nodeId = node.getId();
         float half = footprintSize / 2f;
@@ -154,7 +155,7 @@ final class SkillTreeNodeRingRenderer {
         float ringRadius = donutRadius(footprintSize);
         if (tier == SkillTier.NOTABLE) {
             float stateAlpha = allocated ? 1f : UNALLOCATED_ALPHA_MULT;
-            drawRingStack(center, footprintSize * NOTABLE_RING_OUTER_RADIUS_RATIO, nodeId,
+            drawRingStack(cx, cy, footprintSize * NOTABLE_RING_OUTER_RADIUS_RATIO, nodeId,
                     NOTABLE_RING_COUNT, NOTABLE_RING_RADIUS_DECAY, stateAlpha, alphaMult);
             drawAmbientGlow(cx, cy, footprintSize, stateAlpha, alphaMult);
         } else if (tier == SkillTier.KEYSTONE) {
@@ -221,18 +222,33 @@ final class SkillTreeNodeRingRenderer {
         drawRingOutline(cx, cy, radius + gapRadius, RING_DULL_COLOR, alphaMult * RING_DULL_ALPHA);
     }
 
-    private void drawRingStack(Vector2f center, float outerRadius, String nodeId,
+    private void drawRingStack(float cx, float cy, float outerRadius, String nodeId,
                                 int count, float radiusDecay, float stateAlpha, float alphaMult) {
-        drawRingStackPass(center, outerRadius, ringStacks.computeIfAbsent(nodeId, id -> generateRingInstances(id, count, radiusDecay)),
-                Color.WHITE, 1f, stateAlpha, alphaMult);
-        drawRingStackPass(center, outerRadius, pinkRingStacks.computeIfAbsent(nodeId + "_pink", id -> generateRingInstances(id, count, radiusDecay)),
+        drawRingStackPass(cx, cy, outerRadius, ringStack(nodeId, count, radiusDecay), Color.WHITE, 1f, stateAlpha, alphaMult);
+        drawRingStackPass(cx, cy, outerRadius, pinkRingStack(nodeId, count, radiusDecay),
                 RING_PINK_COLOR, RING_PINK_SCALE_RATIO, stateAlpha, alphaMult);
     }
 
-    private void drawRingStackPass(Vector2f center, float outerRadius, List<RingInstance> instances,
+    private List<RingInstance> ringStack(String nodeId, int count, float radiusDecay) {
+        List<RingInstance> stack = ringStacks.get(nodeId);
+        if (stack == null) {
+            stack = generateRingInstances(nodeId, count, radiusDecay);
+            ringStacks.put(nodeId, stack);
+        }
+        return stack;
+    }
+
+    private List<RingInstance> pinkRingStack(String nodeId, int count, float radiusDecay) {
+        List<RingInstance> stack = pinkRingStacks.get(nodeId);
+        if (stack == null) {
+            stack = generateRingInstances(nodeId + "_pink", count, radiusDecay);
+            pinkRingStacks.put(nodeId, stack);
+        }
+        return stack;
+    }
+
+    private void drawRingStackPass(float cx, float cy, float outerRadius, List<RingInstance> instances,
                                     Color color, float scaleRatio, float stateAlpha, float alphaMult) {
-        float cx = center.x;
-        float cy = center.y;
         float alpha = RING_INSTANCE_BASE_ALPHA * stateAlpha * alphaMult;
 
         for (RingInstance instance : instances) {
@@ -286,8 +302,8 @@ final class SkillTreeNodeRingRenderer {
         }
 
         if (openness > 0f) {
-            drawRingStackPass(new Vector2f(cx, cy), baseRadius * 2f * WORMHOLE_RING_OUTER_RADIUS_RATIO,
-                    ringStacks.computeIfAbsent(nodeId, id -> generateRingInstances(id, WORMHOLE_RING_COUNT, WORMHOLE_RING_RADIUS_DECAY)),
+            drawRingStackPass(cx, cy, baseRadius * 2f * WORMHOLE_RING_OUTER_RADIUS_RATIO,
+                    ringStack(nodeId, WORMHOLE_RING_COUNT, WORMHOLE_RING_RADIUS_DECAY),
                     color, 1f, openness, alphaMult);
         }
 
@@ -336,12 +352,17 @@ final class SkillTreeNodeRingRenderer {
     }
 
     private Color resolveWormholeColor(SkillNode node) {
-        return parsedColor(node, "wormholeColor", node.getWormholeColor(), Color.WHITE);
+        return parsedColor(wormholeColors, node, "wormholeColor", node.getWormholeColor(), Color.WHITE);
     }
 
-    private Color parsedColor(SkillNode node, String fieldName, String hex, Color fallback) {
-        return parsedColors.computeIfAbsent(fieldName + ":" + node.getId(), key -> ColorUtil.parseHexColor(hex, fallback,
-                Logger.getLogger(SkillTreeNodeRingRenderer.class), fieldName + " on node \"" + node.getId() + "\""));
+    private static Color parsedColor(Map<String, Color> cache, SkillNode node, String fieldName, String hex, Color fallback) {
+        Color color = cache.get(node.getId());
+        if (color == null) {
+            color = ColorUtil.parseHexColor(hex, fallback,
+                    Logger.getLogger(SkillTreeNodeRingRenderer.class), fieldName + " on node \"" + node.getId() + "\"");
+            cache.put(node.getId(), color);
+        }
+        return color;
     }
 
     private static String resolveRingBeltPath(SkillNode node) {
@@ -350,7 +371,7 @@ final class SkillTreeNodeRingRenderer {
     }
 
     private Color resolveRingBeltColor(SkillNode node) {
-        return parsedColor(node, "ringBeltColor", node.getRingBeltColor(), DEFAULT_AURORA_COLOR);
+        return parsedColor(ringBeltColors, node, "ringBeltColor", node.getRingBeltColor(), DEFAULT_AURORA_COLOR);
     }
 
     private static float resolveRingBeltWidth(SkillNode node) {
@@ -391,12 +412,20 @@ final class SkillTreeNodeRingRenderer {
         float sizeJitter;
     }
 
+    private static float[] unitCircle(boolean cosine) {
+        float[] values = new float[RING_SEGMENTS];
+        for (int i = 0; i < RING_SEGMENTS; i++) {
+            float angle = (float) (2 * Math.PI * i / RING_SEGMENTS);
+            values[i] = (float) (cosine ? Math.cos(angle) : Math.sin(angle));
+        }
+        return values;
+    }
+
     private void drawRingOutline(float cx, float cy, float radius, Color color, float alpha) {
         Misc.setColor(color, alpha);
         GL11.glBegin(GL11.GL_LINE_LOOP);
         for (int i = 0; i < RING_SEGMENTS; i++) {
-            float angle = (float) (2 * Math.PI * i / RING_SEGMENTS);
-            GL11.glVertex2f(cx + (float) Math.cos(angle) * radius, cy + (float) Math.sin(angle) * radius);
+            GL11.glVertex2f(cx + RING_COS[i] * radius, cy + RING_SIN[i] * radius);
         }
         GL11.glEnd();
     }

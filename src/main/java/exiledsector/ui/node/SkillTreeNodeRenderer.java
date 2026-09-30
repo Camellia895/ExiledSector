@@ -14,7 +14,6 @@ import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.TreeViewport;
 import lunalib.lunaRefit.BaseRefitButton;
 import org.lazywizard.lazylib.ui.LazyFont;
-import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -201,7 +200,7 @@ public final class SkillTreeNodeRenderer {
         float iconSize = footprintSize * ICON_INSET_RATIO;
 
         float nodeAlpha = alphaMult * search.nodeAlpha(node, allocation);
-        ringRenderer.draw(new Vector2f(nodeX, nodeY), footprintSize, nodeAlpha, allocated, breathing, zoom, node);
+        ringRenderer.draw(nodeX, nodeY, footprintSize, nodeAlpha, allocated, breathing, zoom, node);
 
         if (tier != SkillTier.WORMHOLE) {
             Color tint = iconTint(node, allocation, allocated);
@@ -223,7 +222,7 @@ public final class SkillTreeNodeRenderer {
         boolean breathing = choosing || (!allocated && allocation.canAllocate(node));
         float footprintSize = NODE_SIZE * zoom * SkillTier.ROOT.getSizeMultiplier();
         float nodeAlpha = alphaMult * search.nodeAlpha(node, allocation);
-        ringRenderer.draw(new Vector2f(nodeX, nodeY), footprintSize, nodeAlpha, allocated, breathing, zoom, node);
+        ringRenderer.draw(nodeX, nodeY, footprintSize, nodeAlpha, allocated, breathing, zoom, node);
 
         Color tint = choosing ? ALLOCATED_TINT : iconTint(node, allocation, allocated);
         String iconPath = allocator.isStartingRoot(node) ? RootCrestResolver.resolve(member, node) : node.getType().getIconPath();
