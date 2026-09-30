@@ -24,6 +24,9 @@ import java.util.Map;
 public class SkillTreeStarRenderer {
 
     private static final int SPHERE_DETAIL = 32;
+    private static final Sphere SPHERE = texturedSphere();
+    private static boolean unitSphereCompiled;
+    private static int unitSphereList;
     private static final float RIM_ALPHA_MULT = 0.37f;
     private static final String FALLBACK_STAR_TYPE = "star_yellow";
 
@@ -41,17 +44,13 @@ public class SkillTreeStarRenderer {
     private static final int ATMOSPHERE_SEGMENTS = 64;
 
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeStarRenderer.class);
-    private final Sphere sphere = new Sphere();
     private final Map<String, Float> angleById = new HashMap<>();
     private final Map<String, AuroraRenderer> auroraById = new HashMap<>();
     private final Map<String, AuroraDelegate> auroraDelegateById = new HashMap<>();
     private Map<String, PlanetSpecAPI> specsByType;
     private SpriteAPI atmosphereTexture;
     private SpriteAPI auroraTexture;
-
-    public SkillTreeStarRenderer() {
-        sphere.setTextureFlag(true);
-    }
+    private final Map<String, Map<Color, Color>> resolvedColors = new HashMap<>();
 
     public void advance(float amount) {
         if (amount <= 0f) return;
@@ -100,10 +99,10 @@ public class SkillTreeStarRenderer {
             texture.bindTexture();
 
             Misc.setColor(discColor, alphaMult);
-            sphere.draw(radius, SPHERE_DETAIL, SPHERE_DETAIL);
+            drawSphere(radius);
             Misc.setColor(discColor, alphaMult * RIM_ALPHA_MULT);
-            sphere.draw(radius + 0.25f * zoom, SPHERE_DETAIL, SPHERE_DETAIL);
-            sphere.draw(radius + 0.5f * zoom, SPHERE_DETAIL, SPHERE_DETAIL);
+            drawSphere(radius + 0.25f * zoom);
+            drawSphere(radius + 0.5f * zoom);
 
             GL11.glPopMatrix();
 
@@ -242,9 +241,50 @@ public class SkillTreeStarRenderer {
         }
     }
 
-    private static Color resolveColor(Star star, Color fallback) {
-        Color parsed = ColorUtil.parseHexColor(star.getColor(), fallback);
-        return new Color(parsed.getRed(), parsed.getGreen(), parsed.getBlue(), fallback.getAlpha());
+    private static Sphere texturedSphere() {
+        Sphere sphere = new Sphere();
+        sphere.setTextureFlag(true);
+        return sphere;
+    }
+
+    private static void drawSphere(float radius) {
+        if (!unitSphereCompiled) {
+            unitSphereList = compileUnitSphere();
+            unitSphereCompiled = true;
+        }
+        if (unitSphereList == 0) {
+            SPHERE.draw(radius, SPHERE_DETAIL, SPHERE_DETAIL);
+            return;
+        }
+        GL11.glPushMatrix();
+        GL11.glScalef(radius, radius, radius);
+        GL11.glCallList(unitSphereList);
+        GL11.glPopMatrix();
+    }
+
+    private static int compileUnitSphere() {
+        int list = GL11.glGenLists(1);
+        if (list != 0) {
+            GL11.glNewList(list, GL11.GL_COMPILE);
+            SPHERE.draw(1f, SPHERE_DETAIL, SPHERE_DETAIL);
+            GL11.glEndList();
+        }
+        return list;
+    }
+
+    private Color resolveColor(Star star, Color fallback) {
+        Map<Color, Color> byFallback = resolvedColors.get(star.getId());
+        if (byFallback == null) {
+            byFallback = new HashMap<>();
+            resolvedColors.put(star.getId(), byFallback);
+        }
+        Color resolved = byFallback.get(fallback);
+        if (resolved == null) {
+            Color parsed = ColorUtil.parseHexColor(star.getColor(), fallback);
+            resolved = new Color(parsed.getRed(), parsed.getGreen(), parsed.getBlue(), fallback.getAlpha());
+            byFallback.put(fallback, resolved);
+        }
+        return resolved;
     }
 
     private PlanetSpecAPI resolveSpec(String starType) {
