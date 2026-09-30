@@ -65,9 +65,7 @@ public class SkillTreeInstaller implements EveryFrameScript {
         }
 
         ShipVariantAPI variant = ownedVariant(member);
-        for (String npcTag = NpcTreeTag.find(variant); npcTag != null; npcTag = NpcTreeTag.find(variant)) {
-            variant.removeTag(npcTag);
-        }
+        NpcTreeTag.removeAll(variant);
         if (variant.hasHullMod(SkillTreeHullMod.ID) && !variant.getPermaMods().contains(SkillTreeHullMod.ID)) {
             variant.removeMod(SkillTreeHullMod.ID);
         }

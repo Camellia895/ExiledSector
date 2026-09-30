@@ -43,6 +43,12 @@ public final class NpcTreeTag {
         return null;
     }
 
+    public static void removeAll(ShipVariantAPI variant) {
+        for (String tag = find(variant); tag != null; tag = find(variant)) {
+            variant.removeTag(tag);
+        }
+    }
+
     public static String layoutId(String tag) {
         String[] fields = fields(tag);
         return fields == null ? null : fields[0];

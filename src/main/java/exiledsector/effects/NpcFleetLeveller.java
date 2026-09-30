@@ -77,9 +77,7 @@ public final class NpcFleetLeveller {
             return;
         }
         ShipVariantAPI variant = SkillTreeInstaller.ownedVariant(member);
-        for (String existing = NpcTreeTag.find(variant); existing != null; existing = NpcTreeTag.find(variant)) {
-            variant.removeTag(existing);
-        }
+        NpcTreeTag.removeAll(variant);
         variant.addTag(tag);
         stripConflictingHullMods(variant, SkillDataResolver.resolve(member, variant));
         if (!variant.hasHullMod(SkillTreeHullMod.ID)) {
