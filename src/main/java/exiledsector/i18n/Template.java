@@ -23,11 +23,9 @@ public final class Template {
     private record Close(Style style) implements Part {
     }
 
-    private final String raw;
     private final List<Part> parts;
 
-    private Template(String raw, List<Part> parts) {
-        this.raw = raw;
+    private Template(List<Part> parts) {
         this.parts = List.copyOf(parts);
     }
 
@@ -54,7 +52,7 @@ public final class Template {
         if (!literal.isEmpty()) {
             parts.add(new Literal(literal.toString()));
         }
-        return new Template(raw, parts);
+        return new Template(parts);
     }
 
     private static Part token(char opener, String inner) {
@@ -80,10 +78,6 @@ public final class Template {
             }
         }
         return true;
-    }
-
-    public String raw() {
-        return raw;
     }
 
     public Set<String> placeholders() {

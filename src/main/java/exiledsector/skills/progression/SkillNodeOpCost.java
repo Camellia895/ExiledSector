@@ -26,14 +26,10 @@ public final class SkillNodeOpCost {
     }
 
     public static int perNode(HullSize hullSize) {
-        if (hullSize == HullSize.FRIGATE) return settingOrDefault(FRIGATE_FIELD_ID, DEFAULT_FRIGATE);
-        if (hullSize == HullSize.DESTROYER) return settingOrDefault(DESTROYER_FIELD_ID, DEFAULT_DESTROYER);
-        if (hullSize == HullSize.CRUISER) return settingOrDefault(CRUISER_FIELD_ID, DEFAULT_CRUISER);
-        if (hullSize == HullSize.CAPITAL_SHIP) return settingOrDefault(CAPITAL_FIELD_ID, DEFAULT_CAPITAL);
-        return settingOrDefault(UNDEFINED_FIELD_ID, DEFAULT_UNDEFINED);
-    }
-
-    private static int settingOrDefault(String fieldId, int defaultValue) {
-        return ModSettings.intOr(fieldId, defaultValue);
+        if (hullSize == HullSize.FRIGATE) return ModSettings.intOr(FRIGATE_FIELD_ID, DEFAULT_FRIGATE);
+        if (hullSize == HullSize.DESTROYER) return ModSettings.intOr(DESTROYER_FIELD_ID, DEFAULT_DESTROYER);
+        if (hullSize == HullSize.CRUISER) return ModSettings.intOr(CRUISER_FIELD_ID, DEFAULT_CRUISER);
+        if (hullSize == HullSize.CAPITAL_SHIP) return ModSettings.intOr(CAPITAL_FIELD_ID, DEFAULT_CAPITAL);
+        return ModSettings.intOr(UNDEFINED_FIELD_ID, DEFAULT_UNDEFINED);
     }
 }

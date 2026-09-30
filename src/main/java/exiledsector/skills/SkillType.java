@@ -181,10 +181,6 @@ public class SkillType {
         return effects;
     }
 
-    public List<HullSizeSkillEffect> getHullSizeEffects() {
-        return hullSizeEffects;
-    }
-
     public SkillTier getTier() {
         return tier;
     }
