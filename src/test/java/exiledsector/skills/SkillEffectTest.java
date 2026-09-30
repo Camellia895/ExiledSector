@@ -3,6 +3,7 @@ package exiledsector.skills;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.combat.BeamAPI;
+import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
@@ -1409,7 +1410,7 @@ class SkillEffectTest {
              MockedStatic<MagicFakeBeamPlugin> fakeBeamPluginMock = Mockito.mockStatic(MagicFakeBeamPlugin.class)) {
             CombatEngineAPI engine = mock(CombatEngineAPI.class);
             globalMock.when(Global::getCombatEngine).thenReturn(engine);
-            when(engine.getShips()).thenReturn(Arrays.asList(ship, primaryTarget, enemy1, enemy2));
+            stubShipGrid(engine, ship, primaryTarget, enemy1, enemy2);
             fakeBeamMock.when(() -> MagicFakeBeam.getShipCollisionPoint(any(), any(), any(), anyFloat()))
                     .thenAnswer(invocation -> ((ShipAPI) invocation.getArgument(2)).getLocation());
 
@@ -1453,7 +1454,7 @@ class SkillEffectTest {
              MockedStatic<MagicFakeBeamPlugin> fakeBeamPluginMock = Mockito.mockStatic(MagicFakeBeamPlugin.class)) {
             CombatEngineAPI engine = mock(CombatEngineAPI.class);
             globalMock.when(Global::getCombatEngine).thenReturn(engine);
-            when(engine.getShips()).thenReturn(Arrays.asList(ship, primaryTarget, enemy));
+            stubShipGrid(engine, ship, primaryTarget, enemy);
             fakeBeamMock.when(() -> MagicFakeBeam.getShipCollisionPoint(any(), any(), any(), anyFloat()))
                     .thenAnswer(invocation -> ((ShipAPI) invocation.getArgument(2)).getLocation());
 
@@ -1490,6 +1491,12 @@ class SkillEffectTest {
         when(projectile.getCustomData()).thenReturn(new java.util.HashMap<>());
         when(projectile.getProjectileSpecId()).thenReturn("energy_gun_overcharged_shot");
         return projectile;
+    }
+
+    private static void stubShipGrid(CombatEngineAPI engine, ShipAPI... ships) {
+        CollisionGridAPI grid = mock(CollisionGridAPI.class);
+        when(engine.getShipGrid()).thenReturn(grid);
+        when(grid.getCheckIterator(any(), anyFloat(), anyFloat())).thenAnswer(invocation -> List.<Object>of(ships).iterator());
     }
 
     private WeaponAPI mockEnergyWeapon(String id, boolean isBeam) {
@@ -1599,7 +1606,7 @@ class SkillEffectTest {
              MockedStatic<MagicFakeBeamPlugin> fakeBeamPluginMock = Mockito.mockStatic(MagicFakeBeamPlugin.class)) {
             CombatEngineAPI engine = mock(CombatEngineAPI.class);
             globalMock.when(Global::getCombatEngine).thenReturn(engine);
-            when(engine.getShips()).thenReturn(Arrays.asList(ship, primaryTarget, enemy1, enemy2));
+            stubShipGrid(engine, ship, primaryTarget, enemy1, enemy2);
             fakeBeamMock.when(() -> MagicFakeBeam.getShipCollisionPoint(any(), any(), any(), anyFloat()))
                     .thenAnswer(invocation -> ((ShipAPI) invocation.getArgument(2)).getLocation());
 
@@ -1652,7 +1659,7 @@ class SkillEffectTest {
         when(drone.getAllWeapons()).thenReturn(List.of(droneWeapon));
         when(drone.getLocation()).thenReturn(new Vector2f());
         CombatEngineAPI engine = mock(CombatEngineAPI.class);
-        when(engine.getShips()).thenReturn(Arrays.asList(ship, primaryTarget, enemy));
+        stubShipGrid(engine, ship, primaryTarget, enemy);
         when(engine.createFXDrone(variant)).thenReturn(drone);
 
         String returnedModifierId;
@@ -1711,7 +1718,7 @@ class SkillEffectTest {
              MockedStatic<MagicFakeBeamPlugin> fakeBeamPluginMock = Mockito.mockStatic(MagicFakeBeamPlugin.class)) {
             CombatEngineAPI engine = mock(CombatEngineAPI.class);
             globalMock.when(Global::getCombatEngine).thenReturn(engine);
-            when(engine.getShips()).thenReturn(Arrays.asList(ship, primaryTarget, enemy1, enemy2));
+            stubShipGrid(engine, ship, primaryTarget, enemy1, enemy2);
             fakeBeamMock.when(() -> MagicFakeBeam.getShipCollisionPoint(any(), any(), any(), anyFloat()))
                     .thenAnswer(invocation -> ((ShipAPI) invocation.getArgument(2)).getLocation());
             // Simulate the real engine re-invoking every DamageDealtModifier (including this
@@ -1766,7 +1773,7 @@ class SkillEffectTest {
              MockedStatic<MagicFakeBeamPlugin> fakeBeamPluginMock = Mockito.mockStatic(MagicFakeBeamPlugin.class)) {
             CombatEngineAPI engine = mock(CombatEngineAPI.class);
             globalMock.when(Global::getCombatEngine).thenReturn(engine);
-            when(engine.getShips()).thenReturn(Arrays.asList(ship, primaryTarget, enemyInRange, enemyOutOfRange));
+            stubShipGrid(engine, ship, primaryTarget, enemyInRange, enemyOutOfRange);
             fakeBeamMock.when(() -> MagicFakeBeam.getShipCollisionPoint(any(), any(), any(), anyFloat()))
                     .thenAnswer(invocation -> ((ShipAPI) invocation.getArgument(2)).getLocation());
 
@@ -1814,7 +1821,7 @@ class SkillEffectTest {
              MockedStatic<MagicFakeBeamPlugin> fakeBeamPluginMock = Mockito.mockStatic(MagicFakeBeamPlugin.class)) {
             CombatEngineAPI engine = mock(CombatEngineAPI.class);
             globalMock.when(Global::getCombatEngine).thenReturn(engine);
-            when(engine.getShips()).thenReturn(Arrays.asList(ship, primaryTarget, enemyJustOutOfHalfRange));
+            stubShipGrid(engine, ship, primaryTarget, enemyJustOutOfHalfRange);
             fakeBeamMock.when(() -> MagicFakeBeam.getShipCollisionPoint(any(), any(), any(), anyFloat()))
                     .thenAnswer(invocation -> ((ShipAPI) invocation.getArgument(2)).getLocation());
 
@@ -1862,7 +1869,7 @@ class SkillEffectTest {
              MockedStatic<MagicFakeBeamPlugin> fakeBeamPluginMock = Mockito.mockStatic(MagicFakeBeamPlugin.class)) {
             CombatEngineAPI engine = mock(CombatEngineAPI.class);
             globalMock.when(Global::getCombatEngine).thenReturn(engine);
-            when(engine.getShips()).thenReturn(Arrays.asList(ship, primaryTarget, enemy));
+            stubShipGrid(engine, ship, primaryTarget, enemy);
             fakeBeamMock.when(() -> MagicFakeBeam.getShipCollisionPoint(any(), any(), any(), anyFloat()))
                     .thenAnswer(invocation -> ((ShipAPI) invocation.getArgument(2)).getLocation());
 
@@ -1909,7 +1916,7 @@ class SkillEffectTest {
              MockedStatic<MagicFakeBeamPlugin> fakeBeamPluginMock = Mockito.mockStatic(MagicFakeBeamPlugin.class)) {
             CombatEngineAPI engine = mock(CombatEngineAPI.class);
             globalMock.when(Global::getCombatEngine).thenReturn(engine);
-            when(engine.getShips()).thenReturn(Arrays.asList(ship, primaryTarget, neutralBystander));
+            stubShipGrid(engine, ship, primaryTarget, neutralBystander);
 
             listener.modifyDamageDealt(beam, primaryTarget, damage, point, false);
 

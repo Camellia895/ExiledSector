@@ -88,7 +88,7 @@ final class BeamSplitListener implements DamageDealtModifier, AdvanceableListene
     }
 
     private List<ShipAPI> findNearbyEnemies(ShipAPI primaryTarget, Vector2f point, float radius, int count) {
-        List<ShipAPI> candidates = CombatQueries.shipsMatching(other -> other != ship && other != primaryTarget
+        List<ShipAPI> candidates = CombatQueries.shipsNear(point, radius, other -> other != ship && other != primaryTarget
                 && other.isAlive() && !other.isHulk()
                 && CombatQueries.isHostile(ship, other) && CombatQueries.withinRadius(other.getLocation(), point, radius));
         candidates.sort(Comparator.comparingDouble(other -> Vector2f.sub(other.getLocation(), point, null).lengthSquared()));

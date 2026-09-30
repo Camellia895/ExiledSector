@@ -279,22 +279,21 @@ public enum CombatSkillEffect implements BackedSkillEffect {
 
         private boolean isHullTouchingAnything() {
             Vector2f loc = ship.getLocation();
-            float myRadius = ship.getCollisionRadius();
+            float queryRadius = ship.getCollisionRadius() * BROAD_PHASE_MARGIN;
+            CombatEngineAPI engine = Global.getCombatEngine();
+            return CombatQueries.anyNear(engine.getShipGrid(), loc, queryRadius,
+                    candidate -> candidate instanceof ShipAPI other && isCollidableShip(other) && isTouching(other))
+                    || CombatQueries.anyNear(engine.getAsteroidGrid(), loc, queryRadius,
+                    candidate -> candidate instanceof CombatEntityAPI asteroid && isTouching(asteroid));
+        }
 
-            List<ShipAPI> nearby = CombatQueries.shipsMatching(other -> other != ship && !other.isFighter() && !other.isHulk()
-                    && !other.isShuttlePod() && other.getCollisionClass() != CollisionClass.NONE
-                    && isBroadPhaseNear(loc, myRadius, other));
-            for (ShipAPI other : nearby) {
-                if (hullsOverlap(ship, other)) {
-                    return true;
-                }
-            }
-            for (CombatEntityAPI asteroid : Global.getCombatEngine().getAsteroids()) {
-                if (isBroadPhaseNear(loc, myRadius, asteroid) && hullsOverlap(ship, asteroid)) {
-                    return true;
-                }
-            }
-            return false;
+        private boolean isCollidableShip(ShipAPI other) {
+            return other != ship && !other.isFighter() && !other.isHulk() && !other.isShuttlePod()
+                    && other.getCollisionClass() != CollisionClass.NONE;
+        }
+
+        private boolean isTouching(CombatEntityAPI other) {
+            return isBroadPhaseNear(ship.getLocation(), ship.getCollisionRadius(), other) && hullsOverlap(ship, other);
         }
 
         private boolean isBroadPhaseNear(Vector2f loc, float myRadius, CombatEntityAPI other) {
