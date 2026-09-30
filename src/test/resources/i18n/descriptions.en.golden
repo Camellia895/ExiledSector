@@ -2796,21 +2796,21 @@ type|rationing|CRUISER|0	1	<bad>10%</bad> less supply use for maintenance.
 type|rationing|CRUISER|1	1	<bad>10%</bad> less fuel consumption rate.
 type|rationing|CAPITAL_SHIP|0	1	<bad>10%</bad> less supply use for maintenance.
 type|rationing|CAPITAL_SHIP|1	1	<bad>10%</bad> less fuel consumption rate.
-type|reckless_assault|null|0	1	Decreases crew casualties by <bad>50%</bad>.
+type|reckless_assault|null|0	1	Increases crew casualties by <good>50%</good>.
 type|reckless_assault|null|1	0	Increases weapon damage by <good>30%</good>.
-type|reckless_assault|null|2	1	<bad>10%</bad> less damage taken by shields.
-type|reckless_assault|FRIGATE|0	1	Decreases crew casualties by <bad>50%</bad>.
+type|reckless_assault|null|2	1	<good>10%</good> more damage taken by shields.
+type|reckless_assault|FRIGATE|0	1	Increases crew casualties by <good>50%</good>.
 type|reckless_assault|FRIGATE|1	0	Increases weapon damage by <good>30%</good>.
-type|reckless_assault|FRIGATE|2	1	<bad>10%</bad> less damage taken by shields.
-type|reckless_assault|DESTROYER|0	1	Decreases crew casualties by <bad>50%</bad>.
+type|reckless_assault|FRIGATE|2	1	<good>10%</good> more damage taken by shields.
+type|reckless_assault|DESTROYER|0	1	Increases crew casualties by <good>50%</good>.
 type|reckless_assault|DESTROYER|1	0	Increases weapon damage by <good>30%</good>.
-type|reckless_assault|DESTROYER|2	1	<bad>10%</bad> less damage taken by shields.
-type|reckless_assault|CRUISER|0	1	Decreases crew casualties by <bad>50%</bad>.
+type|reckless_assault|DESTROYER|2	1	<good>10%</good> more damage taken by shields.
+type|reckless_assault|CRUISER|0	1	Increases crew casualties by <good>50%</good>.
 type|reckless_assault|CRUISER|1	0	Increases weapon damage by <good>30%</good>.
-type|reckless_assault|CRUISER|2	1	<bad>10%</bad> less damage taken by shields.
-type|reckless_assault|CAPITAL_SHIP|0	1	Decreases crew casualties by <bad>50%</bad>.
+type|reckless_assault|CRUISER|2	1	<good>10%</good> more damage taken by shields.
+type|reckless_assault|CAPITAL_SHIP|0	1	Increases crew casualties by <good>50%</good>.
 type|reckless_assault|CAPITAL_SHIP|1	0	Increases weapon damage by <good>30%</good>.
-type|reckless_assault|CAPITAL_SHIP|2	1	<bad>10%</bad> less damage taken by shields.
+type|reckless_assault|CAPITAL_SHIP|2	1	<good>10%</good> more damage taken by shields.
 type|recovery_shuttles|null|0	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
 type|recovery_shuttles|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Recovery Shuttles.
 type|recovery_shuttles|FRIGATE|0	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
@@ -3286,7 +3286,7 @@ summary|option0|FRIGATE|82	0	Installs a makeshift, front-facing shield if this s
 summary|option0|FRIGATE|83	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
 summary|option0|FRIGATE|84	0	Increases effective strength of planetary raids, up to the total number of marines in the fleet by <good>100</good>.
 summary|option0|FRIGATE|85	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
-summary|option0|FRIGATE|86	1	<bad>34.21%</bad> less damage taken by shields.
+summary|option0|FRIGATE|86	1	<bad>19.59%</bad> less damage taken by shields.
 summary|option0|FRIGATE|87	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 summary|option0|FRIGATE|88	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 summary|option0|FRIGATE|89	0	Increases hull points by <good>150</good>.
@@ -3321,7 +3321,7 @@ summary|option0|FRIGATE|117	0	Even if this ship isn't a phase ship, 100% of its 
 summary|option0|FRIGATE|118	0	Point-defense weapons can identify and ignore decoy flares.
 summary|option0|FRIGATE|119	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 summary|option0|FRIGATE|120	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option0|FRIGATE|121	1	Decreases crew casualties by <bad>50%</bad>.
+summary|option0|FRIGATE|121	1	Increases crew casualties by <good>50%</good>.
 summary|option0|FRIGATE|122	0	Increases weapon damage by <good>10%</good>.
 summary|option0|FRIGATE|123	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
 summary|option0|FRIGATE|124	1	<bad>18.55%</bad> less negative effects from D-mods.
@@ -3441,7 +3441,7 @@ summary|option0|DESTROYER|82	0	Installs a makeshift, front-facing shield if this
 summary|option0|DESTROYER|83	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
 summary|option0|DESTROYER|84	0	Increases effective strength of planetary raids, up to the total number of marines in the fleet by <good>100</good>.
 summary|option0|DESTROYER|85	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
-summary|option0|DESTROYER|86	1	<bad>34.21%</bad> less damage taken by shields.
+summary|option0|DESTROYER|86	1	<bad>19.59%</bad> less damage taken by shields.
 summary|option0|DESTROYER|87	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 summary|option0|DESTROYER|88	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 summary|option0|DESTROYER|89	0	Increases hull points by <good>300</good>.
@@ -3476,7 +3476,7 @@ summary|option0|DESTROYER|117	0	Even if this ship isn't a phase ship, 100% of it
 summary|option0|DESTROYER|118	0	Point-defense weapons can identify and ignore decoy flares.
 summary|option0|DESTROYER|119	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 summary|option0|DESTROYER|120	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option0|DESTROYER|121	1	Decreases crew casualties by <bad>50%</bad>.
+summary|option0|DESTROYER|121	1	Increases crew casualties by <good>50%</good>.
 summary|option0|DESTROYER|122	0	Increases weapon damage by <good>10%</good>.
 summary|option0|DESTROYER|123	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
 summary|option0|DESTROYER|124	1	<bad>18.55%</bad> less negative effects from D-mods.
@@ -3596,7 +3596,7 @@ summary|option0|CRUISER|82	0	Installs a makeshift, front-facing shield if this s
 summary|option0|CRUISER|83	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
 summary|option0|CRUISER|84	0	Increases effective strength of planetary raids, up to the total number of marines in the fleet by <good>100</good>.
 summary|option0|CRUISER|85	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
-summary|option0|CRUISER|86	1	<bad>34.21%</bad> less damage taken by shields.
+summary|option0|CRUISER|86	1	<bad>19.59%</bad> less damage taken by shields.
 summary|option0|CRUISER|87	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 summary|option0|CRUISER|88	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 summary|option0|CRUISER|89	0	Increases hull points by <good>400</good>.
@@ -3631,7 +3631,7 @@ summary|option0|CRUISER|117	0	Even if this ship isn't a phase ship, 100% of its 
 summary|option0|CRUISER|118	0	Point-defense weapons can identify and ignore decoy flares.
 summary|option0|CRUISER|119	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 summary|option0|CRUISER|120	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option0|CRUISER|121	1	Decreases crew casualties by <bad>50%</bad>.
+summary|option0|CRUISER|121	1	Increases crew casualties by <good>50%</good>.
 summary|option0|CRUISER|122	0	Increases weapon damage by <good>10%</good>.
 summary|option0|CRUISER|123	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
 summary|option0|CRUISER|124	1	<bad>18.55%</bad> less negative effects from D-mods.
@@ -3751,7 +3751,7 @@ summary|option0|CAPITAL_SHIP|82	0	Installs a makeshift, front-facing shield if t
 summary|option0|CAPITAL_SHIP|83	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
 summary|option0|CAPITAL_SHIP|84	0	Increases effective strength of planetary raids, up to the total number of marines in the fleet by <good>100</good>.
 summary|option0|CAPITAL_SHIP|85	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
-summary|option0|CAPITAL_SHIP|86	1	<bad>34.21%</bad> less damage taken by shields.
+summary|option0|CAPITAL_SHIP|86	1	<bad>19.59%</bad> less damage taken by shields.
 summary|option0|CAPITAL_SHIP|87	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 summary|option0|CAPITAL_SHIP|88	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 summary|option0|CAPITAL_SHIP|89	0	Increases hull points by <good>500</good>.
@@ -3786,7 +3786,7 @@ summary|option0|CAPITAL_SHIP|117	0	Even if this ship isn't a phase ship, 100% of
 summary|option0|CAPITAL_SHIP|118	0	Point-defense weapons can identify and ignore decoy flares.
 summary|option0|CAPITAL_SHIP|119	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 summary|option0|CAPITAL_SHIP|120	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option0|CAPITAL_SHIP|121	1	Decreases crew casualties by <bad>50%</bad>.
+summary|option0|CAPITAL_SHIP|121	1	Increases crew casualties by <good>50%</good>.
 summary|option0|CAPITAL_SHIP|122	0	Increases weapon damage by <good>10%</good>.
 summary|option0|CAPITAL_SHIP|123	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
 summary|option0|CAPITAL_SHIP|124	1	<bad>18.55%</bad> less negative effects from D-mods.
@@ -3906,7 +3906,7 @@ summary|option1|FRIGATE|82	0	Installs a makeshift, front-facing shield if this s
 summary|option1|FRIGATE|83	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
 summary|option1|FRIGATE|84	0	Increases effective strength of planetary raids, up to the total number of marines in the fleet by <good>100</good>.
 summary|option1|FRIGATE|85	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
-summary|option1|FRIGATE|86	1	<bad>34.21%</bad> less damage taken by shields.
+summary|option1|FRIGATE|86	1	<bad>19.59%</bad> less damage taken by shields.
 summary|option1|FRIGATE|87	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 summary|option1|FRIGATE|88	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 summary|option1|FRIGATE|89	0	Increases hull points by <good>150</good>.
@@ -3941,7 +3941,7 @@ summary|option1|FRIGATE|117	0	Even if this ship isn't a phase ship, 100% of its 
 summary|option1|FRIGATE|118	0	Point-defense weapons can identify and ignore decoy flares.
 summary|option1|FRIGATE|119	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 summary|option1|FRIGATE|120	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option1|FRIGATE|121	1	Decreases crew casualties by <bad>50%</bad>.
+summary|option1|FRIGATE|121	1	Increases crew casualties by <good>50%</good>.
 summary|option1|FRIGATE|122	0	Increases weapon damage by <good>10%</good>.
 summary|option1|FRIGATE|123	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
 summary|option1|FRIGATE|124	1	<bad>18.55%</bad> less negative effects from D-mods.
@@ -4061,7 +4061,7 @@ summary|option1|DESTROYER|82	0	Installs a makeshift, front-facing shield if this
 summary|option1|DESTROYER|83	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
 summary|option1|DESTROYER|84	0	Increases effective strength of planetary raids, up to the total number of marines in the fleet by <good>100</good>.
 summary|option1|DESTROYER|85	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
-summary|option1|DESTROYER|86	1	<bad>34.21%</bad> less damage taken by shields.
+summary|option1|DESTROYER|86	1	<bad>19.59%</bad> less damage taken by shields.
 summary|option1|DESTROYER|87	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 summary|option1|DESTROYER|88	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 summary|option1|DESTROYER|89	0	Increases hull points by <good>300</good>.
@@ -4096,7 +4096,7 @@ summary|option1|DESTROYER|117	0	Even if this ship isn't a phase ship, 100% of it
 summary|option1|DESTROYER|118	0	Point-defense weapons can identify and ignore decoy flares.
 summary|option1|DESTROYER|119	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 summary|option1|DESTROYER|120	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option1|DESTROYER|121	1	Decreases crew casualties by <bad>50%</bad>.
+summary|option1|DESTROYER|121	1	Increases crew casualties by <good>50%</good>.
 summary|option1|DESTROYER|122	0	Increases weapon damage by <good>10%</good>.
 summary|option1|DESTROYER|123	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
 summary|option1|DESTROYER|124	1	<bad>18.55%</bad> less negative effects from D-mods.
@@ -4216,7 +4216,7 @@ summary|option1|CRUISER|82	0	Installs a makeshift, front-facing shield if this s
 summary|option1|CRUISER|83	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
 summary|option1|CRUISER|84	0	Increases effective strength of planetary raids, up to the total number of marines in the fleet by <good>100</good>.
 summary|option1|CRUISER|85	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
-summary|option1|CRUISER|86	1	<bad>34.21%</bad> less damage taken by shields.
+summary|option1|CRUISER|86	1	<bad>19.59%</bad> less damage taken by shields.
 summary|option1|CRUISER|87	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 summary|option1|CRUISER|88	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 summary|option1|CRUISER|89	0	Increases hull points by <good>400</good>.
@@ -4251,7 +4251,7 @@ summary|option1|CRUISER|117	0	Even if this ship isn't a phase ship, 100% of its 
 summary|option1|CRUISER|118	0	Point-defense weapons can identify and ignore decoy flares.
 summary|option1|CRUISER|119	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 summary|option1|CRUISER|120	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option1|CRUISER|121	1	Decreases crew casualties by <bad>50%</bad>.
+summary|option1|CRUISER|121	1	Increases crew casualties by <good>50%</good>.
 summary|option1|CRUISER|122	0	Increases weapon damage by <good>10%</good>.
 summary|option1|CRUISER|123	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
 summary|option1|CRUISER|124	1	<bad>18.55%</bad> less negative effects from D-mods.
@@ -4371,7 +4371,7 @@ summary|option1|CAPITAL_SHIP|82	0	Installs a makeshift, front-facing shield if t
 summary|option1|CAPITAL_SHIP|83	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
 summary|option1|CAPITAL_SHIP|84	0	Increases effective strength of planetary raids, up to the total number of marines in the fleet by <good>100</good>.
 summary|option1|CAPITAL_SHIP|85	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
-summary|option1|CAPITAL_SHIP|86	1	<bad>34.21%</bad> less damage taken by shields.
+summary|option1|CAPITAL_SHIP|86	1	<bad>19.59%</bad> less damage taken by shields.
 summary|option1|CAPITAL_SHIP|87	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 summary|option1|CAPITAL_SHIP|88	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 summary|option1|CAPITAL_SHIP|89	0	Increases hull points by <good>500</good>.
@@ -4406,7 +4406,7 @@ summary|option1|CAPITAL_SHIP|117	0	Even if this ship isn't a phase ship, 100% of
 summary|option1|CAPITAL_SHIP|118	0	Point-defense weapons can identify and ignore decoy flares.
 summary|option1|CAPITAL_SHIP|119	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 summary|option1|CAPITAL_SHIP|120	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option1|CAPITAL_SHIP|121	1	Decreases crew casualties by <bad>50%</bad>.
+summary|option1|CAPITAL_SHIP|121	1	Increases crew casualties by <good>50%</good>.
 summary|option1|CAPITAL_SHIP|122	0	Increases weapon damage by <good>10%</good>.
 summary|option1|CAPITAL_SHIP|123	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
 summary|option1|CAPITAL_SHIP|124	1	<bad>18.55%</bad> less negative effects from D-mods.
@@ -4526,7 +4526,7 @@ summary|option2|FRIGATE|82	0	Installs a makeshift, front-facing shield if this s
 summary|option2|FRIGATE|83	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
 summary|option2|FRIGATE|84	0	Increases effective strength of planetary raids, up to the total number of marines in the fleet by <good>100</good>.
 summary|option2|FRIGATE|85	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
-summary|option2|FRIGATE|86	1	<bad>34.21%</bad> less damage taken by shields.
+summary|option2|FRIGATE|86	1	<bad>19.59%</bad> less damage taken by shields.
 summary|option2|FRIGATE|87	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 summary|option2|FRIGATE|88	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 summary|option2|FRIGATE|89	0	Increases hull points by <good>150</good>.
@@ -4561,7 +4561,7 @@ summary|option2|FRIGATE|117	0	Even if this ship isn't a phase ship, 100% of its 
 summary|option2|FRIGATE|118	0	Point-defense weapons can identify and ignore decoy flares.
 summary|option2|FRIGATE|119	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 summary|option2|FRIGATE|120	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option2|FRIGATE|121	1	Decreases crew casualties by <bad>50%</bad>.
+summary|option2|FRIGATE|121	1	Increases crew casualties by <good>50%</good>.
 summary|option2|FRIGATE|122	0	Increases weapon damage by <good>10%</good>.
 summary|option2|FRIGATE|123	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
 summary|option2|FRIGATE|124	1	<bad>18.55%</bad> less negative effects from D-mods.
@@ -4681,7 +4681,7 @@ summary|option2|DESTROYER|82	0	Installs a makeshift, front-facing shield if this
 summary|option2|DESTROYER|83	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
 summary|option2|DESTROYER|84	0	Increases effective strength of planetary raids, up to the total number of marines in the fleet by <good>100</good>.
 summary|option2|DESTROYER|85	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
-summary|option2|DESTROYER|86	1	<bad>34.21%</bad> less damage taken by shields.
+summary|option2|DESTROYER|86	1	<bad>19.59%</bad> less damage taken by shields.
 summary|option2|DESTROYER|87	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 summary|option2|DESTROYER|88	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 summary|option2|DESTROYER|89	0	Increases hull points by <good>300</good>.
@@ -4716,7 +4716,7 @@ summary|option2|DESTROYER|117	0	Even if this ship isn't a phase ship, 100% of it
 summary|option2|DESTROYER|118	0	Point-defense weapons can identify and ignore decoy flares.
 summary|option2|DESTROYER|119	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 summary|option2|DESTROYER|120	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option2|DESTROYER|121	1	Decreases crew casualties by <bad>50%</bad>.
+summary|option2|DESTROYER|121	1	Increases crew casualties by <good>50%</good>.
 summary|option2|DESTROYER|122	0	Increases weapon damage by <good>10%</good>.
 summary|option2|DESTROYER|123	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
 summary|option2|DESTROYER|124	1	<bad>18.55%</bad> less negative effects from D-mods.
@@ -4836,7 +4836,7 @@ summary|option2|CRUISER|82	0	Installs a makeshift, front-facing shield if this s
 summary|option2|CRUISER|83	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
 summary|option2|CRUISER|84	0	Increases effective strength of planetary raids, up to the total number of marines in the fleet by <good>100</good>.
 summary|option2|CRUISER|85	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
-summary|option2|CRUISER|86	1	<bad>34.21%</bad> less damage taken by shields.
+summary|option2|CRUISER|86	1	<bad>19.59%</bad> less damage taken by shields.
 summary|option2|CRUISER|87	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 summary|option2|CRUISER|88	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 summary|option2|CRUISER|89	0	Increases hull points by <good>400</good>.
@@ -4871,7 +4871,7 @@ summary|option2|CRUISER|117	0	Even if this ship isn't a phase ship, 100% of its 
 summary|option2|CRUISER|118	0	Point-defense weapons can identify and ignore decoy flares.
 summary|option2|CRUISER|119	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 summary|option2|CRUISER|120	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option2|CRUISER|121	1	Decreases crew casualties by <bad>50%</bad>.
+summary|option2|CRUISER|121	1	Increases crew casualties by <good>50%</good>.
 summary|option2|CRUISER|122	0	Increases weapon damage by <good>10%</good>.
 summary|option2|CRUISER|123	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
 summary|option2|CRUISER|124	1	<bad>18.55%</bad> less negative effects from D-mods.
@@ -4991,7 +4991,7 @@ summary|option2|CAPITAL_SHIP|82	0	Installs a makeshift, front-facing shield if t
 summary|option2|CAPITAL_SHIP|83	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
 summary|option2|CAPITAL_SHIP|84	0	Increases effective strength of planetary raids, up to the total number of marines in the fleet by <good>100</good>.
 summary|option2|CAPITAL_SHIP|85	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
-summary|option2|CAPITAL_SHIP|86	1	<bad>34.21%</bad> less damage taken by shields.
+summary|option2|CAPITAL_SHIP|86	1	<bad>19.59%</bad> less damage taken by shields.
 summary|option2|CAPITAL_SHIP|87	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 summary|option2|CAPITAL_SHIP|88	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 summary|option2|CAPITAL_SHIP|89	0	Increases hull points by <good>500</good>.
@@ -5026,7 +5026,7 @@ summary|option2|CAPITAL_SHIP|117	0	Even if this ship isn't a phase ship, 100% of
 summary|option2|CAPITAL_SHIP|118	0	Point-defense weapons can identify and ignore decoy flares.
 summary|option2|CAPITAL_SHIP|119	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 summary|option2|CAPITAL_SHIP|120	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option2|CAPITAL_SHIP|121	1	Decreases crew casualties by <bad>50%</bad>.
+summary|option2|CAPITAL_SHIP|121	1	Increases crew casualties by <good>50%</good>.
 summary|option2|CAPITAL_SHIP|122	0	Increases weapon damage by <good>10%</good>.
 summary|option2|CAPITAL_SHIP|123	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
 summary|option2|CAPITAL_SHIP|124	1	<bad>18.55%</bad> less negative effects from D-mods.

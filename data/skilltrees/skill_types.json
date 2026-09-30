@@ -3151,7 +3151,7 @@
 			"effects": [
 				{
 					"effect": "CREW_LOSS_PERCENT",
-					"magnitude": -50
+					"magnitude": 50
 				},
 				{
 					"effect": "WEAPON_DAMAGE_PERCENT",
@@ -3159,7 +3159,7 @@
 				},
 				{
 					"effect": "SHIELD_DAMAGE_TAKEN_MULT",
-					"magnitude": -10
+					"magnitude": 10
 				}
 			],
 			"tags": [
