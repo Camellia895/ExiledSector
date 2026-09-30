@@ -3,6 +3,7 @@ package exiledsector.ui;
 import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.FleetEncounterContext;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.effects.SkillTreeHullMod;
@@ -11,6 +12,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.progression.ShipLevelConfig;
+import exiledsector.skills.progression.ShipLevelSystem;
 import exiledsector.skills.progression.ShipOpBudget;
 import exiledsector.skills.progression.SkillNodeOpCost;
 import exiledsector.ui.decoration.SkillTreeRingBeltRenderer;
@@ -285,9 +287,19 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private static String buildReadoutTooltipBody(FleetMemberAPI member) {
         int opCost = SkillNodeOpCost.perNode(member.getHullSpec());
         int maxNodes = ShipLevelConfig.maxAllocatedNodes();
-        int lossPercent = Math.round(ShipLevelConfig.xpLossMultiplier() * 100f);
         return Translation.msg("ui.readout.body").arg("opCost", opCost).arg("maxNodes", maxNodes)
-                .arg("lossPercent", lossPercent).text();
+                .arg("xpRules", xpRulesText()).text();
+    }
+
+    static String xpRulesText() {
+        int lossPercent = Math.round(ShipLevelConfig.xpLossMultiplier() * 100f);
+        float maxMultiplier = ShipLevelSystem.difficultyMultiplier(FleetEncounterContext.MAX_XP_MULT,
+                ShipLevelConfig.xpDifficultyStrength(), ShipLevelConfig.xpDifficultyMaxMultiplier());
+        int maxBonus = Math.round((maxMultiplier - 1f) * 100f);
+        if (maxBonus < 1) {
+            return Translation.msg("ui.readout.xp").arg("lossPercent", lossPercent).text();
+        }
+        return Translation.msg("ui.readout.xpWithDifficulty").arg("lossPercent", lossPercent).arg("maxBonus", maxBonus).text();
     }
 
     private void drawShipCardFrame(float alphaMult) {

@@ -237,6 +237,29 @@ class CombatXpListenerTest {
         new CombatXpListener().reportPlayerEngagement(engagement(false, 40f));
 
         assertEquals(40f * ShipLevelConfig.DEFAULT_XP_LOSS_MULTIPLIER * 3f, ShipSkillDataManager.get("ship-a").getXp());
+        verify(textPanel).addPara(eq("%s"), (Color) any(), (Color) any(), contains("Includes +200%"));
+    }
+
+    @Test
+    void aFractionalDifficultyIsAppliedExactlyAndReportedToTheNearestPercent() {
+        oneShipFleetThatWontLevelUp();
+        encounterWithDifficulty(encounterContext(1.234f, true));
+
+        new CombatXpListener().reportPlayerEngagement(engagement(true, 40f));
+
+        assertEquals(40f * 1.234f, ShipSkillDataManager.get("ship-a").getXp(), 1e-4f);
+        verify(textPanel).addPara(eq("%s"), (Color) any(), (Color) any(), contains("Includes +23%"));
+    }
+
+    @Test
+    void aFightThatEarnedNoXpDoesNotAdvertiseADifficultyBonus() {
+        oneShipFleetThatWontLevelUp();
+        encounterWithDifficulty(encounterContext(4f, true));
+
+        new CombatXpListener().reportPlayerEngagement(engagement(true, 0f));
+
+        assertEquals(0f, ShipSkillDataManager.get("ship-a").getXp());
+        verify(textPanel, never()).addPara(eq("%s"), (Color) any(), (Color) any(), contains("battle difficulty"));
     }
 
     @Test
@@ -263,15 +286,24 @@ class CombatXpListenerTest {
         verify(textPanel, never()).addPara(eq("%s"), (Color) any(), (Color) any(), contains("battle difficulty"));
     }
 
-    @Test
-    void theStrengthAndCapSettingsShapeTheDifficultyBonus() {
+    private float xpWithDifficultySettings(float difficulty, float strength, float cap) {
         oneShipFleetThatWontLevelUp();
-        lunaSettingsMock.when(() -> LunaSettings.getFloat("exiledSector", ShipLevelConfig.XP_DIFFICULTY_STRENGTH_FIELD_ID)).thenReturn(0.5f);
-        lunaSettingsMock.when(() -> LunaSettings.getFloat("exiledSector", ShipLevelConfig.XP_DIFFICULTY_MAX_MULTIPLIER_FIELD_ID)).thenReturn(2f);
-        encounterWithDifficulty(encounterContext(5f, true));
+        lunaSettingsMock.when(() -> LunaSettings.getFloat("exiledSector", ShipLevelConfig.XP_DIFFICULTY_STRENGTH_FIELD_ID)).thenReturn(strength);
+        lunaSettingsMock.when(() -> LunaSettings.getFloat("exiledSector", ShipLevelConfig.XP_DIFFICULTY_MAX_MULTIPLIER_FIELD_ID)).thenReturn(cap);
+        encounterWithDifficulty(encounterContext(difficulty, true));
 
         new CombatXpListener().reportPlayerEngagement(engagement(true, 40f));
 
-        assertEquals(80f, ShipSkillDataManager.get("ship-a").getXp());
+        return ShipSkillDataManager.get("ship-a").getXp();
+    }
+
+    @Test
+    void theStrengthSettingScalesOnlyTheBonusAboveOne() {
+        assertEquals(80f, xpWithDifficultySettings(3f, 0.5f, 6f));
+    }
+
+    @Test
+    void theMaxMultiplierSettingCapsTheBonus() {
+        assertEquals(80f, xpWithDifficultySettings(5f, 1f, 2f));
     }
 }

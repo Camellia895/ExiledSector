@@ -89,6 +89,25 @@ class ShipLevelSystemTest {
     }
 
     @Test
+    void aNonFiniteDifficultyInputFallsBackToNoBonus() {
+        assertEquals(1f, ShipLevelSystem.difficultyMultiplier(Float.NaN, 1f, 6f));
+        assertEquals(1f, ShipLevelSystem.difficultyMultiplier(0.5f, Float.POSITIVE_INFINITY, 6f));
+        assertEquals(1f, ShipLevelSystem.difficultyMultiplier(3f, 1f, Float.NaN));
+    }
+
+    @Test
+    void aNonFiniteXpAwardIsIgnoredSoItCannotCorruptTheShipsLevel() {
+        ShipSkillData data = new ShipSkillData();
+        data.addXp(10f);
+
+        ShipLevelSystem.awardXp(data, Float.NaN, curve(NO_GROWTH_CUTOFF, 50), List.of());
+        ShipLevelSystem.awardXp(data, Float.POSITIVE_INFINITY, curve(NO_GROWTH_CUTOFF, 50), List.of());
+
+        assertEquals(0, data.getLevel());
+        assertEquals(10f, data.getXp());
+    }
+
+    @Test
     void awardXpBelowTheThresholdOnlyAccumulatesXpWithoutLevelingUp() {
         ShipSkillData data = new ShipSkillData();
 

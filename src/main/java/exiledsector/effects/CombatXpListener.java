@@ -115,7 +115,7 @@ public class CombatXpListener extends BaseCampaignEventListener {
         }
 
         boolean hasDifficultyBonus() {
-            return difficultyBonusPercent() >= 1;
+            return Math.round(xp) > 0 && difficultyBonusPercent() >= 1;
         }
 
         String difficultyBonusText() {

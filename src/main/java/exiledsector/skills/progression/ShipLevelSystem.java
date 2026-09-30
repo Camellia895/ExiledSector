@@ -32,13 +32,16 @@ public final class ShipLevelSystem {
     }
 
     public static float difficultyMultiplier(float difficulty, float strength, float cap) {
+        if (!Float.isFinite(difficulty) || !Float.isFinite(strength) || !Float.isFinite(cap)) {
+            return 1f;
+        }
         float bonus = Math.max(0f, difficulty - 1f) * Math.max(0f, strength);
         return Math.max(1f, Math.min(cap, 1f + bonus));
     }
 
     public static void awardXp(ShipSkillData data, float xpAmount, LevelCurve curve,
                                 Collection<SkillNode> allNodes) {
-        if (data.getLevel() >= curve.maxLevel()) return;
+        if (data.getLevel() >= curve.maxLevel() || !Float.isFinite(xpAmount)) return;
 
         data.addXp(xpAmount);
         while (data.getLevel() < curve.maxLevel()) {
