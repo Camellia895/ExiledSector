@@ -22,7 +22,9 @@ import exiledsector.skills.progression.SkillNodeOpCost;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 
 final class NodeAllocator {
@@ -30,7 +32,8 @@ final class NodeAllocator {
     static final String LOCKED_REASON = "Unidentified - explore the sector to discover this node.";
     private static final String WRONG_HULL_SIZE_REASON = "This node can't be allocated on this hull size.";
 
-    record Snapshot(ShipSkillData data, String satisfiedRootId, int totalOpBudget, int opCostPerNode, int maxAllocatedNodes) {
+    record Snapshot(ShipSkillData data, String satisfiedRootId, ShipOpBudget budget, int totalOpBudget, int opCostPerNode,
+                    int maxAllocatedNodes, int revision, Set<String> hiddenNodeIds) {
 
         int opCostFor(SkillNode node) {
             return node.getId().equals(satisfiedRootId) ? 0 : opCostPerNode;
@@ -39,11 +42,16 @@ final class NodeAllocator {
         boolean canAllocate(SkillNode node) {
             return data.canAllocate(node, satisfiedRootId, totalOpBudget, opCostFor(node), maxAllocatedNodes);
         }
+
+        boolean isHidden(SkillNode node) {
+            return hiddenNodeIds.contains(node.getId());
+        }
     }
 
     private final FleetMemberAPI member;
     private final ShipVariantAPI variant;
     private final Supplier<SkillNode> startingRoot;
+    private int revision;
 
     NodeAllocator(FleetMemberAPI member, ShipVariantAPI variant, Supplier<SkillNode> startingRoot) {
         this.member = member;
@@ -69,8 +77,18 @@ final class NodeAllocator {
         ShipSkillData data = data();
         ShipOpBudget budget = ShipOpBudget.of(member, variant);
         int opCostPerNode = SkillNodeOpCost.perNode(member.getHullSpec());
-        return new Snapshot(data, satisfiedRootId(), budget.total - budget.used + data.getSpentOp(opCostPerNode),
-                opCostPerNode, ShipLevelConfig.maxAllocatedNodes());
+        return new Snapshot(data, satisfiedRootId(), budget, budget.total - budget.used + data.getSpentOp(opCostPerNode),
+                opCostPerNode, ShipLevelConfig.maxAllocatedNodes(), revision, hiddenNodeIds(data));
+    }
+
+    private static Set<String> hiddenNodeIds(ShipSkillData data) {
+        Set<String> hidden = new HashSet<>();
+        for (SkillNode node : SkillTree.getAllNodes().values()) {
+            if (SkillTypeUnlockStatus.isHidden(node.getType(), data)) {
+                hidden.add(node.getId());
+            }
+        }
+        return hidden;
     }
 
     boolean canAllocate(SkillNode node) {
@@ -150,6 +168,7 @@ final class NodeAllocator {
     }
 
     private void refreshShipStats() {
+        revision++;
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(member.getHullSpec().getHullSize(), member.getStats(), SkillTreeHullMod.ID);
         member.setStatUpdateNeeded(true);
         member.updateStats();

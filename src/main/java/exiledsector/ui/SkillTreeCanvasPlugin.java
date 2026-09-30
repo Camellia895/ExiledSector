@@ -10,6 +10,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.progression.ShipLevelConfig;
+import exiledsector.skills.progression.ShipOpBudget;
 import exiledsector.skills.progression.SkillNodeOpCost;
 import exiledsector.ui.decoration.SkillTreeRingBeltRenderer;
 import exiledsector.ui.decoration.SkillTreeStarRenderer;
@@ -68,8 +69,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.starRenderer = new SkillTreeStarRenderer();
         this.nodeRenderer = new SkillTreeNodeRenderer(member, variant, style, refitButton, search);
         this.searchBar = new SkillTreeSearchBar(search);
-        this.statPanel = new SkillTreeStatPanel(member, variant);
-        this.ordnancePointsBar = new SkillTreeOrdnancePointsBar(member, variant);
+        this.statPanel = new SkillTreeStatPanel(member);
+        this.ordnancePointsBar = new SkillTreeOrdnancePointsBar();
         this.levelBar = new SkillTreeLevelBar(member);
         this.readoutTooltipRenderer = new SkillTreeInfoTooltipRenderer(style);
         this.readoutTooltipBody = buildReadoutTooltipBody(member);
@@ -101,7 +102,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             panX = -nodeRenderer.startingRootOffsetX() * zoom;
             panY = nodeRenderer.startingRootOffsetY() * zoom;
         }
-        ordnancePointsBar.advance(amount, position, mouseX, mouseY, mouseKnown);
+        ShipOpBudget budget = nodeRenderer.budget();
+        statPanel.refresh(budget, nodeRenderer.statsRevision());
+        ordnancePointsBar.advance(amount, budget, position, mouseX, mouseY, mouseKnown);
         levelBar.advance(amount, position, mouseX, mouseY, mouseKnown);
     }
 

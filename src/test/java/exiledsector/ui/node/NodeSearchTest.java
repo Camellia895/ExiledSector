@@ -13,6 +13,7 @@ import org.mockito.Mockito;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -21,7 +22,11 @@ import static org.mockito.Mockito.mock;
 
 class NodeSearchTest {
 
-    private final ShipSkillData data = mock(ShipSkillData.class);
+    private final NodeAllocator.Snapshot tree = snapshotHiding();
+
+    private static NodeAllocator.Snapshot snapshotHiding(String... hiddenNodeIds) {
+        return new NodeAllocator.Snapshot(mock(ShipSkillData.class), null, null, 0, 0, 0, 0, Set.of(hiddenNodeIds));
+    }
 
     private static SkillNode node(String id, String name) {
         SkillType type = new SkillType.Builder(id, name, "", SkillTier.SMALL).build();
@@ -35,11 +40,11 @@ class NodeSearchTest {
         SkillNode armor = node("armor", "Heavy Armor");
 
         search.setQuery("重型");
-        assertTrue(search.matches(armor, data));
+        assertTrue(search.matches(armor, tree));
         search.setQuery("heavy");
-        assertTrue(search.matches(armor, data));
+        assertTrue(search.matches(armor, tree));
         search.setQuery("armor");
-        assertTrue(search.matches(armor, data));
+        assertTrue(search.matches(armor, tree));
         assertEquals("重型装甲", armor.getType().getDisplayName());
         assertEquals("Heavy Armor", armor.getType().getSourceName());
     }
@@ -50,8 +55,8 @@ class NodeSearchTest {
         SkillNode armor = node("armor", "Heavy Armor");
 
         assertFalse(search.isActive());
-        assertFalse(search.matches(armor, data));
-        assertEquals(1f, search.nodeAlpha(armor, data));
+        assertFalse(search.matches(armor, tree));
+        assertEquals(1f, search.nodeAlpha(armor, tree));
         assertEquals(1f, search.backgroundAlpha());
     }
 
@@ -63,11 +68,23 @@ class NodeSearchTest {
 
         search.setQuery("H");
 
-        assertTrue(search.matches(armor, data));
-        assertFalse(search.matches(flux, data));
-        assertEquals(1f, search.nodeAlpha(armor, data));
-        assertEquals(NodeSearch.DIM_ALPHA, search.nodeAlpha(flux, data));
+        assertTrue(search.matches(armor, tree));
+        assertFalse(search.matches(flux, tree));
+        assertEquals(1f, search.nodeAlpha(armor, tree));
+        assertEquals(NodeSearch.DIM_ALPHA, search.nodeAlpha(flux, tree));
         assertEquals(NodeSearch.DIM_ALPHA, search.backgroundAlpha());
+    }
+
+    @Test
+    void aHiddenNodeNeverMatchesAndStaysDimmed() {
+        NodeSearch search = new NodeSearch();
+        SkillNode armor = node("armor", "Heavy Armor");
+        NodeAllocator.Snapshot hidingArmor = snapshotHiding("armor_1");
+
+        search.setQuery("armor");
+
+        assertFalse(search.matches(armor, hidingArmor));
+        assertEquals(NodeSearch.DIM_ALPHA, search.nodeAlpha(armor, hidingArmor));
     }
 
     @Test
@@ -79,8 +96,8 @@ class NodeSearchTest {
 
         search.setQuery("armor");
 
-        assertEquals(1f, search.connectorAlpha(armor, plating, data));
-        assertEquals(NodeSearch.DIM_ALPHA, search.connectorAlpha(armor, flux, data));
+        assertEquals(1f, search.connectorAlpha(armor, plating, tree));
+        assertEquals(NodeSearch.DIM_ALPHA, search.connectorAlpha(armor, flux, tree));
     }
 
     @Test
@@ -93,10 +110,10 @@ class NodeSearchTest {
         NodeSearch search = new NodeSearch();
         search.setQuery("shield");
 
-        try (MockedStatic<SkillTree> tree = Mockito.mockStatic(SkillTree.class)) {
-            tree.when(() -> SkillTree.getType("shields")).thenReturn(shields);
+        try (MockedStatic<SkillTree> skillTree = Mockito.mockStatic(SkillTree.class)) {
+            skillTree.when(() -> SkillTree.getType("shields")).thenReturn(shields);
 
-            assertTrue(search.matches(node, data));
+            assertTrue(search.matches(node, tree));
         }
     }
 }

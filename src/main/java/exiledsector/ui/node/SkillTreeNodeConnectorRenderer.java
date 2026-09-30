@@ -7,7 +7,6 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.layout.ConnectorCurve;
-import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.TreeViewport;
 import org.lwjgl.opengl.GL11;
@@ -71,7 +70,7 @@ final class SkillTreeNodeConnectorRenderer {
         return fader == null ? 0f : fader.getBrightness();
     }
 
-    void draw(TreeViewport viewport, ShipSkillData data, String satisfiedRootId, float alphaMult) {
+    void draw(TreeViewport viewport, NodeAllocator.Snapshot tree, float alphaMult) {
         float zoom = viewport.zoom();
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
@@ -84,15 +83,17 @@ final class SkillTreeNodeConnectorRenderer {
             float nodeY = viewport.screenY(node.getOffsetY());
             ConnectorEndpoint nodeEndpoint = new ConnectorEndpoint(new Vector2f(nodeX, nodeY), endpointRadius(node, zoom));
 
-            drawConnectorsFrom(node, nodeEndpoint, viewport, data, satisfiedRootId, alphaMult);
+            drawConnectorsFrom(node, nodeEndpoint, viewport, tree, alphaMult);
         }
 
         GL11.glDisable(GL11.GL_BLEND);
     }
 
     private void drawConnectorsFrom(SkillNode node, ConnectorEndpoint nodeEndpoint, TreeViewport viewport,
-                                     ShipSkillData data, String satisfiedRootId, float alphaMult) {
+                                     NodeAllocator.Snapshot tree, float alphaMult) {
         float zoom = viewport.zoom();
+        ShipSkillData data = tree.data();
+        String satisfiedRootId = tree.satisfiedRootId();
         for (String connectedId : node.getConnectedNodeIds()) {
             SkillNode other = SkillTree.get(connectedId);
             boolean skip = other == null
@@ -109,12 +110,12 @@ final class SkillTreeNodeConnectorRenderer {
 
             ConnectorFade fade = new ConnectorFade(
                     bothSatisfied,
-                    isWormhole(other) || isHiddenNode(other, data),
-                    isWormhole(node) || isHiddenNode(node, data),
+                    isWormhole(other) || tree.isHidden(other),
+                    isWormhole(node) || tree.isHidden(node),
                     isOpenWormhole(other, data, satisfiedRootId),
                     isOpenWormhole(node, data, satisfiedRootId));
 
-            float edgeAlpha = alphaMult * search.connectorAlpha(node, other, data);
+            float edgeAlpha = alphaMult * search.connectorAlpha(node, other, tree);
             ConnectorCurve curve = SkillTree.getCurve(node.getId(), other.getId());
             if (curve == null) {
                 drawStraightNodeConnectorLine(otherEndpoint, nodeEndpoint, fade, zoom, edgeAlpha);
@@ -138,10 +139,6 @@ final class SkillTreeNodeConnectorRenderer {
 
     private static boolean isWormhole(SkillNode node) {
         return node.getType().getTier() == SkillTier.WORMHOLE;
-    }
-
-    private static boolean isHiddenNode(SkillNode node, ShipSkillData data) {
-        return SkillTypeUnlockStatus.isHidden(node.getType(), data);
     }
 
     private void drawStraightNodeConnectorLine(ConnectorEndpoint a, ConnectorEndpoint b, ConnectorFade fade, float zoom, float alphaMult) {

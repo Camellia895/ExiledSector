@@ -3,7 +3,6 @@ package exiledsector.ui;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
-import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.i18n.Translation;
@@ -57,12 +56,13 @@ final class SkillTreeStatPanel {
     private static final float COLLAPSED_PANEL_SIZE = COLLAPSE_BUTTON_MARGIN * 2f + COLLAPSE_BUTTON_SIZE;
 
     private final FleetMemberAPI member;
-    private final ShipVariantAPI variant;
     private final BorderedPanel borderedPanel = new BorderedPanel(SkillTreeStatPanel.class);
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeStatPanel.class);
     private final CachedText<String, GroupTexts> groupTextCache = new CachedText<>();
     private final Map<String, LazyFont.DrawableString> statGroupHeaderText = new HashMap<>();
 
+    private List<StatGroup> groups;
+    private int groupsRevision;
     private PanelLayout cachedLayout;
     private List<StatGroup> cachedLayoutGroups;
     private float cachedLayoutX;
@@ -73,9 +73,14 @@ final class SkillTreeStatPanel {
     private boolean collapsed = false;
     private ScreenRect drawnBounds = ScreenRect.NONE;
 
-    SkillTreeStatPanel(FleetMemberAPI member, ShipVariantAPI variant) {
+    SkillTreeStatPanel(FleetMemberAPI member) {
         this.member = member;
-        this.variant = variant;
+    }
+
+    void refresh(ShipOpBudget budget, int revision) {
+        if (groups != null && revision == groupsRevision) return;
+        groups = buildStatGroups(budget);
+        groupsRevision = revision;
     }
 
     void toggleCollapsed() {
@@ -151,8 +156,7 @@ final class SkillTreeStatPanel {
     }
 
     private PanelLayout layoutPanel(PositionAPI position, LazyFont font) {
-        List<StatGroup> groups = buildStatGroups(member);
-        if (groups.isEmpty()) return null;
+        if (groups == null || groups.isEmpty()) return null;
 
         if (cachedLayout != null && groups.equals(cachedLayoutGroups)
                 && position.getX() == cachedLayoutX && position.getY() == cachedLayoutY
@@ -231,7 +235,7 @@ final class SkillTreeStatPanel {
         return new GroupTexts(labelText, valueLines, valueWidth);
     }
 
-    private List<StatGroup> buildStatGroups(FleetMemberAPI member) {
+    private List<StatGroup> buildStatGroups(ShipOpBudget budget) {
         List<StatGroup> groups = new ArrayList<>();
         MutableShipStatsAPI stats = member.getStats();
         ShipHullSpecAPI hullSpec = member.getHullSpec();
@@ -277,12 +281,7 @@ final class SkillTreeStatPanel {
         addComparedStat(logistics, Translation.text("ui.stats.burnLevel"), stats.getMaxBurnLevel().getModifiedValue(), stats.getMaxBurnLevel().getBaseValue());
         addComparedStatLowerIsBetter(logistics, Translation.text("ui.stats.sensorProfile"), stats.getSensorProfile().getModifiedValue(), stats.getSensorProfile().getBaseValue());
         addComparedStat(logistics, Translation.text("ui.stats.sensorStrength"), stats.getSensorStrength().getModifiedValue(), stats.getSensorStrength().getBaseValue());
-        try {
-            ShipOpBudget budget = ShipOpBudget.of(member, variant);
-            logistics.add(new StatLine(Translation.text("ui.stats.ordnancePoints"), budget.used + "/" + budget.total));
-        } catch (RuntimeException e) {
-            Logger.getLogger(SkillTreeStatPanel.class).error("Failed to compute ordnance point stats", e);
-        }
+        logistics.add(new StatLine(Translation.text("ui.stats.ordnancePoints"), budget.used + "/" + budget.total));
         ShipSkillData skillData = ShipSkillDataManager.get(member.getId());
         logistics.add(new StatLine(Translation.text("ui.stats.level"), Translation.msg("ui.stats.levelValue").arg("level", skillData.getLevel())
                 .arg("xp", Math.round(skillData.getXp())).text()));

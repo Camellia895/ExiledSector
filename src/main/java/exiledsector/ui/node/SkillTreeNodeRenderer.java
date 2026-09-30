@@ -9,7 +9,7 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledsector.skills.unlock.SkillTypeUnlockStatus;
+import exiledsector.skills.progression.ShipOpBudget;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.TreeViewport;
 import lunalib.lunaRefit.BaseRefitButton;
@@ -46,6 +46,7 @@ public final class SkillTreeNodeRenderer {
 
     private SkillType lastChosenOptionalOption;
     private LazyFont.DrawableString startingRootPrompt;
+    private NodeAllocator.Snapshot snapshot;
 
     public SkillTreeNodeRenderer(FleetMemberAPI member, ShipVariantAPI variant, SkillTreePanelStyle style, BaseRefitButton refitButton,
                                  NodeSearch search) {
@@ -122,13 +123,28 @@ public final class SkillTreeNodeRenderer {
         rootChoice.advance(amount);
         ringRenderer.advance(amount);
         ghostRenderer.advance(amount);
-        ShipSkillData data = allocator.data();
-        wormholeGhostFlights.advance(amount, data);
-        connectorRenderer.advance(amount, data, allocator.satisfiedRootId());
+        NodeAllocator.Snapshot tree = snapshot();
+        wormholeGhostFlights.advance(amount, tree.data());
+        connectorRenderer.advance(amount, tree.data(), tree.satisfiedRootId());
+    }
+
+    private NodeAllocator.Snapshot snapshot() {
+        if (snapshot == null) {
+            snapshot = allocator.snapshot();
+        }
+        return snapshot;
+    }
+
+    public ShipOpBudget budget() {
+        return snapshot().budget();
+    }
+
+    public int statsRevision() {
+        return snapshot().revision();
     }
 
     public void render(TreeViewport viewport, float alphaMult, float mouseX, float mouseY, boolean mouseKnown) {
-        NodeAllocator.Snapshot allocation = allocator.snapshot();
+        NodeAllocator.Snapshot allocation = snapshot();
         float treeAlphaMult = alphaMult * rootChoice.treeAlpha();
 
         for (SkillNode node : SkillTree.getAllNodes().values()) {
@@ -137,7 +153,7 @@ public final class SkillTreeNodeRenderer {
             }
         }
 
-        connectorRenderer.draw(viewport, allocation.data(), allocation.satisfiedRootId(), treeAlphaMult);
+        connectorRenderer.draw(viewport, allocation, treeAlphaMult);
         wormholeGhostFlights.draw(viewport, treeAlphaMult * search.backgroundAlpha());
 
         for (SkillNode node : SkillTree.getAllNodes().values()) {
@@ -173,7 +189,7 @@ public final class SkillTreeNodeRenderer {
         float nodeY = viewport.screenY(node.getOffsetY());
         float footprintSize = NODE_SIZE * zoom * tier.getSizeMultiplier();
 
-        if (SkillTypeUnlockStatus.isHidden(node.getType(), data)) {
+        if (allocation.isHidden(node)) {
             ghostRenderer.draw(nodeX, nodeY, footprintSize, alphaMult * search.backgroundAlpha(), node.getId());
             return;
         }
@@ -183,11 +199,11 @@ public final class SkillTreeNodeRenderer {
         SkillType effectiveType = node.resolveEffectiveType(data);
         float iconSize = footprintSize * ICON_INSET_RATIO;
 
-        float nodeAlpha = alphaMult * search.nodeAlpha(node, data);
+        float nodeAlpha = alphaMult * search.nodeAlpha(node, allocation);
         ringRenderer.draw(new Vector2f(nodeX, nodeY), footprintSize, nodeAlpha, allocated, breathing, zoom, node);
 
         if (tier != SkillTier.WORMHOLE) {
-            Color tint = iconTint(node, data, allocated);
+            Color tint = iconTint(node, allocation, allocated);
             if (effectiveType.isOptional()) {
                 iconRenderer.drawSplitIcon(effectiveType, nodeX, nodeY, iconSize, nodeAlpha, tint);
             } else {
@@ -205,16 +221,16 @@ public final class SkillTreeNodeRenderer {
         boolean allocated = data.isAllocated(node.getId());
         boolean breathing = choosing || (!allocated && allocation.canAllocate(node));
         float footprintSize = NODE_SIZE * zoom * SkillTier.ROOT.getSizeMultiplier();
-        float nodeAlpha = alphaMult * search.nodeAlpha(node, data);
+        float nodeAlpha = alphaMult * search.nodeAlpha(node, allocation);
         ringRenderer.draw(new Vector2f(nodeX, nodeY), footprintSize, nodeAlpha, allocated, breathing, zoom, node);
 
-        Color tint = choosing ? ALLOCATED_TINT : iconTint(node, data, allocated);
+        Color tint = choosing ? ALLOCATED_TINT : iconTint(node, allocation, allocated);
         String iconPath = allocator.isStartingRoot(node) ? RootCrestResolver.resolve(member, node) : node.getType().getIconPath();
         iconRenderer.drawIcon(iconPath, nodeX, nodeY, footprintSize, nodeAlpha, tint);
     }
 
-    private Color iconTint(SkillNode node, ShipSkillData data, boolean allocated) {
-        return allocated || search.matches(node, data) ? ALLOCATED_TINT : UNALLOCATED_TINT;
+    private Color iconTint(SkillNode node, NodeAllocator.Snapshot tree, boolean allocated) {
+        return allocated || search.matches(node, tree) ? ALLOCATED_TINT : UNALLOCATED_TINT;
     }
 
     public void renderHoverTooltip(TreeViewport viewport, float mouseX, float mouseY, float alphaMult) {
@@ -344,6 +360,7 @@ public final class SkillTreeNodeRenderer {
     }
 
     private void afterAllocationChange(SkillNode node, boolean isAllocatedNow) {
+        snapshot = null;
         if (refitButton != null) {
             refitButton.refreshVariant();
         }
