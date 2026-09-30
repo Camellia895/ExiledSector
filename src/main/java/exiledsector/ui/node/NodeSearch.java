@@ -4,13 +4,18 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public final class NodeSearch {
 
     static final float DIM_ALPHA = 0.2f;
 
+    private final Map<String, Boolean> matchesByNodeId = new HashMap<>();
     private String query = "";
+    private String needle = "";
+    private NodeAllocator.Snapshot matchedTree;
 
     public String getQuery() {
         return query;
@@ -18,6 +23,8 @@ public final class NodeSearch {
 
     public void setQuery(String query) {
         this.query = query == null ? "" : query;
+        this.needle = this.query.toLowerCase(Locale.ROOT);
+        matchesByNodeId.clear();
     }
 
     public boolean isActive() {
@@ -32,7 +39,19 @@ public final class NodeSearch {
         if (!isActive() || tree.isHidden(node)) {
             return false;
         }
-        String needle = query.toLowerCase(Locale.ROOT);
+        if (tree != matchedTree) {
+            matchesByNodeId.clear();
+            matchedTree = tree;
+        }
+        Boolean matched = matchesByNodeId.get(node.getId());
+        if (matched == null) {
+            matched = nameMatches(node, tree);
+            matchesByNodeId.put(node.getId(), matched);
+        }
+        return matched;
+    }
+
+    private boolean nameMatches(SkillNode node, NodeAllocator.Snapshot tree) {
         if (nameContains(node.resolveEffectiveType(tree.data()), needle)) {
             return true;
         }
