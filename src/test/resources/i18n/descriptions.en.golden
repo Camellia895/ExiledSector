@@ -1126,12 +1126,12 @@ effect|MISSILE_WEAPON_RANGE_PERCENT|12.5	0	Increases missile weapon range by <go
 effect|MISSILE_WEAPON_RANGE_PERCENT|100.0	0	Increases missile weapon range by <good>100%</good>.
 effect|MISSILE_WEAPON_RANGE_PERCENT|-10.0	0	Decreases missile weapon range by <bad>10%</bad>.
 effect|MISSILE_WEAPON_RANGE_PERCENT|-12.5	0	Decreases missile weapon range by <bad>12.5%</bad>.
-effect|NANOFORGE_HULL_REGEN_PERCENT|1.0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat.
-effect|NANOFORGE_HULL_REGEN_PERCENT|10.0	0	After 5 seconds without taking hull damage, repairs 10% of maximum hull per second in combat.
-effect|NANOFORGE_HULL_REGEN_PERCENT|12.5	0	After 5 seconds without taking hull damage, repairs 12.5% of maximum hull per second in combat.
-effect|NANOFORGE_HULL_REGEN_PERCENT|100.0	0	After 5 seconds without taking hull damage, repairs 100% of maximum hull per second in combat.
-effect|NANOFORGE_HULL_REGEN_PERCENT|-10.0	0	After 5 seconds without taking hull damage, repairs -10% of maximum hull per second in combat.
-effect|NANOFORGE_HULL_REGEN_PERCENT|-12.5	0	After 5 seconds without taking hull damage, repairs -12.5% of maximum hull per second in combat.
+effect|NANOFORGE_HULL_REGEN_PERCENT|1.0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+effect|NANOFORGE_HULL_REGEN_PERCENT|10.0	0	After 5 seconds without taking hull damage, repairs 10% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+effect|NANOFORGE_HULL_REGEN_PERCENT|12.5	0	After 5 seconds without taking hull damage, repairs 12.5% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+effect|NANOFORGE_HULL_REGEN_PERCENT|100.0	0	After 5 seconds without taking hull damage, repairs 100% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+effect|NANOFORGE_HULL_REGEN_PERCENT|-10.0	0	After 5 seconds without taking hull damage, repairs -10% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+effect|NANOFORGE_HULL_REGEN_PERCENT|-12.5	0	After 5 seconds without taking hull damage, repairs -12.5% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 effect|NAV_RATING|1.0	0	Increases fleet nav rating by <good>1</good>.
 effect|NAV_RATING|10.0	0	Increases fleet nav rating by <good>10</good>.
 effect|NAV_RATING|12.5	0	Increases fleet nav rating by <good>12.5</good>.
@@ -2653,11 +2653,11 @@ type|missleracks|CRUISER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>:
 type|missleracks|CAPITAL_SHIP|0	0	Increases missile weapon ammo capacity by <good>100%</good>.
 type|missleracks|CAPITAL_SHIP|1	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
 type|missleracks|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Missile Racks.
-type|nanoforge_mending|null|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat.
-type|nanoforge_mending|FRIGATE|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat.
-type|nanoforge_mending|DESTROYER|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat.
-type|nanoforge_mending|CRUISER|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat.
-type|nanoforge_mending|CAPITAL_SHIP|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat.
+type|nanoforge_mending|null|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+type|nanoforge_mending|FRIGATE|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+type|nanoforge_mending|DESTROYER|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+type|nanoforge_mending|CRUISER|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+type|nanoforge_mending|CAPITAL_SHIP|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 type|nav_relay|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Nav Relay.
 type|nav_relay|FRIGATE|0	0	Increases fleet nav rating by <good>2</good>.
 type|nav_relay|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Nav Relay.
@@ -3304,7 +3304,7 @@ summary|option0|FRIGATE|100	0	Can only be allocated on civilian-grade hulls.
 summary|option0|FRIGATE|101	0	Increases missile weapon damage by <good>25%</good>.
 summary|option0|FRIGATE|102	0	Increases missile weapon ammo capacity by <good>100%</good>.
 summary|option0|FRIGATE|103	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
-summary|option0|FRIGATE|104	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat.
+summary|option0|FRIGATE|104	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 summary|option0|FRIGATE|105	0	Increases fleet nav rating by <good>2</good>.
 summary|option0|FRIGATE|106	0	Increases non-beam energy weapon damage by <good>50%</good>.
 summary|option0|FRIGATE|107	0	Increases range from which combat objectives can be captured by <good>105</good>.
@@ -3459,7 +3459,7 @@ summary|option0|DESTROYER|100	0	Can only be allocated on civilian-grade hulls.
 summary|option0|DESTROYER|101	0	Increases missile weapon damage by <good>25%</good>.
 summary|option0|DESTROYER|102	0	Increases missile weapon ammo capacity by <good>100%</good>.
 summary|option0|DESTROYER|103	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
-summary|option0|DESTROYER|104	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat.
+summary|option0|DESTROYER|104	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 summary|option0|DESTROYER|105	0	Increases fleet nav rating by <good>3</good>.
 summary|option0|DESTROYER|106	0	Increases non-beam energy weapon damage by <good>50%</good>.
 summary|option0|DESTROYER|107	0	Increases range from which combat objectives can be captured by <good>105</good>.
@@ -3614,7 +3614,7 @@ summary|option0|CRUISER|100	0	Can only be allocated on civilian-grade hulls.
 summary|option0|CRUISER|101	0	Increases missile weapon damage by <good>25%</good>.
 summary|option0|CRUISER|102	0	Increases missile weapon ammo capacity by <good>100%</good>.
 summary|option0|CRUISER|103	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
-summary|option0|CRUISER|104	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat.
+summary|option0|CRUISER|104	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 summary|option0|CRUISER|105	0	Increases fleet nav rating by <good>4</good>.
 summary|option0|CRUISER|106	0	Increases non-beam energy weapon damage by <good>50%</good>.
 summary|option0|CRUISER|107	0	Increases range from which combat objectives can be captured by <good>105</good>.
@@ -3769,7 +3769,7 @@ summary|option0|CAPITAL_SHIP|100	0	Can only be allocated on civilian-grade hulls
 summary|option0|CAPITAL_SHIP|101	0	Increases missile weapon damage by <good>25%</good>.
 summary|option0|CAPITAL_SHIP|102	0	Increases missile weapon ammo capacity by <good>100%</good>.
 summary|option0|CAPITAL_SHIP|103	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
-summary|option0|CAPITAL_SHIP|104	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat.
+summary|option0|CAPITAL_SHIP|104	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 summary|option0|CAPITAL_SHIP|105	0	Increases fleet nav rating by <good>5</good>.
 summary|option0|CAPITAL_SHIP|106	0	Increases non-beam energy weapon damage by <good>50%</good>.
 summary|option0|CAPITAL_SHIP|107	0	Increases range from which combat objectives can be captured by <good>105</good>.
@@ -3924,7 +3924,7 @@ summary|option1|FRIGATE|100	0	Can only be allocated on civilian-grade hulls.
 summary|option1|FRIGATE|101	0	Increases missile weapon damage by <good>25%</good>.
 summary|option1|FRIGATE|102	0	Increases missile weapon ammo capacity by <good>100%</good>.
 summary|option1|FRIGATE|103	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
-summary|option1|FRIGATE|104	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat.
+summary|option1|FRIGATE|104	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 summary|option1|FRIGATE|105	0	Increases fleet nav rating by <good>2</good>.
 summary|option1|FRIGATE|106	0	Increases non-beam energy weapon damage by <good>50%</good>.
 summary|option1|FRIGATE|107	0	Increases range from which combat objectives can be captured by <good>105</good>.
@@ -4079,7 +4079,7 @@ summary|option1|DESTROYER|100	0	Can only be allocated on civilian-grade hulls.
 summary|option1|DESTROYER|101	0	Increases missile weapon damage by <good>25%</good>.
 summary|option1|DESTROYER|102	0	Increases missile weapon ammo capacity by <good>100%</good>.
 summary|option1|DESTROYER|103	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
-summary|option1|DESTROYER|104	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat.
+summary|option1|DESTROYER|104	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 summary|option1|DESTROYER|105	0	Increases fleet nav rating by <good>3</good>.
 summary|option1|DESTROYER|106	0	Increases non-beam energy weapon damage by <good>50%</good>.
 summary|option1|DESTROYER|107	0	Increases range from which combat objectives can be captured by <good>105</good>.
@@ -4234,7 +4234,7 @@ summary|option1|CRUISER|100	0	Can only be allocated on civilian-grade hulls.
 summary|option1|CRUISER|101	0	Increases missile weapon damage by <good>25%</good>.
 summary|option1|CRUISER|102	0	Increases missile weapon ammo capacity by <good>100%</good>.
 summary|option1|CRUISER|103	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
-summary|option1|CRUISER|104	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat.
+summary|option1|CRUISER|104	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 summary|option1|CRUISER|105	0	Increases fleet nav rating by <good>4</good>.
 summary|option1|CRUISER|106	0	Increases non-beam energy weapon damage by <good>50%</good>.
 summary|option1|CRUISER|107	0	Increases range from which combat objectives can be captured by <good>105</good>.
@@ -4389,7 +4389,7 @@ summary|option1|CAPITAL_SHIP|100	0	Can only be allocated on civilian-grade hulls
 summary|option1|CAPITAL_SHIP|101	0	Increases missile weapon damage by <good>25%</good>.
 summary|option1|CAPITAL_SHIP|102	0	Increases missile weapon ammo capacity by <good>100%</good>.
 summary|option1|CAPITAL_SHIP|103	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
-summary|option1|CAPITAL_SHIP|104	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat.
+summary|option1|CAPITAL_SHIP|104	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 summary|option1|CAPITAL_SHIP|105	0	Increases fleet nav rating by <good>5</good>.
 summary|option1|CAPITAL_SHIP|106	0	Increases non-beam energy weapon damage by <good>50%</good>.
 summary|option1|CAPITAL_SHIP|107	0	Increases range from which combat objectives can be captured by <good>105</good>.
@@ -4544,7 +4544,7 @@ summary|option2|FRIGATE|100	0	Can only be allocated on civilian-grade hulls.
 summary|option2|FRIGATE|101	0	Increases missile weapon damage by <good>25%</good>.
 summary|option2|FRIGATE|102	0	Increases missile weapon ammo capacity by <good>100%</good>.
 summary|option2|FRIGATE|103	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
-summary|option2|FRIGATE|104	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat.
+summary|option2|FRIGATE|104	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 summary|option2|FRIGATE|105	0	Increases fleet nav rating by <good>2</good>.
 summary|option2|FRIGATE|106	0	Increases non-beam energy weapon damage by <good>50%</good>.
 summary|option2|FRIGATE|107	0	Increases range from which combat objectives can be captured by <good>105</good>.
@@ -4699,7 +4699,7 @@ summary|option2|DESTROYER|100	0	Can only be allocated on civilian-grade hulls.
 summary|option2|DESTROYER|101	0	Increases missile weapon damage by <good>25%</good>.
 summary|option2|DESTROYER|102	0	Increases missile weapon ammo capacity by <good>100%</good>.
 summary|option2|DESTROYER|103	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
-summary|option2|DESTROYER|104	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat.
+summary|option2|DESTROYER|104	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 summary|option2|DESTROYER|105	0	Increases fleet nav rating by <good>3</good>.
 summary|option2|DESTROYER|106	0	Increases non-beam energy weapon damage by <good>50%</good>.
 summary|option2|DESTROYER|107	0	Increases range from which combat objectives can be captured by <good>105</good>.
@@ -4854,7 +4854,7 @@ summary|option2|CRUISER|100	0	Can only be allocated on civilian-grade hulls.
 summary|option2|CRUISER|101	0	Increases missile weapon damage by <good>25%</good>.
 summary|option2|CRUISER|102	0	Increases missile weapon ammo capacity by <good>100%</good>.
 summary|option2|CRUISER|103	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
-summary|option2|CRUISER|104	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat.
+summary|option2|CRUISER|104	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 summary|option2|CRUISER|105	0	Increases fleet nav rating by <good>4</good>.
 summary|option2|CRUISER|106	0	Increases non-beam energy weapon damage by <good>50%</good>.
 summary|option2|CRUISER|107	0	Increases range from which combat objectives can be captured by <good>105</good>.
@@ -5009,7 +5009,7 @@ summary|option2|CAPITAL_SHIP|100	0	Can only be allocated on civilian-grade hulls
 summary|option2|CAPITAL_SHIP|101	0	Increases missile weapon damage by <good>25%</good>.
 summary|option2|CAPITAL_SHIP|102	0	Increases missile weapon ammo capacity by <good>100%</good>.
 summary|option2|CAPITAL_SHIP|103	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
-summary|option2|CAPITAL_SHIP|104	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat.
+summary|option2|CAPITAL_SHIP|104	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 summary|option2|CAPITAL_SHIP|105	0	Increases fleet nav rating by <good>5</good>.
 summary|option2|CAPITAL_SHIP|106	0	Increases non-beam energy weapon damage by <good>50%</good>.
 summary|option2|CAPITAL_SHIP|107	0	Increases range from which combat objectives can be captured by <good>105</good>.

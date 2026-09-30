@@ -24,6 +24,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -115,6 +116,25 @@ class RemnantNotableEffectsTest {
         listener.advance(6f);
 
         verify(ship).setHitpoints(1000f);
+    }
+
+    @Test
+    void nanoforgeRepairsAtMostTheShipsMaximumHullInTotalPerDeployment() {
+        ShipAPI ship = shipWithDynamicValue(NanoforgeMendingListener.REGEN_PERCENT_KEY, 100f);
+        when(ship.getMaxHitpoints()).thenReturn(1000f);
+        when(ship.getHitpoints()).thenReturn(100f);
+        NanoforgeMendingListener listener = new NanoforgeMendingListener(ship);
+        listener.advance(5f);
+        verify(ship).setHitpoints(1000f);
+
+        when(ship.getHitpoints()).thenReturn(200f);
+        listener.advance(1f);
+        listener.advance(5f);
+        verify(ship).setHitpoints(300f);
+
+        when(ship.getHitpoints()).thenReturn(300f);
+        listener.advance(10f);
+        verify(ship, times(2)).setHitpoints(anyFloat());
     }
 
     private static DamagingProjectileAPI projectileFrom(WeaponAPI.WeaponType type) {

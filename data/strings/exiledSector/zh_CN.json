@@ -105,7 +105,7 @@
     "effect.ESCORT_SPEED_BONUS_PERCENT": "处于更大的友方舰船范围内时，最高速度最多提高{value}%，随距离减弱。驱逐舰为主力舰护航时效果翻倍。",
     "effect.ESCORT_WEAPON_RANGE_BONUS_PERCENT": "处于更大的友方舰船范围内时，实弹和能量武器射程最多提高{value}%，随距离减弱。驱逐舰为主力舰护航时效果翻倍。",
     "effect.ESCORT_PROXIMITY_RANGE_FLAT": "上述护航加成在距离更大的友方舰船{value} su以内时完全生效，并在此范围外的500 su内逐渐消失。",
-    "effect.NANOFORGE_HULL_REGEN_PERCENT": "连续{seconds}秒未受到结构伤害后，战斗中每秒修复{value}%的最大结构值。",
+    "effect.NANOFORGE_HULL_REGEN_PERCENT": "连续{seconds}秒未受到结构伤害后，战斗中每秒修复{value}%的最大结构值，每次出击最多共修复{limit}%的最大结构值。",
     "effect.DISINTEGRATION_ARMOR_DAMAGE_PERCENT": "能量武器命中装甲时，会额外剥离命中点周围的装甲，数值为该次命中伤害的{value}%。这部分额外伤害永远不会作用于结构。",
     "effect.TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT": "{range} su内的敌舰，其自动开火武器的目标预判精度降低<good>{value}%</good>。",
 

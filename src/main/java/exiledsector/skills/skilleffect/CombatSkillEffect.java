@@ -47,7 +47,8 @@ public enum CombatSkillEffect implements BackedSkillEffect {
     NANOFORGE_HULL_REGEN_PERCENT(NanoforgeMendingListener.REGEN_PERCENT_KEY, NanoforgeMendingListener.class, NanoforgeMendingListener::new) {
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("seconds", NanoforgeMendingListener.UNDAMAGED_SECONDS).arg("value", magnitude).styled();
+            return EffectText.msg(this).arg("seconds", NanoforgeMendingListener.UNDAMAGED_SECONDS).arg("value", magnitude)
+                    .arg("limit", NanoforgeMendingListener.MAX_TOTAL_REGEN_PERCENT_OF_HULL).styled();
         }
     },
     DISINTEGRATION_ARMOR_DAMAGE_PERCENT(DisintegrationListener.ARMOR_DAMAGE_PERCENT_KEY,
