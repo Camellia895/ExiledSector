@@ -40,11 +40,9 @@ public final class SkillTreeBonusSummary {
             }
             Map<SkillEffect, Float> group = totals.computeIfAbsent(new Group(type.getTemporaryAfterDeploymentSeconds()),
                     key -> new LinkedHashMap<>());
-            for (SkillTypeEffect typeEffect : type.effectsFor(hullSize)) {
+            for (SkillTypeEffect typeEffect : AllocatedSkillEffects.appliedEffects(data, type, hullSize)) {
                 SkillEffect effect = typeEffect.effect();
-                if (!data.isNpcBuild() || effect.appliesToNpcShips()) {
-                    group.merge(effect, typeEffect.magnitude(), (a, b) -> combine(effect, a, b));
-                }
+                group.merge(effect, typeEffect.magnitude(), (a, b) -> combine(effect, a, b));
             }
         }
         return new Summary(root, data.getLevel(), nodeCount, notables, describe(totals));

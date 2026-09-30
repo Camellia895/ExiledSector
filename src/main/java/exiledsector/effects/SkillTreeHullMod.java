@@ -13,6 +13,7 @@ import exiledsector.i18n.I18n;
 import exiledsector.persistence.OpSpentSlotManager;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedNode;
+import exiledsector.skills.AllocatedSkillEffects;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillType;
@@ -96,10 +97,8 @@ public class SkillTreeHullMod extends BaseHullMod {
 
             boolean active = ship.getFullTimeDeployed() < durationSeconds;
             String modId = MOD_ID_PREFIX + allocated.node().getId();
-            for (SkillTypeEffect effect : type.effectsFor(hullSize)) {
-                if (appliesTo(data, effect.effect())) {
-                    effect.effect().apply(stats, modId, active ? effect.magnitude() : 0f);
-                }
+            for (SkillTypeEffect effect : AllocatedSkillEffects.appliedEffects(data, type, hullSize)) {
+                effect.effect().apply(stats, modId, active ? effect.magnitude() : 0f);
             }
         }
     }
@@ -122,17 +121,11 @@ public class SkillTreeHullMod extends BaseHullMod {
                 }
             } else {
                 String modId = MOD_ID_PREFIX + allocated.node().getId();
-                for (SkillTypeEffect effect : type.effectsFor(hullSize)) {
-                    if (appliesTo(data, effect.effect())) {
-                        action.apply(effect.effect(), modId, effect.magnitude());
-                    }
+                for (SkillTypeEffect effect : AllocatedSkillEffects.appliedEffects(data, type, hullSize)) {
+                    action.apply(effect.effect(), modId, effect.magnitude());
                 }
             }
         }
-    }
-
-    private static boolean appliesTo(ShipSkillData data, SkillEffect effect) {
-        return !data.isNpcBuild() || effect.appliesToNpcShips();
     }
 
     public static void syncOpSpentHullMod(FleetMemberAPI member, ShipVariantAPI variant) {
