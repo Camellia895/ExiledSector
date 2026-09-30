@@ -1,6 +1,5 @@
 package exiledsector.ui.node;
 
-import com.fs.starfarer.api.util.FaderUtil;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
@@ -14,9 +13,7 @@ import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_HALO_ALPHA;
 import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_HALO_THICKNESS;
@@ -34,7 +31,6 @@ final class SkillTreeNodeConnectorRenderer {
     private static final int CURVE_RENDER_SEGMENTS = 20;
     private static final float WORMHOLE_TIP_FADE_LENGTH = 14f;
     private static final float WORMHOLE_TIP_FADE_MAX_FRACTION = 0.4f;
-    private static final float WORMHOLE_OPEN_FADE_SECONDS = 2f;
 
     private final SkillTreePanelStyle style;
     private final NodeSearch search;
@@ -42,32 +38,12 @@ final class SkillTreeNodeConnectorRenderer {
     private final List<LineVertex> dullLineVertices = new ArrayList<>();
     private final List<LineVertex> glowLineVertices = new ArrayList<>();
     private final List<LineVertex> glowHaloVertices = new ArrayList<>();
-    private final Map<String, FaderUtil> wormholeOpenFaders = new HashMap<>();
+    private final WormholeOpenness wormholeOpenness;
 
-    SkillTreeNodeConnectorRenderer(SkillTreePanelStyle style, NodeSearch search) {
+    SkillTreeNodeConnectorRenderer(SkillTreePanelStyle style, NodeSearch search, WormholeOpenness wormholeOpenness) {
         this.style = style;
         this.search = search;
-    }
-
-    void advance(float amount, ShipSkillData data, String satisfiedRootId) {
-        for (SkillNode node : SkillTree.getAllNodes().values()) {
-            if (node.getType().getTier() != SkillTier.WORMHOLE) continue;
-
-            FaderUtil fader = wormholeOpenFaders.computeIfAbsent(node.getId(),
-                    key -> new FaderUtil(0f, WORMHOLE_OPEN_FADE_SECONDS, WORMHOLE_OPEN_FADE_SECONDS));
-
-            if (data.isSatisfied(node.getId(), satisfiedRootId)) {
-                fader.fadeIn();
-            } else {
-                fader.fadeOut();
-            }
-            fader.advance(amount);
-        }
-    }
-
-    private float wormholeOpenFraction(String nodeId) {
-        FaderUtil fader = wormholeOpenFaders.get(nodeId);
-        return fader == null ? 0f : fader.getBrightness();
+        this.wormholeOpenness = wormholeOpenness;
     }
 
     void draw(TreeViewport viewport, NodeAllocator.Snapshot tree, float alphaMult) {
@@ -132,7 +108,7 @@ final class SkillTreeNodeConnectorRenderer {
     private float endpointRadius(SkillNode node, float zoom) {
         float fullRadius = connectorEndpointRadius(node.getType().getTier(), NODE_SIZE * zoom * node.getType().getTier().getSizeMultiplier(), zoom);
         if (node.getType().getTier() != SkillTier.WORMHOLE) return fullRadius;
-        return fullRadius * (1f - wormholeOpenFraction(node.getId()));
+        return fullRadius * (1f - wormholeOpenness.of(node.getId()));
     }
 
     private static boolean isOpenWormhole(SkillNode node, ShipSkillData data, String satisfiedRootId) {

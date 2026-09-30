@@ -81,7 +81,6 @@ final class SkillTreeNodeRingRenderer {
     private static final int BREATHING_BRIGHTNESS_PASSES = 2;
 
     private static final float WORMHOLE_MIN_SCALE = 0.25f;
-    private static final float WORMHOLE_FADE_DURATION_SECONDS = 1f;
 
     private static final String WORMHOLE_CORONA_TEXTURE_PATH = "graphics/fx/wormhole_corona.png";
     private static final float WORMHOLE_CORONA_SIZE_RATIO = 2.2f;
@@ -110,14 +109,14 @@ final class SkillTreeNodeRingRenderer {
     private final Map<String, Float> pulseElapsed = new HashMap<>();
     private final Map<String, List<RingInstance>> ringStacks = new HashMap<>();
     private final Map<String, List<RingInstance>> pinkRingStacks = new HashMap<>();
-    private final Map<String, Boolean> wormholeAllocated = new HashMap<>();
-    private final Map<String, Float> wormholeOpenness = new HashMap<>();
+    private final WormholeOpenness wormholeOpenness;
     private final Map<String, Color> parsedColors = new HashMap<>();
     private float breathingPhase = 0f;
     private float elapsedSeconds = 0f;
 
-    SkillTreeNodeRingRenderer(SkillTreePanelStyle style) {
+    SkillTreeNodeRingRenderer(SkillTreePanelStyle style, WormholeOpenness wormholeOpenness) {
         this.style = style;
+        this.wormholeOpenness = wormholeOpenness;
     }
 
     void advance(float amount) {
@@ -135,19 +134,6 @@ final class SkillTreeNodeRingRenderer {
                     entry.setValue(elapsed);
                 }
             }
-        }
-
-        advanceWormholeOpenness(amount);
-    }
-
-    private void advanceWormholeOpenness(float amount) {
-        if (wormholeAllocated.isEmpty()) return;
-        float rate = amount / WORMHOLE_FADE_DURATION_SECONDS;
-        for (Map.Entry<String, Boolean> entry : wormholeAllocated.entrySet()) {
-            float target = Boolean.TRUE.equals(entry.getValue()) ? 1f : 0f;
-            float current = wormholeOpenness.computeIfAbsent(entry.getKey(), id -> target);
-            float next = target > current ? Math.min(target, current + rate) : Math.max(target, current - rate);
-            wormholeOpenness.put(entry.getKey(), next);
         }
     }
 
@@ -182,7 +168,6 @@ final class SkillTreeNodeRingRenderer {
                 drawKeystoneRingBelt(cx, cy, footprintSize, ringBeltWidth, ringBeltPath, stateAlpha, alphaMult);
             }
         } else if (tier == SkillTier.WORMHOLE) {
-            wormholeAllocated.put(nodeId, allocated);
             drawWormhole(cx, cy, footprintSize, alphaMult, nodeId, resolveWormholeColor(node));
         }
 
@@ -290,8 +275,7 @@ final class SkillTreeNodeRingRenderer {
     }
 
     private void drawWormhole(float cx, float cy, float footprintSize, float alphaMult, String nodeId, Color color) {
-        float rawOpenness = wormholeOpenness.computeIfAbsent(nodeId,
-                id -> Boolean.TRUE.equals(wormholeAllocated.get(id)) ? 1f : 0f);
+        float rawOpenness = wormholeOpenness.of(nodeId);
         float openness = rawOpenness * rawOpenness;
         float visualScale = WORMHOLE_MIN_SCALE + (1f - WORMHOLE_MIN_SCALE) * openness;
         float baseRadius = footprintSize / 2f * visualScale;

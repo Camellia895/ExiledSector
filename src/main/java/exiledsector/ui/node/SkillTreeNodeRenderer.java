@@ -43,6 +43,7 @@ public final class SkillTreeNodeRenderer {
     private final SkillTreeNodeTooltipRenderer tooltipRenderer;
     private final SkillTreeNodeDropdownRenderer dropdownRenderer;
     private final NodeSearch search;
+    private final WormholeOpenness wormholeOpenness = new WormholeOpenness();
 
     private SkillType lastChosenOptionalOption;
     private LazyFont.DrawableString startingRootPrompt;
@@ -58,11 +59,11 @@ public final class SkillTreeNodeRenderer {
         this.allocator = new NodeAllocator(member, variant, rootChoice::chosen);
         style.setAccentIconPath(RootCrestResolver.resolve(member, rootChoice.chosen()));
 
-        this.ringRenderer = new SkillTreeNodeRingRenderer(style);
+        this.ringRenderer = new SkillTreeNodeRingRenderer(style, wormholeOpenness);
         this.iconRenderer = new SkillTreeNodeIconRenderer();
         this.ghostRenderer = new SkillTreeNodeGhostRenderer();
         this.wormholeGhostFlights = new SkillTreeWormholeGhostFlights(ghostRenderer, new Random());
-        this.connectorRenderer = new SkillTreeNodeConnectorRenderer(style, search);
+        this.connectorRenderer = new SkillTreeNodeConnectorRenderer(style, search, wormholeOpenness);
         this.tooltipRenderer = new SkillTreeNodeTooltipRenderer(member, style);
         this.dropdownRenderer = new SkillTreeNodeDropdownRenderer(style);
     }
@@ -123,9 +124,9 @@ public final class SkillTreeNodeRenderer {
         rootChoice.advance(amount);
         ringRenderer.advance(amount);
         ghostRenderer.advance(amount);
-        NodeAllocator.Snapshot tree = snapshot();
-        wormholeGhostFlights.advance(amount, tree.data());
-        connectorRenderer.advance(amount, tree.data(), tree.satisfiedRootId());
+        ShipSkillData data = snapshot().data();
+        wormholeGhostFlights.advance(amount, data);
+        wormholeOpenness.advance(amount, data);
     }
 
     private NodeAllocator.Snapshot snapshot() {
