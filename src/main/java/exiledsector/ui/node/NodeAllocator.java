@@ -34,14 +34,14 @@ final class NodeAllocator {
     private static final String WRONG_HULL_SIZE_REASON = "This node can't be allocated on this hull size.";
 
     record Snapshot(ShipSkillData data, String satisfiedRootId, ShipOpBudget budget, int totalOpBudget, int opCostPerNode,
-                    int maxAllocatedNodes, int revision, Set<String> hiddenNodeIds) {
+                    int maxAllocatedNodes, int revision, Set<String> hiddenNodeIds, Set<String> allocatableNodeIds) {
 
         int opCostFor(SkillNode node) {
-            return node.getId().equals(satisfiedRootId) ? 0 : opCostPerNode;
+            return NodeAllocator.opCostFor(node, satisfiedRootId, opCostPerNode);
         }
 
         boolean canAllocate(SkillNode node) {
-            return data.canAllocate(node, satisfiedRootId, totalOpBudget, opCostFor(node), maxAllocatedNodes);
+            return allocatableNodeIds.contains(node.getId());
         }
 
         boolean isHidden(SkillNode node) {
@@ -78,8 +78,26 @@ final class NodeAllocator {
         ShipSkillData data = data();
         ShipOpBudget budget = ShipOpBudget.of(member, variant);
         int opCostPerNode = SkillNodeOpCost.perNode(member.getHullSpec());
-        return new Snapshot(data, satisfiedRootId(), budget, budget.total - budget.used + data.getSpentOp(opCostPerNode),
-                opCostPerNode, ShipLevelConfig.maxAllocatedNodes(), revision, hiddenNodeIds(data));
+        String rootId = satisfiedRootId();
+        int totalOpBudget = budget.total - budget.used + data.getSpentOp(opCostPerNode);
+        int maxAllocatedNodes = ShipLevelConfig.maxAllocatedNodes();
+        return new Snapshot(data, rootId, budget, totalOpBudget, opCostPerNode, maxAllocatedNodes, revision,
+                hiddenNodeIds(data), allocatableNodeIds(data, rootId, totalOpBudget, opCostPerNode, maxAllocatedNodes));
+    }
+
+    private static int opCostFor(SkillNode node, String rootId, int opCostPerNode) {
+        return node.getId().equals(rootId) ? 0 : opCostPerNode;
+    }
+
+    private static Set<String> allocatableNodeIds(ShipSkillData data, String rootId, int totalOpBudget, int opCostPerNode,
+                                                  int maxAllocatedNodes) {
+        Set<String> allocatable = new HashSet<>();
+        for (SkillNode node : SkillTree.getAllNodes().values()) {
+            if (data.canAllocate(node, rootId, totalOpBudget, opCostFor(node, rootId, opCostPerNode), maxAllocatedNodes)) {
+                allocatable.add(node.getId());
+            }
+        }
+        return allocatable;
     }
 
     private static Set<String> hiddenNodeIds(ShipSkillData data) {

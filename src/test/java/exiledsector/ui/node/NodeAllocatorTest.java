@@ -141,6 +141,16 @@ class NodeAllocatorTest {
     }
 
     @Test
+    void theSnapshotKnowsWhichNodesCanBeAllocatedNext() {
+        data().chooseStartingRoot(root);
+
+        NodeAllocator.Snapshot snapshot = allocatorStartingAt(root).snapshot();
+
+        assertTrue(snapshot.canAllocate(frontShield));
+        assertFalse(snapshot.canAllocate(unreachable));
+    }
+
+    @Test
     void theStartingRootCanNeverBeDeallocated() {
         data().chooseStartingRoot(root);
 
