@@ -245,7 +245,7 @@ public final class SkillTreeNodeRenderer {
 
         SkillNode hovered = findNodeAt(viewport, mouseX, mouseY);
         if (hovered != null) {
-            tooltipRenderer.renderTooltip(hovered, mouseX, mouseY, alphaMult);
+            tooltipRenderer.renderTooltip(hovered, snapshot(), mouseX, mouseY, alphaMult);
         }
     }
 
