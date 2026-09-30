@@ -1,7 +1,7 @@
 # Exiled Sector: skill effect mechanics
 
 This document explains how the less obvious skill effects work, with a focus on the ones that behave
-differently from vanilla Starsector or have no vanilla equivalent at all. The magnitudes quoted are the
+differently from vanilla Starsector or have no vanilla equivalent. The magnitudes quoted are the
 defaults in `data/skilltrees/skill_types.json` at the time of writing. Most of them are placeholders and
 will change with balancing.
 
@@ -28,7 +28,6 @@ hierarchy described further down, so it pools with any other weapon damage modif
 ## Lion's Gaze
 
 Lion's Gaze is the beam-splitting keystone (`beam_split`, using `BEAM_WEAPON_SPLIT_TARGETS_FLAT` at 1).
-It has no vanilla equivalent.
 
 Any beam hit on an enemy ship starts a split, whether it lands on shield or hull. The split looks for up
 to N additional targets, where N is the total magnitude, choosing the nearest other hostile ships that are
@@ -61,21 +60,12 @@ split share. EMP is added in proportion to the weapon's EMP-to-damage ratio, the
 beam forces hard flux, and a MagicLib fake beam provides the visual. Simulated splits don't run the
 weapon's effect code, and the AI doesn't treat them as beams.
 
-It hasn't yet been checked in game whether a kill made by a split beam is credited to the ship or to the
-drone.
-
 ## High Scatter Amplifier
 
 The High Scatter Amplifier notable uses `BEAM_WEAPON_HARD_FLUX_PERCENT` at 50 and `BEAM_WEAPON_RANGE_MULT`
 at −25. It is unlocked by the High Scatter Amp blueprint and can't be combined with the vanilla High
 Scatter Amp or Advanced Optics hull mods, or with the Advanced Optics node. It's a deliberately simplified
-take on the vanilla hull mod:
-
-| | Vanilla hull mod | Exiled Sector node |
-|---|---|---|
-| Hard flux | Every beam hit on a shield deals hard flux | A percentage of each beam hit's shield flux is converted to hard flux |
-| Range | Base range above 200 su is cut by half of the excess, before percentage modifiers apply | Every beam's final range is reduced by 25% |
-| Damage | +10% beam damage (+15% as an S-mod) | Not included yet |
+take on the vanilla hull mod.
 
 The hard flux conversion happens on the target after the hit lands. It takes the percentage from the
 firing ship (capped at 100%), converts that share of the hit's shield flux from soft to hard, and never
