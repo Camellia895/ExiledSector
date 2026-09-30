@@ -12,9 +12,9 @@ The Shared Fate notable combines `SHIELD_DAMAGE_SHARED_PERCENT` at 20 with `WEAP
 like this.
 
 When something hits the ship's shield, the game first looks for friendly ships within 1000 su that are
-alive, not hulks and not fighters. If there are none, the hit lands normally. If there are, the hit is
-reduced by the shared percentage before it lands. That percentage is the total from every allocated node,
-capped at 90%. Only shield hits are shared; armour and hull damage never are.
+alive, not hulks, not fighters, and not overloaded or venting. If there are none, the hit lands normally.
+If there are, the hit is reduced by the shared percentage before it lands. That percentage is the total
+from every allocated node, capped at 90%. Only shield hits are shared; armour and hull damage never are.
 
 Once the reduced hit has landed, the mod works out how much flux the removed portion would have caused on
 this ship's shield and hands that amount to the allies as hard flux, split evenly between them. Distance

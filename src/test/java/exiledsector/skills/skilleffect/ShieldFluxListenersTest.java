@@ -230,6 +230,24 @@ class ShieldFluxListenersTest {
     }
 
     @Test
+    void sharedFateSkipsAlliesThatAreOverloadedOrVenting() {
+        ShipAPI defender = ship(SHARED_PERCENT_KEY, 20f);
+        ShipAPI ready = shipAt(300f, 0);
+        ShipAPI busy = shipAt(-300f, 0);
+        when(busy.getFluxTracker().isOverloadedOrVenting()).thenReturn(true);
+        ships.addAll(List.of(defender, ready, busy));
+        DamageTakenModifier listener = attachedListener(ShieldSkillEffect.SHIELD_DAMAGE_SHARED_PERCENT, defender, DamageTakenModifier.class);
+        Object projectile = new Object();
+        when(defender.getParamAboutToApplyDamage()).thenReturn(projectile);
+
+        listener.modifyDamageTaken(projectile, defender, damageWithModifier(new MutableStat(1f)), new Vector2f(), true);
+        ((DamageListener) listener).reportDamageApplied(projectile, defender, shieldFlux(80f));
+
+        verify(ready.getFluxTracker()).increaseFlux(20f, true);
+        verify(busy.getFluxTracker(), never()).increaseFlux(anyFloat(), anyBoolean());
+    }
+
+    @Test
     void sharedFateLeavesTheHitAloneWithNoAlliesNearbyOrOnHullHits() {
         ShipAPI defender = ship(SHARED_PERCENT_KEY, 20f);
         ships.add(defender);
@@ -256,7 +274,7 @@ class ShieldFluxListenersTest {
         when(defender.getParamAboutToApplyDamage()).thenReturn(new Object());
         ((DamageListener) listener).reportDamageApplied(new Object(), defender, shieldFlux(80f));
 
-        verifyNoInteractions(ally.getFluxTracker());
+        verify(ally.getFluxTracker(), never()).increaseFlux(anyFloat(), anyBoolean());
     }
 
     @Test

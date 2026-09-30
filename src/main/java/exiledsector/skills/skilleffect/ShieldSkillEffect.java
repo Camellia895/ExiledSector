@@ -284,7 +284,8 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
         private boolean sharesShieldDamageWith(ShipAPI other) {
             return other != ship && other.getOwner() == ship.getOwner() && other.isAlive() && !other.isHulk()
                     && !other.isFighter()
-                    && CombatQueries.withinRadius(other.getLocation(), ship.getLocation(), SHARED_SHIELD_DAMAGE_RANGE);
+                    && CombatQueries.withinRadius(other.getLocation(), ship.getLocation(), SHARED_SHIELD_DAMAGE_RANGE)
+                    && !other.getFluxTracker().isOverloadedOrVenting();
         }
     }
 

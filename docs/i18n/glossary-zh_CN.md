@@ -12,6 +12,7 @@ The zh_CN catalogue was drafted by Claude and still needs review by a native spe
 | Flux dissipation | 幅能耗散 | |
 | Flux capacitors / flux vents | 电容 / 耗散器 | Refit-screen terms, as in "Caps, Vents or Hull" |
 | Active venting | 主动排散 | "venting speed" is 主动排散速度 |
+| Overloaded | 过载 | |
 | Ordnance points (OP) | 装配点 | |
 | Combat readiness (CR) | 战备值 | Peak CR duration is 峰值战备时间 |
 | Deployment points (DP) | 部署点 | |
