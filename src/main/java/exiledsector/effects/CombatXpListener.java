@@ -37,11 +37,13 @@ public class CombatXpListener extends BaseCampaignEventListener {
         float defeatedDp = enemyDeploymentPointsDefeated(result);
         boolean lost = !result.didPlayerWin();
         float lossMultiplier = lost ? ShipLevelConfig.xpLossMultiplier() : 1f;
-        float xp = defeatedDp * ShipLevelConfig.xpPerDeploymentPoint() * lossMultiplier;
+        float difficultyMultiplier = ShipLevelSystem.difficultyMultiplier(BattleDifficulty.current(),
+                ShipLevelConfig.xpDifficultyStrength(), ShipLevelConfig.xpDifficultyMaxMultiplier());
+        float xp = defeatedDp * ShipLevelConfig.xpPerDeploymentPoint() * lossMultiplier * difficultyMultiplier;
 
         Map<FleetMemberAPI, Integer> levelsBefore = levelsOf(playerFleet);
         ShipLevelSystem.awardXpToFleet(playerFleet, xp);
-        I18n.forGameText(() -> report(new CombatXpReport(xp, defeatedDp, lost, levelUps(levelsBefore))));
+        I18n.forGameText(() -> report(new CombatXpReport(xp, defeatedDp, lost, difficultyMultiplier, levelUps(levelsBefore))));
     }
 
     private static float enemyDeploymentPointsDefeated(EngagementResultAPI result) {
@@ -93,12 +95,16 @@ public class CombatXpListener extends BaseCampaignEventListener {
         String earnedKey = report.lost() ? "combat.xp.earnedAfterLoss" : "combat.xp.earned";
         VanillaText.addPara(text, Translation.msg(earnedKey).arg("xp", report.xpText()).arg("dp", report.dpText()).styled(),
                 Misc.getTextColor());
+        if (report.hasDifficultyBonus()) {
+            VanillaText.addPara(text, Translation.msg("combat.xp.difficultyBonus").arg("percent", report.difficultyBonusText()).styled(),
+                    Misc.getTextColor());
+        }
         for (String levelUp : report.levelUps()) {
             VanillaText.addPara(text, StyledText.of(levelUp), Misc.getPositiveHighlightColor());
         }
     }
 
-    record CombatXpReport(float xp, float defeatedDp, boolean lost, List<String> levelUps) {
+    record CombatXpReport(float xp, float defeatedDp, boolean lost, float difficultyMultiplier, List<String> levelUps) {
 
         String xpText() {
             return String.valueOf(Math.round(xp));
@@ -106,6 +112,18 @@ public class CombatXpListener extends BaseCampaignEventListener {
 
         String dpText() {
             return String.valueOf(Math.round(defeatedDp));
+        }
+
+        boolean hasDifficultyBonus() {
+            return difficultyBonusPercent() >= 1;
+        }
+
+        String difficultyBonusText() {
+            return String.valueOf(difficultyBonusPercent());
+        }
+
+        private int difficultyBonusPercent() {
+            return Math.round((difficultyMultiplier - 1f) * 100f);
         }
     }
 }

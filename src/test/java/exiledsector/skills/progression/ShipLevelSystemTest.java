@@ -60,6 +60,15 @@ class ShipLevelSystemTest {
     }
 
     @Test
+    void difficultyOnlyEverAddsXpByTheBonusAboveOneTimesTheStrengthUpToTheCap() {
+        assertEquals(1f, ShipLevelSystem.difficultyMultiplier(0.5f, 1f, 6f));
+        assertEquals(2.5f, ShipLevelSystem.difficultyMultiplier(2.5f, 1f, 6f));
+        assertEquals(2f, ShipLevelSystem.difficultyMultiplier(3f, 0.5f, 6f));
+        assertEquals(2f, ShipLevelSystem.difficultyMultiplier(4f, 1f, 2f));
+        assertEquals(1f, ShipLevelSystem.difficultyMultiplier(4f, 0f, 6f));
+    }
+
+    @Test
     void xpToReachNextLevelGrowsExponentiallyWithLevel() {
         assertEquals(100f, ShipLevelSystem.xpToReachNextLevel(0, XP_BASE, XP_GROWTH, NO_GROWTH_CUTOFF));
         assertEquals(200f, ShipLevelSystem.xpToReachNextLevel(1, XP_BASE, XP_GROWTH, NO_GROWTH_CUTOFF));

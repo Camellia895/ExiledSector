@@ -76,6 +76,13 @@ public final class ExiledSectorSettings {
                 0.0, 100.0, MAIN_TAB);
         SettingsCreator.addDouble(MOD_ID, ShipLevelConfig.XP_LOSS_MULTIPLIER_FIELD_ID,
                 Translation.text("settings.level.xpLossMultiplier"), "", ShipLevelConfig.DEFAULT_XP_LOSS_MULTIPLIER, 0.0, 1.0, MAIN_TAB);
+        SettingsCreator.addDouble(MOD_ID, ShipLevelConfig.XP_DIFFICULTY_STRENGTH_FIELD_ID,
+                Translation.text("settings.level.xpDifficultyStrength.name"), Translation.text("settings.level.xpDifficultyStrength.tooltip"),
+                ShipLevelConfig.DEFAULT_XP_DIFFICULTY_STRENGTH, 0.0, 5.0, MAIN_TAB);
+        SettingsCreator.addDouble(MOD_ID, ShipLevelConfig.XP_DIFFICULTY_MAX_MULTIPLIER_FIELD_ID,
+                Translation.text("settings.level.xpDifficultyMaxMultiplier.name"),
+                Translation.text("settings.level.xpDifficultyMaxMultiplier.tooltip"),
+                ShipLevelConfig.DEFAULT_XP_DIFFICULTY_MAX_MULTIPLIER, 1.0, 20.0, MAIN_TAB);
         SettingsCreator.addInt(MOD_ID, ShipLevelConfig.MAX_ALLOCATED_NODES_FIELD_ID,
                 Translation.text("settings.level.maxAllocatedNodes.name"), Translation.text("settings.level.maxAllocatedNodes.tooltip"),
                 ShipLevelConfig.DEFAULT_MAX_ALLOCATED_NODES, 1, 500, MAIN_TAB);

@@ -31,6 +31,11 @@ public final class ShipLevelSystem {
         return xpBase * (float) Math.pow(xpGrowth, cappedLevel);
     }
 
+    public static float difficultyMultiplier(float difficulty, float strength, float cap) {
+        float bonus = Math.max(0f, difficulty - 1f) * Math.max(0f, strength);
+        return Math.max(1f, Math.min(cap, 1f + bonus));
+    }
+
     public static void awardXp(ShipSkillData data, float xpAmount, LevelCurve curve,
                                 Collection<SkillNode> allNodes) {
         if (data.getLevel() >= curve.maxLevel()) return;

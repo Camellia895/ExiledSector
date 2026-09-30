@@ -31,6 +31,8 @@ class ShipLevelConfigTest {
         lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", ShipLevelConfig.XP_GROWTH_CUTOFF_LEVEL_FIELD_ID)).thenReturn(null);
         lunaSettingsMock.when(() -> LunaSettings.getFloat("exiledSector", ShipLevelConfig.XP_PER_DEPLOYMENT_POINT_FIELD_ID)).thenReturn(null);
         lunaSettingsMock.when(() -> LunaSettings.getFloat("exiledSector", ShipLevelConfig.XP_LOSS_MULTIPLIER_FIELD_ID)).thenReturn(null);
+        lunaSettingsMock.when(() -> LunaSettings.getFloat("exiledSector", ShipLevelConfig.XP_DIFFICULTY_STRENGTH_FIELD_ID)).thenReturn(null);
+        lunaSettingsMock.when(() -> LunaSettings.getFloat("exiledSector", ShipLevelConfig.XP_DIFFICULTY_MAX_MULTIPLIER_FIELD_ID)).thenReturn(null);
         lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", ShipLevelConfig.MAX_ALLOCATED_NODES_FIELD_ID)).thenReturn(null);
 
         assertEquals(ShipLevelConfig.DEFAULT_MAX_LEVEL, ShipLevelConfig.maxLevel());
@@ -39,6 +41,8 @@ class ShipLevelConfigTest {
         assertEquals(ShipLevelConfig.DEFAULT_XP_GROWTH_CUTOFF_LEVEL, ShipLevelConfig.xpGrowthCutoffLevel());
         assertEquals(ShipLevelConfig.DEFAULT_XP_PER_DEPLOYMENT_POINT, ShipLevelConfig.xpPerDeploymentPoint());
         assertEquals(ShipLevelConfig.DEFAULT_XP_LOSS_MULTIPLIER, ShipLevelConfig.xpLossMultiplier());
+        assertEquals(ShipLevelConfig.DEFAULT_XP_DIFFICULTY_STRENGTH, ShipLevelConfig.xpDifficultyStrength());
+        assertEquals(ShipLevelConfig.DEFAULT_XP_DIFFICULTY_MAX_MULTIPLIER, ShipLevelConfig.xpDifficultyMaxMultiplier());
         assertEquals(ShipLevelConfig.DEFAULT_MAX_ALLOCATED_NODES, ShipLevelConfig.maxAllocatedNodes());
     }
 
@@ -48,10 +52,14 @@ class ShipLevelConfigTest {
         lunaSettingsMock.when(() -> LunaSettings.getFloat("exiledSector", ShipLevelConfig.XP_GROWTH_FIELD_ID)).thenReturn(1.5f);
         lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", ShipLevelConfig.XP_GROWTH_CUTOFF_LEVEL_FIELD_ID)).thenReturn(30);
         lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", ShipLevelConfig.MAX_ALLOCATED_NODES_FIELD_ID)).thenReturn(30);
+        lunaSettingsMock.when(() -> LunaSettings.getFloat("exiledSector", ShipLevelConfig.XP_DIFFICULTY_STRENGTH_FIELD_ID)).thenReturn(0.5f);
+        lunaSettingsMock.when(() -> LunaSettings.getFloat("exiledSector", ShipLevelConfig.XP_DIFFICULTY_MAX_MULTIPLIER_FIELD_ID)).thenReturn(3f);
 
         assertEquals(80, ShipLevelConfig.maxLevel());
         assertEquals(1.5f, ShipLevelConfig.xpGrowth());
         assertEquals(30, ShipLevelConfig.xpGrowthCutoffLevel());
         assertEquals(30, ShipLevelConfig.maxAllocatedNodes());
+        assertEquals(0.5f, ShipLevelConfig.xpDifficultyStrength());
+        assertEquals(3f, ShipLevelConfig.xpDifficultyMaxMultiplier());
     }
 }

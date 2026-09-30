@@ -9,12 +9,14 @@ import com.fs.starfarer.api.campaign.EngagementResultForFleetAPI;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
+import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.TextPanelAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.FleetEncounterContext;
 import com.fs.starfarer.api.ui.LabelAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
@@ -49,6 +51,7 @@ class CombatXpListenerTest {
     private MockedStatic<LunaSettings> lunaSettingsMock;
     private FleetDataAPI fleetData;
     private TextPanelAPI textPanel;
+    private InteractionDialogAPI dialog;
 
     @BeforeEach
     void setUp() {
@@ -62,7 +65,7 @@ class CombatXpListenerTest {
         when(fleetData.getMembersListCopy()).thenReturn(List.of());
 
         CampaignUIAPI campaignUi = mock(CampaignUIAPI.class);
-        InteractionDialogAPI dialog = mock(InteractionDialogAPI.class);
+        dialog = mock(InteractionDialogAPI.class);
         textPanel = mock(TextPanelAPI.class);
         when(sector.getCampaignUI()).thenReturn(campaignUi);
         when(campaignUi.getCurrentInteractionDialog()).thenReturn(dialog);
@@ -75,6 +78,8 @@ class CombatXpListenerTest {
         lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", ShipLevelConfig.XP_GROWTH_CUTOFF_LEVEL_FIELD_ID)).thenReturn(null);
         lunaSettingsMock.when(() -> LunaSettings.getFloat("exiledSector", ShipLevelConfig.XP_PER_DEPLOYMENT_POINT_FIELD_ID)).thenReturn(null);
         lunaSettingsMock.when(() -> LunaSettings.getFloat("exiledSector", ShipLevelConfig.XP_LOSS_MULTIPLIER_FIELD_ID)).thenReturn(null);
+        lunaSettingsMock.when(() -> LunaSettings.getFloat("exiledSector", ShipLevelConfig.XP_DIFFICULTY_STRENGTH_FIELD_ID)).thenReturn(null);
+        lunaSettingsMock.when(() -> LunaSettings.getFloat("exiledSector", ShipLevelConfig.XP_DIFFICULTY_MAX_MULTIPLIER_FIELD_ID)).thenReturn(null);
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSector).thenReturn(sector);
         SettingsAPI settings = mock(SettingsAPI.class);
@@ -191,5 +196,82 @@ class CombatXpListenerTest {
         verify(label).setHighlight("40", "40");
         verify(label).setHighlightColors(Color.YELLOW, Color.YELLOW);
         verify(textPanel).addPara(eq("%s"), eq(Color.GREEN), eq(Color.GREEN), contains("ISS ship-a (Wolf-class) reached level"));
+    }
+
+    private void oneShipFleetThatWontLevelUp() {
+        lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", ShipLevelConfig.XP_BASE_FIELD_ID)).thenReturn(10000);
+        List<FleetMemberAPI> members = List.of(member("ship-a"));
+        when(fleetData.getMembersListCopy()).thenReturn(members);
+    }
+
+    private void encounterWithDifficulty(Object context) {
+        InteractionDialogPlugin plugin = mock(InteractionDialogPlugin.class);
+        when(plugin.getContext()).thenReturn(context);
+        when(dialog.getPlugin()).thenReturn(plugin);
+    }
+
+    private static FleetEncounterContext encounterContext(float difficulty, boolean computed) {
+        FleetEncounterContext context = mock(FleetEncounterContext.class);
+        when(context.getDifficulty()).thenReturn(difficulty);
+        when(context.isComputedDifficulty()).thenReturn(computed);
+        return context;
+    }
+
+    @Test
+    void vanillasBattleDifficultyMultipliesTheXpAndIsReported() {
+        oneShipFleetThatWontLevelUp();
+        encounterWithDifficulty(encounterContext(2f, true));
+
+        new CombatXpListener().reportPlayerEngagement(engagement(true, 40f));
+
+        assertEquals(80f, ShipSkillDataManager.get("ship-a").getXp());
+        verify(textPanel).addPara(eq("%s"), (Color) any(), (Color) any(),
+                eq("Includes +100% for the overall battle difficulty."));
+    }
+
+    @Test
+    void aLostBattleAppliesBothTheLossAndDifficultyMultipliers() {
+        oneShipFleetThatWontLevelUp();
+        encounterWithDifficulty(encounterContext(3f, true));
+
+        new CombatXpListener().reportPlayerEngagement(engagement(false, 40f));
+
+        assertEquals(40f * ShipLevelConfig.DEFAULT_XP_LOSS_MULTIPLIER * 3f, ShipSkillDataManager.get("ship-a").getXp());
+    }
+
+    @Test
+    void anEasierBattleNeverReducesTheXp() {
+        oneShipFleetThatWontLevelUp();
+        encounterWithDifficulty(encounterContext(0.4f, true));
+
+        new CombatXpListener().reportPlayerEngagement(engagement(true, 40f));
+
+        assertEquals(40f, ShipSkillDataManager.get("ship-a").getXp());
+        verify(textPanel, never()).addPara(eq("%s"), (Color) any(), (Color) any(), contains("battle difficulty"));
+    }
+
+    @Test
+    void anUncomputedOrNonVanillaEncounterContextGivesNoBonus() {
+        oneShipFleetThatWontLevelUp();
+
+        encounterWithDifficulty(encounterContext(4f, false));
+        new CombatXpListener().reportPlayerEngagement(engagement(true, 40f));
+        encounterWithDifficulty(new Object());
+        new CombatXpListener().reportPlayerEngagement(engagement(true, 40f));
+
+        assertEquals(80f, ShipSkillDataManager.get("ship-a").getXp());
+        verify(textPanel, never()).addPara(eq("%s"), (Color) any(), (Color) any(), contains("battle difficulty"));
+    }
+
+    @Test
+    void theStrengthAndCapSettingsShapeTheDifficultyBonus() {
+        oneShipFleetThatWontLevelUp();
+        lunaSettingsMock.when(() -> LunaSettings.getFloat("exiledSector", ShipLevelConfig.XP_DIFFICULTY_STRENGTH_FIELD_ID)).thenReturn(0.5f);
+        lunaSettingsMock.when(() -> LunaSettings.getFloat("exiledSector", ShipLevelConfig.XP_DIFFICULTY_MAX_MULTIPLIER_FIELD_ID)).thenReturn(2f);
+        encounterWithDifficulty(encounterContext(5f, true));
+
+        new CombatXpListener().reportPlayerEngagement(engagement(true, 40f));
+
+        assertEquals(80f, ShipSkillDataManager.get("ship-a").getXp());
     }
 }

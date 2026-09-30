@@ -10,6 +10,8 @@ public final class ShipLevelConfig {
     public static final String XP_GROWTH_CUTOFF_LEVEL_FIELD_ID = "exiledSector_levelXpGrowthCutoffLevel";
     public static final String XP_PER_DEPLOYMENT_POINT_FIELD_ID = "exiledSector_levelXpPerDeploymentPoint";
     public static final String XP_LOSS_MULTIPLIER_FIELD_ID = "exiledSector_levelXpLossMultiplier";
+    public static final String XP_DIFFICULTY_STRENGTH_FIELD_ID = "exiledSector_levelXpDifficultyStrength";
+    public static final String XP_DIFFICULTY_MAX_MULTIPLIER_FIELD_ID = "exiledSector_levelXpDifficultyMaxMultiplier";
     public static final String MAX_ALLOCATED_NODES_FIELD_ID = "exiledSector_levelMaxAllocatedNodes";
 
     public static final int DEFAULT_MAX_LEVEL = 50;
@@ -18,6 +20,8 @@ public final class ShipLevelConfig {
     public static final int DEFAULT_XP_GROWTH_CUTOFF_LEVEL = 25;
     public static final float DEFAULT_XP_PER_DEPLOYMENT_POINT = 1f;
     public static final float DEFAULT_XP_LOSS_MULTIPLIER = 0.5f;
+    public static final float DEFAULT_XP_DIFFICULTY_STRENGTH = 1f;
+    public static final float DEFAULT_XP_DIFFICULTY_MAX_MULTIPLIER = 6f;
     public static final int DEFAULT_MAX_ALLOCATED_NODES = 60;
 
     private ShipLevelConfig() {
@@ -45,6 +49,14 @@ public final class ShipLevelConfig {
 
     public static float xpLossMultiplier() {
         return ModSettings.floatOr(XP_LOSS_MULTIPLIER_FIELD_ID, DEFAULT_XP_LOSS_MULTIPLIER);
+    }
+
+    public static float xpDifficultyStrength() {
+        return ModSettings.floatOr(XP_DIFFICULTY_STRENGTH_FIELD_ID, DEFAULT_XP_DIFFICULTY_STRENGTH);
+    }
+
+    public static float xpDifficultyMaxMultiplier() {
+        return ModSettings.floatOr(XP_DIFFICULTY_MAX_MULTIPLIER_FIELD_ID, DEFAULT_XP_DIFFICULTY_MAX_MULTIPLIER);
     }
 
     public static int maxAllocatedNodes() {

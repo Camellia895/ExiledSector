@@ -7,6 +7,7 @@ import exiledsector.i18n.PseudoLocale;
 import exiledsector.i18n.RealCatalogue;
 import exiledsector.skills.npc.NpcLevelTable;
 import exiledsector.skills.npc.NpcTreeConfig;
+import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.ui.inspect.NpcInspectConfig;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
@@ -72,6 +73,14 @@ class ExiledSectorSettingsTest {
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addInt(eq("exiledSector"),
                 eq(NpcTreeConfig.OTHER_SHIP_CHANCE_FIELD_ID), anyString(), anyString(), eq(30), eq(0), eq(100),
                 eq(ExiledSectorSettings.npcScalingTab())));
+    }
+
+    @Test
+    void registersTheBattleDifficultyXpSettingsWithDefaultsThatMatchVanilla() {
+        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addDouble(eq("exiledSector"),
+                eq(ShipLevelConfig.XP_DIFFICULTY_STRENGTH_FIELD_ID), anyString(), anyString(), eq(1.0), eq(0.0), eq(5.0), eq("")));
+        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addDouble(eq("exiledSector"),
+                eq(ShipLevelConfig.XP_DIFFICULTY_MAX_MULTIPLIER_FIELD_ID), anyString(), anyString(), eq(6.0), eq(1.0), eq(20.0), eq("")));
     }
 
     @Test

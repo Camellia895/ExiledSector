@@ -58,7 +58,7 @@ Optional:
 Play your own way – all settings are in the LunaLib mod settings menu:
 
 - OP cost per node, by hull size
-- Leveling curve: max level, XP per level, XP growth, and XP gained from a lost battle
+- Leveling curve: max level, XP per level, XP growth, XP gained from a lost battle, and how much battle difficulty boosts XP
 - Maximum number of allocated nodes per ship
 - Whether hidden nodes are revealed, and which unlock conditions are enforced
 - Language: Auto (follows the game), English or Simplified Chinese
@@ -82,7 +82,7 @@ Open a ship's refit screen and click the **Skill Tree** button.
 
 **Nodes cost OP.** Every node costs the ship's unused ordnance points: 1 for frigates, 2 for destroyers, 3 for cruisers and 4 for capitals. A node can only be allocated next to one you already have.
 
-**Ships earn XP from battles.** After every engagement, each ship in your fleet gains XP equal to the deployment points of the enemy ships destroyed or disabled, whether it deployed or not. You get half as much if you lose.
+**Ships earn XP from battles.** After every engagement, each ship in your fleet gains XP equal to the deployment points of the enemy ships destroyed or disabled, whether it deployed or not. Harder fights pay more: the same battle difficulty bonus vanilla shows before combat ("Additional XP due to overall battle difficulty") multiplies it, up to 6×. You get half as much if you lose.
 
 **Levels give OP back.** Each level makes your most recently bought node free and refunds its OP. If every node you have is already free, the level is banked, and your next node costs nothing. The first level takes 60 XP, each level after that takes 13% more until level 25, and ships cap at level 50.
 
