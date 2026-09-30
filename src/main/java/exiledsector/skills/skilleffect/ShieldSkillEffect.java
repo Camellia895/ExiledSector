@@ -53,7 +53,8 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
 
         @Override
         public String shieldTypeBlockReason(ShieldAPI.ShieldType resolvedShieldType) {
-            return resolvedShieldType == ShieldAPI.ShieldType.NONE ? "Ship has no shields." : null;
+            boolean hasShields = resolvedShieldType == ShieldAPI.ShieldType.FRONT || resolvedShieldType == ShieldAPI.ShieldType.OMNI;
+            return hasShields ? null : "Ship has no shields.";
         }
     },
     CREATE_FRONT_SHIELD_IF_NONE {

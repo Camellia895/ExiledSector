@@ -566,8 +566,7 @@
 			"orbitAnchorId": "anchor_10",
 			"orbitAngle": 90,
 			"tags": [
-				"inner",
-				"req_shields"
+				"inner"
 			]
 		},
 		{

@@ -957,6 +957,15 @@ class SkillEffectTest {
     }
 
     @Test
+    void removeShieldBlocksAllocationOnPhaseShipsBecauseThePhaseCloakIsNotAShield() {
+        FleetMemberAPI member = mockMemberWithShieldType(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.PHASE);
+
+        String reason = ShieldSkillEffect.REMOVE_SHIELD.blockAllocationReason(member, 0f, List.of());
+
+        assertEquals("Ship has no shields.", reason);
+    }
+
+    @Test
     void removeShieldAllowsAllocationWhenShipHasShields() {
         FleetMemberAPI member = mockMemberWithShieldType(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.FRONT);
 
@@ -985,6 +994,10 @@ class SkillEffectTest {
         assertEquals("Ship already has omni-directional shields.", ShieldSkillEffect.CONVERT_SHIELD_TO_OMNI.shieldTypeBlockReason(omni));
         assertEquals("Ship has no shields.",
                 ShieldSkillEffect.REMOVE_SHIELD.shieldTypeBlockReason(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.NONE));
+        assertEquals("Ship has no shields.",
+                ShieldSkillEffect.REMOVE_SHIELD.shieldTypeBlockReason(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.PHASE));
+        assertNull(ShieldSkillEffect.REMOVE_SHIELD.shieldTypeBlockReason(front));
+        assertNull(ShieldSkillEffect.REMOVE_SHIELD.shieldTypeBlockReason(omni));
         assertNull(ShieldSkillEffect.SHIELD_ARC_PERCENT.shieldTypeBlockReason(front));
     }
 
