@@ -71,7 +71,7 @@ final class NodeAllocator {
         return root == null ? null : root.getId();
     }
 
-    boolean isStartingRoot(SkillNode node) {
+    private boolean isStartingRoot(SkillNode node) {
         SkillNode root = startingRoot.get();
         return root != null && node.getId().equals(root.getId());
     }

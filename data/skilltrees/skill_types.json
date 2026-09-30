@@ -85,7 +85,7 @@
 		{
 			"id": "ballistic_projectile_speed",
 			"name": "Ballistic Projectile Speed",
-			"icon": "graphics/icons/target_analysis_circular.png",
+			"icon": "graphics/icons/ballistic_projectile_speed.png",
 			"effects": [
 				{
 					"effect": "BALLISTIC_WEAPON_PROJECTILE_SPEED_PERCENT",
@@ -100,7 +100,7 @@
 		{
 			"id": "missile_top_speed",
 			"name": "Missile Top Speed",
-			"icon": "graphics/icons/missile_speed_circular.png",
+			"icon": "graphics/icons/missile_top_speed.png",
 			"effects": [
 				{
 					"effect": "MISSILE_WEAPON_PROJECTILE_SPEED_PERCENT",
@@ -115,7 +115,7 @@
 		{
 			"id": "reduced_D_mod_effect",
 			"name": "Reduced D-Mod Effect",
-			"icon": "graphics/icons/rugged_construction_shifted.png",
+			"icon": "graphics/icons/reduced_D_mod_effect.png",
 			"effects": [
 				{
 					"effect": "DMOD_EFFECT_MULT",
@@ -129,7 +129,7 @@
 		{
 			"id": "heavy_ballistics_integration",
 			"name": "Heavy Ballistics Integration",
-			"icon": "graphics/icons/ballistics_integration_circular.png",
+			"icon": "graphics/icons/heavy_ballistics_integration.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -148,7 +148,7 @@
 		{
 			"id": "ground_support",
 			"name": "Ground Support",
-			"icon": "graphics/icons/ground_support_shifted.png",
+			"icon": "graphics/icons/ground_support.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -168,7 +168,7 @@
 		{
 			"id": "tactical_superiority",
 			"name": "Tactical Superiority",
-			"icon": "graphics/icons/advanced_tactics_shifted.png",
+			"icon": "graphics/icons/tactical_superiority.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -183,7 +183,7 @@
 		{
 			"id": "objective_capture_range",
 			"name": "Objective Capture Range",
-			"icon": "graphics/icons/helmsmanship_circular.png",
+			"icon": "graphics/icons/objective_capture_range.png",
 			"effects": [
 				{
 					"effect": "OBJECTIVE_CAPTURE_RANGE_FLAT",
@@ -197,7 +197,7 @@
 		{
 			"id": "combat_readiness",
 			"name": "Combat Readiness",
-			"icon": "graphics/icons/combat_endurance3_circular.png",
+			"icon": "graphics/icons/combat_readiness.png",
 			"effects": [
 				{
 					"effect": "MAX_COMBAT_READINESS_PERCENT",
@@ -211,7 +211,7 @@
 		{
 			"id": "nanoforge_mending",
 			"name": "Nanoforge Mending",
-			"icon": "graphics/icons/computer_systems_circular.png",
+			"icon": "graphics/icons/nanoforge_mending.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -227,7 +227,7 @@
 		{
 			"id": "disintegration",
 			"name": "Disintegration",
-			"icon": "graphics/icons/beam_engine_shifted.png",
+			"icon": "graphics/icons/disintegration.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -244,7 +244,7 @@
 		{
 			"id": "machine_precision",
 			"name": "Machine Precision",
-			"icon": "graphics/icons/gunnery_implants_circular.png",
+			"icon": "graphics/icons/machine_precision.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -272,7 +272,7 @@
 		{
 			"id": "terrifying_presence",
 			"name": "Terrifying Presence",
-			"icon": "graphics/icons/hypercognition.png",
+			"icon": "graphics/icons/terrifying_presence.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -287,7 +287,7 @@
 		{
 			"id": "torpedo_specialisation",
 			"name": "Torpedo Specialisation",
-			"icon": "graphics/icons/engine_circular.png",
+			"icon": "graphics/icons/torpedo_specialisation.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -411,7 +411,7 @@
 		{
 			"id": "beam_split",
 			"name": "Lion's Gaze",
-			"icon": "graphics/icons/wolfpack_circular_alt1.png",
+			"icon": "graphics/icons/beam_split.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -518,7 +518,7 @@
 		{
 			"id": "fuel_core_overload",
 			"name": "Ludd's Light",
-			"icon": "graphics/icons/combat_circular.png",
+			"icon": "graphics/icons/fuel_core_overload.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -530,7 +530,7 @@
 		{
 			"id": "exposed_fuel_lines",
 			"name": "At Any Cost",
-			"icon": "graphics/icons/evasive_maneuvering_circular.png",
+			"icon": "graphics/icons/exposed_fuel_lines.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -542,7 +542,7 @@
 		{
 			"id": "energy_chain",
 			"name": "Refracting Projectiles",
-			"icon": "graphics/icons/navigation_circular.png",
+			"icon": "graphics/icons/energy_chain.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -562,7 +562,7 @@
 		{
 			"id": "ballistic_momentum",
 			"name": "Ballistic Momentum",
-			"icon": "graphics/icons/engine_circular_alt1.png",
+			"icon": "graphics/icons/ballistic_momentum.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -579,7 +579,7 @@
 		{
 			"id": "attuned_sensors",
 			"name": "Attuned Sensors",
-			"icon": "graphics/icons/sensors_circular_shifted.png",
+			"icon": "graphics/icons/attuned_sensors.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1140,7 +1140,7 @@
 		{
 			"id": "phase_sensor_upgrades",
 			"name": "Phase Sensor Upgrades",
-			"icon": "graphics/icons/phase_field_circular.png",
+			"icon": "graphics/icons/phase_sensor_upgrades.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1160,7 +1160,7 @@
 		{
 			"id": "hoarded_arms",
 			"name": "Co-ordinated Reload",
-			"icon": "graphics/icons/heavyweapons_shifted.png",
+			"icon": "graphics/icons/hoarded_arms.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2342,7 +2342,7 @@
 		{
 			"id": "shared_fate",
 			"name": "Shared Fate",
-			"icon": "graphics/icons/colony_management_circular.png",
+			"icon": "graphics/icons/shared_fate.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2362,7 +2362,7 @@
 		{
 			"id": "shared_damage_taken",
 			"name": "Shared Damage Taken",
-			"icon": "graphics/icons/colony_management_circular_shifted2.png",
+			"icon": "graphics/icons/shared_damage_taken.png",
 			"effects": [
 				{
 					"effect": "SHIELD_DAMAGE_SHARED_PERCENT",
@@ -2438,7 +2438,7 @@
 		{
 			"id": "increased_sensor_strength",
 			"name": "Sensor Strength",
-			"icon": "graphics/icons/increased_sensor_range.png",
+			"icon": "graphics/icons/increased_sensor_strength.png",
 			"hullSizeEffects": [
 				{
 					"effect": "SENSOR_STRENGTH_FLAT",
@@ -2455,7 +2455,7 @@
 		{
 			"id": "violence_of_action",
 			"name": "Dramatic Entrance",
-			"icon": "graphics/icons/engine4_shifted.png",
+			"icon": "graphics/icons/violence_of_action.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2475,7 +2475,7 @@
 		{
 			"id": "restriction_breeds_creativity",
 			"name": "Restriction Breeds Creativity",
-			"icon": "graphics/icons/damage_control2.png",
+			"icon": "graphics/icons/restriction_breeds_creativity.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2491,7 +2491,7 @@
 		{
 			"id": "perseverence_through_faith",
 			"name": "Perseverence Through Faith",
-			"icon": "graphics/icons/engine_gun_shifted.png",
+			"icon": "graphics/icons/perseverence_through_faith.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2507,7 +2507,7 @@
 		{
 			"id": "crustacean_integration",
 			"name": "Crustacean Integration",
-			"icon": "graphics/icons/lobster.png",
+			"icon": "graphics/icons/crustacean_integration.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2537,7 +2537,7 @@
 		{
 			"id": "waste_not",
 			"name": "Waste Not",
-			"icon": "graphics/icons/cargo_capacity_flat_shifted.png",
+			"icon": "graphics/icons/waste_not.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3053,7 +3053,7 @@
 		{
 			"id": "beam_split_reduced_damage",
 			"name": "Additional Beam Splits",
-			"icon": "graphics/icons/weapon_drills_circular_shifted.png",
+			"icon": "graphics/icons/beam_split_reduced_damage.png",
 			"effects": [
 				{
 					"effect": "BEAM_WEAPON_SPLIT_TARGETS_FLAT",
@@ -3069,7 +3069,7 @@
 		{
 			"id": "sindrian_shielding",
 			"name": "Sindrian Shielding",
-			"icon": "graphics/icons/solar_shielding_purple.png",
+			"icon": "graphics/icons/sindrian_shielding.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3089,7 +3089,7 @@
 		{
 			"id": "less_energy_damage_taken",
 			"name": "Energy Damage Resistance",
-			"icon": "graphics/icons/icy_space_circular.png",
+			"icon": "graphics/icons/less_energy_damage_taken.png",
 			"effects": [
 				{
 					"effect": "ENERGY_DAMAGE_TAKEN_PERCENT",
@@ -3103,7 +3103,7 @@
 		{
 			"id": "ammo_capacity",
 			"name": "Ammo Capacity",
-			"icon": "graphics/icons/expanded_magazines_shifted.png",
+			"icon": "graphics/icons/ammo_capacity.png",
 			"effects": [
 				{
 					"effect": "BALLISTIC_WEAPON_AMMO_PERCENT",
@@ -3121,7 +3121,7 @@
 		{
 			"id": "peak_cr_duration",
 			"name": "Peak CR Duration",
-			"icon": "graphics/icons/field_repairs_shifted_shifted.png",
+			"icon": "graphics/icons/peak_cr_duration.png",
 			"effects": [
 				{
 					"effect": "PEAK_CR_DURATION_PERCENT",
@@ -3135,7 +3135,7 @@
 		{
 			"id": "temporary_acceleration",
 			"name": "Temporary Acceleration",
-			"icon": "graphics/icons/engine_fighter_shifted.png",
+			"icon": "graphics/icons/temporary_acceleration.png",
 			"effects": [
 				{
 					"effect": "ACCELERATION_PERCENT",
@@ -3150,7 +3150,7 @@
 		{
 			"id": "reckless_assault",
 			"name": "Reckless Assault",
-			"icon": "graphics/icons/explosion2_shifted.png",
+			"icon": "graphics/icons/reckless_assault.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{

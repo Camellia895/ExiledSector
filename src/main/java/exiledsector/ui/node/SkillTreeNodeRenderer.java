@@ -28,7 +28,6 @@ public final class SkillTreeNodeRenderer {
     private static final Color ALLOCATED_TINT = Color.WHITE;
     private static final Color UNALLOCATED_TINT = new Color(90, 90, 90);
 
-    private final FleetMemberAPI member;
     private final BaseRefitButton refitButton;
     private final SkillTreePanelStyle style;
     private final StartingRootChoice rootChoice;
@@ -50,13 +49,13 @@ public final class SkillTreeNodeRenderer {
 
     public SkillTreeNodeRenderer(FleetMemberAPI member, ShipVariantAPI variant, SkillTreePanelStyle style, BaseRefitButton refitButton,
                                  NodeSearch search) {
-        this.member = member;
         this.refitButton = refitButton;
         this.search = search;
         this.style = style;
         this.rootChoice = initialRootChoice(ShipSkillDataManager.get(member.getId()));
         this.allocator = new NodeAllocator(member, variant, rootChoice::chosen);
-        style.setAccentIconPath(RootCrestResolver.resolve(member, rootChoice.chosen()));
+        SkillNode chosenRoot = rootChoice.chosen();
+        style.setAccentIconPath(chosenRoot != null ? chosenRoot.getType().getIconPath() : null);
 
         this.ringRenderer = new SkillTreeNodeRingRenderer(style, wormholeOpenness);
         this.iconRenderer = new SkillTreeNodeIconRenderer();
@@ -115,7 +114,7 @@ public final class SkillTreeNodeRenderer {
             return;
         }
         rootChoice.choose(root);
-        style.setAccentIconPath(RootCrestResolver.resolve(member, root));
+        style.setAccentIconPath(root.getType().getIconPath());
         afterAllocationChange(root, true);
     }
 
@@ -225,8 +224,7 @@ public final class SkillTreeNodeRenderer {
         ringRenderer.draw(nodeX, nodeY, footprintSize, nodeAlpha, allocated, breathing, zoom, node);
 
         Color tint = choosing ? ALLOCATED_TINT : iconTint(node, allocation, allocated);
-        String iconPath = allocator.isStartingRoot(node) ? RootCrestResolver.resolve(member, node) : node.getType().getIconPath();
-        iconRenderer.drawIcon(iconPath, nodeX, nodeY, footprintSize, nodeAlpha, tint);
+        iconRenderer.drawIcon(node.getType().getIconPath(), nodeX, nodeY, footprintSize, nodeAlpha, tint);
     }
 
     private Color iconTint(SkillNode node, NodeAllocator.Snapshot tree, boolean allocated) {
