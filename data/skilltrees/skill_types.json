@@ -451,10 +451,12 @@
 			"tier": "KEYSTONE",
 			"effects": [
 				{
-					"effect": "ZERO_FLUX_ALWAYS_ON"
+					"effect": "ZERO_FLUX_ALWAYS_ON",
+					"magnitude": 0
 				},
 				{
-					"effect": "COUNTS_AS_SAFETY_OVERRIDES"
+					"effect": "COUNTS_AS_SAFETY_OVERRIDES",
+					"magnitude": 0
 				},
 				{
 					"effect": "FLUX_DISSIPATION_MULT",
@@ -499,6 +501,11 @@
 					"cruiser": 40,
 					"capitalShip": 20
 				}
+			],
+			"requiredHullSizes": [
+				"FRIGATE",
+				"DESTROYER",
+				"CRUISER"
 			],
 			"exclusiveHullMods": [
 				"safetyoverrides"
@@ -2844,6 +2851,9 @@
 					"id": "magazines"
 				}
 			],
+			"exclusiveHullMods": [
+				"magazines"
+			],
 			"tags": [
 				"energy",
 				"ammo",
@@ -3038,10 +3048,6 @@
 				{
 					"effect": "BEAM_WEAPON_SPLIT_TARGETS_FLAT",
 					"magnitude": 1
-				},
-				{
-					"effect": "BEAM_WEAPON_DAMAGE_PERCENT",
-					"magnitude": -7
 				}
 			],
 			"tags": [
