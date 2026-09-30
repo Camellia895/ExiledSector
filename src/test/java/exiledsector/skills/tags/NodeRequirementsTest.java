@@ -123,29 +123,6 @@ class NodeRequirementsTest {
     }
 
     @Test
-    void reqDestroyerPlusExcludesOnlyFrigates() {
-        assertTrue(met("req_destroyer_plus", hull(HullSize.DESTROYER)));
-        assertTrue(met("req_destroyer_plus", hull(HullSize.CRUISER)));
-        assertTrue(met("req_destroyer_plus", hull(HullSize.CAPITAL_SHIP)));
-        assertFalse(met("req_destroyer_plus", hull(HullSize.FRIGATE)));
-    }
-
-    @Test
-    void reqCruiserPlusNeedsACruiserOrCapital() {
-        assertTrue(met("req_cruiser_plus", hull(HullSize.CRUISER)));
-        assertTrue(met("req_cruiser_plus", hull(HullSize.CAPITAL_SHIP)));
-        assertFalse(met("req_cruiser_plus", hull(HullSize.DESTROYER)));
-        assertFalse(met("req_cruiser_plus", hull(HullSize.FRIGATE)));
-    }
-
-    @Test
-    void reqNoCapitalExcludesOnlyCapitals() {
-        assertTrue(met("req_no_capital", hull(HullSize.FRIGATE)));
-        assertTrue(met("req_no_capital", hull(HullSize.CRUISER)));
-        assertFalse(met("req_no_capital", hull(HullSize.CAPITAL_SHIP)));
-    }
-
-    @Test
     void reqFlagshipNeedsTheFleetFlagship() {
         assertTrue(met("req_flagship", flagship(true)));
         assertFalse(met("req_flagship", flagship(false)));

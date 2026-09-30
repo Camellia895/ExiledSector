@@ -30,7 +30,7 @@ class NpcLayoutTest {
 
     @Test
     void aLayoutIsEligibleWhenEveryRequirementIsMet() {
-        assertTrue(layoutRequiring("req_shields", "req_ballistic", "req_cruiser_plus").isEligible(SHIELDED_BALLISTIC_CRUISER));
+        assertTrue(layoutRequiring("req_shields", "req_ballistic", "req_no_fighter_bays").isEligible(SHIELDED_BALLISTIC_CRUISER));
     }
 
     @Test

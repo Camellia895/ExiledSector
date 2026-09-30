@@ -2034,35 +2034,40 @@ type|converted_hangar|null|2	0	<bad>50%</bad> slower fighter replacement rate de
 type|converted_hangar|null|3	1	Increases fighter relaunch time, as a % of base refit time by <good>40</good>. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|null|4	1	Increases minimum crew required by <good>20</good>. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|null|5	0	Cannot be unallocated without at least 1 empty fighter bay.
-type|converted_hangar|null|6	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Converted Hangar.
+type|converted_hangar|null|6	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
+type|converted_hangar|null|7	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Converted Hangar.
 type|converted_hangar|FRIGATE|0	0	Increases number of fighter bays by <good>1</good>.
 type|converted_hangar|FRIGATE|1	1	<good>50%</good> more fighter refit time. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|FRIGATE|2	0	<bad>50%</bad> slower fighter replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|FRIGATE|3	1	Increases fighter relaunch time, as a % of base refit time by <good>40</good>. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|FRIGATE|4	1	Increases minimum crew required by <good>20</good>. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|FRIGATE|5	0	Cannot be unallocated without at least 1 empty fighter bay.
-type|converted_hangar|FRIGATE|6	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Converted Hangar.
+type|converted_hangar|FRIGATE|6	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
+type|converted_hangar|FRIGATE|7	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Converted Hangar.
 type|converted_hangar|DESTROYER|0	0	Increases number of fighter bays by <good>1</good>.
 type|converted_hangar|DESTROYER|1	1	<good>50%</good> more fighter refit time. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|DESTROYER|2	0	<bad>50%</bad> slower fighter replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|DESTROYER|3	1	Increases fighter relaunch time, as a % of base refit time by <good>40</good>. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|DESTROYER|4	1	Increases minimum crew required by <good>20</good>. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|DESTROYER|5	0	Cannot be unallocated without at least 1 empty fighter bay.
-type|converted_hangar|DESTROYER|6	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Converted Hangar.
+type|converted_hangar|DESTROYER|6	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
+type|converted_hangar|DESTROYER|7	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Converted Hangar.
 type|converted_hangar|CRUISER|0	0	Increases number of fighter bays by <good>1</good>.
 type|converted_hangar|CRUISER|1	1	<good>50%</good> more fighter refit time. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|CRUISER|2	0	<bad>50%</bad> slower fighter replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|CRUISER|3	1	Increases fighter relaunch time, as a % of base refit time by <good>40</good>. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|CRUISER|4	1	Increases minimum crew required by <good>20</good>. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|CRUISER|5	0	Cannot be unallocated without at least 1 empty fighter bay.
-type|converted_hangar|CRUISER|6	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Converted Hangar.
+type|converted_hangar|CRUISER|6	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
+type|converted_hangar|CRUISER|7	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Converted Hangar.
 type|converted_hangar|CAPITAL_SHIP|0	0	Increases number of fighter bays by <good>1</good>.
 type|converted_hangar|CAPITAL_SHIP|1	1	<good>50%</good> more fighter refit time. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|CAPITAL_SHIP|2	0	<bad>50%</bad> slower fighter replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|CAPITAL_SHIP|3	1	Increases fighter relaunch time, as a % of base refit time by <good>40</good>. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|CAPITAL_SHIP|4	1	Increases minimum crew required by <good>20</good>. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|CAPITAL_SHIP|5	0	Cannot be unallocated without at least 1 empty fighter bay.
-type|converted_hangar|CAPITAL_SHIP|6	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Converted Hangar.
+type|converted_hangar|CAPITAL_SHIP|6	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
+type|converted_hangar|CAPITAL_SHIP|7	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Converted Hangar.
 type|crew_capacity_flat|FRIGATE|0	0	Increases crew capacity by <good>5</good>.
 type|crew_capacity_flat|DESTROYER|0	0	Increases crew capacity by <good>15</good>.
 type|crew_capacity_flat|CRUISER|0	0	Increases crew capacity by <good>25</good>.
@@ -2092,19 +2097,24 @@ type|crustacean_integration|CAPITAL_SHIP|1	0	Increases combat readiness recovery
 type|crustacean_integration|CAPITAL_SHIP|2	0	Increases top speed by <good>10%</good>.
 type|crustacean_integration|CAPITAL_SHIP|3	0	Increases peak combat readiness duration by <good>30%</good>.
 type|crustacean_integration|CAPITAL_SHIP|4	0	Costs 1000 lobster to allocate. It is returned to you upon de-allocation.
-type|dedicated_targeting_core|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Dedicated Targeting Core, Integrated Targeting Unit, Advanced Targeting Core, Distributed Fire Control.\n\nMutually exclusive with <node>node</node>: Integrated Targeting Unit.
+type|dedicated_targeting_core|null|0	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
+type|dedicated_targeting_core|null|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Dedicated Targeting Core, Integrated Targeting Unit, Advanced Targeting Core, Distributed Fire Control.\n\nMutually exclusive with <node>node</node>: Integrated Targeting Unit.
 type|dedicated_targeting_core|FRIGATE|0	0	Increases ballistic weapon range by <good>0%</good>.
 type|dedicated_targeting_core|FRIGATE|1	0	Increases energy weapon range by <good>0%</good>.
-type|dedicated_targeting_core|FRIGATE|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Dedicated Targeting Core, Integrated Targeting Unit, Advanced Targeting Core, Distributed Fire Control.\n\nMutually exclusive with <node>node</node>: Integrated Targeting Unit.
+type|dedicated_targeting_core|FRIGATE|2	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
+type|dedicated_targeting_core|FRIGATE|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Dedicated Targeting Core, Integrated Targeting Unit, Advanced Targeting Core, Distributed Fire Control.\n\nMutually exclusive with <node>node</node>: Integrated Targeting Unit.
 type|dedicated_targeting_core|DESTROYER|0	0	Increases ballistic weapon range by <good>0%</good>.
 type|dedicated_targeting_core|DESTROYER|1	0	Increases energy weapon range by <good>0%</good>.
-type|dedicated_targeting_core|DESTROYER|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Dedicated Targeting Core, Integrated Targeting Unit, Advanced Targeting Core, Distributed Fire Control.\n\nMutually exclusive with <node>node</node>: Integrated Targeting Unit.
+type|dedicated_targeting_core|DESTROYER|2	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
+type|dedicated_targeting_core|DESTROYER|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Dedicated Targeting Core, Integrated Targeting Unit, Advanced Targeting Core, Distributed Fire Control.\n\nMutually exclusive with <node>node</node>: Integrated Targeting Unit.
 type|dedicated_targeting_core|CRUISER|0	0	Increases ballistic weapon range by <good>35%</good>.
 type|dedicated_targeting_core|CRUISER|1	0	Increases energy weapon range by <good>35%</good>.
-type|dedicated_targeting_core|CRUISER|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Dedicated Targeting Core, Integrated Targeting Unit, Advanced Targeting Core, Distributed Fire Control.\n\nMutually exclusive with <node>node</node>: Integrated Targeting Unit.
+type|dedicated_targeting_core|CRUISER|2	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
+type|dedicated_targeting_core|CRUISER|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Dedicated Targeting Core, Integrated Targeting Unit, Advanced Targeting Core, Distributed Fire Control.\n\nMutually exclusive with <node>node</node>: Integrated Targeting Unit.
 type|dedicated_targeting_core|CAPITAL_SHIP|0	0	Increases ballistic weapon range by <good>50%</good>.
 type|dedicated_targeting_core|CAPITAL_SHIP|1	0	Increases energy weapon range by <good>50%</good>.
-type|dedicated_targeting_core|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Dedicated Targeting Core, Integrated Targeting Unit, Advanced Targeting Core, Distributed Fire Control.\n\nMutually exclusive with <node>node</node>: Integrated Targeting Unit.
+type|dedicated_targeting_core|CAPITAL_SHIP|2	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
+type|dedicated_targeting_core|CAPITAL_SHIP|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Dedicated Targeting Core, Integrated Targeting Unit, Advanced Targeting Core, Distributed Fire Control.\n\nMutually exclusive with <node>node</node>: Integrated Targeting Unit.
 type|defensive_targeting_array|null|0	0	Increases the damage fighters launched from this ship deal to other fighters and missiles. Also locks launched fighters to stay near the ship instead of patrolling freely.
 type|defensive_targeting_array|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Defensive Targeting Array.
 type|defensive_targeting_array|FRIGATE|0	0	Increases the damage fighters launched from this ship deal to other fighters and missiles. Also locks launched fighters to stay near the ship instead of patrolling freely.

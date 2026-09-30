@@ -1,5 +1,6 @@
 package exiledsector.skills;
 
+import exiledsector.skills.tags.SkillTags;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
@@ -76,5 +77,28 @@ class SkillTypesDataConsistencyTest {
             }
         }
         assertTrue(gaps.isEmpty(), String.join("\n", gaps));
+    }
+
+    @Test
+    void everySkillTypeAndNodeTagIsInTheTagVocabulary() throws Exception {
+        List<String> unknown = new ArrayList<>();
+        for (JSONObject type : loadTypes().values()) {
+            for (String tag : strings(type, "tags")) {
+                if (!SkillTags.ALL.contains(tag)) {
+                    unknown.add("type " + type.getString("id") + ": " + tag);
+                }
+            }
+        }
+        String tree = Files.readString(Path.of("data/skilltrees/ship_skill_tree.json"), StandardCharsets.UTF_8);
+        JSONArray nodes = new JSONObject(tree).getJSONArray("nodes");
+        for (int i = 0; i < nodes.length(); i++) {
+            JSONObject node = nodes.getJSONObject(i);
+            for (String tag : strings(node, "tags")) {
+                if (!SkillTags.ALL.contains(tag)) {
+                    unknown.add("node " + node.getString("id") + ": " + tag);
+                }
+            }
+        }
+        assertTrue(unknown.isEmpty(), "Tags outside the vocabulary: " + unknown);
     }
 }

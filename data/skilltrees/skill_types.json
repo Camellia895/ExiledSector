@@ -512,8 +512,7 @@
 			],
 			"tags": [
 				"flux",
-				"speed",
-				"req_no_capital"
+				"speed"
 			]
 		},
 		{
@@ -872,6 +871,11 @@
 					"magnitude": 20
 				}
 			],
+			"requiredHullSizes": [
+				"DESTROYER",
+				"CRUISER",
+				"CAPITAL_SHIP"
+			],
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -885,8 +889,7 @@
 			"todo": "Real vanilla effect also increases deployment points and supply cost to recover by 1 per 5 OP spent on fighters (min 1), with a proportional increase in CR lost per deployment - deliberately not implemented yet, so right now this node is a buff with no real downside beyond the 4 modifiers above. This node may need other balance considerations once that's added.",
 			"tags": [
 				"fighter",
-				"req_no_fighter_bays",
-				"req_destroyer_plus"
+				"req_no_fighter_bays"
 			]
 		},
 		{
@@ -945,6 +948,10 @@
 					"capitalShip": 50
 				}
 			],
+			"requiredHullSizes": [
+				"CRUISER",
+				"CAPITAL_SHIP"
+			],
 			"exclusiveHullMods": [
 				"dedicated_targeting_core",
 				"targetingunit",
@@ -955,8 +962,7 @@
 				"targetingunit"
 			],
 			"tags": [
-				"range",
-				"req_cruiser_plus"
+				"range"
 			]
 		},
 		{

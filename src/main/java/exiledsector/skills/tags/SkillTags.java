@@ -15,8 +15,8 @@ public final class SkillTags {
 
     public static final List<String> REQUIREMENT = List.of(
             "req_shields", "req_no_shields", "req_phase", "req_fighter_bays", "req_no_fighter_bays", "req_ballistic",
-            "req_missile", "req_energy", "req_beam", "req_offensive_beam", "req_non_beam_energy", "req_destroyer_plus",
-            "req_cruiser_plus", "req_no_capital", "req_flagship", "campaign_only", "player_only");
+            "req_missile", "req_energy", "req_beam", "req_offensive_beam", "req_non_beam_energy", "req_flagship",
+            "campaign_only", "player_only");
 
     public static final List<String> ALL = Stream.of(THEME, REGION, REQUIREMENT).flatMap(List::stream).toList();
 

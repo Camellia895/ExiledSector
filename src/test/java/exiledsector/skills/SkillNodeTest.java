@@ -393,27 +393,27 @@ class SkillNodeTest {
 
     @Test
     void effectiveTagsListNodeTagsThenTypeTagsWithoutDuplicates() {
-        SkillType type = taggedType("hull", List.of(), List.of("hull", "req_destroyer_plus"));
+        SkillType type = taggedType("hull", List.of(), List.of("hull", "req_shields"));
         SkillNode node = taggedNode(type, List.of("hegemony", "hull"));
 
-        assertEquals(List.of("hegemony", "hull", "req_destroyer_plus"), List.copyOf(node.effectiveTags(new ShipSkillData())));
+        assertEquals(List.of("hegemony", "hull", "req_shields"), List.copyOf(node.effectiveTags(new ShipSkillData())));
     }
 
     @Test
     void effectiveTagsIncludeTheChosenOptionsTagsOnceSelected() {
-        SkillType hullOption = taggedType("hull", List.of(), List.of("hull", "req_cruiser_plus"));
+        SkillType hullOption = taggedType("hull", List.of(), List.of("hull", "req_ballistic"));
         SkillTree.registerType(hullOption);
         SkillType placeholder = taggedType("slot", List.of("hull"), List.of("hull"));
         SkillNode node = taggedNode(placeholder, List.of("pirate"));
         ShipSkillData data = new ShipSkillData();
         data.selectOption(node, hullOption, 1);
 
-        assertEquals(List.of("pirate", "hull", "req_cruiser_plus"), List.copyOf(node.effectiveTags(data)));
+        assertEquals(List.of("pirate", "hull", "req_ballistic"), List.copyOf(node.effectiveTags(data)));
     }
 
     @Test
     void effectiveTagsOfAnUnselectedOptionalNodeAreJustTheNodeAndPlaceholderTags() {
-        SkillType hullOption = taggedType("hull", List.of(), List.of("req_cruiser_plus"));
+        SkillType hullOption = taggedType("hull", List.of(), List.of("req_ballistic"));
         SkillTree.registerType(hullOption);
         SkillType placeholder = taggedType("slot", List.of("hull"), List.of("hull"));
         SkillNode node = taggedNode(placeholder, List.of("pirate"));
@@ -424,11 +424,11 @@ class SkillNodeTest {
 
     @Test
     void effectiveTagsForAKnownOptionIncludeThatOptionsTags() {
-        SkillType hullOption = taggedType("hull", List.of(), List.of("req_cruiser_plus"));
+        SkillType hullOption = taggedType("hull", List.of(), List.of("req_ballistic"));
         SkillType placeholder = taggedType("slot", List.of("hull"), List.of("hull"));
         SkillNode node = taggedNode(placeholder, List.of("pirate"));
 
-        assertEquals(List.of("pirate", "hull", "req_cruiser_plus"), List.copyOf(node.effectiveTags(hullOption)));
+        assertEquals(List.of("pirate", "hull", "req_ballistic"), List.copyOf(node.effectiveTags(hullOption)));
         assertEquals(List.of("pirate", "hull"), List.copyOf(node.effectiveTags((SkillType) null)));
     }
 
