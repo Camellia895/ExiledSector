@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-public enum CombatSkillEffect implements SkillEffect {
+public enum CombatSkillEffect implements BackedSkillEffect {
 
     BEAM_WEAPON_SPLIT_TARGETS_FLAT(BeamSplitListener.TARGETS_KEY, BeamSplitListener.class, BeamSplitListener::new) {
         @Override
@@ -64,34 +64,19 @@ public enum CombatSkillEffect implements SkillEffect {
     private static final String NON_BEAM_ENERGY_CHAIN_COUNT_KEY = "exiledSector_energyChainCount";
     private static final String NON_BEAM_ENERGY_CHAIN_DEALT_MULT_KEY = "exiledSector_energyChainDealtMult";
 
-    private final ListenerEffect listener;
+    private final EffectBacking backing;
 
     <T> CombatSkillEffect(Class<T> listenerType, Function<ShipAPI, ? extends T> listenerFactory) {
         this(null, listenerType, listenerFactory);
     }
 
     <T> CombatSkillEffect(String magnitudeKey, Class<T> listenerType, Function<ShipAPI, ? extends T> listenerFactory) {
-        this.listener = new ListenerEffect(magnitudeKey, listenerType, listenerFactory);
+        this.backing = new ListenerEffect(magnitudeKey, listenerType, listenerFactory);
     }
 
     @Override
-    public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-        listener.storeMagnitude(stats, modId, magnitude);
-    }
-
-    @Override
-    public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
-        listener.attach(ship);
-    }
-
-    @Override
-    public boolean supportsTemporaryGating() {
-        return false;
-    }
-
-    @Override
-    public StyledText description(float magnitude) {
-        return EffectText.templated(this, magnitude);
+    public EffectBacking backing() {
+        return backing;
     }
 
     private static final class EnergyChainListener implements DamageDealtModifier {

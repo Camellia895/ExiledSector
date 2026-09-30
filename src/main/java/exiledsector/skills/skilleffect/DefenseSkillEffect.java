@@ -11,7 +11,7 @@ import static exiledsector.skills.skilleffect.StatTarget.all;
 import static exiledsector.skills.skilleffect.StatTarget.bonus;
 import static exiledsector.skills.skilleffect.StatTarget.stat;
 
-public enum DefenseSkillEffect implements SkillEffect {
+public enum DefenseSkillEffect implements BackedSkillEffect {
 
     HULL_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getHullBonus), StatNames.HULL_POINTS, false),
     HULL_FLAT(FLAT, bonus(MutableShipStatsAPI::getHullBonus), StatNames.HULL_POINTS, false),
@@ -77,29 +77,23 @@ public enum DefenseSkillEffect implements SkillEffect {
             stat(MutableShipStatsAPI::getEnergyShieldDamageTakenMult)),
             "stat.energyDamageTakenIncludingHitsOnShieldsArmorAndHull", true);
 
-    private final SimpleStatEffect simpleStat;
+    private final EffectBacking backing;
 
     DefenseSkillEffect() {
-        this.simpleStat = null;
+        this((EffectBacking) null);
     }
 
     DefenseSkillEffect(StatMode mode, StatTarget target, String statKey, boolean lowerIsBetter) {
-        this.simpleStat = new SimpleStatEffect(mode, target, statKey, lowerIsBetter);
+        this(new SimpleStatEffect(mode, target, statKey, lowerIsBetter));
+    }
+
+    DefenseSkillEffect(EffectBacking backing) {
+        this.backing = backing;
     }
 
     @Override
-    public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-        simpleStat.apply(stats, modId, magnitude);
-    }
-
-    @Override
-    public StyledText description(float magnitude) {
-        return simpleStat != null ? simpleStat.description(magnitude) : EffectText.templated(this, magnitude);
-    }
-
-    @Override
-    public boolean lowerIsBetter() {
-        return simpleStat != null && simpleStat.lowerIsBetter();
+    public EffectBacking backing() {
+        return backing;
     }
 
     private static final class StatNames {

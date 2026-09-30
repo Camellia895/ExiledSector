@@ -1,14 +1,13 @@
 package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
-import exiledsector.i18n.StyledText;
 
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
 import static exiledsector.skills.skilleffect.StatTarget.stat;
 
-public enum MovementSkillEffect implements SkillEffect {
+public enum MovementSkillEffect implements BackedSkillEffect {
 
     MANEUVERABILITY_PERCENT(PERCENT, stat(MutableShipStatsAPI::getMaxTurnRate), "stat.maneuverability", false),
     TOP_SPEED_PERCENT(PERCENT, stat(MutableShipStatsAPI::getMaxSpeed), StatNames.TOP_SPEED, false),
@@ -20,25 +19,19 @@ public enum MovementSkillEffect implements SkillEffect {
     DECELERATION_FLAT(FLAT, stat(MutableShipStatsAPI::getDeceleration), "stat.deceleration", false),
     TURN_ACCELERATION_PERCENT(PERCENT, stat(MutableShipStatsAPI::getTurnAcceleration), "stat.turnAcceleration", false);
 
-    private final SimpleStatEffect simpleStat;
+    private final EffectBacking backing;
 
     MovementSkillEffect(StatMode mode, StatTarget target, String statKey, boolean lowerIsBetter) {
-        this.simpleStat = new SimpleStatEffect(mode, target, statKey, lowerIsBetter);
+        this(new SimpleStatEffect(mode, target, statKey, lowerIsBetter));
+    }
+
+    MovementSkillEffect(EffectBacking backing) {
+        this.backing = backing;
     }
 
     @Override
-    public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-        simpleStat.apply(stats, modId, magnitude);
-    }
-
-    @Override
-    public StyledText description(float magnitude) {
-        return simpleStat.description(magnitude);
-    }
-
-    @Override
-    public boolean lowerIsBetter() {
-        return simpleStat.lowerIsBetter();
+    public EffectBacking backing() {
+        return backing;
     }
 
     private static final class StatNames {

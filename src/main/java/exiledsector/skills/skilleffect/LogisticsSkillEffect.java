@@ -18,7 +18,7 @@ import static exiledsector.skills.skilleffect.StatTarget.dynamicMod;
 import static exiledsector.skills.skilleffect.StatTarget.dynamicStat;
 import static exiledsector.skills.skilleffect.StatTarget.stat;
 
-public enum LogisticsSkillEffect implements SkillEffect {
+public enum LogisticsSkillEffect implements BackedSkillEffect {
 
     FUEL_CAPACITY_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getFuelMod), "stat.fuelCapacity", false),
     FUEL_CAPACITY_FLAT(FLAT, bonus(MutableShipStatsAPI::getFuelMod), "stat.fuelCapacity", false),
@@ -187,29 +187,23 @@ public enum LogisticsSkillEffect implements SkillEffect {
         }
     };
 
-    private final SimpleStatEffect simpleStat;
+    private final EffectBacking backing;
 
     LogisticsSkillEffect() {
-        this.simpleStat = null;
+        this((EffectBacking) null);
     }
 
     LogisticsSkillEffect(StatMode mode, StatTarget target, String statKey, boolean lowerIsBetter) {
-        this.simpleStat = new SimpleStatEffect(mode, target, statKey, lowerIsBetter);
+        this(new SimpleStatEffect(mode, target, statKey, lowerIsBetter));
+    }
+
+    LogisticsSkillEffect(EffectBacking backing) {
+        this.backing = backing;
     }
 
     @Override
-    public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-        simpleStat.apply(stats, modId, magnitude);
-    }
-
-    @Override
-    public StyledText description(float magnitude) {
-        return simpleStat != null ? simpleStat.description(magnitude) : EffectText.templated(this, magnitude);
-    }
-
-    @Override
-    public boolean lowerIsBetter() {
-        return simpleStat != null && simpleStat.lowerIsBetter();
+    public EffectBacking backing() {
+        return backing;
     }
 
     private static final class StatNames {

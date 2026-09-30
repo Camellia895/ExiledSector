@@ -3,9 +3,10 @@ package exiledsector.skills.skilleffect;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import exiledsector.i18n.StyledText;
 
-record SimpleStatEffect(StatMode mode, StatTarget target, String statKey, boolean lowerIsBetter) {
+record SimpleStatEffect(StatMode mode, StatTarget target, String statKey, boolean lowerIsBetter) implements EffectBacking {
 
-    void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+    @Override
+    public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
         target.apply(stats, modId, mode, magnitude);
     }
 
@@ -13,7 +14,13 @@ record SimpleStatEffect(StatMode mode, StatTarget target, String statKey, boolea
         return mode.describeStat(magnitude, statKey);
     }
 
-    boolean supportsTemporaryGating() {
+    @Override
+    public StyledText description(SkillEffect effect, float magnitude) {
+        return description(magnitude);
+    }
+
+    @Override
+    public boolean supportsTemporaryGating() {
         return target.supportsTemporaryGating();
     }
 }

@@ -24,7 +24,7 @@ import static exiledsector.skills.skilleffect.StatMode.PERCENT;
 import static exiledsector.skills.skilleffect.StatTarget.bonus;
 import static exiledsector.skills.skilleffect.StatTarget.dynamicMod;
 
-public enum PhaseSkillEffect implements SkillEffect {
+public enum PhaseSkillEffect implements BackedSkillEffect {
 
     PHASE_CLOAK_ACTIVATION_COST_MULT(MULT, bonus(MutableShipStatsAPI::getPhaseCloakActivationCostBonus),
             "stat.phaseCloakActivationCost", true),
@@ -97,29 +97,23 @@ public enum PhaseSkillEffect implements SkillEffect {
 
     private static final String PHASE_ANCHOR_CR_PENALTY_KEY = "exiledSector_phaseAnchorCrPenaltyPercent";
 
-    private final SimpleStatEffect simpleStat;
+    private final EffectBacking backing;
 
     PhaseSkillEffect() {
-        this.simpleStat = null;
+        this((EffectBacking) null);
     }
 
     PhaseSkillEffect(StatMode mode, StatTarget target, String statKey, boolean lowerIsBetter) {
-        this.simpleStat = new SimpleStatEffect(mode, target, statKey, lowerIsBetter);
+        this(new SimpleStatEffect(mode, target, statKey, lowerIsBetter));
+    }
+
+    PhaseSkillEffect(EffectBacking backing) {
+        this.backing = backing;
     }
 
     @Override
-    public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-        simpleStat.apply(stats, modId, magnitude);
-    }
-
-    @Override
-    public StyledText description(float magnitude) {
-        return simpleStat != null ? simpleStat.description(magnitude) : EffectText.templated(this, magnitude);
-    }
-
-    @Override
-    public boolean lowerIsBetter() {
-        return simpleStat != null && simpleStat.lowerIsBetter();
+    public EffectBacking backing() {
+        return backing;
     }
 
     private static final class PhaseAnchorDiveListener implements HullDamageAboutToBeTakenListener, AdvanceableListener {

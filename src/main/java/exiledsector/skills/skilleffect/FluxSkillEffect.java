@@ -9,7 +9,7 @@ import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
 import static exiledsector.skills.skilleffect.StatTarget.stat;
 
-public enum FluxSkillEffect implements SkillEffect {
+public enum FluxSkillEffect implements BackedSkillEffect {
 
     FLUX_CAPACITY_PERCENT(PERCENT, stat(MutableShipStatsAPI::getFluxCapacity), StatNames.FLUX_CAPACITY, false),
     FLUX_CAPACITY_FLAT(FLAT, stat(MutableShipStatsAPI::getFluxCapacity), StatNames.FLUX_CAPACITY, false),
@@ -60,29 +60,23 @@ public enum FluxSkillEffect implements SkillEffect {
         }
     };
 
-    private final SimpleStatEffect simpleStat;
+    private final EffectBacking backing;
 
     FluxSkillEffect() {
-        this.simpleStat = null;
+        this((EffectBacking) null);
     }
 
     FluxSkillEffect(StatMode mode, StatTarget target, String statKey, boolean lowerIsBetter) {
-        this.simpleStat = new SimpleStatEffect(mode, target, statKey, lowerIsBetter);
+        this(new SimpleStatEffect(mode, target, statKey, lowerIsBetter));
+    }
+
+    FluxSkillEffect(EffectBacking backing) {
+        this.backing = backing;
     }
 
     @Override
-    public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-        simpleStat.apply(stats, modId, magnitude);
-    }
-
-    @Override
-    public StyledText description(float magnitude) {
-        return simpleStat != null ? simpleStat.description(magnitude) : EffectText.templated(this, magnitude);
-    }
-
-    @Override
-    public boolean lowerIsBetter() {
-        return simpleStat != null && simpleStat.lowerIsBetter();
+    public EffectBacking backing() {
+        return backing;
     }
 
     private static final class StatNames {

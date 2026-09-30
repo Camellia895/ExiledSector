@@ -20,7 +20,7 @@ import static exiledsector.skills.skilleffect.StatTarget.bonus;
 import static exiledsector.skills.skilleffect.StatTarget.dynamicMod;
 import static exiledsector.skills.skilleffect.StatTarget.stat;
 
-public enum MiscSkillEffect implements SkillEffect {
+public enum MiscSkillEffect implements BackedSkillEffect {
 
     PD_IGNORES_DECOY_FLARES {
         @Override
@@ -129,28 +129,22 @@ public enum MiscSkillEffect implements SkillEffect {
         }
     };
 
-    private final SimpleStatEffect simpleStat;
+    private final EffectBacking backing;
 
     MiscSkillEffect() {
-        this.simpleStat = null;
+        this((EffectBacking) null);
     }
 
     MiscSkillEffect(StatMode mode, StatTarget target, String statKey, boolean lowerIsBetter) {
-        this.simpleStat = new SimpleStatEffect(mode, target, statKey, lowerIsBetter);
+        this(new SimpleStatEffect(mode, target, statKey, lowerIsBetter));
+    }
+
+    MiscSkillEffect(EffectBacking backing) {
+        this.backing = backing;
     }
 
     @Override
-    public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-        simpleStat.apply(stats, modId, magnitude);
-    }
-
-    @Override
-    public StyledText description(float magnitude) {
-        return simpleStat != null ? simpleStat.description(magnitude) : EffectText.templated(this, magnitude);
-    }
-
-    @Override
-    public boolean lowerIsBetter() {
-        return simpleStat != null && simpleStat.lowerIsBetter();
+    public EffectBacking backing() {
+        return backing;
     }
 }

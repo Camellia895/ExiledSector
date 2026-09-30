@@ -28,14 +28,9 @@ import static exiledsector.skills.skilleffect.StatTarget.bonus;
 import static exiledsector.skills.skilleffect.StatTarget.dynamicStat;
 import static exiledsector.skills.skilleffect.StatTarget.stat;
 
-public enum ShieldSkillEffect implements SkillEffect {
+public enum ShieldSkillEffect implements BackedSkillEffect {
 
-    BEAM_WEAPON_HARD_FLUX_PERCENT(BeamHardFluxListener.HARD_FLUX_PERCENT_KEY, BeamHardFluxListener.class, ship -> new BeamHardFluxListener()) {
-        @Override
-        public boolean supportsTemporaryGating() {
-            return false;
-        }
-    },
+    BEAM_WEAPON_HARD_FLUX_PERCENT(BeamHardFluxListener.HARD_FLUX_PERCENT_KEY, BeamHardFluxListener.class, ship -> new BeamHardFluxListener()),
     REMOVE_SHIELD {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -157,50 +152,27 @@ public enum ShieldSkillEffect implements SkillEffect {
     public static final float MAKESHIFT_SHIELD_TURN_RATE_MULT = 1.2f;
     public static final float MAKESHIFT_SHIELD_ARC = 90f;
 
-    private final SimpleStatEffect simpleStat;
-    private final ListenerEffect listener;
+    private final EffectBacking backing;
 
     ShieldSkillEffect() {
-        this(null, null);
+        this((EffectBacking) null);
     }
 
     ShieldSkillEffect(StatMode mode, StatTarget target, String statKey, boolean lowerIsBetter) {
-        this(new SimpleStatEffect(mode, target, statKey, lowerIsBetter), null);
+        this(new SimpleStatEffect(mode, target, statKey, lowerIsBetter));
     }
 
     <T> ShieldSkillEffect(String magnitudeKey, Class<T> listenerType, Function<ShipAPI, ? extends T> listenerFactory) {
-        this(null, new ListenerEffect(magnitudeKey, listenerType, listenerFactory));
+        this(new ListenerEffect(magnitudeKey, listenerType, listenerFactory));
     }
 
-    ShieldSkillEffect(SimpleStatEffect simpleStat, ListenerEffect listener) {
-        this.simpleStat = simpleStat;
-        this.listener = listener;
-    }
-
-    @Override
-    public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-        if (listener != null) {
-            listener.storeMagnitude(stats, modId, magnitude);
-        } else {
-            simpleStat.apply(stats, modId, magnitude);
-        }
+    ShieldSkillEffect(EffectBacking backing) {
+        this.backing = backing;
     }
 
     @Override
-    public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
-        if (listener != null) {
-            listener.attach(ship);
-        }
-    }
-
-    @Override
-    public StyledText description(float magnitude) {
-        return simpleStat != null ? simpleStat.description(magnitude) : EffectText.templated(this, magnitude);
-    }
-
-    @Override
-    public boolean lowerIsBetter() {
-        return simpleStat != null && simpleStat.lowerIsBetter();
+    public EffectBacking backing() {
+        return backing;
     }
 
     public static ShieldAPI.ShieldType resolveDisplayShieldType(ShieldAPI.ShieldType baseType, List<SkillEffect> effectsInAllocationOrder) {
