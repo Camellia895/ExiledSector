@@ -1,6 +1,5 @@
 package exiledsector.ui.node;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
@@ -115,10 +114,10 @@ final class SkillTreeWormholeGhostFlights {
     }
 
     void draw(TreeViewport viewport, float alphaMult) {
-        if (flights.isEmpty() || !spriteCache.ensureLoaded(SkillTreeNodeGhostRenderer.GHOST_TEXTURE_PATH)) {
+        SpriteAPI sprite = flights.isEmpty() ? null : spriteCache.sprite(SkillTreeNodeGhostRenderer.GHOST_TEXTURE_PATH);
+        if (sprite == null) {
             return;
         }
-        SpriteAPI sprite = Global.getSettings().getSprite(SkillTreeNodeGhostRenderer.GHOST_TEXTURE_PATH);
         Color color = ghostRenderer.ghostColor();
         float size = SkillTreeNodeGeometry.NODE_SIZE * GHOST_SIZE_RATIO * viewport.zoom();
 

@@ -46,6 +46,8 @@ public class SkillTreeStarRenderer {
     private final Map<String, AuroraRenderer> auroraById = new HashMap<>();
     private final Map<String, AuroraDelegate> auroraDelegateById = new HashMap<>();
     private Map<String, PlanetSpecAPI> specsByType;
+    private SpriteAPI atmosphereTexture;
+    private SpriteAPI auroraTexture;
 
     public SkillTreeStarRenderer() {
         sphere.setTextureFlag(true);
@@ -70,11 +72,11 @@ public class SkillTreeStarRenderer {
         for (Star star : stars) {
             PlanetSpecAPI spec = resolveSpec(star.getStarType());
             String texturePath = spec == null ? null : spec.getTexture();
-            if (texturePath == null || texturePath.isEmpty() || !spriteCache.ensureLoaded(texturePath)) {
+            SpriteAPI texture = texturePath == null || texturePath.isEmpty() ? null : spriteCache.texture(texturePath);
+            if (texture == null) {
                 continue;
             }
 
-            SpriteAPI texture = Global.getSettings().getSprite(texturePath);
             float screenX = viewport.screenX(star.getX());
             float screenY = viewport.screenY(star.getY());
             float radius = star.getRadius() * zoom;
@@ -117,7 +119,10 @@ public class SkillTreeStarRenderer {
         List<Star> stars = SkillTree.getStars();
         if (stars.isEmpty()) return;
 
-        SpriteAPI texture = Global.getSettings().getSprite(ATMOSPHERE_TEXTURE_CATEGORY, ATMOSPHERE_TEXTURE_ID);
+        if (atmosphereTexture == null) {
+            atmosphereTexture = Global.getSettings().getSprite(ATMOSPHERE_TEXTURE_CATEGORY, ATMOSPHERE_TEXTURE_ID);
+        }
+        SpriteAPI texture = atmosphereTexture;
         if (texture == null) return;
 
         for (Star star : stars) {
@@ -174,7 +179,10 @@ public class SkillTreeStarRenderer {
         List<Star> stars = SkillTree.getStars();
         if (stars.isEmpty()) return;
 
-        SpriteAPI texture = Global.getSettings().getSprite(AURORA_TEXTURE_CATEGORY, AURORA_TEXTURE_ID);
+        if (auroraTexture == null) {
+            auroraTexture = Global.getSettings().getSprite(AURORA_TEXTURE_CATEGORY, AURORA_TEXTURE_ID);
+        }
+        SpriteAPI texture = auroraTexture;
         if (texture == null) return;
 
         for (Star star : stars) {
@@ -228,8 +236,8 @@ public class SkillTreeStarRenderer {
             float radius = star.getRadius() * zoom;
             float haloRadius = star.getRadius() * spec.getCoronaSize() * zoom;
             if (haloRadius > radius) {
-                SpriteDraw.drawAdditiveAtCenter(spriteCache, coronaPath, new Vector2f(viewport.screenX(star.getX()), viewport.screenY(star.getY())),
-                        new Vector2f(haloRadius * 2f, haloRadius * 2f), resolveColor(star, spec.getCoronaColor()), alphaMult);
+                SpriteDraw.drawAdditiveAtCenter(spriteCache, coronaPath, viewport.screenX(star.getX()), viewport.screenY(star.getY()),
+                        haloRadius * 2f, haloRadius * 2f, resolveColor(star, spec.getCoronaColor()), alphaMult);
             }
         }
     }

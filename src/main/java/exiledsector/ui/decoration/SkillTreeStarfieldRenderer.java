@@ -5,7 +5,6 @@ import exiledsector.skills.layout.Star;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.util.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
-import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -99,8 +98,8 @@ public class SkillTreeStarfieldRenderer {
 
                 float twinkle = 0.6f + 0.4f * (float) Math.sin(elapsedTime * star.twinkleSpeed + star.twinklePhase);
 
-                SpriteDraw.drawAtCenter(spriteCache, STAR_SPRITE_PATHS[star.spriteIndex], new Vector2f(screenX, screenY),
-                        new Vector2f(star.size, star.size), star.useAccentColor ? accentColor : STANDARD_STAR_COLOR,
+                SpriteDraw.drawAtCenter(spriteCache, STAR_SPRITE_PATHS[star.spriteIndex], screenX, screenY,
+                        star.size, star.size, star.useAccentColor ? accentColor : STANDARD_STAR_COLOR,
                         alphaMult * star.baseAlpha * twinkle);
             }
         }

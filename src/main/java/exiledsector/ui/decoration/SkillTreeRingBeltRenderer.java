@@ -1,6 +1,5 @@
 package exiledsector.ui.decoration;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.layout.RingBelt;
@@ -29,9 +28,9 @@ public class SkillTreeRingBeltRenderer {
 
         for (RingBelt belt : ringBelts) {
             String path = belt.getRingArtPath();
-            if (path == null || path.isEmpty() || !spriteCache.ensureLoaded(path)) continue;
+            SpriteAPI sprite = path == null || path.isEmpty() ? null : spriteCache.texture(path);
+            if (sprite == null) continue;
 
-            SpriteAPI sprite = Global.getSettings().getSprite(path);
             float screenX = viewport.screenX(belt.getX());
             float screenY = viewport.screenY(belt.getY());
             float rotationDeg = belt.getRotation() + belt.getRotationSpeed() * elapsedSeconds;

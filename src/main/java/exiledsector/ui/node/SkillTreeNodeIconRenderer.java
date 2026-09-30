@@ -5,7 +5,6 @@ import exiledsector.skills.SkillType;
 import exiledsector.ui.util.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -19,7 +18,7 @@ final class SkillTreeNodeIconRenderer {
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeNodeIconRenderer.class);
 
     void drawIcon(String spritePath, float cx, float cy, float size, float alphaMult, Color tint) {
-        SpriteDraw.drawAtCenter(spriteCache, spritePath, new Vector2f(cx, cy), new Vector2f(size, size), tint, alphaMult);
+        SpriteDraw.drawAtCenter(spriteCache, spritePath, cx, cy, size, size, tint, alphaMult);
     }
 
     void drawSplitIcon(SkillType optionalType, float cx, float cy, float size, float alphaMult, Color tint) {

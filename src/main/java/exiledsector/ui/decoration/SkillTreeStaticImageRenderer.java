@@ -5,7 +5,6 @@ import exiledsector.skills.layout.StaticImage;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
-import org.lwjgl.util.vector.Vector2f;
 
 import java.util.List;
 
@@ -30,8 +29,8 @@ public class SkillTreeStaticImageRenderer {
             float screenX = viewport.screenX(image.getX());
             float screenY = viewport.screenY(image.getY());
             float angleDeg = -(image.getRotation() + image.getRotationSpeed() * elapsedSeconds);
-            SpriteDraw.drawAtCenter(spriteCache, path, new Vector2f(screenX, screenY),
-                    new Vector2f(image.getWidth() * zoom, image.getHeight() * zoom), null, alphaMult, angleDeg);
+            SpriteDraw.drawAtCenter(spriteCache, path, screenX, screenY,
+                    image.getWidth() * zoom, image.getHeight() * zoom, null, alphaMult, angleDeg);
         }
     }
 }

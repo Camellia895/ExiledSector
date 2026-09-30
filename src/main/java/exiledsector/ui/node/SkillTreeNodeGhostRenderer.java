@@ -37,11 +37,11 @@ final class SkillTreeNodeGhostRenderer {
     }
 
     void draw(float cx, float cy, float footprintSize, float alphaMult, String nodeId) {
-        if (!spriteCache.ensureLoaded(GHOST_TEXTURE_PATH)) return;
+        SpriteAPI sprite = spriteCache.sprite(GHOST_TEXTURE_PATH);
+        if (sprite == null) return;
 
         List<GhostInstance> ghosts = ghostsByNode.computeIfAbsent(nodeId, id -> generateGhosts(id));
         Color color = ghostColor();
-        SpriteAPI sprite = Global.getSettings().getSprite(GHOST_TEXTURE_PATH);
         float size = footprintSize * GHOST_SIZE_RATIO;
 
         for (GhostInstance ghost : ghosts) {

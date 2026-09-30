@@ -1,6 +1,5 @@
 package exiledsector.ui.node;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.SkillNode;
@@ -248,27 +247,27 @@ final class SkillTreeNodeRingRenderer {
             float jy = (float) Math.sin(wanderRad) * jitterMag;
             float size = radius * 2f * instance.sizeJitter;
 
-            SpriteDraw.drawAdditiveAtCenter(spriteCache, path, new Vector2f(cx + jx, cy + jy), new Vector2f(size, size), color, alpha, angle);
+            SpriteDraw.drawAdditiveAtCenter(spriteCache, path, cx + jx, cy + jy, size, size, color, alpha, angle);
         }
     }
 
     private void drawAmbientGlow(float cx, float cy, float footprintSize, float stateAlpha, float alphaMult) {
         float size = footprintSize * AMBIENT_GLOW_SIZE_RATIO;
 
-        SpriteDraw.drawAdditiveAtCenter(spriteCache, GLOW_TEXTURE_PATH, new Vector2f(cx, cy), new Vector2f(size, size),
+        SpriteDraw.drawAdditiveAtCenter(spriteCache, GLOW_TEXTURE_PATH, cx, cy, size, size,
                 AMBIENT_GLOW_COLOR, AMBIENT_GLOW_ALPHA * stateAlpha * alphaMult);
     }
 
     private void drawKeystoneRingBelt(float cx, float cy, float footprintSize, float widthRatio, String ringArtPath, float stateAlpha, float alphaMult) {
-        if (!spriteCache.ensureLoaded(ringArtPath)) return;
-        SpriteAPI sprite = Global.getSettings().getSprite(ringArtPath);
+        SpriteAPI sprite = spriteCache.texture(ringArtPath);
+        if (sprite == null) return;
         RadialBand band = new RadialBand(new Vector2f(cx, cy), beltInnerRadius(footprintSize), beltOuterRadius(footprintSize, widthRatio));
         RingBeltRenderer.render(sprite, band, Color.WHITE, stateAlpha * alphaMult);
     }
 
     private void drawKeystoneAuroraBelt(float cx, float cy, float footprintSize, float widthRatio, Color tint, float stateAlpha, float alphaMult) {
-        if (!spriteCache.ensureLoaded(AURORA_TEXTURE_PATH)) return;
-        SpriteAPI sprite = Global.getSettings().getSprite(AURORA_TEXTURE_PATH);
+        SpriteAPI sprite = spriteCache.texture(AURORA_TEXTURE_PATH);
+        if (sprite == null) return;
         AuroraBeltRenderer.render(sprite,
                 new RadialBand(new Vector2f(cx, cy), beltInnerRadius(footprintSize), beltOuterRadius(footprintSize, widthRatio)),
                 tint, stateAlpha * alphaMult, elapsedSeconds);
@@ -308,14 +307,14 @@ final class SkillTreeNodeRingRenderer {
             float pulse = 1f + (float) Math.sin(Math.toRadians(elapsedSeconds * WORMHOLE_CORONA_PULSE_SPEED_DEG + baseAngle)) * WORMHOLE_CORONA_PULSE_SIZE_RATIO;
 
             SpriteDraw.drawAdditiveAtCenter(spriteCache, WORMHOLE_CORONA_TEXTURE_PATH,
-                    new Vector2f(cx + (float) Math.cos(rad) * orbit, cy + (float) Math.sin(rad) * orbit),
-                    new Vector2f(size * pulse, size * pulse), color, alphaMult, angle);
+                    cx + (float) Math.cos(rad) * orbit, cy + (float) Math.sin(rad) * orbit,
+                    size * pulse, size * pulse, color, alphaMult, angle);
         }
     }
 
     private void drawWormholeBands(float cx, float cy, float baseRadius, Color color, float alphaMult) {
-        if (!spriteCache.ensureLoaded(WORMHOLE_BAND_TEXTURE_PATH)) return;
-        SpriteAPI texture = Global.getSettings().getSprite(WORMHOLE_BAND_TEXTURE_PATH);
+        SpriteAPI texture = spriteCache.texture(WORMHOLE_BAND_TEXTURE_PATH);
+        if (texture == null) return;
         float innerRadius = baseRadius * WORMHOLE_BAND_INNER_RADIUS_RATIO;
         float outerRadius = innerRadius + baseRadius * WORMHOLE_BAND_THICKNESS_RATIO;
         float rotationA = (elapsedSeconds * WORMHOLE_BAND_ROTATION_SPEED_DEG) % 360f;
@@ -327,15 +326,13 @@ final class SkillTreeNodeRingRenderer {
     }
 
     private void drawWormholeGlow(float cx, float cy, float baseRadius, Color color, float alphaMult, float openness) {
-        Vector2f center = new Vector2f(cx, cy);
         float size = baseRadius * 2f * WORMHOLE_GLOW_SIZE_RATIO;
-        Vector2f glowSize = new Vector2f(size, size);
         float closedness = 1f - openness;
         float alpha = WORMHOLE_GLOW_ALPHA * closedness * closedness * closedness * alphaMult;
 
         //intentionally rendering two because it's prettier
-        SpriteDraw.drawAdditiveAtCenter(spriteCache, WORMHOLE_GLOW_TEXTURE_PATH, center, glowSize, color, alpha);
-        SpriteDraw.drawAdditiveAtCenter(spriteCache, WORMHOLE_GLOW_TEXTURE_PATH, center, glowSize, color, alpha);
+        SpriteDraw.drawAdditiveAtCenter(spriteCache, WORMHOLE_GLOW_TEXTURE_PATH, cx, cy, size, size, color, alpha);
+        SpriteDraw.drawAdditiveAtCenter(spriteCache, WORMHOLE_GLOW_TEXTURE_PATH, cx, cy, size, size, color, alpha);
     }
 
     private Color resolveWormholeColor(SkillNode node) {

@@ -12,7 +12,6 @@ import exiledsector.ui.util.SpriteDraw;
 import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.ui.LazyFont;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
 
@@ -140,8 +139,8 @@ final class SkillTreeReadoutBar {
     }
 
     private void drawLeadingEdgeGlow(float edgeX, float bottom, Color color, float alphaMult, float glowBoost) {
-        SpriteDraw.drawAdditiveAtCenter(spriteCache, GLOW_LINE_TEXTURE, new Vector2f(edgeX, bottom + BAR_HEIGHT / 2f),
-                new Vector2f(LEADING_EDGE_GLOW_WIDTH, BAR_HEIGHT), color, alphaMult * (0.35f + 0.65f * glowBoost));
+        SpriteDraw.drawAdditiveAtCenter(spriteCache, GLOW_LINE_TEXTURE, edgeX, bottom + BAR_HEIGHT / 2f,
+                LEADING_EDGE_GLOW_WIDTH, BAR_HEIGHT, color, alphaMult * (0.35f + 0.65f * glowBoost));
     }
 
     private void drawInnerGlow(float left, float bottom, float width, Color color, float alphaMult, float glowBoost) {
