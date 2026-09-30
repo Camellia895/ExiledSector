@@ -1432,23 +1432,27 @@
 			"effects": [
 				{
 					"effect": "MANEUVERABILITY_PERCENT",
-					"magnitude": -50
+					"magnitude": -20
+				},
+				{
+					"effect": "ARMOR_PERCENT",
+					"magnitude": 30
 				}
 			],
 			"hullSizeEffects": [
 				{
 					"effect": "HULL_FLAT",
-					"frigate": 150,
-					"destroyer": 300,
-					"cruiser": 400,
-					"capitalShip": 500
+					"frigate": 100,
+					"destroyer": 200,
+					"cruiser": 300,
+					"capitalShip": 400
 				},
 				{
 					"effect": "ARMOR_FLAT",
-					"frigate": 80,
-					"destroyer": 180,
-					"cruiser": 150,
-					"capitalShip": 175
+					"frigate": 100,
+					"destroyer": 200,
+					"cruiser": 300,
+					"capitalShip": 400
 				}
 			],
 			"unlockConditions": [
