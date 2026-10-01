@@ -51,7 +51,8 @@ final class SkillTreeNodeConnectorRenderer {
         this.wormholeOpenness = wormholeOpenness;
     }
 
-    void draw(TreeViewport viewport, NodeAllocator.Snapshot tree, Set<String> templateNodeIds, float alphaMult) {
+    void draw(TreeViewport viewport, NodeAllocator.Snapshot tree, Set<String> templateNodeIds, ConnectorFills fills,
+              float alphaMult) {
         float zoom = viewport.zoom();
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
@@ -64,7 +65,7 @@ final class SkillTreeNodeConnectorRenderer {
             ConnectorEndpoint nodeEndpoint = new ConnectorEndpoint(viewport.screenX(node.getOffsetX()),
                     viewport.screenY(node.getOffsetY()), endpointRadius(node, zoom));
 
-            drawConnectorsFrom(node, nodeEndpoint, viewport, tree, templateNodeIds, alphaMult);
+            drawConnectorsFrom(node, nodeEndpoint, viewport, tree, templateNodeIds, fills, alphaMult);
         }
 
         flushBatch();
@@ -72,39 +73,51 @@ final class SkillTreeNodeConnectorRenderer {
     }
 
     private void drawConnectorsFrom(SkillNode node, ConnectorEndpoint nodeEndpoint, TreeViewport viewport,
-                                     NodeAllocator.Snapshot tree, Set<String> templateNodeIds, float alphaMult) {
+                                     NodeAllocator.Snapshot tree, Set<String> templateNodeIds, ConnectorFills fills,
+                                     float alphaMult) {
         float zoom = viewport.zoom();
         ShipSkillData data = tree.data();
         String satisfiedRootId = tree.satisfiedRootId();
         for (String connectedId : node.getConnectedNodeIds()) {
             SkillNode other = SkillTree.get(connectedId);
-            boolean skip = other == null
-                    || (other.getType().getTier() != SkillTier.ROOT && node.getId().compareTo(other.getId()) >= 0)
-                    || !SkillTree.isConnectorVisible(node.getId(), other.getId());
-            if (skip) {
+            if (other == null || !drawsListedEdge(node, other)) {
                 continue;
             }
 
             ConnectorEndpoint otherEndpoint = new ConnectorEndpoint(viewport.screenX(other.getOffsetX()),
                     viewport.screenY(other.getOffsetY()), endpointRadius(other, zoom));
             boolean bothSatisfied = data.isSatisfied(node.getId(), satisfiedRootId) && data.isSatisfied(other.getId(), satisfiedRootId);
+            boolean nodeInTemplate = templateNodeIds.contains(node.getId());
+            boolean otherInTemplate = templateNodeIds.contains(other.getId());
 
             ConnectorFade fade = new ConnectorFade(
-                    ConnectorKind.of(bothSatisfied, templateNodeIds.contains(node.getId()), templateNodeIds.contains(other.getId())),
+                    ConnectorKind.of(bothSatisfied, nodeInTemplate, otherInTemplate),
                     isWormhole(other) || tree.isHidden(other),
                     isWormhole(node) || tree.isHidden(node),
                     isOpenWormhole(other, data, satisfiedRootId),
                     isOpenWormhole(node, data, satisfiedRootId));
+            ConnectorFills.FillRange fill = bothSatisfied ? fills.filledRange(other.getId(), node.getId()) : ConnectorFills.FillRange.FULL;
+            EdgeFill edgeFill = fill.isFull() ? EdgeFill.NONE : new EdgeFill(fill, ConnectorKind.of(false, nodeInTemplate, otherInTemplate));
 
             float edgeAlpha = alphaMult * search.connectorAlpha(node, other, tree);
             ConnectorCurve curve = SkillTree.getCurve(node.getId(), other.getId());
             if (curve == null) {
-                drawStraightNodeConnectorLine(otherEndpoint, nodeEndpoint, fade, zoom, edgeAlpha);
+                drawStraightNodeConnectorLine(otherEndpoint, nodeEndpoint, fade, edgeFill, zoom, edgeAlpha);
             } else {
                 drawCurvedNodeConnectorLine(otherEndpoint, viewport.screenX(curve.getControlOffsetX()),
-                        viewport.screenY(curve.getControlOffsetY()), nodeEndpoint, fade, zoom, edgeAlpha);
+                        viewport.screenY(curve.getControlOffsetY()), nodeEndpoint, fade, edgeFill, zoom, edgeAlpha);
             }
         }
+    }
+
+    static boolean drawsEdge(SkillNode from, SkillNode to) {
+        return from.getConnectedNodeIds().contains(to.getId()) && drawsListedEdge(from, to);
+    }
+
+    private static boolean drawsListedEdge(SkillNode from, SkillNode to) {
+        return from.getType().getTier() != SkillTier.ROOT
+                && (to.getType().getTier() == SkillTier.ROOT || from.getId().compareTo(to.getId()) < 0)
+                && SkillTree.isConnectorVisible(from.getId(), to.getId());
     }
 
     private float endpointRadius(SkillNode node, float zoom) {
@@ -121,7 +134,8 @@ final class SkillTreeNodeConnectorRenderer {
         return node.getType().getTier() == SkillTier.WORMHOLE;
     }
 
-    private void drawStraightNodeConnectorLine(ConnectorEndpoint a, ConnectorEndpoint b, ConnectorFade fade, float zoom, float alphaMult) {
+    private void drawStraightNodeConnectorLine(ConnectorEndpoint a, ConnectorEndpoint b, ConnectorFade fade, EdgeFill edgeFill,
+                                               float zoom, float alphaMult) {
         float x1 = a.x();
         float y1 = a.y();
         float r1 = a.radius();
@@ -139,7 +153,7 @@ final class SkillTreeNodeConnectorRenderer {
         float startY = y1 + dirY * r1;
         float endX = x2 - dirX * r2;
         float endY = y2 - dirY * r2;
-        SegmentFade segmentFade = segmentFade(fade, length - r1 - r2, zoom, alphaMult);
+        SegmentFade segmentFade = segmentFade(fade, edgeFill, length - r1 - r2, zoom, alphaMult);
 
         float[] breakpoints = straightBreakpoints(segmentFade);
         for (int i = 1; i < breakpoints.length; i++) {
@@ -162,11 +176,11 @@ final class SkillTreeNodeConnectorRenderer {
         return PLAIN_BREAKPOINTS;
     }
 
-    private static SegmentFade segmentFade(ConnectorFade fade, float visibleLength, float zoom, float alphaMult) {
+    private static SegmentFade segmentFade(ConnectorFade fade, EdgeFill edgeFill, float visibleLength, float zoom, float alphaMult) {
         return new SegmentFade(fade,
                 tipFraction(fade.glowing() && fade.tipFadeR1ToBlack(), visibleLength, zoom),
                 tipFraction(fade.glowing() && fade.tipFadeR2ToBlack(), visibleLength, zoom),
-                alphaMult);
+                alphaMult, edgeFill);
     }
 
     private static float tipFraction(boolean fades, float visibleLength, float zoom) {
@@ -178,6 +192,43 @@ final class SkillTreeNodeConnectorRenderer {
 
     private void drawFadedSegment(float x1, float y1, float x2, float y2, float progress1, float progress2,
                                   SegmentFade segmentFade) {
+        if (segmentFade.edgeFill() != EdgeFill.NONE) {
+            drawPartiallyFilledSegment(x1, y1, x2, y2, progress1, progress2, segmentFade);
+            return;
+        }
+        drawSegmentAsIs(x1, y1, x2, y2, progress1, progress2, segmentFade);
+    }
+
+    private void drawPartiallyFilledSegment(float x1, float y1, float x2, float y2, float progress1, float progress2,
+                                            SegmentFade segmentFade) {
+        ConnectorFills.FillRange fill = segmentFade.edgeFill().range();
+        float fillStart = Math.max(progress1, Math.min(progress2, fill.start()));
+        float fillEnd = Math.max(progress1, Math.min(progress2, fill.end()));
+        drawFillPart(x1, y1, x2, y2, progress1, progress2, progress1, fillStart, segmentFade);
+        drawFillPart(x1, y1, x2, y2, progress1, progress2, fillStart, fillEnd, segmentFade);
+        drawFillPart(x1, y1, x2, y2, progress1, progress2, fillEnd, progress2, segmentFade);
+    }
+
+    private void drawFillPart(float x1, float y1, float x2, float y2, float progress1, float progress2,
+                              float from, float to, SegmentFade segmentFade) {
+        if (to <= from || progress2 <= progress1) return;
+        float f0 = (from - progress1) / (progress2 - progress1);
+        float f1 = (to - progress1) / (progress2 - progress1);
+        float xa = x1 + (x2 - x1) * f0;
+        float ya = y1 + (y2 - y1) * f0;
+        float xb = x1 + (x2 - x1) * f1;
+        float yb = y1 + (y2 - y1) * f1;
+        if (segmentFade.edgeFill().range().contains(from, to)) {
+            drawSegmentAsIs(xa, ya, xb, yb, from, to, segmentFade);
+            return;
+        }
+        ConnectorFade fade = segmentFade.fade();
+        if (fade.fadeR1ToBlack() || fade.fadeR2ToBlack()) return;
+        drawConnectorSegment(xa, ya, xb, yb, segmentFade.edgeFill().unfilledKind(), segmentFade.alphaMult());
+    }
+
+    private void drawSegmentAsIs(float x1, float y1, float x2, float y2, float progress1, float progress2,
+                                 SegmentFade segmentFade) {
         ConnectorFade fade = segmentFade.fade();
         float alphaMult = segmentFade.alphaMult();
         if (fade.dullFading() && fade.kind() == ConnectorKind.TEMPLATE) {
@@ -193,7 +244,7 @@ final class SkillTreeNodeConnectorRenderer {
     }
 
     private void drawCurvedNodeConnectorLine(ConnectorEndpoint a, float throughX, float throughY, ConnectorEndpoint b,
-                                             ConnectorFade fade, float zoom, float alphaMult) {
+                                             ConnectorFade fade, EdgeFill edgeFill, float zoom, float alphaMult) {
         float r1 = a.radius();
         float r2 = b.radius();
         float cx = 2f * throughX - (a.x() + b.x()) / 2f;
@@ -208,7 +259,7 @@ final class SkillTreeNodeConnectorRenderer {
         float tEnd = curveParamAtArcLength(cumLen, totalLength - r2);
         if (tEnd <= tStart) return;
 
-        renderCurveSegments(curve, tStart, tEnd, totalLength - r1 - r2, fade, zoom, alphaMult);
+        renderCurveSegments(curve, tStart, tEnd, totalLength - r1 - r2, fade, edgeFill, zoom, alphaMult);
     }
 
     private float[] computeCumulativeArcLength(QuadraticCurve curve) {
@@ -230,8 +281,8 @@ final class SkillTreeNodeConnectorRenderer {
     }
 
     private void renderCurveSegments(QuadraticCurve curve, float tStart, float tEnd, float visibleArcLength,
-                                      ConnectorFade fade, float zoom, float alphaMult) {
-        SegmentFade segmentFade = segmentFade(fade, visibleArcLength, zoom, alphaMult);
+                                      ConnectorFade fade, EdgeFill edgeFill, float zoom, float alphaMult) {
+        SegmentFade segmentFade = segmentFade(fade, edgeFill, visibleArcLength, zoom, alphaMult);
 
         float prevX = curve.xAt(tStart);
         float prevY = curve.yAt(tStart);
@@ -383,7 +434,11 @@ final class SkillTreeNodeConnectorRenderer {
         }
     }
 
-    private record SegmentFade(ConnectorFade fade, float tipFraction1, float tipFraction2, float alphaMult) {
+    private record SegmentFade(ConnectorFade fade, float tipFraction1, float tipFraction2, float alphaMult, EdgeFill edgeFill) {
+    }
+
+    private record EdgeFill(ConnectorFills.FillRange range, ConnectorKind unfilledKind) {
+        static final EdgeFill NONE = new EdgeFill(ConnectorFills.FillRange.FULL, ConnectorKind.GLOW);
     }
 
     private record QuadraticCurve(float x0, float y0, float cx, float cy, float x2, float y2) {

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static exiledsector.ui.node.SkillTreeNodeGeometry.ICON_INSET_RATIO;
@@ -50,6 +51,8 @@ public final class SkillTreeNodeRenderer {
     private final SkillTreeNodeDropdownRenderer dropdownRenderer;
     private final NodeSearch search;
     private final WormholeOpenness wormholeOpenness = new WormholeOpenness();
+    private final ConnectorFills connectorFills = new ConnectorFills();
+    private final Consumer<String> startPulse;
 
     private final TemplateStepExecutor stepExecutor;
     private final Function<TemplateStep, StepVerdict> attemptStep;
@@ -74,6 +77,7 @@ public final class SkillTreeNodeRenderer {
         style.setAccentIconPath(chosenRoot != null ? chosenRoot.getType().getIconPath() : null);
 
         this.ringRenderer = new SkillTreeNodeRingRenderer(style, wormholeOpenness);
+        this.startPulse = ringRenderer::startPulse;
         this.iconRenderer = new SkillTreeNodeIconRenderer();
         this.ghostRenderer = new SkillTreeNodeGhostRenderer();
         this.wormholeGhostFlights = new SkillTreeWormholeGhostFlights(ghostRenderer, new Random());
@@ -140,6 +144,7 @@ public final class SkillTreeNodeRenderer {
     public void advance(float amount) {
         rootChoice.advance(amount);
         ringRenderer.advance(amount);
+        connectorFills.advance(amount, startPulse);
         ghostRenderer.advance(amount);
         ShipSkillData data = snapshot().data();
         wormholeGhostFlights.advance(amount, data);
@@ -241,7 +246,7 @@ public final class SkillTreeNodeRenderer {
             }
         }
 
-        connectorRenderer.draw(viewport, allocation, templateNodeIds, treeAlphaMult);
+        connectorRenderer.draw(viewport, allocation, templateNodeIds, connectorFills, treeAlphaMult);
         wormholeGhostFlights.draw(viewport, treeAlphaMult * search.backgroundAlpha());
 
         for (SkillNode node : SkillTree.getAllNodes().values()) {
@@ -441,18 +446,49 @@ public final class SkillTreeNodeRenderer {
     }
 
     private void allocateOptionalNode(SkillNode node, SkillType chosenOption) {
+        boolean wasAllocated = allocator.data().isAllocated(node.getId());
         allocator.allocateOption(node, chosenOption);
         lastChosenOptionalOption = chosenOption;
-        afterAllocationChange(node, true);
+        if (wasAllocated) {
+            refreshAfterAllocation();
+            ringRenderer.startPulse(node.getId());
+        } else {
+            afterAllocationChange(node, true);
+        }
     }
 
-    private void afterAllocationChange(SkillNode node, boolean isAllocatedNow) {
+    private void refreshAfterAllocation() {
         snapshot = null;
         if (refitButton != null) {
             refitButton.refreshVariant();
         }
-        if (isAllocatedNow) {
+    }
+
+    private void afterAllocationChange(SkillNode node, boolean isAllocatedNow) {
+        refreshAfterAllocation();
+        if (!isAllocatedNow) {
+            connectorFills.cancel(node.getId());
+            if (node.getPairedNodeId() != null) {
+                connectorFills.cancel(node.getPairedNodeId());
+            }
+        } else if (startFillsInto(node)) {
+            connectorFills.schedulePulse(node.getId());
+        } else {
             ringRenderer.startPulse(node.getId());
         }
+    }
+
+    private boolean startFillsInto(SkillNode node) {
+        NodeAllocator.Snapshot tree = snapshot();
+        boolean started = false;
+        for (SkillNode neighbour : SkillTree.getAllNodes().values()) {
+            boolean drawn = SkillTreeNodeConnectorRenderer.drawsEdge(node, neighbour)
+                    || SkillTreeNodeConnectorRenderer.drawsEdge(neighbour, node);
+            if (drawn && tree.data().isSatisfied(neighbour.getId(), tree.satisfiedRootId())) {
+                connectorFills.start(neighbour.getId(), node.getId());
+                started = true;
+            }
+        }
+        return started;
     }
 }
