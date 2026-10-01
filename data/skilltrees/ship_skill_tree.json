@@ -3531,7 +3531,6 @@
 			"id": "tactical_superiority_1",
 			"type": "tactical_superiority",
 			"connectedTo": [
-				"small_flux_optional_47",
 				"objective_capture_range_3"
 			],
 			"x": 9,
@@ -3814,7 +3813,6 @@
 			"id": "violence_of_action_1",
 			"type": "violence_of_action",
 			"connectedTo": [
-				"small_flux_optional_55",
 				"temporary_acceleration_1",
 				"temporary_acceleration_2"
 			],
@@ -4011,7 +4009,6 @@
 			"id": "torpedo_specialisation_1",
 			"type": "torpedo_specialisation",
 			"connectedTo": [
-				"small_flux_optional_59",
 				"missile_damage_5",
 				"missile_top_speed_1"
 			],
@@ -4105,7 +4102,6 @@
 			"id": "waste_not_1",
 			"type": "waste_not",
 			"connectedTo": [
-				"small_flux_optional_60",
 				"small_flux_optional_61"
 			],
 			"x": 8560,
