@@ -70,3 +70,25 @@ function Copy-ModFiles {
         Where-Object { $excludedGraphics -notcontains $_.Name } |
         ForEach-Object { Copy-Item -Path $_.FullName -Destination $graphics.FullName -Recurse -Force }
 }
+
+function Save-ReleasedSkillNodes {
+    param([string]$ProjectRoot)
+
+    $tree = Get-Content (Join-Path $ProjectRoot "data\skilltrees\ship_skill_tree.json") -Raw -Encoding UTF8 | ConvertFrom-Json
+    $types = Get-Content (Join-Path $ProjectRoot "data\skilltrees\skill_types.json") -Raw -Encoding UTF8 | ConvertFrom-Json
+    $rootTypes = @($types.skillTypes | Where-Object { $_.tier -ceq "ROOT" } | ForEach-Object { $_.id })
+    [string[]]$nodes = @($tree.nodes | ForEach-Object { $_.id })
+    [string[]]$roots = @($tree.nodes | Where-Object { $rootTypes -ccontains $_.type } | ForEach-Object { $_.id })
+    [Array]::Sort($nodes, [StringComparer]::Ordinal)
+    [Array]::Sort($roots, [StringComparer]::Ordinal)
+    $nodeLines = ($nodes | ForEach-Object { "    `"$_`"" }) -join ",`n"
+    $rootLines = ($roots | ForEach-Object { "    `"$_`"" }) -join ",`n"
+    $text = "{`n  `"nodes`": [`n$nodeLines`n  ],`n  `"roots`": [`n$rootLines`n  ]`n}`n"
+
+    $ledgerFile = Join-Path $ProjectRoot "src\test\resources\released_skill_nodes.json"
+    $before = if (Test-Path $ledgerFile) { [System.IO.File]::ReadAllText($ledgerFile).Replace("`r`n", "`n") } else { "" }
+    if ($before -ne $text) {
+        [System.IO.File]::WriteAllText($ledgerFile, $text, (New-Object System.Text.UTF8Encoding($false)))
+        Write-Host "Recorded $($nodes.Count) released skill node ids in $ledgerFile; commit it with the release."
+    }
+}

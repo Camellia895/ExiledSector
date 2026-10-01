@@ -15,6 +15,8 @@ import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
+import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillTree;
 import exiledsector.skills.npc.NpcLayout;
 import exiledsector.skills.npc.NpcLayouts;
 import exiledsector.ui.SkillTreeRefitButton;
@@ -53,6 +55,10 @@ import static org.mockito.Mockito.when;
 
 class ExiledSectorModPluginTest {
 
+    private static final String TYPES = "{ \"skillTypes\": [ { \"id\": \"root_type\", \"name\": \"Root\", \"icon\": \"a.png\", \"tier\": \"ROOT\" },"
+            + " { \"id\": \"armor\", \"name\": \"Armor\", \"icon\": \"a.png\" } ] }";
+    private static final String NODES = "{ \"id\": \"root\", \"type\": \"root_type\" }, { \"id\": \"armor\", \"type\": \"armor\", \"connectedTo\": [\"root\"] }";
+
     private MockedStatic<Global> globalMock;
     private MockedStatic<LunaSettings> lunaSettingsMock;
     private MockedStatic<LunaSettings.SettingsCreator> settingsCreatorMock;
@@ -90,7 +96,9 @@ class ExiledSectorModPluginTest {
     }
 
     @AfterEach
-    void tearDown() {
+    void tearDown() throws Exception {
+        loadTree("");
+        SkillTree.getAllTypes().clear();
         NpcLayouts.register(Map.of());
         settingsCreatorMock.close();
         globalMock.close();
@@ -99,6 +107,59 @@ class ExiledSectorModPluginTest {
         if (registered != null) {
             LunaRefitManager.INSTANCE.removeButton(registered);
         }
+    }
+
+    private void loadTree(String nodes) throws Exception {
+        when(settings.loadJSON("data/skilltrees/skill_types.json")).thenReturn(new JSONObject(TYPES));
+        when(settings.loadJSON("data/skilltrees/ship_skill_tree.json")).thenReturn(new JSONObject("{ \"nodes\": [ " + nodes + " ] }"));
+        SkillTree.load();
+    }
+
+    private static ShipSkillData shipWithARemovedNode() {
+        ShipSkillData data = ShipSkillDataManager.get("ship");
+        data.chooseStartingRoot(SkillTree.get("root"));
+        data.allocate(SkillTree.get("armor"), 3);
+        data.getAllocatedNodeIds().add("removed_by_update");
+        return data;
+    }
+
+    @Test
+    void onGameLoadForgetsSavedNodesTheSkillTreeNoLongerHas() throws Exception {
+        loadTree(NODES);
+        ShipSkillData data = shipWithARemovedNode();
+
+        new ExiledSectorModPlugin().onGameLoad(false);
+
+        assertEquals(List.of("root", "armor"), List.copyOf(data.getAllocatedNodeIds()));
+    }
+
+    @Test
+    void aShipResetBecauseItsRootWasRemovedKeepsItsReserveSlotUntilTheNextLoad() throws Exception {
+        loadTree(NODES);
+        ShipSkillData data = ShipSkillDataManager.get("rootless");
+        data.chooseStartingRoot(new SkillNode("removed_root", SkillTree.getType("root_type"), List.of(), 0f, 0f));
+        data.allocate(SkillTree.get("armor"), 3);
+        persistentData.put("exiledSector_opSpentSlots", new HashMap<>(Map.of("rootless", 0)));
+
+        new ExiledSectorModPlugin().onGameLoad(false);
+
+        assertTrue(data.getAllocatedNodeIds().isEmpty());
+        assertEquals(Map.of("rootless", 0), persistentData.get("exiledSector_opSpentSlots"));
+
+        new ExiledSectorModPlugin().onGameLoad(false);
+
+        assertEquals(Map.of(), persistentData.get("exiledSector_opSpentSlots"));
+        assertNull(ShipSkillDataManager.find("rootless"));
+    }
+
+    @Test
+    void onGameLoadLeavesSavedNodesAloneWhenTheSkillTreeDidNotLoadCompletely() throws Exception {
+        loadTree(NODES + ", { \"id\": \"broken\", \"type\": \"missing_type\" }");
+        ShipSkillData data = shipWithARemovedNode();
+
+        new ExiledSectorModPlugin().onGameLoad(false);
+
+        assertTrue(data.isAllocated("removed_by_update"));
     }
 
     @Test

@@ -190,6 +190,39 @@ public class ShipSkillData {
         }
     }
 
+    public List<String> forgetUnknownNodes(Map<String, SkillNode> tree) {
+        List<String> forgotten = new ArrayList<>();
+        for (String nodeId : List.copyOf(allocatedNodeIds)) {
+            if (!tree.containsKey(nodeId)) {
+                allocatedNodeIds.remove(nodeId);
+                release(nodeId);
+                forgotten.add(nodeId);
+            }
+        }
+        return forgotten;
+    }
+
+    public boolean hasLostStartingRoot(Map<String, SkillNode> tree) {
+        if (startingRootId == null) {
+            return !allocatedNodeIds.isEmpty() && firstAllocatedRootId(tree.values()) == null;
+        }
+        SkillNode root = tree.get(startingRootId);
+        return root == null || root.getType().getTier() != SkillTier.ROOT;
+    }
+
+    public List<String> resetAllocations() {
+        List<String> released = List.copyOf(allocatedNodeIds);
+        released.forEach(this::release);
+        allocatedNodeIds.clear();
+        freeNodeIds().clear();
+        pairedFreeNodeIds().clear();
+        if (optionalSelections != null) {
+            optionalSelections.clear();
+        }
+        startingRootId = null;
+        return released;
+    }
+
     private void charge(String nodeId, int opCost) {
         if (opCost > 0 && bankedFreeAllocations > 0) {
             bankedFreeAllocations--;

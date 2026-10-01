@@ -42,11 +42,13 @@ public final class SkillTreeLoader {
     public static ParsedTree loadAll(Map<String, SkillType> skillTypes) {
         JSONObject root = loadRoot();
         if (root == null) {
-            return new ParsedTree(new ArrayList<>(), new LinkedHashMap<>(), new HashSet<>(),
+            return new ParsedTree(new ArrayList<>(), 0, new LinkedHashMap<>(), new HashSet<>(),
                     new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         }
+        JSONArray declaredNodes = root.optJSONArray("nodes");
         return new ParsedTree(
                 safeParse("nodes", () -> parseNodes(root, skillTypes), new ArrayList<>()),
+                declaredNodes == null ? 0 : declaredNodes.length(),
                 safeParse("connector curves", () -> parseConnectorCurves(root), new LinkedHashMap<>()),
                 safeParse("hidden connectors", () -> parseHiddenConnectors(root), new HashSet<>()),
                 safeParse("static images", () -> parseStaticImages(root), new ArrayList<>()),
@@ -69,15 +71,17 @@ public final class SkillTreeLoader {
 
     public static final class ParsedTree {
         public final List<SkillNode> nodes;
+        public final int declaredNodeCount;
         public final Map<String, ConnectorCurve> connectorCurves;
         public final Set<String> hiddenConnectors;
         public final List<StaticImage> staticImages;
         public final List<RingBelt> ringBelts;
         public final List<Star> stars;
 
-        ParsedTree(List<SkillNode> nodes, Map<String, ConnectorCurve> connectorCurves, Set<String> hiddenConnectors,
+        ParsedTree(List<SkillNode> nodes, int declaredNodeCount, Map<String, ConnectorCurve> connectorCurves, Set<String> hiddenConnectors,
                    List<StaticImage> staticImages, List<RingBelt> ringBelts, List<Star> stars) {
             this.nodes = nodes;
+            this.declaredNodeCount = declaredNodeCount;
             this.connectorCurves = connectorCurves;
             this.hiddenConnectors = hiddenConnectors;
             this.staticImages = staticImages;

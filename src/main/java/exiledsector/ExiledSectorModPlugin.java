@@ -2,6 +2,7 @@ package exiledsector;
 
 import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.effects.CombatXpListener;
 import exiledsector.effects.NpcFleetDialogListener;
@@ -19,6 +20,7 @@ import exiledsector.persistence.OpSpentSlotManager;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
 import exiledsector.skills.SkillDataResolver;
+import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.npc.NpcLayouts;
 import exiledsector.skills.skilleffect.CsvIdBlocklist;
@@ -73,11 +75,27 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         spec.setDescriptionFormat(Translation.data("hullmod." + hullModId + ".description", spec.getDescriptionFormat()));
     }
 
+    private static void forgetUnknownNodes() {
+        if (!SkillTree.isLoadedCompletely()) {
+            Global.getLogger(ExiledSectorModPlugin.class).warn(LOG_TAG + ": the skill tree did not load completely, so saved allocations were left as they are.");
+            return;
+        }
+        ShipSkillDataManager.forgetUnknownNodes(SkillTree.getAllNodes(), ExiledSectorModPlugin::refund);
+    }
+
+    private static void refund(SkillItemCost itemCost) {
+        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
+        if (playerFleet != null) {
+            playerFleet.getCargo().addCommodity(itemCost.itemId(), itemCost.quantity());
+        }
+    }
+
     @Override
     public void onGameLoad(boolean newGame) {
         SkillDataResolver.clearCache();
         OpSpentSlotManager.releaseUnless(ShipSkillDataManager::hasProgress);
         ShipSkillDataManager.removeBlankRecords();
+        forgetUnknownNodes();
         SkillTreeTemplateStore.pruneAssignments(ShipSkillDataManager::hasProgress);
         FleetWideEffects.markPhaseFieldStale();
         Global.getSector().removeScriptsOfClass(SkillTreeInstaller.class);

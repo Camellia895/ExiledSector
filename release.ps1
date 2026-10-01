@@ -72,6 +72,8 @@ if ($outsideModFolder) {
     throw "Release zip has entries outside $modFolderName/: $($outsideModFolder -join ', ')"
 }
 
+Save-ReleasedSkillNodes -ProjectRoot $projectRoot
+
 $sizeMb = [math]::Round((Get-Item $zipPath).Length / 1MB, 1)
 Write-Host "Built $zipPath ($sizeMb MB, version $version)"
 Write-Host "Next: tag v$version, create a GitHub release, attach $zipName (keep that exact name), then push ExiledSector.version to main."

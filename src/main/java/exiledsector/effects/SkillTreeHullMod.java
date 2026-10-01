@@ -179,6 +179,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
                 setReserveCost(reserveId, 0);
                 variant.removeMod(reserveId);
             }
+            removeReservesOfReleasedSlots(variant);
             return;
         }
 
@@ -190,6 +191,29 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         }
         if (reserveId != null && !variant.hasHullMod(reserveId)) {
             variant.addMod(reserveId);
+        }
+    }
+
+    private static void removeReservesOfReleasedSlots(ShipVariantAPI variant) {
+        List<String> stale = null;
+        for (String hullModId : variant.getHullMods()) {
+            if (hullModId.startsWith(OP_SPENT_HULLMOD_ID_PREFIX) && isReleasedSlot(hullModId)) {
+                if (stale == null) {
+                    stale = new ArrayList<>();
+                }
+                stale.add(hullModId);
+            }
+        }
+        if (stale != null) {
+            stale.forEach(variant::removeMod);
+        }
+    }
+
+    private static boolean isReleasedSlot(String reserveId) {
+        try {
+            return !OpSpentSlotManager.isAssigned(Integer.parseInt(reserveId.substring(OP_SPENT_HULLMOD_ID_PREFIX.length())));
+        } catch (NumberFormatException e) {
+            return false;
         }
     }
 

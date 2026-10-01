@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -1033,5 +1034,59 @@ class ShipSkillDataTest {
         assertFalse(levelled.isBlank());
         assertFalse(experienced.isBlank());
         assertFalse(credited.isBlank());
+    }
+
+    @Test
+    void forgettingNodesTheTreeNoLongerHasRefundsTheirFreeCreditsAndOrdnancePoints() {
+        SkillNode root = rootNode("root", List.of());
+        SkillNode kept = node("kept", List.of("root"));
+        ShipSkillData data = new ShipSkillData();
+        data.chooseStartingRoot(root);
+        data.allocate(kept, 3);
+        data.allocate(node("gone", List.of("root")), 3);
+        data.addFreeAllocationCredit();
+        data.allocate(node("free_gone", List.of("root")), 3);
+        Map<String, SkillNode> tree = Map.of("root", root, "kept", kept);
+
+        assertEquals(List.of("gone", "free_gone"), data.forgetUnknownNodes(tree));
+        assertEquals(List.of("root", "kept"), List.copyOf(data.getAllocatedNodeIds()));
+        assertEquals(1, data.getBankedFreeAllocations());
+        assertEquals(3, data.getSpentOp(3));
+        assertFalse(data.hasLostStartingRoot(tree));
+        assertEquals(List.of(), data.forgetUnknownNodes(tree));
+    }
+
+    @Test
+    void aShipWhoseStartingRootIsGoneOrNoLongerARootIsResetButKeepsItsProgress() {
+        SkillNode root = rootNode("root", List.of());
+        SkillNode child = node("child", List.of("root"));
+        ShipSkillData data = new ShipSkillData();
+        data.chooseStartingRoot(root);
+        data.addFreeAllocationCredit();
+        data.allocate(child, 3);
+        data.incrementLevel();
+
+        assertTrue(data.hasLostStartingRoot(Map.of("child", child)));
+        assertTrue(data.hasLostStartingRoot(Map.of("root", node("root", List.of()), "child", child)));
+        assertEquals(List.of("root", "child"), data.resetAllocations());
+
+        assertTrue(data.getAllocatedNodeIds().isEmpty());
+        assertEquals(1, data.getBankedFreeAllocations());
+        assertEquals(1, data.getLevel());
+        assertTrue(data.chooseStartingRoot(root));
+    }
+
+    @Test
+    void anOlderTreeWithNoRecordedStartingRootIsLostOnlyOnceNoAllocatedRootRemains() {
+        SkillNode root = rootNode("root", List.of());
+        SkillNode child = node("child", List.of("root"));
+        ShipSkillData legacy = new ShipSkillData();
+        legacy.allocate(root, 0);
+        legacy.allocate(child, 3);
+
+        assertFalse(legacy.hasLostStartingRoot(Map.of("root", root, "child", child)));
+        legacy.forgetUnknownNodes(Map.of("child", child));
+        assertTrue(legacy.hasLostStartingRoot(Map.of("child", child)));
+        assertFalse(new ShipSkillData().hasLostStartingRoot(Map.of()));
     }
 }

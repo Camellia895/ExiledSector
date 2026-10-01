@@ -566,6 +566,19 @@ class SkillTreeHullModTest {
     }
 
     @Test
+    void aShipWithoutPaidNodesDropsAReserveWhoseSlotNoShipHoldsAnyMore() {
+        persistentData.put("exiledSector_opSpentSlots", new HashMap<>(Map.of("real-ship", 4)));
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(variant.getHullMods()).thenReturn(List.of("exiledSector_opSpent_4", "exiledSector_opSpent_9", "hardenedshieldemitter"));
+
+        SkillTreeHullMod.syncOpSpentHullMod(memberWithId("reset-ship"), variant);
+
+        verify(variant).removeMod("exiledSector_opSpent_9");
+        verify(variant, never()).removeMod("exiledSector_opSpent_4");
+        verify(variant, never()).removeMod("hardenedshieldemitter");
+    }
+
+    @Test
     void aReserveCopiedFromAnotherShipIsSwappedForThisShipsOwn() {
         FleetMemberAPI member = memberWithId("ship-a");
         ShipHullSpecAPI hull = mock(ShipHullSpecAPI.class);

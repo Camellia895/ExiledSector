@@ -25,6 +25,7 @@ public class SkillTree {
     private static final List<StaticImage> STATIC_IMAGES = new ArrayList<>();
     private static final List<RingBelt> RING_BELTS = new ArrayList<>();
     private static final List<Star> STARS = new ArrayList<>();
+    private static boolean loadedCompletely;
 
     private SkillTree() {
     }
@@ -45,6 +46,7 @@ public class SkillTree {
         for (SkillNode node : parsed.nodes) {
             register(node);
         }
+        loadedCompletely = parsed.declaredNodeCount > 0 && NODES.size() == parsed.declaredNodeCount;
         for (String issue : WormholePairValidator.findIssues(NODES.values())) {
             Logger.getLogger(SkillTree.class).error(issue);
         }
@@ -53,6 +55,10 @@ public class SkillTree {
         STATIC_IMAGES.addAll(parsed.staticImages);
         RING_BELTS.addAll(parsed.ringBelts);
         STARS.addAll(parsed.stars);
+    }
+
+    public static boolean isLoadedCompletely() {
+        return loadedCompletely;
     }
 
     public static void register(SkillNode node) {

@@ -3,6 +3,7 @@ package exiledsector.persistence;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -134,5 +136,33 @@ class ShipSkillDataManagerTest {
         assertNull(ShipSkillDataManager.find("blank-b"));
         assertNotNull(ShipSkillDataManager.find("levelled"));
         assertNotNull(ShipSkillDataManager.find("allocated"));
+    }
+
+    private static SkillNode typedNode(String id, SkillTier tier, SkillItemCost itemCost) {
+        SkillType type = new SkillType.Builder(id, id, "a.png", tier).effects(List.of()).itemCost(itemCost).build();
+        return new SkillNode(id, type, List.of(), 0f, 0f);
+    }
+
+    @Test
+    void forgettingUnknownNodesTrimsHealthyShipsAndResetsShipsWhoseRootIsGoneRefundingTheirItems() {
+        SkillNode root = typedNode("root", SkillTier.ROOT, null);
+        SkillNode lobster = typedNode("lobster", SkillTier.SMALL, new SkillItemCost("lobster", 50f));
+        SkillNode removedRoot = typedNode("removed_root", SkillTier.ROOT, null);
+        ShipSkillData healthy = ShipSkillDataManager.get("healthy");
+        healthy.chooseStartingRoot(root);
+        healthy.allocate(lobster, 3);
+        healthy.allocate(node("removed"), 3);
+        ShipSkillData rootless = ShipSkillDataManager.get("rootless");
+        rootless.chooseStartingRoot(removedRoot);
+        rootless.allocate(lobster, 3);
+        rootless.incrementLevel();
+        List<SkillItemCost> refunds = new ArrayList<>();
+
+        ShipSkillDataManager.forgetUnknownNodes(Map.of("root", root, "lobster", lobster), refunds::add);
+
+        assertEquals(List.of("root", "lobster"), List.copyOf(healthy.getAllocatedNodeIds()));
+        assertTrue(rootless.getAllocatedNodeIds().isEmpty());
+        assertEquals(1, rootless.getLevel());
+        assertEquals(List.of(new SkillItemCost("lobster", 50f)), refunds);
     }
 }

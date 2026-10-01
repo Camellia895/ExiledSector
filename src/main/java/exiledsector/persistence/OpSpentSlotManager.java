@@ -40,6 +40,10 @@ public final class OpSpentSlotManager {
         return getSlots(Global.getSector().getPersistentData()).get(shipId);
     }
 
+    public static boolean isAssigned(int slot) {
+        return getSlots(Global.getSector().getPersistentData()).containsValue(slot);
+    }
+
     public static void releaseUnless(Predicate<String> stillNeeded) {
         Map<String, Object> persistentData = Global.getSector().getPersistentData();
         persistentData.remove(LEGACY_NEXT_SLOT_KEY);
