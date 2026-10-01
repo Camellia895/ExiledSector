@@ -204,9 +204,26 @@ final class SkillTreeNodeConnectorRenderer {
         ConnectorFills.FillRange fill = segmentFade.edgeFill().range();
         float fillStart = Math.max(progress1, Math.min(progress2, fill.start()));
         float fillEnd = Math.max(progress1, Math.min(progress2, fill.end()));
+        if (segmentFade.fade().glowTipFading()) {
+            drawWormholeSegmentWithInnerLineFill(x1, y1, x2, y2, progress1, progress2, fillStart, fillEnd, segmentFade);
+            return;
+        }
         drawFillPart(x1, y1, x2, y2, progress1, progress2, progress1, fillStart, segmentFade);
         drawFillPart(x1, y1, x2, y2, progress1, progress2, fillStart, fillEnd, segmentFade);
         drawFillPart(x1, y1, x2, y2, progress1, progress2, fillEnd, progress2, segmentFade);
+    }
+
+    private void drawWormholeSegmentWithInnerLineFill(float x1, float y1, float x2, float y2, float progress1, float progress2,
+                                                      float fillStart, float fillEnd, SegmentFade segmentFade) {
+        float tip1 = segmentFade.tipFraction1();
+        float tip2 = segmentFade.tipFraction2();
+        float alphaMult = segmentFade.alphaMult();
+        addTipFadeLine(glowHaloLines, x1, y1, x2, y2, progress1, progress2, tip1, tip2, alphaMult * NODE_CONNECTOR_GLOW_HALO_ALPHA);
+        if (fillEnd <= fillStart || progress2 <= progress1) return;
+        float f0 = (fillStart - progress1) / (progress2 - progress1);
+        float f1 = (fillEnd - progress1) / (progress2 - progress1);
+        addTipFadeLine(glowLines, x1 + (x2 - x1) * f0, y1 + (y2 - y1) * f0, x1 + (x2 - x1) * f1, y1 + (y2 - y1) * f1,
+                fillStart, fillEnd, tip1, tip2, alphaMult);
     }
 
     private void drawFillPart(float x1, float y1, float x2, float y2, float progress1, float progress2,
@@ -365,10 +382,16 @@ final class SkillTreeNodeConnectorRenderer {
 
     private void drawGlowingSegmentWithTipFade(float x1, float y1, float x2, float y2, float progress0, float progress1,
                                                 float tipFraction1, float tipFraction2, float alphaMult) {
+        addTipFadeLine(glowHaloLines, x1, y1, x2, y2, progress0, progress1, tipFraction1, tipFraction2,
+                alphaMult * NODE_CONNECTOR_GLOW_HALO_ALPHA);
+        addTipFadeLine(glowLines, x1, y1, x2, y2, progress0, progress1, tipFraction1, tipFraction2, alphaMult);
+    }
+
+    private void addTipFadeLine(LineBatch batch, float x1, float y1, float x2, float y2, float progress0, float progress1,
+                                float tipFraction1, float tipFraction2, float alphaMult) {
         int color0 = colorForTipFade(progress0, tipFraction1, tipFraction2);
         int color1 = colorForTipFade(progress1, tipFraction1, tipFraction2);
-        glowHaloLines.add(x1, y1, color0, x2, y2, color1, alphaMult * NODE_CONNECTOR_GLOW_HALO_ALPHA);
-        glowLines.add(x1, y1, color0, x2, y2, color1, alphaMult);
+        batch.add(x1, y1, color0, x2, y2, color1, alphaMult);
     }
 
     private int colorForTipFade(float progress, float tipFraction1, float tipFraction2) {
