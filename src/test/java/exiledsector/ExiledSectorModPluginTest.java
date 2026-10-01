@@ -3,6 +3,7 @@ package exiledsector;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import exiledsector.effects.CombatXpListener;
@@ -11,6 +12,7 @@ import exiledsector.effects.NpcFleetInflationListener;
 import exiledsector.effects.NpcFleetSweepScript;
 import exiledsector.effects.SkillTreeInstaller;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.persistence.SkillTreeTemplateStore;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.npc.NpcLayout;
@@ -136,6 +138,20 @@ class ExiledSectorModPluginTest {
         InOrder order = inOrder(sector);
         order.verify(sector).removeScriptsOfClass(SkillTreeInstaller.class);
         order.verify(sector).addTransientScript(any(SkillTreeInstaller.class));
+    }
+
+    @Test
+    void onGameLoadDropsTemplateAssignmentsForShipsWithNoProgressOrDeletedTemplates() {
+        String templateId = SkillTreeTemplateStore.save("Brawler", "root_low_tech_1", HullSize.CRUISER, List.of()).id();
+        ShipSkillDataManager.get("kept").addXp(5f);
+        SkillTreeTemplateStore.assign("kept", templateId);
+        SkillTreeTemplateStore.assign("no-record", templateId);
+        ShipSkillDataManager.get("levelled-but-dangling").addXp(5f);
+        SkillTreeTemplateStore.assign("levelled-but-dangling", "deleted-template");
+
+        new ExiledSectorModPlugin().onGameLoad(false);
+
+        assertEquals(Map.of("kept", templateId), persistentData.get("exiledSector_skillTreeTemplateAssignments"));
     }
 
     @Test

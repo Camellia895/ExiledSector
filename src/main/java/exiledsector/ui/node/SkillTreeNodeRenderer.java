@@ -10,6 +10,11 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.progression.ShipOpBudget;
+import exiledsector.skills.template.AutoAllocateRun;
+import exiledsector.skills.template.SkillTreeTemplate;
+import exiledsector.skills.template.StepVerdict;
+import exiledsector.skills.template.TemplateCapture;
+import exiledsector.skills.template.TemplateStep;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.TreeViewport;
 import lunalib.lunaRefit.BaseRefitButton;
@@ -19,6 +24,9 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
+import java.util.function.BooleanSupplier;
+import java.util.function.Function;
 
 import static exiledsector.ui.node.SkillTreeNodeGeometry.ICON_INSET_RATIO;
 import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_SIZE;
@@ -43,9 +51,17 @@ public final class SkillTreeNodeRenderer {
     private final NodeSearch search;
     private final WormholeOpenness wormholeOpenness = new WormholeOpenness();
 
+    private final TemplateStepExecutor stepExecutor;
+    private final Function<TemplateStep, StepVerdict> attemptStep;
+    private final BooleanSupplier pointsLeft;
+
     private SkillType lastChosenOptionalOption;
     private LazyFont.DrawableString startingRootPrompt;
     private NodeAllocator.Snapshot snapshot;
+    private SkillTreeTemplate template;
+    private Set<String> templateNodeIds = Set.of();
+    private AutoAllocateRun autoRun;
+    private AutoAllocateRun.Summary lastRunSummary;
 
     public SkillTreeNodeRenderer(FleetMemberAPI member, ShipVariantAPI variant, SkillTreePanelStyle style, BaseRefitButton refitButton,
                                  NodeSearch search) {
@@ -64,6 +80,9 @@ public final class SkillTreeNodeRenderer {
         this.connectorRenderer = new SkillTreeNodeConnectorRenderer(style, search, wormholeOpenness);
         this.tooltipRenderer = new SkillTreeNodeTooltipRenderer(member, style);
         this.dropdownRenderer = new SkillTreeNodeDropdownRenderer(style);
+        this.stepExecutor = new TemplateStepExecutor(allocator, this::snapshot, node -> afterAllocationChange(node, true));
+        this.attemptStep = stepExecutor::attempt;
+        this.pointsLeft = stepExecutor::hasPointsLeft;
     }
 
     private static StartingRootChoice initialRootChoice(ShipSkillData data) {
@@ -125,6 +144,76 @@ public final class SkillTreeNodeRenderer {
         ShipSkillData data = snapshot().data();
         wormholeGhostFlights.advance(amount, data);
         wormholeOpenness.advance(amount, data);
+        advanceAutoAllocate(amount);
+    }
+
+    private void advanceAutoAllocate(float amount) {
+        if (autoRun == null || rootChoice.isInputLocked()) {
+            return;
+        }
+        autoRun.advance(amount, attemptStep, pointsLeft);
+        if (autoRun.isFinished()) {
+            lastRunSummary = autoRun.summary();
+            autoRun = null;
+        }
+    }
+
+    public void setTemplate(SkillTreeTemplate template) {
+        cancelAutoAllocate();
+        this.template = template;
+        this.templateNodeIds = template == null ? Set.of() : template.nodeIds();
+    }
+
+    public SkillTreeTemplate template() {
+        return template;
+    }
+
+    public boolean startAutoAllocate() {
+        if (template == null || autoRun != null || rootChoice.isInputLocked()) {
+            return false;
+        }
+        dropdownRenderer.close();
+        ShipSkillData data = snapshot().data();
+        int pending = 0;
+        for (TemplateStep step : template.steps()) {
+            if (SkillTree.get(step.nodeId()) != null && !data.isAllocated(step.nodeId())) {
+                pending++;
+            }
+        }
+        autoRun = new AutoAllocateRun(template.steps(), pending);
+        lastRunSummary = null;
+        return true;
+    }
+
+    public boolean isAutoAllocating() {
+        return autoRun != null;
+    }
+
+    public void cancelAutoAllocate() {
+        if (autoRun != null) {
+            autoRun.cancel();
+            lastRunSummary = autoRun.summary();
+            autoRun = null;
+        }
+    }
+
+    public AutoAllocateRun.Summary takeLastRunSummary() {
+        AutoAllocateRun.Summary summary = lastRunSummary;
+        lastRunSummary = null;
+        return summary;
+    }
+
+    public boolean hasPointsLeft() {
+        return stepExecutor.hasPointsLeft();
+    }
+
+    public int allocatedNodeCount() {
+        return snapshot().data().getAllocatedNodeIds().size();
+    }
+
+    public List<TemplateStep> captureTemplateSteps() {
+        SkillNode root = getStartingRoot();
+        return TemplateCapture.capture(snapshot().data(), root == null ? null : root.getId(), SkillTree.getAllNodes());
     }
 
     private NodeAllocator.Snapshot snapshot() {
@@ -152,7 +241,7 @@ public final class SkillTreeNodeRenderer {
             }
         }
 
-        connectorRenderer.draw(viewport, allocation, treeAlphaMult);
+        connectorRenderer.draw(viewport, allocation, templateNodeIds, treeAlphaMult);
         wormholeGhostFlights.draw(viewport, treeAlphaMult * search.backgroundAlpha());
 
         for (SkillNode node : SkillTree.getAllNodes().values()) {
@@ -279,7 +368,7 @@ public final class SkillTreeNodeRenderer {
     }
 
     public void toggleAllocation(SkillNode node, boolean ctrlDown) {
-        if (isStartingRootInputLocked()) {
+        if (isStartingRootInputLocked() || autoRun != null) {
             return;
         }
         boolean wasAllocated = allocator.data().isAllocated(node.getId());

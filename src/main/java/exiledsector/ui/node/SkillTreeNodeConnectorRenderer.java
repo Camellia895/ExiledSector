@@ -11,6 +11,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 import java.util.Arrays;
+import java.util.Set;
 
 import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_HALO_ALPHA;
 import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_HALO_THICKNESS;
@@ -31,6 +32,8 @@ final class SkillTreeNodeConnectorRenderer {
     private static final float[] PLAIN_BREAKPOINTS = {0f, 1f};
     private static final float[] DULL_FADE_BREAKPOINTS = {0f, 0.5f, 1f};
     private static final int RING_DULL_RGB = RING_DULL_COLOR.getRGB();
+    private static final int TEMPLATE_RGB = SkillTreePanelStyle.POSITIVE_STAT_COLOR.getRGB();
+    private static final float TEMPLATE_ALPHA = 0.9f;
     private static final int BLACK_RGB = Color.BLACK.getRGB();
 
     private final SkillTreePanelStyle style;
@@ -48,7 +51,7 @@ final class SkillTreeNodeConnectorRenderer {
         this.wormholeOpenness = wormholeOpenness;
     }
 
-    void draw(TreeViewport viewport, NodeAllocator.Snapshot tree, float alphaMult) {
+    void draw(TreeViewport viewport, NodeAllocator.Snapshot tree, Set<String> templateNodeIds, float alphaMult) {
         float zoom = viewport.zoom();
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
@@ -61,7 +64,7 @@ final class SkillTreeNodeConnectorRenderer {
             ConnectorEndpoint nodeEndpoint = new ConnectorEndpoint(viewport.screenX(node.getOffsetX()),
                     viewport.screenY(node.getOffsetY()), endpointRadius(node, zoom));
 
-            drawConnectorsFrom(node, nodeEndpoint, viewport, tree, alphaMult);
+            drawConnectorsFrom(node, nodeEndpoint, viewport, tree, templateNodeIds, alphaMult);
         }
 
         flushBatch();
@@ -69,7 +72,7 @@ final class SkillTreeNodeConnectorRenderer {
     }
 
     private void drawConnectorsFrom(SkillNode node, ConnectorEndpoint nodeEndpoint, TreeViewport viewport,
-                                     NodeAllocator.Snapshot tree, float alphaMult) {
+                                     NodeAllocator.Snapshot tree, Set<String> templateNodeIds, float alphaMult) {
         float zoom = viewport.zoom();
         ShipSkillData data = tree.data();
         String satisfiedRootId = tree.satisfiedRootId();
@@ -87,7 +90,7 @@ final class SkillTreeNodeConnectorRenderer {
             boolean bothSatisfied = data.isSatisfied(node.getId(), satisfiedRootId) && data.isSatisfied(other.getId(), satisfiedRootId);
 
             ConnectorFade fade = new ConnectorFade(
-                    bothSatisfied,
+                    ConnectorKind.of(bothSatisfied, templateNodeIds.contains(node.getId()), templateNodeIds.contains(other.getId())),
                     isWormhole(other) || tree.isHidden(other),
                     isWormhole(node) || tree.isHidden(node),
                     isOpenWormhole(other, data, satisfiedRootId),
@@ -177,13 +180,15 @@ final class SkillTreeNodeConnectorRenderer {
                                   SegmentFade segmentFade) {
         ConnectorFade fade = segmentFade.fade();
         float alphaMult = segmentFade.alphaMult();
-        if (fade.dullFading()) {
+        if (fade.dullFading() && fade.kind() == ConnectorKind.TEMPLATE) {
+            drawFadedTemplateSegment(x1, y1, x2, y2, progress1, progress2, fade.fadeR1ToBlack(), fade.fadeR2ToBlack(), alphaMult);
+        } else if (fade.dullFading()) {
             drawFadedDullSegment(x1, y1, x2, y2, progress1, progress2, fade.fadeR1ToBlack(), fade.fadeR2ToBlack(), alphaMult);
         } else if (fade.glowTipFading()) {
             drawGlowingSegmentWithTipFade(x1, y1, x2, y2, progress1, progress2,
                     segmentFade.tipFraction1(), segmentFade.tipFraction2(), alphaMult);
         } else {
-            drawConnectorSegment(x1, y1, x2, y2, fade.glowing(), alphaMult);
+            drawConnectorSegment(x1, y1, x2, y2, fade.kind(), alphaMult);
         }
     }
 
@@ -255,11 +260,15 @@ final class SkillTreeNodeConnectorRenderer {
         return 1f;
     }
 
-    private void drawConnectorSegment(float x1, float y1, float x2, float y2, boolean glowing, float alphaMult) {
-        if (glowing) {
+    private void drawConnectorSegment(float x1, float y1, float x2, float y2, ConnectorKind kind, float alphaMult) {
+        if (kind == ConnectorKind.GLOW) {
             int accent = style.getAccentColor().getRGB();
             glowHaloLines.add(x1, y1, accent, x2, y2, accent, alphaMult * NODE_CONNECTOR_GLOW_HALO_ALPHA);
             glowLines.add(x1, y1, accent, x2, y2, accent, alphaMult);
+            return;
+        }
+        if (kind == ConnectorKind.TEMPLATE) {
+            glowLines.add(x1, y1, TEMPLATE_RGB, x2, y2, TEMPLATE_RGB, alphaMult * TEMPLATE_ALPHA);
             return;
         }
 
@@ -288,12 +297,19 @@ final class SkillTreeNodeConnectorRenderer {
         float perpX = -dirY * (NODE_CONNECTOR_PARALLEL_GAP / 2f);
         float perpY = dirX * (NODE_CONNECTOR_PARALLEL_GAP / 2f);
 
-        int color0 = colorForFadeProgress(progress0, fadeR1ToBlack, fadeR2ToBlack);
-        int color1 = colorForFadeProgress(progress1, fadeR1ToBlack, fadeR2ToBlack);
+        int color0 = colorForFadeProgress(progress0, fadeR1ToBlack, fadeR2ToBlack, RING_DULL_RGB);
+        int color1 = colorForFadeProgress(progress1, fadeR1ToBlack, fadeR2ToBlack, RING_DULL_RGB);
         float alpha = alphaMult * RING_DULL_ALPHA;
 
         dullLines.add(x1 + perpX, y1 + perpY, color0, x2 + perpX, y2 + perpY, color1, alpha);
         dullLines.add(x1 - perpX, y1 - perpY, color0, x2 - perpX, y2 - perpY, color1, alpha);
+    }
+
+    private void drawFadedTemplateSegment(float x1, float y1, float x2, float y2, float progress0, float progress1,
+                                          boolean fadeR1ToBlack, boolean fadeR2ToBlack, float alphaMult) {
+        int color0 = colorForFadeProgress(progress0, fadeR1ToBlack, fadeR2ToBlack, TEMPLATE_RGB);
+        int color1 = colorForFadeProgress(progress1, fadeR1ToBlack, fadeR2ToBlack, TEMPLATE_RGB);
+        glowLines.add(x1, y1, color0, x2, y2, color1, alphaMult * TEMPLATE_ALPHA);
     }
 
     private void drawGlowingSegmentWithTipFade(float x1, float y1, float x2, float y2, float progress0, float progress1,
@@ -314,14 +330,14 @@ final class SkillTreeNodeConnectorRenderer {
         return lerpOpaqueRgb(style.getAccentColor().getRGB(), BLACK_RGB, t);
     }
 
-    private static int colorForFadeProgress(float progress, boolean fadeR1ToBlack, boolean fadeR2ToBlack) {
+    private static int colorForFadeProgress(float progress, boolean fadeR1ToBlack, boolean fadeR2ToBlack, int baseRgb) {
         float t;
         if (progress <= 0.5f) {
             t = fadeR1ToBlack ? (1f - progress / 0.5f) : 0f;
         } else {
             t = fadeR2ToBlack ? ((progress - 0.5f) / 0.5f) : 0f;
         }
-        return lerpOpaqueRgb(RING_DULL_RGB, BLACK_RGB, t);
+        return lerpOpaqueRgb(baseRgb, BLACK_RGB, t);
     }
 
     private static int lerpOpaqueRgb(int a, int b, float t) {
@@ -351,15 +367,19 @@ final class SkillTreeNodeConnectorRenderer {
     private record ConnectorEndpoint(float x, float y, float radius) {
     }
 
-    private record ConnectorFade(boolean glowing, boolean fadeR1ToBlack, boolean fadeR2ToBlack,
+    private record ConnectorFade(ConnectorKind kind, boolean fadeR1ToBlack, boolean fadeR2ToBlack,
                                   boolean tipFadeR1ToBlack, boolean tipFadeR2ToBlack) {
 
+        boolean glowing() {
+            return kind == ConnectorKind.GLOW;
+        }
+
         boolean dullFading() {
-            return !glowing && (fadeR1ToBlack || fadeR2ToBlack);
+            return !glowing() && (fadeR1ToBlack || fadeR2ToBlack);
         }
 
         boolean glowTipFading() {
-            return glowing && (tipFadeR1ToBlack || tipFadeR2ToBlack);
+            return glowing() && (tipFadeR1ToBlack || tipFadeR2ToBlack);
         }
     }
 

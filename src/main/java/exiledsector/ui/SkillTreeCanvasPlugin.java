@@ -24,6 +24,7 @@ import exiledsector.ui.node.NodeSearch;
 import exiledsector.ui.node.SkillTreeNodeRenderer;
 import exiledsector.ui.util.BorderedPanel;
 import lunalib.lunaRefit.BaseRefitButton;
+import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
@@ -49,6 +50,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final SkillTreeInfoTooltipRenderer readoutTooltipRenderer;
     private final NodeSearch search = new NodeSearch();
     private final SkillTreeSearchBar searchBar;
+    private final SkillTreeTemplateController templateUi;
     private final BorderedPanel shipCardPanel = new BorderedPanel(SkillTreeCanvasPlugin.class);
     private final float shipCardHeight;
 
@@ -64,6 +66,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private boolean pendingClickCtrlDown;
     private SkillType pendingDropdownOption;
     private CameraPanAnimation cameraPan;
+    private boolean swallowEscapeUp;
 
     public SkillTreeCanvasPlugin(FleetMemberAPI member, ShipVariantAPI variant, float shipCardHeight, BaseRefitButton refitButton) {
         if (SkillTreeInstaller.ensureInstalled(member, variant) && refitButton != null) {
@@ -78,6 +81,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.starRenderer = new SkillTreeStarRenderer();
         this.nodeRenderer = new SkillTreeNodeRenderer(member, variant, style, refitButton, search);
         this.searchBar = new SkillTreeSearchBar(search);
+        this.templateUi = new SkillTreeTemplateController(member, nodeRenderer, style);
         this.statPanel = new SkillTreeStatPanel(member);
         this.levelBar = new SkillTreeLevelBar(member, 1);
         this.readoutTooltipRenderer = new SkillTreeInfoTooltipRenderer(style);
@@ -108,10 +112,12 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         if (followingStartingRoot) {
             centreOn(nodeRenderer.startingRootOffsetX(), nodeRenderer.startingRootOffsetY());
         }
+        templateUi.advance(amount, position);
         ShipOpBudget budget = nodeRenderer.budget();
+        boolean pointerLive = mouseKnown && !templateUi.isModalOpen();
         statPanel.refresh(budget, nodeRenderer.statsRevision());
-        ordnancePointsBar.advance(amount, position, budget.used, budget.total, mouseX, mouseY, mouseKnown);
-        levelBar.advance(amount, position, mouseX, mouseY, mouseKnown);
+        ordnancePointsBar.advance(amount, position, budget.used, budget.total, mouseX, mouseY, pointerLive);
+        levelBar.advance(amount, position, mouseX, mouseY, pointerLive);
     }
 
     private void advanceCameraPan(float amount) {
@@ -142,8 +148,16 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void handleEvent(InputEventAPI event) {
-        if (nodeRenderer.isStartingRootInputLocked()) {
+        if (swallowEscapeUp && event.isKeyUpEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
+            swallowEscapeUp = false;
+            event.consume();
+        } else if (nodeRenderer.isStartingRootInputLocked()) {
             handleStartingRootEvent(event);
+        } else if (templateUi.isModalOpen()) {
+            handleModalEvent(event);
+        } else if (nodeRenderer.isAutoAllocating() && interruptsAutoAllocate(event)) {
+            nodeRenderer.cancelAutoAllocate();
+            consume(event);
         } else if (event.isLMBDownEvent() && position.containsEvent(event)) {
             handleLmbDown(event);
         } else if (event.isLMBUpEvent()) {
@@ -153,8 +167,37 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         } else if (event.isMouseScrollEvent() && position.containsEvent(event)) {
             handleMouseScroll(event);
         } else if (event.isKeyboardEvent() && searchBar.handleKey(event)) {
-            event.consume();
+            consume(event);
         }
+    }
+
+    private void consume(InputEventAPI event) {
+        if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
+            swallowEscapeUp = true;
+        }
+        event.consume();
+    }
+
+    private boolean interruptsAutoAllocate(InputEventAPI event) {
+        return (event.isLMBDownEvent() && position.containsEvent(event))
+                || (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE);
+    }
+
+    private void handleModalEvent(InputEventAPI event) {
+        if (event.isMouseMoveEvent()) {
+            handleMouseMove(event);
+            return;
+        }
+        if (event.isLMBDownEvent()) {
+            templateUi.handleLmbDown(event.getX(), event.getY());
+        } else if (event.isLMBUpEvent()) {
+            templateUi.handleLmbUp(event.getX(), event.getY());
+        } else if (event.isMouseScrollEvent()) {
+            templateUi.handleScroll(event);
+        } else if (event.isKeyboardEvent()) {
+            templateUi.handleKey(event);
+        }
+        consume(event);
     }
 
     private void handleStartingRootEvent(InputEventAPI event) {
@@ -175,6 +218,10 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     private void handleLmbDown(InputEventAPI event) {
         if (searchBar.handleClick(position, event.getX(), event.getY())) {
+            event.consume();
+            return;
+        }
+        if (templateUi.handleLmbDown(event.getX(), event.getY())) {
             event.consume();
             return;
         }
@@ -208,6 +255,13 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void handleLmbUp(InputEventAPI event) {
+        if (templateUi.handleLmbUp(event.getX(), event.getY())) {
+            if (templateUi.isModalOpen()) {
+                searchBar.unfocus();
+            }
+            event.consume();
+            return;
+        }
         boolean wasOurGesture = dragging || pendingDropdownOption != null || pendingClickNode != null;
         dragging = false;
         if (pendingDropdownOption != null) {
@@ -265,7 +319,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         starRenderer.renderAurora(viewport, backgroundAlpha);
         ringBeltRenderer.render(viewport, backgroundAlpha);
         staticImageRenderer.render(viewport, backgroundAlpha);
-        boolean treeHovered = mouseKnown && !isOverOverlay(mouseX, mouseY);
+        boolean treeHovered = mouseKnown && !isOverOverlay(mouseX, mouseY) && !templateUi.isModalOpen();
         nodeRenderer.render(viewport, alphaMult, mouseX, mouseY, treeHovered);
         starRenderer.renderGlow(viewport, backgroundAlpha);
         statPanel.render(position, alphaMult);
@@ -274,16 +328,19 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         if (!nodeRenderer.isStartingRootInputLocked()) {
             searchBar.render(position, alphaMult);
         }
+        templateUi.renderBar(position, mouseX, mouseY, alphaMult);
         drawShipCardFrame(alphaMult);
 
-        if (!dragging && mouseKnown) {
+        if (!dragging && mouseKnown && !templateUi.isModalOpen()) {
             if (treeHovered) {
                 nodeRenderer.renderHoverTooltip(viewport, mouseX, mouseY, alphaMult);
             }
             if (ordnancePointsBar.isHovered(position, mouseX, mouseY) || levelBar.isHovered(position, mouseX, mouseY)) {
                 readoutTooltipRenderer.render(readoutTooltipTitle, readoutTooltipBody, mouseX, mouseY, alphaMult);
             }
+            templateUi.renderBarTooltip(mouseX, mouseY, alphaMult);
         }
+        templateUi.renderModals(position, mouseX, mouseY, alphaMult);
     }
 
     private static String buildReadoutTooltipBody(FleetMemberAPI member) {
@@ -321,6 +378,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                 || ordnancePointsBar.isHovered(position, x, y)
                 || levelBar.isHovered(position, x, y)
                 || (!nodeRenderer.isStartingRootInputLocked() && SkillTreeSearchBar.contains(position, x, y))
+                || templateUi.barContains(x, y)
                 || shipCardFrame().contains(x, y);
     }
 

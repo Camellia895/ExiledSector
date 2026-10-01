@@ -17,6 +17,7 @@ import exiledsector.i18n.Languages;
 import exiledsector.i18n.Translation;
 import exiledsector.persistence.OpSpentSlotManager;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.persistence.SkillTreeTemplateStore;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.npc.NpcLayouts;
@@ -77,6 +78,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         SkillDataResolver.clearCache();
         OpSpentSlotManager.releaseUnless(ShipSkillDataManager::hasProgress);
         ShipSkillDataManager.removeBlankRecords();
+        SkillTreeTemplateStore.pruneAssignments(ShipSkillDataManager::hasProgress);
         FleetWideEffects.markPhaseFieldStale();
         Global.getSector().removeScriptsOfClass(SkillTreeInstaller.class);
         Global.getSector().addTransientScript(new SkillTreeInstaller());

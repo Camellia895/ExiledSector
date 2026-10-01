@@ -28,6 +28,8 @@ import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.progression.SkillNodeOpCost;
 import exiledsector.skills.skilleffect.FighterSkillEffect;
 import exiledsector.skills.skilleffect.LogisticsSkillEffect;
+import exiledsector.skills.template.StepVerdict;
+import exiledsector.skills.template.TemplateStep;
 import exiledsector.skills.unlock.UnlockCondition;
 import lunalib.lunaSettings.LunaSettings;
 import org.apache.log4j.Logger;
@@ -38,6 +40,7 @@ import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -49,8 +52,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyFloat;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -392,5 +398,61 @@ class NodeAllocatorTest {
         assertTrue(allocator.chooseStartingRoot(root));
         assertFalse(allocator.chooseStartingRoot(root));
         assertTrue(data().isAllocated("root_1"));
+    }
+
+    private TemplateStepExecutor executor(List<SkillNode> allocated) {
+        data().chooseStartingRoot(root);
+        NodeAllocator allocator = allocatorStartingAt(root);
+        return new TemplateStepExecutor(allocator, allocator::snapshot, allocated::add);
+    }
+
+    @Test
+    void aTemplateStepAllocatesItsNodeTheWayAClickWould() {
+        List<SkillNode> allocated = new ArrayList<>();
+
+        StepVerdict verdict = executor(allocated).attempt(new TemplateStep("frontshield_1", null));
+
+        assertEquals(StepVerdict.ALLOCATE, verdict);
+        assertTrue(data().isAllocated("frontshield_1"));
+        assertEquals(List.of(frontShield), allocated);
+    }
+
+    @Test
+    void aTemplateStepNeverSpendsCargoOnANodeWithAnItemCost() {
+        when(cargo.getCommodityQuantity("alpha_core")).thenReturn(5f);
+
+        assertEquals(StepVerdict.ITEM_COST, executor(new ArrayList<>()).attempt(new TemplateStep("core_1", null)));
+        assertFalse(data().isAllocated("core_1"));
+        verify(cargo, never()).removeCommodity(anyString(), anyFloat());
+    }
+
+    @Test
+    void aTemplateStepSkipsNodesThatAreUnreachableOrBlocked() {
+        register("frigate_only_1", type("frigate_only", "Frigate Only", SkillTier.SMALL)
+                .requiredHullSizes(List.of(HullSize.FRIGATE)).build(), "root_1");
+        TemplateStepExecutor executor = executor(new ArrayList<>());
+
+        assertEquals(StepVerdict.NOT_ALLOCATABLE, executor.attempt(new TemplateStep("beyond_1", null)));
+        assertEquals(StepVerdict.BLOCKED, executor.attempt(new TemplateStep("frigate_only_1", null)));
+        assertEquals(StepVerdict.ALREADY_ALLOCATED, executor.attempt(new TemplateStep("root_1", null)));
+    }
+
+    @Test
+    void aTemplateStepOnAnOptionalNodeAllocatesTheTemplatesOption() {
+        SkillType option = type("hull_option", "Hull Option", SkillTier.SMALL).build();
+        SkillTree.registerType(option);
+        SkillNode slot = register("slot_1", type("slot", "Slot", SkillTier.SMALL).optionalOptionIds(List.of("hull_option")).build(), "root_1");
+
+        assertEquals(StepVerdict.ALLOCATE, executor(new ArrayList<>()).attempt(new TemplateStep("slot_1", "hull_option")));
+        assertEquals(option, slot.resolveEffectiveType(data()));
+    }
+
+    @Test
+    void pointsRunOutWhenTheNextNodeWouldNotFitTheShipsFreeOp() {
+        TemplateStepExecutor executor = executor(new ArrayList<>());
+        assertTrue(executor.hasPointsLeft());
+
+        when(variant.computeOPCost(any())).thenReturn(99);
+        assertFalse(executor.hasPointsLeft());
     }
 }

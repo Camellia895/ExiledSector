@@ -58,6 +58,7 @@ The zh_CN catalogue was drafted by Claude and still needs review by a native spe
 | Free allocation | 免费分配 | |
 | Level / XP | 等级 / 经验 | |
 | Build (NPC layout) | 构筑 | |
+| Template / auto-allocate | 模板 / 自动分配 | A saved set of nodes a ship can follow |
 | Wormhole | 虫洞 | |
 | Escort | 护航 | |
 
