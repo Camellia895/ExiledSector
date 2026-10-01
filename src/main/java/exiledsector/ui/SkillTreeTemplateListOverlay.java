@@ -278,7 +278,7 @@ final class SkillTreeTemplateListOverlay {
             if (TemplateFilter.isFilterable(value.hullSize())) {
                 parts.add(Translation.styled("hullSize." + value.hullSize().name()));
             }
-            parts.add(Translation.msg("ui.template.list.nodes").count(value.steps().size()).styled());
+            parts.add(Translation.msg("ui.template.list.nodes").count(value.knownStepCount()).styled());
             if (assigned) {
                 parts.add(Translation.styled("ui.template.list.inUse"));
             }

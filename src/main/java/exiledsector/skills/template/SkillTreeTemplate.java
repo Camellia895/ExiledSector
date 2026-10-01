@@ -1,6 +1,7 @@
 package exiledsector.skills.template;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.skills.SkillTree;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -19,5 +20,15 @@ public record SkillTreeTemplate(String id, String name, String rootNodeId, HullS
             ids.add(step.nodeId());
         }
         return Set.copyOf(ids);
+    }
+
+    public int knownStepCount() {
+        int known = 0;
+        for (TemplateStep step : steps) {
+            if (SkillTree.get(step.nodeId()) != null) {
+                known++;
+            }
+        }
+        return known;
     }
 }

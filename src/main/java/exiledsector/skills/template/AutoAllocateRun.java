@@ -1,5 +1,6 @@
 package exiledsector.skills.template;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
@@ -17,8 +18,11 @@ public final class AutoAllocateRun {
     public record Summary(Status status, int allocated, int skipped) {
     }
 
-    private final List<TemplateStep> steps;
     private final float stepSeconds;
+    private List<TemplateStep> pass;
+    private List<TemplateStep> deferred = new ArrayList<>();
+    private boolean retrying;
+    private boolean progressed;
     private float budget;
     private int index;
     private int allocated;
@@ -26,7 +30,7 @@ public final class AutoAllocateRun {
     private Status status = Status.RUNNING;
 
     public AutoAllocateRun(List<TemplateStep> steps, int pendingCount) {
-        this.steps = List.copyOf(steps);
+        this.pass = List.copyOf(steps);
         this.stepSeconds = Math.min(BASE_STEP_SECONDS, TARGET_TOTAL_SECONDS / Math.max(1, pendingCount));
         this.budget = stepSeconds;
     }
@@ -40,15 +44,19 @@ public final class AutoAllocateRun {
         while (status == Status.RUNNING) {
             if (!pointsLeft.getAsBoolean()) {
                 status = Status.OUT_OF_POINTS;
-            } else if (index >= steps.size()) {
-                status = Status.PATH_END;
+            } else if (index >= pass.size()) {
+                endPass();
             } else if (budget < stepSeconds || blockedChecks >= MAX_BLOCKED_CHECKS_PER_FRAME) {
                 return;
             } else {
-                StepVerdict verdict = attempt.apply(steps.get(index++));
+                TemplateStep step = pass.get(index++);
+                StepVerdict verdict = attempt.apply(step);
                 if (verdict == StepVerdict.ALLOCATE) {
                     allocated++;
+                    progressed = true;
                     budget -= stepSeconds;
+                } else if (verdict == StepVerdict.NOT_ALLOCATABLE) {
+                    deferred.add(step);
                 } else if (verdict != StepVerdict.ALREADY_ALLOCATED) {
                     skipped++;
                     if (verdict == StepVerdict.BLOCKED) {
@@ -57,6 +65,18 @@ public final class AutoAllocateRun {
                 }
             }
         }
+    }
+
+    private void endPass() {
+        if (!progressed || deferred.isEmpty()) {
+            status = Status.PATH_END;
+            return;
+        }
+        pass = deferred;
+        deferred = new ArrayList<>();
+        index = 0;
+        retrying = true;
+        progressed = false;
     }
 
     public void cancel() {
@@ -70,7 +90,8 @@ public final class AutoAllocateRun {
     }
 
     public Summary summary() {
-        return new Summary(status, allocated, skipped);
+        int notRetried = retrying ? pass.size() - index : 0;
+        return new Summary(status, allocated, skipped + deferred.size() + notRetried);
     }
 
     float stepSeconds() {

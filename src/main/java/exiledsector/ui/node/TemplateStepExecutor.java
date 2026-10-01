@@ -58,8 +58,9 @@ final class TemplateStepExecutor {
     }
 
     private static void logSkip(TemplateStep step, StepVerdict verdict) {
-        if (verdict != StepVerdict.ALREADY_ALLOCATED) {
-            Logger.getLogger(TemplateStepExecutor.class).debug("[ExiledSector] Auto-allocate skipped " + step.nodeId() + ": " + verdict);
+        Logger logger = Logger.getLogger(TemplateStepExecutor.class);
+        if (verdict != StepVerdict.ALREADY_ALLOCATED && verdict != StepVerdict.NOT_ALLOCATABLE && logger.isDebugEnabled()) {
+            logger.debug("[ExiledSector] Auto-allocate skipped " + step.nodeId() + ": " + verdict);
         }
     }
 }

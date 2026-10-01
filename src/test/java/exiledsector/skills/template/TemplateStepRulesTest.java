@@ -105,4 +105,12 @@ class TemplateStepRulesTest {
         assertEquals(StepVerdict.BLOCKED, TemplateStepRules.verdict(new TemplateStep("slot", "hull"), data, "root", ALLOCATABLE, blockHull));
         assertEquals(StepVerdict.BLOCKED, TemplateStepRules.verdict(new TemplateStep("armor", null), data, "root", ALLOCATABLE, type -> "x"));
     }
+
+    @Test
+    void theNodeCountShownForATemplateLeavesOutNodesTheTreeNoLongerHas() {
+        SkillTreeTemplate template = new SkillTreeTemplate("id", "Brawler", "root", null, List.of(
+                new TemplateStep("armor", null), new TemplateStep("removed_by_update", null), new TemplateStep("slot", "hull")));
+
+        assertEquals(2, template.knownStepCount());
+    }
 }
